@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.hsbo.kommonitor</groupId>
+    <artifactId>kommonitor-data-management-api</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>KomMonitor Data Management</name>
+    <description>REST API to manage all data within KomMonitor</description>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.1.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <spring-cloud.version>Finchley.M9</spring-cloud.version>
+        <logstash.logback.version>5.0</logstash.logback.version>
+        <docker.image.prefix>kommonitor</docker.image.prefix>
+        <springfox.version>2.7.0</springfox.version>
+        <geotools.version>19.0</geotools.version>
+        <postgresql.version>42.1.4</postgresql.version>
+        <hibernate.version>5.2.12.Final</hibernate.version>
+    </properties>
+
+    <dependencies>
+
+
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+	    </dependency>
+
+        <!-- Consul dependencies -->
+        <!-- <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-consul-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-consul-discovery</artifactId>
+        </dependency> -->
+
+
+        <!-- Java Topology Suite -->
+        <dependency>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.bedatadriven</groupId>
+            <artifactId>jackson-datatype-jts</artifactId>
+            <version>2.4</version>
+        </dependency>
+
+        <!-- springfox -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox.version}</version>
+        </dependency>
+
+        <!-- Geotools -->
+       <!-- Geotools support -->
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-coverage</artifactId>
+           <version>${geotools.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-epsg-hsql</artifactId>
+           <version>${geotools.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-epsg-wkt</artifactId>
+           <version>${geotools.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-grid</artifactId>
+           <version>${geotools.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-geotiff</artifactId>
+           <version>${geotools.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-main</artifactId>
+           <version>${geotools.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-api</artifactId>
+           <version>${geotools.version}</version>
+           <type>jar</type>
+       </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-cql</artifactId>
+           <version>${geotools.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-data</artifactId>
+           <version>${geotools.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-opengis</artifactId>
+           <version>${geotools.version}</version>
+           <type>jar</type>
+       </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-referencing</artifactId>
+           <version>${geotools.version}</version>
+           <type>jar</type>
+       </dependency>
+       <!-- <dependency>
+               <groupId>org.geotools</groupId>
+               <artifactId>gt-metadata</artifactId>
+               <version>${geotools.version}</version>
+       </dependency> -->
+       <!-- <dependency>
+               <groupId>org.geotools</groupId>
+               <artifactId>gt-data</artifactId>
+               <version>${geotools.version}</version>
+       </dependency> -->
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-shapefile</artifactId>
+           <version>${geotools.version}</version>
+           <type>jar</type>
+       </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-geopkg</artifactId>
+           <version>${geotools.version}</version>
+           <type>jar</type>
+       </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-geojson</artifactId>
+           <version>${geotools.version}</version>
+       </dependency>
+
+       <!-- PostgeSQL support -->
+       <dependency>
+           <groupId>org.postgresql</groupId>
+           <artifactId>postgresql</artifactId>
+           <version>${postgresql.version}</version>
+       </dependency>
+
+
+       <dependency>
+           <groupId>junit</groupId>
+           <artifactId>junit</artifactId>
+           <scope>test</scope>
+       </dependency>
+
+       <!-- Hibernate -->
+       <dependency>
+           <groupId>org.hibernate</groupId>
+           <artifactId>hibernate-entitymanager</artifactId>
+           <version>${hibernate.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>org.hibernate</groupId>
+           <artifactId>hibernate-core</artifactId>
+           <version>${hibernate.version}</version>
+           <type>jar</type>
+       </dependency>
+       <dependency>
+           <groupId>org.hibernate</groupId>
+           <artifactId>hibernate-spatial</artifactId>
+           <version>${hibernate.version}</version>
+       </dependency>
+
+       <!-- Geoserver Manager -->
+       <dependency>
+         <groupId>it.geosolutions</groupId>
+         <artifactId>geoserver-manager</artifactId>
+         <version>1.7.0</version>
+       </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                    <repository>${docker.image.prefix}/${project.artifactId}</repository>
+                    <tag>${project.version}</tag>
+                    <buildArgs>
+                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                    </buildArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>osgeo</id>
+            <name>Open Source Geospatial Foundation Repository</name>
+            <url>http://download.osgeo.org/webdav/geotools/</url>
+        </repository>
+        <repository>
+            <id>boundless</id>
+            <name>boundless repo for geoserver</name>
+            <url>http://repo.boundlessgeo.com/main/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>maven central</id>
+            <name>central repo for geoserver</name>
+            <url>http://central.maven.org/maven2</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>geotoolkit</id>
+            <name>central repo for geoserver</name>
+            <url>http://maven.geotoolkit.org/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>
