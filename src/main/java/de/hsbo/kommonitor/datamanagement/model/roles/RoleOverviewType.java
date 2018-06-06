@@ -25,7 +25,13 @@ public class RoleOverviewType   {
   
   private List<String> priviledges = new ArrayList<>();
 
-  public RoleOverviewType roleId(String roleId) {
+  public RoleOverviewType(String roleId) {
+	  this.roleId = roleId;
+}
+
+  public RoleOverviewType() {}
+  
+public RoleOverviewType roleId(String roleId) {
     this.roleId = roleId;
     return this;
   }
