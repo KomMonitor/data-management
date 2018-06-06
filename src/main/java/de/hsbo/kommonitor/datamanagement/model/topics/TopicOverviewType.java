@@ -2,16 +2,8 @@ package de.hsbo.kommonitor.datamanagement.model.topics;
 
 import java.util.Objects;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-import org.hibernate.annotations.GenericGenerator;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -20,12 +12,8 @@ import io.swagger.annotations.ApiModelProperty;
 
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
 
-@Entity(name = "Topics")
 public class TopicOverviewType   {
 	
-  @Id
-  @GeneratedValue(generator = "UUID")
-  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
   @JsonProperty("topicId")
   private String topicId = null;
 
@@ -34,11 +22,13 @@ public class TopicOverviewType   {
 
   @JsonProperty("topicDescription")
   private String topicDescription = null;
+  
+  public TopicOverviewType() {
+	  }
 
-//  public TopicOverviewType topicId(String topicId) {
-//    this.topicId = topicId;
-//    return this;
-//  }
+  public TopicOverviewType(String topicId) {
+    this.topicId = topicId;
+  }
 
    /**
    * the identifier of the topic

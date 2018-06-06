@@ -2,12 +2,12 @@ package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
-public interface TopicsRepository extends JpaRepository<TopicOverviewType, Long> {
-    TopicOverviewType findByTopicId(String topicId);
+public interface TopicsRepository extends JpaRepository<TopicsEntity, Long> {
+	TopicsEntity findByTopicId(String topicId);
     
-    TopicOverviewType findByTopicName(String topicName);
+	TopicsEntity findByTopicName(String topicName);
     
     boolean existsByTopicId(String topicId);
     

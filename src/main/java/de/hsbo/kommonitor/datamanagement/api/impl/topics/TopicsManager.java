@@ -2,8 +2,6 @@ package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
@@ -16,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicInputType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 @Transactional
 @Repository
@@ -47,7 +46,7 @@ public class TopicsManager {
 		 * 
 		 * return id
 		 */
-		TopicOverviewType topic = new TopicOverviewType();
+		TopicsEntity topic = new TopicsEntity();
 		topic.setTopicName(topicData.getTopicName());
 		topic.setTopicDescription(topicData.getTopicDescription());
 		/*
@@ -57,17 +56,24 @@ public class TopicsManager {
 		topicsRepo.save(topic);
 		
 		return topic.getTopicId();
-
 	}
 
 	public List<TopicOverviewType> getTopics() {
 		logger.info("Retrieving all topics from db");
-		return topicsRepo.findAll();
+		
+		List<TopicsEntity> topicEntities = topicsRepo.findAll();
+		List<TopicOverviewType> topics = TopicsMapper.mapToSwaggerTopics(topicEntities);
+		
+		return topics;
 	}
 
 	public TopicOverviewType getTopicById(String topicId) {
 		logger.info("Retrieving topic for topicId '{}'", topicId);
-		return topicsRepo.findByTopicId(topicId);
+		
+		TopicsEntity topicEntity = topicsRepo.findByTopicId(topicId);
+		TopicOverviewType topic = TopicsMapper.mapToSwaggerTopic(topicEntity);
+		
+		return topic;
 	}
 
 	public boolean deleteTopicById(String topicId) throws ResourceNotFoundException {
