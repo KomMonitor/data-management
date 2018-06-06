@@ -53,7 +53,13 @@ public class TopicsController extends BasePathController implements TopicsApi {
 		/*
 		 * analyse input data and save it within database
 		 */
-		String topicId = topicsManager.addTopic(topicData);
+		String topicId;
+		try {
+			topicId = topicsManager.addTopic(topicData);
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+			
+		}
 
 		if (topicId != null) {
 			HttpHeaders responseHeaders = new HttpHeaders();
