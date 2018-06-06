@@ -22,8 +22,8 @@ import de.hsbo.kommonitor.datamanagement.api.TopicsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.TopicInputType;
-import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.topics.TopicInputType;
+import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
 
 @Controller
 public class TopicsController extends BasePathController implements TopicsApi {

@@ -6,10 +6,7 @@
 package de.hsbo.kommonitor.datamanagement.api;
 
 import java.math.BigDecimal;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPUTInputType;
+
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
+
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
 
 import java.util.List;
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")

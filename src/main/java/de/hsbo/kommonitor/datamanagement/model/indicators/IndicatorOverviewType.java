@@ -1,4 +1,4 @@
-package de.hsbo.kommonitor.datamanagement.model;
+package de.hsbo.kommonitor.datamanagement.model.indicators;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;

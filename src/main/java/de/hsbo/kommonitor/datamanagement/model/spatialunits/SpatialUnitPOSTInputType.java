@@ -1,4 +1,4 @@
-package de.hsbo.kommonitor.datamanagement.model;
+package de.hsbo.kommonitor.datamanagement.model.spatialunits;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,18 +7,19 @@ import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * SpatialUnitOverviewType
+ * SpatialUnitPOSTInputType
  */
 
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
 
-public class SpatialUnitOverviewType   {
+public class SpatialUnitPOSTInputType   {
   @JsonProperty("spatialUnitLevel")
   private String spatialUnitLevel = null;
+
+  @JsonProperty("periodOfValidity")
+  private PeriodOfValidityType periodOfValidity = null;
 
   @JsonProperty("metadata")
   private CommonMetadataType metadata = null;
@@ -29,20 +30,22 @@ public class SpatialUnitOverviewType   {
   @JsonProperty("nextUpperHierarchyLevel")
   private String nextUpperHierarchyLevel = null;
 
-  @JsonProperty("availablePeriodsOfValidity")
-  
-  private List<PeriodOfValidityType> availablePeriodsOfValidity = new ArrayList<>();
+  @JsonProperty("jsonSchema")
+  private String jsonSchema = null;
 
-  public SpatialUnitOverviewType spatialUnitLevel(String spatialUnitLevel) {
+  @JsonProperty("geoJsonString")
+  private String geoJsonString = null;
+
+  public SpatialUnitPOSTInputType spatialUnitLevel(String spatialUnitLevel) {
     this.spatialUnitLevel = spatialUnitLevel;
     return this;
   }
 
    /**
-   * the name/identifier of the spatial unit level the features apply to
+   * the name and identifier of the spatial unit level the features apply to
    * @return spatialUnitLevel
   **/
-  @ApiModelProperty(required = true, value = "the name/identifier of the spatial unit level the features apply to")
+  @ApiModelProperty(required = true, value = "the name and identifier of the spatial unit level the features apply to")
   public String getSpatialUnitLevel() {
     return spatialUnitLevel;
   }
@@ -51,7 +54,25 @@ public class SpatialUnitOverviewType   {
     this.spatialUnitLevel = spatialUnitLevel;
   }
 
-  public SpatialUnitOverviewType metadata(CommonMetadataType metadata) {
+  public SpatialUnitPOSTInputType periodOfValidity(PeriodOfValidityType periodOfValidity) {
+    this.periodOfValidity = periodOfValidity;
+    return this;
+  }
+
+   /**
+   * Get periodOfValidity
+   * @return periodOfValidity
+  **/
+  @ApiModelProperty(required = true, value = "")
+  public PeriodOfValidityType getPeriodOfValidity() {
+    return periodOfValidity;
+  }
+
+  public void setPeriodOfValidity(PeriodOfValidityType periodOfValidity) {
+    this.periodOfValidity = periodOfValidity;
+  }
+
+  public SpatialUnitPOSTInputType metadata(CommonMetadataType metadata) {
     this.metadata = metadata;
     return this;
   }
@@ -69,7 +90,7 @@ public class SpatialUnitOverviewType   {
     this.metadata = metadata;
   }
 
-  public SpatialUnitOverviewType nextLowerHierarchyLevel(String nextLowerHierarchyLevel) {
+  public SpatialUnitPOSTInputType nextLowerHierarchyLevel(String nextLowerHierarchyLevel) {
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
     return this;
   }
@@ -87,7 +108,7 @@ public class SpatialUnitOverviewType   {
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
   }
 
-  public SpatialUnitOverviewType nextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
+  public SpatialUnitPOSTInputType nextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
     return this;
   }
@@ -105,27 +126,40 @@ public class SpatialUnitOverviewType   {
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
   }
 
-  public SpatialUnitOverviewType availablePeriodsOfValidity(List<PeriodOfValidityType> availablePeriodsOfValidity) {
-    this.availablePeriodsOfValidity = availablePeriodsOfValidity;
-    return this;
-  }
-
-  public SpatialUnitOverviewType addAvailablePeriodsOfValidityItem(PeriodOfValidityType availablePeriodsOfValidityItem) {
-    this.availablePeriodsOfValidity.add(availablePeriodsOfValidityItem);
+  public SpatialUnitPOSTInputType jsonSchema(String jsonSchema) {
+    this.jsonSchema = jsonSchema;
     return this;
   }
 
    /**
-   * Get availablePeriodsOfValidity
-   * @return availablePeriodsOfValidity
+   * a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.
+   * @return jsonSchema
   **/
-  @ApiModelProperty(required = true, value = "")
-  public List<PeriodOfValidityType> getAvailablePeriodsOfValidity() {
-    return availablePeriodsOfValidity;
+  @ApiModelProperty(required = true, value = "a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.")
+  public String getJsonSchema() {
+    return jsonSchema;
   }
 
-  public void setAvailablePeriodsOfValidity(List<PeriodOfValidityType> availablePeriodsOfValidity) {
-    this.availablePeriodsOfValidity = availablePeriodsOfValidity;
+  public void setJsonSchema(String jsonSchema) {
+    this.jsonSchema = jsonSchema;
+  }
+
+  public SpatialUnitPOSTInputType geoJsonString(String geoJsonString) {
+    this.geoJsonString = geoJsonString;
+    return this;
+  }
+
+   /**
+   * a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'
+   * @return geoJsonString
+  **/
+  @ApiModelProperty(required = true, value = "a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'")
+  public String getGeoJsonString() {
+    return geoJsonString;
+  }
+
+  public void setGeoJsonString(String geoJsonString) {
+    this.geoJsonString = geoJsonString;
   }
 
 
@@ -137,29 +171,33 @@ public class SpatialUnitOverviewType   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SpatialUnitOverviewType spatialUnitOverviewType = (SpatialUnitOverviewType) o;
-    return Objects.equals(this.spatialUnitLevel, spatialUnitOverviewType.spatialUnitLevel) &&
-        Objects.equals(this.metadata, spatialUnitOverviewType.metadata) &&
-        Objects.equals(this.nextLowerHierarchyLevel, spatialUnitOverviewType.nextLowerHierarchyLevel) &&
-        Objects.equals(this.nextUpperHierarchyLevel, spatialUnitOverviewType.nextUpperHierarchyLevel) &&
-        Objects.equals(this.availablePeriodsOfValidity, spatialUnitOverviewType.availablePeriodsOfValidity);
+    SpatialUnitPOSTInputType spatialUnitPOSTInputType = (SpatialUnitPOSTInputType) o;
+    return Objects.equals(this.spatialUnitLevel, spatialUnitPOSTInputType.spatialUnitLevel) &&
+        Objects.equals(this.periodOfValidity, spatialUnitPOSTInputType.periodOfValidity) &&
+        Objects.equals(this.metadata, spatialUnitPOSTInputType.metadata) &&
+        Objects.equals(this.nextLowerHierarchyLevel, spatialUnitPOSTInputType.nextLowerHierarchyLevel) &&
+        Objects.equals(this.nextUpperHierarchyLevel, spatialUnitPOSTInputType.nextUpperHierarchyLevel) &&
+        Objects.equals(this.jsonSchema, spatialUnitPOSTInputType.jsonSchema) &&
+        Objects.equals(this.geoJsonString, spatialUnitPOSTInputType.geoJsonString);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(spatialUnitLevel, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, availablePeriodsOfValidity);
+    return Objects.hash(spatialUnitLevel, periodOfValidity, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, jsonSchema, geoJsonString);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SpatialUnitOverviewType {\n");
+    sb.append("class SpatialUnitPOSTInputType {\n");
     
     sb.append("    spatialUnitLevel: ").append(toIndentedString(spatialUnitLevel)).append("\n");
+    sb.append("    periodOfValidity: ").append(toIndentedString(periodOfValidity)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    nextLowerHierarchyLevel: ").append(toIndentedString(nextLowerHierarchyLevel)).append("\n");
     sb.append("    nextUpperHierarchyLevel: ").append(toIndentedString(nextUpperHierarchyLevel)).append("\n");
-    sb.append("    availablePeriodsOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
+    sb.append("    jsonSchema: ").append(toIndentedString(jsonSchema)).append("\n");
+    sb.append("    geoJsonString: ").append(toIndentedString(geoJsonString)).append("\n");
     sb.append("}");
     return sb.toString();
   }

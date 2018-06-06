@@ -5,8 +5,6 @@
  */
 package de.hsbo.kommonitor.datamanagement.api;
 
-import de.hsbo.kommonitor.datamanagement.model.UserInputType;
-import de.hsbo.kommonitor.datamanagement.model.UserOverviewType;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
+
+import de.hsbo.kommonitor.datamanagement.model.users.UserInputType;
+import de.hsbo.kommonitor.datamanagement.model.users.UserOverviewType;
 
 import java.util.List;
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")

@@ -1,9 +1,12 @@
-package de.hsbo.kommonitor.datamanagement.model;
+package de.hsbo.kommonitor.datamanagement.model.indicators;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeValueMapping;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;

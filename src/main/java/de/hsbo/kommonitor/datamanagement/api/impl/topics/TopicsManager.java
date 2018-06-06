@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.model.TopicInputType;
-import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.topics.TopicInputType;
+import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
 
 @Transactional
 @Repository

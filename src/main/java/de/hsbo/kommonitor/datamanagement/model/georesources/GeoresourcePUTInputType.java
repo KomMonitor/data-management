@@ -1,4 +1,4 @@
-package de.hsbo.kommonitor.datamanagement.model;
+package de.hsbo.kommonitor.datamanagement.model.georesources;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,19 +8,19 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * SpatialUnitPUTInputType
+ * GeoresourcePUTInputType
  */
 
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
 
-public class SpatialUnitPUTInputType   {
+public class GeoresourcePUTInputType   {
   @JsonProperty("periodOfValidity")
   private PeriodOfValidityType periodOfValidity = null;
 
   @JsonProperty("geoJsonString")
   private String geoJsonString = null;
 
-  public SpatialUnitPUTInputType periodOfValidity(PeriodOfValidityType periodOfValidity) {
+  public GeoresourcePUTInputType periodOfValidity(PeriodOfValidityType periodOfValidity) {
     this.periodOfValidity = periodOfValidity;
     return this;
   }
@@ -38,16 +38,16 @@ public class SpatialUnitPUTInputType   {
     this.periodOfValidity = periodOfValidity;
   }
 
-  public SpatialUnitPUTInputType geoJsonString(String geoJsonString) {
+  public GeoresourcePUTInputType geoJsonString(String geoJsonString) {
     this.geoJsonString = geoJsonString;
     return this;
   }
 
    /**
-   * a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'
+   * a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset
    * @return geoJsonString
   **/
-  @ApiModelProperty(required = true, value = "a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'")
+  @ApiModelProperty(required = true, value = "a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset")
   public String getGeoJsonString() {
     return geoJsonString;
   }
@@ -65,9 +65,9 @@ public class SpatialUnitPUTInputType   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SpatialUnitPUTInputType spatialUnitPUTInputType = (SpatialUnitPUTInputType) o;
-    return Objects.equals(this.periodOfValidity, spatialUnitPUTInputType.periodOfValidity) &&
-        Objects.equals(this.geoJsonString, spatialUnitPUTInputType.geoJsonString);
+    GeoresourcePUTInputType georesourcePUTInputType = (GeoresourcePUTInputType) o;
+    return Objects.equals(this.periodOfValidity, georesourcePUTInputType.periodOfValidity) &&
+        Objects.equals(this.geoJsonString, georesourcePUTInputType.geoJsonString);
   }
 
   @Override
@@ -78,7 +78,7 @@ public class SpatialUnitPUTInputType   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SpatialUnitPUTInputType {\n");
+    sb.append("class GeoresourcePUTInputType {\n");
     
     sb.append("    periodOfValidity: ").append(toIndentedString(periodOfValidity)).append("\n");
     sb.append("    geoJsonString: ").append(toIndentedString(geoJsonString)).append("\n");

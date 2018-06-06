@@ -1,32 +1,35 @@
-package de.hsbo.kommonitor.datamanagement.model;
+package de.hsbo.kommonitor.datamanagement.model.scripts;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessInputType;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.hsbo.kommonitor.datamanagement.model.ProcessInputType;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ProcessScriptPOSTInputType
+ * ProcessScriptOverviewType
  */
 
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
 
-public class ProcessScriptPOSTInputType   {
+public class ProcessScriptOverviewType   {
   @JsonProperty("name")
   private String name = null;
 
   @JsonProperty("description")
   private String description = null;
 
-  @JsonProperty("associatedIndicatorId")
-  private String associatedIndicatorId = null;
+  @JsonProperty("scriptId")
+  private String scriptId = null;
 
-  @JsonProperty("scriptCode")
-  private String scriptCode = null;
+  @JsonProperty("indicatorId")
+  private String indicatorId = null;
 
   @JsonProperty("requiredIndicatorIds")
   
@@ -40,7 +43,7 @@ public class ProcessScriptPOSTInputType   {
   
   private List<ProcessInputType> variableProcessParameters = new ArrayList<>();
 
-  public ProcessScriptPOSTInputType name(String name) {
+  public ProcessScriptOverviewType name(String name) {
     this.name = name;
     return this;
   }
@@ -58,7 +61,7 @@ public class ProcessScriptPOSTInputType   {
     this.name = name;
   }
 
-  public ProcessScriptPOSTInputType description(String description) {
+  public ProcessScriptOverviewType description(String description) {
     this.description = description;
     return this;
   }
@@ -76,48 +79,48 @@ public class ProcessScriptPOSTInputType   {
     this.description = description;
   }
 
-  public ProcessScriptPOSTInputType associatedIndicatorId(String associatedIndicatorId) {
-    this.associatedIndicatorId = associatedIndicatorId;
+  public ProcessScriptOverviewType scriptId(String scriptId) {
+    this.scriptId = scriptId;
+    return this;
+  }
+
+   /**
+   * unique identifier of the process script
+   * @return scriptId
+  **/
+  @ApiModelProperty(required = true, value = "unique identifier of the process script")
+  public String getScriptId() {
+    return scriptId;
+  }
+
+  public void setScriptId(String scriptId) {
+    this.scriptId = scriptId;
+  }
+
+  public ProcessScriptOverviewType indicatorId(String indicatorId) {
+    this.indicatorId = indicatorId;
     return this;
   }
 
    /**
    * unique identifier of the associated indicator (e.g. the indicator that is computed by a script or for which the values shall be aggregated to another spatial unit)
-   * @return associatedIndicatorId
+   * @return indicatorId
   **/
   @ApiModelProperty(required = true, value = "unique identifier of the associated indicator (e.g. the indicator that is computed by a script or for which the values shall be aggregated to another spatial unit)")
-  public String getAssociatedIndicatorId() {
-    return associatedIndicatorId;
+  public String getIndicatorId() {
+    return indicatorId;
   }
 
-  public void setAssociatedIndicatorId(String associatedIndicatorId) {
-    this.associatedIndicatorId = associatedIndicatorId;
+  public void setIndicatorId(String indicatorId) {
+    this.indicatorId = indicatorId;
   }
 
-  public ProcessScriptPOSTInputType scriptCode(String scriptCode) {
-    this.scriptCode = scriptCode;
-    return this;
-  }
-
-   /**
-   * the actual script code (JavaScript) as a string
-   * @return scriptCode
-  **/
-  @ApiModelProperty(required = true, value = "the actual script code (JavaScript) as a string")
-  public String getScriptCode() {
-    return scriptCode;
-  }
-
-  public void setScriptCode(String scriptCode) {
-    this.scriptCode = scriptCode;
-  }
-
-  public ProcessScriptPOSTInputType requiredIndicatorIds(List<String> requiredIndicatorIds) {
+  public ProcessScriptOverviewType requiredIndicatorIds(List<String> requiredIndicatorIds) {
     this.requiredIndicatorIds = requiredIndicatorIds;
     return this;
   }
 
-  public ProcessScriptPOSTInputType addRequiredIndicatorIdsItem(String requiredIndicatorIdsItem) {
+  public ProcessScriptOverviewType addRequiredIndicatorIdsItem(String requiredIndicatorIdsItem) {
     this.requiredIndicatorIds.add(requiredIndicatorIdsItem);
     return this;
   }
@@ -135,12 +138,12 @@ public class ProcessScriptPOSTInputType   {
     this.requiredIndicatorIds = requiredIndicatorIds;
   }
 
-  public ProcessScriptPOSTInputType requiredGeoresourceIds(List<String> requiredGeoresourceIds) {
+  public ProcessScriptOverviewType requiredGeoresourceIds(List<String> requiredGeoresourceIds) {
     this.requiredGeoresourceIds = requiredGeoresourceIds;
     return this;
   }
 
-  public ProcessScriptPOSTInputType addRequiredGeoresourceIdsItem(String requiredGeoresourceIdsItem) {
+  public ProcessScriptOverviewType addRequiredGeoresourceIdsItem(String requiredGeoresourceIdsItem) {
     this.requiredGeoresourceIds.add(requiredGeoresourceIdsItem);
     return this;
   }
@@ -158,12 +161,12 @@ public class ProcessScriptPOSTInputType   {
     this.requiredGeoresourceIds = requiredGeoresourceIds;
   }
 
-  public ProcessScriptPOSTInputType variableProcessParameters(List<ProcessInputType> variableProcessParameters) {
+  public ProcessScriptOverviewType variableProcessParameters(List<ProcessInputType> variableProcessParameters) {
     this.variableProcessParameters = variableProcessParameters;
     return this;
   }
 
-  public ProcessScriptPOSTInputType addVariableProcessParametersItem(ProcessInputType variableProcessParametersItem) {
+  public ProcessScriptOverviewType addVariableProcessParametersItem(ProcessInputType variableProcessParametersItem) {
     this.variableProcessParameters.add(variableProcessParametersItem);
     return this;
   }
@@ -190,30 +193,30 @@ public class ProcessScriptPOSTInputType   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ProcessScriptPOSTInputType processScriptPOSTInputType = (ProcessScriptPOSTInputType) o;
-    return Objects.equals(this.name, processScriptPOSTInputType.name) &&
-        Objects.equals(this.description, processScriptPOSTInputType.description) &&
-        Objects.equals(this.associatedIndicatorId, processScriptPOSTInputType.associatedIndicatorId) &&
-        Objects.equals(this.scriptCode, processScriptPOSTInputType.scriptCode) &&
-        Objects.equals(this.requiredIndicatorIds, processScriptPOSTInputType.requiredIndicatorIds) &&
-        Objects.equals(this.requiredGeoresourceIds, processScriptPOSTInputType.requiredGeoresourceIds) &&
-        Objects.equals(this.variableProcessParameters, processScriptPOSTInputType.variableProcessParameters);
+    ProcessScriptOverviewType processScriptOverviewType = (ProcessScriptOverviewType) o;
+    return Objects.equals(this.name, processScriptOverviewType.name) &&
+        Objects.equals(this.description, processScriptOverviewType.description) &&
+        Objects.equals(this.scriptId, processScriptOverviewType.scriptId) &&
+        Objects.equals(this.indicatorId, processScriptOverviewType.indicatorId) &&
+        Objects.equals(this.requiredIndicatorIds, processScriptOverviewType.requiredIndicatorIds) &&
+        Objects.equals(this.requiredGeoresourceIds, processScriptOverviewType.requiredGeoresourceIds) &&
+        Objects.equals(this.variableProcessParameters, processScriptOverviewType.variableProcessParameters);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, description, associatedIndicatorId, scriptCode, requiredIndicatorIds, requiredGeoresourceIds, variableProcessParameters);
+    return Objects.hash(name, description, scriptId, indicatorId, requiredIndicatorIds, requiredGeoresourceIds, variableProcessParameters);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ProcessScriptPOSTInputType {\n");
+    sb.append("class ProcessScriptOverviewType {\n");
     
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    associatedIndicatorId: ").append(toIndentedString(associatedIndicatorId)).append("\n");
-    sb.append("    scriptCode: ").append(toIndentedString(scriptCode)).append("\n");
+    sb.append("    scriptId: ").append(toIndentedString(scriptId)).append("\n");
+    sb.append("    indicatorId: ").append(toIndentedString(indicatorId)).append("\n");
     sb.append("    requiredIndicatorIds: ").append(toIndentedString(requiredIndicatorIds)).append("\n");
     sb.append("    requiredGeoresourceIds: ").append(toIndentedString(requiredGeoresourceIds)).append("\n");
     sb.append("    variableProcessParameters: ").append(toIndentedString(variableProcessParameters)).append("\n");
