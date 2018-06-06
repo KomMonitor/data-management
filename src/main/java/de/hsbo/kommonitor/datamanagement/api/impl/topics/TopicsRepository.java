@@ -11,5 +11,7 @@ public interface TopicsRepository extends JpaRepository<TopicsEntity, Long> {
     
     boolean existsByTopicId(String topicId);
     
+    boolean existsByTopicName(String topicName);
+    
     void deleteByTopicId(String topicId);
 }
