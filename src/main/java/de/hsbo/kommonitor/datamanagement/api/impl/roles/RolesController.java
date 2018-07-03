@@ -21,12 +21,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.RolesApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsController;
-import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.roles.RoleInputType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
 
 @Controller
 public class RolesController extends BasePathController implements RolesApi {
