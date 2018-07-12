@@ -25,14 +25,14 @@ public class UsersEntity {
 
 	private String password = null;
 	
-//	@ManyToMany
-//    @JoinTable( 
-//        name = "users_roles", 
-//        joinColumns = @JoinColumn(
-//          name = "user_id", referencedColumnName = "userid"), 
-//        inverseJoinColumns = @JoinColumn(
-//          name = "role_id", referencedColumnName = "roleid")) 
-//    private Collection<RolesEntity> userRoles;
+	@ManyToMany
+    @JoinTable( 
+        name = "users_roles", 
+        joinColumns = @JoinColumn(
+          name = "user_id", referencedColumnName = "userid"), 
+        inverseJoinColumns = @JoinColumn(
+          name = "role_id", referencedColumnName = "roleid")) 
+    private Collection<RolesEntity> userRoles;
 
 	/*
 	 * default constructor is required by hibernate / jpa
@@ -61,8 +61,12 @@ public class UsersEntity {
 		return userId;
 	}
 	
-//	public Collection<RolesEntity> getUserRoles() {
-//		return userRoles;
-//	}
+	public Collection<RolesEntity> getUserRoles() {
+		return userRoles;
+	}
+
+	public void setUserRoles(Collection<RolesEntity> userRoles) {
+		this.userRoles = userRoles;
+	}
 
 }

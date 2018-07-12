@@ -1,8 +1,12 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.users;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesMapper;
+import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.model.users.UserOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.users.UsersEntity;
 
@@ -15,9 +19,9 @@ public class UsersMapper {
 		user.setUserId(userEntity.getUserId());
 
 		// Roles
-//		Collection<RolesEntity> userRoles = userEntity.getUserRoles();
-//		List<RoleOverviewType> roles = RolesMapper.mapToSwaggerRoles(new ArrayList<>(userRoles));
-//		user.setRoles(roles);
+		Collection<RolesEntity> userRoles = userEntity.getUserRoles();
+		List<RoleOverviewType> roles = RolesMapper.mapToSwaggerRoles(new ArrayList<>(userRoles));
+		user.setRoles(roles);
 
 		return user;
 	}

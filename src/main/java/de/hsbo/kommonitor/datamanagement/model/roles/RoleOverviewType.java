@@ -1,12 +1,12 @@
 package de.hsbo.kommonitor.datamanagement.model.roles;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * RoleOverviewType
@@ -21,9 +21,9 @@ public class RoleOverviewType   {
   @JsonProperty("roleName")
   private String roleName = null;
 
-  @JsonProperty("priviledges")
+  @JsonProperty("privileges")
   
-  private List<String> priviledges = new ArrayList<>();
+  private List<String> privileges = new ArrayList<>();
 
   public RoleOverviewType(String roleId) {
 	  this.roleId = roleId;
@@ -67,27 +67,27 @@ public RoleOverviewType roleId(String roleId) {
     this.roleName = roleName;
   }
 
-  public RoleOverviewType priviledges(List<String> priviledges) {
-    this.priviledges = priviledges;
+  public RoleOverviewType privileges(List<String> privileges) {
+    this.privileges = privileges;
     return this;
   }
 
-  public RoleOverviewType addPriviledgesItem(String priviledgesItem) {
-    this.priviledges.add(priviledgesItem);
+  public RoleOverviewType addPrivilegesItem(String privilegesItem) {
+    this.privileges.add(privilegesItem);
     return this;
   }
 
    /**
-   * list of priviledges that are associated to this role. They indicate, what operations and data can be accessed by users.
-   * @return priviledges
+   * list of privileges that are associated to this role. They indicate, what operations and data can be accessed by users.
+   * @return privileges
   **/
-  @ApiModelProperty(required = true, value = "list of priviledges that are associated to this role. They indicate, what operations and data can be accessed by users.")
-  public List<String> getPriviledges() {
-    return priviledges;
+  @ApiModelProperty(required = true, value = "list of privileges that are associated to this role. They indicate, what operations and data can be accessed by users.")
+  public List<String> getPrivileges() {
+    return privileges;
   }
 
-  public void setPriviledges(List<String> priviledges) {
-    this.priviledges = priviledges;
+  public void setPrivileges(List<String> privileges) {
+    this.privileges = privileges;
   }
 
 
@@ -102,12 +102,12 @@ public RoleOverviewType roleId(String roleId) {
     RoleOverviewType roleOverviewType = (RoleOverviewType) o;
     return Objects.equals(this.roleId, roleOverviewType.roleId) &&
         Objects.equals(this.roleName, roleOverviewType.roleName) &&
-        Objects.equals(this.priviledges, roleOverviewType.priviledges);
+        Objects.equals(this.privileges, roleOverviewType.privileges);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(roleId, roleName, priviledges);
+    return Objects.hash(roleId, roleName, privileges);
   }
 
   @Override
@@ -117,7 +117,7 @@ public RoleOverviewType roleId(String roleId) {
     
     sb.append("    roleId: ").append(toIndentedString(roleId)).append("\n");
     sb.append("    roleName: ").append(toIndentedString(roleName)).append("\n");
-    sb.append("    priviledges: ").append(toIndentedString(priviledges)).append("\n");
+    sb.append("    privileges: ").append(toIndentedString(privileges)).append("\n");
     sb.append("}");
     return sb.toString();
   }
