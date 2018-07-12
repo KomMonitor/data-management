@@ -15,8 +15,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
 @Transactional
 @Repository
 @Component
-
-
 public class GeoresourcesManager {
 	
 	
