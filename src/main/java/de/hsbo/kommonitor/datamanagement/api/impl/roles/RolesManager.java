@@ -46,7 +46,7 @@ public class RolesManager {
 		 */
 
 		if (rolesRepo.existsByRoleName(roleName)) {
-			logger.error("The role with roleName '{}' already exists. Thus aborting add topic request.", roleName);
+			logger.error("The role with roleName '{}' already exists. Thus aborting add role request.", roleName);
 			throw new Exception("role already exists. Aborting add role request.");
 		}
 

@@ -84,7 +84,7 @@ logger.info("Received request to delete role for roleId '{}'", roleId);
 		String accept = request.getHeader("Accept");
 
 		/*
-		 * delete topic with the specified id
+		 * delete role with the specified id
 		 */
 
 		if (accept != null && accept.contains("application/json")){
@@ -115,7 +115,7 @@ logger.info("Received request to delete role for roleId '{}'", roleId);
 		String accept = request.getHeader("Accept");
 
 		/*
-		 * retrieve the topic for the specified id
+		 * retrieve the role for the specified id
 		 */
 
 		if (accept != null && accept.contains("application/json")){
@@ -136,7 +136,7 @@ logger.info("Received request to delete role for roleId '{}'", roleId);
 		String accept = request.getHeader("Accept");
 
 		/*
-		 * retrieve all available topics
+		 * retrieve all available roles
 		 * 
 		 * return them to client
 		 */
