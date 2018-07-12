@@ -12,21 +12,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsMapper;
-import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
 import de.hsbo.kommonitor.datamanagement.model.roles.RoleInputType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 @Transactional
 @Repository
 @Component
 public class RolesManager {
 
-	private static Logger logger = LoggerFactory.getLogger(TopicsManager.class);
+	private static Logger logger = LoggerFactory.getLogger(RolesManager.class);
 
 	/**
 	*
