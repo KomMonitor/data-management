@@ -12,7 +12,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
 
 @MappedSuperclass
-public abstract class Metadata {
+public abstract class AbstractMetadata {
 
 	
 	@Id

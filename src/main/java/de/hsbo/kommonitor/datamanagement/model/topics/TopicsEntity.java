@@ -1,10 +1,17 @@
 package de.hsbo.kommonitor.datamanagement.model.topics;
 
+import java.util.Collection;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 import org.hibernate.annotations.GenericGenerator;
+
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
+import de.hsbo.kommonitor.datamanagement.model.users.UsersEntity;
 
 @Entity(name = "Topics")
 public class TopicsEntity {
@@ -21,6 +28,13 @@ public class TopicsEntity {
 	  /*
 	   * default constructor is required by hibernate / jpa
 	   */
+	  
+	  @ManyToMany(mappedBy = "georesourcesTopics")
+	    private Collection<MetadataGeoresourcesEntity> metadataGeoresources;
+	  
+	  @ManyToMany(mappedBy = "indicatorTopics")
+	    private Collection<MetadataIndicatorsEntity> metadataIndicators;
+	  
 	  public TopicsEntity(){
 		  
 	  }
