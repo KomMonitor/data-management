@@ -3,6 +3,8 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -24,18 +26,15 @@ public abstract class AbstractMetadata {
 	private String description = null;
 	private String dataSource = null;
 	private String contact = null;
+	@Enumerated(EnumType.STRING)
 	private UpdateIntervalEnum updateIntervall = null;
 	private String jsonSchema = null;
 	private String wmsUrl = null;
 	private String wfsUrl = null;
 	
-	@Column(columnDefinition = "TIMESTAMP WITH THE ZONE")
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate = null;
-	
-	
-	
-	
 	
 	public Date getLastUpdate() {
 		return lastUpdate;
