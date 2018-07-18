@@ -2,7 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
 import javax.persistence.Entity;
 
-@Entity(name = "etadataSpatialUnits")
+@Entity(name = "MetadataSpatialUnits")
 public class MetadataSpatialUnitsEntity extends AbstractMetadata {
 
 	private int sridEpsg;
