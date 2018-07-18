@@ -1,48 +1,43 @@
 package de.hsbo.kommonitor.datamanagement.model.indicators;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * IndicatorPOSTInputTypeIndicatorValues
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-18T20:11:44.438+02:00")
 
 public class IndicatorPOSTInputTypeIndicatorValues   {
-  @JsonProperty("timestamp")
-  private LocalDate timestamp = null;
+  @JsonProperty("spatialReferenceKey")
+  private String spatialReferenceKey = null;
 
   @JsonProperty("valueMapping")
   
   private List<IndicatorPOSTInputTypeValueMapping> valueMapping = null;
 
-  public IndicatorPOSTInputTypeIndicatorValues timestamp(LocalDate timestamp) {
-    this.timestamp = timestamp;
+  public IndicatorPOSTInputTypeIndicatorValues spatialReferenceKey(String spatialReferenceKey) {
+    this.spatialReferenceKey = spatialReferenceKey;
     return this;
   }
 
    /**
-   * timestamp consisting of year, month and day according to ISO 8601 (e.g. 2018-01-30)
-   * @return timestamp
+   * identifier (uuid) of the spatial feature to which the values shall be applied
+   * @return spatialReferenceKey
   **/
-  @ApiModelProperty(value = "timestamp consisting of year, month and day according to ISO 8601 (e.g. 2018-01-30)")
-  public LocalDate getTimestamp() {
-    return timestamp;
+  @ApiModelProperty(value = "identifier (uuid) of the spatial feature to which the values shall be applied")
+  public String getSpatialReferenceKey() {
+    return spatialReferenceKey;
   }
 
-  public void setTimestamp(LocalDate timestamp) {
-    this.timestamp = timestamp;
+  public void setSpatialReferenceKey(String spatialReferenceKey) {
+    this.spatialReferenceKey = spatialReferenceKey;
   }
 
   public IndicatorPOSTInputTypeIndicatorValues valueMapping(List<IndicatorPOSTInputTypeValueMapping> valueMapping) {
@@ -59,10 +54,10 @@ public class IndicatorPOSTInputTypeIndicatorValues   {
   }
 
    /**
-   * an array of entries mapping an indicator value to a spatial feature via its unique uuid as mapping key
+   * an array of entries mapping an indicator value to a timestamp as mapping key
    * @return valueMapping
   **/
-  @ApiModelProperty(value = "an array of entries mapping an indicator value to a spatial feature via its unique uuid as mapping key")
+  @ApiModelProperty(value = "an array of entries mapping an indicator value to a timestamp as mapping key")
   public List<IndicatorPOSTInputTypeValueMapping> getValueMapping() {
     return valueMapping;
   }
@@ -81,13 +76,13 @@ public class IndicatorPOSTInputTypeIndicatorValues   {
       return false;
     }
     IndicatorPOSTInputTypeIndicatorValues indicatorPOSTInputTypeIndicatorValues = (IndicatorPOSTInputTypeIndicatorValues) o;
-    return Objects.equals(this.timestamp, indicatorPOSTInputTypeIndicatorValues.timestamp) &&
+    return Objects.equals(this.spatialReferenceKey, indicatorPOSTInputTypeIndicatorValues.spatialReferenceKey) &&
         Objects.equals(this.valueMapping, indicatorPOSTInputTypeIndicatorValues.valueMapping);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(timestamp, valueMapping);
+    return Objects.hash(spatialReferenceKey, valueMapping);
   }
 
   @Override
@@ -95,7 +90,7 @@ public class IndicatorPOSTInputTypeIndicatorValues   {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorPOSTInputTypeIndicatorValues {\n");
     
-    sb.append("    timestamp: ").append(toIndentedString(timestamp)).append("\n");
+    sb.append("    spatialReferenceKey: ").append(toIndentedString(spatialReferenceKey)).append("\n");
     sb.append("    valueMapping: ").append(toIndentedString(valueMapping)).append("\n");
     sb.append("}");
     return sb.toString();

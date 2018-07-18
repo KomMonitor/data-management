@@ -1,16 +1,16 @@
 package de.hsbo.kommonitor.datamanagement.model.indicators;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
+
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * IndicatorPOSTInputTypeRefrencesToGeoresources
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-18T20:11:44.438+02:00")
 
 public class IndicatorPOSTInputTypeRefrencesToGeoresources   {
   @JsonProperty("indicatorId")
