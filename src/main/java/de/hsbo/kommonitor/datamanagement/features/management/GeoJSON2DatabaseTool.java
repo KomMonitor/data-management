@@ -46,7 +46,6 @@ public class GeoJSON2DatabaseTool {
 		// .readFeatureCollection(stream);
 
 		logger.info("Enriching featureSchema with KomMonitor specific properties");
-		;
 
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 		featureSchema = enrichWithKomMonitorProperties(featureSchema, postGisStore, resourceType);
@@ -55,63 +54,7 @@ public class GeoJSON2DatabaseTool {
 		postGisStore.createSchema(featureSchema);
 
 		logger.info("Start to add the actual features to table with name {}", featureSchema.getTypeName());
-		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(featureSchema.getTypeName());
-		if (featureSource instanceof SimpleFeatureStore) {
-			SimpleFeatureStore store = (SimpleFeatureStore) featureSource; // write
-																			// access!
-
-			Transaction transaction = new DefaultTransaction("Add features in Table " + featureSchema.getTypeName());
-			store.setTransaction(transaction);
-			try {
-				store.addFeatures(featureCollection);
-				transaction.commit(); // actually writes out the features in one
-										// go
-			} catch (Exception eek) {
-				transaction.rollback();
-			}
-
-			transaction.close();
-
-			logger.info("Features should have been added to table with name {}", featureSchema.getTypeName());
-
-			logger.info("Start to modify the features (set periodOfValidity) in table with name {}",
-					featureSchema.getTypeName());
-			final FilterFactory ff = CommonFactoryFinder.getFilterFactory();
-			Filter filter = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + " is null");
-
-			transaction = new DefaultTransaction(
-					"Modify (initialize periodOfValidity) features in Table " + featureSchema.getTypeName());
-			store.setTransaction(transaction);
-			try {
-				store.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME,
-						periodOfValidity.getStartDate(), filter);
-				store.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME,
-						periodOfValidity.getEndDate(), filter);
-				transaction.commit(); // actually writes out the features in one
-										// go
-			} catch (Exception eek) {
-				transaction.rollback();
-			}
-
-			transaction.close();
-
-			logger.info("Modification of features finished  for table with name {}", featureSchema.getTypeName());
-		}
-
-		// /*
-		// * now fetch the entries again from db
-		// * in order to set the custom added properties!
-		// */
-		// featureCollection = featureSource.getFeatures();
-		//
-		// featureCollection = initializeKomMonitorProperties(featureCollection,
-		// periodOfValidity);
-		//
-		// if (featureSource instanceof SimpleFeatureStore) {
-		// SimpleFeatureStore store = (SimpleFeatureStore) featureSource; //
-		// write
-		// // access
-		// }
+		persistSpatialResource(periodOfValidity, featureSchema, featureCollection, postGisStore);
 
 		/*
 		 * after writing to DB set the unique db tableName within the
@@ -121,39 +64,96 @@ public class GeoJSON2DatabaseTool {
 		logger.info(
 				"Modifying the metadata entry to set the name of the formerly created feature database table. MetadataId for resourceType {} is {}",
 				resourceType.name(), correspondingMetadataDatasetId);
-		DatabaseHelperUtil.updateResourceMetadataEntry(resourceType, featureSchema.getTypeName().toString(), correspondingMetadataDatasetId);
+		DatabaseHelperUtil.updateResourceMetadataEntry(resourceType, featureSchema.getTypeName().toString(),
+				correspondingMetadataDatasetId);
 
 		postGisStore.dispose();
 
 		return true;
 	}
 
+	private static void persistSpatialResource(PeriodOfValidityType periodOfValidity, SimpleFeatureType featureSchema,
+			FeatureCollection featureCollection, DataStore postGisStore) throws IOException, CQLException {
+		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(featureSchema.getTypeName());
+		if (featureSource instanceof SimpleFeatureStore) {
+			SimpleFeatureStore store = (SimpleFeatureStore) featureSource; // write
+																			// access!
+			addFeatureCollectionToTable(featureSchema, featureCollection, store);
 
+			logger.info("Features should have been added to table with name {}", featureSchema.getTypeName());
 
-//	private static FeatureCollection initializeKomMonitorProperties(FeatureCollection featureCollection,
-//			PeriodOfValidityType periodOfValidity) {
-//		FeatureIterator featureIterator = featureCollection.features();
-//
-//		while (featureIterator.hasNext()) {
-//			Feature next = featureIterator.next();
-//
-//			/*
-//			 * take the values from the PeriodOfValidity
-//			 */
-//
-//			next.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME)
-//					.setValue(periodOfValidity.getStartDate());
-//			next.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME)
-//					.setValue(periodOfValidity.getEndDate());
-//			/*
-//			 * arisonFrom cannot be set, when features are initialized for the
-//			 * first time.
-//			 */
-//			next.getProperty(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME).setValue(null);
-//		}
-//
-//		return featureCollection;
-//	}
+			logger.info("Start to modify the features (set periodOfValidity) in table with name {}",
+					featureSchema.getTypeName());
+
+			initializePeriodOfValidityForAllEntries(periodOfValidity, featureSchema, store);
+
+			logger.info("Modification of features finished  for table with name {}", featureSchema.getTypeName());
+		}
+	}
+
+	private static void initializePeriodOfValidityForAllEntries(PeriodOfValidityType periodOfValidity,
+			SimpleFeatureType featureSchema, SimpleFeatureStore store) throws CQLException, IOException {
+		Transaction transaction;
+		final FilterFactory ff = CommonFactoryFinder.getFilterFactory();
+		Filter filter = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + " is null");
+
+		transaction = new DefaultTransaction(
+				"Modify (initialize periodOfValidity) features in Table " + featureSchema.getTypeName());
+		store.setTransaction(transaction);
+		try {
+			store.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME,
+					periodOfValidity.getStartDate(), filter);
+			store.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, periodOfValidity.getEndDate(),
+					filter);
+			transaction.commit(); // actually writes out the features in one
+									// go
+		} catch (Exception eek) {
+			transaction.rollback();
+		}
+
+		transaction.close();
+	}
+
+	private static void addFeatureCollectionToTable(SimpleFeatureType featureSchema,
+			FeatureCollection featureCollection, SimpleFeatureStore store) throws IOException {
+		Transaction transaction = new DefaultTransaction("Add features in Table " + featureSchema.getTypeName());
+		store.setTransaction(transaction);
+		try {
+			store.addFeatures(featureCollection);
+			transaction.commit(); // actually writes out the features in one
+									// go
+		} catch (Exception eek) {
+			transaction.rollback();
+		}
+
+		transaction.close();
+	}
+
+	// private static FeatureCollection
+	// initializeKomMonitorProperties(FeatureCollection featureCollection,
+	// PeriodOfValidityType periodOfValidity) {
+	// FeatureIterator featureIterator = featureCollection.features();
+	//
+	// while (featureIterator.hasNext()) {
+	// Feature next = featureIterator.next();
+	//
+	// /*
+	// * take the values from the PeriodOfValidity
+	// */
+	//
+	// next.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME)
+	// .setValue(periodOfValidity.getStartDate());
+	// next.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME)
+	// .setValue(periodOfValidity.getEndDate());
+	// /*
+	// * arisonFrom cannot be set, when features are initialized for the
+	// * first time.
+	// */
+	// next.getProperty(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME).setValue(null);
+	// }
+	//
+	// return featureCollection;
+	// }
 
 	private static SimpleFeatureType enrichWithKomMonitorProperties(SimpleFeatureType featureSchema,
 			DataStore dataStore, ResourceTypeEnum resourceType) throws IOException {
@@ -174,5 +174,4 @@ public class GeoJSON2DatabaseTool {
 		return tb.buildFeatureType();
 	}
 
-	
 }
