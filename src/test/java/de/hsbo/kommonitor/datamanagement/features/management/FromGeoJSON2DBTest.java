@@ -17,7 +17,7 @@ public class FromGeoJSON2DBTest {
 	public void test() throws IOException, URISyntaxException {
 
 		String geoJSON_Stadtteile = new String(
-				Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource("Stadtteile.json").toURI())));
+				Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource("Stadtbezirke.json").toURI())));
 
 		PeriodOfValidityType periodOfValidity = new PeriodOfValidityType();
 		periodOfValidity.setStartDate(LocalDate.of(2014, Month.JANUARY, 1));

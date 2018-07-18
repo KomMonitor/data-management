@@ -16,6 +16,7 @@ import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.geojson.GeoJSONUtil;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -31,11 +32,13 @@ public class GeoJSON2DatabaseTool {
 		 * TODO implement
 		 */
 
-		InputStream stream = new ByteArrayInputStream(geoJSONFeatures.getBytes(StandardCharsets.UTF_8));
+		InputStream stream = new ByteArrayInputStream(geoJSONFeatures.getBytes());
 
 		FeatureJSON featureJSON = new FeatureJSON();
 		SimpleFeatureType featureSchema = featureJSON.readFeatureCollectionSchema(stream, false);
-		FeatureCollection featureCollection = featureJSON.readFeatureCollection(stream);
+		FeatureCollection featureCollection = featureJSON.readFeatureCollection(geoJSONFeatures);
+//		GeoJSONUtil
+//				.readFeatureCollection(stream);
 
 		DataStore postGisStore = getPostGisDataStore();
 		featureSchema = enrichWithKomMonitorProperties(featureSchema, postGisStore, resourceType);
