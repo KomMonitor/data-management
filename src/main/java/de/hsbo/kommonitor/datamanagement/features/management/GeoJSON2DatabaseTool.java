@@ -2,12 +2,8 @@ package de.hsbo.kommonitor.datamanagement.features.management;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureSource;
@@ -52,7 +48,7 @@ public class GeoJSON2DatabaseTool {
 		logger.info("Enriching featureSchema with KomMonitor specific properties");
 		;
 
-		DataStore postGisStore = getPostGisDataStore();
+		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 		featureSchema = enrichWithKomMonitorProperties(featureSchema, postGisStore, resourceType);
 
 		logger.info("create new Table from featureSchema using table name {}", featureSchema.getTypeName());
@@ -125,17 +121,14 @@ public class GeoJSON2DatabaseTool {
 		logger.info(
 				"Modifying the metadata entry to set the name of the formerly created feature database table. MetadataId for resourceType {} is {}",
 				resourceType.name(), correspondingMetadataDatasetId);
-		updateResourceMetadataEntry(featureSchema.getTypeName().toString(), correspondingMetadataDatasetId);
+		DatabaseHelperUtil.updateResourceMetadataEntry(featureSchema.getTypeName().toString(), correspondingMetadataDatasetId);
 
 		postGisStore.dispose();
 
 		return true;
 	}
 
-	private static void updateResourceMetadataEntry(String tableName, String correspondingMetadataDatasetId) {
-		// TODO FIXME update metadata entry: set name of associated dbTable
 
-	}
 
 //	private static FeatureCollection initializeKomMonitorProperties(FeatureCollection featureCollection,
 //			PeriodOfValidityType periodOfValidity) {
@@ -165,7 +158,7 @@ public class GeoJSON2DatabaseTool {
 	private static SimpleFeatureType enrichWithKomMonitorProperties(SimpleFeatureType featureSchema,
 			DataStore dataStore, ResourceTypeEnum resourceType) throws IOException {
 		SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-		tb.setName(createUniqueTableNameForResourceType(resourceType, dataStore));
+		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(resourceType, dataStore));
 		tb.setNamespaceURI(featureSchema.getName().getNamespaceURI());
 		tb.setCRS(featureSchema.getCoordinateReferenceSystem());
 		tb.addAll(featureSchema.getAttributeDescriptors());
@@ -181,66 +174,5 @@ public class GeoJSON2DatabaseTool {
 		return tb.buildFeatureType();
 	}
 
-	private static String createUniqueTableNameForResourceType(ResourceTypeEnum resourceType, DataStore dataStore)
-			throws IOException {
-		int numberSuffix = 0;
-		String resourceTypeName = resourceType.name();
-
-		String potentialDBTableName = createPotentialDBTableName(resourceTypeName, numberSuffix);
-
-		SimpleFeatureSource featureSource = null;
-		boolean uniqueTableNameFound = false;
-		do {
-			try {
-				featureSource = dataStore.getFeatureSource(potentialDBTableName);
-			} catch (Exception e) {
-				// we assume that should the retrieval of featureSource have
-				// failed, then
-				// there is no database table for the potentialName
-				uniqueTableNameFound = true;
-				break;
-			}
-
-			if (featureSource == null) {
-				uniqueTableNameFound = true;
-				break;
-			} else {
-				// increment suffix and try again
-				potentialDBTableName = createPotentialDBTableName(resourceTypeName, numberSuffix++);
-			}
-		} while (!uniqueTableNameFound);
-
-		return potentialDBTableName;
-	}
-
-	private static String createPotentialDBTableName(String resourceTypeName, int numberSuffix) {
-		// TODO Auto-generated method stub
-		return resourceTypeName + "_" + numberSuffix;
-	}
-
-	private static DataStore getPostGisDataStore() throws IOException {
-
-		Properties properties = new Properties();
-
-		/*
-		 * TODO If environment variables are used for DB connection then change
-		 * this FIXME If environment variables are used for DB connection then
-		 * change this
-		 */
-		properties.load(GeoJSON2DatabaseTool.class.getResourceAsStream("/application.properties"));
-
-		Map<String, Object> params = new HashMap<>();
-		params.put("dbtype", "postgis");
-		params.put("host", properties.getProperty("database.host"));
-		params.put("port", 5432);
-		params.put("schema", "public");
-		params.put("database", properties.getProperty("database.name"));
-		params.put("user", properties.getProperty("spring.datasource.username"));
-		params.put("passwd", properties.getProperty("spring.datasource.password"));
-
-		DataStore dataStore = DataStoreFinder.getDataStore(params);
-
-		return dataStore;
-	}
-
+	
 }
