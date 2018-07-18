@@ -170,9 +170,12 @@ public class Indicator2Database {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 
-		int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH); // 17
-		int month = cal.get(Calendar.MONTH); // 5
-		int year = cal.get(Calendar.YEAR); // 2016
+		int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH); 
+		/*
+		 * +1 because method return values between 0-11
+		 */
+		int month = cal.get(Calendar.MONTH) + 1; 
+		int year = cal.get(Calendar.YEAR); 
 
 		String dateString = year + "-" + month + "-" + dayOfMonth;
 		return dateString;
