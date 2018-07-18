@@ -121,7 +121,7 @@ public class GeoJSON2DatabaseTool {
 		logger.info(
 				"Modifying the metadata entry to set the name of the formerly created feature database table. MetadataId for resourceType {} is {}",
 				resourceType.name(), correspondingMetadataDatasetId);
-		DatabaseHelperUtil.updateResourceMetadataEntry(featureSchema.getTypeName().toString(), correspondingMetadataDatasetId);
+		DatabaseHelperUtil.updateResourceMetadataEntry(resourceType, featureSchema.getTypeName().toString(), correspondingMetadataDatasetId);
 
 		postGisStore.dispose();
 

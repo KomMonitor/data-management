@@ -11,7 +11,7 @@ import org.geotools.data.simple.SimpleFeatureSource;
 
 public class DatabaseHelperUtil {
 
-	public static void updateResourceMetadataEntry(String tableName, String correspondingMetadataDatasetId) {
+	public static void updateResourceMetadataEntry(ResourceTypeEnum indicator, String tableName, String correspondingMetadataDatasetId) {
 		// TODO FIXME update metadata entry: set name of associated dbTable
 
 	}
