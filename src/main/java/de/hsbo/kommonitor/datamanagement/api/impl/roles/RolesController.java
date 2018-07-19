@@ -86,8 +86,6 @@ logger.info("Received request to delete role for roleId '{}'", roleId);
 		/*
 		 * delete role with the specified id
 		 */
-
-		if (accept != null && accept.contains("application/json")){
 			
 			boolean isDeleted;
 			try {
@@ -99,11 +97,6 @@ logger.info("Received request to delete role for roleId '{}'", roleId);
 			} catch (ResourceNotFoundException e) {
 				return ApiUtils.createResponseEntityFromException(e);
 			}
-			
-			
-		} else{
-			return ApiUtils.createResponseEntityFromException(new Exception("False or missing Accept Header! Expected Accept Header is 'application/json'"));
-		}
 		
 		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	

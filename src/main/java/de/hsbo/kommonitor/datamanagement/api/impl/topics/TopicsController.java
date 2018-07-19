@@ -87,8 +87,6 @@ public class TopicsController extends BasePathController implements TopicsApi {
 		/*
 		 * delete topic with the specified id
 		 */
-
-		if (accept != null && accept.contains("application/json")){
 			
 			boolean isDeleted;
 			try {
@@ -100,11 +98,6 @@ public class TopicsController extends BasePathController implements TopicsApi {
 			} catch (ResourceNotFoundException e) {
 				return ApiUtils.createResponseEntityFromException(e);
 			}
-			
-			
-		} else{
-			return ApiUtils.createResponseEntityFromException(new Exception("False or missing Accept Header! Expected Accept Header is 'application/json'"));
-		}
 		
 		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
