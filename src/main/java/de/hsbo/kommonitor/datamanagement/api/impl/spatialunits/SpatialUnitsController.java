@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
@@ -156,8 +157,38 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	@Override
 	public ResponseEntity<byte[]> getSpatialUnitsByLevelAndYearAndMonth(String spatialUnitLevel, BigDecimal year,
 			BigDecimal month, BigDecimal day) {
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Received request to get spatialUnit features for datasetName '{}'", spatialUnitLevel);
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * retrieve the user for the specified id
+		 */
+
+		if (accept != null && accept.contains("application/json")) {
+
+			
+			try {
+				String geoJsonFeatures = spatialUnitsManager.getValidSpatialUnitFeatures(spatialUnitLevel, year, month, day);
+				String fileName = "SpatialUnitFeatures_" + spatialUnitLevel + "_" + year + "-" + month + "-" + day + ".json";
+				
+				HttpHeaders headers = new HttpHeaders();
+				headers.add("content-disposition", "attachment; filename="+ fileName);
+				byte[] JsonBytes = geoJsonFeatures.getBytes();
+				
+				return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff")).body(JsonBytes);
+				
+			} catch (ResourceNotFoundException e) {
+				// TODO Auto-generated catch block
+				return ApiUtils.createResponseEntityFromException(e);
+			}
+
+			
+			
+			
+
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@Override

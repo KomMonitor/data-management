@@ -194,4 +194,9 @@ public class GeoJSON2DatabaseTool {
 		return null;
 	}
 
+	public static String getValidFeatures(Date date, String dbTableName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

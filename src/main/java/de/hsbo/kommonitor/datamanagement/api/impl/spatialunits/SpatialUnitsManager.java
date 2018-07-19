@@ -3,7 +3,10 @@ package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Date;
+
+import java.util.Calendar;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -264,6 +267,29 @@ public class SpatialUnitsManager {
 		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);
 		
 		return spatialUnitMetadataEntity.getJsonSchema();
+	}
+
+	public String getValidSpatialUnitFeatures(String spatialUnitLevel, BigDecimal year, BigDecimal month,
+			BigDecimal day) throws ResourceNotFoundException {
+		Calendar calender = Calendar.getInstance();
+		calender.set(year.intValue(), month.intValueExact()-1, day.intValue());
+		java.util.Date date = calender.getTime();
+		logger.info("Retrieving valid spatialUnit Features from Dataset '{}' for date '{}'", spatialUnitLevel, date);
+		
+		if (spatialUnitsMetadataRepo.existsByDatasetName(spatialUnitLevel)) {
+			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);
+	
+		String dbTableName = metadataEntity.getDbTableName();
+			
+		String geoJson = GeoJSON2DatabaseTool.getValidFeatures(date, dbTableName);
+		return geoJson;
+		
+		}else {
+			logger.error("No spatialUnit dataset with datasetName '{}' was found in database. Get request has no effect.", spatialUnitLevel);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to get spatialUnit features, but no dataset existes with datasetName " + spatialUnitLevel);
+		}
+		
 	}
 	
 	
