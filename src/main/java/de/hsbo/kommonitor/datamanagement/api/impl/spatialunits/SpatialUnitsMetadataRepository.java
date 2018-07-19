@@ -6,9 +6,13 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsE
 
 public interface SpatialUnitsMetadataRepository extends JpaRepository<MetadataSpatialUnitsEntity, Long> {
 	MetadataSpatialUnitsEntity findBySpatialUnitId(String spatialUnitId);
+	
+	MetadataSpatialUnitsEntity findByDatasetId(String datasetId);
 
 	boolean existsByDatasetId(String datasetId);
 
 	boolean existsByDatasetName(String datasetName);
+
+	
 
 }
