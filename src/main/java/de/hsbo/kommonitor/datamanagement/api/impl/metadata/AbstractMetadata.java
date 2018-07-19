@@ -13,6 +13,8 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType.UpdateIntervalEnum;
+
 @MappedSuperclass
 public abstract class AbstractMetadata {
 
