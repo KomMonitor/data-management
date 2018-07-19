@@ -1,20 +1,18 @@
 package de.hsbo.kommonitor.datamanagement.model.spatialunits;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * SpatialUnitOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-19T11:48:18.228+02:00")
 
 public class SpatialUnitOverviewType   {
   @JsonProperty("spatialUnitLevel")
@@ -29,9 +27,8 @@ public class SpatialUnitOverviewType   {
   @JsonProperty("nextUpperHierarchyLevel")
   private String nextUpperHierarchyLevel = null;
 
-  @JsonProperty("availablePeriodsOfValidity")
-  
-  private List<PeriodOfValidityType> availablePeriodsOfValidity = new ArrayList<>();
+  @JsonProperty("availablePeriodOfValidity")
+  private AvailablePeriodOfValidityType availablePeriodOfValidity = null;
 
   public SpatialUnitOverviewType spatialUnitLevel(String spatialUnitLevel) {
     this.spatialUnitLevel = spatialUnitLevel;
@@ -105,27 +102,22 @@ public class SpatialUnitOverviewType   {
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
   }
 
-  public SpatialUnitOverviewType availablePeriodsOfValidity(List<PeriodOfValidityType> availablePeriodsOfValidity) {
-    this.availablePeriodsOfValidity = availablePeriodsOfValidity;
-    return this;
-  }
-
-  public SpatialUnitOverviewType addAvailablePeriodsOfValidityItem(PeriodOfValidityType availablePeriodsOfValidityItem) {
-    this.availablePeriodsOfValidity.add(availablePeriodsOfValidityItem);
+  public SpatialUnitOverviewType availablePeriodOfValidity(AvailablePeriodOfValidityType availablePeriodOfValidity) {
+    this.availablePeriodOfValidity = availablePeriodOfValidity;
     return this;
   }
 
    /**
-   * Get availablePeriodsOfValidity
-   * @return availablePeriodsOfValidity
+   * Get availablePeriodOfValidity
+   * @return availablePeriodOfValidity
   **/
-  @ApiModelProperty(required = true, value = "")
-  public List<PeriodOfValidityType> getAvailablePeriodsOfValidity() {
-    return availablePeriodsOfValidity;
+  @ApiModelProperty(value = "")
+  public AvailablePeriodOfValidityType getAvailablePeriodOfValidity() {
+    return availablePeriodOfValidity;
   }
 
-  public void setAvailablePeriodsOfValidity(List<PeriodOfValidityType> availablePeriodsOfValidity) {
-    this.availablePeriodsOfValidity = availablePeriodsOfValidity;
+  public void setAvailablePeriodOfValidity(AvailablePeriodOfValidityType availablePeriodOfValidity) {
+    this.availablePeriodOfValidity = availablePeriodOfValidity;
   }
 
 
@@ -142,12 +134,12 @@ public class SpatialUnitOverviewType   {
         Objects.equals(this.metadata, spatialUnitOverviewType.metadata) &&
         Objects.equals(this.nextLowerHierarchyLevel, spatialUnitOverviewType.nextLowerHierarchyLevel) &&
         Objects.equals(this.nextUpperHierarchyLevel, spatialUnitOverviewType.nextUpperHierarchyLevel) &&
-        Objects.equals(this.availablePeriodsOfValidity, spatialUnitOverviewType.availablePeriodsOfValidity);
+        Objects.equals(this.availablePeriodOfValidity, spatialUnitOverviewType.availablePeriodOfValidity);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(spatialUnitLevel, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, availablePeriodsOfValidity);
+    return Objects.hash(spatialUnitLevel, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, availablePeriodOfValidity);
   }
 
   @Override
@@ -159,7 +151,7 @@ public class SpatialUnitOverviewType   {
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    nextLowerHierarchyLevel: ").append(toIndentedString(nextLowerHierarchyLevel)).append("\n");
     sb.append("    nextUpperHierarchyLevel: ").append(toIndentedString(nextUpperHierarchyLevel)).append("\n");
-    sb.append("    availablePeriodsOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
+    sb.append("    availablePeriodOfValidity: ").append(toIndentedString(availablePeriodOfValidity)).append("\n");
     sb.append("}");
     return sb.toString();
   }
