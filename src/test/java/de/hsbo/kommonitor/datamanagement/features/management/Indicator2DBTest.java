@@ -31,9 +31,9 @@ public class Indicator2DBTest {
 
 		List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = indicator.getIndicatorValues();
 
-		boolean writtenToDb = Indicator2Database.writeIndicatorsToDatabase(indicatorValues, "metadataIndicatorId1234");
+		String tableName = Indicator2Database.writeIndicatorsToDatabase(indicatorValues, "metadataIndicatorId1234");
 
-		Assert.assertTrue(writtenToDb);
+		Assert.assertTrue(tableName != null);
 	}
 
 }

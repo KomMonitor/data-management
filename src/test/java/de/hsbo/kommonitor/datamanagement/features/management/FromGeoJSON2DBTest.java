@@ -25,10 +25,10 @@ public class FromGeoJSON2DBTest {
 		periodOfValidity.setStartDate(LocalDate.of(2014, Month.JANUARY, 1));
 		periodOfValidity.setEndDate(null);
 
-		boolean writtenToDb = GeoJSON2DatabaseTool.writeGeoJSONFeaturesToDatabase(ResourceTypeEnum.SPATIAL_UNIT, geoJSON_Stadtteile,
+		String tableName = GeoJSON2DatabaseTool.writeGeoJSONFeaturesToDatabase(ResourceTypeEnum.SPATIAL_UNIT, geoJSON_Stadtteile,
 				periodOfValidity, "metadataIndicatorId1234");
 		
-		Assert.assertTrue(writtenToDb);
+		Assert.assertTrue(tableName != null);
 	}
 
 }
