@@ -20,6 +20,7 @@ import org.opengis.filter.FilterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
 
@@ -186,6 +187,11 @@ public class GeoJSON2DatabaseTool {
 		// TODO FIXME implement
 		
 		// TODO check, if update was successful
+	}
+
+	public static AvailablePeriodOfValidityType getAvailablePeriodOfValidity(String dbTableName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

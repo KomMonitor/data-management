@@ -244,9 +244,18 @@ public class SpatialUnitsManager {
 		logger.info("Retrieving all spatialUnits metadata from db");
 
 		List<MetadataSpatialUnitsEntity> spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll();
-		List<SpatialUnitOverviewType> users = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitMeatadataEntities);
+		List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitMeatadataEntities);
 
-		return users;
+		return swaggerSpatialUnitsMetadata;
+	}
+
+	public SpatialUnitOverviewType getSpatialUnitByDatasetName(String spatialUnitLevel) {
+		logger.info("Retrieving spatialUnit metadata for datasetName '{}'", spatialUnitLevel);
+
+		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);
+		SpatialUnitOverviewType swaggerSpatialUnitMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnit(spatialUnitMetadataEntity);
+
+		return swaggerSpatialUnitMetadata;
 	}
 	
 	
