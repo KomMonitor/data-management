@@ -2,10 +2,13 @@ package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 
-public interface SpatialUnitsRepository extends JpaRepository<SpatialUnitsEntity, Long> {
-	SpatialUnitsEntity findBySpatialUnitId(String spatialUnitId);
-	
-	
+public interface SpatialUnitsMetadataRepository extends JpaRepository<MetadataSpatialUnitsEntity, Long> {
+	MetadataSpatialUnitsEntity findBySpatialUnitId(String spatialUnitId);
+
+	boolean existsByDatasetId(String datasetId);
+
+	boolean existsByDatasetName(String datasetName);
+
 }
