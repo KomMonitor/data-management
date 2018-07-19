@@ -26,7 +26,7 @@ public class GeoJSON2DatabaseTool {
 
 	private static Logger logger = LoggerFactory.getLogger(GeoJSON2DatabaseTool.class);
 
-	public static boolean writeGeoJSONFeaturesToDatabase(ResourceTypeEnum resourceType, String geoJSONFeatures,
+	public static String writeGeoJSONFeaturesToDatabase(ResourceTypeEnum resourceType, String geoJSONFeatures,
 			PeriodOfValidityType periodOfValidity, String correspondingMetadataDatasetId)
 			throws IOException, CQLException {
 
@@ -69,7 +69,7 @@ public class GeoJSON2DatabaseTool {
 
 		postGisStore.dispose();
 
-		return true;
+		return featureSchema.getTypeName();
 	}
 
 	private static void persistSpatialResource(PeriodOfValidityType periodOfValidity, SimpleFeatureType featureSchema,

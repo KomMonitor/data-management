@@ -27,7 +27,7 @@ public class Indicator2Database {
 
 	private static Logger logger = LoggerFactory.getLogger(Indicator2Database.class);
 
-	public static boolean writeIndicatorsToDatabase(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues,
+	public static String writeIndicatorsToDatabase(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues,
 			String correspondingMetadataDatasetId) throws IOException, CQLException {
 
 		/*
@@ -76,7 +76,7 @@ public class Indicator2Database {
 
 		postGisStore.dispose();
 
-		return true;
+		return featureType.getTypeName();
 	}
 
 	private static void persistIndicator(DataStore postGisStore, SimpleFeatureType featureType,
