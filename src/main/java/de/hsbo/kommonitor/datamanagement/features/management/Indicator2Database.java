@@ -11,16 +11,12 @@ import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,7 +152,7 @@ public class Indicator2Database {
 		/*
 		 * add KomMonitor specific properties!
 		 */
-		tb.add("spatialUnitId", String.class);
+		tb.add(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME, String.class);
 
 		for (Date date : availableDatesForIndicator) {
 			String dateString = createDateStringForDbProperty(date);
