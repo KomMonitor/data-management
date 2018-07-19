@@ -143,9 +143,10 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 		if (accept != null && accept.contains("application/json")) {
 
-			String jsonSchema = spatialUnitsManager.getJsonSchemaForDatasetName(spatialUnitLevel);
+			
+			SpatialUnitOverviewType spatialUnitMetadata = spatialUnitsManager.getSpatialUnitByDatasetName(spatialUnitLevel);
 
-			return new ResponseEntity(jsonSchema, HttpStatus.OK);
+			return new ResponseEntity<>(spatialUnitMetadata, HttpStatus.OK);
 
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -170,9 +171,9 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 		if (accept != null && accept.contains("application/json")) {
 
-			SpatialUnitOverviewType spatialUnitMetadata = spatialUnitsManager.getSpatialUnitByDatasetName(spatialUnitLevel);
+			String jsonSchema = spatialUnitsManager.getJsonSchemaForDatasetName(spatialUnitLevel);
 
-			return new ResponseEntity(spatialUnitMetadata, HttpStatus.OK);
+			return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
 
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
