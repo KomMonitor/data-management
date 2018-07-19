@@ -1,21 +1,30 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.model.users.UserOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.users.UsersEntity;
 
 public class SpatialUnitsMapper {
 
-	public static List<SpatialUnitOverviewType> mapToSwaggerSpatialUnits(
-			List<SpatialUnitsEntity> georesourcesEntities) {
+	public static SpatialUnitOverviewType mapToSwaggerSpatialUnit(MetadataSpatialUnitsEntity georesourcesEntities) {
+		SpatialUnitOverviewType dataset = new SpatialUnitOverviewType();
+		
+//		dataset.setAvailablePeriodsOfValidity(availablePeriodsOfValidity);
+
 		return null;
-		// TODO
 	}
 
-	public static SpatialUnitOverviewType mapToSwaggerSpatialUnit(SpatialUnitsEntity georesourcesEntities) {
-		return null;
-		// TODO
+	public static List<SpatialUnitOverviewType> mapToSwaggerSpatialUnits(
+			List<MetadataSpatialUnitsEntity> spatialUnitMeatadataEntities) {
+		List<SpatialUnitOverviewType> metadatasets = new ArrayList<SpatialUnitOverviewType>(spatialUnitMeatadataEntities.size());
 
+		for (MetadataSpatialUnitsEntity metadataEntity : spatialUnitMeatadataEntities) {
+			metadatasets.add(mapToSwaggerSpatialUnit(metadataEntity));
+		}
+		return metadatasets;
 	}
 }

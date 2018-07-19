@@ -25,6 +25,7 @@ import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewT
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.users.UserOverviewType;
 
 @Controller
 public class SpatialUnitsController extends BasePathController implements SpatialUnitsApi {
@@ -81,7 +82,26 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 	@Override
 	public ResponseEntity deleteSpatialUnitByUnit(String spatialUnitLevel) {
-		return null;
+		logger.info("Received request to delete spatialUnit for datasetName '{}'", spatialUnitLevel);
+
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * delete topic with the specified id
+		 */
+
+		boolean isDeleted;
+		try {
+			isDeleted = spatialUnitsManager.deleteSpatialUnitDatasetByName(spatialUnitLevel);
+
+			if (isDeleted)
+				return new ResponseEntity<>(HttpStatus.OK);
+
+		} catch (ResourceNotFoundException e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@Override
@@ -93,8 +113,24 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 	@Override
 	public ResponseEntity<List<SpatialUnitOverviewType>> getSpatialUnits() {
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Received request to get all spatialUnits metadata");
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * retrieve all available users
+		 * 
+		 * return them to client
+		 */
+
+		if (accept != null && accept.contains("application/json")) {
+
+			List<SpatialUnitOverviewType> spatialunitsMetadata = spatialUnitsManager.getAllSpatialUnitsMetadata();
+
+			return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
+
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@Override
@@ -118,14 +154,68 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 	@Override
 	public ResponseEntity updateSpatialUnitAsBody(String spatialUnitLevel, SpatialUnitPUTInputType featureData) {
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Received request to update spatial unit features for datasetName '{}'", spatialUnitLevel);
+
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * analyse input data and save it within database
+		 */
+
+		try {
+			spatialUnitLevel = spatialUnitsManager.updateFeatures(featureData, spatialUnitLevel);
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+
+		}
+
+		if (spatialUnitLevel != null) {
+			HttpHeaders responseHeaders = new HttpHeaders();
+
+			String location = spatialUnitLevel;
+			try {
+				responseHeaders.setLocation(new URI(location));
+			} catch (URISyntaxException e) {
+				// return ApiResponseUtil.createResponseEntityFromException(e);
+			}
+
+			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@Override
 	public ResponseEntity updateSpatialUnitMetadataAsBody(String spatialUnitLevel, SpatialUnitPATCHInputType metadata) {
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Received request to update spatial unit metadata for datasetName '{}'", spatialUnitLevel);
+
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * analyse input data and save it within database
+		 */
+
+		try {
+			spatialUnitLevel = spatialUnitsManager.updateMetadata(metadata, spatialUnitLevel);
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+
+		}
+
+		if (spatialUnitLevel != null) {
+			HttpHeaders responseHeaders = new HttpHeaders();
+
+			String location = spatialUnitLevel;
+			try {
+				responseHeaders.setLocation(new URI(location));
+			} catch (URISyntaxException e) {
+				// return ApiResponseUtil.createResponseEntityFromException(e);
+			}
+
+			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }

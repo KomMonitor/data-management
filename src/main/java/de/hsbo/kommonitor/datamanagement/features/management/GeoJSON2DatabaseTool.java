@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
 
 public class GeoJSON2DatabaseTool {
 
@@ -172,6 +173,19 @@ public class GeoJSON2DatabaseTool {
 		tb.add(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME, String.class);
 
 		return tb.buildFeatureType();
+	}
+
+	public static void deleteFeatureTable(ResourceTypeEnum spatialUnit, String dbTableName) {
+		// TODO FIXME implement
+		
+		// TODO check, if deletion was successful
+		
+	}
+
+	public static void updateFeatures(SpatialUnitPUTInputType featureData, String dbTableName) {
+		// TODO FIXME implement
+		
+		// TODO check, if update was successful
 	}
 
 }

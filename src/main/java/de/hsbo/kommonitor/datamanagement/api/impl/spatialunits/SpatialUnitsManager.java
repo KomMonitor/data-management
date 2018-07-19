@@ -4,6 +4,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -12,15 +13,23 @@ import org.hibernate.annotations.GenerationTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.users.UsersMapper;
 import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseTool;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.users.UserOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.users.UsersEntity;
 
 @Transactional
 @Repository
@@ -146,6 +155,98 @@ public class SpatialUnitsManager {
 		logger.info("Completed to add spatialUnit metadata entry for spatialUnit dataset with id {}.", entity.getDatasetId());
 		
 		return entity.getDatasetId();
+	}
+
+	public boolean deleteSpatialUnitDatasetByName(String spatialUnitLevel) throws ResourceNotFoundException {
+		logger.info("Trying to delete spatialUnit dataset with datasetName '{}'", spatialUnitLevel);
+		if (spatialUnitsMetadataRepo.existsByDatasetName(spatialUnitLevel)){
+			String dbTableName = spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel).getDbTableName();
+			/*
+			 * delete featureTable
+			 */
+			GeoJSON2DatabaseTool.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);
+			/*
+			 * delete metadata entry
+			 */
+			spatialUnitsMetadataRepo.deleteByDatasetName(spatialUnitLevel);
+			
+			return true;
+		}else{
+			logger.error("No spatialUnit dataset with datasetName '{}' was found in database. Delete request has no effect.", spatialUnitLevel);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Tried to delete spatialUnit dataset, but no dataset existes with datasetName " + spatialUnitLevel);
+		}
+	}
+
+	public String updateFeatures(SpatialUnitPUTInputType featureData, String spatialUnitLevel) throws ResourceNotFoundException {
+		logger.info("Trying to update spatialUnit features for datasetName '{}'", spatialUnitLevel);
+		if (spatialUnitsMetadataRepo.existsByDatasetName(spatialUnitLevel)) {
+			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);
+			String dbTableName = metadataEntity.getDbTableName();
+			/*
+			 * call DB tool to update features
+			 */
+			GeoJSON2DatabaseTool.updateFeatures(featureData, dbTableName);
+			
+			// set lastUpdate in metadata in case of successful update
+			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
+			
+			spatialUnitsMetadataRepo.save(metadataEntity);
+			return spatialUnitLevel;
+		} else {
+			logger.error("No spatialUnit dataset with datasetName '{}' was found in database. Update request has no effect.", spatialUnitLevel);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to update spatialUnit features, but no dataset existes with datasetName " + spatialUnitLevel);
+		}
+	}
+
+	public String updateMetadata(SpatialUnitPATCHInputType metadata, String spatialUnitLevel) throws ResourceNotFoundException {
+		logger.info("Trying to update spatialUnit metadata for datasetName '{}'", spatialUnitLevel);
+		if (spatialUnitsMetadataRepo.existsByDatasetName(spatialUnitLevel)) {
+			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);
+
+			/*
+			 * call DB tool to update features
+			 */
+			updateMetadata(metadata, metadataEntity);
+			
+			spatialUnitsMetadataRepo.save(metadataEntity);
+			return spatialUnitLevel;
+		} else {
+			logger.error("No spatialUnit dataset with datasetName '{}' was found in database. Update request has no effect.", spatialUnitLevel);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to update spatialUnit metadata, but no dataset existes with datasetName " + spatialUnitLevel);
+		}
+	}
+
+	private void updateMetadata(SpatialUnitPATCHInputType metadata, MetadataSpatialUnitsEntity entity) {
+		
+		CommonMetadataType genericMetadata = metadata.getMetadata();
+		entity.setContact(genericMetadata.getContact());
+		entity.setDataSource(genericMetadata.getDatasource());
+		entity.setDescription(genericMetadata.getDescription());
+		
+		java.util.Date lastUpdate = java.sql.Date.valueOf(genericMetadata.getLastUpdate());
+		if (lastUpdate == null)
+			lastUpdate = java.util.Calendar.getInstance().getTime();
+		entity.setLastUpdate(lastUpdate);
+		entity.setNextLowerHierarchyLevel(metadata.getNextLowerHierarchyLevel());
+		entity.setNextUpperHierarchyLevel(metadata.getNextUpperHierarchyLevel());
+		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
+		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
+		
+		/*
+		 * dbTanle name and OGC service urls may not be set here!
+		 * they are set automatically by other components
+		 */
+	}
+
+	public List<SpatialUnitOverviewType> getAllSpatialUnitsMetadata() {
+		logger.info("Retrieving all spatialUnits metadata from db");
+
+		List<MetadataSpatialUnitsEntity> spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll();
+		List<SpatialUnitOverviewType> users = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitMeatadataEntities);
+
+		return users;
 	}
 	
 	
