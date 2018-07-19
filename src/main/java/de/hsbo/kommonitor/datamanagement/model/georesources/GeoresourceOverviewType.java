@@ -1,20 +1,20 @@
 package de.hsbo.kommonitor.datamanagement.model.georesources;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * GeoresourceOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-19T11:48:18.228+02:00")
 
 public class GeoresourceOverviewType   {
   @JsonProperty("datasetName")
@@ -26,9 +26,8 @@ public class GeoresourceOverviewType   {
   @JsonProperty("metadata")
   private CommonMetadataType metadata = null;
 
-  @JsonProperty("availablePeriodsOfValidity")
-  
-  private List<PeriodOfValidityType> availablePeriodsOfValidity = new ArrayList<>();
+  @JsonProperty("availablePeriodOfValidity")
+  private AvailablePeriodOfValidityType availablePeriodOfValidity = null;
 
   @JsonProperty("applicableTopics")
   
@@ -92,27 +91,22 @@ public class GeoresourceOverviewType   {
     this.metadata = metadata;
   }
 
-  public GeoresourceOverviewType availablePeriodsOfValidity(List<PeriodOfValidityType> availablePeriodsOfValidity) {
-    this.availablePeriodsOfValidity = availablePeriodsOfValidity;
-    return this;
-  }
-
-  public GeoresourceOverviewType addAvailablePeriodsOfValidityItem(PeriodOfValidityType availablePeriodsOfValidityItem) {
-    this.availablePeriodsOfValidity.add(availablePeriodsOfValidityItem);
+  public GeoresourceOverviewType availablePeriodOfValidity(AvailablePeriodOfValidityType availablePeriodOfValidity) {
+    this.availablePeriodOfValidity = availablePeriodOfValidity;
     return this;
   }
 
    /**
-   * Get availablePeriodsOfValidity
-   * @return availablePeriodsOfValidity
+   * Get availablePeriodOfValidity
+   * @return availablePeriodOfValidity
   **/
-  @ApiModelProperty(required = true, value = "")
-  public List<PeriodOfValidityType> getAvailablePeriodsOfValidity() {
-    return availablePeriodsOfValidity;
+  @ApiModelProperty(value = "")
+  public AvailablePeriodOfValidityType getAvailablePeriodOfValidity() {
+    return availablePeriodOfValidity;
   }
 
-  public void setAvailablePeriodsOfValidity(List<PeriodOfValidityType> availablePeriodsOfValidity) {
-    this.availablePeriodsOfValidity = availablePeriodsOfValidity;
+  public void setAvailablePeriodOfValidity(AvailablePeriodOfValidityType availablePeriodOfValidity) {
+    this.availablePeriodOfValidity = availablePeriodOfValidity;
   }
 
   public GeoresourceOverviewType applicableTopics(List<String> applicableTopics) {
@@ -177,14 +171,14 @@ public class GeoresourceOverviewType   {
     return Objects.equals(this.datasetName, georesourceOverviewType.datasetName) &&
         Objects.equals(this.georesourceId, georesourceOverviewType.georesourceId) &&
         Objects.equals(this.metadata, georesourceOverviewType.metadata) &&
-        Objects.equals(this.availablePeriodsOfValidity, georesourceOverviewType.availablePeriodsOfValidity) &&
+        Objects.equals(this.availablePeriodOfValidity, georesourceOverviewType.availablePeriodOfValidity) &&
         Objects.equals(this.applicableTopics, georesourceOverviewType.applicableTopics) &&
         Objects.equals(this.allowedRoles, georesourceOverviewType.allowedRoles);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodsOfValidity, applicableTopics, allowedRoles);
+    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodOfValidity, applicableTopics, allowedRoles);
   }
 
   @Override
@@ -195,7 +189,7 @@ public class GeoresourceOverviewType   {
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
     sb.append("    georesourceId: ").append(toIndentedString(georesourceId)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
-    sb.append("    availablePeriodsOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
+    sb.append("    availablePeriodOfValidity: ").append(toIndentedString(availablePeriodOfValidity)).append("\n");
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("}");
