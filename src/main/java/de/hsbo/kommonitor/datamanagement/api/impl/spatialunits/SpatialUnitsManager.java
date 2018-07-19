@@ -257,6 +257,14 @@ public class SpatialUnitsManager {
 
 		return swaggerSpatialUnitMetadata;
 	}
+
+	public String getJsonSchemaForDatasetName(String spatialUnitLevel) {
+		logger.info("Retrieving spatialUnit jsonSchema for datasetName '{}'", spatialUnitLevel);
+
+		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);
+		
+		return spatialUnitMetadataEntity.getJsonSchema();
+	}
 	
 	
 	//TODO: Methoden zum handling der SpatialUnits
