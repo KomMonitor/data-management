@@ -1,12 +1,14 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * CommonMetadataType
@@ -26,6 +28,9 @@ public class CommonMetadataType   {
 
   @JsonProperty("contact")
   private String contact = null;
+  
+  @JsonProperty("lastUpdate")
+  private LocalDate lastUpdate = null;
 
   /**
    * Gets or Sets updateInterval
@@ -158,7 +163,15 @@ public class CommonMetadataType   {
   }
 
 
-  @Override
+  public LocalDate getLastUpdate() {
+	return lastUpdate;
+}
+
+public void setLastUpdate(LocalDate lastUpdate) {
+	this.lastUpdate = lastUpdate;
+}
+
+@Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
@@ -189,6 +202,7 @@ public class CommonMetadataType   {
     sb.append("    datasource: ").append(toIndentedString(datasource)).append("\n");
     sb.append("    contact: ").append(toIndentedString(contact)).append("\n");
     sb.append("    updateInterval: ").append(toIndentedString(updateInterval)).append("\n");
+    sb.append("    lastUpdate: ").append(toIndentedString(lastUpdate)).append("\n");
     sb.append("}");
     return sb.toString();
   }
