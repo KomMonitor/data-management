@@ -266,7 +266,7 @@ public class SpatialUnitsManager {
 	}
 
 	public String getValidSpatialUnitFeatures(String spatialUnitLevel, BigDecimal year, BigDecimal month,
-			BigDecimal day) throws ResourceNotFoundException {
+			BigDecimal day) throws ResourceNotFoundException, CQLException, IOException {
 		Calendar calender = Calendar.getInstance();
 		calender.set(year.intValue(), month.intValueExact()-1, day.intValue());
 		java.util.Date date = calender.getTime();

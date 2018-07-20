@@ -1,6 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.features.management;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,9 +11,9 @@ import java.util.Date;
 import org.geotools.data.DataStore;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.filter.text.cql2.CQL;
@@ -20,7 +21,6 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +100,6 @@ public class GeoJSON2DatabaseTool {
 	private static void initializePeriodOfValidityForAllEntries(PeriodOfValidityType periodOfValidity,
 			SimpleFeatureType featureSchema, SimpleFeatureStore store) throws CQLException, IOException {
 		Transaction transaction;
-		final FilterFactory ff = CommonFactoryFinder.getFilterFactory();
 		Filter filter = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + " is null");
 
 		transaction = new DefaultTransaction(
@@ -212,6 +211,7 @@ public class GeoJSON2DatabaseTool {
 		}
 
 		rs.close();
+		statement.close();
 
 		// handle endDate
 		statement = jdbcConnection.createStatement();
@@ -248,14 +248,49 @@ public class GeoJSON2DatabaseTool {
 			}
 
 		}
+		rs.close();
+		statement.close();
 
 		jdbcConnection.close();
 		return validityPeriod;
 	}
 
-	public static String getValidFeatures(Date date, String dbTableName) {
-		// TODO Auto-generated method stub
-		return null;
+	public static String getValidFeatures(Date date, String dbTableName) throws IOException, CQLException {
+		/*
+		 * fetch all features from table where startDate <= date and (endDate >= date || endDate = null)
+		 * 
+		 * then transform the featureCollection to GeoJSON! 
+		 * return geojsonString
+		 */
+		logger.info("Fetch features for validDate {} from table with name {}", date, dbTableName);
+		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+		
+		FeatureCollection features;
+		
+		SimpleFeatureSource featureSource = dataStore.getFeatureSource(dbTableName);
+		features = fetchFeaturesForDate(featureSource, date);
+		
+		logger.info("Transform {} found features to GeoJSON", features.size());
+		
+		FeatureJSON toGeoJSON = new FeatureJSON();
+		StringWriter writer = new StringWriter();
+		toGeoJSON.writeFeatureCollection(features, writer);
+		String geoJson = writer.toString();
+		
+		dataStore.dispose();
+		
+		return geoJson;
+	}
+
+	private static FeatureCollection fetchFeaturesForDate(SimpleFeatureSource featureSource, Date date)
+			throws CQLException, IOException {
+		// fetch all features from table where startDate <= date and (endDate >=
+		// date || endDate = null)
+		Filter filter = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + " <= " + date + " AND ("
+				+ KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " = null OR "
+				+ KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " >= " + date + ")");
+		SimpleFeatureCollection features = featureSource.getFeatures(filter);
+		return features;
 	}
 
 }

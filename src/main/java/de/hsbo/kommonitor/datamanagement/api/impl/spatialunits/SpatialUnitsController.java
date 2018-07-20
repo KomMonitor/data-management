@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,7 +188,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 				
 				return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff")).body(JsonBytes);
 				
-			} catch (ResourceNotFoundException e) {
+			} catch (ResourceNotFoundException | CQLException | IOException e) {
 				return ApiUtils.createResponseEntityFromException(e);
 			}
 
