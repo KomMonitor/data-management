@@ -4,15 +4,12 @@ package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Date;
-
 import java.util.Calendar;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
 import org.geotools.filter.text.cql2.CQLException;
-import org.hibernate.annotations.GenerationTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +19,6 @@ import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.users.UsersMapper;
 import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseTool;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
@@ -31,8 +27,6 @@ import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewT
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.users.UserOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.users.UsersEntity;
 
 @Transactional
 @Repository
@@ -160,7 +154,7 @@ public class SpatialUnitsManager {
 		return entity.getDatasetId();
 	}
 
-	public boolean deleteSpatialUnitDatasetByName(String spatialUnitLevel) throws ResourceNotFoundException {
+	public boolean deleteSpatialUnitDatasetByName(String spatialUnitLevel) throws ResourceNotFoundException, IOException {
 		logger.info("Trying to delete spatialUnit dataset with datasetName '{}'", spatialUnitLevel);
 		if (spatialUnitsMetadataRepo.existsByDatasetName(spatialUnitLevel)){
 			String dbTableName = spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel).getDbTableName();

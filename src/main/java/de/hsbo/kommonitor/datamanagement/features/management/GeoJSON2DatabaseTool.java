@@ -176,11 +176,16 @@ public class GeoJSON2DatabaseTool {
 		return tb.buildFeatureType();
 	}
 
-	public static void deleteFeatureTable(ResourceTypeEnum spatialUnit, String dbTableName) {
-		// TODO FIXME implement
+	public static void deleteFeatureTable(ResourceTypeEnum spatialUnit, String dbTableName) throws IOException {
+		logger.info("Deleting feature table {}.", dbTableName);
+
+		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
 		
-		// TODO check, if deletion was successful
-		
+		store.removeSchema(dbTableName);
+
+		logger.info("Deletion of table {} was successful {}", dbTableName);
+
+		store.dispose();		
 	}
 
 	public static void updateFeatures(SpatialUnitPUTInputType featureData, String dbTableName) {

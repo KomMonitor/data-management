@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -97,7 +98,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			if (isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
 
-		} catch (ResourceNotFoundException e) {
+		} catch (ResourceNotFoundException | IOException e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
 
