@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.geotools.data.DataStore;
@@ -16,14 +18,22 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.filter.FilterFactoryImpl;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geojson.feature.FeatureJSON;
+import org.geotools.temporal.object.DefaultInstant;
+import org.geotools.temporal.object.DefaultPosition;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.And;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.Or;
+import org.opengis.temporal.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
@@ -286,10 +296,25 @@ public class GeoJSON2DatabaseTool {
 			throws CQLException, IOException {
 		// fetch all features from table where startDate <= date and (endDate >=
 		// date || endDate = null)
-		Filter filter = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + " <= " + date + " AND ("
-				+ KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " = null OR "
-				+ KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " >= " + date + ")");
-		SimpleFeatureCollection features = featureSource.getFeatures(filter);
+		
+		FilterFactory ff = new FilterFactoryImpl();
+//		
+//		ff.before(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, date);ExpressionF
+		String iso8601utc = DateTimeUtil.toISO8601UTC(date);
+		System.out.println(iso8601utc);
+		
+        Instant temporalInstant = new DefaultInstant(new DefaultPosition(date));
+
+        // Simple check if property is after provided temporal instant
+        Filter endDateAfter = ff.after(ff.property(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME), ff.literal(temporalInstant));		
+		Filter endDateNull = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " is null");
+		Filter startDateBefore = ff.before(ff.property(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME), ff.literal(temporalInstant));
+
+		Or endDateNullOrAfter = ff.or(endDateNull, endDateAfter);
+
+		And andFilter = ff.and(startDateBefore, endDateNullOrAfter);
+		
+		SimpleFeatureCollection features = featureSource.getFeatures(andFilter);
 		return features;
 	}
 
