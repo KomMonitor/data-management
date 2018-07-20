@@ -203,8 +203,8 @@ public class GeoJSON2DatabaseTool {
 		Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
 
 		Statement statement = jdbcConnection.createStatement();
-		ResultSet rs = statement.executeQuery("SELECT min(" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME
-				+ ") FROM " + dbTableName + "");
+		ResultSet rs = statement.executeQuery("SELECT min(\"" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME
+				+ "\") FROM \"" + dbTableName + "\"");
 
 		AvailablePeriodOfValidityType validityPeriod = new AvailablePeriodOfValidityType();
 		if (rs.next()) { // check if a result was returned
@@ -216,8 +216,9 @@ public class GeoJSON2DatabaseTool {
 		// handle endDate
 		statement = jdbcConnection.createStatement();
 
-		rs = statement.executeQuery("SELECT " + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " FROM "
-				+ dbTableName + " WHERE " + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " = null");
+		// be sure to quote the identifier!
+		rs = statement.executeQuery("SELECT \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" FROM \""
+				+ dbTableName + "\" WHERE \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" = null");
 
 		if (rs.next()) { // check if a result was returned
 			/*
@@ -231,8 +232,9 @@ public class GeoJSON2DatabaseTool {
 			/*
 			 * we have to find the latest endDate (maxValue)
 			 */
-			rs = statement.executeQuery("SELECT max(" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME
-					+ ") FROM " + dbTableName + "");
+			// be sure to quote the identifier!
+			rs = statement.executeQuery("SELECT max(\"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME
+					+ "\") FROM \"" + dbTableName + "\"");
 			if (rs.next()) { // check if a result was returned
 				/*
 				 * latestEndDate might be null, if it was never set
