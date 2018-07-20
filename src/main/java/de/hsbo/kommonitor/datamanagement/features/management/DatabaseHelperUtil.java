@@ -103,7 +103,7 @@ public class DatabaseHelperUtil {
 		Properties props = new Properties();
 		props.setProperty("user", properties.getProperty("spring.datasource.username"));
 		props.setProperty("password", properties.getProperty("spring.datasource.password"));
-		props.setProperty("ssl", "true");
+//		props.setProperty("ssl", "true");
 		Connection conn = DriverManager.getConnection(url, props);
 
 		return conn;
