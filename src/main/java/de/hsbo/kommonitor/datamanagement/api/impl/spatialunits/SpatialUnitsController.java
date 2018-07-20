@@ -122,15 +122,20 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		 * 
 		 * return them to client
 		 */
+		try {
+			
+			if (accept != null && accept.contains("application/json")) {
 
-		if (accept != null && accept.contains("application/json")) {
+				List<SpatialUnitOverviewType> spatialunitsMetadata = spatialUnitsManager.getAllSpatialUnitsMetadata();
 
-			List<SpatialUnitOverviewType> spatialunitsMetadata = spatialUnitsManager.getAllSpatialUnitsMetadata();
+				return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
 
-			return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
-
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			} else {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
 		}
 	}
 
@@ -142,17 +147,22 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		/*
 		 * retrieve the user for the specified id
 		 */
+		try {
+			if (accept != null && accept.contains("application/json")) {
 
-		if (accept != null && accept.contains("application/json")) {
+				
+				SpatialUnitOverviewType spatialUnitMetadata = spatialUnitsManager.getSpatialUnitByDatasetName(spatialUnitLevel);
 
-			
-			SpatialUnitOverviewType spatialUnitMetadata = spatialUnitsManager.getSpatialUnitByDatasetName(spatialUnitLevel);
+				return new ResponseEntity<>(spatialUnitMetadata, HttpStatus.OK);
 
-			return new ResponseEntity<>(spatialUnitMetadata, HttpStatus.OK);
-
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			} else {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
 		}
+
+		
 	}
 
 	@Override
@@ -167,7 +177,6 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 		if (accept != null && accept.contains("application/json")) {
 
-			
 			try {
 				String geoJsonFeatures = spatialUnitsManager.getValidSpatialUnitFeatures(spatialUnitLevel, year, month, day);
 				String fileName = "SpatialUnitFeatures_" + spatialUnitLevel + "_" + year + "-" + month + "-" + day + ".json";
@@ -179,13 +188,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 				return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff")).body(JsonBytes);
 				
 			} catch (ResourceNotFoundException e) {
-				// TODO Auto-generated catch block
 				return ApiUtils.createResponseEntityFromException(e);
 			}
-
-			
-			
-			
 
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

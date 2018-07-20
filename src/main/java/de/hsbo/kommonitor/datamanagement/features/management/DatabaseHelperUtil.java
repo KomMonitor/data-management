@@ -1,6 +1,9 @@
 package de.hsbo.kommonitor.datamanagement.features.management;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -11,11 +14,14 @@ import org.geotools.data.simple.SimpleFeatureSource;
 
 public class DatabaseHelperUtil {
 
-	public static void updateResourceMetadataEntry(ResourceTypeEnum indicator, String tableName, String correspondingMetadataDatasetId) {
+	private static Properties properties;
+
+	public static void updateResourceMetadataEntry(ResourceTypeEnum indicator, String tableName,
+			String correspondingMetadataDatasetId) {
 		// TODO FIXME update metadata entry: set name of associated dbTable
 
 	}
-	
+
 	public static String createUniqueTableNameForResourceType(ResourceTypeEnum resourceType, DataStore dataStore)
 			throws IOException {
 		int numberSuffix = 0;
@@ -55,14 +61,16 @@ public class DatabaseHelperUtil {
 
 	public static DataStore getPostGisDataStore() throws IOException {
 
-		Properties properties = new Properties();
-
 		/*
 		 * TODO If environment variables are used for DB connection then change
 		 * this FIXME If environment variables are used for DB connection then
 		 * change this
 		 */
-		properties.load(GeoJSON2DatabaseTool.class.getResourceAsStream("/application.properties"));
+		if (properties == null){
+			properties = new Properties();
+			properties.load(GeoJSON2DatabaseTool.class.getResourceAsStream("/application.properties"));
+		}
+			
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("dbtype", "postgis");
@@ -78,5 +86,27 @@ public class DatabaseHelperUtil {
 		return dataStore;
 	}
 
-	
+	public static Connection getJdbcConnection() throws IOException, SQLException {
+
+		/*
+		 * TODO If environment variables are used for DB connection then change
+		 * this FIXME If environment variables are used for DB connection then
+		 * change this
+		 */
+		if (properties == null){
+			properties = new Properties();
+			properties.load(GeoJSON2DatabaseTool.class.getResourceAsStream("/application.properties"));
+		}
+
+		String url = "jdbc:postgresql://" + properties.getProperty("database.host") + "/"
+				+ properties.getProperty("database.name");
+		Properties props = new Properties();
+		props.setProperty("user", properties.getProperty("spring.datasource.username"));
+		props.setProperty("password", properties.getProperty("spring.datasource.password"));
+		props.setProperty("ssl", "true");
+		Connection conn = DriverManager.getConnection(url, props);
+
+		return conn;
+	}
+
 }

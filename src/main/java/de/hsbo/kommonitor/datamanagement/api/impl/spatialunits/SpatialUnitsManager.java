@@ -4,6 +4,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -237,7 +238,7 @@ public class SpatialUnitsManager {
 		 */
 	}
 
-	public List<SpatialUnitOverviewType> getAllSpatialUnitsMetadata() {
+	public List<SpatialUnitOverviewType> getAllSpatialUnitsMetadata() throws IOException, SQLException {
 		logger.info("Retrieving all spatialUnits metadata from db");
 
 		List<MetadataSpatialUnitsEntity> spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll();
@@ -246,7 +247,8 @@ public class SpatialUnitsManager {
 		return swaggerSpatialUnitsMetadata;
 	}
 
-	public SpatialUnitOverviewType getSpatialUnitByDatasetName(String spatialUnitLevel) {
+	public SpatialUnitOverviewType getSpatialUnitByDatasetName(String spatialUnitLevel)
+			throws IOException, SQLException {
 		logger.info("Retrieving spatialUnit metadata for datasetName '{}'", spatialUnitLevel);
 
 		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);

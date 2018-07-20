@@ -1,6 +1,8 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +13,7 @@ import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewT
 
 public class SpatialUnitsMapper {
 
-	public static SpatialUnitOverviewType mapToSwaggerSpatialUnit(MetadataSpatialUnitsEntity georesourcesEntities) {
+	public static SpatialUnitOverviewType mapToSwaggerSpatialUnit(MetadataSpatialUnitsEntity georesourcesEntities) throws IOException, SQLException {
 		SpatialUnitOverviewType dataset = new SpatialUnitOverviewType();
 		
 		dataset.setAvailablePeriodOfValidity(GeoJSON2DatabaseTool.getAvailablePeriodOfValidity(georesourcesEntities.getDbTableName()));
@@ -33,7 +35,7 @@ public class SpatialUnitsMapper {
 	}
 
 	public static List<SpatialUnitOverviewType> mapToSwaggerSpatialUnits(
-			List<MetadataSpatialUnitsEntity> spatialUnitMeatadataEntities) {
+			List<MetadataSpatialUnitsEntity> spatialUnitMeatadataEntities) throws IOException, SQLException {
 		List<SpatialUnitOverviewType> metadatasets = new ArrayList<SpatialUnitOverviewType>(spatialUnitMeatadataEntities.size());
 
 		for (MetadataSpatialUnitsEntity metadataEntity : spatialUnitMeatadataEntities) {

@@ -1,6 +1,10 @@
 package de.hsbo.kommonitor.datamanagement.features.management;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 
 import org.geotools.data.DataStore;
@@ -180,23 +184,71 @@ public class GeoJSON2DatabaseTool {
 		logger.info("Deleting feature table {}.", dbTableName);
 
 		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
-		
+
 		store.removeSchema(dbTableName);
 
 		logger.info("Deletion of table {} was successful {}", dbTableName);
 
-		store.dispose();		
+		store.dispose();
 	}
 
 	public static void updateFeatures(SpatialUnitPUTInputType featureData, String dbTableName) {
 		// TODO FIXME implement
-		
+
 		// TODO check, if update was successful
 	}
 
-	public static AvailablePeriodOfValidityType getAvailablePeriodOfValidity(String dbTableName) {
-		// TODO Auto-generated method stub
-		return null;
+	public static AvailablePeriodOfValidityType getAvailablePeriodOfValidity(String dbTableName)
+			throws IOException, SQLException {
+		Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+
+		Statement statement = jdbcConnection.createStatement();
+		ResultSet rs = statement.executeQuery("SELECT min(" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME
+				+ ") FROM " + dbTableName + "");
+
+		AvailablePeriodOfValidityType validityPeriod = new AvailablePeriodOfValidityType();
+		if (rs.next()) { // check if a result was returned
+			validityPeriod.setEarliestStartDate(new java.sql.Date(rs.getDate(1).getTime()).toLocalDate());
+		}
+
+		rs.close();
+
+		// handle endDate
+		statement = jdbcConnection.createStatement();
+
+		rs = statement.executeQuery("SELECT " + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " FROM "
+				+ dbTableName + " WHERE " + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " = null");
+
+		if (rs.next()) { // check if a result was returned
+			/*
+			 * the result set has results. Thus there are features with endDate
+			 * == null
+			 * 
+			 * Thus there is no known latestEndDate to be set
+			 */
+			validityPeriod.setEndDate(null);
+		} else {
+			/*
+			 * we have to find the latest endDate (maxValue)
+			 */
+			rs = statement.executeQuery("SELECT max(" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME
+					+ ") FROM " + dbTableName + "");
+			if (rs.next()) { // check if a result was returned
+				/*
+				 * latestEndDate might be null, if it was never set
+				 * 
+				 * then it indicates, that there is no end date and all data is
+				 * st
+				 */
+				java.sql.Date latestEndDate = rs.getDate(1);
+				if (latestEndDate != null)
+					validityPeriod.setEndDate(new java.sql.Date(latestEndDate.getTime()).toLocalDate());
+			}
+
+		}
+
+		jdbcConnection.close();
+		return validityPeriod;
 	}
 
 	public static String getValidFeatures(Date date, String dbTableName) {
