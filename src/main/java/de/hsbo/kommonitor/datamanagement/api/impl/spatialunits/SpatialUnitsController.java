@@ -188,7 +188,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 				
 				return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff")).body(JsonBytes);
 				
-			} catch (ResourceNotFoundException | CQLException | IOException e) {
+			} catch (Exception e) {
 				return ApiUtils.createResponseEntityFromException(e);
 			}
 

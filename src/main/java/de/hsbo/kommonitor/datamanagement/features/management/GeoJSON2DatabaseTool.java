@@ -265,7 +265,7 @@ public class GeoJSON2DatabaseTool {
 		return validityPeriod;
 	}
 
-	public static String getValidFeatures(Date date, String dbTableName) throws IOException, CQLException {
+	public static String getValidFeatures(Date date, String dbTableName) throws Exception {
 		/*
 		 * fetch all features from table where startDate <= date and (endDate >= date || endDate = null)
 		 * 
@@ -280,12 +280,20 @@ public class GeoJSON2DatabaseTool {
 		SimpleFeatureSource featureSource = dataStore.getFeatureSource(dbTableName);
 		features = fetchFeaturesForDate(featureSource, date);
 		
-		logger.info("Transform {} found features to GeoJSON", features.size());
+		int validFeaturesSize = features.size();
+		logger.info("Transform {} found features to GeoJSON", validFeaturesSize);
 		
-		FeatureJSON toGeoJSON = new FeatureJSON();
-		StringWriter writer = new StringWriter();
-		toGeoJSON.writeFeatureCollection(features, writer);
-		String geoJson = writer.toString();
+		String geoJson = null;
+		
+		if(validFeaturesSize > 0){
+			FeatureJSON toGeoJSON = new FeatureJSON();
+			StringWriter writer = new StringWriter();
+			toGeoJSON.writeFeatureCollection(features, writer);
+			geoJson = writer.toString();
+		}else{
+			dataStore.dispose();
+			throw new Exception("No valid features could be retrieved for the specified date.");
+		}
 		
 		dataStore.dispose();
 		
