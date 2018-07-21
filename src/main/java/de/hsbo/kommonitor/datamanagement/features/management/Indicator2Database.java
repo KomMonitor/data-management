@@ -1,6 +1,9 @@
 package de.hsbo.kommonitor.datamanagement.features.management;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,6 +23,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
 
@@ -28,7 +33,7 @@ public class Indicator2Database {
 	private static Logger logger = LoggerFactory.getLogger(Indicator2Database.class);
 
 	public static String writeIndicatorsToDatabase(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues,
-			String correspondingMetadataDatasetId) throws IOException, CQLException {
+			String correspondingMetadataDatasetId) throws IOException, CQLException, SQLException {
 
 		/*
 		 * TODO implement
@@ -68,15 +73,64 @@ public class Indicator2Database {
 		 * corresponding MetadataEntry
 		 */
 
-		logger.info(
-				"Modifying the metadata entry to set the name of the formerly created feature database table. MetadataId for resourceType {} is {}",
-				ResourceTypeEnum.INDICATOR, correspondingMetadataDatasetId);
-		DatabaseHelperUtil.updateResourceMetadataEntry(ResourceTypeEnum.INDICATOR, featureType.getTypeName().toString(),
+		/*
+		 * TODO FIXME create view containing the geometry and indicatorValues
+		 * for each indicator feature also set ViewName in Metadata --> create
+		 * new field for that
+		 */
+		String indicatorTableName = featureType.getTypeName().toString();
+		String viewTableName = createOrOverwriteView(ResourceTypeEnum.INDICATOR, indicatorTableName,
 				correspondingMetadataDatasetId);
+
+		logger.info(
+				"Modifying the indicator metadata entry with id {} to set the name of the formerly created feature database table named {} and also the created featureViewTable with name {}.",
+				correspondingMetadataDatasetId, indicatorTableName, viewTableName);
+		DatabaseHelperUtil.updateIndicatorMetadataEntry(ResourceTypeEnum.INDICATOR, correspondingMetadataDatasetId,
+				indicatorTableName, viewTableName);
 
 		postGisStore.dispose();
 
 		return featureType.getTypeName();
+	}
+
+	private static String createOrOverwriteView(ResourceTypeEnum indicator, String indicatorTableName,
+			String correspondingMetadataDatasetId) throws IOException, SQLException {
+		Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+
+		Statement statement = jdbcConnection.createStatement();
+
+		String viewTableName = "VIEW_" + indicatorTableName;
+
+		/*
+		 * CREATE VIEW vw_combined AS SELECT * FROM TABLE1 t1 JOIN TABLE2 t2 ON
+		 * t2.col = t1.col
+		 */
+
+		MetadataIndicatorsEntity indicatorEntity = DatabaseHelperUtil
+				.getIndicatorMetadataEntity(correspondingMetadataDatasetId);
+		String associatedSpatialUnitMetadataId = indicatorEntity.getAssociatedSpatialUnitMetadataId();
+		MetadataSpatialUnitsEntity spatialUnitEntity = DatabaseHelperUtil
+				.getSpatialUnitMetadataEntity(associatedSpatialUnitMetadataId);
+		String spatialUnitsTable = spatialUnitEntity.getDbTableName();
+
+		String indicatorColumnName = "spatialUnitId";
+		/*
+		 * TODOD FIXME bith tables should hav the same identical name. How to
+		 * ensure this in the best way?
+		 */
+		String spatialUnitColumnName = "OBJECTID";
+
+		String createViewCommand = "create or replace view " + viewTableName + " as select * from " + indicatorTableName
+				+ " join " + spatialUnitsTable + " on " + indicatorTableName + "." + indicatorColumnName + " = "
+				+ spatialUnitsTable + "." + spatialUnitColumnName;
+		
+		// TODO check if works
+		statement.executeUpdate(createViewCommand);
+
+		statement.close();
+		jdbcConnection.close();
+
+		return viewTableName;
 	}
 
 	private static void persistIndicator(DataStore postGisStore, SimpleFeatureType featureType,
@@ -166,12 +220,12 @@ public class Indicator2Database {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 
-		int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH); 
+		int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
 		/*
 		 * +1 because method return values between 0-11
 		 */
-		int month = cal.get(Calendar.MONTH) + 1; 
-		int year = cal.get(Calendar.YEAR); 
+		int month = cal.get(Calendar.MONTH) + 1;
+		int year = cal.get(Calendar.YEAR);
 
 		String dateString = year + "-" + month + "-" + dayOfMonth;
 		return dateString;

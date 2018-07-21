@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.geotools.filter.text.cql2.CQLException;
@@ -19,7 +20,7 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType
 public class Indicator2DBTest {
 
 	@Test
-	public void test() throws IOException, URISyntaxException, CQLException {
+	public void test() throws IOException, URISyntaxException, CQLException, SQLException {
 
 		String jsonIndicatorMapping = new String(
 				Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource("TestIndicator.json").toURI())));

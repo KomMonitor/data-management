@@ -16,6 +16,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	private String unit = null;
 	private CreationTypeEnum creationType = null;
 	private String featureViewDbTableName = null;
+	private String associatedSpatialUnitMetadataId = null;
 	
 	/*
 	 * references to other indicators are mapped by hand
@@ -71,6 +72,14 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 
 	public void setFeatureViewDbTableName(String featureViewDbTableName) {
 		this.featureViewDbTableName = featureViewDbTableName;
+	}
+
+	public String getAssociatedSpatialUnitMetadataId() {
+		return associatedSpatialUnitMetadataId;
+	}
+
+	public void setAssociatedSpatialUnitMetadataId(String associatedSpatialUnitMetadataId) {
+		this.associatedSpatialUnitMetadataId = associatedSpatialUnitMetadataId;
 	}
 
 }

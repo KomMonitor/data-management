@@ -153,4 +153,17 @@ public class DatabaseHelperUtil {
 		
 	}
 
+	public static MetadataIndicatorsEntity getIndicatorMetadataEntity(String indicatorDatasetId) {
+		/*
+		 * TODO fix this as soon as indicator metadata is implemented
+		 */
+//		MetadataIndicatorsEntity entity = indicatorsRepo.findByDatasetId(indicatorDatasetId);
+//		return entity;
+		return null;
+	}
+
+	public static MetadataSpatialUnitsEntity getSpatialUnitMetadataEntity(String spatialUnitMetadataId) {
+		return spatialUnitsRepo.findByDatasetId(spatialUnitMetadataId);
+	}
+
 }
