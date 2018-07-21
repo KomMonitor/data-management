@@ -27,7 +27,7 @@ public class GeoresourcesManager {
 //	EntityManager em;
 	
 	@Autowired
-	GeoresourcesRepository georesourcesRepo;
+	GeoresourcesMetadataRepository georesourcesRepo;
 	
 	
 	//TODO: Methoden zum handling der Georesourcen
