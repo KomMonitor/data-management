@@ -11,14 +11,46 @@ import java.util.Properties;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 
 public class DatabaseHelperUtil {
 
 	private static Properties properties;
+	
+	@Autowired
+	private static SpatialUnitsMetadataRepository spatialUnitsRepo;
+	
+	@Autowired
+	private static GeoresourcesMetadataRepository georesourceRepo;
+	
+//	@Autowired
+//	private static IndicatorsMetadataRepository indicatorsRepo;
 
-	public static void updateResourceMetadataEntry(ResourceTypeEnum indicator, String tableName,
+	public static void updateResourceMetadataEntry(ResourceTypeEnum resource, String tableName,
 			String correspondingMetadataDatasetId) {
-		// TODO FIXME update metadata entry: set name of associated dbTable
+		switch (resource) {
+		case SPATIAL_UNIT:
+			MetadataSpatialUnitsEntity spatialUnitsEntity = spatialUnitsRepo.findByDatasetId(correspondingMetadataDatasetId);
+			spatialUnitsEntity.setDbTableName(tableName);
+			spatialUnitsRepo.save(spatialUnitsEntity);
+			break;
+		case GEORESOURCE:
+			MetadataGeoresourcesEntity georesourcesEntity = georesourceRepo.findByDatasetId(correspondingMetadataDatasetId);
+			georesourcesEntity.setDbTableName(tableName);
+			georesourceRepo.save(georesourcesEntity);
+			break;
+//		case INDICATOR:
+//			MetadataIndicatorsEntity indicatorsEntity = indicatorsRepo.findByDatasetId(correspondingMetadataDatasetId);
+//			indicatorsEntity.setDbTableName(tableName);
+//			indicatorsRepo.save(indicatorsEntity);
+//			break;	
+		}
 
 	}
 
