@@ -141,4 +141,16 @@ public class DatabaseHelperUtil {
 		return conn;
 	}
 
+	public static void updateIndicatorMetadataEntry(ResourceTypeEnum indicator, String correspondingMetadataDatasetId,
+			String indicatorTableName, String viewTableName) {
+		/*
+		 * TODO fix this as soon as indicator metadata is implemented
+		 */
+//		MetadataIndicatorsEntity indicatorsEntity = indicatorsRepo.findByDatasetId(correspondingMetadataDatasetId);
+//		indicatorsEntity.setDbTableName(indicatorTableName);
+//		indicatorsEntity.setFeatureViewDbTableName(viewTableName);
+//		indicatorsRepo.save(indicatorsEntity);
+		
+	}
+
 }
