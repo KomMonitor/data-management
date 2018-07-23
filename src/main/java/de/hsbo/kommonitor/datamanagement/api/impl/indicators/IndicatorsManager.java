@@ -187,7 +187,7 @@ public class IndicatorsManager {
 			/*
 			 * call DB tool to update features
 			 */
-			GeoJSON2DatabaseTool.updateFeatures(featureData, dbTableName);
+			GeoJSON2DatabaseTool.updateSpatialUnitFeatures(featureData, dbTableName);
 			
 			// set lastUpdate in metadata in case of successful update
 			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());

@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
 
 public class GeoJSON2DatabaseTool {
@@ -201,7 +202,7 @@ public class GeoJSON2DatabaseTool {
 		store.dispose();
 	}
 
-	public static void updateFeatures(SpatialUnitPUTInputType featureData, String dbTableName) {
+	public static void updateSpatialUnitFeatures(SpatialUnitPUTInputType featureData, String dbTableName) {
 		// TODO FIXME implement
 
 		// TODO check, if update was successful
@@ -324,6 +325,11 @@ public class GeoJSON2DatabaseTool {
 		
 		SimpleFeatureCollection features = featureSource.getFeatures(andFilter);
 		return features;
+	}
+
+	public static void updateGeoresourceFeatures(GeoresourcePUTInputType featureData, String dbTableName) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

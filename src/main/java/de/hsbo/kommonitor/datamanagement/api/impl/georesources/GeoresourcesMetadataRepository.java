@@ -1,11 +1,22 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 public interface GeoresourcesMetadataRepository extends JpaRepository<MetadataGeoresourcesEntity, Long> {
 
 	MetadataGeoresourcesEntity findByDatasetId(String datasetId);
+
+	boolean existsByDatasetName(String datasetName);
+
+	boolean existsByDatasetId(String datasetId);
+
+	void deleteByDatasetId(String datasetId);
+
+	List<MetadataGeoresourcesEntity> findByTopicIn(List<TopicsEntity> georesourcesTopics);
 
 }

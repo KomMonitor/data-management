@@ -183,7 +183,7 @@ public class SpatialUnitsManager {
 			/*
 			 * call DB tool to update features
 			 */
-			GeoJSON2DatabaseTool.updateFeatures(featureData, dbTableName);
+			GeoJSON2DatabaseTool.updateSpatialUnitFeatures(featureData, dbTableName);
 			
 			// set lastUpdate in metadata in case of successful update
 			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
@@ -233,7 +233,7 @@ public class SpatialUnitsManager {
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 		
 		/*
-		 * dbTanle name and OGC service urls may not be set here!
+		 * dbTable name and OGC service urls may not be set here!
 		 * they are set automatically by other components
 		 */
 	}
