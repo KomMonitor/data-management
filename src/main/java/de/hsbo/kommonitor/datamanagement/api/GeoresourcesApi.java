@@ -62,9 +62,8 @@ public interface GeoresourcesApi {
     @RequestMapping(value = "/georesources/{georesourceId}/{year}/{month}/{day}",
         method = RequestMethod.DELETE)
     ResponseEntity deleteGeoresourceByIdAndYearAndMonth(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day);
-
-
-    @ApiOperation(value = "retrieve information about available features of different geo-resource datasets", nickname = "getGeoresource", notes = "retrieve information about available features of different geo-resource datasets", response = GeoresourceOverviewType.class, responseContainer = "array", authorizations = {
+    
+    @ApiOperation(value = "retrieve information about available features of different geo-resource datasets", nickname = "getGeoresources", notes = "retrieve information about available features of different geo-resource datasets", response = GeoresourceOverviewType.class, responseContainer = "array", authorizations = {
         @Authorization(value = "basicAuth")
     }, tags={  })
     @ApiResponses(value = { 
@@ -74,7 +73,7 @@ public interface GeoresourcesApi {
     @RequestMapping(value = "/georesources",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<GeoresourceOverviewType>> getGeoresource(@ApiParam(value = "thematic topic to filter available geo-resource", allowableValues = "demography, environment, habitation, migration, social")  @RequestParam(value = "topic", required = false) String topic);
+    ResponseEntity<List<GeoresourceOverviewType>> getGeoresources(@ApiParam(value = "thematic topic to filter available geo-resource", allowableValues = "demography, environment, habitation, migration, social")  @RequestParam(value = "topic", required = false) String topic);
 
 
     @ApiOperation(value = "retrieve information about available features of the selected geo-resource dataset", nickname = "getGeoresourceById", notes = "retrieve information about available features of the selected geo-resource dataset", response = GeoresourceOverviewType.class, authorizations = {

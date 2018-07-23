@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -50,7 +52,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	// TODO fill methods
 
 	@Override
-	public ResponseEntity addSpatialUnitAsBody(SpatialUnitPOSTInputType featureData) {
+	public ResponseEntity addSpatialUnitAsBody(@RequestBody SpatialUnitPOSTInputType featureData) {
 		logger.info("Received request to insert new spatial unit");
 
 		String accept = request.getHeader("Accept");
@@ -83,7 +85,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	public ResponseEntity deleteSpatialUnitByUnit(String spatialUnitLevel) {
+	public ResponseEntity deleteSpatialUnitByUnit(@PathVariable("spatialUnitLevel") String spatialUnitLevel) {
 		logger.info("Received request to delete spatialUnit for datasetName '{}'", spatialUnitLevel);
 
 		String accept = request.getHeader("Accept");
@@ -107,10 +109,28 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	public ResponseEntity deleteSpatialUnitByUnitAndYearAndMonth(String spatialUnitLevel, BigDecimal year,
-			BigDecimal month, BigDecimal day) {
-		// TODO Auto-generated method stub
-		return null;
+	public ResponseEntity deleteSpatialUnitByUnitAndYearAndMonth(@PathVariable("spatialUnitLevel") String spatialUnitLevel, @PathVariable("year") BigDecimal year,
+			@PathVariable("month") BigDecimal month, @PathVariable("day") BigDecimal day) {
+		logger.info("Received request to delete spatialUnit for datasetName '{}' and Date '{}-{}-{}'", spatialUnitLevel, year, month, day);
+
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * delete topic with the specified id
+		 */
+
+		boolean isDeleted;
+		try {
+			isDeleted = spatialUnitsManager.deleteSpatialUnitDatasetByNameAndDate(spatialUnitLevel, year, month, day);
+
+			if (isDeleted)
+				return new ResponseEntity<>(HttpStatus.OK);
+
+		} catch (ResourceNotFoundException | IOException e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@Override
@@ -141,7 +161,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	public ResponseEntity<SpatialUnitOverviewType> getSpatialUnitsByLevel(String spatialUnitLevel) {
+	public ResponseEntity<SpatialUnitOverviewType> getSpatialUnitsByLevel(@PathVariable("spatialUnitLevel") String spatialUnitLevel) {
 		logger.info("Received request to get spatialUnit metadata for datasetName '{}'", spatialUnitLevel);
 		String accept = request.getHeader("Accept");
 
@@ -167,8 +187,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	public ResponseEntity<byte[]> getSpatialUnitsByLevelAndYearAndMonth(String spatialUnitLevel, BigDecimal year,
-			BigDecimal month, BigDecimal day) {
+	public ResponseEntity<byte[]> getSpatialUnitsByLevelAndYearAndMonth(@PathVariable("spatialUnitLevel") String spatialUnitLevel, @PathVariable("year") BigDecimal year,
+			@PathVariable("month") BigDecimal month, @PathVariable("day") BigDecimal day) {
 		logger.info("Received request to get spatialUnit features for datasetName '{}'", spatialUnitLevel);
 		String accept = request.getHeader("Accept");
 
@@ -198,7 +218,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	public ResponseEntity<String> getSpatialUnitsSchemaByLevel(String spatialUnitLevel) {
+	public ResponseEntity<String> getSpatialUnitsSchemaByLevel(@PathVariable("spatialUnitLevel") String spatialUnitLevel) {
 		logger.info("Received request to get spatialUnit metadata for datasetName '{}'", spatialUnitLevel);
 		String accept = request.getHeader("Accept");
 
@@ -218,7 +238,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	public ResponseEntity updateSpatialUnitAsBody(String spatialUnitLevel, SpatialUnitPUTInputType featureData) {
+	public ResponseEntity updateSpatialUnitAsBody(@PathVariable("spatialUnitLevel") String spatialUnitLevel, @RequestBody SpatialUnitPUTInputType featureData) {
 		logger.info("Received request to update spatial unit features for datasetName '{}'", spatialUnitLevel);
 
 		String accept = request.getHeader("Accept");
@@ -241,7 +261,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			try {
 				responseHeaders.setLocation(new URI(location));
 			} catch (URISyntaxException e) {
-				// return ApiResponseUtil.createResponseEntityFromException(e);
+				return ApiUtils.createResponseEntityFromException(e);
 			}
 
 			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
@@ -251,7 +271,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	public ResponseEntity updateSpatialUnitMetadataAsBody(String spatialUnitLevel, SpatialUnitPATCHInputType metadata) {
+	public ResponseEntity updateSpatialUnitMetadataAsBody(@PathVariable("spatialUnitLevel") String spatialUnitLevel, @RequestBody SpatialUnitPATCHInputType metadata) {
 		logger.info("Received request to update spatial unit metadata for datasetName '{}'", spatialUnitLevel);
 
 		String accept = request.getHeader("Accept");
@@ -274,7 +294,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			try {
 				responseHeaders.setLocation(new URI(location));
 			} catch (URISyntaxException e) {
-				// return ApiResponseUtil.createResponseEntityFromException(e);
+				return ApiUtils.createResponseEntityFromException(e);
 			}
 
 			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);

@@ -112,7 +112,7 @@ public interface IndicatorsApi {
     @RequestMapping(value = "/indicators/{indicatorId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<IndicatorOverviewType> getIndicatorsById(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
+    ResponseEntity<IndicatorOverviewType> getIndicatorById(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
 
 
     @ApiOperation(value = "Modify/Update the contents of the selected indicator dataset", nickname = "updateIndicatorAsBody", notes = "Modify/Update the contents of the selected indicator dataset", authorizations = {

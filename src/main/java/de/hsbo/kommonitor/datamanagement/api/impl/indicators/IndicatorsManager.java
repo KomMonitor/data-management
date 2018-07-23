@@ -1,4 +1,4 @@
-package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
+package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
 
 
@@ -24,6 +24,10 @@ import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseToo
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPOSTInputType;
@@ -32,10 +36,10 @@ import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputT
 @Transactional
 @Repository
 @Component
-public class SpatialUnitsManager {
+public class IndicatorsManager {
 	
 	
-	private static Logger logger = LoggerFactory.getLogger(SpatialUnitsManager.class);
+	private static Logger logger = LoggerFactory.getLogger(IndicatorsManager.class);
 
 	/**
 	*
@@ -44,7 +48,7 @@ public class SpatialUnitsManager {
 //	EntityManager em;
 	
 	@Autowired
-	SpatialUnitsMetadataRepository spatialUnitsMetadataRepo;
+	IndicatorsMetadataRepository spatialUnitsMetadataRepo;
 
 	public String addSpatialUnit(SpatialUnitPOSTInputType featureData) throws Exception {
 		String datasetName = featureData.getSpatialUnitLevel();
@@ -242,7 +246,7 @@ public class SpatialUnitsManager {
 		logger.info("Retrieving all spatialUnits metadata from db");
 
 		List<MetadataSpatialUnitsEntity> spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll();
-		List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitMeatadataEntities);
+		List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata = IndicatorsMapper.mapToSwaggerSpatialUnits(spatialUnitMeatadataEntities);
 
 		return swaggerSpatialUnitsMetadata;
 	}
@@ -252,7 +256,7 @@ public class SpatialUnitsManager {
 		logger.info("Retrieving spatialUnit metadata for datasetName '{}'", spatialUnitLevel);
 
 		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);
-		SpatialUnitOverviewType swaggerSpatialUnitMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnit(spatialUnitMetadataEntity);
+		SpatialUnitOverviewType swaggerSpatialUnitMetadata = IndicatorsMapper.mapToSwaggerSpatialUnit(spatialUnitMetadataEntity);
 
 		return swaggerSpatialUnitMetadata;
 	}
@@ -288,12 +292,56 @@ public class SpatialUnitsManager {
 		
 	}
 
-	public boolean deleteSpatialUnitDatasetByNameAndDate(String spatialUnitLevel, BigDecimal year, BigDecimal month, BigDecimal day) throws ResourceNotFoundException, IOException {
+	public static String updateMetadata(IndicatorPATCHInputType metadata, String indicatorId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String updateFeatures(IndicatorPUTInputType indicatorData, String indicatorId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IndicatorOverviewType getIndicatorById(String indicatorId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<IndicatorOverviewType> getAllIndicatorsMetadata(String topic) {
+		// TODO Auto-generated method stub
+		/*
+		 * topic is optional and thus may be null
+		 * then simply return all datasets
+		 */
+		return null;
+	}
+
+	public String getValidIndicatorFeatures(String indicatorId, String spatialUnitLevel, BigDecimal year,
+			BigDecimal month, BigDecimal day) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getValidIndicatorFeatures(String indicatorId, String spatialUnitLevel) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean deleteIndicatorDatasetById(String indicatorId) throws ResourceNotFoundException, IOException {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
-	
-	//TODO: Methoden zum handling der SpatialUnits
-	
+
+	public String addIndicator(IndicatorPOSTInputType indicatorData) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean deleteIndicatorDatasetByIdAndDate(String indicatorId, BigDecimal year, BigDecimal month,
+			BigDecimal day) throws ResourceNotFoundException, IOException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
 }
