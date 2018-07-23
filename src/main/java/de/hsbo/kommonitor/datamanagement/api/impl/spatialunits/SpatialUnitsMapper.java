@@ -13,23 +13,23 @@ import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewT
 
 public class SpatialUnitsMapper {
 
-	public static SpatialUnitOverviewType mapToSwaggerSpatialUnit(MetadataSpatialUnitsEntity georesourcesEntities) throws IOException, SQLException {
+	public static SpatialUnitOverviewType mapToSwaggerSpatialUnit(MetadataSpatialUnitsEntity spatialUnitEntity) throws IOException, SQLException {
 		SpatialUnitOverviewType dataset = new SpatialUnitOverviewType();
 		
-		dataset.setAvailablePeriodOfValidity(GeoJSON2DatabaseTool.getAvailablePeriodOfValidity(georesourcesEntities.getDbTableName()));
+		dataset.setAvailablePeriodOfValidity(GeoJSON2DatabaseTool.getAvailablePeriodOfValidity(spatialUnitEntity.getDbTableName()));
 		
 		CommonMetadataType commonMetadata = new CommonMetadataType();
-		commonMetadata.setContact(georesourcesEntities.getContact());
-		commonMetadata.setDatasource(georesourcesEntities.getDataSource());
-		commonMetadata.setDescription(georesourcesEntities.getDescription());
-		commonMetadata.setLastUpdate(new java.sql.Date(georesourcesEntities.getLastUpdate().getTime()).toLocalDate());
-		commonMetadata.setSridEPSG(new BigDecimal(georesourcesEntities.getSridEpsg()));
-		commonMetadata.setUpdateInterval(georesourcesEntities.getUpdateIntervall());
+		commonMetadata.setContact(spatialUnitEntity.getContact());
+		commonMetadata.setDatasource(spatialUnitEntity.getDataSource());
+		commonMetadata.setDescription(spatialUnitEntity.getDescription());
+		commonMetadata.setLastUpdate(new java.sql.Date(spatialUnitEntity.getLastUpdate().getTime()).toLocalDate());
+		commonMetadata.setSridEPSG(new BigDecimal(spatialUnitEntity.getSridEpsg()));
+		commonMetadata.setUpdateInterval(spatialUnitEntity.getUpdateIntervall());
 		dataset.setMetadata(commonMetadata);
 		
-		dataset.setNextLowerHierarchyLevel(georesourcesEntities.getNextLowerHierarchyLevel());
-		dataset.setNextUpperHierarchyLevel(georesourcesEntities.getNextUpperHierarchyLevel());
-		dataset.setSpatialUnitLevel(georesourcesEntities.getDatasetName());
+		dataset.setNextLowerHierarchyLevel(spatialUnitEntity.getNextLowerHierarchyLevel());
+		dataset.setNextUpperHierarchyLevel(spatialUnitEntity.getNextUpperHierarchyLevel());
+		dataset.setSpatialUnitLevel(spatialUnitEntity.getDatasetName());
 
 		return dataset;
 	}
