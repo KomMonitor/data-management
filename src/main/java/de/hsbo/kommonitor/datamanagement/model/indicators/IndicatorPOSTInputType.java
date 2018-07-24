@@ -15,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPOSTInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-18T20:11:44.438+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-24T10:41:52.323+02:00")
 
 public class IndicatorPOSTInputType   {
   @JsonProperty("datasetName")
@@ -33,6 +33,9 @@ public class IndicatorPOSTInputType   {
 
   @JsonProperty("processDescription")
   private String processDescription = null;
+
+  @JsonProperty("unit")
+  private String unit = null;
 
   /**
    * indicates if the data was simply inserted (INSERTED), computed by an automated script (COMPUTED) or automatically aggregated by a script (AGGREGATED)
@@ -181,6 +184,24 @@ public class IndicatorPOSTInputType   {
     this.processDescription = processDescription;
   }
 
+  public IndicatorPOSTInputType unit(String unit) {
+    this.unit = unit;
+    return this;
+  }
+
+   /**
+   * unit of the indicator values
+   * @return unit
+  **/
+  @ApiModelProperty(value = "unit of the indicator values")
+  public String getUnit() {
+    return unit;
+  }
+
+  public void setUnit(String unit) {
+    this.unit = unit;
+  }
+
   public IndicatorPOSTInputType creationType(CreationTypeEnum creationType) {
     this.creationType = creationType;
     return this;
@@ -312,6 +333,7 @@ public class IndicatorPOSTInputType   {
         Objects.equals(this.applicableTopics, indicatorPOSTInputType.applicableTopics) &&
         Objects.equals(this.metadata, indicatorPOSTInputType.metadata) &&
         Objects.equals(this.processDescription, indicatorPOSTInputType.processDescription) &&
+        Objects.equals(this.unit, indicatorPOSTInputType.unit) &&
         Objects.equals(this.creationType, indicatorPOSTInputType.creationType) &&
         Objects.equals(this.allowedRoles, indicatorPOSTInputType.allowedRoles) &&
         Objects.equals(this.refrencesToOtherIndicators, indicatorPOSTInputType.refrencesToOtherIndicators) &&
@@ -321,7 +343,7 @@ public class IndicatorPOSTInputType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, applicableSpatialUnit, applicableTopics, metadata, processDescription, creationType, allowedRoles, refrencesToOtherIndicators, refrencesToGeoresources, indicatorValues);
+    return Objects.hash(datasetName, applicableSpatialUnit, applicableTopics, metadata, processDescription, unit, creationType, allowedRoles, refrencesToOtherIndicators, refrencesToGeoresources, indicatorValues);
   }
 
   @Override
@@ -334,6 +356,7 @@ public class IndicatorPOSTInputType   {
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
+    sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
     sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    refrencesToOtherIndicators: ").append(toIndentedString(refrencesToOtherIndicators)).append("\n");

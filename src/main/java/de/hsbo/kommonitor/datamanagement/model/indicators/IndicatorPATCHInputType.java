@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPATCHInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-18T20:11:44.438+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-24T10:41:52.323+02:00")
 
 public class IndicatorPATCHInputType   {
   @JsonProperty("applicableTopics")
@@ -22,6 +22,12 @@ public class IndicatorPATCHInputType   {
 
   @JsonProperty("metadata")
   private CommonMetadataType metadata = null;
+
+  @JsonProperty("processDescription")
+  private String processDescription = null;
+
+  @JsonProperty("unit")
+  private String unit = null;
 
   @JsonProperty("allowedRoles")
   
@@ -74,6 +80,42 @@ public class IndicatorPATCHInputType   {
 
   public void setMetadata(CommonMetadataType metadata) {
     this.metadata = metadata;
+  }
+
+  public IndicatorPATCHInputType processDescription(String processDescription) {
+    this.processDescription = processDescription;
+    return this;
+  }
+
+   /**
+   * description about how the indicator was computed
+   * @return processDescription
+  **/
+  @ApiModelProperty(value = "description about how the indicator was computed")
+  public String getProcessDescription() {
+    return processDescription;
+  }
+
+  public void setProcessDescription(String processDescription) {
+    this.processDescription = processDescription;
+  }
+
+  public IndicatorPATCHInputType unit(String unit) {
+    this.unit = unit;
+    return this;
+  }
+
+   /**
+   * unit of the indicator values
+   * @return unit
+  **/
+  @ApiModelProperty(value = "unit of the indicator values")
+  public String getUnit() {
+    return unit;
+  }
+
+  public void setUnit(String unit) {
+    this.unit = unit;
   }
 
   public IndicatorPATCHInputType allowedRoles(List<String> allowedRoles) {
@@ -163,6 +205,8 @@ public class IndicatorPATCHInputType   {
     IndicatorPATCHInputType indicatorPATCHInputType = (IndicatorPATCHInputType) o;
     return Objects.equals(this.applicableTopics, indicatorPATCHInputType.applicableTopics) &&
         Objects.equals(this.metadata, indicatorPATCHInputType.metadata) &&
+        Objects.equals(this.processDescription, indicatorPATCHInputType.processDescription) &&
+        Objects.equals(this.unit, indicatorPATCHInputType.unit) &&
         Objects.equals(this.allowedRoles, indicatorPATCHInputType.allowedRoles) &&
         Objects.equals(this.refrencesToOtherIndicators, indicatorPATCHInputType.refrencesToOtherIndicators) &&
         Objects.equals(this.refrencesToGeoresources, indicatorPATCHInputType.refrencesToGeoresources);
@@ -170,7 +214,7 @@ public class IndicatorPATCHInputType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(applicableTopics, metadata, allowedRoles, refrencesToOtherIndicators, refrencesToGeoresources);
+    return Objects.hash(applicableTopics, metadata, processDescription, unit, allowedRoles, refrencesToOtherIndicators, refrencesToGeoresources);
   }
 
   @Override
@@ -180,6 +224,8 @@ public class IndicatorPATCHInputType   {
     
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
+    sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
+    sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    refrencesToOtherIndicators: ").append(toIndentedString(refrencesToOtherIndicators)).append("\n");
     sb.append("    refrencesToGeoresources: ").append(toIndentedString(refrencesToGeoresources)).append("\n");
@@ -197,15 +243,5 @@ public class IndicatorPATCHInputType   {
     }
     return o.toString().replace("\n", "\n    ");
   }
-
-public String getProcessDescription() {
-	// TODO Auto-generated method stub
-	return null;
-}
-
-public String getUnit() {
-	// TODO Auto-generated method stub
-	return null;
-}
 }
 
