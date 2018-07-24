@@ -1,18 +1,21 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsHelper;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 @Entity(name = "MetadataIndicators")
 public class MetadataIndicatorsEntity extends AbstractMetadata {
 
-	private String processDescrition = null;
+	private String processDescription = null;
 	private String unit = null;
 	private CreationTypeEnum creationType = null;
 	private String featureViewDbTableName = null;
@@ -34,12 +37,12 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	inverseJoinColumns = @JoinColumn(name = "topic_id", referencedColumnName = "topicid"))
 	private Collection<TopicsEntity> indicatorTopics;
 	
-	public String getProcessDescrition() {
-		return processDescrition;
+	public String getProcessDescription() {
+		return processDescription;
 	}
 
-	public void setProcessDescrition(String processDescrition) {
-		this.processDescrition = processDescrition;
+	public void setProcessDescription(String processDescrition) {
+		this.processDescription = processDescrition;
 	}
 
 	public String getUnit() {
@@ -81,5 +84,27 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	public void setAssociatedSpatialUnitMetadataId(String associatedSpatialUnitMetadataId) {
 		this.associatedSpatialUnitMetadataId = associatedSpatialUnitMetadataId;
 	}
+
+	public void addTopicsIfNotExist(List<String> applicableTopics)throws Exception {
+		if (this.indicatorTopics == null)
+			this.indicatorTopics = new ArrayList<>();
+
+		for (String topic : applicableTopics) {
+			/*
+			 * add topic if not exists
+			 */
+			if (!topicAlreadyInTopicReferences(topic, applicableTopics))
+				this.indicatorTopics.add(TopicsHelper.getTopicByName(topic));
+		}
+	}
+	
+	private boolean topicAlreadyInTopicReferences(String topic, List<String> applicableTopics) throws Exception {
+		TopicsEntity topicEntity = TopicsHelper.getTopicByName(topic);
+		if (applicableTopics.contains(topicEntity))
+			return true;
+		// if code reaches this line, then the topic is not within the list
+		return false;
+	}
+
 
 }
