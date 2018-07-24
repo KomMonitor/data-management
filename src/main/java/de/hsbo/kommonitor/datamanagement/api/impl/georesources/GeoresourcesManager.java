@@ -152,7 +152,7 @@ public class GeoresourcesManager {
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 
 		/*
-		 * add topic to referenced topics, bu only if topic is not yet included!
+		 * add topic to referenced topics, but only if topic is not yet included!
 		 */
 		entity.addTopicsIfNotExist(featureData.getApplicableTopics());
 
