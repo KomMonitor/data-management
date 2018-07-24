@@ -202,10 +202,76 @@ public class GeoJSON2DatabaseTool {
 		store.dispose();
 	}
 
-	public static void updateSpatialUnitFeatures(SpatialUnitPUTInputType featureData, String dbTableName) {
+	public static void updateSpatialUnitFeatures(SpatialUnitPUTInputType featureData, String dbTableName) throws IOException {
 		// TODO FIXME implement
 
 		// TODO check, if update was successful
+		
+		/*
+		 * idea:
+		 * check all features from input:
+		 * 
+		 * if (feature exists in db with the same geometry),
+		 * 		then only update the validity period
+		 * else (feature does not exist at all or has different geometry)
+		 * 		then 
+		 * 			if (only geometry changed, id remains) 
+		 * 				then insert as new feature and set validity period end date for the OLD feature
+		 * 			else (completely new feature with new id)
+		 * 				then insert as new feature
+		 * 
+		 *  arisenFrom will be implemented as parameter within geoJSON dataset. Hence no geometric operations are required for now
+		 */
+		
+		logger.info("Updating feature table {}.", dbTableName);
+		
+		int numberOfModifiedEntries = 0;
+		int numberOfInsertedEntries = 0;
+		boolean inputFeaturesHaveArisonFromAttribute = false;
+		
+		FeatureJSON featureJSON = new FeatureJSON();
+		String geoJsonString = featureData.getGeoJsonString();
+		SimpleFeatureType inputFeatureSchema = featureJSON.readFeatureCollectionSchema(geoJsonString, false);
+		FeatureCollection inputFeatureCollection = featureJSON.readFeatureCollection(geoJsonString);
+		
+		if (inputFeatureSchema.getDescriptor(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME) != null)
+			inputFeaturesHaveArisonFromAttribute = true;		
+
+		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
+
+		SimpleFeatureSource featureSource = store.getFeatureSource(dbTableName);
+		if (featureSource instanceof SimpleFeatureStore) {
+			SimpleFeatureStore sfStore = (SimpleFeatureStore) featureSource; // write
+																			// access!
+			
+
+			
+		}
+
+		logger.info("Update of feature table {} was successful {}. Modified {} entries. Added {} new entries", dbTableName, numberOfModifiedEntries, numberOfInsertedEntries);
+
+		store.dispose();
+	}
+	
+	public static void updateGeoresourceFeatures(GeoresourcePUTInputType featureData, String dbTableName) throws IOException {
+		// TODO Auto-generated method stub
+		
+		/*
+		 * idea:
+		 * check all features from input:
+		 * 
+		 * if (feature exists in db with the same geometry),
+		 * 		then only update the validity period
+		 * else (feature does not exist at all or has different geometry)
+		 * 		then 
+		 * 			if (only geometry changed, id remains) 
+		 * 				then insert as new feature and set validity period end date for the OLD feature
+		 * 			else (completely new feature with new id)
+		 * 				then insert as new feature
+		 * 
+		 *  arisenFrom will be implemented as parameter within geoJSON dataset. Hence no geometric operations are required for now
+		 */
+		
 	}
 
 	public static AvailablePeriodOfValidityType getAvailablePeriodOfValidity(String dbTableName)
@@ -325,11 +391,6 @@ public class GeoJSON2DatabaseTool {
 		
 		SimpleFeatureCollection features = featureSource.getFeatures(andFilter);
 		return features;
-	}
-
-	public static void updateGeoresourceFeatures(GeoresourcePUTInputType featureData, String dbTableName) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
