@@ -6,17 +6,18 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.filter.FilterFactoryImpl;
 import org.geotools.filter.text.cql2.CQL;
@@ -24,6 +25,8 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPosition;
+import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -32,6 +35,8 @@ import org.opengis.filter.Or;
 import org.opengis.temporal.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodOfValidityType;
@@ -42,6 +47,9 @@ import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputT
 public class GeoJSON2DatabaseTool {
 
 	private static Logger logger = LoggerFactory.getLogger(GeoJSON2DatabaseTool.class);
+	private static int numberOfModifiedEntries;
+	private static int numberOfInsertedEntries;
+	private static boolean inputFeaturesHaveArisonFromAttribute;
 
 	public static String writeGeoJSONFeaturesToDatabase(ResourceTypeEnum resourceType, String geoJSONFeatures,
 			PeriodOfValidityType periodOfValidity, String correspondingMetadataDatasetId)
@@ -202,76 +210,144 @@ public class GeoJSON2DatabaseTool {
 		store.dispose();
 	}
 
-	public static void updateSpatialUnitFeatures(SpatialUnitPUTInputType featureData, String dbTableName) throws IOException {
+	public static void updateSpatialUnitFeatures(SpatialUnitPUTInputType featureData, String dbTableName)
+			throws IOException {
 		// TODO FIXME implement
 
 		// TODO check, if update was successful
-		
+
 		/*
-		 * idea:
-		 * check all features from input:
+		 * idea: check all features from input:
 		 * 
-		 * if (feature exists in db with the same geometry),
-		 * 		then only update the validity period
-		 * else (feature does not exist at all or has different geometry)
-		 * 		then 
-		 * 			if (only geometry changed, id remains) 
-		 * 				then insert as new feature and set validity period end date for the OLD feature
-		 * 			else (completely new feature with new id)
-		 * 				then insert as new feature
+		 * if (feature exists in db with the same geometry), then only update
+		 * the validity period else (feature does not exist at all or has
+		 * different geometry) then if (only geometry changed, id remains) then
+		 * insert as new feature and set validity period end date for the OLD
+		 * feature else (completely new feature with new id) then insert as new
+		 * feature
 		 * 
-		 *  arisenFrom will be implemented as parameter within geoJSON dataset. Hence no geometric operations are required for now
+		 * arisenFrom will be implemented as parameter within geoJSON dataset.
+		 * Hence no geometric operations are required for now
 		 */
-		
+
 		logger.info("Updating feature table {}.", dbTableName);
-		
-		int numberOfModifiedEntries = 0;
-		int numberOfInsertedEntries = 0;
-		boolean inputFeaturesHaveArisonFromAttribute = false;
-		
+
+		numberOfModifiedEntries = 0;
+		numberOfInsertedEntries = 0;
+		inputFeaturesHaveArisonFromAttribute = false;
+
 		FeatureJSON featureJSON = new FeatureJSON();
 		String geoJsonString = featureData.getGeoJsonString();
 		SimpleFeatureType inputFeatureSchema = featureJSON.readFeatureCollectionSchema(geoJsonString, false);
 		FeatureCollection inputFeatureCollection = featureJSON.readFeatureCollection(geoJsonString);
-		
+
+		DefaultFeatureCollection newFeaturesToBeAdded = new DefaultFeatureCollection();
+
 		if (inputFeatureSchema.getDescriptor(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME) != null)
-			inputFeaturesHaveArisonFromAttribute = true;		
+			inputFeaturesHaveArisonFromAttribute = true;
 
 		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
-
 		SimpleFeatureSource featureSource = store.getFeatureSource(dbTableName);
+		
 		if (featureSource instanceof SimpleFeatureStore) {
 			SimpleFeatureStore sfStore = (SimpleFeatureStore) featureSource; // write
-																			// access!
-			
+																				// access!
 
-			
+			DefaultTransaction transaction = new DefaultTransaction("Modify features in Table " + dbTableName);
+			sfStore.setTransaction(transaction);
+			try {
+
+				SimpleFeatureCollection dbFeatures = featureSource.getFeatures();
+
+				/*
+				 * now compare each of the input features with the dbFeatures
+				 * 
+				 * modify elements of dbFeatures, if necessary and then replace
+				 * db content with modified features
+				 * 
+				 * collect completetly new features separately in order to add
+				 * them and initialize their KomMonitor field in a second step
+				 */
+
+				FeatureIterator inputFeaturesIterator = inputFeatureCollection.features();
+
+				while (inputFeaturesIterator.hasNext()) {
+					Feature inputFeature = inputFeaturesIterator.next();
+
+					Feature correspondingDbFeature = findCorrespondingDbFeatureById(inputFeature, dbFeatures);
+
+					if (correspondingDbFeature != null) {
+						// compare geometries
+						Geometry dbGeometry = (Geometry) correspondingDbFeature.getDefaultGeometryProperty().getValue();
+						Geometry inputGeometry = (Geometry) inputFeature.getDefaultGeometryProperty().getValue();
+						if (dbGeometry.equals(inputGeometry)) {
+							// same object --> only update validity period!
+							// create modify statement and add to transaction!
+							//TODO implement
+						} else {
+							// same id but different geometry --> hence mark old object as outdated
+							// and add new inputFeature to newFeaturesToBeAdded
+							// TODO implement
+						}
+					}
+
+				}
+
+				inputFeaturesIterator.close();
+
+				transaction.commit(); // actually writes out the features in one
+				// go
+			} catch (Exception eek) {
+				transaction.rollback();
+			}
+
 		}
 
-		logger.info("Update of feature table {} was successful {}. Modified {} entries. Added {} new entries", dbTableName, numberOfModifiedEntries, numberOfInsertedEntries);
+		logger.info("Update of feature table {} was successful {}. Modified {} entries. Added {} new entries",
+				dbTableName, numberOfModifiedEntries, numberOfInsertedEntries);
+		
+		/*
+		 * TODO FIXME check all dbEntries, if they might have to be assigned with a new endDate in case
+		 * they are no longer present in the inputFeatures
+		 * 
+		 */
 
 		store.dispose();
 	}
-	
-	public static void updateGeoresourceFeatures(GeoresourcePUTInputType featureData, String dbTableName) throws IOException {
+
+	private static Feature findCorrespondingDbFeatureById(Feature inputFeature, SimpleFeatureCollection dbFeatures) {
+		SimpleFeatureIterator dbFeatureIterator = dbFeatures.features();
+		
+		while (dbFeatureIterator.hasNext()){
+			SimpleFeature dbFeature = dbFeatureIterator.next();
+			
+			if(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME).equals(dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME))){
+				dbFeatureIterator.close();
+				return dbFeature;
+			}			
+		}
+		// if code reaches this, then no dvFeature was found
+		return null;
+	}
+
+	public static void updateGeoresourceFeatures(GeoresourcePUTInputType featureData, String dbTableName)
+			throws IOException {
 		// TODO Auto-generated method stub
-		
+
 		/*
-		 * idea:
-		 * check all features from input:
+		 * idea: check all features from input:
 		 * 
-		 * if (feature exists in db with the same geometry),
-		 * 		then only update the validity period
-		 * else (feature does not exist at all or has different geometry)
-		 * 		then 
-		 * 			if (only geometry changed, id remains) 
-		 * 				then insert as new feature and set validity period end date for the OLD feature
-		 * 			else (completely new feature with new id)
-		 * 				then insert as new feature
+		 * if (feature exists in db with the same geometry), then only update
+		 * the validity period else (feature does not exist at all or has
+		 * different geometry) then if (only geometry changed, id remains) then
+		 * insert as new feature and set validity period end date for the OLD
+		 * feature else (completely new feature with new id) then insert as new
+		 * feature
 		 * 
-		 *  arisenFrom will be implemented as parameter within geoJSON dataset. Hence no geometric operations are required for now
+		 * arisenFrom will be implemented as parameter within geoJSON dataset.
+		 * Hence no geometric operations are required for now
 		 */
-		
+
 	}
 
 	public static AvailablePeriodOfValidityType getAvailablePeriodOfValidity(String dbTableName)
@@ -334,36 +410,36 @@ public class GeoJSON2DatabaseTool {
 
 	public static String getValidFeatures(Date date, String dbTableName) throws Exception {
 		/*
-		 * fetch all features from table where startDate <= date and (endDate >= date || endDate = null)
+		 * fetch all features from table where startDate <= date and (endDate >=
+		 * date || endDate = null)
 		 * 
-		 * then transform the featureCollection to GeoJSON! 
-		 * return geojsonString
+		 * then transform the featureCollection to GeoJSON! return geojsonString
 		 */
 		logger.info("Fetch features for validDate {} from table with name {}", date, dbTableName);
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
-		
+
 		FeatureCollection features;
-		
+
 		SimpleFeatureSource featureSource = dataStore.getFeatureSource(dbTableName);
 		features = fetchFeaturesForDate(featureSource, date);
-		
+
 		int validFeaturesSize = features.size();
 		logger.info("Transform {} found features to GeoJSON", validFeaturesSize);
-		
+
 		String geoJson = null;
-		
-		if(validFeaturesSize > 0){
+
+		if (validFeaturesSize > 0) {
 			FeatureJSON toGeoJSON = new FeatureJSON();
 			StringWriter writer = new StringWriter();
 			toGeoJSON.writeFeatureCollection(features, writer);
 			geoJson = writer.toString();
-		}else{
+		} else {
 			dataStore.dispose();
 			throw new Exception("No valid features could be retrieved for the specified date.");
 		}
-		
+
 		dataStore.dispose();
-		
+
 		return geoJson;
 	}
 
@@ -371,24 +447,27 @@ public class GeoJSON2DatabaseTool {
 			throws CQLException, IOException {
 		// fetch all features from table where startDate <= date and (endDate >=
 		// date || endDate = null)
-		
+
 		FilterFactory ff = new FilterFactoryImpl();
-//		
-//		ff.before(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, date);ExpressionF
+		//
+		// ff.before(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME,
+		// date);ExpressionF
 		String iso8601utc = DateTimeUtil.toISO8601UTC(date);
 		System.out.println(iso8601utc);
-		
-        Instant temporalInstant = new DefaultInstant(new DefaultPosition(date));
 
-        // Simple check if property is after provided temporal instant
-        Filter endDateAfter = ff.after(ff.property(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME), ff.literal(temporalInstant));		
+		Instant temporalInstant = new DefaultInstant(new DefaultPosition(date));
+
+		// Simple check if property is after provided temporal instant
+		Filter endDateAfter = ff.after(ff.property(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME),
+				ff.literal(temporalInstant));
 		Filter endDateNull = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " is null");
-		Filter startDateBefore = ff.before(ff.property(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME), ff.literal(temporalInstant));
+		Filter startDateBefore = ff.before(ff.property(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME),
+				ff.literal(temporalInstant));
 
 		Or endDateNullOrAfter = ff.or(endDateNull, endDateAfter);
 
 		And andFilter = ff.and(startDateBefore, endDateNullOrAfter);
-		
+
 		SimpleFeatureCollection features = featureSource.getFeatures(andFilter);
 		return features;
 	}
