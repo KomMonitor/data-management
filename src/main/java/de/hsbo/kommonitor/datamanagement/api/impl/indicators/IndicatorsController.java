@@ -301,7 +301,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 		 */
 
 		try {
-			indicatorId = IndicatorsManager.updateMetadata(metadata, indicatorId);
+			indicatorId = indicatorsManager.updateMetadata(metadata, indicatorId);
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 

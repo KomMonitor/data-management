@@ -197,5 +197,15 @@ public class IndicatorPATCHInputType   {
     }
     return o.toString().replace("\n", "\n    ");
   }
+
+public String getProcessDescription() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public String getUnit() {
+	// TODO Auto-generated method stub
+	return null;
+}
 }
 
