@@ -27,6 +27,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEnt
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
 
 public class Indicator2Database {
 
@@ -230,5 +231,26 @@ public class Indicator2Database {
 		String dateString = year + "-" + month + "-" + dayOfMonth;
 		return dateString;
 	}
+
+	public static void updateIndicatorFeatures(IndicatorPUTInputType indicatorData, String dbTableName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static String getValidFeatures(Date date, String dbTableName, String spatialUnit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static String getValidFeatures(String dbTableName, String spatialUnit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static void deleteFeatureTable(ResourceTypeEnum indicator, String dbTableName) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

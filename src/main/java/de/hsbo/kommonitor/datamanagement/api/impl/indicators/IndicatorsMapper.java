@@ -6,13 +6,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseTool;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 
 public class IndicatorsMapper {
 
+	public static List <IndicatorOverviewType> mapToSwaggerIndicator(List<MetadataIndicatorsEntity> indicatorsMetadataEntity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+/*
 	public static SpatialUnitOverviewType mapToSwaggerSpatialUnit(MetadataSpatialUnitsEntity georesourcesEntities) throws IOException, SQLException {
 		SpatialUnitOverviewType dataset = new SpatialUnitOverviewType();
 		
@@ -42,5 +49,15 @@ public class IndicatorsMapper {
 			metadatasets.add(mapToSwaggerSpatialUnit(metadataEntity));
 		}
 		return metadatasets;
+	}*/
+
+	public static IndicatorOverviewType mapToSwaggerIndicator(MetadataIndicatorsEntity indicatorsMetadataEntity) {
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+
+	
+	
+	
 }

@@ -16,6 +16,8 @@ public interface IndicatorsMetadataRepository extends JpaRepository<MetadataIndi
 
 	void deleteByDatasetName(String datasetName);
 
+	void deleteByDatasetId(String indicatorId);
+
 
 	
 
