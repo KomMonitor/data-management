@@ -29,6 +29,7 @@ import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPosition;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.And;
@@ -360,7 +361,7 @@ public class GeoJSON2DatabaseTool {
 	}
 	
 	public static void updateSpatialUnitFeatures(SpatialUnitPUTInputType featureData, String dbTableName)
-			throws IOException {
+			throws Exception {
 		// TODO FIXME implement
 
 		// TODO check, if update was successful
@@ -387,7 +388,9 @@ public class GeoJSON2DatabaseTool {
 		
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
 		Date startDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getStartDate());
-		Date endDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
+		Date endDate_new = null;
+		if (periodOfValidity.getEndDate() != null)
+			DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
 		
 		FilterFactory ff = new FilterFactoryImpl();
 
@@ -498,11 +501,14 @@ public class GeoJSON2DatabaseTool {
 				// go
 			} catch (Exception eek) {
 				transaction.rollback();
+				eek.printStackTrace();
+				logger.error("An error occured while updating the feature table with name '" + dbTableName + "'. Update failed. Error message is: '" + eek.getMessage() + "'");
+				throw new Exception("An error occured while updating the feature table with name '" + dbTableName + "'. Update failed. Error message is: '" + eek.getMessage() + "'");
 			}
 
 		}
 
-		logger.info("Update of feature table {} was successful {}. Modified {} entries. Added {} new entries",
+		logger.info("Update of feature table {} was successful. Modified {} entries. Added {} new entries",
 				dbTableName, numberOfModifiedEntries, numberOfInsertedEntries);
 		
 		/*
@@ -538,7 +544,9 @@ public class GeoJSON2DatabaseTool {
 			Date validEndDate = (Date) dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
 			Date now = new Date();
 			
-			if(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME).equals(dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME))
+			String inputFeatureId = String.valueOf(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME).getValue());
+			String dbFeatureId = String.valueOf(dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME));
+			if(inputFeatureId.equals(dbFeatureId)
 					&& (validEndDate == null || validEndDate.after(now))){
 				dbFeatureIterator.close();
 				return dbFeature;

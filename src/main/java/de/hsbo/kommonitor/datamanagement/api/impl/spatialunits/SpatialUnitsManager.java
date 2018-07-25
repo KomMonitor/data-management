@@ -176,7 +176,7 @@ public class SpatialUnitsManager {
 		}
 	}
 
-	public String updateFeatures(SpatialUnitPUTInputType featureData, String spatialUnitLevel) throws ResourceNotFoundException, IOException {
+	public String updateFeatures(SpatialUnitPUTInputType featureData, String spatialUnitLevel) throws Exception {
 		logger.info("Trying to update spatialUnit features for datasetName '{}'", spatialUnitLevel);
 		if (spatialUnitsMetadataRepo.existsByDatasetName(spatialUnitLevel)) {
 			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);

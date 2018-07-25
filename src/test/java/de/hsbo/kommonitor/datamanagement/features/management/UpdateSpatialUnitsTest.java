@@ -17,10 +17,10 @@ import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputT
 public class UpdateSpatialUnitsTest {
 
 	@Test
-	public void test() throws IOException, URISyntaxException, CQLException {
+	public void test() throws Exception {
 
 		String geoJSON_Stadtteile_update = new String(
-				Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource("Stadtbezirke_updated.json").toURI())));
+				Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource("Stadtteile_Gelsenkirchen_updated.json").toURI())));
 
 		PeriodOfValidityType periodOfValidity = new PeriodOfValidityType();
 		periodOfValidity.setStartDate(LocalDate.of(2017, Month.JANUARY, 1));
