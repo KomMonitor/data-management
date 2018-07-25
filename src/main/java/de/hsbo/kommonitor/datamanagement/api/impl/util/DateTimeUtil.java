@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.util;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -27,6 +28,14 @@ public class DateTimeUtil {
 		}
 
 		return null;
+	}
+
+	public static Date fromLocalDate(LocalDate date) {
+		return java.sql.Date.valueOf(date);
+	}
+	
+	public static LocalDate toLocalDate(Date date) {
+		return new java.sql.Date(date.getTime()).toLocalDate();
 	}
 
 }

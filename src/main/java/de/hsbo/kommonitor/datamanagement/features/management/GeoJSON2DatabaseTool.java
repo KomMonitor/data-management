@@ -235,6 +235,10 @@ public class GeoJSON2DatabaseTool {
 		numberOfModifiedEntries = 0;
 		numberOfInsertedEntries = 0;
 		inputFeaturesHaveArisonFromAttribute = false;
+		
+		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
+		Date startDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getStartDate());
+		Date endDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
 
 		FeatureJSON featureJSON = new FeatureJSON();
 		String geoJsonString = featureData.getGeoJsonString();
@@ -284,6 +288,13 @@ public class GeoJSON2DatabaseTool {
 							// same object --> only update validity period!
 							// create modify statement and add to transaction!
 							//TODO implement
+							
+							//set validStartDate, if new one is earlier
+							Date dbFeatureStartDate = (Date) correspondingDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+							
+							// setvalidEndDate, if new one is later or null
+							
+//							sfStore.modifyFeatures(attributeName, attributeValue, filter);
 						} else {
 							// same id but different geometry --> hence mark old object as outdated
 							// and add new inputFeature to newFeaturesToBeAdded
@@ -370,7 +381,7 @@ public class GeoJSON2DatabaseTool {
 
 		AvailablePeriodOfValidityType validityPeriod = new AvailablePeriodOfValidityType();
 		if (rs.next()) { // check if a result was returned
-			validityPeriod.setEarliestStartDate(new java.sql.Date(rs.getDate(1).getTime()).toLocalDate());
+			validityPeriod.setEarliestStartDate(DateTimeUtil.toLocalDate(rs.getDate(1)));
 		}
 
 		rs.close();
@@ -407,7 +418,7 @@ public class GeoJSON2DatabaseTool {
 				 */
 				java.sql.Date latestEndDate = rs.getDate(1);
 				if (latestEndDate != null)
-					validityPeriod.setEndDate(new java.sql.Date(latestEndDate.getTime()).toLocalDate());
+					validityPeriod.setEndDate(DateTimeUtil.toLocalDate(latestEndDate));
 			}
 
 		}

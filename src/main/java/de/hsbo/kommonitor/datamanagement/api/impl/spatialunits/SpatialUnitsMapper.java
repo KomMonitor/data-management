@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseTool;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
@@ -22,7 +23,7 @@ public class SpatialUnitsMapper {
 		commonMetadata.setContact(spatialUnitEntity.getContact());
 		commonMetadata.setDatasource(spatialUnitEntity.getDataSource());
 		commonMetadata.setDescription(spatialUnitEntity.getDescription());
-		commonMetadata.setLastUpdate(new java.sql.Date(spatialUnitEntity.getLastUpdate().getTime()).toLocalDate());
+		commonMetadata.setLastUpdate(DateTimeUtil.toLocalDate(spatialUnitEntity.getLastUpdate()));
 		commonMetadata.setSridEPSG(new BigDecimal(spatialUnitEntity.getSridEpsg()));
 		commonMetadata.setUpdateInterval(spatialUnitEntity.getUpdateIntervall());
 		dataset.setMetadata(commonMetadata);

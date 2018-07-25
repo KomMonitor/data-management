@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
@@ -189,7 +190,8 @@ public class Indicator2Database {
 		List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorValues.get(0).getValueMapping();
 
 		for (IndicatorPOSTInputTypeValueMapping entry : valueMapping) {
-			availableDates.add(java.sql.Date.valueOf(entry.getTimestamp()));
+//			availableDates.add(java.sql.Date.valueOf(entry.getTimestamp()));
+			availableDates.add(DateTimeUtil.fromLocalDate(entry.getTimestamp()));
 		}
 
 		return availableDates;

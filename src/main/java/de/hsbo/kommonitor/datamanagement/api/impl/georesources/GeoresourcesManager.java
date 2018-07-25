@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseTool;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
@@ -144,7 +145,7 @@ public class GeoresourcesManager {
 		entity.setDescription(genericMetadata.getDescription());
 		entity.setJsonSchema(featureData.getJsonSchema());
 
-		java.util.Date lastUpdate = java.sql.Date.valueOf(genericMetadata.getLastUpdate());
+		java.util.Date lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
 		if (lastUpdate == null)
 			lastUpdate = java.util.Calendar.getInstance().getTime();
 		entity.setLastUpdate(lastUpdate);
@@ -296,7 +297,7 @@ public class GeoresourcesManager {
 		entity.setDataSource(genericMetadata.getDatasource());
 		entity.setDescription(genericMetadata.getDescription());
 
-		java.util.Date lastUpdate = java.sql.Date.valueOf(genericMetadata.getLastUpdate());
+		java.util.Date lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
 		if (lastUpdate == null)
 			lastUpdate = java.util.Calendar.getInstance().getTime();
 		entity.setLastUpdate(lastUpdate);

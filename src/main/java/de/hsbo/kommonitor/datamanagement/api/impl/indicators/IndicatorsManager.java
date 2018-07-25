@@ -25,6 +25,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseTool;
 import de.hsbo.kommonitor.datamanagement.features.management.Indicator2Database;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
@@ -89,7 +90,7 @@ public class IndicatorsManager {
 		entity.setDataSource(genericMetadata.getDatasource());
 		entity.setDescription(genericMetadata.getDescription());
 
-		java.util.Date lastUpdate = java.sql.Date.valueOf(genericMetadata.getLastUpdate());
+		java.util.Date lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
 		if (lastUpdate == null)
 			lastUpdate = java.util.Calendar.getInstance().getTime();
 		entity.setLastUpdate(lastUpdate);
@@ -341,7 +342,7 @@ public class IndicatorsManager {
 		entity.setDataSource(genericMetadata.getDatasource());
 		entity.setDescription(genericMetadata.getDescription());
 
-		java.util.Date lastUpdate = java.sql.Date.valueOf(genericMetadata.getLastUpdate());
+		java.util.Date lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
 		if (lastUpdate == null)
 			lastUpdate = java.util.Calendar.getInstance().getTime();
 		entity.setLastUpdate(lastUpdate);

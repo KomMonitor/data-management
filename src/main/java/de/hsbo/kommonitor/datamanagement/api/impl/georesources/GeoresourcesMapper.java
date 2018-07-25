@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseTool;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
@@ -38,7 +39,7 @@ public class GeoresourcesMapper {
 		commonMetadata.setDatasource(georesourceMetadataEntity.getDataSource());
 		commonMetadata.setDescription(georesourceMetadataEntity.getDescription());
 		commonMetadata
-				.setLastUpdate(new java.sql.Date(georesourceMetadataEntity.getLastUpdate().getTime()).toLocalDate());
+				.setLastUpdate(DateTimeUtil.toLocalDate(georesourceMetadataEntity.getLastUpdate()));
 		commonMetadata.setSridEPSG(new BigDecimal(georesourceMetadataEntity.getSridEpsg()));
 		commonMetadata.setUpdateInterval(georesourceMetadataEntity.getUpdateIntervall());
 		dataset.setMetadata(commonMetadata);
