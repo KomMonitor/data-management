@@ -291,6 +291,10 @@ public class GeoJSON2DatabaseTool {
 							
 							//set validStartDate, if new one is earlier
 							Date dbFeatureStartDate = (Date) correspondingDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+							if (startDate_new.before(dbFeatureStartDate)){
+								String uniqueFeatureIdValue = correspondingDbFeature.getIdentifier().getID();
+//								String uniqueFeatureIdPropertyName = 
+							}
 							
 							// setvalidEndDate, if new one is later or null
 							
