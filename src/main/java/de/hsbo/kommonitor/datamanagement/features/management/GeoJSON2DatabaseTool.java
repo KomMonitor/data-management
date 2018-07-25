@@ -294,6 +294,7 @@ public class GeoJSON2DatabaseTool {
 							if (startDate_new.before(dbFeatureStartDate)){
 								String uniqueFeatureIdValue = correspondingDbFeature.getIdentifier().getID();
 //								String uniqueFeatureIdPropertyName = 
+								//
 							}
 							
 							// setvalidEndDate, if new one is later or null
