@@ -472,12 +472,13 @@ public class GeoJSON2DatabaseTool {
 							// add inputFeature to newFeaturesToBeAdded will be processed later together with all other new features
 							newFeaturesToBeAdded.add((SimpleFeature)inputFeature);
 						}
+					}else{
+						/*
+						 * no corresponding db feature entry has been found.
+						 * hence this feature is completely new
+						 */
+						newFeaturesToBeAdded.add((SimpleFeature)inputFeature);
 					}
-					/*
-					 * no corresponding db feature entry has been found.
-					 * hence this feature is completely new
-					 */
-					newFeaturesToBeAdded.add((SimpleFeature)inputFeature);
 				}
 
 				inputFeaturesIterator.close();
