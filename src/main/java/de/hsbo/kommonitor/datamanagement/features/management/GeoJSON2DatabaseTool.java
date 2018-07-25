@@ -7,6 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.DefaultTransaction;
@@ -32,6 +35,8 @@ import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Or;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.identity.Identifier;
 import org.opengis.temporal.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -210,171 +215,7 @@ public class GeoJSON2DatabaseTool {
 		store.dispose();
 	}
 
-	public static void updateSpatialUnitFeatures(SpatialUnitPUTInputType featureData, String dbTableName)
-			throws IOException {
-		// TODO FIXME implement
 
-		// TODO check, if update was successful
-
-		/*
-		 * idea: check all features from input:
-		 * 
-		 * if (feature exists in db with the same geometry), then only update
-		 * the validity period else (feature does not exist at all or has
-		 * different geometry) then if (only geometry changed, id remains) then
-		 * insert as new feature and set validity period end date for the OLD
-		 * feature else (completely new feature with new id) then insert as new
-		 * feature
-		 * 
-		 * arisenFrom will be implemented as parameter within geoJSON dataset.
-		 * Hence no geometric operations are required for now
-		 */
-
-		logger.info("Updating feature table {}.", dbTableName);
-
-		numberOfModifiedEntries = 0;
-		numberOfInsertedEntries = 0;
-		inputFeaturesHaveArisonFromAttribute = false;
-		
-		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
-		Date startDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getStartDate());
-		Date endDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
-
-		FeatureJSON featureJSON = new FeatureJSON();
-		String geoJsonString = featureData.getGeoJsonString();
-		SimpleFeatureType inputFeatureSchema = featureJSON.readFeatureCollectionSchema(geoJsonString, false);
-		FeatureCollection inputFeatureCollection = featureJSON.readFeatureCollection(geoJsonString);
-
-		DefaultFeatureCollection newFeaturesToBeAdded = new DefaultFeatureCollection();
-
-		if (inputFeatureSchema.getDescriptor(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME) != null)
-			inputFeaturesHaveArisonFromAttribute = true;
-
-		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
-		SimpleFeatureSource featureSource = store.getFeatureSource(dbTableName);
-		
-		if (featureSource instanceof SimpleFeatureStore) {
-			SimpleFeatureStore sfStore = (SimpleFeatureStore) featureSource; // write
-																				// access!
-
-			DefaultTransaction transaction = new DefaultTransaction("Modify features in Table " + dbTableName);
-			sfStore.setTransaction(transaction);
-			try {
-
-				SimpleFeatureCollection dbFeatures = featureSource.getFeatures();
-
-				/*
-				 * now compare each of the input features with the dbFeatures
-				 * 
-				 * modify elements of dbFeatures, if necessary and then replace
-				 * db content with modified features
-				 * 
-				 * collect completetly new features separately in order to add
-				 * them and initialize their KomMonitor field in a second step
-				 */
-
-				FeatureIterator inputFeaturesIterator = inputFeatureCollection.features();
-
-				while (inputFeaturesIterator.hasNext()) {
-					Feature inputFeature = inputFeaturesIterator.next();
-
-					Feature correspondingDbFeature = findCorrespondingDbFeatureById(inputFeature, dbFeatures);
-
-					if (correspondingDbFeature != null) {
-						// compare geometries
-						Geometry dbGeometry = (Geometry) correspondingDbFeature.getDefaultGeometryProperty().getValue();
-						Geometry inputGeometry = (Geometry) inputFeature.getDefaultGeometryProperty().getValue();
-						if (dbGeometry.equals(inputGeometry)) {
-							// same object --> only update validity period!
-							// create modify statement and add to transaction!
-							//TODO implement
-							
-							//set validStartDate, if new one is earlier
-							Date dbFeatureStartDate = (Date) correspondingDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
-							if (startDate_new.before(dbFeatureStartDate)){
-								String uniqueFeatureIdValue = correspondingDbFeature.getIdentifier().getID();
-//								String uniqueFeatureIdPropertyName = 
-								//
-							}
-							
-							// setvalidEndDate, if new one is later or null
-							
-//							sfStore.modifyFeatures(attributeName, attributeValue, filter);
-						} else {
-							// same id but different geometry --> hence mark old object as outdated
-							// and add new inputFeature to newFeaturesToBeAdded
-							// TODO implement
-						}
-					}
-
-				}
-
-				inputFeaturesIterator.close();
-
-				transaction.commit(); // actually writes out the features in one
-				// go
-			} catch (Exception eek) {
-				transaction.rollback();
-			}
-
-		}
-
-		logger.info("Update of feature table {} was successful {}. Modified {} entries. Added {} new entries",
-				dbTableName, numberOfModifiedEntries, numberOfInsertedEntries);
-		
-		/*
-		 * TODO FIXME check all dbEntries, if they might have to be assigned with a new endDate in case
-		 * they are no longer present in the inputFeatures
-		 * 
-		 */
-
-		store.dispose();
-	}
-
-	private static Feature findCorrespondingDbFeatureById(Feature inputFeature, SimpleFeatureCollection dbFeatures) {
-		SimpleFeatureIterator dbFeatureIterator = dbFeatures.features();
-		
-		while (dbFeatureIterator.hasNext()){
-			SimpleFeature dbFeature = dbFeatureIterator.next();
-			/*
-			 * if both have the same id AND validEndDate is null OR in the future
-			 * then we have found the feature
-			 * 
-			 * --> although there might be multiple features with the same ID already,
-			 * only one geometry can be currently valid!!! 
-			 */
-			Date validEndDate = (Date) dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
-			Date now = new Date();
-			
-			if(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME).equals(dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME))
-					&& (validEndDate == null || validEndDate.after(now))){
-				dbFeatureIterator.close();
-				return dbFeature;
-			}			
-		}
-		// if code reaches this, then no dvFeature was found
-		return null;
-	}
-
-	public static void updateGeoresourceFeatures(GeoresourcePUTInputType featureData, String dbTableName)
-			throws IOException {
-		// TODO Auto-generated method stub
-
-		/*
-		 * idea: check all features from input:
-		 * 
-		 * if (feature exists in db with the same geometry), then only update
-		 * the validity period else (feature does not exist at all or has
-		 * different geometry) then if (only geometry changed, id remains) then
-		 * insert as new feature and set validity period end date for the OLD
-		 * feature else (completely new feature with new id) then insert as new
-		 * feature
-		 * 
-		 * arisenFrom will be implemented as parameter within geoJSON dataset.
-		 * Hence no geometric operations are required for now
-		 */
-
-	}
 
 	public static AvailablePeriodOfValidityType getAvailablePeriodOfValidity(String dbTableName)
 			throws IOException, SQLException {
@@ -497,5 +338,213 @@ public class GeoJSON2DatabaseTool {
 		SimpleFeatureCollection features = featureSource.getFeatures(andFilter);
 		return features;
 	}
+	
+	public static void updateGeoresourceFeatures(GeoresourcePUTInputType featureData, String dbTableName)
+			throws IOException {
+		// TODO Auto-generated method stub
 
+		/*
+		 * idea: check all features from input:
+		 * 
+		 * if (feature exists in db with the same geometry), then only update
+		 * the validity period else (feature does not exist at all or has
+		 * different geometry) then if (only geometry changed, id remains) then
+		 * insert as new feature and set validity period end date for the OLD
+		 * feature else (completely new feature with new id) then insert as new
+		 * feature
+		 * 
+		 * arisenFrom will be implemented as parameter within geoJSON dataset.
+		 * Hence no geometric operations are required for now
+		 */
+
+	}
+	
+	public static void updateSpatialUnitFeatures(SpatialUnitPUTInputType featureData, String dbTableName)
+			throws IOException {
+		// TODO FIXME implement
+
+		// TODO check, if update was successful
+
+		/*
+		 * idea: check all features from input:
+		 * 
+		 * if (feature exists in db with the same geometry), then only update
+		 * the validity period else (feature does not exist at all or has
+		 * different geometry) then if (only geometry changed, id remains) then
+		 * insert as new feature and set validity period end date for the OLD
+		 * feature else (completely new feature with new id) then insert as new
+		 * feature
+		 * 
+		 * arisenFrom will be implemented as parameter within geoJSON dataset.
+		 * Hence no geometric operations are required for now
+		 */
+
+		logger.info("Updating feature table {}.", dbTableName);
+
+		numberOfModifiedEntries = 0;
+		numberOfInsertedEntries = 0;
+		inputFeaturesHaveArisonFromAttribute = false;
+		
+		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
+		Date startDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getStartDate());
+		Date endDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
+		
+		FilterFactory ff = new FilterFactoryImpl();
+
+		FeatureJSON featureJSON = new FeatureJSON();
+		String geoJsonString = featureData.getGeoJsonString();
+		SimpleFeatureType inputFeatureSchema = featureJSON.readFeatureCollectionSchema(geoJsonString, false);
+		FeatureCollection inputFeatureCollection = featureJSON.readFeatureCollection(geoJsonString);
+
+		DefaultFeatureCollection newFeaturesToBeAdded = new DefaultFeatureCollection();
+
+		if (inputFeatureSchema.getDescriptor(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME) != null)
+			inputFeaturesHaveArisonFromAttribute = true;
+
+		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
+		SimpleFeatureSource featureSource = store.getFeatureSource(dbTableName);
+		
+		if (featureSource instanceof SimpleFeatureStore) {
+			SimpleFeatureStore sfStore = (SimpleFeatureStore) featureSource; // write
+																				// access!
+
+			DefaultTransaction transaction = new DefaultTransaction("Modify features in Table " + dbTableName);
+			sfStore.setTransaction(transaction);
+			try {
+
+				SimpleFeatureCollection dbFeatures = featureSource.getFeatures();
+
+				/*
+				 * now compare each of the input features with the dbFeatures
+				 * 
+				 * modify elements of dbFeatures, if necessary and then replace
+				 * db content with modified features
+				 * 
+				 * collect completetly new features separately in order to add
+				 * them and initialize their KomMonitor field in a second step
+				 */
+
+				FeatureIterator inputFeaturesIterator = inputFeatureCollection.features();
+
+				while (inputFeaturesIterator.hasNext()) {
+					Feature inputFeature = inputFeaturesIterator.next();
+
+					Feature correspondingDbFeature = findCorrespondingDbFeatureById(inputFeature, dbFeatures);
+
+					if (correspondingDbFeature != null) {
+						// compare geometries
+						Geometry dbGeometry = (Geometry) correspondingDbFeature.getDefaultGeometryProperty().getValue();
+						Geometry inputGeometry = (Geometry) inputFeature.getDefaultGeometryProperty().getValue();
+						Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, correspondingDbFeature);
+						if (dbGeometry.equals(inputGeometry)) {
+							// same object --> only update validity period!
+							// create modify statement and add to transaction!
+							
+							boolean wasUpdated = false;
+							
+							//set validStartDate, if new one is earlier
+							Date dbFeatureStartDate = (Date) correspondingDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+							if (startDate_new.before(dbFeatureStartDate)){
+								wasUpdated = true;
+								sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new, filterForDbFeatureId);
+							}
+							
+							// setvalidEndDate, if new one is later or null
+							Date dbFeatureEndDate = (Date) correspondingDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
+							if (endDate_new == null || endDate_new.after(dbFeatureEndDate)){
+								wasUpdated = true;
+								sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new, filterForDbFeatureId);
+							}
+							
+							// increase counter if necessary
+							if (wasUpdated)
+								numberOfModifiedEntries++;
+						} else {
+							// same id but different geometry --> hence mark old object as outdated
+							// and add new inputFeature to newFeaturesToBeAdded
+							
+							// to mark old feature as outdated set the validEndData to the submitted startDate of the new feature
+							sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDate_new, filterForDbFeatureId);
+							
+							// add inputFeature to newFeaturesToBeAdded will be processed later together with all other new features
+							newFeaturesToBeAdded.add((SimpleFeature)inputFeature);
+						}
+					}
+					/*
+					 * no corresponding db feature entry has been found.
+					 * hence this feature is completely new
+					 */
+					newFeaturesToBeAdded.add((SimpleFeature)inputFeature);
+				}
+
+				inputFeaturesIterator.close();
+				
+				/*
+				 * now deal with the completely new features and add them all to db
+				 * 
+				 * they will have initial validStartDate = null, validEndDate = null
+				 * hence we have to modify this properties according to the input data
+				 */
+				List<FeatureId> newFeatureIds = sfStore.addFeatures(newFeaturesToBeAdded);
+				numberOfInsertedEntries = newFeatureIds.size();
+				
+				Set<Identifier> featureIdSet = new HashSet<Identifier>();
+				featureIdSet.addAll(newFeatureIds);
+				Filter filterForNewFeatures = ff.id(featureIdSet);
+				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new, filterForNewFeatures);
+				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new, filterForNewFeatures);
+
+				transaction.commit(); // actually writes out the features in one
+				// go
+			} catch (Exception eek) {
+				transaction.rollback();
+			}
+
+		}
+
+		logger.info("Update of feature table {} was successful {}. Modified {} entries. Added {} new entries",
+				dbTableName, numberOfModifiedEntries, numberOfInsertedEntries);
+		
+		/*
+		 * TODO FIXME check all dbEntries, if they might have to be assigned with a new endDate in case
+		 * they are no longer present in the inputFeatures
+		 * 
+		 */
+
+		store.dispose();
+	}
+
+	private static Filter createFilterForUniqueFeatureId(FilterFactory ff, Feature correspondingDbFeature) {
+		String uniqueFeatureIdValue = correspondingDbFeature.getIdentifier().getID();
+		String uniqueFeatureIdPropertyName = KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_NAME;
+		Set<Identifier> set = new HashSet<Identifier>();
+		set.add(correspondingDbFeature.getIdentifier());
+		Filter filterForFeatureId = ff.id(set);
+		return filterForFeatureId;
+	}
+
+	private static Feature findCorrespondingDbFeatureById(Feature inputFeature, SimpleFeatureCollection dbFeatures) {
+		SimpleFeatureIterator dbFeatureIterator = dbFeatures.features();
+		
+		while (dbFeatureIterator.hasNext()){
+			SimpleFeature dbFeature = dbFeatureIterator.next();
+			/*
+			 * if both have the same id AND validEndDate is null OR in the future
+			 * then we have found the feature
+			 * 
+			 * --> although there might be multiple features with the same ID already,
+			 * only one geometry can be currently valid!!! 
+			 */
+			Date validEndDate = (Date) dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+			Date now = new Date();
+			
+			if(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME).equals(dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME))
+					&& (validEndDate == null || validEndDate.after(now))){
+				dbFeatureIterator.close();
+				return dbFeature;
+			}			
+		}
+		// if code reaches this, then no dvFeature was found
+		return null;
+	}
 }
