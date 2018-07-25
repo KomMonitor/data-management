@@ -320,8 +320,18 @@ public class GeoJSON2DatabaseTool {
 		
 		while (dbFeatureIterator.hasNext()){
 			SimpleFeature dbFeature = dbFeatureIterator.next();
+			/*
+			 * if both have the same id AND validEndDate is null OR in the future
+			 * then we have found the feature
+			 * 
+			 * --> although there might be multiple features with the same ID already,
+			 * only one geometry can be currently valid!!! 
+			 */
+			Date validEndDate = (Date) dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+			Date now = new Date();
 			
-			if(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME).equals(dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME))){
+			if(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME).equals(dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME))
+					&& (validEndDate == null || validEndDate.after(now))){
 				dbFeatureIterator.close();
 				return dbFeature;
 			}			
