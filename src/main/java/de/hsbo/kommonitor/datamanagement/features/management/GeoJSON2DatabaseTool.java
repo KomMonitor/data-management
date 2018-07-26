@@ -407,118 +407,160 @@ public class GeoJSON2DatabaseTool {
 		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
 		SimpleFeatureSource featureSource = store.getFeatureSource(dbTableName);
 		
+		handleUpdateProcess(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection, newFeaturesToBeAdded,
+				featureSource);
+
+		logger.info("Update of feature table {} was successful. Modified {} entries. Added {} new entries",
+				dbTableName, numberOfModifiedEntries, numberOfInsertedEntries);		
+
+		store.dispose();
+	}
+
+	private static void handleUpdateProcess(String dbTableName, Date startDate_new, Date endDate_new, FilterFactory ff,
+			FeatureCollection inputFeatureCollection, DefaultFeatureCollection newFeaturesToBeAdded,
+			SimpleFeatureSource featureSource) throws IOException, Exception {
 		if (featureSource instanceof SimpleFeatureStore) {
 			SimpleFeatureStore sfStore = (SimpleFeatureStore) featureSource; // write
 																				// access!
 
-			DefaultTransaction transaction = new DefaultTransaction("Modify features in Table " + dbTableName);
-			sfStore.setTransaction(transaction);
-			try {
+			compareInputFeaturesToDbFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
+					newFeaturesToBeAdded, featureSource, sfStore);
+			
+			/*
+			 * TODO FIXME check all dbEntries, if they might have to be assigned with a new endDate in case
+			 * they are no longer present in the inputFeatures
+			 */
+			
+			compareDbFeaturesToInputFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
+					newFeaturesToBeAdded, featureSource, sfStore);
+		}
+	}
 
-				SimpleFeatureCollection dbFeatures = featureSource.getFeatures();
+	private static void compareDbFeaturesToInputFeatures(String dbTableName, Date startDate_new, Date endDate_new,
+			FilterFactory ff, FeatureCollection inputFeatureCollection, DefaultFeatureCollection newFeaturesToBeAdded,
+			SimpleFeatureSource featureSource, SimpleFeatureStore sfStore) {
+		// TODO Auto-generated method stub
+		
+	}
 
-				/*
-				 * now compare each of the input features with the dbFeatures
-				 * 
-				 * modify elements of dbFeatures, if necessary and then replace
-				 * db content with modified features
-				 * 
-				 * collect completetly new features separately in order to add
-				 * them and initialize their KomMonitor field in a second step
-				 */
+	private static void compareInputFeaturesToDbFeatures(String dbTableName, Date startDate_new, Date endDate_new,
+			FilterFactory ff, FeatureCollection inputFeatureCollection, DefaultFeatureCollection newFeaturesToBeAdded,
+			SimpleFeatureSource featureSource, SimpleFeatureStore sfStore) throws IOException, Exception {
+		DefaultTransaction transaction = new DefaultTransaction("Modify features in Table " + dbTableName);
+		sfStore.setTransaction(transaction);
+		try {
 
-				FeatureIterator inputFeaturesIterator = inputFeatureCollection.features();
+			SimpleFeatureCollection dbFeatures = featureSource.getFeatures();
 
-				while (inputFeaturesIterator.hasNext()) {
-					Feature inputFeature = inputFeaturesIterator.next();
+			/*
+			 * now compare each of the input features with the dbFeatures
+			 * 
+			 * modify elements of dbFeatures, if necessary and then replace
+			 * db content with modified features
+			 * 
+			 * collect completetly new features separately in order to add
+			 * them and initialize their KomMonitor field in a second step
+			 */
 
-					Feature correspondingDbFeature = findCorrespondingDbFeatureById(inputFeature, dbFeatures);
+			FeatureIterator inputFeaturesIterator = inputFeatureCollection.features();
 
-					if (correspondingDbFeature != null) {
-						// compare geometries
-						Geometry dbGeometry = (Geometry) correspondingDbFeature.getDefaultGeometryProperty().getValue();
-						Geometry inputGeometry = (Geometry) inputFeature.getDefaultGeometryProperty().getValue();
-						Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, correspondingDbFeature);
-						if (dbGeometry.equals(inputGeometry)) {
-							// same object --> only update validity period!
-							// create modify statement and add to transaction!
-							
-							boolean wasUpdated = false;
-							
-							//set validStartDate, if new one is earlier
-							Date dbFeatureStartDate = (Date) correspondingDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
-							if (startDate_new.before(dbFeatureStartDate)){
-								wasUpdated = true;
-								sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new, filterForDbFeatureId);
-							}
-							
-							// setvalidEndDate, if new one is later or null
-							Date dbFeatureEndDate = (Date) correspondingDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
-							if (endDate_new == null || endDate_new.after(dbFeatureEndDate)){
-								wasUpdated = true;
-								sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new, filterForDbFeatureId);
-							}
-							
-							// increase counter if necessary
-							if (wasUpdated)
-								numberOfModifiedEntries++;
-						} else {
-							// same id but different geometry --> hence mark old object as outdated
-							// and add new inputFeature to newFeaturesToBeAdded
-							
-							// to mark old feature as outdated set the validEndData to the submitted startDate of the new feature
-							sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDate_new, filterForDbFeatureId);
-							
-							// add inputFeature to newFeaturesToBeAdded will be processed later together with all other new features
-							newFeaturesToBeAdded.add((SimpleFeature)inputFeature);
-						}
-					}else{
-						/*
-						 * no corresponding db feature entry has been found.
-						 * hence this feature is completely new
-						 */
-						newFeaturesToBeAdded.add((SimpleFeature)inputFeature);
-					}
-				}
-
-				inputFeaturesIterator.close();
-				
-				/*
-				 * now deal with the completely new features and add them all to db
-				 * 
-				 * they will have initial validStartDate = null, validEndDate = null
-				 * hence we have to modify this properties according to the input data
-				 */
-				List<FeatureId> newFeatureIds = sfStore.addFeatures(newFeaturesToBeAdded);
-				numberOfInsertedEntries = newFeatureIds.size();
-				
-				Set<Identifier> featureIdSet = new HashSet<Identifier>();
-				featureIdSet.addAll(newFeatureIds);
-				Filter filterForNewFeatures = ff.id(featureIdSet);
-				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new, filterForNewFeatures);
-				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new, filterForNewFeatures);
-
-				transaction.commit(); // actually writes out the features in one
-				// go
-			} catch (Exception eek) {
-				transaction.rollback();
-				eek.printStackTrace();
-				logger.error("An error occured while updating the feature table with name '" + dbTableName + "'. Update failed. Error message is: '" + eek.getMessage() + "'");
-				throw new Exception("An error occured while updating the feature table with name '" + dbTableName + "'. Update failed. Error message is: '" + eek.getMessage() + "'");
+			while (inputFeaturesIterator.hasNext()) {
+				compareInputFeatureToDbFeature(startDate_new, endDate_new, ff, newFeaturesToBeAdded, sfStore,
+						dbFeatures, inputFeaturesIterator);
 			}
 
+			inputFeaturesIterator.close();
+			
+			/*
+			 * now deal with the completely new features and add them all to db
+			 * 
+			 * they will have initial validStartDate = null, validEndDate = null
+			 * hence we have to modify this properties according to the input data
+			 */
+			insertNewFeatures(startDate_new, endDate_new, ff, newFeaturesToBeAdded, sfStore);
+
+			transaction.commit(); // actually writes out the features in one
+			// go
+			transaction.close();
+		} catch (Exception eek) {
+			transaction.rollback();
+			eek.printStackTrace();
+			logger.error("An error occured while updating the feature table with name '" + dbTableName + "'. Update failed. Error message is: '" + eek.getMessage() + "'");
+			throw new Exception("An error occured while updating the feature table with name '" + dbTableName + "'. Update failed. Error message is: '" + eek.getMessage() + "'");
 		}
+	}
 
-		logger.info("Update of feature table {} was successful. Modified {} entries. Added {} new entries",
-				dbTableName, numberOfModifiedEntries, numberOfInsertedEntries);
+	private static void insertNewFeatures(Date startDate_new, Date endDate_new, FilterFactory ff,
+			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureStore sfStore) throws IOException {
+		List<FeatureId> newFeatureIds = sfStore.addFeatures(newFeaturesToBeAdded);
+		numberOfInsertedEntries = newFeatureIds.size();
 		
-		/*
-		 * TODO FIXME check all dbEntries, if they might have to be assigned with a new endDate in case
-		 * they are no longer present in the inputFeatures
-		 * 
-		 */
+		Set<Identifier> featureIdSet = new HashSet<Identifier>();
+		featureIdSet.addAll(newFeatureIds);
+		Filter filterForNewFeatures = ff.id(featureIdSet);
+		sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new, filterForNewFeatures);
+		sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new, filterForNewFeatures);
+	}
 
-		store.dispose();
+	private static void compareInputFeatureToDbFeature(Date startDate_new, Date endDate_new, FilterFactory ff,
+			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureStore sfStore,
+			SimpleFeatureCollection dbFeatures, FeatureIterator inputFeaturesIterator) throws IOException {
+		Feature inputFeature = inputFeaturesIterator.next();
+
+		Feature correspondingDbFeature = findCorrespondingDbFeatureById(inputFeature, dbFeatures);
+
+		if (correspondingDbFeature != null) {
+			// compare geometries
+			compareGeometries(startDate_new, endDate_new, ff, newFeaturesToBeAdded, sfStore, inputFeature,
+					correspondingDbFeature);
+		}else{
+			/*
+			 * no corresponding db feature entry has been found.
+			 * hence this feature is completely new
+			 */
+			newFeaturesToBeAdded.add((SimpleFeature)inputFeature);
+		}
+	}
+
+	private static void compareGeometries(Date startDate_new, Date endDate_new, FilterFactory ff,
+			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureStore sfStore, Feature inputFeature,
+			Feature correspondingDbFeature) throws IOException {
+		Geometry dbGeometry = (Geometry) correspondingDbFeature.getDefaultGeometryProperty().getValue();
+		Geometry inputGeometry = (Geometry) inputFeature.getDefaultGeometryProperty().getValue();
+		Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, correspondingDbFeature);
+		if (dbGeometry.equals(inputGeometry)) {
+			// same object --> only update validity period!
+			// create modify statement and add to transaction!
+			
+			boolean wasUpdated = false;
+			
+			//set validStartDate, if new one is earlier
+			Date dbFeatureStartDate = (Date) correspondingDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+			if (startDate_new.before(dbFeatureStartDate)){
+				wasUpdated = true;
+				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new, filterForDbFeatureId);
+			}
+			
+			// setvalidEndDate, if new one is later or null
+			Date dbFeatureEndDate = (Date) correspondingDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
+			if (endDate_new == null || endDate_new.after(dbFeatureEndDate)){
+				wasUpdated = true;
+				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new, filterForDbFeatureId);
+			}
+			
+			// increase counter if necessary
+			if (wasUpdated)
+				numberOfModifiedEntries++;
+		} else {
+			// same id but different geometry --> hence mark old object as outdated
+			// and add new inputFeature to newFeaturesToBeAdded
+			
+			// to mark old feature as outdated set the validEndData to the submitted startDate of the new feature
+			sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDate_new, filterForDbFeatureId);
+			
+			// add inputFeature to newFeaturesToBeAdded will be processed later together with all other new features
+			newFeaturesToBeAdded.add((SimpleFeature)inputFeature);
+		}
 	}
 
 	private static Filter createFilterForUniqueFeatureId(FilterFactory ff, Feature correspondingDbFeature) {
