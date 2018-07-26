@@ -52,7 +52,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 		this.request = request;
 	}
 	
-	//TODO fill methods
+	
 	
 	@Override
 	public ResponseEntity addGeoresourceAsBody(@RequestBody GeoresourcePOSTInputType featureData) {

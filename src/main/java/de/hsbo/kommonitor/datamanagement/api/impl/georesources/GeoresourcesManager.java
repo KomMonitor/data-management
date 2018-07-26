@@ -314,7 +314,6 @@ public class GeoresourcesManager {
 	}
 
 	public List<GeoresourceOverviewType> getAllGeoresourcesMetadata(String topic) throws IOException, SQLException {
-		// TODO Auto-generated method stub
 		/*
 		 * topic is an optional parameter and thus might be null! then get all
 		 * datasets!

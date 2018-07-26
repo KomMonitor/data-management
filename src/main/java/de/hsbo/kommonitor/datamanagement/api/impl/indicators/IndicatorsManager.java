@@ -25,6 +25,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.ReferenceManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseTool;
 import de.hsbo.kommonitor.datamanagement.features.management.Indicator2Database;
@@ -32,11 +33,14 @@ import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPOSTInputType;
@@ -48,6 +52,8 @@ import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 @Component
 public class IndicatorsManager {
 	
+	
+	//TODO References to georesources and other indicators
 	
 	private static Logger logger = LoggerFactory.getLogger(IndicatorsManager.class);
 
@@ -74,6 +80,8 @@ public class IndicatorsManager {
 			updateMetadata(metadata, metadataEntity);
 
 			indicatorsMetadataRepo.save(metadataEntity);
+			ReferenceManager.updateReferences(metadata.getRefrencesToGeoresources(), metadata.getRefrencesToOtherIndicators(),metadataEntity.getDatasetId());
+			
 			return indicatorId;
 		} else {
 			logger.error(
@@ -135,11 +143,18 @@ public class IndicatorsManager {
 
 	public IndicatorOverviewType getIndicatorById(String indicatorId) {
 		logger.info("Retrieving indicator metadata for datasetId '{}'", indicatorId);
-
 		MetadataIndicatorsEntity indicatorsMetadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+		
+		
+		List<IndicatorReferenceType> indicatorReferences = ReferenceManager.getIndicatorReferences(indicatorsMetadataEntity.getDatasetId());
+		List<GeoresourceReferenceType> georesourcesReferences = ReferenceManager.getGeoresourcesReferences(indicatorsMetadataEntity.getDatasetId());
+		
+	
 		IndicatorOverviewType swaggerIndicatorMetadata = IndicatorsMapper
 				.mapToSwaggerIndicator(indicatorsMetadataEntity);
-
+		swaggerIndicatorMetadata.setReferencedIndicators(indicatorReferences);
+		swaggerIndicatorMetadata.setReferencedGeoresources(georesourcesReferences);
+		
 		return swaggerIndicatorMetadata;
 	}
 
@@ -148,6 +163,9 @@ public class IndicatorsManager {
 
 		List<MetadataIndicatorsEntity> indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll();
 
+		
+		
+		
 		if (topic != null) {
 			/*
 			 * remove all entities that do not correspond to the topic
@@ -157,6 +175,16 @@ public class IndicatorsManager {
 		List<IndicatorOverviewType> swaggerIndicatorsMetadata = IndicatorsMapper
 				.mapToSwaggerIndicator(indicatorsMeatadataEntities);
 
+		for (IndicatorOverviewType indicatorOverviewType : swaggerIndicatorsMetadata) {
+			
+			List<IndicatorReferenceType> indicatorReferences = ReferenceManager.getIndicatorReferences(indicatorOverviewType.getIndicatorId());
+			List<GeoresourceReferenceType> georesourcesReferences = ReferenceManager.getGeoresourcesReferences(indicatorOverviewType.getIndicatorId());
+			
+			indicatorOverviewType.setReferencedIndicators(indicatorReferences);
+			indicatorOverviewType.setReferencedGeoresources(georesourcesReferences);	
+		}
+		
+		
 		return swaggerIndicatorsMetadata;
 	}
 
@@ -243,7 +271,7 @@ public class IndicatorsManager {
 			 * delete metadata entry
 			 */
 			indicatorsMetadataRepo.deleteByDatasetId(indicatorId);
-
+			ReferenceManager.removeReferences(indicatorId);
 			return true;
 		} else {
 			logger.error(
@@ -281,6 +309,7 @@ public class IndicatorsManager {
 
 		boolean isCreated = createFeatureTable(indicatorData.getIndicatorValues(),
 				metadataId);
+		ReferenceManager.createReferences(indicatorData.getRefrencesToGeoresources(), indicatorData.getRefrencesToOtherIndicators(), metadataId);
 
 		if (!isCreated) {
 			/*
