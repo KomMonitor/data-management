@@ -10,31 +10,31 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPOSTInputTypeRefrencesToGeoresources
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-18T20:11:44.438+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-26T11:42:32.420+02:00")
 
 public class IndicatorPOSTInputTypeRefrencesToGeoresources   {
-  @JsonProperty("indicatorId")
-  private String indicatorId = null;
+  @JsonProperty("georesourceId")
+  private String georesourceId = null;
 
   @JsonProperty("referenceDescription")
   private String referenceDescription = null;
 
-  public IndicatorPOSTInputTypeRefrencesToGeoresources indicatorId(String indicatorId) {
-    this.indicatorId = indicatorId;
+  public IndicatorPOSTInputTypeRefrencesToGeoresources georesourceId(String georesourceId) {
+    this.georesourceId = georesourceId;
     return this;
   }
 
    /**
    * identifier of the referenced georesource
-   * @return indicatorId
+   * @return georesourceId
   **/
   @ApiModelProperty(value = "identifier of the referenced georesource")
-  public String getIndicatorId() {
-    return indicatorId;
+  public String getGeoresourceId() {
+    return georesourceId;
   }
 
-  public void setIndicatorId(String indicatorId) {
-    this.indicatorId = indicatorId;
+  public void setGeoresourceId(String georesourceId) {
+    this.georesourceId = georesourceId;
   }
 
   public IndicatorPOSTInputTypeRefrencesToGeoresources referenceDescription(String referenceDescription) {
@@ -65,13 +65,13 @@ public class IndicatorPOSTInputTypeRefrencesToGeoresources   {
       return false;
     }
     IndicatorPOSTInputTypeRefrencesToGeoresources indicatorPOSTInputTypeRefrencesToGeoresources = (IndicatorPOSTInputTypeRefrencesToGeoresources) o;
-    return Objects.equals(this.indicatorId, indicatorPOSTInputTypeRefrencesToGeoresources.indicatorId) &&
+    return Objects.equals(this.georesourceId, indicatorPOSTInputTypeRefrencesToGeoresources.georesourceId) &&
         Objects.equals(this.referenceDescription, indicatorPOSTInputTypeRefrencesToGeoresources.referenceDescription);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(indicatorId, referenceDescription);
+    return Objects.hash(georesourceId, referenceDescription);
   }
 
   @Override
@@ -79,7 +79,7 @@ public class IndicatorPOSTInputTypeRefrencesToGeoresources   {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorPOSTInputTypeRefrencesToGeoresources {\n");
     
-    sb.append("    indicatorId: ").append(toIndentedString(indicatorId)).append("\n");
+    sb.append("    georesourceId: ").append(toIndentedString(georesourceId)).append("\n");
     sb.append("    referenceDescription: ").append(toIndentedString(referenceDescription)).append("\n");
     sb.append("}");
     return sb.toString();
