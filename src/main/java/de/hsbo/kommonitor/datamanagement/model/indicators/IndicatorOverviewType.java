@@ -1,19 +1,19 @@
 package de.hsbo.kommonitor.datamanagement.model.indicators;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * IndicatorOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-18T20:11:44.438+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-26T10:18:13.375+02:00")
 
 public class IndicatorOverviewType   {
   @JsonProperty("indicatorName")
@@ -46,6 +46,14 @@ public class IndicatorOverviewType   {
   @JsonProperty("allowedRoles")
   
   private List<String> allowedRoles = null;
+
+  @JsonProperty("referencedIndicators")
+  
+  private List<IndicatorReferenceType> referencedIndicators = null;
+
+  @JsonProperty("referencedGeoresources")
+  
+  private List<GeoresourceReferenceType> referencedGeoresources = null;
 
   public IndicatorOverviewType indicatorName(String indicatorName) {
     this.indicatorName = indicatorName;
@@ -232,6 +240,58 @@ public class IndicatorOverviewType   {
     this.allowedRoles = allowedRoles;
   }
 
+  public IndicatorOverviewType referencedIndicators(List<IndicatorReferenceType> referencedIndicators) {
+    this.referencedIndicators = referencedIndicators;
+    return this;
+  }
+
+  public IndicatorOverviewType addReferencedIndicatorsItem(IndicatorReferenceType referencedIndicatorsItem) {
+    if (this.referencedIndicators == null) {
+      this.referencedIndicators = new ArrayList<>();
+    }
+    this.referencedIndicators.add(referencedIndicatorsItem);
+    return this;
+  }
+
+   /**
+   * list of references to other indicators
+   * @return referencedIndicators
+  **/
+  @ApiModelProperty(value = "list of references to other indicators")
+  public List<IndicatorReferenceType> getReferencedIndicators() {
+    return referencedIndicators;
+  }
+
+  public void setReferencedIndicators(List<IndicatorReferenceType> referencedIndicators) {
+    this.referencedIndicators = referencedIndicators;
+  }
+
+  public IndicatorOverviewType referencedGeoresources(List<GeoresourceReferenceType> referencedGeoresources) {
+    this.referencedGeoresources = referencedGeoresources;
+    return this;
+  }
+
+  public IndicatorOverviewType addReferencedGeoresourcesItem(GeoresourceReferenceType referencedGeoresourcesItem) {
+    if (this.referencedGeoresources == null) {
+      this.referencedGeoresources = new ArrayList<>();
+    }
+    this.referencedGeoresources.add(referencedGeoresourcesItem);
+    return this;
+  }
+
+   /**
+   * list of references to georesources
+   * @return referencedGeoresources
+  **/
+  @ApiModelProperty(value = "list of references to georesources")
+  public List<GeoresourceReferenceType> getReferencedGeoresources() {
+    return referencedGeoresources;
+  }
+
+  public void setReferencedGeoresources(List<GeoresourceReferenceType> referencedGeoresources) {
+    this.referencedGeoresources = referencedGeoresources;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -250,12 +310,14 @@ public class IndicatorOverviewType   {
         Objects.equals(this.applicableSpatialUnits, indicatorOverviewType.applicableSpatialUnits) &&
         Objects.equals(this.applicableDates, indicatorOverviewType.applicableDates) &&
         Objects.equals(this.applicableTopics, indicatorOverviewType.applicableTopics) &&
-        Objects.equals(this.allowedRoles, indicatorOverviewType.allowedRoles);
+        Objects.equals(this.allowedRoles, indicatorOverviewType.allowedRoles) &&
+        Objects.equals(this.referencedIndicators, indicatorOverviewType.referencedIndicators) &&
+        Objects.equals(this.referencedGeoresources, indicatorOverviewType.referencedGeoresources);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(indicatorName, indicatorId, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles);
+    return Objects.hash(indicatorName, indicatorId, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles, referencedIndicators, referencedGeoresources);
   }
 
   @Override
@@ -272,6 +334,8 @@ public class IndicatorOverviewType   {
     sb.append("    applicableDates: ").append(toIndentedString(applicableDates)).append("\n");
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    referencedIndicators: ").append(toIndentedString(referencedIndicators)).append("\n");
+    sb.append("    referencedGeoresources: ").append(toIndentedString(referencedGeoresources)).append("\n");
     sb.append("}");
     return sb.toString();
   }
