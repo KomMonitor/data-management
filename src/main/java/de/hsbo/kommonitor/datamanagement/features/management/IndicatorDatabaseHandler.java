@@ -115,12 +115,9 @@ public class IndicatorDatabaseHandler {
 				.getSpatialUnitMetadataEntity(associatedSpatialUnitMetadataId);
 		String spatialUnitsTable = spatialUnitEntity.getDbTableName();
 
-		String indicatorColumnName = "spatialUnitId";
-		/*
-		 * TODOD FIXME bith tables should hav the same identical name. How to
-		 * ensure this in the best way?
-		 */
-		String spatialUnitColumnName = "OBJECTID";
+		// the correct naming of the properies/columns has to be ensured within input dataset!
+		String indicatorColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME;
+		String spatialUnitColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME;
 
 		String createViewCommand = "create or replace view " + viewTableName + " as select * from " + indicatorTableName
 				+ " join " + spatialUnitsTable + " on " + indicatorTableName + "." + indicatorColumnName + " = "
