@@ -14,6 +14,7 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
@@ -29,8 +30,8 @@ public class DatabaseHelperUtil {
 	@Autowired
 	private static GeoresourcesMetadataRepository georesourceRepo;
 	
-//	@Autowired
-//	private static IndicatorsMetadataRepository indicatorsRepo;
+	@Autowired
+	private static IndicatorsMetadataRepository indicatorsRepo;
 
 	public static void updateResourceMetadataEntry(ResourceTypeEnum resource, String tableName,
 			String correspondingMetadataDatasetId) {
@@ -45,11 +46,11 @@ public class DatabaseHelperUtil {
 			georesourcesEntity.setDbTableName(tableName);
 			georesourceRepo.save(georesourcesEntity);
 			break;
-//		case INDICATOR:
-//			MetadataIndicatorsEntity indicatorsEntity = indicatorsRepo.findByDatasetId(correspondingMetadataDatasetId);
-//			indicatorsEntity.setDbTableName(tableName);
-//			indicatorsRepo.save(indicatorsEntity);
-//			break;	
+		case INDICATOR:
+			MetadataIndicatorsEntity indicatorsEntity = indicatorsRepo.findByDatasetId(correspondingMetadataDatasetId);
+			indicatorsEntity.setDbTableName(tableName);
+			indicatorsRepo.save(indicatorsEntity);
+			break;	
 		}
 
 	}
@@ -87,7 +88,6 @@ public class DatabaseHelperUtil {
 	}
 
 	private static String createPotentialDBTableName(String resourceTypeName, int numberSuffix) {
-		// TODO Auto-generated method stub
 		return resourceTypeName + "_" + numberSuffix;
 	}
 
@@ -143,23 +143,15 @@ public class DatabaseHelperUtil {
 
 	public static void updateIndicatorMetadataEntry(ResourceTypeEnum indicator, String correspondingMetadataDatasetId,
 			String indicatorTableName, String viewTableName) {
-		/*
-		 * TODO fix this as soon as indicator metadata is implemented
-		 */
-//		MetadataIndicatorsEntity indicatorsEntity = indicatorsRepo.findByDatasetId(correspondingMetadataDatasetId);
-//		indicatorsEntity.setDbTableName(indicatorTableName);
-//		indicatorsEntity.setFeatureViewDbTableName(viewTableName);
-//		indicatorsRepo.save(indicatorsEntity);
-		
+
+		MetadataIndicatorsEntity indicatorsEntity = indicatorsRepo.findByDatasetId(correspondingMetadataDatasetId);
+		indicatorsEntity.setDbTableName(indicatorTableName);
+		indicatorsEntity.setFeatureViewDbTableName(viewTableName);
+		indicatorsRepo.save(indicatorsEntity);
 	}
 
 	public static MetadataIndicatorsEntity getIndicatorMetadataEntity(String indicatorDatasetId) {
-		/*
-		 * TODO fix this as soon as indicator metadata is implemented
-		 */
-//		MetadataIndicatorsEntity entity = indicatorsRepo.findByDatasetId(indicatorDatasetId);
-//		return entity;
-		return null;
+		return indicatorsRepo.findByDatasetId(indicatorDatasetId);
 	}
 
 	public static MetadataSpatialUnitsEntity getSpatialUnitMetadataEntity(String spatialUnitMetadataId) {

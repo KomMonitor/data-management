@@ -76,9 +76,8 @@ public class IndicatorDatabaseHandler {
 		 */
 
 		/*
-		 * TODO FIXME create view containing the geometry and indicatorValues
-		 * for each indicator feature also set ViewName in Metadata --> create
-		 * new field for that
+		 * create view containing the geometry and indicatorValues
+		 * for each indicator feature also set ViewName in Metadata
 		 */
 		String indicatorTableName = featureType.getTypeName().toString();
 		String viewTableName = createOrOverwriteView(ResourceTypeEnum.INDICATOR, indicatorTableName,
