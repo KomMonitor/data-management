@@ -427,7 +427,7 @@ public class GeoJSON2DatabaseTool {
 					newFeaturesToBeAdded, featureSource, sfStore);
 			
 			/*
-			 * TODO FIXME check all dbEntries, if they might have to be assigned with a new endDate in case
+			 * check all dbEntries, if they might have to be assigned with a new endDate in case
 			 * they are no longer present in the inputFeatures
 			 */
 			
@@ -440,13 +440,54 @@ public class GeoJSON2DatabaseTool {
 			FilterFactory ff, FeatureCollection inputFeatureCollection, DefaultFeatureCollection newFeaturesToBeAdded,
 			SimpleFeatureSource featureSource, SimpleFeatureStore sfStore) {
 		// TODO Auto-generated method stub
-		
+//		DefaultTransaction transaction = new DefaultTransaction("Compare database features to inputFeatures and mark database features as outdated that are not valid anymore in Table " + dbTableName);
+//		sfStore.setTransaction(transaction);
+//		try {
+//
+//			SimpleFeatureCollection dbFeatures = featureSource.getFeatures();
+//
+//			/*
+//			 * now compare each of the input features with the dbFeatures
+//			 * 
+//			 * modify elements of dbFeatures, if necessary and then replace
+//			 * db content with modified features
+//			 * 
+//			 * collect completetly new features separately in order to add
+//			 * them and initialize their KomMonitor field in a second step
+//			 */
+//
+//			FeatureIterator inputFeaturesIterator = inputFeatureCollection.features();
+//
+//			while (inputFeaturesIterator.hasNext()) {
+//				compareInputFeatureToDbFeature(startDate_new, endDate_new, ff, newFeaturesToBeAdded, sfStore,
+//						dbFeatures, inputFeaturesIterator);
+//			}
+//
+//			inputFeaturesIterator.close();
+//			
+//			/*
+//			 * now deal with the completely new features and add them all to db
+//			 * 
+//			 * they will have initial validStartDate = null, validEndDate = null
+//			 * hence we have to modify this properties according to the input data
+//			 */
+//			insertNewFeatures(startDate_new, endDate_new, ff, newFeaturesToBeAdded, sfStore);
+//
+//			transaction.commit(); // actually writes out the features in one
+//			// go
+//			transaction.close();
+//		} catch (Exception eek) {
+//			transaction.rollback();
+//			eek.printStackTrace();
+//			logger.error("An error occured while updating the feature table with name '" + dbTableName + "'. Update failed. Error message is: '" + eek.getMessage() + "'");
+//			throw new Exception("An error occured while updating the feature table with name '" + dbTableName + "'. Update failed. Error message is: '" + eek.getMessage() + "'");
+//		}
 	}
 
 	private static void compareInputFeaturesToDbFeatures(String dbTableName, Date startDate_new, Date endDate_new,
 			FilterFactory ff, FeatureCollection inputFeatureCollection, DefaultFeatureCollection newFeaturesToBeAdded,
 			SimpleFeatureSource featureSource, SimpleFeatureStore sfStore) throws IOException, Exception {
-		DefaultTransaction transaction = new DefaultTransaction("Modify features in Table " + dbTableName);
+		DefaultTransaction transaction = new DefaultTransaction("Compare inputFeatures to database features and modify database features where necessary in Table " + dbTableName);
 		sfStore.setTransaction(transaction);
 		try {
 
