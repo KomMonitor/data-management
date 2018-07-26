@@ -55,6 +55,7 @@ public class GeoJSON2DatabaseTool {
 	private static Logger logger = LoggerFactory.getLogger(GeoJSON2DatabaseTool.class);
 	private static int numberOfModifiedEntries;
 	private static int numberOfInsertedEntries;
+	private static int numberOfEntriesMarkedAsOutdated;
 	private static boolean inputFeaturesHaveArisonFromAttribute;
 
 	public static String writeGeoJSONFeaturesToDatabase(ResourceTypeEnum resourceType, String geoJSONFeatures,
@@ -384,6 +385,7 @@ public class GeoJSON2DatabaseTool {
 
 		numberOfModifiedEntries = 0;
 		numberOfInsertedEntries = 0;
+		numberOfEntriesMarkedAsOutdated = 0;
 		inputFeaturesHaveArisonFromAttribute = false;
 		
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
@@ -410,8 +412,8 @@ public class GeoJSON2DatabaseTool {
 		handleUpdateProcess(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection, newFeaturesToBeAdded,
 				featureSource);
 
-		logger.info("Update of feature table {} was successful. Modified {} entries. Added {} new entries",
-				dbTableName, numberOfModifiedEntries, numberOfInsertedEntries);		
+		logger.info("Update of feature table {} was successful. Modified {} entries. Added {} new entries. Marked {} entries as outdated.",
+				dbTableName, numberOfModifiedEntries, numberOfInsertedEntries, numberOfEntriesMarkedAsOutdated);		
 
 		store.dispose();
 	}
@@ -457,6 +459,7 @@ public class GeoJSON2DatabaseTool {
 				Feature dbFeature = dbFeaturesIterator.next();
 				if (!dbFeatureIdIsWithinInputFeatures(String.valueOf(dbFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME).getValue()), inputFeatureCollection)){
 					// mark as outdated by setting validEndDate to dubmitted start date
+					numberOfEntriesMarkedAsOutdated++;
 					Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeature);
 					
 					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDate_new, filterForDbFeatureId);
@@ -603,6 +606,7 @@ public class GeoJSON2DatabaseTool {
 		} else {
 			// same id but different geometry --> hence mark old object as outdated
 			// and add new inputFeature to newFeaturesToBeAdded
+			numberOfEntriesMarkedAsOutdated++;
 			
 			// to mark old feature as outdated set the validEndData to the submitted startDate of the new feature
 			sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDate_new, filterForDbFeatureId);
