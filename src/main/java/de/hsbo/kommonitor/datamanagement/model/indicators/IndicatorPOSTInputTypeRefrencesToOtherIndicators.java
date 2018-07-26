@@ -29,7 +29,7 @@ public class IndicatorPOSTInputTypeRefrencesToOtherIndicators   {
    * @return indicatorId
   **/
   @ApiModelProperty(value = "identifier of the referenced indicator")
-  public String getIndicatorId() {
+  public String getGeoresourceId() {
     return indicatorId;
   }
 

@@ -1,4 +1,4 @@
-package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
+package de.hsbo.kommonitor.datamanagement.api.impl.metadata.references;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

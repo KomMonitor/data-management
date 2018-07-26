@@ -1,6 +1,8 @@
-package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
+package de.hsbo.kommonitor.datamanagement.api.impl.metadata.references;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToGeoresources;
@@ -8,15 +10,27 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
 
 public class ReferenceManager {
+	
+	@Autowired
+	private static IndicatorReferenceRepository indicatorRefRepo;
+	@Autowired
+	private static GeoresourceReferenceRepository georesourceRefRepo;
 
 	public static void createReferences(List<IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources,
-			List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators, String metadataId) {
-		// TODO Auto-generated method stub
+			List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators, String indicatorId) {
+		
+		List<IndicatorReferenceEntity> indicatorRefEntities =  IndicatorReferenceMapper.mapToEntities(refrencesToOtherIndicators, indicatorId);
+		
+		indicatorRefRepo.saveAll(indicatorRefEntities);
+		
+		List<GeoresourceReferenceEntity> georesourceRefEntities =  GeoresourceReferenceMapper.mapToEntities(refrencesToGeoresources, indicatorId);
+		
+		georesourceRefRepo.saveAll(georesourceRefEntities);
 		
 	}
 
 	public static void updateReferences(List<IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources,
-			List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators, String datasetId) {
+			List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators, String indicatorId) {
 		// TODO Auto-generated method stub
 		
 	}
