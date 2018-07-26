@@ -160,32 +160,6 @@ public class SpatialFeatureDatabaseHandler {
 		transaction.close();
 	}
 
-	// private static FeatureCollection
-	// initializeKomMonitorProperties(FeatureCollection featureCollection,
-	// PeriodOfValidityType periodOfValidity) {
-	// FeatureIterator featureIterator = featureCollection.features();
-	//
-	// while (featureIterator.hasNext()) {
-	// Feature next = featureIterator.next();
-	//
-	// /*
-	// * take the values from the PeriodOfValidity
-	// */
-	//
-	// next.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME)
-	// .setValue(periodOfValidity.getStartDate());
-	// next.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME)
-	// .setValue(periodOfValidity.getEndDate());
-	// /*
-	// * arisonFrom cannot be set, when features are initialized for the
-	// * first time.
-	// */
-	// next.getProperty(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME).setValue(null);
-	// }
-	//
-	// return featureCollection;
-	// }
-
 	private static SimpleFeatureType enrichWithKomMonitorProperties(SimpleFeatureType featureSchema,
 			DataStore dataStore, ResourceTypeEnum resourceType) throws IOException {
 		SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();

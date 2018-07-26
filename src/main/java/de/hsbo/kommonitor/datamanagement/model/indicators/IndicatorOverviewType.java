@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-26T10:18:13.375+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-26T14:51:31.528+02:00")
 
 public class IndicatorOverviewType   {
   @JsonProperty("indicatorName")
@@ -54,6 +56,15 @@ public class IndicatorOverviewType   {
   @JsonProperty("referencedGeoresources")
   
   private List<GeoresourceReferenceType> referencedGeoresources = null;
+
+  @JsonProperty("creationType")
+  private CreationTypeEnum creationType = null;
+
+  @JsonProperty("wmsUrl")
+  private String wmsUrl = null;
+
+  @JsonProperty("wfsUrl")
+  private String wfsUrl = null;
 
   public IndicatorOverviewType indicatorName(String indicatorName) {
     this.indicatorName = indicatorName;
@@ -292,6 +303,60 @@ public class IndicatorOverviewType   {
     this.referencedGeoresources = referencedGeoresources;
   }
 
+  public IndicatorOverviewType creationType(CreationTypeEnum creationType) {
+    this.creationType = creationType;
+    return this;
+  }
+
+   /**
+   * indicates if the data was simply inserted (INSERTED), computed by an automated script (COMPUTED) or automatically aggregated by a script (AGGREGATED)
+   * @return creationType
+  **/
+  @ApiModelProperty(value = "indicates if the data was simply inserted (INSERTED), computed by an automated script (COMPUTED) or automatically aggregated by a script (AGGREGATED)")
+  public CreationTypeEnum getCreationType() {
+    return creationType;
+  }
+
+  public void setCreationType(CreationTypeEnum creationType) {
+    this.creationType = creationType;
+  }
+
+  public IndicatorOverviewType wmsUrl(String wmsUrl) {
+    this.wmsUrl = wmsUrl;
+    return this;
+  }
+
+   /**
+   * WMS URL to fetch data as OGC WMS
+   * @return wmsUrl
+  **/
+  @ApiModelProperty(value = "WMS URL to fetch data as OGC WMS")
+  public String getWmsUrl() {
+    return wmsUrl;
+  }
+
+  public void setWmsUrl(String wmsUrl) {
+    this.wmsUrl = wmsUrl;
+  }
+
+  public IndicatorOverviewType wfsUrl(String wfsUrl) {
+    this.wfsUrl = wfsUrl;
+    return this;
+  }
+
+   /**
+   * WFS URL to fetch data as OGC WFS
+   * @return wfsUrl
+  **/
+  @ApiModelProperty(value = "WFS URL to fetch data as OGC WFS")
+  public String getWfsUrl() {
+    return wfsUrl;
+  }
+
+  public void setWfsUrl(String wfsUrl) {
+    this.wfsUrl = wfsUrl;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -312,12 +377,15 @@ public class IndicatorOverviewType   {
         Objects.equals(this.applicableTopics, indicatorOverviewType.applicableTopics) &&
         Objects.equals(this.allowedRoles, indicatorOverviewType.allowedRoles) &&
         Objects.equals(this.referencedIndicators, indicatorOverviewType.referencedIndicators) &&
-        Objects.equals(this.referencedGeoresources, indicatorOverviewType.referencedGeoresources);
+        Objects.equals(this.referencedGeoresources, indicatorOverviewType.referencedGeoresources) &&
+        Objects.equals(this.creationType, indicatorOverviewType.creationType) &&
+        Objects.equals(this.wmsUrl, indicatorOverviewType.wmsUrl) &&
+        Objects.equals(this.wfsUrl, indicatorOverviewType.wfsUrl);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(indicatorName, indicatorId, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles, referencedIndicators, referencedGeoresources);
+    return Objects.hash(indicatorName, indicatorId, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles, referencedIndicators, referencedGeoresources, creationType, wmsUrl, wfsUrl);
   }
 
   @Override
@@ -336,6 +404,9 @@ public class IndicatorOverviewType   {
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    referencedIndicators: ").append(toIndentedString(referencedIndicators)).append("\n");
     sb.append("    referencedGeoresources: ").append(toIndentedString(referencedGeoresources)).append("\n");
+    sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
+    sb.append("    wmsUrl: ").append(toIndentedString(wmsUrl)).append("\n");
+    sb.append("    wfsUrl: ").append(toIndentedString(wfsUrl)).append("\n");
     sb.append("}");
     return sb.toString();
   }

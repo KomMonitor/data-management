@@ -126,7 +126,7 @@ public class IndicatorsManager {
 		}
 	}
 
-	public IndicatorOverviewType getIndicatorById(String indicatorId) {
+	public IndicatorOverviewType getIndicatorById(String indicatorId) throws IOException {
 		logger.info("Retrieving indicator metadata for datasetId '{}'", indicatorId);
 		MetadataIndicatorsEntity indicatorsMetadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
 		
@@ -136,9 +136,7 @@ public class IndicatorsManager {
 		
 	
 		IndicatorOverviewType swaggerIndicatorMetadata = IndicatorsMapper
-				.mapToSwaggerIndicator(indicatorsMetadataEntity);
-		swaggerIndicatorMetadata.setReferencedIndicators(indicatorReferences);
-		swaggerIndicatorMetadata.setReferencedGeoresources(georesourcesReferences);
+				.mapToSwaggerIndicator(indicatorsMetadataEntity, indicatorReferences, georesourcesReferences);
 		
 		return swaggerIndicatorMetadata;
 	}
@@ -158,17 +156,7 @@ public class IndicatorsManager {
 			indicatorsMeatadataEntities = removeEntitiesNotAssociatedToTopic(indicatorsMeatadataEntities, topic);
 		}
 		List<IndicatorOverviewType> swaggerIndicatorsMetadata = IndicatorsMapper
-				.mapToSwaggerIndicator(indicatorsMeatadataEntities);
-
-		for (IndicatorOverviewType indicatorOverviewType : swaggerIndicatorsMetadata) {
-			
-			List<IndicatorReferenceType> indicatorReferences = ReferenceManager.getIndicatorReferences(indicatorOverviewType.getIndicatorId());
-			List<GeoresourceReferenceType> georesourcesReferences = ReferenceManager.getGeoresourcesReferences(indicatorOverviewType.getIndicatorId());
-			
-			indicatorOverviewType.setReferencedIndicators(indicatorReferences);
-			indicatorOverviewType.setReferencedGeoresources(georesourcesReferences);	
-		}
-		
+				.mapToSwaggerIndicators(indicatorsMeatadataEntities);
 		
 		return swaggerIndicatorsMetadata;
 	}

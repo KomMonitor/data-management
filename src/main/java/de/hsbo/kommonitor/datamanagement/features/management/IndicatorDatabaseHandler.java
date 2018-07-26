@@ -20,6 +20,8 @@ import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.filter.text.cql2.CQLException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,6 +230,36 @@ public class IndicatorDatabaseHandler {
 
 		String dateString = year + "-" + month + "-" + dayOfMonth;
 		return dateString;
+	}
+	
+	public static List<String> getAvailableDates(String dbTableName) throws IOException {
+		List<String> availableDates = new ArrayList<String>();
+		/*
+		 * indicator db tables have two columns that are not required: - fid -
+		 * spatialUnitId
+		 * 
+		 * the remaining columns are named by the date for which they apply.
+		 * hence search for all columns except the two mentioned above
+		 */
+		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
+
+		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(dbTableName);
+		SimpleFeatureType schema = featureSource.getSchema();
+		List<AttributeDescriptor> attributeDescriptors = schema.getAttributeDescriptors();
+
+		for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
+			// TODO FIXME is this the correct column name?
+			String attributeName = attributeDescriptor.getName().getLocalPart();
+
+			if (!attributeName.equalsIgnoreCase(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_NAME)
+					&& !attributeName.equalsIgnoreCase(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME))
+				availableDates.add(attributeName);
+		}
+
+		postGisStore.dispose();
+		
+		return availableDates;
+
 	}
 
 	public static void updateIndicatorFeatures(IndicatorPUTInputType indicatorData, String dbTableName) {
