@@ -14,7 +14,7 @@ public class FromDB2GeoJSONTest {
 
 		// 2014-01-01
 		c.set(2014, 0, 1);
-		String geoJSON = GeoJSON2DatabaseTool.getValidFeatures(c.getTime(), "SPATIAL_UNIT_0");
+		String geoJSON = SpatialFeatureDatabaseHandler.getValidFeatures(c.getTime(), "SPATIAL_UNIT_0");
 
 		System.out.println(geoJSON);
 
@@ -25,7 +25,7 @@ public class FromDB2GeoJSONTest {
 		try {
 			// 2013-01-01 --> will fail with exception
 			c.set(2013, 0, 1);
-			geoJSON = GeoJSON2DatabaseTool.getValidFeatures(c.getTime(), "SPATIAL_UNIT_0");
+			geoJSON = SpatialFeatureDatabaseHandler.getValidFeatures(c.getTime(), "SPATIAL_UNIT_0");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		} finally {

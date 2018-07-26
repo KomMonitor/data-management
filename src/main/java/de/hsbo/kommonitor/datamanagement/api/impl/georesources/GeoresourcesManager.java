@@ -20,7 +20,7 @@ import org.springframework.stereotype.Repository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseTool;
+import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
@@ -102,7 +102,7 @@ public class GeoresourcesManager {
 		 * validity periods
 		 */
 
-		String dbTableName = GeoJSON2DatabaseTool.writeGeoJSONFeaturesToDatabase(ResourceTypeEnum.GEORESOURCE,
+		String dbTableName = SpatialFeatureDatabaseHandler.writeGeoJSONFeaturesToDatabase(ResourceTypeEnum.GEORESOURCE,
 				geoJsonString, periodOfValidity, metadataId);
 
 		logger.info("Completed creation of georesource feature table corresponding to datasetId {}. Table name is {}.",
@@ -179,7 +179,7 @@ public class GeoresourcesManager {
 			/*
 			 * delete featureTable
 			 */
-			GeoJSON2DatabaseTool.deleteFeatureTable(ResourceTypeEnum.GEORESOURCE, dbTableName);
+			SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.GEORESOURCE, dbTableName);
 			/*
 			 * delete metadata entry
 			 */
@@ -224,7 +224,7 @@ public class GeoresourcesManager {
 
 			String dbTableName = metadataEntity.getDbTableName();
 
-			String geoJson = GeoJSON2DatabaseTool.getValidFeatures(date, dbTableName);
+			String geoJson = SpatialFeatureDatabaseHandler.getValidFeatures(date, dbTableName);
 			return geoJson;
 
 		} else {
@@ -253,7 +253,7 @@ public class GeoresourcesManager {
 			/*
 			 * call DB tool to update features
 			 */
-			GeoJSON2DatabaseTool.updateGeoresourceFeatures(featureData, dbTableName);
+			SpatialFeatureDatabaseHandler.updateGeoresourceFeatures(featureData, dbTableName);
 
 			// set lastUpdate in metadata in case of successful update
 			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());

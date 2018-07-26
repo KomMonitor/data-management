@@ -30,7 +30,7 @@ public class UpdateSpatialUnitsTest {
 		type.setPeriodOfValidity(periodOfValidity);
 		type.setGeoJsonString(geoJSON_Stadtteile_update);
 		
-		GeoJSON2DatabaseTool.updateSpatialUnitFeatures(type, "SPATIAL_UNIT_0");
+		SpatialFeatureDatabaseHandler.updateSpatialUnitFeatures(type, "SPATIAL_UNIT_0");
 		
 //		GeoJSON2DatabaseTool.getValidFeatures(date, dbTableName)
 		

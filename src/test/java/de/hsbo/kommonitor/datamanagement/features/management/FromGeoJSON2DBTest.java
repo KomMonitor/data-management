@@ -25,7 +25,7 @@ public class FromGeoJSON2DBTest {
 		periodOfValidity.setStartDate(LocalDate.of(2014, Month.JANUARY, 1));
 		periodOfValidity.setEndDate(null);
 
-		String tableName = GeoJSON2DatabaseTool.writeGeoJSONFeaturesToDatabase(ResourceTypeEnum.SPATIAL_UNIT, geoJSON_Stadtteile,
+		String tableName = SpatialFeatureDatabaseHandler.writeGeoJSONFeaturesToDatabase(ResourceTypeEnum.SPATIAL_UNIT, geoJSON_Stadtteile,
 				periodOfValidity, "metadataIndicatorId1234");
 		
 		Assert.assertTrue(tableName != null);

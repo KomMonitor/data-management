@@ -15,7 +15,7 @@ public class GetValidityPeriodFromFeatureTableTest {
 	@Test
 	public void test() throws IOException, URISyntaxException, CQLException, SQLException {
 
-		AvailablePeriodOfValidityType availablePeriodOfValidity = GeoJSON2DatabaseTool
+		AvailablePeriodOfValidityType availablePeriodOfValidity = SpatialFeatureDatabaseHandler
 				.getAvailablePeriodOfValidity("SPATIAL_UNIT_0");
 
 		System.out.println("Found period " + availablePeriodOfValidity);

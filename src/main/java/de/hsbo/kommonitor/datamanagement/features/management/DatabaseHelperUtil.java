@@ -100,7 +100,7 @@ public class DatabaseHelperUtil {
 		 */
 		if (properties == null){
 			properties = new Properties();
-			properties.load(GeoJSON2DatabaseTool.class.getResourceAsStream("/application.properties"));
+			properties.load(SpatialFeatureDatabaseHandler.class.getResourceAsStream("/application.properties"));
 		}
 			
 
@@ -127,7 +127,7 @@ public class DatabaseHelperUtil {
 		 */
 		if (properties == null){
 			properties = new Properties();
-			properties.load(GeoJSON2DatabaseTool.class.getResourceAsStream("/application.properties"));
+			properties.load(SpatialFeatureDatabaseHandler.class.getResourceAsStream("/application.properties"));
 		}
 
 		String url = "jdbc:postgresql://" + properties.getProperty("database.host") + "/"

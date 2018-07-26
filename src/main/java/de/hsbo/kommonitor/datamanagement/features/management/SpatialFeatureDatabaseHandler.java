@@ -50,9 +50,9 @@ import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
 
-public class GeoJSON2DatabaseTool {
+public class SpatialFeatureDatabaseHandler {
 
-	private static Logger logger = LoggerFactory.getLogger(GeoJSON2DatabaseTool.class);
+	private static Logger logger = LoggerFactory.getLogger(SpatialFeatureDatabaseHandler.class);
 	private static int numberOfModifiedEntries;
 	private static int numberOfInsertedEntries;
 	private static int numberOfEntriesMarkedAsOutdated;

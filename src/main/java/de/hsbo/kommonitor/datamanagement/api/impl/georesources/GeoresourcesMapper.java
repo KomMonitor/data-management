@@ -9,7 +9,7 @@ import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseTool;
+import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
@@ -32,7 +32,7 @@ public class GeoresourcesMapper {
 		GeoresourceOverviewType dataset = new GeoresourceOverviewType();
 
 		dataset.setAvailablePeriodOfValidity(
-				GeoJSON2DatabaseTool.getAvailablePeriodOfValidity(georesourceMetadataEntity.getDbTableName()));
+				SpatialFeatureDatabaseHandler.getAvailablePeriodOfValidity(georesourceMetadataEntity.getDbTableName()));
 
 		CommonMetadataType commonMetadata = new CommonMetadataType();
 		commonMetadata.setContact(georesourceMetadataEntity.getContact());

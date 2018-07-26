@@ -23,7 +23,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundExce
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.features.management.Indicator2Database;
+import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
@@ -110,7 +110,7 @@ public class IndicatorsManager {
 			/*
 			 * call DB tool to update features
 			 */
-			Indicator2Database.updateIndicatorFeatures(indicatorData, dbTableName);
+			IndicatorDatabaseHandler.updateIndicatorFeatures(indicatorData, dbTableName);
 
 			// set lastUpdate in metadata in case of successful update
 			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
@@ -211,7 +211,7 @@ public class IndicatorsManager {
 			String dbTableName = metadataEntity.getDbTableName();
 			String spatialUnit = metadataEntity.getAssociatedSpatialUnitMetadataId();
 
-			String json = Indicator2Database.getValidFeatures(date, dbTableName, spatialUnit);
+			String json = IndicatorDatabaseHandler.getValidFeatures(date, dbTableName, spatialUnit);
 			return json;
 
 		} else {
@@ -232,7 +232,7 @@ public class IndicatorsManager {
 			String dbTableName = metadataEntity.getDbTableName();
 			String spatialUnit = metadataEntity.getAssociatedSpatialUnitMetadataId();
 
-			String json = Indicator2Database.getValidFeatures(dbTableName, spatialUnit);
+			String json = IndicatorDatabaseHandler.getValidFeatures(dbTableName, spatialUnit);
 			return json;
 
 		} else {
@@ -251,7 +251,7 @@ public class IndicatorsManager {
 			/*
 			 * delete featureTable
 			 */
-			Indicator2Database.deleteFeatureTable(ResourceTypeEnum.INDICATOR, dbTableName);
+			IndicatorDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.INDICATOR, dbTableName);
 			/*
 			 * delete metadata entry
 			 */
@@ -315,7 +315,7 @@ public class IndicatorsManager {
 		 */
 		logger.info("Trying to create unique table for indicator values.");
 
-		String dbTableName = Indicator2Database.writeIndicatorsToDatabase(indicatorValues, metadataId);
+		String dbTableName = IndicatorDatabaseHandler.writeIndicatorsToDatabase(indicatorValues, metadataId);
 
 		logger.info("Completed creation of indicator values table corresponding to datasetId {}. Table name is {}.",
 				metadataId, dbTableName);

@@ -8,7 +8,7 @@ import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseTool;
+import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 
@@ -17,7 +17,7 @@ public class SpatialUnitsMapper {
 	public static SpatialUnitOverviewType mapToSwaggerSpatialUnit(MetadataSpatialUnitsEntity spatialUnitEntity) throws IOException, SQLException {
 		SpatialUnitOverviewType dataset = new SpatialUnitOverviewType();
 		
-		dataset.setAvailablePeriodOfValidity(GeoJSON2DatabaseTool.getAvailablePeriodOfValidity(spatialUnitEntity.getDbTableName()));
+		dataset.setAvailablePeriodOfValidity(SpatialFeatureDatabaseHandler.getAvailablePeriodOfValidity(spatialUnitEntity.getDbTableName()));
 		
 		CommonMetadataType commonMetadata = new CommonMetadataType();
 		commonMetadata.setContact(spatialUnitEntity.getContact());

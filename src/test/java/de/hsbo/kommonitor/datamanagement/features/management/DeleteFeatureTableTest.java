@@ -12,7 +12,7 @@ public class DeleteFeatureTableTest {
 	@Test
 	public void test() throws IOException, URISyntaxException, CQLException {
 
-		GeoJSON2DatabaseTool.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, "SPATIAL_UNIT_0");
+		SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, "SPATIAL_UNIT_0");
 		
 		Assert.assertTrue(true);
 	}

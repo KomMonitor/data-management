@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.features.management.GeoJSON2DatabaseTool;
+import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
@@ -95,7 +95,7 @@ public class SpatialUnitsManager {
 		 * when they will are updated, then each feature might have different validity periods
 		 */
 		
-		String dbTableName = GeoJSON2DatabaseTool.writeGeoJSONFeaturesToDatabase(ResourceTypeEnum.SPATIAL_UNIT, geoJsonString, periodOfValidityType, metadataId);
+		String dbTableName = SpatialFeatureDatabaseHandler.writeGeoJSONFeaturesToDatabase(ResourceTypeEnum.SPATIAL_UNIT, geoJsonString, periodOfValidityType, metadataId);
 		
 		logger.info("Completed creation of spatialUnit feature table corresponding to datasetId {}. Table name is {}.", metadataId, dbTableName);
 		
@@ -163,7 +163,7 @@ public class SpatialUnitsManager {
 			/*
 			 * delete featureTable
 			 */
-			GeoJSON2DatabaseTool.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);
+			SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);
 			/*
 			 * delete metadata entry
 			 */
@@ -184,7 +184,7 @@ public class SpatialUnitsManager {
 			/*
 			 * call DB tool to update features
 			 */
-			GeoJSON2DatabaseTool.updateSpatialUnitFeatures(featureData, dbTableName);
+			SpatialFeatureDatabaseHandler.updateSpatialUnitFeatures(featureData, dbTableName);
 			
 			// set lastUpdate in metadata in case of successful update
 			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
@@ -278,7 +278,7 @@ public class SpatialUnitsManager {
 	
 		String dbTableName = metadataEntity.getDbTableName();
 			
-		String geoJson = GeoJSON2DatabaseTool.getValidFeatures(date, dbTableName);
+		String geoJson = SpatialFeatureDatabaseHandler.getValidFeatures(date, dbTableName);
 		return geoJson;
 		
 		}else {

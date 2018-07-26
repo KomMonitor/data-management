@@ -32,7 +32,7 @@ public class Indicator2DBTest {
 
 		List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = indicator.getIndicatorValues();
 
-		String tableName = Indicator2Database.writeIndicatorsToDatabase(indicatorValues, "metadataIndicatorId1234");
+		String tableName = IndicatorDatabaseHandler.writeIndicatorsToDatabase(indicatorValues, "metadataIndicatorId1234");
 
 		Assert.assertTrue(tableName != null);
 	}

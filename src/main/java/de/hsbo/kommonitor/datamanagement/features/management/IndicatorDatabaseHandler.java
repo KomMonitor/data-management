@@ -30,9 +30,9 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
 
-public class Indicator2Database {
+public class IndicatorDatabaseHandler {
 
-	private static Logger logger = LoggerFactory.getLogger(Indicator2Database.class);
+	private static Logger logger = LoggerFactory.getLogger(IndicatorDatabaseHandler.class);
 
 	public static String writeIndicatorsToDatabase(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues,
 			String correspondingMetadataDatasetId) throws IOException, CQLException, SQLException {
