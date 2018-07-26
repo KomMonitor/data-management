@@ -290,11 +290,11 @@ public class SpatialUnitsManager {
 	}
 
 	public boolean deleteSpatialUnitDatasetByNameAndDate(String spatialUnitLevel, BigDecimal year, BigDecimal month, BigDecimal day) throws ResourceNotFoundException, IOException {
-		// TODO Auto-generated method stub
+		// TODO fill method
 		return false;
 	}
 	
 	
-	//TODO: Methoden zum handling der SpatialUnits
+
 	
 }
