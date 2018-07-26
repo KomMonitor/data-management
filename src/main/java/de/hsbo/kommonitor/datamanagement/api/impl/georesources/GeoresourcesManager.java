@@ -245,7 +245,7 @@ public class GeoresourcesManager {
 	}
 
 	public String updateFeatures(GeoresourcePUTInputType featureData, String georesourceId)
-			throws ResourceNotFoundException, IOException {
+			throws Exception {
 		logger.info("Trying to update georesource features for datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetName(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);

@@ -342,31 +342,25 @@ public class SpatialFeatureDatabaseHandler {
 	}
 	
 	public static void updateGeoresourceFeatures(GeoresourcePUTInputType featureData, String dbTableName)
-			throws IOException {
-		// TODO Auto-generated method stub
+			throws Exception {
 
-		/*
-		 * idea: check all features from input:
-		 * 
-		 * if (feature exists in db with the same geometry), then only update
-		 * the validity period else (feature does not exist at all or has
-		 * different geometry) then if (only geometry changed, id remains) then
-		 * insert as new feature and set validity period end date for the OLD
-		 * feature else (completely new feature with new id) then insert as new
-		 * feature
-		 * 
-		 * arisenFrom will be implemented as parameter within geoJSON dataset.
-		 * Hence no geometric operations are required for now
-		 */
-
+		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
+		String geoJsonString = featureData.getGeoJsonString();
+		
+		updateSpatialFeaturTable(dbTableName, periodOfValidity, geoJsonString);
 	}
 	
 	public static void updateSpatialUnitFeatures(SpatialUnitPUTInputType featureData, String dbTableName)
 			throws Exception {
-		// TODO FIXME implement
 
-		// TODO check, if update was successful
+		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
+		String geoJsonString = featureData.getGeoJsonString();
+		
+		updateSpatialFeaturTable(dbTableName, periodOfValidity, geoJsonString);
+	}
 
+	private static void updateSpatialFeaturTable(String dbTableName, PeriodOfValidityType periodOfValidity,
+			String geoJsonString) throws IOException, Exception {
 		/*
 		 * idea: check all features from input:
 		 * 
@@ -388,7 +382,7 @@ public class SpatialFeatureDatabaseHandler {
 		numberOfEntriesMarkedAsOutdated = 0;
 		inputFeaturesHaveArisonFromAttribute = false;
 		
-		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
+		
 		Date startDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getStartDate());
 		Date endDate_new = null;
 		if (periodOfValidity.getEndDate() != null)
@@ -397,7 +391,6 @@ public class SpatialFeatureDatabaseHandler {
 		FilterFactory ff = new FilterFactoryImpl();
 
 		FeatureJSON featureJSON = new FeatureJSON();
-		String geoJsonString = featureData.getGeoJsonString();
 		SimpleFeatureType inputFeatureSchema = featureJSON.readFeatureCollectionSchema(geoJsonString, false);
 		FeatureCollection inputFeatureCollection = featureJSON.readFeatureCollection(geoJsonString);
 
