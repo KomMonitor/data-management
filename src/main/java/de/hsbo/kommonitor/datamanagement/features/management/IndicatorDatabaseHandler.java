@@ -21,7 +21,6 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +35,7 @@ public class IndicatorDatabaseHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(IndicatorDatabaseHandler.class);
 
-	public static String writeIndicatorsToDatabase(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues,
-			String correspondingMetadataDatasetId) throws IOException, CQLException, SQLException {
+	public static String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) throws IOException, CQLException, SQLException {
 
 		/*
 		 * TODO implement
@@ -77,27 +75,13 @@ public class IndicatorDatabaseHandler {
 		 * corresponding MetadataEntry
 		 */
 
-		/*
-		 * create view containing the geometry and indicatorValues
-		 * for each indicator feature also set ViewName in Metadata
-		 */
-		String indicatorTableName = featureType.getTypeName().toString();
-		String viewTableName = createOrOverwriteView(ResourceTypeEnum.INDICATOR, indicatorTableName,
-				correspondingMetadataDatasetId);
-
-		logger.info(
-				"Modifying the indicator metadata entry with id {} to set the name of the formerly created feature database table named {} and also the created featureViewTable with name {}.",
-				correspondingMetadataDatasetId, indicatorTableName, viewTableName);
-		DatabaseHelperUtil.updateIndicatorMetadataEntry(ResourceTypeEnum.INDICATOR, correspondingMetadataDatasetId,
-				indicatorTableName, viewTableName);
-
 		postGisStore.dispose();
 
 		return featureType.getTypeName();
 	}
 
-	private static String createOrOverwriteView(ResourceTypeEnum indicator, String indicatorTableName,
-			String correspondingMetadataDatasetId) throws IOException, SQLException {
+	private static String createOrOverwriteView(String indicatorTableName,
+			String spatialUnitName) throws IOException, SQLException {
 		Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
 
 		Statement statement = jdbcConnection.createStatement();
@@ -108,12 +92,8 @@ public class IndicatorDatabaseHandler {
 		 * CREATE VIEW vw_combined AS SELECT * FROM TABLE1 t1 JOIN TABLE2 t2 ON
 		 * t2.col = t1.col
 		 */
-
-		MetadataIndicatorsEntity indicatorEntity = DatabaseHelperUtil
-				.getIndicatorMetadataEntity(correspondingMetadataDatasetId);
-		String associatedSpatialUnitMetadataId = indicatorEntity.getAssociatedSpatialUnitMetadataId();
 		MetadataSpatialUnitsEntity spatialUnitEntity = DatabaseHelperUtil
-				.getSpatialUnitMetadataEntity(associatedSpatialUnitMetadataId);
+				.getSpatialUnitMetadataEntity(spatialUnitName);
 		String spatialUnitsTable = spatialUnitEntity.getDbTableName();
 
 		// the correct naming of the properies/columns has to be ensured within input dataset!
@@ -267,19 +247,41 @@ public class IndicatorDatabaseHandler {
 		
 	}
 
-	public static String getValidFeatures(Date date, String dbTableName, String spatialUnit) {
+	public static String getValidFeatures(Date date, String dbTableName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public static String getValidFeatures(String dbTableName, String spatialUnit) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public static void deleteFeatureTable(ResourceTypeEnum indicator, String dbTableName) {
+	public static void deleteFeatureTable(String dbTableName) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public static String getFeatures(String featureViewTableName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static void deleteFeatureView(String featureViewTableName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static String createIndicatorFeatureView(String indicatorValueTableName, String spatialUnitName) throws IOException, SQLException {
+		/*
+		 * create view containing the geometry and indicatorValues
+		 * for each indicator feature also set ViewName in Metadata
+		 */
+		String viewTableName = createOrOverwriteView(indicatorValueTableName,
+				spatialUnitName);
+
+//		logger.info(
+//				"Modifying the indicator metadata entry with id {} to set the name of the formerly created feature database table named {} and also the created featureViewTable with name {}.",
+//				correspondingMetadataDatasetId, indicatorTableName, viewTableName);
+//		DatabaseHelperUtil.updateIndicatorMetadataEntry(ResourceTypeEnum.INDICATOR, correspondingMetadataDatasetId,
+//				indicatorTableName, viewTableName);
+		
+		return viewTableName;
 	}
 
 

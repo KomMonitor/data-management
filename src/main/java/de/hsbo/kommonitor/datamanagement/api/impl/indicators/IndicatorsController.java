@@ -156,7 +156,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 		if (accept != null && accept.contains("application/json")) {
 
 			try {
-				String geoJsonFeatures = indicatorsManager.getValidIndicatorFeatures(indicatorId, spatialUnitLevel);
+				String geoJsonFeatures = indicatorsManager.getIndicatorFeatures(indicatorId, spatialUnitLevel);
 				String fileName = "IndicatorFeatures_" + spatialUnitLevel + "_" + indicatorId + ".json";
 				
 				HttpHeaders headers = new HttpHeaders();

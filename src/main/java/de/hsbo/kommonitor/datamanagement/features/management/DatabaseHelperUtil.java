@@ -141,21 +141,21 @@ public class DatabaseHelperUtil {
 		return conn;
 	}
 
-	public static void updateIndicatorMetadataEntry(ResourceTypeEnum indicator, String correspondingMetadataDatasetId,
-			String indicatorTableName, String viewTableName) {
+//	public static void updateIndicatorMetadataEntry(ResourceTypeEnum indicator, String correspondingMetadataDatasetId,
+//			String indicatorTableName, String viewTableName) {
+//
+//		MetadataIndicatorsEntity indicatorsEntity = indicatorsRepo.findByDatasetId(correspondingMetadataDatasetId);
+//		indicatorsEntity.setDbTableName(indicatorTableName);
+//		indicatorsEntity.setFeatureViewDbTableName(viewTableName);
+//		indicatorsRepo.save(indicatorsEntity);
+//	}
 
-		MetadataIndicatorsEntity indicatorsEntity = indicatorsRepo.findByDatasetId(correspondingMetadataDatasetId);
-		indicatorsEntity.setDbTableName(indicatorTableName);
-		indicatorsEntity.setFeatureViewDbTableName(viewTableName);
-		indicatorsRepo.save(indicatorsEntity);
-	}
+//	public static MetadataIndicatorsEntity getIndicatorMetadataEntity(String indicatorDatasetId) {
+//		return indicatorsRepo.findByDatasetId(indicatorDatasetId);
+//	}
 
-	public static MetadataIndicatorsEntity getIndicatorMetadataEntity(String indicatorDatasetId) {
-		return indicatorsRepo.findByDatasetId(indicatorDatasetId);
-	}
-
-	public static MetadataSpatialUnitsEntity getSpatialUnitMetadataEntity(String spatialUnitMetadataId) {
-		return spatialUnitsRepo.findByDatasetId(spatialUnitMetadataId);
+	public static MetadataSpatialUnitsEntity getSpatialUnitMetadataEntity(String spatialUnitName) {
+		return spatialUnitsRepo.findByDatasetName(spatialUnitName);
 	}
 
 }

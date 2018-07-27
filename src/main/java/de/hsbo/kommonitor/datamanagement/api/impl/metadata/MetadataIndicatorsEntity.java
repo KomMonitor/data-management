@@ -19,8 +19,6 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	private String processDescription = null;
 	private String unit = null;
 	private CreationTypeEnum creationType = null;
-	private String featureViewDbTableName = null;
-	private String associatedSpatialUnitMetadataId = null;
 	
 	/*
 	 * references to other indicators are mapped by hand
@@ -68,22 +66,6 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 
 	public void setIndicatorTopics(Collection<TopicsEntity> indicatorsTopics) {
 		this.indicatorTopics = indicatorsTopics;
-	}
-
-	public String getFeatureViewDbTableName() {
-		return featureViewDbTableName;
-	}
-
-	public void setFeatureViewDbTableName(String featureViewDbTableName) {
-		this.featureViewDbTableName = featureViewDbTableName;
-	}
-
-	public String getAssociatedSpatialUnitMetadataId() {
-		return associatedSpatialUnitMetadataId;
-	}
-
-	public void setAssociatedSpatialUnitMetadataId(String associatedSpatialUnitMetadataId) {
-		this.associatedSpatialUnitMetadataId = associatedSpatialUnitMetadataId;
 	}
 
 	public void addTopicsIfNotExist(List<String> applicableTopics)throws Exception {
