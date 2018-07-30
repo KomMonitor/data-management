@@ -1,16 +1,14 @@
 package de.hsbo.kommonitor.datamanagement.features.management;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.geotools.data.DataAccess;
 import org.geotools.data.DataStore;
@@ -19,21 +17,19 @@ import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
-import org.opengis.feature.Feature;
+import org.geotools.geojson.feature.FeatureJSON;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
@@ -371,9 +367,34 @@ public class IndicatorDatabaseHandler {
 		
 	}
 
-	public static String getFeatures(String featureViewTableName) {
-		// TODO Auto-generated method stub
-		return null;
+	public static String getFeatures(String featureViewTableName) throws Exception {
+
+		logger.info("Fetch indicator features for table with name {}", featureViewTableName);
+		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+
+
+		SimpleFeatureSource featureSource = dataStore.getFeatureSource(featureViewTableName);
+
+		FeatureCollection features = featureSource.getFeatures();
+
+		int indicatorFeaturesSize = features.size();
+		logger.info("Transform {} found indicator features to GeoJSON", indicatorFeaturesSize);
+
+		String geoJson = null;
+
+		if (indicatorFeaturesSize > 0) {
+			FeatureJSON toGeoJSON = new FeatureJSON();
+			StringWriter writer = new StringWriter();
+			toGeoJSON.writeFeatureCollection(features, writer);
+			geoJson = writer.toString();
+		} else {
+			dataStore.dispose();
+			throw new Exception("No features could be retrieved for the specified indicator feature table.");
+		}
+
+		dataStore.dispose();
+
+		return geoJson;
 	}
 
 	public static void deleteFeatureView(String featureViewTableName) {
