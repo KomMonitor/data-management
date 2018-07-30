@@ -55,7 +55,7 @@ public class ReferenceManager {
 
 		for (IndicatorPOSTInputTypeRefrencesToGeoresources georesourceReference : refrencesToGeoresources) {
 			String referencedGeoresourceId = georesourceReference.getGeoresourceId();
-			if (georesourceRefRepo.existsByMainIndicatorIdAndReferencedGeoresourceIdId(indicatorId,
+			if (georesourceRefRepo.existsByMainIndicatorIdAndReferencedGeoresourceId(indicatorId,
 					referencedGeoresourceId)) {
 				// only update
 				GeoresourceReferenceEntity entity = georesourceRefRepo
