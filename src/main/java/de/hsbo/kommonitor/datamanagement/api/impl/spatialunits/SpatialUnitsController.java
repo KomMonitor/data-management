@@ -49,8 +49,6 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		this.request = request;
 	}
 
-	// TODO fill methods
-
 	@Override
 	public ResponseEntity addSpatialUnitAsBody(@RequestBody SpatialUnitPOSTInputType featureData) {
 		logger.info("Received request to insert new spatial unit");

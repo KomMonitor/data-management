@@ -37,10 +37,6 @@ public class IndicatorDatabaseHandler {
 
 	public static String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) throws IOException, CQLException, SQLException {
 
-		/*
-		 * TODO implement
-		 */
-
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 
 		List<Date> availableDatesForIndicator = collectIndicatorDates(indicatorValues);

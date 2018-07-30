@@ -62,13 +62,6 @@ public class SpatialFeatureDatabaseHandler {
 			PeriodOfValidityType periodOfValidity, String correspondingMetadataDatasetId)
 			throws IOException, CQLException {
 
-		/*
-		 * TODO implement
-		 */
-
-		// InputStream stream = new
-		// ByteArrayInputStream(geoJSONFeatures.getBytes());
-
 		logger.info("Parsing GeoJSON into features and schema");
 
 		FeatureJSON featureJSON = new FeatureJSON();
