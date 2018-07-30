@@ -238,7 +238,7 @@ public class IndicatorsManager {
 				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName);
 				String featureViewTableName = indicatorSpatialsUnitsEntity.getFeatureViewTableName();
 
-				String json = IndicatorDatabaseHandler.getFeatures(featureViewTableName);
+				String json = IndicatorDatabaseHandler.getIndicatorFeatures(featureViewTableName);
 				return json;
 
 			} else{
@@ -268,8 +268,8 @@ public class IndicatorsManager {
 			 * delete featureTables and views for each spatial unit
 			 */
 			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
-				IndicatorDatabaseHandler.deleteFeatureTable(indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
-				IndicatorDatabaseHandler.deleteFeatureView(indicatorSpatialUnitJoinEntity.getFeatureViewTableName());
+				IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
+				IndicatorDatabaseHandler.deleteIndicatorFeatureView(indicatorSpatialUnitJoinEntity.getFeatureViewTableName());
 			}
 			
 			/*

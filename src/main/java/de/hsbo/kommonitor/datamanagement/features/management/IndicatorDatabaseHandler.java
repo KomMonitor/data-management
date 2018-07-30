@@ -401,12 +401,20 @@ public class IndicatorDatabaseHandler {
 		return geoJson;
 	}
 
-	public static void deleteFeatureTable(String dbTableName) {
-		// TODO Auto-generated method stub
+	public static void deleteIndicatorValueTable(String dbTableName) throws IOException {
+		logger.info("Deleting indicator value table {}.", dbTableName);
+
+		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
+
+		store.removeSchema(dbTableName);
+
+		logger.info("Deletion of table {} was successful {}", dbTableName);
+
+		store.dispose();
 		
 	}
 
-	public static String getFeatures(String featureViewTableName) throws Exception {
+	public static String getIndicatorFeatures(String featureViewTableName) throws Exception {
 
 		logger.info("Fetch indicator features for table with name {}", featureViewTableName);
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
@@ -436,8 +444,17 @@ public class IndicatorDatabaseHandler {
 		return geoJson;
 	}
 
-	public static void deleteFeatureView(String featureViewTableName) {
-		// TODO Auto-generated method stub
+	public static void deleteIndicatorFeatureView(String featureViewTableName) throws IOException {
+		//TODO test if this works
+		logger.info("Deleting indicator feature view {}.", featureViewTableName);
+
+		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
+
+		store.removeSchema(featureViewTableName);
+
+		logger.info("Deletion of view {} was successful", featureViewTableName);
+
+		store.dispose();
 		
 	}
 
