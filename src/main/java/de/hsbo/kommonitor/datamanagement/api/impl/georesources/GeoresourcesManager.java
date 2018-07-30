@@ -197,7 +197,39 @@ public class GeoresourcesManager {
 
 	public boolean deleteGeoresourceFeaturesByIdAndDate(String georesourceId, BigDecimal year, BigDecimal month,
 			BigDecimal day) throws ResourceNotFoundException, IOException {
-		// TODO Auto-generated method stub
+		/*
+		 * TODO implement
+		 */
+//		logger.info("Deleting georesource features for datasetId '{}' and date '{}-{}-{}'", georesourceId, year, month, day);
+//		
+//		try {
+//			
+//			if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+//				String dbTableName = georesourcesMetadataRepo.findByDatasetId(georesourceId).getDbTableName();
+//				/*
+//				 * delete featureTable
+//				 */
+//				SpatialFeatureDatabaseHandler.deleteFeaturesForDate(ResourceTypeEnum.GEORESOURCE, dbTableName);
+//				/*
+//				 * delete metadata entry
+//				 */
+//				georesourcesMetadataRepo.deleteByDatasetId(georesourceId);
+//
+//				return true;
+//			} else {
+//				logger.error(
+//						"No georesource dataset with datasetName '{}' was found in database. Delete request has no effect.",
+//						georesourceId);
+//				throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+//						"Tried to delete georesource dataset, but no dataset existes with datasetId " + georesourceId);
+//			}
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			logger.error("Error while deleting georesource features. Error message is '{}'", e.getMessage());
+//			throw e;
+//		}
+		
 		return false;
 	}
 
