@@ -46,7 +46,7 @@ public class ScriptMetadataEntity {
 	private Collection<MetadataIndicatorsEntity> requiredIndicators;
 
 	@ManyToMany
-	@JoinTable(name = "scripts_requiredindicators", joinColumns = @JoinColumn(name = "script_id", referencedColumnName = "scriptid"), inverseJoinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"))
+	@JoinTable(name = "scripts_requiredgeoresources", joinColumns = @JoinColumn(name = "script_id", referencedColumnName = "scriptid"), inverseJoinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"))
 	private Collection<MetadataGeoresourcesEntity> requiredGeoresources;
 
 	public String getName() {
@@ -126,7 +126,7 @@ public class ScriptMetadataEntity {
 	public void setRequiredGeoresources(Collection<MetadataGeoresourcesEntity> requiredGeoresources) {
 		this.requiredGeoresources = requiredGeoresources;
 	}
-	
+
 	public void addRequiredGeoresources(MetadataGeoresourcesEntity requiredGeoressource) {
 		if (this.requiredGeoresources == null) {
 			this.requiredGeoresources = new ArrayList<MetadataGeoresourcesEntity>();
