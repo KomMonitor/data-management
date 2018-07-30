@@ -201,18 +201,15 @@ public class IndicatorsManager {
 
 	public String getValidIndicatorFeatures(String indicatorId, String spatialUnitName, BigDecimal year,
 			BigDecimal month, BigDecimal day)throws Exception {
-		Calendar calender = Calendar.getInstance();
-		calender.set(year.intValue(), month.intValueExact() - 1, day.intValue());
-		java.util.Date date = calender.getTime();
-		logger.info("Retrieving valid indicator features from Dataset with id '{}'for spatialUnit '{}' for date '{}'", indicatorId, spatialUnitName,
-				date);
+		logger.info("Retrieving valid indicator features from Dataset with id '{}'for spatialUnit '{}' for date '{}-{}-{}'", indicatorId, spatialUnitName,
+				year, month, day);
 
 		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
 			if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName)){
 				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName);
 				String featureViewTableName = indicatorSpatialsUnitsEntity.getFeatureViewTableName();
 
-				String json = IndicatorDatabaseHandler.getValidFeatures(date, featureViewTableName);
+				String json = IndicatorDatabaseHandler.getValidFeatures(featureViewTableName, year, month, day);
 				return json;
 
 			} else{

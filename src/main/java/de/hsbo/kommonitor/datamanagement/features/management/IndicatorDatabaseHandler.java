@@ -2,6 +2,7 @@ package de.hsbo.kommonitor.datamanagement.features.management;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,6 +14,7 @@ import java.util.List;
 import org.geotools.data.DataAccess;
 import org.geotools.data.DataStore;
 import org.geotools.data.DefaultTransaction;
+import org.geotools.data.Query;
 import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
@@ -357,9 +359,41 @@ public class IndicatorDatabaseHandler {
 		return false;
 	}
 
-	public static String getValidFeatures(Date date, String dbTableName) {
-		// TODO Auto-generated method stub
-		return null;
+	public static String getValidFeatures(String featureViewName, BigDecimal year, BigDecimal month, BigDecimal day) throws Exception {
+		logger.info("Fetch indicator features for table with name {} and timestamp '{}-{}-{}'", featureViewName, year, month, day);
+		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+
+		SimpleFeatureSource featureSource = dataStore.getFeatureSource(featureViewName);
+
+		Calendar cal = Calendar.getInstance();
+		// -1 in month, as month is 0-based
+		cal.set(year.intValue(), month.intValue() - 1, day.intValue());
+		Date date = cal.getTime();
+		String datePropertyString = createDateStringForDbProperty(date);
+		/*
+		 * TODO FIXME check if that query actually works
+		 */
+		Query query = new Query(featureViewName, null, new String[] { datePropertyString });
+		FeatureCollection features = featureSource.getFeatures(query);
+
+		int indicatorFeaturesSize = features.size();
+		logger.info("Transform {} found indicator features to GeoJSON", indicatorFeaturesSize);
+
+		String geoJson = null;
+
+		if (indicatorFeaturesSize > 0) {
+			FeatureJSON toGeoJSON = new FeatureJSON();
+			StringWriter writer = new StringWriter();
+			toGeoJSON.writeFeatureCollection(features, writer);
+			geoJson = writer.toString();
+		} else {
+			dataStore.dispose();
+			throw new Exception("No features could be retrieved for the specified indicator feature table.");
+		}
+
+		dataStore.dispose();
+
+		return geoJson;
 	}
 
 	public static void deleteFeatureTable(String dbTableName) {
