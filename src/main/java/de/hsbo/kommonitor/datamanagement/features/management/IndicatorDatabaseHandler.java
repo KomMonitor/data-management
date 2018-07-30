@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.geotools.data.DataAccess;
 import org.geotools.data.DataStore;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
@@ -17,10 +21,15 @@ import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.identity.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -238,9 +247,118 @@ public class IndicatorDatabaseHandler {
 
 	}
 
-	public static void updateIndicatorFeatures(IndicatorPUTInputType indicatorData, String dbTableName) {
-		// TODO Auto-generated method stub
+	public static void updateIndicatorFeatures(IndicatorPUTInputType indicatorData, String dbTableName) throws IOException {
+		/*
+		 * update indicator featue table with the submitted values
+		 * 
+		 * if column for date already exists, then overwrite values
+		 * 
+		 * else if column name for date does not exists
+		 * 	--> then add new column and insert values
+		 */
+		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
+		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(dbTableName);
+		SimpleFeatureType schema = featureSource.getSchema();		
 		
+		List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = indicatorData.getIndicatorValues();
+		/*
+		 * get sample time stamps
+		 */
+		List<IndicatorPOSTInputTypeValueMapping> sampleValueMapping = indicatorValues.get(0).getValueMapping();
+		schema = updateSchema(schema, sampleValueMapping);
+		
+		// update schema in db to ensure all new columns are created
+		postGisStore.updateSchema(dbTableName, schema);
+		
+		DataAccess<SimpleFeatureType, SimpleFeature> dataStore = featureSource.getDataStore();
+		
+		if (featureSource instanceof SimpleFeatureStore) {
+			SimpleFeatureStore store = (SimpleFeatureStore) featureSource; // write
+																			// access!
+			Transaction transaction = new DefaultTransaction("Update features in Table " + dbTableName);
+			
+			try {
+
+				applyModificationStatements(indicatorValues, store);
+
+				transaction.commit(); // actually writes out the features in one
+										// go
+			} catch (Exception eek) {
+				transaction.rollback();
+			}
+
+			transaction.close();
+		}
+		
+		postGisStore.dispose();
+		
+	}
+
+	private static void applyModificationStatements(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues,
+			SimpleFeatureStore store) throws CQLException, IOException {
+		for (IndicatorPOSTInputTypeIndicatorValues indicatorValueMappingEntry : indicatorValues) {
+			String spatialReferenceKey = indicatorValueMappingEntry.getSpatialReferenceKey();
+			List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorValueMappingEntry
+					.getValueMapping();
+
+			for (IndicatorPOSTInputTypeValueMapping valueMappingEntry : valueMapping) {
+				Date dateColumn = DateTimeUtil.fromLocalDate(valueMappingEntry.getTimestamp());
+				String dateColumnName = createDateStringForDbProperty(dateColumn);
+				
+				Filter filter = createFilterForSpatialUnitId(spatialReferenceKey);
+				
+				store.modifyFeatures(dateColumnName, valueMappingEntry.getIndicatorValue(), filter);
+			}
+			
+		}
+	}
+	
+	private static Filter createFilterForSpatialUnitId(String spatialUnitId) throws CQLException {
+		Filter filter = CQL.toFilter(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_NAME + " is " + spatialUnitId);
+		return filter;
+	}
+
+	private static SimpleFeatureType updateSchema(SimpleFeatureType schema,
+			List<IndicatorPOSTInputTypeValueMapping> sampleValueMapping) {
+		/*
+		 * for each timestamp within indicator value mapping
+		 * 
+		 * check if columns already exists
+		 * 		then do nothing
+		 * 
+		 * if it not exists,
+		 * 		then add it to schema
+		 */
+		SimpleFeatureTypeBuilder sftBuilder = new SimpleFeatureTypeBuilder();
+		sftBuilder.setNamespaceURI(schema.getName().getNamespaceURI());
+		sftBuilder.addAll(schema.getAttributeDescriptors());
+		
+		
+		for (IndicatorPOSTInputTypeValueMapping indicatorValueMappingEntry : sampleValueMapping) {
+			Date date = DateTimeUtil.fromLocalDate(indicatorValueMappingEntry.getTimestamp());
+			String datePropertyName = createDateStringForDbProperty(date);
+			
+			if(!schemaContainsDateProperty(schema, datePropertyName)){
+				// add new Property
+				logger.debug("Add new propert/column '{}' to table '{}'", datePropertyName, schema.getTypeName());
+				sftBuilder.add(datePropertyName, Float.class);
+			}
+		}
+		return sftBuilder.buildFeatureType();
+	}
+
+	private static boolean schemaContainsDateProperty(SimpleFeatureType schema, String datePropertyName) {
+		List<AttributeDescriptor> attributeDescriptors = schema.getAttributeDescriptors();
+		
+		for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
+			/*
+			 * TODO FIXME ist the string the correct name of the property?
+			 */
+			String attributeName = attributeDescriptor.getName().getLocalPart();
+			if(attributeName.equals(datePropertyName))
+				return true;
+		}
+		return false;
 	}
 
 	public static String getValidFeatures(Date date, String dbTableName) {
