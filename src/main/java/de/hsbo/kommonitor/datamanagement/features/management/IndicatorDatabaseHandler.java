@@ -361,6 +361,10 @@ public class IndicatorDatabaseHandler {
 
 	public static String getValidFeatures(String featureViewName, BigDecimal year, BigDecimal month, BigDecimal day) throws Exception {
 		logger.info("Fetch indicator features for table with name {} and timestamp '{}-{}-{}'", featureViewName, year, month, day);
+		/*
+		 * here all indicators for the requested spatial unit shall be retrieved. However, the timeseries shall be reduced
+		 * to only contain the requested timestamp
+		 */
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
 		SimpleFeatureSource featureSource = dataStore.getFeatureSource(featureViewName);
@@ -388,7 +392,8 @@ public class IndicatorDatabaseHandler {
 			geoJson = writer.toString();
 		} else {
 			dataStore.dispose();
-			throw new Exception("No features could be retrieved for the specified indicator feature table.");
+			throw new Exception("No features could be retrieved for the specified indicator feature table and timestamp ." 
+			+ year + "-" + month + "-" + day);
 		}
 
 		dataStore.dispose();
