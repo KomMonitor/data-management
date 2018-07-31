@@ -111,7 +111,7 @@ public class SpatialUnitsManager {
 		
 		metadataset.setDbTableName(dbTableName);
 		
-		spatialUnitsMetadataRepo.save(metadataset);
+		spatialUnitsMetadataRepo.saveAndFlush(metadataset);
 		
 		logger.info("Updating successful");
 	}
@@ -150,7 +150,8 @@ public class SpatialUnitsManager {
 		entity.setWmsUrl(null);
 		
 		// persist in db
-		spatialUnitsMetadataRepo.save(entity);
+		spatialUnitsMetadataRepo.saveAndFlush(entity);
+	
 		logger.info("Completed to add spatialUnit metadata entry for spatialUnit dataset with id {}.", entity.getDatasetId());
 		
 		return entity.getDatasetId();
@@ -192,7 +193,7 @@ public class SpatialUnitsManager {
 			// set lastUpdate in metadata in case of successful update
 			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
 			
-			spatialUnitsMetadataRepo.save(metadataEntity);
+			spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
 			
 			// handle OGC web service
 			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
@@ -215,7 +216,7 @@ public class SpatialUnitsManager {
 			 */
 			updateMetadata(metadata, metadataEntity);
 			
-			spatialUnitsMetadataRepo.save(metadataEntity);
+			spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
 			return spatialUnitId;
 		} else {
 			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Update request has no effect.", spatialUnitId);

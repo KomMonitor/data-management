@@ -121,7 +121,7 @@ public class GeoresourcesManager {
 
 		metadataset.setDbTableName(dbTableName);
 
-		georesourcesMetadataRepo.save(metadataset);
+		georesourcesMetadataRepo.saveAndFlush(metadataset);
 
 		logger.info("Updating successful");
 
@@ -164,7 +164,7 @@ public class GeoresourcesManager {
 		entity.setWmsUrl(null);
 
 		// persist in db
-		georesourcesMetadataRepo.save(entity);
+		georesourcesMetadataRepo.saveAndFlush(entity);
 		logger.info("Completed to add georesource metadata entry for georesource dataset with id {}.",
 				entity.getDatasetId());
 
@@ -295,7 +295,7 @@ public class GeoresourcesManager {
 			// set lastUpdate in metadata in case of successful update
 			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
 
-			georesourcesMetadataRepo.save(metadataEntity);
+			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 			
 			// handle OGC web service
 			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.GEORESOURCE);
@@ -320,7 +320,7 @@ public class GeoresourcesManager {
 			 */
 			updateMetadata(metadata, metadataEntity);
 
-			georesourcesMetadataRepo.save(metadataEntity);
+			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 			return georesourceId;
 		} else {
 			logger.error(
@@ -351,7 +351,7 @@ public class GeoresourcesManager {
 		entity.addTopicsIfNotExist(metadata.getApplicableTopics());
 
 		// persist in db
-		georesourcesMetadataRepo.save(entity);
+		georesourcesMetadataRepo.saveAndFlush(entity);
 	}
 
 	public List<GeoresourceOverviewType> getAllGeoresourcesMetadata(String topic) throws IOException, SQLException {

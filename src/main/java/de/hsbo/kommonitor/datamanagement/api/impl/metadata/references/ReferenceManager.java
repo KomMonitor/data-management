@@ -49,7 +49,7 @@ public class ReferenceManager {
 				entity.setReferencedIndicatorId(indicatorReference.getIndicatorId());
 			} else {
 				// save new resource
-				indicatorRefRepo.save(IndicatorReferenceMapper.mapToEntity(indicatorId, indicatorReference));
+				indicatorRefRepo.saveAndFlush(IndicatorReferenceMapper.mapToEntity(indicatorId, indicatorReference));
 			}
 		}
 
@@ -65,7 +65,7 @@ public class ReferenceManager {
 				entity.setReferencedGeoresourceId(georesourceReference.getGeoresourceId());
 			} else {
 				// save new resource
-				georesourceRefRepo.save(GeoresourceReferenceMapper.mapToEntity(georesourceReference, indicatorId));
+				georesourceRefRepo.saveAndFlush(GeoresourceReferenceMapper.mapToEntity(georesourceReference, indicatorId));
 			}
 		}
 

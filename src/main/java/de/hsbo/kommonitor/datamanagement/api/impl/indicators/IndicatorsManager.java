@@ -71,7 +71,7 @@ public class IndicatorsManager {
 			 */
 			updateMetadata(metadata, metadataEntity);
 
-			indicatorsMetadataRepo.save(metadataEntity);
+			indicatorsMetadataRepo.saveAndFlush(metadataEntity);
 			ReferenceManager.updateReferences(metadata.getRefrencesToGeoresources(), metadata.getRefrencesToOtherIndicators(),metadataEntity.getDatasetId());
 			
 			return indicatorId;
@@ -105,7 +105,7 @@ public class IndicatorsManager {
 		entity.addTopicsIfNotExist(metadata.getApplicableTopics());
 
 		// persist in db
-		indicatorsMetadataRepo.save(entity);
+		indicatorsMetadataRepo.saveAndFlush(entity);
 		
 	}
 
@@ -129,7 +129,7 @@ public class IndicatorsManager {
 				
 				indicatorMetadataEntry.setLastUpdate(java.util.Calendar.getInstance().getTime());
 
-				indicatorsMetadataRepo.save(indicatorMetadataEntry);
+				indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
 				
 				// handle OGC web service
 				ogcServiceManager.publishDbLayerAsOgcService(indicatorfeatureViewName, ResourceTypeEnum.INDICATOR);
@@ -412,7 +412,7 @@ public class IndicatorsManager {
 //
 //		metadataset.setDbTableName(indicatorValueTable);
 //
-//		indicatorsMetadataRepo.save(metadataset);
+//		indicatorsMetadataRepo.saveAndFlush(metadataset);
 //
 		logger.info("Creation of join entry successful.");
 		
@@ -455,7 +455,7 @@ public class IndicatorsManager {
 		entity.setWmsUrl(null);
 
 		// persist in db
-		indicatorsMetadataRepo.save(entity);
+		indicatorsMetadataRepo.saveAndFlush(entity);
 		logger.info("Completed to add indicator metadata entry for indicator dataset with id {}.",
 				entity.getDatasetId());
 
