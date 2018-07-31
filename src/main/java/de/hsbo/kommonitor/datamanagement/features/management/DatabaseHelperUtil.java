@@ -24,14 +24,18 @@ public class DatabaseHelperUtil {
 
 	private static Properties properties;
 	
-	@Autowired
 	private static SpatialUnitsMetadataRepository spatialUnitsRepo;
 	
-	@Autowired
 	private static GeoresourcesMetadataRepository georesourceRepo;
 	
-	@Autowired
 	private static IndicatorsMetadataRepository indicatorsRepo;
+	
+	public DatabaseHelperUtil(SpatialUnitsMetadataRepository spatialUnitsRepository, GeoresourcesMetadataRepository georesourcesRepository,
+			IndicatorsMetadataRepository indicatorsRepository){
+		spatialUnitsRepo = spatialUnitsRepository;
+		georesourceRepo = georesourcesRepository;
+		indicatorsRepo = indicatorsRepository;
+	}
 
 	public static void updateResourceMetadataEntry(ResourceTypeEnum resource, String tableName,
 			String correspondingMetadataDatasetId) {
