@@ -196,28 +196,19 @@ public class GeorecourcesController extends BasePathController implements Geores
 		logger.info("Received request to get georesource features for datasetId '{}'", georesourceId);
 		String accept = request.getHeader("Accept");
 
-		/*
-		 * retrieve the user for the specified id
-		 */
+		try {
+			String geoJsonFeatures = georesourcesManager.getValidGeoresourceFeatures(georesourceId, year, month, day);
+			String fileName = "GeoresourceFeatures_" + georesourceId + "_" + year + "-" + month + "-" + day + ".json";
 
-		if (accept != null && accept.contains("application/json")) {
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("content-disposition", "attachment; filename=" + fileName);
+			byte[] JsonBytes = geoJsonFeatures.getBytes();
 
-			try {
-				String geoJsonFeatures = georesourcesManager.getValidGeoresourceFeatures(georesourceId, year, month, day);
-				String fileName = "GeoresourceFeatures_" + georesourceId + "_" + year + "-" + month + "-" + day + ".json";
-				
-				HttpHeaders headers = new HttpHeaders();
-				headers.add("content-disposition", "attachment; filename="+ fileName);
-				byte[] JsonBytes = geoJsonFeatures.getBytes();
-				
-				return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff")).body(JsonBytes);
-				
-			} catch (Exception e) {
-				return ApiUtils.createResponseEntityFromException(e);
-			}
+			return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff"))
+					.body(JsonBytes);
 
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
 		}
 	}
 

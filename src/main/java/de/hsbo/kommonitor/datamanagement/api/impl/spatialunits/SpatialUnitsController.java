@@ -194,24 +194,21 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		 * retrieve the user for the specified id
 		 */
 
-		if (accept != null && accept.contains("application/json")) {
+		try {
+			String geoJsonFeatures = spatialUnitsManager.getValidSpatialUnitFeatures(spatialUnitLevel, year, month,
+					day);
+			String fileName = "SpatialUnitFeatures_" + spatialUnitLevel + "_" + year + "-" + month + "-" + day
+					+ ".json";
 
-			try {
-				String geoJsonFeatures = spatialUnitsManager.getValidSpatialUnitFeatures(spatialUnitLevel, year, month, day);
-				String fileName = "SpatialUnitFeatures_" + spatialUnitLevel + "_" + year + "-" + month + "-" + day + ".json";
-				
-				HttpHeaders headers = new HttpHeaders();
-				headers.add("content-disposition", "attachment; filename="+ fileName);
-				byte[] JsonBytes = geoJsonFeatures.getBytes();
-				
-				return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff")).body(JsonBytes);
-				
-			} catch (Exception e) {
-				return ApiUtils.createResponseEntityFromException(e);
-			}
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("content-disposition", "attachment; filename=" + fileName);
+			byte[] JsonBytes = geoJsonFeatures.getBytes();
 
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff"))
+					.body(JsonBytes);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
 		}
 	}
 

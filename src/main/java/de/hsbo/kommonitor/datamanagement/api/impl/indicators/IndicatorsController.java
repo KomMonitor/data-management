@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.hsbo.kommonitor.datamanagement.api.IndicatorsApi;
-import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
@@ -32,10 +30,6 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
 
 @Controller
 public class IndicatorsController extends BasePathController implements IndicatorsApi {
@@ -145,32 +139,25 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 
 	@Override
-	public ResponseEntity<byte[]> getIndicatorBySpatialUnitLevelAndId(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitLevel") String spatialUnitLevel) {
-		logger.info("Received request to get indicators features for spatialUnitLevel '{}' and Id '{}' ", spatialUnitLevel, indicatorId);
+	public ResponseEntity<byte[]> getIndicatorBySpatialUnitLevelAndId(@PathVariable("indicatorId") String indicatorId,
+			@PathVariable("spatialUnitLevel") String spatialUnitLevel) {
+		logger.info("Received request to get indicators features for spatialUnitLevel '{}' and Id '{}' ",
+				spatialUnitLevel, indicatorId);
 		String accept = request.getHeader("Accept");
 
-		/*
-		 * retrieve the user for the specified id
-		 */
+		try {
+			String geoJsonFeatures = indicatorsManager.getIndicatorFeatures(indicatorId, spatialUnitLevel);
+			String fileName = "IndicatorFeatures_" + spatialUnitLevel + "_" + indicatorId + ".json";
 
-		if (accept != null && accept.contains("application/json")) {
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("content-disposition", "attachment; filename=" + fileName);
+			byte[] JsonBytes = geoJsonFeatures.getBytes();
 
-			try {
-				String geoJsonFeatures = indicatorsManager.getIndicatorFeatures(indicatorId, spatialUnitLevel);
-				String fileName = "IndicatorFeatures_" + spatialUnitLevel + "_" + indicatorId + ".json";
-				
-				HttpHeaders headers = new HttpHeaders();
-				headers.add("content-disposition", "attachment; filename="+ fileName);
-				byte[] JsonBytes = geoJsonFeatures.getBytes();
-				
-				return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff")).body(JsonBytes);
-				
-			} catch (Exception e) {
-				return ApiUtils.createResponseEntityFromException(e);
-			}
+			return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff"))
+					.body(JsonBytes);
 
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
 		}
 	}
 
