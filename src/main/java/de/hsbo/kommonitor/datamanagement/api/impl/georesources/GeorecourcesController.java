@@ -30,7 +30,6 @@ import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewT
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 
 
 @Controller
@@ -204,7 +203,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 			headers.add("content-disposition", "attachment; filename=" + fileName);
 			byte[] JsonBytes = geoJsonFeatures.getBytes();
 
-			return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff"))
+			return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/vnd.geo+json"))
 					.body(JsonBytes);
 
 		} catch (Exception e) {

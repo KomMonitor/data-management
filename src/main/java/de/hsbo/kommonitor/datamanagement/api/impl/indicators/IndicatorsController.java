@@ -153,7 +153,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 			headers.add("content-disposition", "attachment; filename=" + fileName);
 			byte[] JsonBytes = geoJsonFeatures.getBytes();
 
-			return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff"))
+			return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/vnd.geo+json"))
 					.body(JsonBytes);
 
 		} catch (Exception e) {
@@ -165,31 +165,30 @@ public class IndicatorsController extends BasePathController implements Indicato
 	public ResponseEntity<byte[]> getIndicatorBySpatialUnitLevelAndIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId,
 			@PathVariable("spatialUnitLevel") String spatialUnitLevel, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
 			@PathVariable("day") BigDecimal day) {
-		logger.info("Received request to get indicators features for spatialUnitLevel '{}' and Id '{}' and Date '{}-{}-{}' ", spatialUnitLevel, indicatorId, year, month, day);
+		logger.info(
+				"Received request to get indicators features for spatialUnitLevel '{}' and Id '{}' and Date '{}-{}-{}' ",
+				spatialUnitLevel, indicatorId, year, month, day);
 		String accept = request.getHeader("Accept");
 
 		/*
 		 * retrieve the user for the specified id
 		 */
 
-		if (accept != null && accept.contains("application/json")) {
+		try {
+			String geoJsonFeatures = indicatorsManager.getValidIndicatorFeatures(indicatorId, spatialUnitLevel, year,
+					month, day);
+			String fileName = "IndicatorFeatures_" + spatialUnitLevel + "_" + indicatorId + "_" + year + "-" + month
+					+ "-" + day + ".json";
 
-			try {
-				String geoJsonFeatures = indicatorsManager.getValidIndicatorFeatures(indicatorId, spatialUnitLevel, year, month, day);
-				String fileName = "IndicatorFeatures_" + spatialUnitLevel + "_" + indicatorId + "_"+ year + "-" + month + "-" + day + ".json";
-				
-				HttpHeaders headers = new HttpHeaders();
-				headers.add("content-disposition", "attachment; filename="+ fileName);
-				byte[] JsonBytes = geoJsonFeatures.getBytes();
-				
-				return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("image/tiff")).body(JsonBytes);
-				
-			} catch (Exception e) {
-				return ApiUtils.createResponseEntityFromException(e);
-			}
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("content-disposition", "attachment; filename=" + fileName);
+			byte[] JsonBytes = geoJsonFeatures.getBytes();
 
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.ok().headers(headers)
+					.contentType(MediaType.parseMediaType("application/vnd.geo+json")).body(JsonBytes);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
 		}
 	}
 
