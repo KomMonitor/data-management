@@ -9,6 +9,8 @@ import javax.persistence.ManyToMany;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessInputType.DataTypeEnum;
 
 @Entity(name = "ScriptInputParameters")
@@ -22,11 +24,12 @@ public class ScriptInputParameterEntity {
 	private String name = null;
 	private String description = null;
 	private DataTypeEnum dataType = null;
+	private String defaultValue = null;
 	private double maxParameterValueForNumericInputs;
 	private double minParameterValueForNumericInputs;
 	
-	@ManyToMany(mappedBy = "scriptInputParameters")
-    private Collection<ScriptMetadataEntity> scriptsMetadata;
+//	@ManyToMany(mappedBy = "scriptInputParameters")
+//    private Collection<ScriptMetadataEntity> scriptsMetadata;
 
 	public String getName() {
 		return name;
@@ -68,16 +71,24 @@ public class ScriptInputParameterEntity {
 		this.minParameterValueForNumericInputs = minParameterValueForNumericInputs;
 	}
 
-	public Collection<ScriptMetadataEntity> getScriptsMetadata() {
-		return scriptsMetadata;
-	}
-
-	public void setScriptsMetadata(Collection<ScriptMetadataEntity> scriptsMetadata) {
-		this.scriptsMetadata = scriptsMetadata;
-	}
+//	public Collection<ScriptMetadataEntity> getScriptsMetadata() {
+//		return scriptsMetadata;
+//	}
+//
+//	public void setScriptsMetadata(Collection<ScriptMetadataEntity> scriptsMetadata) {
+//		this.scriptsMetadata = scriptsMetadata;
+//	}
 
 	public String getInputParameterId() {
 		return inputParameterId;
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 
 }
