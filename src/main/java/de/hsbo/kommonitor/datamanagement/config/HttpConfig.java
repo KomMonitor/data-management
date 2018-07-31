@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.GeoserverManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
@@ -17,6 +18,7 @@ public class HttpConfig {
     public ObjectMapper provideObjectMapper(){
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JtsModule());
+        objectMapper.registerModule(new JavaTimeModule());
         return objectMapper;
     }
     
