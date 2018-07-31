@@ -151,14 +151,19 @@ public class ScriptManager {
 		return scriptsMetadata;
 	}
 
-	public List<ProcessScriptOverviewType> getScriptMetadataByIndicatorId(String indicatorId) {
-//		logger.info("Retrieving script metadata from db for indicatorId '{}'", indicatorId);
-//
-//		ScriptMetadataEntity scriptEntity = scriptMetadataRepo.findByIndicatorId(indicatorId);
-//		ProcessScriptOverviewType scriptMetadata = ScriptMapper.mapToSwaggerScript(scriptEntity);
-//
-//		return scriptMetadata;
-		return null;
+	public ProcessScriptOverviewType getScriptMetadataByIndicatorId(String indicatorId) throws ResourceNotFoundException {
+		logger.info("Retrieving script metadata from db for indicatorId '{}'", indicatorId);
+		
+		if (!scriptMetadataRepo.existsByIndicatorId(indicatorId)){
+			logger.error("No script with indicatorId '{}' was found in database. Get script metadata request has no effect.", indicatorId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to get script metadata, but no script metadata exists with indicatorId " + indicatorId);
+		}
+
+		ScriptMetadataEntity scriptEntity = scriptMetadataRepo.findByIndicatorId(indicatorId);
+		ProcessScriptOverviewType scriptMetadata = ScriptMapper.mapToSwaggerScript(scriptEntity);
+
+		return scriptMetadata;
 	}
 
 	public String updateScriptForIndicatorId(ProcessScriptPUTInputType processScriptData, String indicatorId)
@@ -258,6 +263,18 @@ public class ScriptManager {
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 			"Tried to update script, but no script exists for associated indicatorId " + indicatorId);
 		}
+	}
+
+	public String getScriptCodeForIndicatorId(String indicatorId) throws ResourceNotFoundException {
+		if (!scriptMetadataRepo.existsByIndicatorId(indicatorId)){
+			logger.error("No script with indicatorId '{}' was found in database. Get script code request has no effect.", indicatorId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to get script code, but no script metadata exists with indicatorId " + indicatorId);
+		}
+		
+		ScriptMetadataEntity scriptMetadataEntity = scriptMetadataRepo.findByIndicatorId(indicatorId);
+		
+		return scriptMetadataEntity.getScriptCode();
 	}
 	
 

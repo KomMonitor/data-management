@@ -20,7 +20,6 @@ import de.hsbo.kommonitor.datamanagement.api.ProcessScriptsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPUTInputType;
@@ -67,7 +66,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 			try {
 				responseHeaders.setLocation(new URI(location));
 			} catch (URISyntaxException e) {
-				// return ApiResponseUtil.createResponseEntityFromException(e);
+				return ApiUtils.createResponseEntityFromException(e);
 			}
 
 			return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
@@ -104,7 +103,10 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	public ResponseEntity<String> getProcessScriptTemplate() {
-		// TODO Auto-generated method stub
+		// TODO implement getTemplate!
+		/*
+		 * TODO FIXME it is not yet clear how to store and deliver the template, make individual REST endpoint?
+		 */
 		return null;
 	}
 
@@ -131,7 +133,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity<List<ProcessScriptOverviewType>> getProcessScriptsForIndicator(String indicatorId) {
+	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(String indicatorId) {
 		logger.info("Received request to get process script metadata for indicatorId '{}'", indicatorId);
 		String accept = request.getHeader("Accept");
 
@@ -139,13 +141,19 @@ public class ScriptController extends BasePathController implements ProcessScrip
 		 * retrieve the role for the specified id
 		 */
 
-		if (accept != null && accept.contains("application/json")){
-			
-			List<ProcessScriptOverviewType> scripts = scriptManager.getScriptMetadataByIndicatorId(indicatorId);
-			
-			return new ResponseEntity<>(scripts, HttpStatus.OK);
-			
-		} else{
+		if (accept != null && accept.contains("application/json")) {
+
+			ProcessScriptOverviewType script = null;
+
+			try {
+				script = scriptManager.getScriptMetadataByIndicatorId(indicatorId);
+			} catch (ResourceNotFoundException e) {
+				ApiUtils.createResponseEntityFromException(e);
+			}
+
+			return new ResponseEntity<>(script, HttpStatus.OK);
+
+		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -179,6 +187,21 @@ public class ScriptController extends BasePathController implements ProcessScrip
 			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Override
+	public ResponseEntity<String> getProcessScriptCodeForIndicator(String indicatorId) {
+		logger.info("Received request to get scriptCode for associated indicatorId '{}'", indicatorId);
+		String accept = request.getHeader("Accept");
+
+		try {
+			String scriptCode = scriptManager.getScriptCodeForIndicatorId(indicatorId);
+			
+			return new ResponseEntity<String>(scriptCode, HttpStatus.OK);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
 		}
 	}
 }

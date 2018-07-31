@@ -5,23 +5,24 @@
  */
 package de.hsbo.kommonitor.datamanagement.api;
 
-import io.swagger.annotations.*;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPUTInputType;
-
-import java.util.List;
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-31T09:43:33.838+02:00")
 
 @Api(value = "ProcessScripts", description = "the ProcessScripts API")
 public interface ProcessScriptsApi {
@@ -50,6 +51,32 @@ public interface ProcessScriptsApi {
     ResponseEntity deleteProcessScript(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
 
 
+    @ApiOperation(value = "retrieve the process script code associated to a certain indicator", nickname = "getProcessScriptCodeForIndicator", notes = "retrieve the process script code associated to a certain indicator", response = String.class, authorizations = {
+        @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "OK", response = String.class),
+        @ApiResponse(code = 400, message = "Invalid status value"),
+        @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/process-scripts/{indicatorId}/scriptCode",
+        produces = { "application/json" }, 
+        method = RequestMethod.GET)
+    ResponseEntity<String> getProcessScriptCodeForIndicator(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
+
+
+    @ApiOperation(value = "retrieve information about the associated process script for a certain indicator", nickname = "getProcessScriptForIndicator", notes = "retrieve information about the associated process script for a certain indicator", response = ProcessScriptOverviewType.class, authorizations = {
+        @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "OK", response = ProcessScriptOverviewType.class),
+        @ApiResponse(code = 400, message = "Invalid status value"),
+        @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/process-scripts/{indicatorId}",
+        produces = { "application/json" }, 
+        method = RequestMethod.GET)
+    ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
+
+
     @ApiOperation(value = "retrieve an empty script template, that defines how to implement process scripts for KomMonitor.", nickname = "getProcessScriptTemplate", notes = "retrieve an empty script template, that defines how to implement process scripts for KomMonitor. The script works as a template for a NodeJS module. Hence, it predefines required methods that are called by the executing processing engine (a NodeJS runtimne environment). As a script developer, those predefined methods have to be implemented. The template contains detailed documentation on how to implement those methods.", response = String.class, authorizations = {
         @Authorization(value = "basicAuth")
     }, tags={  })
@@ -74,19 +101,6 @@ public interface ProcessScriptsApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<List<ProcessScriptOverviewType>> getProcessScripts();
-
-
-    @ApiOperation(value = "retrieve information about available process scripts for a certain indicator", nickname = "getProcessScriptsForIndicator", notes = "retrieve information about available process scripts for a certain indicator", response = ProcessScriptOverviewType.class, responseContainer = "array", authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = ProcessScriptOverviewType.class, responseContainer = "array"),
-        @ApiResponse(code = 400, message = "Invalid status value"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/process-scripts/{indicatorId}",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<ProcessScriptOverviewType>> getProcessScriptsForIndicator(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
 
 
     @ApiOperation(value = "Modify/Update an existing process script", nickname = "updateProcessScriptAsBody", notes = "Modify/Update an existing process script associated to a certain indicator", authorizations = {
