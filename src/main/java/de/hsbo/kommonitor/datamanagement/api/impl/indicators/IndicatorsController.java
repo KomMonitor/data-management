@@ -53,7 +53,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 
 	@Override
-	public ResponseEntity deleteIndicatorByIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitLevel") String spatialUnitLevel,
+	public ResponseEntity deleteIndicatorByIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId,
 			@PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
 			@PathVariable("day") BigDecimal day) {
 		logger.info("Received request to delete indicator for indicatorId '{}' and Date '{}-{}-{}'", indicatorId, year, month, day);
@@ -66,7 +66,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 		boolean isDeleted;
 		try {
-			isDeleted = indicatorsManager.deleteIndicatorDatasetByIdAndDate(indicatorId, year, month, day);
+			isDeleted = indicatorsManager.deleteIndicatorDatasetByIdAndDate(indicatorId, spatialUnitId, year, month, day);
 
 			if (isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -139,15 +139,15 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 
 	@Override
-	public ResponseEntity<byte[]> getIndicatorBySpatialUnitLevelAndId(@PathVariable("indicatorId") String indicatorId,
-			@PathVariable("spatialUnitLevel") String spatialUnitLevel) {
-		logger.info("Received request to get indicators features for spatialUnitLevel '{}' and Id '{}' ",
-				spatialUnitLevel, indicatorId);
+	public ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndId(@PathVariable("indicatorId") String indicatorId,
+			@PathVariable("spatialUnitId") String spatialUnitId) {
+		logger.info("Received request to get indicators features for spatialUnitId '{}' and Id '{}' ",
+				spatialUnitId, indicatorId);
 		String accept = request.getHeader("Accept");
 
 		try {
-			String geoJsonFeatures = indicatorsManager.getIndicatorFeatures(indicatorId, spatialUnitLevel);
-			String fileName = "IndicatorFeatures_" + spatialUnitLevel + "_" + indicatorId + ".json";
+			String geoJsonFeatures = indicatorsManager.getIndicatorFeatures(indicatorId, spatialUnitId);
+			String fileName = "IndicatorFeatures_" + spatialUnitId + "_" + indicatorId + ".json";
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.add("content-disposition", "attachment; filename=" + fileName);
@@ -162,12 +162,12 @@ public class IndicatorsController extends BasePathController implements Indicato
 	}
 
 	@Override
-	public ResponseEntity<byte[]> getIndicatorBySpatialUnitLevelAndIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId,
-			@PathVariable("spatialUnitLevel") String spatialUnitLevel, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
+	public ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId,
+			@PathVariable("spatialUnitId") String spatialUnitId, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
 			@PathVariable("day") BigDecimal day) {
 		logger.info(
-				"Received request to get indicators features for spatialUnitLevel '{}' and Id '{}' and Date '{}-{}-{}' ",
-				spatialUnitLevel, indicatorId, year, month, day);
+				"Received request to get indicators features for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
+				spatialUnitId, indicatorId, year, month, day);
 		String accept = request.getHeader("Accept");
 
 		/*
@@ -175,9 +175,9 @@ public class IndicatorsController extends BasePathController implements Indicato
 		 */
 
 		try {
-			String geoJsonFeatures = indicatorsManager.getValidIndicatorFeatures(indicatorId, spatialUnitLevel, year,
+			String geoJsonFeatures = indicatorsManager.getValidIndicatorFeatures(indicatorId, spatialUnitId, year,
 					month, day);
-			String fileName = "IndicatorFeatures_" + spatialUnitLevel + "_" + indicatorId + "_" + year + "-" + month
+			String fileName = "IndicatorFeatures_" + spatialUnitId + "_" + indicatorId + "_" + year + "-" + month
 					+ "-" + day + ".json";
 
 			HttpHeaders headers = new HttpHeaders();

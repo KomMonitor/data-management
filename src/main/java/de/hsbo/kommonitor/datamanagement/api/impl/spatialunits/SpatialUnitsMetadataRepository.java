@@ -15,6 +15,8 @@ public interface SpatialUnitsMetadataRepository extends JpaRepository<MetadataSp
 
 	void deleteByDatasetName(String datasetName);
 
+	void deleteByDatasetId(String datasetId);
+
 	
 
 }

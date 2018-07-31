@@ -156,10 +156,10 @@ public class SpatialUnitsManager {
 		return entity.getDatasetId();
 	}
 
-	public boolean deleteSpatialUnitDatasetByName(String spatialUnitLevel) throws ResourceNotFoundException, IOException {
-		logger.info("Trying to delete spatialUnit dataset with datasetName '{}'", spatialUnitLevel);
-		if (spatialUnitsMetadataRepo.existsByDatasetName(spatialUnitLevel)){
-			String dbTableName = spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel).getDbTableName();
+	public boolean deleteSpatialUnitDatasetById(String spatialUnitId) throws ResourceNotFoundException, IOException {
+		logger.info("Trying to delete spatialUnit dataset with datasetId '{}'", spatialUnitId);
+		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)){
+			String dbTableName = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId).getDbTableName();
 			/*
 			 * delete featureTable
 			 */
@@ -167,19 +167,19 @@ public class SpatialUnitsManager {
 			/*
 			 * delete metadata entry
 			 */
-			spatialUnitsMetadataRepo.deleteByDatasetName(spatialUnitLevel);
+			spatialUnitsMetadataRepo.deleteByDatasetId(spatialUnitId);
 			
 			return true;
 		}else{
-			logger.error("No spatialUnit dataset with datasetName '{}' was found in database. Delete request has no effect.", spatialUnitLevel);
-			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Tried to delete spatialUnit dataset, but no dataset existes with datasetName " + spatialUnitLevel);
+			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Delete request has no effect.", spatialUnitId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Tried to delete spatialUnit dataset, but no dataset existes with datasetId " + spatialUnitId);
 		}
 	}
 
-	public String updateFeatures(SpatialUnitPUTInputType featureData, String spatialUnitLevel) throws Exception {
-		logger.info("Trying to update spatialUnit features for datasetName '{}'", spatialUnitLevel);
-		if (spatialUnitsMetadataRepo.existsByDatasetName(spatialUnitLevel)) {
-			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);
+	public String updateFeatures(SpatialUnitPUTInputType featureData, String spatialUnitId) throws Exception {
+		logger.info("Trying to update spatialUnit features for datasetId '{}'", spatialUnitId);
+		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
 			String dbTableName = metadataEntity.getDbTableName();
 			/*
 			 * call DB tool to update features
@@ -190,18 +190,18 @@ public class SpatialUnitsManager {
 			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
 			
 			spatialUnitsMetadataRepo.save(metadataEntity);
-			return spatialUnitLevel;
+			return spatialUnitId;
 		} else {
-			logger.error("No spatialUnit dataset with datasetName '{}' was found in database. Update request has no effect.", spatialUnitLevel);
+			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Update request has no effect.", spatialUnitId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to update spatialUnit features, but no dataset existes with datasetName " + spatialUnitLevel);
+					"Tried to update spatialUnit features, but no dataset existes with datasetId " + spatialUnitId);
 		}
 	}
 
-	public String updateMetadata(SpatialUnitPATCHInputType metadata, String spatialUnitLevel) throws ResourceNotFoundException {
-		logger.info("Trying to update spatialUnit metadata for datasetName '{}'", spatialUnitLevel);
-		if (spatialUnitsMetadataRepo.existsByDatasetName(spatialUnitLevel)) {
-			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);
+	public String updateMetadata(SpatialUnitPATCHInputType metadata, String spatialUnitId) throws ResourceNotFoundException {
+		logger.info("Trying to update spatialUnit metadata for datasetId '{}'", spatialUnitId);
+		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
 
 			/*
 			 * call DB tool to update features
@@ -209,11 +209,11 @@ public class SpatialUnitsManager {
 			updateMetadata(metadata, metadataEntity);
 			
 			spatialUnitsMetadataRepo.save(metadataEntity);
-			return spatialUnitLevel;
+			return spatialUnitId;
 		} else {
-			logger.error("No spatialUnit dataset with datasetName '{}' was found in database. Update request has no effect.", spatialUnitLevel);
+			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Update request has no effect.", spatialUnitId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to update spatialUnit metadata, but no dataset existes with datasetName " + spatialUnitLevel);
+					"Tried to update spatialUnit metadata, but no dataset existes with datasetId " + spatialUnitId);
 		}
 	}
 
@@ -248,33 +248,33 @@ public class SpatialUnitsManager {
 		return swaggerSpatialUnitsMetadata;
 	}
 
-	public SpatialUnitOverviewType getSpatialUnitByDatasetName(String spatialUnitLevel)
+	public SpatialUnitOverviewType getSpatialUnitByDatasetId(String spatialUnitId)
 			throws IOException, SQLException {
-		logger.info("Retrieving spatialUnit metadata for datasetName '{}'", spatialUnitLevel);
+		logger.info("Retrieving spatialUnit metadata for datasetId '{}'", spatialUnitId);
 
-		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);
+		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
 		SpatialUnitOverviewType swaggerSpatialUnitMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnit(spatialUnitMetadataEntity);
 
 		return swaggerSpatialUnitMetadata;
 	}
 
-	public String getJsonSchemaForDatasetName(String spatialUnitLevel) {
-		logger.info("Retrieving spatialUnit jsonSchema for datasetName '{}'", spatialUnitLevel);
+	public String getJsonSchemaForDatasetId(String spatialUnitId) {
+		logger.info("Retrieving spatialUnit jsonSchema for datasetId '{}'", spatialUnitId);
 
-		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);
+		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
 		
 		return spatialUnitMetadataEntity.getJsonSchema();
 	}
 
-	public String getValidSpatialUnitFeatures(String spatialUnitLevel, BigDecimal year, BigDecimal month,
+	public String getValidSpatialUnitFeatures(String spatialUnitId, BigDecimal year, BigDecimal month,
 			BigDecimal day) throws Exception {
 		Calendar calender = Calendar.getInstance();
 		calender.set(year.intValue(), month.intValueExact()-1, day.intValue());
 		java.util.Date date = calender.getTime();
-		logger.info("Retrieving valid spatialUnit Features from Dataset '{}' for date '{}'", spatialUnitLevel, date);
+		logger.info("Retrieving valid spatialUnit Features from Dataset '{}' for date '{}'", spatialUnitId, date);
 		
-		if (spatialUnitsMetadataRepo.existsByDatasetName(spatialUnitLevel)) {
-			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetName(spatialUnitLevel);
+		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
 	
 		String dbTableName = metadataEntity.getDbTableName();
 			
@@ -282,14 +282,14 @@ public class SpatialUnitsManager {
 		return geoJson;
 		
 		}else {
-			logger.error("No spatialUnit dataset with datasetName '{}' was found in database. Get request has no effect.", spatialUnitLevel);
+			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Get request has no effect.", spatialUnitId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to get spatialUnit features, but no dataset existes with datasetName " + spatialUnitLevel);
+					"Tried to get spatialUnit features, but no dataset existes with datasetId " + spatialUnitId);
 		}
 		
 	}
 
-	public boolean deleteSpatialUnitDatasetByNameAndDate(String spatialUnitLevel, BigDecimal year, BigDecimal month, BigDecimal day) throws ResourceNotFoundException, IOException {
+	public boolean deleteSpatialUnitDatasetByIdAndDate(String spatialUnitId, BigDecimal year, BigDecimal month, BigDecimal day) throws ResourceNotFoundException, IOException {
 		// TODO fill method
 		return false;
 	}
