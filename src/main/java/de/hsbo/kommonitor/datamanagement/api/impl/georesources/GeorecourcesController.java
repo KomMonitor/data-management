@@ -103,7 +103,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 			if (isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
 
-		} catch (ResourceNotFoundException | IOException e) {
+		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
 

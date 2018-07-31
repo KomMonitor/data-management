@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
@@ -45,6 +46,9 @@ public class GeoresourcesManager {
 
 	@Autowired
 	GeoresourcesMetadataRepository georesourcesMetadataRepo;
+	
+	@Autowired
+	OGCWebServiceManager ogcServiceManager;
 
 	public String addGeoresource(GeoresourcePOSTInputType featureData) throws Exception {
 		String datasetName = featureData.getDatasetName();
@@ -71,21 +75,16 @@ public class GeoresourcesManager {
 
 		String metadataId = createMetadata(featureData);
 
-		boolean isCreated = createFeatureTable(featureData.getGeoJsonString(), featureData.getPeriodOfValidity(),
+		String dbTableName = createFeatureTable(featureData.getGeoJsonString(), featureData.getPeriodOfValidity(),
 				metadataId);
 
-		if (!isCreated) {
-			/*
-			 * TODO FIXME check if any resource has been persisted (metadata or
-			 * features) --> remove it
-			 */
-			throw new Exception("An error occured during creation of georesource dataset.");
-		}
+		// handle OGC web service
+		ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.GEORESOURCE);
 
 		return metadataId;
 	}
 
-	private boolean createFeatureTable(String geoJsonString, PeriodOfValidityType periodOfValidity, String metadataId)
+	private String createFeatureTable(String geoJsonString, PeriodOfValidityType periodOfValidity, String metadataId)
 			throws CQLException, IOException {
 		/*
 		 * write features to a new unique db table
@@ -110,7 +109,7 @@ public class GeoresourcesManager {
 
 		updateMetadataWithAssociatedFeatureTable(metadataId, dbTableName);
 
-		return true;
+		return dbTableName;
 	}
 
 	private void updateMetadataWithAssociatedFeatureTable(String metadataId, String dbTableName) {
@@ -172,7 +171,7 @@ public class GeoresourcesManager {
 		return entity.getDatasetId();
 	}
 
-	public boolean deleteGeoresourceDatasetById(String georesourceId) throws ResourceNotFoundException, IOException {
+	public boolean deleteGeoresourceDatasetById(String georesourceId) throws Exception {
 		logger.info("Trying to delete georesource dataset with datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			String dbTableName = georesourcesMetadataRepo.findByDatasetId(georesourceId).getDbTableName();
@@ -184,6 +183,9 @@ public class GeoresourcesManager {
 			 * delete metadata entry
 			 */
 			georesourcesMetadataRepo.deleteByDatasetId(georesourceId);
+			
+			// handle OGC web service
+			ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.GEORESOURCE);
 
 			return true;
 		} else {
@@ -214,6 +216,9 @@ public class GeoresourcesManager {
 //				 * delete metadata entry
 //				 */
 //				georesourcesMetadataRepo.deleteByDatasetId(georesourceId);
+//		
+//				// handle OGC web service
+//				ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.GEORESOURCE);
 //
 //				return true;
 //			} else {
@@ -291,6 +296,10 @@ public class GeoresourcesManager {
 			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
 
 			georesourcesMetadataRepo.save(metadataEntity);
+			
+			// handle OGC web service
+			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.GEORESOURCE);
+			
 			return georesourceId;
 		} else {
 			logger.error(

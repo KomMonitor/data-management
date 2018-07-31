@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
@@ -46,6 +47,9 @@ public class SpatialUnitsManager {
 	
 	@Autowired
 	SpatialUnitsMetadataRepository spatialUnitsMetadataRepo;
+	
+	@Autowired
+	OGCWebServiceManager ogcServiceManager;
 
 	public String addSpatialUnit(SpatialUnitPOSTInputType featureData) throws Exception {
 		String datasetName = featureData.getSpatialUnitLevel();
@@ -68,19 +72,15 @@ public class SpatialUnitsManager {
 		
 		String metadataId = createMetadata(featureData);
 		
-		boolean isCreated = createFeatureTable(featureData.getGeoJsonString(), featureData.getPeriodOfValidity(), metadataId);
+		String dbTableName = createFeatureTable(featureData.getGeoJsonString(), featureData.getPeriodOfValidity(), metadataId);
 		
-		if(!isCreated) {
-			/*
-			 * TODO FIXME check if any resource has been persisted (metadata or features) --> remove it
-			 */
-			throw new Exception("An error occured during creation of spatial unit dataset.");
-		}
+		// handle OGC web service
+		ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
 		
 		return metadataId;
 	}
 
-	private boolean createFeatureTable(String geoJsonString, PeriodOfValidityType periodOfValidityType, String metadataId) throws CQLException, IOException {
+	private String createFeatureTable(String geoJsonString, PeriodOfValidityType periodOfValidityType, String metadataId) throws CQLException, IOException {
 		/*
 		 * write features to a new unique db table
 		 * 
@@ -101,7 +101,7 @@ public class SpatialUnitsManager {
 		
 		updateMetadataWithAssociatedFeatureTable(metadataId, dbTableName);
 		
-		return true;
+		return dbTableName;
 	}
 
 	private void updateMetadataWithAssociatedFeatureTable(String metadataId, String dbTableName) {
@@ -156,7 +156,7 @@ public class SpatialUnitsManager {
 		return entity.getDatasetId();
 	}
 
-	public boolean deleteSpatialUnitDatasetById(String spatialUnitId) throws ResourceNotFoundException, IOException {
+	public boolean deleteSpatialUnitDatasetById(String spatialUnitId) throws Exception {
 		logger.info("Trying to delete spatialUnit dataset with datasetId '{}'", spatialUnitId);
 		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)){
 			String dbTableName = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId).getDbTableName();
@@ -168,6 +168,9 @@ public class SpatialUnitsManager {
 			 * delete metadata entry
 			 */
 			spatialUnitsMetadataRepo.deleteByDatasetId(spatialUnitId);
+			
+			// handle OGC web service
+			ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
 			
 			return true;
 		}else{
@@ -190,6 +193,10 @@ public class SpatialUnitsManager {
 			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
 			
 			spatialUnitsMetadataRepo.save(metadataEntity);
+			
+			// handle OGC web service
+			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
+			
 			return spatialUnitId;
 		} else {
 			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Update request has no effect.", spatialUnitId);

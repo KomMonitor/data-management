@@ -98,7 +98,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			if (isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
 
-		} catch (ResourceNotFoundException | IOException e) {
+		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
 

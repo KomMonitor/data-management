@@ -7,6 +7,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.GeoserverManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
+
 @Configuration
 public class HttpConfig {
 
@@ -20,5 +23,10 @@ public class HttpConfig {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+    
+    @Bean
+    public OGCWebServiceManager ogcServiceManager() {
+        return new GeoserverManager();
     }
 }

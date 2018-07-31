@@ -458,7 +458,7 @@ public class IndicatorDatabaseHandler {
 		
 	}
 
-	public static String createIndicatorFeatureView(String indicatorValueTableName, String spatialUnitName) throws IOException, SQLException {
+	public static String createOrReplaceIndicatorFeatureView(String indicatorValueTableName, String spatialUnitName) throws IOException, SQLException {
 		/*
 		 * create view containing the geometry and indicatorValues
 		 * for each indicator feature also set ViewName in Metadata

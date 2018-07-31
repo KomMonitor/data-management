@@ -5,7 +5,6 @@ package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,6 +25,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEnt
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
@@ -57,6 +57,9 @@ public class IndicatorsManager {
 	
 	@Autowired
 	private IndicatorSpatialUnitsRepository indicatorsSpatialUnitsRepo;
+	
+	@Autowired
+	OGCWebServiceManager ogcServiceManager;
 	
 	public String updateMetadata(IndicatorPATCHInputType metadata, String indicatorId) throws Exception {
 		logger.info("Trying to update indicator metadata for datasetId '{}'", indicatorId);
@@ -106,7 +109,7 @@ public class IndicatorsManager {
 		
 	}
 
-	public String updateFeatures(IndicatorPUTInputType indicatorData, String indicatorId) throws ResourceNotFoundException, IOException {
+	public String updateFeatures(IndicatorPUTInputType indicatorData, String indicatorId) throws Exception {
 		logger.info("Trying to update indicator features for datasetId '{}'", indicatorId);
 		if (indicatorsMetadataRepo.existsByDatasetName(indicatorId)) {
 			String spatialUnitName = indicatorData.getApplicableSpatialUnit();
@@ -121,9 +124,16 @@ public class IndicatorsManager {
 
 				// set lastUpdate in metadata in case of successful update
 				MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+				
+				String indicatorfeatureViewName = createOrReplaceIndicatorFeatureView(dbTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
+				
 				indicatorMetadataEntry.setLastUpdate(java.util.Calendar.getInstance().getTime());
 
 				indicatorsMetadataRepo.save(indicatorMetadataEntry);
+				
+				// handle OGC web service
+				ogcServiceManager.publishDbLayerAsOgcService(indicatorfeatureViewName, ResourceTypeEnum.INDICATOR);
+				
 				return indicatorId;
 			} else{
 				logger.error(
@@ -259,7 +269,7 @@ public class IndicatorsManager {
 		}
 	}
 
-	public boolean deleteIndicatorDatasetById(String indicatorId) throws ResourceNotFoundException, IOException {
+	public boolean deleteIndicatorDatasetById(String indicatorId) throws Exception {
 		logger.info("Trying to delete indicator dataset with datasetId '{}'", indicatorId);
 		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
 			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo.findByIndicatorMetadataId(indicatorId);
@@ -269,7 +279,11 @@ public class IndicatorsManager {
 			 */
 			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
 				IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
-				IndicatorDatabaseHandler.deleteIndicatorFeatureView(indicatorSpatialUnitJoinEntity.getFeatureViewTableName());
+				String featureViewTableName = indicatorSpatialUnitJoinEntity.getFeatureViewTableName();
+				IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
+				
+				// handle OGC web service
+				ogcServiceManager.unpublishDbLayer(featureViewTableName, ResourceTypeEnum.INDICATOR);
 			}
 			
 			/*
@@ -338,21 +352,24 @@ public class IndicatorsManager {
 		}
 
 		String indicatorValueTableName = createIndicatorValueTable(indicatorData.getIndicatorValues(), metadataId);
-		String indicatorfeatureViewName = createIndicatorFeatureView(indicatorValueTableName, spatialUnitName, metadataId);
+		String indicatorfeatureViewName = createOrReplaceIndicatorFeatureView(indicatorValueTableName, spatialUnitName, metadataId);
 		
 		persistNamesOfCreatedTablesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName, indicatorfeatureViewName);
+		
+		// handle OGC web service
+		ogcServiceManager.publishDbLayerAsOgcService(indicatorfeatureViewName, ResourceTypeEnum.INDICATOR);
 		
 		return metadataId;
 	}
 
-	private String createIndicatorFeatureView(String indicatorValueTableName, String spatialUnitName,
+	private String createOrReplaceIndicatorFeatureView(String indicatorValueTableName, String spatialUnitName,
 			String metadataId) throws IOException, SQLException {
 		/*
 		 * create view joining indicator values and spatial unit features
 		 */
 		logger.info("Trying to create unique view joining indicator values and spatial unit features.");
 
-		String dbViewName = IndicatorDatabaseHandler.createIndicatorFeatureView(indicatorValueTableName, spatialUnitName);
+		String dbViewName = IndicatorDatabaseHandler.createOrReplaceIndicatorFeatureView(indicatorValueTableName, spatialUnitName);
 
 		logger.info("Completed creation of indicator feature view corresponding to datasetId {}. View name is {}.",
 				metadataId, dbViewName);
