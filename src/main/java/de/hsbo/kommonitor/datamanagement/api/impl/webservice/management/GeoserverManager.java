@@ -38,35 +38,85 @@ public class GeoserverManager implements OGCWebServiceManager {
 	@Override
 	public boolean publishDbLayerAsOgcService(String dbTableName, ResourceTypeEnum resourceType)
 			throws FileNotFoundException, IOException {
-		// TODO Auto-generated method stub
 		parseResourceFiles();
 
 		publishDBLayerInGeoserver(dbTableName, resourceType);
-		return false;
+		return true;
 	}
 
 	@Override
-	public boolean unpublishDbLayer(String dbTableName, ResourceTypeEnum resourceType) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean unpublishDbLayer(String dbTableName, ResourceTypeEnum resourceType) throws MalformedURLException {
+		GeoServerRESTManager geoserverManager = initializeGeoserverRestManager();
+
+		GeoServerRESTReader reader = geoserverManager.getReader();
+		GeoServerRESTPublisher publisher = geoserverManager.getPublisher();
+		GeoServerRESTStoreManager storeManager = geoserverManager.getStoreManager();
+
+		String targetWorkspace = geoserverProps.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+		String targetDatastore = null;
+		String targetSchema_indicators = null;
+
+		switch (resourceType) {
+		case SPATIAL_UNIT:
+			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_SPATIALUNITS);
+			targetSchema_indicators = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_SPATIALUNITS);
+			break;
+		case GEORESOURCE:
+			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
+			targetSchema_indicators = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
+			break;
+		case INDICATOR:
+			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_INDICATORS);
+			targetSchema_indicators = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_INDICATORS);
+			break;
+
+		default:
+			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
+			targetSchema_indicators = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
+			break;
+		}
+		
+		if (reader.existsFeatureType(targetWorkspace, targetDatastore, dbTableName)) {
+			logger.info("Removing FeatureType '{}' on geoserver.", dbTableName);
+			publisher.unpublishFeatureType(targetWorkspace, targetDatastore, dbTableName);
+		}
+
+		if (reader.existsLayer(targetWorkspace, dbTableName)
+				|| (reader.getLayer(targetWorkspace, dbTableName) != null)) {
+			publisher.removeLayer(targetWorkspace, dbTableName);
+			logger.info("Removing Layer '{}' on geoserver", dbTableName);
+		}
+		return true;
 	}
 
 	@Override
-	public String getWmsUrl(String dbTableName, ResourceTypeEnum resourceType) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getWmsUrl(String dbTableName) {
+		String targetWorkspace = geoserverProps.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+		String wmsUrl = geoserverProps.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + dbTableName + "/wms";
+		
+		logger.info("created WMS URL '{}' for dbTable '{}'" + wmsUrl, dbTableName);
+		
+		return wmsUrl;
 	}
 
 	@Override
-	public String getWfsUrl(String dbTableName, ResourceTypeEnum resourceType) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getWfsUrl(String dbTableName) {
+		String targetWorkspace = geoserverProps.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+		String wfsUrl = geoserverProps.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + dbTableName + "/wfs";
+		
+		logger.info("created WFS URL '{}' for dbTable '{}'" + wfsUrl, dbTableName);
+		
+		return wfsUrl;
 	}
 
 	@Override
-	public String getWcsUrl(String dbTableName, ResourceTypeEnum resourceType) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getWcsUrl(String dbTableName) {
+		String targetWorkspace = geoserverProps.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+		String wcsUrl = geoserverProps.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + dbTableName + "/wcs";
+		
+		logger.info("created WCS URL '{}' for dbTable '{}'" + wcsUrl, dbTableName);
+		
+		return wcsUrl;
 	}
 
 	private static void parseResourceFiles() throws IOException, FileNotFoundException {

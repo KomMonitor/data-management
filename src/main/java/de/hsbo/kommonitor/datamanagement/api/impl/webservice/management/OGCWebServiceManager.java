@@ -49,11 +49,9 @@ public interface OGCWebServiceManager {
 	 * @param dbTableName
 	 *            the name of the database table that contains the spatial
 	 *            features
-	 * @param resourceType
-	 *            the type of spatial features within the KomMonitor project
 	 * @return the WMS URL or null if no such service exists
 	 */
-	public String getWmsUrl(String dbTableName, ResourceTypeEnum resourceType);
+	public String getWmsUrl(String dbTableName);
 
 	/**
 	 * Claim the URL of the WFS associated to the spatial dataset.
@@ -61,11 +59,9 @@ public interface OGCWebServiceManager {
 	 * @param dbTableName
 	 *            the name of the database table that contains the spatial
 	 *            features
-	 * @param resourceType
-	 *            the type of spatial features within the KomMonitor project
 	 * @return the WFS URL or null if no such service exists
 	 */
-	public String getWfsUrl(String dbTableName, ResourceTypeEnum resourceType);
+	public String getWfsUrl(String dbTableName);
 
 	/**
 	 * Claim the URL of the WCS associated to the spatial dataset.
@@ -73,10 +69,8 @@ public interface OGCWebServiceManager {
 	 * @param dbTableName
 	 *            the name of the database table that contains the spatial
 	 *            features
-	 * @param resourceType
-	 *            the type of spatial features within the KomMonitor project
 	 * @return the WCS URL or null if no such service exists
 	 */
-	public String getWcsUrl(String dbTableName, ResourceTypeEnum resourceType);
+	public String getWcsUrl(String dbTableName);
 
 }
