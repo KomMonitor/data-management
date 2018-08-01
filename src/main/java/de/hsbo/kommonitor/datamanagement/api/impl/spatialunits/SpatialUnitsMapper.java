@@ -17,6 +17,8 @@ public class SpatialUnitsMapper {
 	public static SpatialUnitOverviewType mapToSwaggerSpatialUnit(MetadataSpatialUnitsEntity spatialUnitEntity) throws IOException, SQLException {
 		SpatialUnitOverviewType dataset = new SpatialUnitOverviewType();
 		
+		dataset.setSpatialUnitId(spatialUnitEntity.getDatasetId());
+		
 		dataset.setAvailablePeriodOfValidity(SpatialFeatureDatabaseHandler.getAvailablePeriodOfValidity(spatialUnitEntity.getDbTableName()));
 		
 		CommonMetadataType commonMetadata = new CommonMetadataType();

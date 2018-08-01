@@ -12,9 +12,12 @@ import io.swagger.annotations.ApiModelProperty;
  * SpatialUnitOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-19T11:48:18.228+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-01T09:09:45.004+02:00")
 
 public class SpatialUnitOverviewType   {
+  @JsonProperty("spatialUnitId")
+  private String spatialUnitId = null;
+
   @JsonProperty("spatialUnitLevel")
   private String spatialUnitLevel = null;
 
@@ -30,16 +33,34 @@ public class SpatialUnitOverviewType   {
   @JsonProperty("availablePeriodOfValidity")
   private AvailablePeriodOfValidityType availablePeriodOfValidity = null;
 
+  public SpatialUnitOverviewType spatialUnitId(String spatialUnitId) {
+    this.spatialUnitId = spatialUnitId;
+    return this;
+  }
+
+   /**
+   * the unique identifier of the spatial unit level the features apply to
+   * @return spatialUnitId
+  **/
+  @ApiModelProperty(required = true, value = "the unique identifier of the spatial unit level the features apply to")
+  public String getSpatialUnitId() {
+    return spatialUnitId;
+  }
+
+  public void setSpatialUnitId(String spatialUnitId) {
+    this.spatialUnitId = spatialUnitId;
+  }
+
   public SpatialUnitOverviewType spatialUnitLevel(String spatialUnitLevel) {
     this.spatialUnitLevel = spatialUnitLevel;
     return this;
   }
 
    /**
-   * the name/identifier of the spatial unit level the features apply to
+   * the name of the spatial unit level the features apply to
    * @return spatialUnitLevel
   **/
-  @ApiModelProperty(required = true, value = "the name/identifier of the spatial unit level the features apply to")
+  @ApiModelProperty(required = true, value = "the name of the spatial unit level the features apply to")
   public String getSpatialUnitLevel() {
     return spatialUnitLevel;
   }
@@ -130,7 +151,8 @@ public class SpatialUnitOverviewType   {
       return false;
     }
     SpatialUnitOverviewType spatialUnitOverviewType = (SpatialUnitOverviewType) o;
-    return Objects.equals(this.spatialUnitLevel, spatialUnitOverviewType.spatialUnitLevel) &&
+    return Objects.equals(this.spatialUnitId, spatialUnitOverviewType.spatialUnitId) &&
+        Objects.equals(this.spatialUnitLevel, spatialUnitOverviewType.spatialUnitLevel) &&
         Objects.equals(this.metadata, spatialUnitOverviewType.metadata) &&
         Objects.equals(this.nextLowerHierarchyLevel, spatialUnitOverviewType.nextLowerHierarchyLevel) &&
         Objects.equals(this.nextUpperHierarchyLevel, spatialUnitOverviewType.nextUpperHierarchyLevel) &&
@@ -139,7 +161,7 @@ public class SpatialUnitOverviewType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(spatialUnitLevel, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, availablePeriodOfValidity);
+    return Objects.hash(spatialUnitId, spatialUnitLevel, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, availablePeriodOfValidity);
   }
 
   @Override
@@ -147,6 +169,7 @@ public class SpatialUnitOverviewType   {
     StringBuilder sb = new StringBuilder();
     sb.append("class SpatialUnitOverviewType {\n");
     
+    sb.append("    spatialUnitId: ").append(toIndentedString(spatialUnitId)).append("\n");
     sb.append("    spatialUnitLevel: ").append(toIndentedString(spatialUnitLevel)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    nextLowerHierarchyLevel: ").append(toIndentedString(nextLowerHierarchyLevel)).append("\n");
