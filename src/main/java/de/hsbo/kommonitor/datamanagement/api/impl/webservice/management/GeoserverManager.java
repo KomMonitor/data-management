@@ -34,11 +34,22 @@ public class GeoserverManager implements OGCWebServiceManager {
 	private static Logger logger = LoggerFactory.getLogger(GeoserverManager.class);
 
 	private static Properties geoserverProps = null;
+	
+	static{
+		try {
+			parseResourceFiles();
+		} catch (FileNotFoundException e) {
+			logger.error("Error while instantiating GeoserverManager.");
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error("Error while instantiating GeoserverManager.");
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public boolean publishDbLayerAsOgcService(String dbTableName, ResourceTypeEnum resourceType)
 			throws FileNotFoundException, IOException {
-		parseResourceFiles();
 
 		publishDBLayerInGeoserver(dbTableName, resourceType);
 		return true;
@@ -54,25 +65,25 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 		String targetWorkspace = geoserverProps.getProperty(GeoserverPropertiesConstants.WORKSPACE);
 		String targetDatastore = null;
-		String targetSchema_indicators = null;
+		String targetSchema = null;
 
 		switch (resourceType) {
 		case SPATIAL_UNIT:
 			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_SPATIALUNITS);
-			targetSchema_indicators = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_SPATIALUNITS);
+			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_SPATIALUNITS);
 			break;
 		case GEORESOURCE:
 			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
-			targetSchema_indicators = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
+			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
 			break;
 		case INDICATOR:
 			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_INDICATORS);
-			targetSchema_indicators = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_INDICATORS);
+			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_INDICATORS);
 			break;
 
 		default:
 			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
-			targetSchema_indicators = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
+			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
 			break;
 		}
 		
@@ -154,25 +165,25 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 		String targetWorkspace = geoserverProps.getProperty(GeoserverPropertiesConstants.WORKSPACE);
 		String targetDatastore = null;
-		String targetSchema_indicators = null;
+		String targetSchema = null;
 
 		switch (resourceType) {
 		case SPATIAL_UNIT:
 			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_SPATIALUNITS);
-			targetSchema_indicators = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_SPATIALUNITS);
+			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_SPATIALUNITS);
 			break;
 		case GEORESOURCE:
 			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
-			targetSchema_indicators = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
+			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
 			break;
 		case INDICATOR:
 			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_INDICATORS);
-			targetSchema_indicators = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_INDICATORS);
+			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_INDICATORS);
 			break;
 
 		default:
 			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
-			targetSchema_indicators = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
+			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
 			break;
 		}
 		
@@ -202,7 +213,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 					logger.info("Layer should have been published as OGC service via geoserver!");
 				} else {
 					createNewDataStoreOnGeoserver(storeManager, targetWorkspace, targetDatastore,
-							targetSchema_indicators);
+							targetSchema);
 
 					publishDBLayerInGeoserver(dbTableName, resourceType);
 				}
@@ -214,7 +225,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 	}
 
 	private static void publishLayerOnGeoserver(String relation_name, GeoServerRESTPublisher publisher,
-			String targetWorkspace, String targetDatastore_indicators, String targetEPSG) {
+			String targetWorkspace, String targetDatastore, String targetEPSG) {
 		GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 		fte.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
 		fte.addKeyword(relation_name);
@@ -224,18 +235,18 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 		final GSLayerEncoder layerEncoder = new GSLayerEncoder();
 
-		boolean ok = publisher.publishDBLayer(targetWorkspace, targetDatastore_indicators, fte, layerEncoder);
+		boolean ok = publisher.publishDBLayer(targetWorkspace, targetDatastore, fte, layerEncoder);
 	}
 
 	private static void createNewDataStoreOnGeoserver(GeoServerRESTStoreManager storeManager, String targetWorkspace,
-			String targetDatastore_indicators, String targetSchema_indicators) {
-		GSPostGISDatastoreEncoder storeEncoder = new GSPostGISDatastoreEncoder(targetDatastore_indicators);
+			String targetDatastore, String targetSchema) {
+		GSPostGISDatastoreEncoder storeEncoder = new GSPostGISDatastoreEncoder(targetDatastore);
 		storeEncoder.setDatabase(geoserverProps.getProperty(GeoserverPropertiesConstants.DB_DATABASE));
 		storeEncoder.setHost(geoserverProps.getProperty(GeoserverPropertiesConstants.DB_HOST));
 		storeEncoder.setPort(Integer.parseInt(geoserverProps.getProperty(GeoserverPropertiesConstants.DB_PORT)));
 		storeEncoder.setUser(geoserverProps.getProperty(GeoserverPropertiesConstants.DB_USERNAME));
 		storeEncoder.setPassword(geoserverProps.getProperty(GeoserverPropertiesConstants.DB_PASSWORD));
-		storeEncoder.setSchema(targetSchema_indicators);
+		storeEncoder.setSchema(targetSchema);
 		// storeEncoder.setNamespace(dbProps.getProperty("kommonitor"));
 		logger.info("Creating new db store '{}' on geoserver" + storeEncoder);
 		storeManager.create(targetWorkspace, storeEncoder);
