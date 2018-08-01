@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
@@ -50,6 +51,9 @@ public class HttpConfig {
 	
 	@Autowired
 	private TopicsRepository topicsRepo;
+	
+	@Autowired
+	private Environment environment;
 
     @Bean
     public ObjectMapper provideObjectMapper(){
@@ -67,12 +71,12 @@ public class HttpConfig {
     
     @Bean
     public OGCWebServiceManager ogcServiceManager() {
-        return new GeoserverManager();
+        return new GeoserverManager(environment);
     }
     
     @Bean
     public DatabaseHelperUtil databaseHelper(){
-    	return new DatabaseHelperUtil(spatialUnitsRepo, georesourceRepo, indicatorsRepo);
+    	return new DatabaseHelperUtil(spatialUnitsRepo, georesourceRepo, indicatorsRepo, environment);
     }
     
     @Bean
@@ -104,5 +108,4 @@ public class HttpConfig {
     public TopicsHelper topicsHelper(){
     	return new TopicsHelper(topicsRepo);
     }
-    
 }

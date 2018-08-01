@@ -30,6 +30,18 @@ services:
      - DATABASE_PASSWORD=SoTj[5Ss<Df<68r90HE>
      - DATABASE_NAME=kommonitor_data
      - DATABASE_PORT=5432
+     - DB_SCHEMA_SPATIALUNITS=public
+     - DB_SCHEMA_GEORESOURCES=public
+     - DB_SCHEMA_INDICATORS=public
+     - GEOSERVER_HOST=geoserver
+     - GEOSERVER_PORT=8087
+     - GEOSERVER_USER=admin
+     - GEOSERVER_PASSWORD=geoserver
+     - GEOSERVER_TARGET_WORKSPACE=kommonitor
+     - GEOSERVER_DATASTORE_SPATIALUNITS=kommonitor_spatialunits
+     - GEOSERVER_DATASTORE_GEORESOURCES=kommonitor_georesources
+     - GEOSERVER_DATASTORE_INDICATORS=kommonitor_indicators
+     - GEOSERVER_DEFAULT_EPSG=4326
 
   geoserver-db:
      image: kartoza/postgis:10.0-2.4

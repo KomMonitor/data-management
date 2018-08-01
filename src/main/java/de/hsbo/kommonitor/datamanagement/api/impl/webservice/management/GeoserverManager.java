@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
@@ -33,19 +34,25 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 	private static Logger logger = LoggerFactory.getLogger(GeoserverManager.class);
 
-	private static Properties geoserverProps = null;
+//	private static Properties env = null;
 	
-	static{
-		try {
-			parseResourceFiles();
-		} catch (FileNotFoundException e) {
-			logger.error("Error while instantiating GeoserverManager.");
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error("Error while instantiating GeoserverManager.");
-			e.printStackTrace();
-		}
+	private static Environment env;
+	
+	public GeoserverManager(Environment environment) {
+		env = environment;
 	}
+	
+//	static{
+//		try {
+//			parseResourceFiles();
+//		} catch (FileNotFoundException e) {
+//			logger.error("Error while instantiating GeoserverManager.");
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			logger.error("Error while instantiating GeoserverManager.");
+//			e.printStackTrace();
+//		}
+//	}
 
 	@Override
 	public boolean publishDbLayerAsOgcService(String dbTableName, ResourceTypeEnum resourceType)
@@ -63,27 +70,27 @@ public class GeoserverManager implements OGCWebServiceManager {
 		GeoServerRESTPublisher publisher = geoserverManager.getPublisher();
 		GeoServerRESTStoreManager storeManager = geoserverManager.getStoreManager();
 
-		String targetWorkspace = geoserverProps.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
 		String targetDatastore = null;
 		String targetSchema = null;
 
 		switch (resourceType) {
 		case SPATIAL_UNIT:
-			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_SPATIALUNITS);
-			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_SPATIALUNITS);
+			targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_SPATIALUNITS);
+			targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_SPATIALUNITS);
 			break;
 		case GEORESOURCE:
-			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
-			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
+			targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
+			targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
 			break;
 		case INDICATOR:
-			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_INDICATORS);
-			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_INDICATORS);
+			targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_INDICATORS);
+			targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_INDICATORS);
 			break;
 
 		default:
-			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
-			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
+			targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
+			targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
 			break;
 		}
 		
@@ -102,8 +109,8 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 	@Override
 	public String getWmsUrl(String dbTableName) {
-		String targetWorkspace = geoserverProps.getProperty(GeoserverPropertiesConstants.WORKSPACE);
-		String wmsUrl = geoserverProps.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + dbTableName + "/wms";
+		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+		String wmsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + dbTableName + "/wms";
 		
 		logger.info("created WMS URL '{}' for dbTable '{}'" + wmsUrl, dbTableName);
 		
@@ -112,8 +119,8 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 	@Override
 	public String getWfsUrl(String dbTableName) {
-		String targetWorkspace = geoserverProps.getProperty(GeoserverPropertiesConstants.WORKSPACE);
-		String wfsUrl = geoserverProps.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + dbTableName + "/wfs";
+		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+		String wfsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + dbTableName + "/wfs";
 		
 		logger.info("created WFS URL '{}' for dbTable '{}'" + wfsUrl, dbTableName);
 		
@@ -122,20 +129,20 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 	@Override
 	public String getWcsUrl(String dbTableName) {
-		String targetWorkspace = geoserverProps.getProperty(GeoserverPropertiesConstants.WORKSPACE);
-		String wcsUrl = geoserverProps.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + dbTableName + "/wcs";
+		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+		String wcsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + dbTableName + "/wcs";
 		
 		logger.info("created WCS URL '{}' for dbTable '{}'" + wcsUrl, dbTableName);
 		
 		return wcsUrl;
 	}
 
-	private static void parseResourceFiles() throws IOException, FileNotFoundException {
-
-		if (geoserverProps == null)
-			;
-		geoserverProps = parseProperties(ResourceFileConstants.geoserverPropertiesFileLocation);
-	}
+//	private static void parseResourceFiles() throws IOException, FileNotFoundException {
+//
+//		if (env == null)
+//			;
+//		env = parseProperties(ResourceFileConstants.geoserverPropertiesFileLocation);
+//	}
 
 	private static Properties parseProperties(String filename) throws IOException, FileNotFoundException {
 		String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
@@ -147,9 +154,9 @@ public class GeoserverManager implements OGCWebServiceManager {
 	}
 
 	private static GeoServerRESTManager initializeGeoserverRestManager() throws MalformedURLException {
-		String RESTURL = geoserverProps.getProperty(GeoserverPropertiesConstants.REST_URL);
-		String RESTUSER = geoserverProps.getProperty(GeoserverPropertiesConstants.REST_USER);
-		String RESTPW = geoserverProps.getProperty(GeoserverPropertiesConstants.REST_PASSWORD);
+		String RESTURL = env.getProperty(GeoserverPropertiesConstants.REST_URL);
+		String RESTUSER = env.getProperty(GeoserverPropertiesConstants.REST_USER);
+		String RESTPW = env.getProperty(GeoserverPropertiesConstants.REST_PASSWORD);
 
 		GeoServerRESTManager geoserverManager = new GeoServerRESTManager(new URL(RESTURL), RESTUSER, RESTPW);
 		return geoserverManager;
@@ -163,31 +170,31 @@ public class GeoserverManager implements OGCWebServiceManager {
 		GeoServerRESTPublisher publisher = geoserverManager.getPublisher();
 		GeoServerRESTStoreManager storeManager = geoserverManager.getStoreManager();
 
-		String targetWorkspace = geoserverProps.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
 		String targetDatastore = null;
 		String targetSchema = null;
 
 		switch (resourceType) {
 		case SPATIAL_UNIT:
-			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_SPATIALUNITS);
-			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_SPATIALUNITS);
+			targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_SPATIALUNITS);
+			targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_SPATIALUNITS);
 			break;
 		case GEORESOURCE:
-			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
-			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
+			targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
+			targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
 			break;
 		case INDICATOR:
-			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_INDICATORS);
-			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_INDICATORS);
+			targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_INDICATORS);
+			targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_INDICATORS);
 			break;
 
 		default:
-			targetDatastore = geoserverProps.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
-			targetSchema = geoserverProps.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
+			targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
+			targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
 			break;
 		}
 		
-		String targetEPSG = geoserverProps.getProperty(GeoserverPropertiesConstants.EPSG_DEFAULT);
+		String targetEPSG = env.getProperty(GeoserverPropertiesConstants.EPSG_DEFAULT);
 
 		if (reader.existsFeatureType(targetWorkspace, targetDatastore, dbTableName)) {
 			logger.info("Removing FeatureType '{}' on geoserver.", dbTableName);
@@ -241,11 +248,11 @@ public class GeoserverManager implements OGCWebServiceManager {
 	private static void createNewDataStoreOnGeoserver(GeoServerRESTStoreManager storeManager, String targetWorkspace,
 			String targetDatastore, String targetSchema) {
 		GSPostGISDatastoreEncoder storeEncoder = new GSPostGISDatastoreEncoder(targetDatastore);
-		storeEncoder.setDatabase(geoserverProps.getProperty(GeoserverPropertiesConstants.DB_DATABASE));
-		storeEncoder.setHost(geoserverProps.getProperty(GeoserverPropertiesConstants.DB_HOST));
-		storeEncoder.setPort(Integer.parseInt(geoserverProps.getProperty(GeoserverPropertiesConstants.DB_PORT)));
-		storeEncoder.setUser(geoserverProps.getProperty(GeoserverPropertiesConstants.DB_USERNAME));
-		storeEncoder.setPassword(geoserverProps.getProperty(GeoserverPropertiesConstants.DB_PASSWORD));
+		storeEncoder.setDatabase(env.getProperty(GeoserverPropertiesConstants.DB_DATABASE));
+		storeEncoder.setHost(env.getProperty(GeoserverPropertiesConstants.DB_HOST));
+		storeEncoder.setPort(Integer.parseInt(env.getProperty(GeoserverPropertiesConstants.DB_PORT)));
+		storeEncoder.setUser(env.getProperty(GeoserverPropertiesConstants.DB_USERNAME));
+		storeEncoder.setPassword(env.getProperty(GeoserverPropertiesConstants.DB_PASSWORD));
 		storeEncoder.setSchema(targetSchema);
 		// storeEncoder.setNamespace(dbProps.getProperty("kommonitor"));
 		logger.info("Creating new db store '{}' on geoserver" + storeEncoder);

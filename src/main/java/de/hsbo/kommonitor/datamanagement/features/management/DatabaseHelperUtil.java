@@ -11,6 +11,9 @@ import java.util.Properties;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
@@ -20,8 +23,10 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsE
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 
 public class DatabaseHelperUtil {
+	
+    private static Environment env;
 
-	private static Properties properties;
+//	private static Properties properties;
 	
 	private static SpatialUnitsMetadataRepository spatialUnitsRepo;
 	
@@ -30,10 +35,11 @@ public class DatabaseHelperUtil {
 	private static IndicatorsMetadataRepository indicatorsRepo;
 	
 	public DatabaseHelperUtil(SpatialUnitsMetadataRepository spatialUnitsRepository, GeoresourcesMetadataRepository georesourcesRepository,
-			IndicatorsMetadataRepository indicatorsRepository){
+			IndicatorsMetadataRepository indicatorsRepository, Environment environment){
 		spatialUnitsRepo = spatialUnitsRepository;
 		georesourceRepo = georesourcesRepository;
 		indicatorsRepo = indicatorsRepository;
+		env = environment;
 	}
 
 	public static void updateResourceMetadataEntry(ResourceTypeEnum resource, String tableName,
@@ -101,20 +107,23 @@ public class DatabaseHelperUtil {
 		 * this FIXME If environment variables are used for DB connection then
 		 * change this
 		 */
-		if (properties == null){
-			properties = new Properties();
-			properties.load(SpatialFeatureDatabaseHandler.class.getResourceAsStream("/application.properties"));
-		}
+//		if (properties == null){
+//			properties = new Properties();
+//			properties.load(SpatialFeatureDatabaseHandler.class.getResourceAsStream("/application-docker.properties"));
+//		}
+		
+		System.out.println("DB HOST: " + env.getProperty("database.host"));
+		System.out.println("DB URL COMPLETE: " + env.getProperty("spring.datasource.url"));
 			
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("dbtype", "postgis");
-		params.put("host", properties.getProperty("database.host"));
-		params.put("port", 5432);
+		params.put("host", env.getProperty("database.host"));
+		params.put("port", env.getProperty("database.port"));
 		params.put("schema", "public");
-		params.put("database", properties.getProperty("database.name"));
-		params.put("user", properties.getProperty("spring.datasource.username"));
-		params.put("passwd", properties.getProperty("spring.datasource.password"));
+		params.put("database", env.getProperty("database.name"));
+		params.put("user", env.getProperty("spring.datasource.username"));
+		params.put("passwd", env.getProperty("spring.datasource.password"));
 
 		DataStore dataStore = DataStoreFinder.getDataStore(params);
 
@@ -128,16 +137,16 @@ public class DatabaseHelperUtil {
 		 * this FIXME If environment variables are used for DB connection then
 		 * change this
 		 */
-		if (properties == null){
-			properties = new Properties();
-			properties.load(SpatialFeatureDatabaseHandler.class.getResourceAsStream("/application.properties"));
-		}
+//		if (properties == null){
+//			properties = new Properties();
+//			properties.load(SpatialFeatureDatabaseHandler.class.getResourceAsStream("/application-docker.properties"));
+//		}
 
-		String url = "jdbc:postgresql://" + properties.getProperty("database.host") + "/"
-				+ properties.getProperty("database.name");
+		String url = "jdbc:postgresql://" + env.getProperty("database.host") + "/"
+				+ env.getProperty("database.name");
 		Properties props = new Properties();
-		props.setProperty("user", properties.getProperty("spring.datasource.username"));
-		props.setProperty("password", properties.getProperty("spring.datasource.password"));
+		props.setProperty("user", env.getProperty("spring.datasource.username"));
+		props.setProperty("password", env.getProperty("spring.datasource.password"));
 //		props.setProperty("ssl", "true");
 		Connection conn = DriverManager.getConnection(url, props);
 
