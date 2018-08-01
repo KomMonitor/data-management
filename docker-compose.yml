@@ -1,0 +1,64 @@
+version: '3'
+
+volumes:
+   db-backups:
+   geoserver-data:
+
+services:
+  kommonitor-db:
+    image: mdillon/postgis
+    environment:
+      - POSTGRES_USER=kommonitor
+      - POSTGRES_PASSWORD=SoTj[5Ss<Df<68r90HE>
+      - POSTGRES_DB=kommonitor_data
+    volumes:
+      - /var/lib/postgresql/data
+
+  kommonitor-data-management-api:
+    build: .
+    image: kommonitor-data-management
+    container_name: kommonitor-data-management
+    depends_on:
+      - kommonitor-db
+    ports:
+      - "8085:8085"
+    links:
+      - kommonitor-db
+    environment:
+     - DATABASE_HOST=kommonitor-db
+     - DATABASE_USER=kommonitor
+     - DATABASE_PASSWORD=SoTj[5Ss<Df<68r90HE>
+     - DATABASE_NAME=kommonitor_data
+     - DATABASE_PORT=5432
+
+  geoserver-db:
+     image: kartoza/postgis:10.0-2.4
+     # volumes:
+        #- ./pg/postgres_data:/var/lib/postgresql
+        # - db-backups:/backups
+     ports:
+       - "25433:5432"
+     environment:
+        - USERNAME=docker
+        - PASS=docker
+        - ALLOW_IP_RANGE=0.0.0.0/0
+     restart: on-failure
+#     healthcheck:
+#       test: "exit 0"
+       
+  geoserver:
+    image: kartoza/geoserver:2.13.0
+    volumes:
+      - geoserver-data:/opt/geoserver/data_dir
+    ports:
+      - "8087:8080"
+    restart: on-failure
+    env_file:
+      - geoserver.env
+    depends_on:
+      - geoserver-db
+#    healthcheck:
+#      test: curl --fail -s http://localhost:8080/ || exit 1
+#      interval: 1m30s
+#      timeout: 10s
+#      retries: 3   
