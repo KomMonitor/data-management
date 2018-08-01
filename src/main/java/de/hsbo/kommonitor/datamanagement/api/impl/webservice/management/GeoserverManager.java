@@ -1,11 +1,9 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.webservice.management;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,19 +142,21 @@ public class GeoserverManager implements OGCWebServiceManager {
 //		env = parseProperties(ResourceFileConstants.geoserverPropertiesFileLocation);
 //	}
 
-	private static Properties parseProperties(String filename) throws IOException, FileNotFoundException {
-		String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-		String resourcePath = rootPath + filename;
-
-		Properties props = new Properties();
-		props.load(new FileInputStream(resourcePath));
-		return props;
-	}
+//	private static Properties parseProperties(String filename) throws IOException, FileNotFoundException {
+//		String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+//		String resourcePath = rootPath + filename;
+//
+//		Properties props = new Properties();
+//		props.load(new FileInputStream(resourcePath));
+//		return props;
+//	}
 
 	private static GeoServerRESTManager initializeGeoserverRestManager() throws MalformedURLException {
 		String RESTURL = env.getProperty(GeoserverPropertiesConstants.REST_URL);
 		String RESTUSER = env.getProperty(GeoserverPropertiesConstants.REST_USER);
 		String RESTPW = env.getProperty(GeoserverPropertiesConstants.REST_PASSWORD);
+		
+		logger.info("Initialize GeoserverRESTManager with URL='{}' and username='{}' and password='{}'", RESTURL, RESTUSER, RESTPW);
 
 		GeoServerRESTManager geoserverManager = new GeoServerRESTManager(new URL(RESTURL), RESTUSER, RESTPW);
 		return geoserverManager;

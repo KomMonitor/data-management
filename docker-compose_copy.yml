@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3'
 
 volumes:
    db-backups:
@@ -18,8 +18,8 @@ services:
         - PASS=docker
         - ALLOW_IP_RANGE=0.0.0.0/0
      restart: on-failure
-#     healthcheck:
-#       test: "exit 0"
+     healthcheck:
+       test: "exit 0"
        
   geoserver:
     image: kartoza/geoserver:2.13.0
@@ -33,7 +33,7 @@ services:
     depends_on:
       - geoserver-db
     healthcheck:
-      test: curl --fail -s http://localhost:8080/ || exit 1
+      test: curl --fail -s http://localhost:8087/ || exit 1
       interval: 1m30s
       timeout: 10s
       retries: 3   
@@ -46,18 +46,16 @@ services:
       - POSTGRES_DB=kommonitor_data
     volumes:
       - /var/lib/postgresql/data
-#    healthcheck:
-#      test: "exit 0"      
+    healthcheck:
+      test: "exit 0"      
 
   kommonitor-data-management-api:
     build: .
     image: kommonitor-data-management
     container_name: kommonitor-data-management
     depends_on:
-      kommonitor-db:
-        condition: service_started
-      geoserver:
-        condition: service_healthy
+      - kommonitor-db
+      - geoserver
     ports:
       - "8085:8085"
     links:
