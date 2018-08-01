@@ -10,8 +10,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceMapper;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceMapper;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsHelper;
+import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.GeoserverManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
@@ -28,6 +37,18 @@ public class HttpConfig {
 	
 	@Autowired
 	private IndicatorsMetadataRepository indicatorsRepo;
+	
+	@Autowired
+	private IndicatorSpatialUnitsRepository indicatorSpatialUnitsRepo;
+	
+	@Autowired
+	private IndicatorReferenceRepository indicatorRefRepo;
+	
+	@Autowired
+	private GeoresourceReferenceRepository georesourceRefRepo;
+	
+	@Autowired
+	private TopicsRepository topicsRepo;
 
     @Bean
     public ObjectMapper provideObjectMapper(){
@@ -57,5 +78,29 @@ public class HttpConfig {
     	return new IndicatorDatabaseHandler();
     }
     
+    @Bean
+    public IndicatorsMapper indicatorMapper(){
+    	return new IndicatorsMapper(indicatorSpatialUnitsRepo);
+    }
+    
+    @Bean
+    public GeoresourceReferenceMapper georesourceReferenceMapper(){
+    	return new GeoresourceReferenceMapper(georesourceRepo);
+    }
+    
+    @Bean
+    public IndicatorReferenceMapper indicatorReferenceMapper(){
+    	return new IndicatorReferenceMapper(indicatorsRepo);
+    }
+    
+    @Bean
+    public ReferenceManager referenceManager(){
+    	return new ReferenceManager(indicatorRefRepo, georesourceRefRepo);
+    }
+    
+    @Bean
+    public TopicsHelper topicsHelper(){
+    	return new TopicsHelper(topicsRepo);
+    }
     
 }

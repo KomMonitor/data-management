@@ -3,16 +3,17 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata.references;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
 
 public class IndicatorReferenceMapper {
 
-	@Autowired
 	private static IndicatorsMetadataRepository indicatorsMetadataRepo;
+
+	public IndicatorReferenceMapper(IndicatorsMetadataRepository indicatorsRepo) {
+		indicatorsMetadataRepo = indicatorsRepo;
+	}
 
 	public static List<IndicatorReferenceEntity> mapToEntities(
 			List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators, String indicatorId) {

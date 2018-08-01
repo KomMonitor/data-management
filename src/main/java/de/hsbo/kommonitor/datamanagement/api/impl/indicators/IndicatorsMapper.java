@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
@@ -21,8 +19,11 @@ import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 public class IndicatorsMapper {
 
-	@Autowired
 	private static IndicatorSpatialUnitsRepository indicatorSpatialUnitsRepo;
+	
+	public IndicatorsMapper(IndicatorSpatialUnitsRepository indicatorSpatialUnitsRepository){
+		indicatorSpatialUnitsRepo = indicatorSpatialUnitsRepository;
+	}
 
 	public static List<IndicatorOverviewType> mapToSwaggerIndicators(
 			List<MetadataIndicatorsEntity> indicatorsMetadataEntity) throws IOException {

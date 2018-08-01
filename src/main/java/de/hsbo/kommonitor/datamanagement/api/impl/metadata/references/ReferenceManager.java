@@ -2,8 +2,6 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata.references;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToGeoresources;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
@@ -11,10 +9,15 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType
 
 public class ReferenceManager {
 
-	@Autowired
 	private static IndicatorReferenceRepository indicatorRefRepo;
-	@Autowired
+
 	private static GeoresourceReferenceRepository georesourceRefRepo;
+
+	public ReferenceManager(IndicatorReferenceRepository indicatorRefRepository,
+			GeoresourceReferenceRepository georesourceRefRepository) {
+		indicatorRefRepo = indicatorRefRepository;
+		georesourceRefRepo = georesourceRefRepository;
+	}
 
 	public static void createReferences(List<IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources,
 			List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators, String indicatorId) {

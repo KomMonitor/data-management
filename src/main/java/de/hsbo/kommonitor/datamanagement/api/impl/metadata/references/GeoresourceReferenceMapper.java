@@ -3,16 +3,17 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata.references;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToGeoresources;
 
 public class GeoresourceReferenceMapper {
 
-	@Autowired
 	private static GeoresourcesMetadataRepository georesourcesMetadataRepo;
+	
+	public GeoresourceReferenceMapper(GeoresourcesMetadataRepository georesourcesMetadataRepository){
+		georesourcesMetadataRepo = georesourcesMetadataRepository;
+	}
 
 	public static List<GeoresourceReferenceEntity> mapToEntities(
 			List<IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources, String indicatorId) {

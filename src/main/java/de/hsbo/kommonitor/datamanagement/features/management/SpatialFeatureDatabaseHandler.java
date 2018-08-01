@@ -29,7 +29,6 @@ import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPosition;
 import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.And;
