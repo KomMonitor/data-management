@@ -95,9 +95,9 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 	@Override
 	public String getWmsUrl(String dbTableName) {
-		// example: http://localhost:8080/geoserver/kommonitor/kommonitor:SPATIAL_UNIT_4/wms
+		// example: http://localhost:8080/geoserver/kommonitor/SPATIAL_UNIT_5/ows?service=WMS&request=GetCapabilities
 		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
-		String wmsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + targetWorkspace + ":" + dbTableName + "/wms";
+		String wmsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/"+ dbTableName + "/ows?service=WMS&request=GetCapabilities";
 		
 		logger.info("created WMS URL '{}' for dbTable '{}'", wmsUrl, dbTableName);
 		
@@ -106,9 +106,9 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 	@Override
 	public String getWfsUrl(String dbTableName) {
-		// example: http://localhost:8080/geoserver/kommonitor/kommonitor:SPATIAL_UNIT_4/wfs
+		// example: http://localhost:8080/geoserver/kommonitor/SPATIAL_UNIT_5/ows?service=WFS&request=GetCapabilities
 		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
-		String wfsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + targetWorkspace + ":" + dbTableName + "/wfs";
+		String wfsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/"+ dbTableName + "/ows?service=WMS&request=GetCapabilities";
 		
 		logger.info("created WFS URL '{}' for dbTable '{}'", wfsUrl, dbTableName);
 		
@@ -117,9 +117,9 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 	@Override
 	public String getWcsUrl(String dbTableName) {
-		// example: http://localhost:8080/geoserver/kommonitor/kommonitor:SPATIAL_UNIT_4/wcs
+		// example: http://localhost:8080/geoserver/kommonitor/SPATIAL_UNIT_5/ows?service=WCS&request=GetCapabilities
 		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
-		String wcsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + targetWorkspace + ":" + dbTableName + "/wcs";
+		String wcsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/"+ dbTableName + "/ows?service=WMS&request=GetCapabilities";
 		
 		logger.info("created WCS URL '{}' for dbTable '{}'", wcsUrl, dbTableName);
 		
