@@ -77,7 +77,21 @@ public class SpatialUnitsManager {
 		// handle OGC web service
 		ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
 		
+		/*
+		 * set wms and wfs urls within metadata
+		 */
+		updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
+		
 		return metadataId;
+	}
+
+	private void updateMetadataWithOgcServiceUrls(String metadataId, String dbTableName) {
+		MetadataSpatialUnitsEntity metadata = spatialUnitsMetadataRepo.findByDatasetId(metadataId);
+		
+		metadata.setWmsUrl(ogcServiceManager.getWmsUrl(dbTableName));
+		metadata.setWfsUrl(ogcServiceManager.getWfsUrl(dbTableName));
+		
+		spatialUnitsMetadataRepo.saveAndFlush(metadata);
 	}
 
 	private String createFeatureTable(String geoJsonString, PeriodOfValidityType periodOfValidityType, String metadataId) throws CQLException, IOException {
@@ -197,6 +211,11 @@ public class SpatialUnitsManager {
 			
 			// handle OGC web service
 			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
+			
+			/*
+			 * set wms and wfs urls within metadata
+			 */
+			updateMetadataWithOgcServiceUrls(metadataEntity.getDatasetId(), dbTableName);
 			
 			return spatialUnitId;
 		} else {

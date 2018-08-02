@@ -134,6 +134,11 @@ public class IndicatorsManager {
 				// handle OGC web service
 				ogcServiceManager.publishDbLayerAsOgcService(indicatorfeatureViewName, ResourceTypeEnum.INDICATOR);
 				
+				/*
+				 * set wms and wfs urls within metadata
+				 */
+				updateMetadataWithOgcServiceUrls(indicatorMetadataEntry.getDatasetId(), indicatorfeatureViewName);
+				
 				return indicatorId;
 			} else{
 				logger.error(
@@ -359,7 +364,21 @@ public class IndicatorsManager {
 		// handle OGC web service
 		ogcServiceManager.publishDbLayerAsOgcService(indicatorfeatureViewName, ResourceTypeEnum.INDICATOR);
 		
+		/*
+		 * set wms and wfs urls within metadata
+		 */
+		updateMetadataWithOgcServiceUrls(metadataId, indicatorfeatureViewName);
+		
 		return metadataId;
+	}
+	
+	private void updateMetadataWithOgcServiceUrls(String metadataId, String dbTableName) {
+		MetadataIndicatorsEntity metadata = indicatorsMetadataRepo.findByDatasetId(metadataId);
+		
+		metadata.setWmsUrl(ogcServiceManager.getWmsUrl(dbTableName));
+		metadata.setWfsUrl(ogcServiceManager.getWfsUrl(dbTableName));
+		
+		indicatorsMetadataRepo.saveAndFlush(metadata);
 	}
 
 	private String createOrReplaceIndicatorFeatureView(String indicatorValueTableName, String spatialUnitName,

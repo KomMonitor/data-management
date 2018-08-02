@@ -39,18 +39,6 @@ public class GeoserverManager implements OGCWebServiceManager {
 	public GeoserverManager(Environment environment) {
 		env = environment;
 	}
-	
-//	static{
-//		try {
-//			parseResourceFiles();
-//		} catch (FileNotFoundException e) {
-//			logger.error("Error while instantiating GeoserverManager.");
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			logger.error("Error while instantiating GeoserverManager.");
-//			e.printStackTrace();
-//		}
-//	}
 
 	@Override
 	public boolean publishDbLayerAsOgcService(String dbTableName, ResourceTypeEnum resourceType)

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
@@ -81,7 +82,21 @@ public class GeoresourcesManager {
 		// handle OGC web service
 		ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.GEORESOURCE);
 
+		/*
+		 * set wms and wfs urls within metadata
+		 */
+		updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
+
 		return metadataId;
+	}
+
+	private void updateMetadataWithOgcServiceUrls(String metadataId, String dbTableName) {
+		MetadataGeoresourcesEntity metadata = georesourcesMetadataRepo.findByDatasetId(metadataId);
+		
+		metadata.setWmsUrl(ogcServiceManager.getWmsUrl(dbTableName));
+		metadata.setWfsUrl(ogcServiceManager.getWfsUrl(dbTableName));
+		
+		georesourcesMetadataRepo.saveAndFlush(metadata);
 	}
 
 	private String createFeatureTable(String geoJsonString, PeriodOfValidityType periodOfValidity, String metadataId)
@@ -299,6 +314,11 @@ public class GeoresourcesManager {
 			
 			// handle OGC web service
 			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.GEORESOURCE);
+
+			/*
+			 * set wms and wfs urls within metadata
+			 */
+			updateMetadataWithOgcServiceUrls(metadataEntity.getDatasetId(), dbTableName);
 			
 			return georesourceId;
 		} else {
