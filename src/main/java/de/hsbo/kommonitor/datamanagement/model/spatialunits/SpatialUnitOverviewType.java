@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
  * SpatialUnitOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-01T09:09:45.004+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-02T08:44:45.917+02:00")
 
 public class SpatialUnitOverviewType   {
   @JsonProperty("spatialUnitId")
@@ -32,6 +32,12 @@ public class SpatialUnitOverviewType   {
 
   @JsonProperty("availablePeriodOfValidity")
   private AvailablePeriodOfValidityType availablePeriodOfValidity = null;
+
+  @JsonProperty("wmsUrl")
+  private String wmsUrl = null;
+
+  @JsonProperty("wfsUrl")
+  private String wfsUrl = null;
 
   public SpatialUnitOverviewType spatialUnitId(String spatialUnitId) {
     this.spatialUnitId = spatialUnitId;
@@ -141,6 +147,42 @@ public class SpatialUnitOverviewType   {
     this.availablePeriodOfValidity = availablePeriodOfValidity;
   }
 
+  public SpatialUnitOverviewType wmsUrl(String wmsUrl) {
+    this.wmsUrl = wmsUrl;
+    return this;
+  }
+
+   /**
+   * the URL of a running WMS instance serving the spatial features of the associated dataset
+   * @return wmsUrl
+  **/
+  @ApiModelProperty(required = true, value = "the URL of a running WMS instance serving the spatial features of the associated dataset")
+  public String getWmsUrl() {
+    return wmsUrl;
+  }
+
+  public void setWmsUrl(String wmsUrl) {
+    this.wmsUrl = wmsUrl;
+  }
+
+  public SpatialUnitOverviewType wfsUrl(String wfsUrl) {
+    this.wfsUrl = wfsUrl;
+    return this;
+  }
+
+   /**
+   * the URL of a running WFS instance serving the spatial features of the associated dataset
+   * @return wfsUrl
+  **/
+  @ApiModelProperty(required = true, value = "the URL of a running WFS instance serving the spatial features of the associated dataset")
+  public String getWfsUrl() {
+    return wfsUrl;
+  }
+
+  public void setWfsUrl(String wfsUrl) {
+    this.wfsUrl = wfsUrl;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -156,12 +198,14 @@ public class SpatialUnitOverviewType   {
         Objects.equals(this.metadata, spatialUnitOverviewType.metadata) &&
         Objects.equals(this.nextLowerHierarchyLevel, spatialUnitOverviewType.nextLowerHierarchyLevel) &&
         Objects.equals(this.nextUpperHierarchyLevel, spatialUnitOverviewType.nextUpperHierarchyLevel) &&
-        Objects.equals(this.availablePeriodOfValidity, spatialUnitOverviewType.availablePeriodOfValidity);
+        Objects.equals(this.availablePeriodOfValidity, spatialUnitOverviewType.availablePeriodOfValidity) &&
+        Objects.equals(this.wmsUrl, spatialUnitOverviewType.wmsUrl) &&
+        Objects.equals(this.wfsUrl, spatialUnitOverviewType.wfsUrl);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(spatialUnitId, spatialUnitLevel, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, availablePeriodOfValidity);
+    return Objects.hash(spatialUnitId, spatialUnitLevel, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, availablePeriodOfValidity, wmsUrl, wfsUrl);
   }
 
   @Override
@@ -175,6 +219,8 @@ public class SpatialUnitOverviewType   {
     sb.append("    nextLowerHierarchyLevel: ").append(toIndentedString(nextLowerHierarchyLevel)).append("\n");
     sb.append("    nextUpperHierarchyLevel: ").append(toIndentedString(nextUpperHierarchyLevel)).append("\n");
     sb.append("    availablePeriodOfValidity: ").append(toIndentedString(availablePeriodOfValidity)).append("\n");
+    sb.append("    wmsUrl: ").append(toIndentedString(wmsUrl)).append("\n");
+    sb.append("    wfsUrl: ").append(toIndentedString(wfsUrl)).append("\n");
     sb.append("}");
     return sb.toString();
   }

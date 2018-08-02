@@ -47,6 +47,9 @@ public class GeoresourcesMapper {
 		dataset.datasetName(georesourceMetadataEntity.getDatasetName());
 		dataset.setGeoresourceId(georesourceMetadataEntity.getDatasetId());
 		dataset.setApplicableTopics(getSwaggerTopicStrings(georesourceMetadataEntity.getGeoresourcesTopics()));
+		
+		dataset.setWmsUrl(georesourceMetadataEntity.getWmsUrl());
+		dataset.setWfsUrl(georesourceMetadataEntity.getWfsUrl());
 
 		return dataset;
 	}

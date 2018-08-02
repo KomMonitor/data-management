@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * GeoresourceOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-19T11:48:18.228+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-02T08:44:45.917+02:00")
 
 public class GeoresourceOverviewType   {
   @JsonProperty("datasetName")
@@ -36,6 +36,12 @@ public class GeoresourceOverviewType   {
   @JsonProperty("allowedRoles")
   
   private List<String> allowedRoles = null;
+
+  @JsonProperty("wmsUrl")
+  private String wmsUrl = null;
+
+  @JsonProperty("wfsUrl")
+  private String wfsUrl = null;
 
   public GeoresourceOverviewType datasetName(String datasetName) {
     this.datasetName = datasetName;
@@ -158,6 +164,42 @@ public class GeoresourceOverviewType   {
     this.allowedRoles = allowedRoles;
   }
 
+  public GeoresourceOverviewType wmsUrl(String wmsUrl) {
+    this.wmsUrl = wmsUrl;
+    return this;
+  }
+
+   /**
+   * the URL of a running WMS instance serving the spatial features of the associated dataset
+   * @return wmsUrl
+  **/
+  @ApiModelProperty(required = true, value = "the URL of a running WMS instance serving the spatial features of the associated dataset")
+  public String getWmsUrl() {
+    return wmsUrl;
+  }
+
+  public void setWmsUrl(String wmsUrl) {
+    this.wmsUrl = wmsUrl;
+  }
+
+  public GeoresourceOverviewType wfsUrl(String wfsUrl) {
+    this.wfsUrl = wfsUrl;
+    return this;
+  }
+
+   /**
+   * the URL of a running WFS instance serving the spatial features of the associated dataset
+   * @return wfsUrl
+  **/
+  @ApiModelProperty(required = true, value = "the URL of a running WFS instance serving the spatial features of the associated dataset")
+  public String getWfsUrl() {
+    return wfsUrl;
+  }
+
+  public void setWfsUrl(String wfsUrl) {
+    this.wfsUrl = wfsUrl;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -173,12 +215,14 @@ public class GeoresourceOverviewType   {
         Objects.equals(this.metadata, georesourceOverviewType.metadata) &&
         Objects.equals(this.availablePeriodOfValidity, georesourceOverviewType.availablePeriodOfValidity) &&
         Objects.equals(this.applicableTopics, georesourceOverviewType.applicableTopics) &&
-        Objects.equals(this.allowedRoles, georesourceOverviewType.allowedRoles);
+        Objects.equals(this.allowedRoles, georesourceOverviewType.allowedRoles) &&
+        Objects.equals(this.wmsUrl, georesourceOverviewType.wmsUrl) &&
+        Objects.equals(this.wfsUrl, georesourceOverviewType.wfsUrl);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodOfValidity, applicableTopics, allowedRoles);
+    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodOfValidity, applicableTopics, allowedRoles, wmsUrl, wfsUrl);
   }
 
   @Override
@@ -192,6 +236,8 @@ public class GeoresourceOverviewType   {
     sb.append("    availablePeriodOfValidity: ").append(toIndentedString(availablePeriodOfValidity)).append("\n");
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    wmsUrl: ").append(toIndentedString(wmsUrl)).append("\n");
+    sb.append("    wfsUrl: ").append(toIndentedString(wfsUrl)).append("\n");
     sb.append("}");
     return sb.toString();
   }

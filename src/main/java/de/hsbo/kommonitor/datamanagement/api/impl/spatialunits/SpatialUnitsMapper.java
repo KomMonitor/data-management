@@ -33,6 +33,9 @@ public class SpatialUnitsMapper {
 		dataset.setNextLowerHierarchyLevel(spatialUnitEntity.getNextLowerHierarchyLevel());
 		dataset.setNextUpperHierarchyLevel(spatialUnitEntity.getNextUpperHierarchyLevel());
 		dataset.setSpatialUnitLevel(spatialUnitEntity.getDatasetName());
+		
+		dataset.setWmsUrl(spatialUnitEntity.getWmsUrl());
+		dataset.setWfsUrl(spatialUnitEntity.getWfsUrl());
 
 		return dataset;
 	}

@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-26T14:51:31.528+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-02T08:44:45.917+02:00")
 
 public class IndicatorOverviewType   {
   @JsonProperty("indicatorName")
@@ -327,10 +325,10 @@ public class IndicatorOverviewType   {
   }
 
    /**
-   * WMS URL to fetch data as OGC WMS
+   * the URL of a running WMS instance serving the spatial features of the associated dataset
    * @return wmsUrl
   **/
-  @ApiModelProperty(value = "WMS URL to fetch data as OGC WMS")
+  @ApiModelProperty(required = true, value = "the URL of a running WMS instance serving the spatial features of the associated dataset")
   public String getWmsUrl() {
     return wmsUrl;
   }
@@ -345,10 +343,10 @@ public class IndicatorOverviewType   {
   }
 
    /**
-   * WFS URL to fetch data as OGC WFS
+   * the URL of a running WFS instance serving the spatial features of the associated dataset
    * @return wfsUrl
   **/
-  @ApiModelProperty(value = "WFS URL to fetch data as OGC WFS")
+  @ApiModelProperty(required = true, value = "the URL of a running WFS instance serving the spatial features of the associated dataset")
   public String getWfsUrl() {
     return wfsUrl;
   }
