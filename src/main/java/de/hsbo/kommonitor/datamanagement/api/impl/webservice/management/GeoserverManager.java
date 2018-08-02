@@ -98,7 +98,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
 		String wmsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + dbTableName + "/wms";
 		
-		logger.info("created WMS URL '{}' for dbTable '{}'" + wmsUrl, dbTableName);
+		logger.info("created WMS URL '{}' for dbTable '{}'", wmsUrl, dbTableName);
 		
 		return wmsUrl;
 	}
@@ -108,7 +108,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
 		String wfsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + dbTableName + "/wfs";
 		
-		logger.info("created WFS URL '{}' for dbTable '{}'" + wfsUrl, dbTableName);
+		logger.info("created WFS URL '{}' for dbTable '{}'", wfsUrl, dbTableName);
 		
 		return wfsUrl;
 	}
@@ -118,7 +118,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
 		String wcsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/" + dbTableName + "/wcs";
 		
-		logger.info("created WCS URL '{}' for dbTable '{}'" + wcsUrl, dbTableName);
+		logger.info("created WCS URL '{}' for dbTable '{}'", wcsUrl, dbTableName);
 		
 		return wcsUrl;
 	}
