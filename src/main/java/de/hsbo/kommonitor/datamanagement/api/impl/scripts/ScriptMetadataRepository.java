@@ -9,9 +9,15 @@ public interface ScriptMetadataRepository extends JpaRepository<ScriptMetadataEn
 
 	boolean existsByIndicatorId(String indicatorId);
 
+	boolean existsByScriptId(String scriptId);
+
 	ScriptMetadataEntity findByIndicatorId(String indicatorId);
+	
+	ScriptMetadataEntity findByScriptId(String scriptId);
 
 	void deleteByIndicatorId(String indicatorId);
+
+	void deleteByScriptId(String scriptId);
 
 
 }

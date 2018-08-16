@@ -13,6 +13,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -43,7 +45,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity addProcessScriptAsBody(ProcessScriptPOSTInputType processScriptData) {
+	public ResponseEntity addProcessScriptAsBody(@RequestBody ProcessScriptPOSTInputType processScriptData) {
 		logger.info("Received request to insert new process script");
 
 		String accept = request.getHeader("Accept");
@@ -77,7 +79,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity deleteProcessScript(String indicatorId) {
+	public ResponseEntity deleteProcessScript(@PathVariable("indicatorId") String indicatorId) {
 		logger.info("Received request to delete process scripts for indicatorId '{}'", indicatorId);
 		
 		String accept = request.getHeader("Accept");
@@ -133,7 +135,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(String indicatorId) {
+	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(@PathVariable("indicatorId") String indicatorId) {
 		logger.info("Received request to get process script metadata for indicatorId '{}'", indicatorId);
 		String accept = request.getHeader("Accept");
 
@@ -159,7 +161,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity updateProcessScriptAsBody(String indicatorId, ProcessScriptPUTInputType processScriptData) {
+	public ResponseEntity updateProcessScriptAsBody(@PathVariable("indicatorId") String indicatorId, @RequestBody ProcessScriptPUTInputType processScriptData) {
 		logger.info("Received request to update process script with indicatorId '{}'", indicatorId);
 
 		String accept = request.getHeader("Accept");
@@ -191,7 +193,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity<String> getProcessScriptCodeForIndicator(String indicatorId) {
+	public ResponseEntity<String> getProcessScriptCodeForIndicator(@PathVariable("indicatorId") String indicatorId) {
 		logger.info("Received request to get scriptCode for associated indicatorId '{}'", indicatorId);
 		String accept = request.getHeader("Accept");
 
@@ -202,6 +204,104 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
+	public ResponseEntity deleteProcessScriptByScriptId(@PathVariable("scriptId") String scriptId) {
+		logger.info("Received request to delete process scripts for scriptId '{}'", scriptId);
+		
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * delete role with the specified id
+		 */
+			
+			boolean isDeleted;
+			try {
+				isDeleted = scriptManager.deleteScriptByScriptId(scriptId);
+			
+			if(isDeleted)
+				return new ResponseEntity<>(HttpStatus.OK);
+			
+			} catch (ResourceNotFoundException e) {
+				return ApiUtils.createResponseEntityFromException(e);
+			}
+		
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<String> getProcessScriptCodeByScriptId(@PathVariable("scriptId") String scriptId) {
+		logger.info("Received request to get scriptCode for scriptId '{}'", scriptId);
+		String accept = request.getHeader("Accept");
+
+		try {
+			String scriptCode = scriptManager.getScriptCodeForScriptId(scriptId);
+			
+			return new ResponseEntity<String>(scriptCode, HttpStatus.OK);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
+	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForScriptId(@PathVariable("scriptId") String scriptId) {
+		logger.info("Received request to get process script metadata for scriptId '{}'", scriptId);
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * retrieve the role for the specified id
+		 */
+
+		if (accept != null && accept.contains("application/json")) {
+
+			ProcessScriptOverviewType script = null;
+
+			try {
+				script = scriptManager.getScriptMetadataByScriptId(scriptId);
+			} catch (ResourceNotFoundException e) {
+				ApiUtils.createResponseEntityFromException(e);
+			}
+
+			return new ResponseEntity<>(script, HttpStatus.OK);
+
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Override
+	public ResponseEntity updateProcessScriptAsBodyByScriptId(@PathVariable("scriptId") String scriptId,
+			@RequestBody ProcessScriptPUTInputType processScriptData) {
+		logger.info("Received request to update process script with scriptId '{}'", scriptId);
+
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * analyse input data and save it within database
+		 */
+		try {
+			scriptId = scriptManager.updateScriptForScriptId(processScriptData, scriptId);
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+
+		}
+
+		if (scriptId != null) {
+			HttpHeaders responseHeaders = new HttpHeaders();
+
+			String location = scriptId;
+			try {
+				responseHeaders.setLocation(new URI(location));
+			} catch (URISyntaxException e) {
+				// return ApiResponseUtil.createResponseEntityFromException(e);
+			}
+
+			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }
