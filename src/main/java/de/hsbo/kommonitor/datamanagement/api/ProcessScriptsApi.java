@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-16T13:07:14.792+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-16T15:44:52.171+02:00")
 
 @Api(value = "ProcessScripts", description = "the ProcessScripts API")
 public interface ProcessScriptsApi {
@@ -46,7 +46,7 @@ public interface ProcessScriptsApi {
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/process-scripts/{indicatorId}",
+    @RequestMapping(value = "/process-scripts/usingIndicatorId/{indicatorId}",
         method = RequestMethod.DELETE)
     ResponseEntity deleteProcessScript(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
 
@@ -82,7 +82,7 @@ public interface ProcessScriptsApi {
         @ApiResponse(code = 200, message = "OK", response = String.class),
         @ApiResponse(code = 400, message = "Invalid status value"),
         @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/process-scripts/{indicatorId}/scriptCode",
+    @RequestMapping(value = "/process-scripts/usingIndicatorId/{indicatorId}/scriptCode",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<String> getProcessScriptCodeForIndicator(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
@@ -95,7 +95,7 @@ public interface ProcessScriptsApi {
         @ApiResponse(code = 200, message = "OK", response = ProcessScriptOverviewType.class),
         @ApiResponse(code = 400, message = "Invalid status value"),
         @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/process-scripts/{indicatorId}",
+    @RequestMapping(value = "/process-scripts/usingIndicatorId/{indicatorId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
@@ -147,7 +147,7 @@ public interface ProcessScriptsApi {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
-    @RequestMapping(value = "/process-scripts/{indicatorId}",
+    @RequestMapping(value = "/process-scripts/usingIndicatorId/{indicatorId}",
         consumes = { "application/json" },
         method = RequestMethod.PUT)
     ResponseEntity updateProcessScriptAsBody(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "details necessary to modify the process script" ,required=true )   @RequestBody ProcessScriptPUTInputType processScriptData);
