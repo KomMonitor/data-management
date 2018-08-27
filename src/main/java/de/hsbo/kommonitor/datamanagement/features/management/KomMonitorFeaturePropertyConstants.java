@@ -2,13 +2,13 @@ package de.hsbo.kommonitor.datamanagement.features.management;
 
 public class KomMonitorFeaturePropertyConstants {
 	
-	public static final String UNIQUE_FEATURE_ID_NAME = "fid";
+	public static final String UNIQUE_FEATURE_ID_PRIMARYKEY_NAME = "fid";
 
 	public static final String VALID_START_DATE_NAME = "validStartDate";
 	public static final String VALID_END_DATE_NAME = "validEndDate";
 	public static final String ARISEN_FROM_NAME = "arisenFrom";
 	
 	
-	public static final String SPATIAL_UNIT_ID_NAME = "spatialUnitId";
+	public static final String SPATIAL_UNIT_FEATUREID_NAME = "spatialUnitFeatureId";
 
 }

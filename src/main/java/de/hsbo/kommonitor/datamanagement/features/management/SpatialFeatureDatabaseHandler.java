@@ -416,7 +416,7 @@ public class SpatialFeatureDatabaseHandler {
 
 			while (dbFeaturesIterator.hasNext()) {
 				Feature dbFeature = dbFeaturesIterator.next();
-				if (!dbFeatureIdIsWithinInputFeatures(String.valueOf(dbFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME).getValue()), inputFeatureCollection)){
+				if (!dbFeatureIdIsWithinInputFeatures(String.valueOf(dbFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATUREID_NAME).getValue()), inputFeatureCollection)){
 					// mark as outdated by setting validEndDate to dubmitted start date
 					numberOfEntriesMarkedAsOutdated++;
 					Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeature);
@@ -446,7 +446,7 @@ public class SpatialFeatureDatabaseHandler {
 		
 		while (inputFeatureIterator.hasNext()){
 			Feature inputFeature = inputFeatureIterator.next();
-			String inputFeatureId = String.valueOf(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME).getValue());
+			String inputFeatureId = String.valueOf(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATUREID_NAME).getValue());
 			
 			if(inputFeatureId.equals(dbFeatureId)){
 				inputFeatureIterator.close();
@@ -577,7 +577,7 @@ public class SpatialFeatureDatabaseHandler {
 
 	private static Filter createFilterForUniqueFeatureId(FilterFactory ff, Feature correspondingDbFeature) {
 		String uniqueFeatureIdValue = correspondingDbFeature.getIdentifier().getID();
-		String uniqueFeatureIdPropertyName = KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_NAME;
+		String uniqueFeatureIdPropertyName = KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME;
 		Set<Identifier> set = new HashSet<Identifier>();
 		set.add(correspondingDbFeature.getIdentifier());
 		Filter filterForFeatureId = ff.id(set);
@@ -599,8 +599,8 @@ public class SpatialFeatureDatabaseHandler {
 			Date validEndDate = (Date) dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
 			Date now = new Date();
 			
-			String inputFeatureId = String.valueOf(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME).getValue());
-			String dbFeatureId = String.valueOf(dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_ID_NAME));
+			String inputFeatureId = String.valueOf(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATUREID_NAME).getValue());
+			String dbFeatureId = String.valueOf(dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATUREID_NAME));
 			if(inputFeatureId.equals(dbFeatureId)
 					&& (validEndDate == null || validEndDate.after(now))){
 				dbFeatureIterator.close();
