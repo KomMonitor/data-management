@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPOSTInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-24T10:41:52.323+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-27T07:50:59.124+02:00")
 
 public class IndicatorPOSTInputType   {
   @JsonProperty("datasetName")
@@ -54,7 +52,7 @@ public class IndicatorPOSTInputType   {
 
   @JsonProperty("indicatorValues")
   
-  private List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = new ArrayList<>();
+  private List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = null;
 
   public IndicatorPOSTInputType datasetName(String datasetName) {
     this.datasetName = datasetName;
@@ -142,7 +140,7 @@ public class IndicatorPOSTInputType   {
    * description about how the indicator was computed
    * @return processDescription
   **/
-  @ApiModelProperty(value = "description about how the indicator was computed")
+  @ApiModelProperty(required = true, value = "description about how the indicator was computed")
   public String getProcessDescription() {
     return processDescription;
   }
@@ -160,7 +158,7 @@ public class IndicatorPOSTInputType   {
    * unit of the indicator values
    * @return unit
   **/
-  @ApiModelProperty(value = "unit of the indicator values")
+  @ApiModelProperty(required = true, value = "unit of the indicator values")
   public String getUnit() {
     return unit;
   }
@@ -175,10 +173,10 @@ public class IndicatorPOSTInputType   {
   }
 
    /**
-   * indicates if the data was simply inserted (INSERTED), computed by an automated script (COMPUTED) or automatically aggregated by a script (AGGREGATED)
+   * indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)
    * @return creationType
   **/
-  @ApiModelProperty(value = "indicates if the data was simply inserted (INSERTED), computed by an automated script (COMPUTED) or automatically aggregated by a script (AGGREGATED)")
+  @ApiModelProperty(required = true, value = "indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)")
   public CreationTypeEnum getCreationType() {
     return creationType;
   }
@@ -268,6 +266,9 @@ public class IndicatorPOSTInputType   {
   }
 
   public IndicatorPOSTInputType addIndicatorValuesItem(IndicatorPOSTInputTypeIndicatorValues indicatorValuesItem) {
+    if (this.indicatorValues == null) {
+      this.indicatorValues = new ArrayList<>();
+    }
     this.indicatorValues.add(indicatorValuesItem);
     return this;
   }
@@ -276,7 +277,7 @@ public class IndicatorPOSTInputType   {
    * an array of entries containing indicator values and mapping to spatial features via identifiers
    * @return indicatorValues
   **/
-  @ApiModelProperty(required = true, value = "an array of entries containing indicator values and mapping to spatial features via identifiers")
+  @ApiModelProperty(value = "an array of entries containing indicator values and mapping to spatial features via identifiers")
   public List<IndicatorPOSTInputTypeIndicatorValues> getIndicatorValues() {
     return indicatorValues;
   }
@@ -343,9 +344,5 @@ public class IndicatorPOSTInputType   {
     }
     return o.toString().replace("\n", "\n    ");
   }
-
-
-
-  
 }
 

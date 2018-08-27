@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * indicates if the data was simply inserted (INSERTED), computed by an automated script (COMPUTED) or automatically aggregated by a script (AGGREGATED)
+ * indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)
  */
 public enum CreationTypeEnum {
-  INSERTED("INSERTED"),
+  INSERTION("INSERTION"),
   
-  COMPUTED("COMPUTED"),
+  COMPUTATION("COMPUTATION"),
   
-  AGGREGATED("AGGREGATED");
+  AGGREGATION("AGGREGATION");
 
   private String value;
 

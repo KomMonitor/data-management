@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-02T08:44:45.917+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-27T07:50:59.124+02:00")
 
 public class IndicatorOverviewType   {
   @JsonProperty("indicatorName")
@@ -307,10 +309,10 @@ public class IndicatorOverviewType   {
   }
 
    /**
-   * indicates if the data was simply inserted (INSERTED), computed by an automated script (COMPUTED) or automatically aggregated by a script (AGGREGATED)
+   * indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)
    * @return creationType
   **/
-  @ApiModelProperty(value = "indicates if the data was simply inserted (INSERTED), computed by an automated script (COMPUTED) or automatically aggregated by a script (AGGREGATED)")
+  @ApiModelProperty(required = true, value = "indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)")
   public CreationTypeEnum getCreationType() {
     return creationType;
   }

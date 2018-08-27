@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPATCHInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-24T10:41:52.323+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-27T07:50:59.124+02:00")
 
 public class IndicatorPATCHInputType   {
   @JsonProperty("applicableTopics")
@@ -91,7 +91,7 @@ public class IndicatorPATCHInputType   {
    * description about how the indicator was computed
    * @return processDescription
   **/
-  @ApiModelProperty(value = "description about how the indicator was computed")
+  @ApiModelProperty(required = true, value = "description about how the indicator was computed")
   public String getProcessDescription() {
     return processDescription;
   }
@@ -109,7 +109,7 @@ public class IndicatorPATCHInputType   {
    * unit of the indicator values
    * @return unit
   **/
-  @ApiModelProperty(value = "unit of the indicator values")
+  @ApiModelProperty(required = true, value = "unit of the indicator values")
   public String getUnit() {
     return unit;
   }
