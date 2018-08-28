@@ -465,6 +465,7 @@ public class IndicatorsManager {
 		entity.addTopicsIfNotExist(indicatorData.getApplicableTopics());
 		entity.setProcessDescription(indicatorData.getProcessDescription());
 		entity.setUnit(indicatorData.getUnit());
+		entity.setCreationType(indicatorData.getCreationType());
 
 		/*
 		 * the remaining properties cannot be set initially!
