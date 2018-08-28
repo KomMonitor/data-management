@@ -11,6 +11,6 @@ public class KomMonitorFeaturePropertyConstants {
 	
 	
 	public static final String SPATIAL_UNIT_FEATURE_ID_NAME = "spatialUnitFeatureId";
-//	public static final String SPATIAL_UNIT_FEATURE_NAME_NAME = "spatialUnitFeatureName";
+	public static final String SPATIAL_UNIT_FEATURE_NAME_NAME = "spatialUnitFeatureName";
 
 }

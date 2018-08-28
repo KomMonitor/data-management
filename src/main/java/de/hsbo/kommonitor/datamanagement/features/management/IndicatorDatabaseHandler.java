@@ -102,10 +102,12 @@ public class IndicatorDatabaseHandler {
 		// the correct naming of the properies/columns has to be ensured within input dataset!
 		String indicatorColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME;
 		String spatialUnitColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME;
-
-		String createViewCommand = "create or replace view \"" + viewTableName + "\" as select * from \"" + indicatorTableName
-				+ "\" join \"" + spatialUnitsTable + "\" on \"" + indicatorTableName + "\".\"" + indicatorColumnName + "\" = '\""
-				+ spatialUnitsTable + "\".\"" + spatialUnitColumnName + "\"'";
+		
+		String createViewCommand = "create or replace view \"" + viewTableName + "\" as select indicator.*, spatialunit." + 
+				KomMonitorFeaturePropertyConstants.GEOMETRY_COLUMN_NAME + ", spatialunit.\"" + 
+				KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME + "\" from \"" + indicatorTableName
+				+ "\" indicator join \"" + spatialUnitsTable + "\" spatialunit on indicator.\"" 
+				+ indicatorColumnName + "\" = CAST(spatialunit.\"" + spatialUnitColumnName + "\" AS varchar)";
 		
 		// TODO check if works
 		statement.executeUpdate(createViewCommand);
