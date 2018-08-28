@@ -100,8 +100,8 @@ public class IndicatorDatabaseHandler {
 		String spatialUnitsTable = spatialUnitEntity.getDbTableName();
 
 		// the correct naming of the properies/columns has to be ensured within input dataset!
-		String indicatorColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATUREID_NAME;
-		String spatialUnitColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATUREID_NAME;
+		String indicatorColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME;
+		String spatialUnitColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME;
 
 		String createViewCommand = "create or replace view \"" + viewTableName + "\" as select * from \"" + indicatorTableName
 				+ "\" join \"" + spatialUnitsTable + "\" on \"" + indicatorTableName + "\".\"" + indicatorColumnName + "\" = '\""
@@ -190,7 +190,7 @@ public class IndicatorDatabaseHandler {
 		/*
 		 * add KomMonitor specific properties!
 		 */
-		tb.add(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATUREID_NAME, String.class);
+		tb.add(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME, String.class);
 
 		for (Date date : availableDatesForIndicator) {
 			String dateString = createDateStringForDbProperty(date);
@@ -235,7 +235,7 @@ public class IndicatorDatabaseHandler {
 			String attributeName = attributeDescriptor.getName().getLocalPart();
 
 			if (!attributeName.equalsIgnoreCase(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME)
-					&& !attributeName.equalsIgnoreCase(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATUREID_NAME))
+					&& !attributeName.equalsIgnoreCase(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME))
 				availableDates.add(attributeName);
 		}
 
