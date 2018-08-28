@@ -137,7 +137,7 @@ public class IndicatorsManager {
 				/*
 				 * set wms and wfs urls within metadata
 				 */
-				updateMetadataWithOgcServiceUrls(indicatorMetadataEntry.getDatasetId(), indicatorfeatureViewName);
+				updateMetadataWithOgcServiceUrlsAndIndicatorTableName(indicatorMetadataEntry.getDatasetId(), indicatorfeatureViewName);
 				
 				return indicatorId;
 			} else{
@@ -367,16 +367,17 @@ public class IndicatorsManager {
 		/*
 		 * set wms and wfs urls within metadata
 		 */
-		updateMetadataWithOgcServiceUrls(metadataId, indicatorfeatureViewName);
+		updateMetadataWithOgcServiceUrlsAndIndicatorTableName(metadataId, indicatorfeatureViewName, indicatorValueTableName);
 		
 		return metadataId;
 	}
 	
-	private void updateMetadataWithOgcServiceUrls(String metadataId, String dbTableName) {
+	private void updateMetadataWithOgcServiceUrlsAndIndicatorTableName(String metadataId, String indicatorViewName, String indicatorValueTableName) {
 		MetadataIndicatorsEntity metadata = indicatorsMetadataRepo.findByDatasetId(metadataId);
 		
-		metadata.setWmsUrl(ogcServiceManager.getWmsUrl(dbTableName));
-		metadata.setWfsUrl(ogcServiceManager.getWfsUrl(dbTableName));
+		metadata.setWmsUrl(ogcServiceManager.getWmsUrl(indicatorViewName));
+		metadata.setWfsUrl(ogcServiceManager.getWfsUrl(indicatorViewName));
+		metadata.setDbTableName(indicatorValueTableName);
 		
 		indicatorsMetadataRepo.saveAndFlush(metadata);
 	}
