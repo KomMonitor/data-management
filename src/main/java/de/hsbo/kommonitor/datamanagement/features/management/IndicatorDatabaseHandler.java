@@ -103,9 +103,9 @@ public class IndicatorDatabaseHandler {
 		String indicatorColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATUREID_NAME;
 		String spatialUnitColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATUREID_NAME;
 
-		String createViewCommand = "create or replace view " + viewTableName + " as select * from " + indicatorTableName
-				+ " join " + spatialUnitsTable + " on " + indicatorTableName + "." + indicatorColumnName + " = "
-				+ spatialUnitsTable + "." + spatialUnitColumnName;
+		String createViewCommand = "create or replace view \"" + viewTableName + "\" as select * from \"" + indicatorTableName
+				+ "\" join \"" + spatialUnitsTable + "\" on \"" + indicatorTableName + "\".\"" + indicatorColumnName + "\" = \""
+				+ spatialUnitsTable + "\".\"" + spatialUnitColumnName + "\"";
 		
 		// TODO check if works
 		statement.executeUpdate(createViewCommand);
