@@ -137,7 +137,7 @@ public class IndicatorsManager {
 				/*
 				 * set wms and wfs urls within metadata
 				 */
-				updateMetadataWithOgcServiceUrlsAndIndicatorTableName(indicatorMetadataEntry.getDatasetId(), indicatorfeatureViewName);
+				updateMetadataWithOgcServiceUrlsAndIndicatorTableName(indicatorMetadataEntry.getDatasetId(), indicatorfeatureViewName, dbTableName);
 				
 				return indicatorId;
 			} else{
