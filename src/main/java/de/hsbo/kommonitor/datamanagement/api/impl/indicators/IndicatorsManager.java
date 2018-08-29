@@ -283,9 +283,10 @@ public class IndicatorsManager {
 			 * delete featureTables and views for each spatial unit
 			 */
 			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
-				IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
 				String featureViewTableName = indicatorSpatialUnitJoinEntity.getFeatureViewTableName();
-				IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
+//				IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
+				
+				IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
 				
 				// handle OGC web service
 				ogcServiceManager.unpublishDbLayer(featureViewTableName, ResourceTypeEnum.INDICATOR);
@@ -427,6 +428,8 @@ public class IndicatorsManager {
 		entity.setIndicatorValueTableName(indicatorValueTableName);
 		entity.setSpatialUnitId(spatialUnitMetadataEntity.getDatasetId());
 		entity.setSpatialUnitName(spatialUnitName);
+		
+		indicatorsSpatialUnitsRepo.saveAndFlush(entity);
 
 //		MetadataIndicatorsEntity metadataset = indicatorsMetadataRepo.findByDatasetId(metadataId);
 //
