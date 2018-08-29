@@ -51,9 +51,12 @@ public class IndicatorsMapper {
 		 * FIXME here we simply assume that the indicator has the same timestamps for each spatial unit
 		 */
 		List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnitEntities = indicatorSpatialUnitsRepo.findByIndicatorMetadataId(indicatorsMetadataEntity.getDatasetId());
-		indicatorOverviewType.setApplicableDates(
-				IndicatorDatabaseHandler.getAvailableDates(indicatorSpatialUnitEntities.get(0).getIndicatorValueTableName()));
-		indicatorOverviewType.setApplicableSpatialUnits(getApplicableSpatialUnitsNames(indicatorSpatialUnitEntities));
+		if(indicatorSpatialUnitEntities != null && indicatorSpatialUnitEntities.size() > 0){
+			indicatorOverviewType.setApplicableDates(
+					IndicatorDatabaseHandler.getAvailableDates(indicatorSpatialUnitEntities.get(0).getIndicatorValueTableName()));
+			indicatorOverviewType.setApplicableSpatialUnits(getApplicableSpatialUnitsNames(indicatorSpatialUnitEntities));
+			
+		}
 		
 		indicatorOverviewType.setApplicableTopics(getTopicNames(indicatorsMetadataEntity.getIndicatorTopics()));
 		indicatorOverviewType.setIndicatorId(indicatorsMetadataEntity.getDatasetId());
