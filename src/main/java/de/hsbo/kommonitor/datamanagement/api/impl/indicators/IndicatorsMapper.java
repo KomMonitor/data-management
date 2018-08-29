@@ -15,6 +15,7 @@ import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.OgcServicesType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 public class IndicatorsMapper {
@@ -73,10 +74,26 @@ public class IndicatorsMapper {
 		indicatorOverviewType.setReferencedIndicators(indicatorReferences);
 		indicatorOverviewType.setUnit(indicatorsMetadataEntity.getUnit());
 		indicatorOverviewType.setCreationType(indicatorsMetadataEntity.getCreationType());
-		indicatorOverviewType.setWmsUrl(indicatorsMetadataEntity.getWmsUrl());
-		indicatorOverviewType.setWfsUrl(indicatorsMetadataEntity.getWfsUrl());
+		
+		indicatorOverviewType.setOgcServices(generateOgcServiceOverview(indicatorSpatialUnitEntities));
 
 		return indicatorOverviewType;
+	}
+
+	private static List<OgcServicesType> generateOgcServiceOverview(
+			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnitEntities) {
+		List<OgcServicesType> ogcServices = new ArrayList<OgcServicesType>();
+		
+		for (IndicatorSpatialUnitJoinEntity entity : indicatorSpatialUnitEntities) {
+			OgcServicesType ogcServicesInstance = new OgcServicesType();
+			ogcServicesInstance.setSpatialUnit(entity.getSpatialUnitName());
+			ogcServicesInstance.setWfsUrl(entity.getWfsUrl());
+			ogcServicesInstance.setWmsUrl(entity.getWmsUrl());
+			
+			ogcServices.add(ogcServicesInstance);
+		}
+		
+		return ogcServices;
 	}
 
 	private static List<String> getApplicableSpatialUnitsNames(

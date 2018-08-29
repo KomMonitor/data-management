@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-27T07:50:59.124+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-29T11:30:05.521+02:00")
 
 public class IndicatorOverviewType   {
   @JsonProperty("indicatorName")
@@ -60,11 +58,9 @@ public class IndicatorOverviewType   {
   @JsonProperty("creationType")
   private CreationTypeEnum creationType = null;
 
-  @JsonProperty("wmsUrl")
-  private String wmsUrl = null;
-
-  @JsonProperty("wfsUrl")
-  private String wfsUrl = null;
+  @JsonProperty("ogcServices")
+  
+  private List<OgcServicesType> ogcServices = new ArrayList<>();
 
   public IndicatorOverviewType indicatorName(String indicatorName) {
     this.indicatorName = indicatorName;
@@ -321,40 +317,27 @@ public class IndicatorOverviewType   {
     this.creationType = creationType;
   }
 
-  public IndicatorOverviewType wmsUrl(String wmsUrl) {
-    this.wmsUrl = wmsUrl;
+  public IndicatorOverviewType ogcServices(List<OgcServicesType> ogcServices) {
+    this.ogcServices = ogcServices;
+    return this;
+  }
+
+  public IndicatorOverviewType addOgcServicesItem(OgcServicesType ogcServicesItem) {
+    this.ogcServices.add(ogcServicesItem);
     return this;
   }
 
    /**
-   * the URL of a running WMS instance serving the spatial features of the associated dataset
-   * @return wmsUrl
+   * list of available OGC services for that indicator for different spatial units
+   * @return ogcServices
   **/
-  @ApiModelProperty(required = true, value = "the URL of a running WMS instance serving the spatial features of the associated dataset")
-  public String getWmsUrl() {
-    return wmsUrl;
+  @ApiModelProperty(required = true, value = "list of available OGC services for that indicator for different spatial units")
+  public List<OgcServicesType> getOgcServices() {
+    return ogcServices;
   }
 
-  public void setWmsUrl(String wmsUrl) {
-    this.wmsUrl = wmsUrl;
-  }
-
-  public IndicatorOverviewType wfsUrl(String wfsUrl) {
-    this.wfsUrl = wfsUrl;
-    return this;
-  }
-
-   /**
-   * the URL of a running WFS instance serving the spatial features of the associated dataset
-   * @return wfsUrl
-  **/
-  @ApiModelProperty(required = true, value = "the URL of a running WFS instance serving the spatial features of the associated dataset")
-  public String getWfsUrl() {
-    return wfsUrl;
-  }
-
-  public void setWfsUrl(String wfsUrl) {
-    this.wfsUrl = wfsUrl;
+  public void setOgcServices(List<OgcServicesType> ogcServices) {
+    this.ogcServices = ogcServices;
   }
 
 
@@ -379,13 +362,12 @@ public class IndicatorOverviewType   {
         Objects.equals(this.referencedIndicators, indicatorOverviewType.referencedIndicators) &&
         Objects.equals(this.referencedGeoresources, indicatorOverviewType.referencedGeoresources) &&
         Objects.equals(this.creationType, indicatorOverviewType.creationType) &&
-        Objects.equals(this.wmsUrl, indicatorOverviewType.wmsUrl) &&
-        Objects.equals(this.wfsUrl, indicatorOverviewType.wfsUrl);
+        Objects.equals(this.ogcServices, indicatorOverviewType.ogcServices);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(indicatorName, indicatorId, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles, referencedIndicators, referencedGeoresources, creationType, wmsUrl, wfsUrl);
+    return Objects.hash(indicatorName, indicatorId, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles, referencedIndicators, referencedGeoresources, creationType, ogcServices);
   }
 
   @Override
@@ -405,8 +387,7 @@ public class IndicatorOverviewType   {
     sb.append("    referencedIndicators: ").append(toIndentedString(referencedIndicators)).append("\n");
     sb.append("    referencedGeoresources: ").append(toIndentedString(referencedGeoresources)).append("\n");
     sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
-    sb.append("    wmsUrl: ").append(toIndentedString(wmsUrl)).append("\n");
-    sb.append("    wfsUrl: ").append(toIndentedString(wfsUrl)).append("\n");
+    sb.append("    ogcServices: ").append(toIndentedString(ogcServices)).append("\n");
     sb.append("}");
     return sb.toString();
   }

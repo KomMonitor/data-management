@@ -119,21 +119,21 @@ public class IndicatorsManager {
 			
 			if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName)){
 				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName);
-				String dbTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
+				String indicatorValueTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
 				/*
 				 * call DB tool to update features
 				 */
-				IndicatorDatabaseHandler.updateIndicatorFeatures(indicatorData, dbTableName);
+				IndicatorDatabaseHandler.updateIndicatorFeatures(indicatorData, indicatorValueTableName);
 			
-				String indicatorfeatureViewName = createOrReplaceIndicatorFeatureView(dbTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
+				String indicatorFeatureViewName = createOrReplaceIndicatorFeatureView(indicatorValueTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
 				
 				// handle OGC web service
-				ogcServiceManager.publishDbLayerAsOgcService(indicatorfeatureViewName, ResourceTypeEnum.INDICATOR);
+				ogcServiceManager.publishDbLayerAsOgcService(indicatorFeatureViewName, ResourceTypeEnum.INDICATOR);
 				
 				/*
 				 * set wms and wfs urls within metadata
 				 */
-				updateMetadataWithOgcServiceUrls(indicatorMetadataEntry.getDatasetId(), indicatorfeatureViewName, dbTableName);
+				persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName, indicatorFeatureViewName);
 				
 			} else{
 				logger.info(
@@ -379,25 +379,23 @@ public class IndicatorsManager {
 		String indicatorValueTableName = createIndicatorValueTable(indicatorValues, metadataId);
 		String indicatorfeatureViewName = createOrReplaceIndicatorFeatureView(indicatorValueTableName, spatialUnitName, metadataId);
 		
-		persistNamesOfCreatedTablesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName, indicatorfeatureViewName);
-		
 		// handle OGC web service
 		ogcServiceManager.publishDbLayerAsOgcService(indicatorfeatureViewName, ResourceTypeEnum.INDICATOR);
 		
-		/*
-		 * set wms and wfs urls within metadata
-		 */
-		updateMetadataWithOgcServiceUrls(metadataId, indicatorfeatureViewName, indicatorValueTableName);
-	}
-	
-	private void updateMetadataWithOgcServiceUrls(String metadataId, String indicatorViewName, String indicatorValueTableName) {
-		MetadataIndicatorsEntity metadata = indicatorsMetadataRepo.findByDatasetId(metadataId);
+		persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName, indicatorfeatureViewName);
 		
-		metadata.setWmsUrl(ogcServiceManager.getWmsUrl(indicatorViewName));
-		metadata.setWfsUrl(ogcServiceManager.getWfsUrl(indicatorViewName));
-		
-		indicatorsMetadataRepo.saveAndFlush(metadata);
 	}
+//	
+//	private void updateJoinTableWithOgcServiceUrls(String metadataId, String indicatorViewName, String indicatorValueTableName) {
+////		MetadataIndicatorsEntity metadata = indicatorsMetadataRepo.findByDatasetId(metadataId);
+////		
+////		metadata.setWmsUrl(ogcServiceManager.getWmsUrl(indicatorViewName));
+////		metadata.setWfsUrl(ogcServiceManager.getWfsUrl(indicatorViewName));
+////		
+////		indicatorsMetadataRepo.saveAndFlush(metadata);
+//		
+////		indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(metadataId, spatialUnitId)
+//	}
 
 	private String createOrReplaceIndicatorFeatureView(String indicatorValueTableName, String spatialUnitName,
 			String metadataId) throws IOException, SQLException {
@@ -429,31 +427,35 @@ public class IndicatorsManager {
 		return dbTableName;
 	}
 
-	private void persistNamesOfCreatedTablesInJoinTable(String indicatorMetadataId, String indicatorName, String spatialUnitName, 
+	private void persistNamesOfIndicatorTablesAndServicesInJoinTable(String indicatorMetadataId, String indicatorName, String spatialUnitName, 
 			String indicatorValueTableName, String indicatorFeatureViewName) {
 		logger.info(
-				"Create new entry in indicator spatial units join table for indicatorId '{}', and spatialUnitName '{}'. Set indicatorValueTable with name '{}'  and feature view with name '{}'.",
+				"Create or modify entry in indicator spatial units join table for indicatorId '{}', and spatialUnitName '{}'. Set indicatorValueTable with name '{}'  and feature view with name '{}'.",
 				indicatorMetadataId, spatialUnitName, indicatorValueTableName, indicatorFeatureViewName);
 		
 		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = DatabaseHelperUtil.getSpatialUnitMetadataEntity(spatialUnitName);
+		String spatialUnitId = spatialUnitMetadataEntity.getDatasetId();
 		
 		IndicatorSpatialUnitJoinEntity entity = new IndicatorSpatialUnitJoinEntity();
+		
+		/*
+		 * if an entity already exists for this combination of indicator and spatial unti then only modify those values
+		 */
+		if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorMetadataId, spatialUnitId))
+			entity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorMetadataId, spatialUnitId);
+		
 		entity.setFeatureViewTableName(indicatorFeatureViewName);
 		entity.setIndicatorMetadataId(indicatorMetadataId);
 		entity.setIndicatorName(indicatorName);
 		entity.setIndicatorValueTableName(indicatorValueTableName);
-		entity.setSpatialUnitId(spatialUnitMetadataEntity.getDatasetId());
+		entity.setSpatialUnitId(spatialUnitId);
 		entity.setSpatialUnitName(spatialUnitName);
+		entity.setWmsUrl(ogcServiceManager.getWmsUrl(indicatorFeatureViewName));
+		entity.setWfsUrl(ogcServiceManager.getWfsUrl(indicatorFeatureViewName));
 		
 		indicatorsSpatialUnitsRepo.saveAndFlush(entity);
 
-//		MetadataIndicatorsEntity metadataset = indicatorsMetadataRepo.findByDatasetId(metadataId);
-//
-//		metadataset.setDbTableName(indicatorValueTable);
-//
-//		indicatorsMetadataRepo.saveAndFlush(metadataset);
-//
-		logger.info("Creation of join entry successful.");
+		logger.info("Creation or modification of join entry successful.");
 		
 	}
 
