@@ -35,6 +35,7 @@ public class ScriptMetadataEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate = null;
 
+	@Column(columnDefinition="text", length=10485760)
 	private String scriptCode = null;
 
 	@ManyToMany
