@@ -1,7 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.webservice.management;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -54,7 +52,6 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 		GeoServerRESTReader reader = geoserverManager.getReader();
 		GeoServerRESTPublisher publisher = geoserverManager.getPublisher();
-		GeoServerRESTStoreManager storeManager = geoserverManager.getStoreManager();
 
 		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
 		String targetDatastore = null;
@@ -222,7 +219,10 @@ public class GeoserverManager implements OGCWebServiceManager {
 					publishDBLayerInGeoserver(dbTableName, resourceType);
 				}
 			} else {
-				publisher.createWorkspace(targetWorkspace);
+				boolean created = publisher.createWorkspace(targetWorkspace);
+				if(!created)
+					throw new Exception("Error while creating workspace. Processing failed.");
+				
 				publishDBLayerInGeoserver(dbTableName, resourceType);
 			}
 		}
@@ -246,7 +246,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 	}
 
 	private static void createNewDataStoreOnGeoserver(GeoServerRESTStoreManager storeManager, String targetWorkspace,
-			String targetDatastore, String targetSchema) {
+			String targetDatastore, String targetSchema) throws Exception {
 		GSPostGISDatastoreEncoder storeEncoder = new GSPostGISDatastoreEncoder(targetDatastore);
 		storeEncoder.setDatabase(env.getProperty(GeoserverPropertiesConstants.DB_DATABASE));
 		storeEncoder.setHost(env.getProperty(GeoserverPropertiesConstants.DB_HOST));
@@ -256,6 +256,9 @@ public class GeoserverManager implements OGCWebServiceManager {
 		storeEncoder.setSchema(targetSchema);
 		// storeEncoder.setNamespace(dbProps.getProperty("kommonitor"));
 		logger.info("Creating new db store '{}' on geoserver" + storeEncoder);
-		storeManager.create(targetWorkspace, storeEncoder);
+		boolean created = storeManager.create(targetWorkspace, storeEncoder);
+		
+		if(!created)
+			throw new Exception("Error while creating data store. Processing failed.");
 	}
 }
