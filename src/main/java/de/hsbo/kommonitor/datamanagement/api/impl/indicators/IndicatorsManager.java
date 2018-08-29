@@ -30,6 +30,7 @@ import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
@@ -114,6 +115,8 @@ public class IndicatorsManager {
 		if (indicatorsMetadataRepo.existsByDatasetName(indicatorId)) {
 			String spatialUnitName = indicatorData.getApplicableSpatialUnit();
 			
+			MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+			
 			if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName)){
 				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName);
 				String dbTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
@@ -121,15 +124,8 @@ public class IndicatorsManager {
 				 * call DB tool to update features
 				 */
 				IndicatorDatabaseHandler.updateIndicatorFeatures(indicatorData, dbTableName);
-
-				// set lastUpdate in metadata in case of successful update
-				MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
-				
+			
 				String indicatorfeatureViewName = createOrReplaceIndicatorFeatureView(dbTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
-				
-				indicatorMetadataEntry.setLastUpdate(java.util.Calendar.getInstance().getTime());
-
-				indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
 				
 				// handle OGC web service
 				ogcServiceManager.publishDbLayerAsOgcService(indicatorfeatureViewName, ResourceTypeEnum.INDICATOR);
@@ -137,17 +133,24 @@ public class IndicatorsManager {
 				/*
 				 * set wms and wfs urls within metadata
 				 */
-				updateMetadataWithOgcServiceUrlsAndIndicatorTableName(indicatorMetadataEntry.getDatasetId(), indicatorfeatureViewName, dbTableName);
+				updateMetadataWithOgcServiceUrls(indicatorMetadataEntry.getDatasetId(), indicatorfeatureViewName, dbTableName);
 				
-				return indicatorId;
 			} else{
-				logger.error(
-						"No indicator dataset for the given indicatorId '{}' and spatialUnitName '{}' was found in database. Update request has no effect.",
+				logger.info(
+						"No indicator dataset for the given indicatorId '{}' and spatialUnitName '{}' was found in database. Update request will create associated feature table and view for the first time. Also OGC publishment will be done",
 						indicatorId, spatialUnitName);
-				throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-						"Tried to update indicator features, but there is no table for the combination of indicatorId " 
-								+ indicatorId + " and spatialUnitName " + spatialUnitName);
+				
+				handleInitialIndicatorPersistanceAndPublishing(indicatorData.getIndicatorValues(), indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorMetadataEntry.getDatasetId());
+				
+				
+//				throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+//						"Tried to update indicator features, but there is no table for the combination of indicatorId " 
+//								+ indicatorId + " and spatialUnitName " + spatialUnitName);
 			}
+			indicatorMetadataEntry.setLastUpdate(java.util.Calendar.getInstance().getTime());			
+			indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
+			
+			return indicatorId;
 			
 		} else {
 			logger.error(
@@ -160,13 +163,11 @@ public class IndicatorsManager {
 
 	public IndicatorOverviewType getIndicatorById(String indicatorId) throws IOException {
 		logger.info("Retrieving indicator metadata for datasetId '{}'", indicatorId);
-		MetadataIndicatorsEntity indicatorsMetadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
-		
+		MetadataIndicatorsEntity indicatorsMetadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);	
 		
 		List<IndicatorReferenceType> indicatorReferences = ReferenceManager.getIndicatorReferences(indicatorsMetadataEntity.getDatasetId());
 		List<GeoresourceReferenceType> georesourcesReferences = ReferenceManager.getGeoresourcesReferences(indicatorsMetadataEntity.getDatasetId());
 		
-	
 		IndicatorOverviewType swaggerIndicatorMetadata = IndicatorsMapper
 				.mapToSwaggerIndicator(indicatorsMetadataEntity, indicatorReferences, georesourcesReferences);
 		
@@ -320,7 +321,8 @@ public class IndicatorsManager {
 		 */
 		String indicatorName = indicatorData.getDatasetName();
 		String spatialUnitName = indicatorData.getApplicableSpatialUnit();
-		logger.info("Trying to persist indicator with name '{}' and associated spatialUnitName '{}'", indicatorName, spatialUnitName);
+		CreationTypeEnum creationType = indicatorData.getCreationType();
+		logger.info("Trying to persist indicator with name '{}', creationType '{}' and associated spatialUnitName '{}'", indicatorName, creationType.toString(), spatialUnitName);
 
 		/*
 		 * analyse input type
@@ -356,8 +358,25 @@ public class IndicatorsManager {
 					indicatorData.getRefrencesToOtherIndicators(), metadataId);
 
 		}
+		
+		/*
+		 * only if creationType == INSERTION then create table and view
+		 */
 
-		String indicatorValueTableName = createIndicatorValueTable(indicatorData.getIndicatorValues(), metadataId);
+		if(creationType.equals(CreationTypeEnum.INSERTION)){
+			
+			logger.info("As creationType is set to '{}', a featureTable and featureView will be created from indicator values. Also OGC publishing will be done.", creationType.toString());
+			handleInitialIndicatorPersistanceAndPublishing(indicatorData.getIndicatorValues(), indicatorName, spatialUnitName, metadataId);
+		} else{
+			logger.info("As creationType is set to '{}', Only the metadata entry was created. No featureTable and view have been created..", creationType.toString());
+		}
+		
+		return metadataId;
+	}
+
+	private void handleInitialIndicatorPersistanceAndPublishing(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, String indicatorName,
+			String spatialUnitName, String metadataId) throws CQLException, IOException, SQLException, Exception {
+		String indicatorValueTableName = createIndicatorValueTable(indicatorValues, metadataId);
 		String indicatorfeatureViewName = createOrReplaceIndicatorFeatureView(indicatorValueTableName, spatialUnitName, metadataId);
 		
 		persistNamesOfCreatedTablesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName, indicatorfeatureViewName);
@@ -368,17 +387,14 @@ public class IndicatorsManager {
 		/*
 		 * set wms and wfs urls within metadata
 		 */
-		updateMetadataWithOgcServiceUrlsAndIndicatorTableName(metadataId, indicatorfeatureViewName, indicatorValueTableName);
-		
-		return metadataId;
+		updateMetadataWithOgcServiceUrls(metadataId, indicatorfeatureViewName, indicatorValueTableName);
 	}
 	
-	private void updateMetadataWithOgcServiceUrlsAndIndicatorTableName(String metadataId, String indicatorViewName, String indicatorValueTableName) {
+	private void updateMetadataWithOgcServiceUrls(String metadataId, String indicatorViewName, String indicatorValueTableName) {
 		MetadataIndicatorsEntity metadata = indicatorsMetadataRepo.findByDatasetId(metadataId);
 		
 		metadata.setWmsUrl(ogcServiceManager.getWmsUrl(indicatorViewName));
 		metadata.setWfsUrl(ogcServiceManager.getWfsUrl(indicatorViewName));
-		metadata.setDbTableName(indicatorValueTableName);
 		
 		indicatorsMetadataRepo.saveAndFlush(metadata);
 	}

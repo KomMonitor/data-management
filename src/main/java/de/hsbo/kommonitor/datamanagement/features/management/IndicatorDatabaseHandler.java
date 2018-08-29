@@ -41,7 +41,7 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
 public class IndicatorDatabaseHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(IndicatorDatabaseHandler.class);
-
+	
 	public static String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) throws IOException, CQLException, SQLException {
 
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
@@ -168,7 +168,7 @@ public class IndicatorDatabaseHandler {
 	}
 
 	private static List<Date> collectIndicatorDates(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) {
-		List<Date> availableDates = new ArrayList<>(indicatorValues.size());
+		List<Date> availableDates = new ArrayList<>();
 
 		List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorValues.get(0).getValueMapping();
 
