@@ -52,42 +52,79 @@ public class GeoresourcesManager {
 	OGCWebServiceManager ogcServiceManager;
 
 	public String addGeoresource(GeoresourcePOSTInputType featureData) throws Exception {
-		String datasetName = featureData.getDatasetName();
-		logger.info("Trying to persist georesource with name '{}'", datasetName);
+		
+		String metadataId = null;
+		String dbTableName = null;
+		boolean publishedAsService = false;
+		try {
+			String datasetName = featureData.getDatasetName();
+			logger.info("Trying to persist georesource with name '{}'", datasetName);
 
-		/*
-		 * analyse input type
-		 * 
-		 * store metadata entry for georesource
-		 * 
-		 * create db table for actual features
-		 * 
-		 * create reference to topics
-		 * 
-		 * return metadata id
-		 */
+			/*
+			 * analyse input type
+			 * 
+			 * store metadata entry for georesource
+			 * 
+			 * create db table for actual features
+			 * 
+			 * create reference to topics
+			 * 
+			 * return metadata id
+			 */
 
-		if (georesourcesMetadataRepo.existsByDatasetName(datasetName)) {
-			logger.error(
-					"The georesource metadataset with datasetName '{}' already exists. Thus aborting add georesource request.",
-					datasetName);
-			throw new Exception("Georesource already exists. Aborting add georesource request.");
+			if (georesourcesMetadataRepo.existsByDatasetName(datasetName)) {
+				logger.error(
+						"The georesource metadataset with datasetName '{}' already exists. Thus aborting add georesource request.",
+						datasetName);
+				throw new Exception("Georesource already exists. Aborting add georesource request.");
+			}
+
+			metadataId = createMetadata(featureData);
+
+			dbTableName = createFeatureTable(featureData.getGeoJsonString(), featureData.getPeriodOfValidity(),
+					metadataId);
+
+			// handle OGC web service
+			publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.GEORESOURCE);
+
+			/*
+			 * set wms and wfs urls within metadata
+			 */
+			updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
+
+			return metadataId;
+		} catch (Exception e) {
+			/*
+			 * remove partially created resources and thrwo error
+			 */
+			logger.error("Error while creating georesource. Error message: " + e.getMessage());
+			e.printStackTrace();
+			
+			logger.info("Deleting partially created resources");
+			
+			try {
+				logger.info("Delete metadata entry if exists for id '{}'" + metadataId);
+				if(metadataId != null){
+					if (georesourcesMetadataRepo.existsByDatasetId(metadataId))
+						georesourcesMetadataRepo.deleteByDatasetId(metadataId);
+				}
+				
+				logger.info("Delete feature table if exists for tableName '{}'" + dbTableName);
+				if(dbTableName != null){
+					SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.GEORESOURCE, dbTableName);;
+				}
+				
+				logger.info("Unpublish OGC services if exists");
+				if(publishedAsService){
+					ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.GEORESOURCE);
+				}
+			} catch (Exception e2) {
+				logger.error("Error while deleting partially created georesource. Error message: " + e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+			throw e;
 		}
-
-		String metadataId = createMetadata(featureData);
-
-		String dbTableName = createFeatureTable(featureData.getGeoJsonString(), featureData.getPeriodOfValidity(),
-				metadataId);
-
-		// handle OGC web service
-		ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.GEORESOURCE);
-
-		/*
-		 * set wms and wfs urls within metadata
-		 */
-		updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
-
-		return metadataId;
 	}
 
 	private void updateMetadataWithOgcServiceUrls(String metadataId, String dbTableName) {

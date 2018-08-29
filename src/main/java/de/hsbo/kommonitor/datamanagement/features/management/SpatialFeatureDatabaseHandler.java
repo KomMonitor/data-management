@@ -171,14 +171,20 @@ public class SpatialFeatureDatabaseHandler {
 		return tb.buildFeatureType();
 	}
 
-	public static void deleteFeatureTable(ResourceTypeEnum spatialUnit, String dbTableName) throws IOException {
+	public static void deleteFeatureTable(ResourceTypeEnum resourceType, String dbTableName) throws IOException {
 		logger.info("Deleting feature table {}.", dbTableName);
 
 		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
 
-		store.removeSchema(dbTableName);
+		try {
+			store.removeSchema(dbTableName);
 
-		logger.info("Deletion of table {} was successful {}", dbTableName);
+			logger.info("Deletion of table {} was successful {}", dbTableName);
+		} catch (Exception e) {
+			logger.error("Error while deleting database table with name '{}'", dbTableName);
+			e.printStackTrace();
+		}
+		
 
 		store.dispose();
 	}

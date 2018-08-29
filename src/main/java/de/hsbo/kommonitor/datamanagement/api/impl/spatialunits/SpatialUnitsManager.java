@@ -52,35 +52,72 @@ public class SpatialUnitsManager {
 	OGCWebServiceManager ogcServiceManager;
 
 	public String addSpatialUnit(SpatialUnitPOSTInputType featureData) throws Exception {
-		String datasetName = featureData.getSpatialUnitLevel();
-		logger.info("Trying to persist spatialUnit with name '{}'", datasetName);
-		
-		/*
-		 * analyse input type
-		 * 
-		 * store metadata entry for spatial unit
-		 * 
-		 * create db table for actual features
-		 * 
-		 * return metadata id
-		 */
-		
-		if(spatialUnitsMetadataRepo.existsByDatasetName(datasetName)){
-			logger.error("The spatialUnit metadataset with datasetName '{}' already exists. Thus aborting add spatial unit request.", datasetName);
-			throw new Exception("SpatialUnit already exists. Aborting add spatialUnit request.");
+		String metadataId = null;
+		String dbTableName = null;
+		boolean publishedAsService = false;
+		try {
+			String datasetName = featureData.getSpatialUnitLevel();
+			logger.info("Trying to persist spatialUnit with name '{}'", datasetName);
+			
+			/*
+			 * analyse input type
+			 * 
+			 * store metadata entry for spatial unit
+			 * 
+			 * create db table for actual features
+			 * 
+			 * return metadata id
+			 */
+			
+			if(spatialUnitsMetadataRepo.existsByDatasetName(datasetName)){
+				logger.error("The spatialUnit metadataset with datasetName '{}' already exists. Thus aborting add spatial unit request.", datasetName);
+				throw new Exception("SpatialUnit already exists. Aborting add spatialUnit request.");
+			}
+			
+			metadataId = createMetadata(featureData);
+			
+			dbTableName = createFeatureTable(featureData.getGeoJsonString(), featureData.getPeriodOfValidity(), metadataId);
+			
+			// handle OGC web service
+			publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
+			
+			/*
+			 * set wms and wfs urls within metadata
+			 */
+			updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
+		} catch (Exception e) {
+			/*
+			 * remove partially created resources and thrwo error
+			 */
+			logger.error("Error while creating spatialUnit. Error message: " + e.getMessage());
+			e.printStackTrace();
+			
+			logger.info("Deleting partially created resources");
+			
+			try {
+				logger.info("Delete metadata entry if exists for id '{}'" + metadataId);
+				if(metadataId != null){
+					if (spatialUnitsMetadataRepo.existsByDatasetId(metadataId))
+						spatialUnitsMetadataRepo.deleteByDatasetId(metadataId);
+				}
+				
+				logger.info("Delete feature table if exists for tableName '{}'" + dbTableName);
+				if(dbTableName != null){
+					SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);;
+				}
+				
+				logger.info("Unpublish OGC services if exists");
+				if(publishedAsService){
+					ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
+				}
+			} catch (Exception e2) {
+				logger.error("Error while deleting partially created georesource. Error message: " + e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+			throw e;
 		}
 		
-		String metadataId = createMetadata(featureData);
-		
-		String dbTableName = createFeatureTable(featureData.getGeoJsonString(), featureData.getPeriodOfValidity(), metadataId);
-		
-		// handle OGC web service
-		ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
-		
-		/*
-		 * set wms and wfs urls within metadata
-		 */
-		updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
 		
 		return metadataId;
 	}

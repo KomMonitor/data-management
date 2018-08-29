@@ -87,8 +87,10 @@ public class ReferenceManager {
 	}
 
 	public static void removeReferences(String indicatorId) {
-		indicatorRefRepo.deleteByIndicatorId(indicatorId);
-		georesourceRefRepo.deleteByMainIndicatorId(indicatorId);
+		if(indicatorRefRepo.existsByIndicatorId(indicatorId))
+			indicatorRefRepo.deleteByIndicatorId(indicatorId);
+		if(georesourceRefRepo.existsByMainIndicatorId(indicatorId))
+			georesourceRefRepo.deleteByMainIndicatorId(indicatorId);
 
 	}
 }
