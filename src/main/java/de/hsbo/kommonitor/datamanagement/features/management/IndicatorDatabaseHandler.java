@@ -403,16 +403,28 @@ public class IndicatorDatabaseHandler {
 		return geoJson;
 	}
 
-	public static void deleteIndicatorValueTable(String dbTableName) throws IOException {
+	public static void deleteIndicatorValueTable(String dbTableName) throws IOException, SQLException {
 		logger.info("Deleting indicator value table {}.", dbTableName);
 
-		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
+//		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
+//
+//		store.removeSchema(dbTableName);
+		
+		Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
 
-		store.removeSchema(dbTableName);
+		Statement statement = jdbcConnection.createStatement();
+		
+		String dropTableCommand = "drop table \"" + dbTableName + "\" CASCADE";
+		
+		// TODO check if works
+		statement.executeUpdate(dropTableCommand);
 
-		logger.info("Deletion of table {} was successful {}", dbTableName);
+		statement.close();
+		jdbcConnection.close();
 
-		store.dispose();
+		logger.info("Deletion of table {} was successful", dbTableName);
+//
+//		store.dispose();
 		
 	}
 
@@ -446,19 +458,19 @@ public class IndicatorDatabaseHandler {
 		return geoJson;
 	}
 
-	public static void deleteIndicatorFeatureView(String featureViewTableName) throws IOException {
-		//TODO test if this works
-		logger.info("Deleting indicator feature view {}.", featureViewTableName);
-
-		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
-
-		store.removeSchema(featureViewTableName);
-
-		logger.info("Deletion of view {} was successful", featureViewTableName);
-
-		store.dispose();
-		
-	}
+//	public static void deleteIndicatorFeatureView(String featureViewTableName) throws IOException {
+//		//TODO test if this works
+//		logger.info("Deleting indicator feature view {}.", featureViewTableName);
+//
+//		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
+//
+//		store.removeSchema(featureViewTableName);
+//
+//		logger.info("Deletion of view {} was successful", featureViewTableName);
+//
+//		store.dispose();
+//		
+//	}
 
 	public static String createOrReplaceIndicatorFeatureView(String indicatorValueTableName, String spatialUnitName) throws IOException, SQLException {
 		/*
