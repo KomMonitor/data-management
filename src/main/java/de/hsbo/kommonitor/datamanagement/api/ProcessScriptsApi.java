@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-16T15:44:52.171+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-29T14:25:08.011+02:00")
 
 @Api(value = "ProcessScripts", description = "the ProcessScripts API")
 public interface ProcessScriptsApi {
@@ -62,30 +62,30 @@ public interface ProcessScriptsApi {
     ResponseEntity deleteProcessScriptByScriptId(@ApiParam(value = "unique identifier of the selected script",required=true) @PathVariable("scriptId") String scriptId);
 
 
-    @ApiOperation(value = "retrieve the process script code associated to a certain scriptId", nickname = "getProcessScriptCodeByScriptId", notes = "retrieve the process script code associated to a certain scriptId", response = String.class, authorizations = {
+    @ApiOperation(value = "retrieve the process script code associated to a certain indicator as JavaScript file", nickname = "getProcessScriptCodeForIndicator", notes = "retrieve the process script code associated to a certain indicator as JavaScript file", response = byte[].class, authorizations = {
         @Authorization(value = "basicAuth")
     }, tags={  })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = String.class),
-        @ApiResponse(code = 400, message = "Invalid status value"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/process-scripts/{scriptId}/scriptCode",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<String> getProcessScriptCodeByScriptId(@ApiParam(value = "unique identifier of the selected script",required=true) @PathVariable("scriptId") String scriptId);
-
-
-    @ApiOperation(value = "retrieve the process script code associated to a certain indicator", nickname = "getProcessScriptCodeForIndicator", notes = "retrieve the process script code associated to a certain indicator", response = String.class, authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = String.class),
+        @ApiResponse(code = 200, message = "OK", response = byte[].class),
         @ApiResponse(code = 400, message = "Invalid status value"),
         @ApiResponse(code = 401, message = "API key is missing or invalid") })
     @RequestMapping(value = "/process-scripts/usingIndicatorId/{indicatorId}/scriptCode",
-        produces = { "application/json" }, 
+        produces = { "application/javascript" }, 
         method = RequestMethod.GET)
-    ResponseEntity<String> getProcessScriptCodeForIndicator(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
+    ResponseEntity<byte[]> getProcessScriptCodeForIndicator(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
+
+
+    @ApiOperation(value = "retrieve the process script code associated to a certain indicator as JavaScript file", nickname = "getProcessScriptCodeForIndicator_0", notes = "retrieve the process script code associated to a certain indicator as JavaScript file", response = byte[].class, authorizations = {
+        @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "OK", response = byte[].class),
+        @ApiResponse(code = 400, message = "Invalid status value"),
+        @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/process-scripts/{scriptId}/scriptCode",
+        produces = { "application/javascript" }, 
+        method = RequestMethod.GET)
+    ResponseEntity<byte[]> getProcessScriptCode(@ApiParam(value = "unique identifier of the selected script",required=true) @PathVariable("scriptId") String scriptId);
 
 
     @ApiOperation(value = "retrieve information about the associated process script for a certain indicator", nickname = "getProcessScriptForIndicator", notes = "retrieve information about the associated process script for a certain indicator", response = ProcessScriptOverviewType.class, authorizations = {

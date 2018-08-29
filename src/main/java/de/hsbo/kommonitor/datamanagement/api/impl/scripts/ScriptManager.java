@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.geotools.data.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,11 @@ public class ScriptManager {
 		scriptMetadata.setDescription(processScriptData.getDescription());
 		scriptMetadata.setIndicatorId(processScriptData.getAssociatedIndicatorId());
 		scriptMetadata.setName(scriptName);
-		scriptMetadata.setScriptCode(processScriptData.getScriptCode());
+		/*
+		 * script code is delivered as Base64 encoded String
+		 * we save it as byte[] within Database
+		 */
+		scriptMetadata.setScriptCode(Base64.decode(processScriptData.getScriptCodeBase64()));
 		
 		/*
 		 * deal with requiredIndicators and requiredGeoresources
@@ -188,7 +193,11 @@ public class ScriptManager {
 		//set all components according to input
 		scriptMetadataEntity.setDescription(processScriptData.getDescription());
 		scriptMetadataEntity.setName(processScriptData.getName());
-		scriptMetadataEntity.setScriptCode(processScriptData.getScriptCode());
+		/*
+		 * script code is delivered as Base64 encoded String
+		 * we save it as byte[] within Database
+		 */
+		scriptMetadataEntity.setScriptCode(Base64.decode(processScriptData.getScriptCodeBase64()));
 		
 		/*
 		 * deal with required indicators and georesource
@@ -270,7 +279,7 @@ public class ScriptManager {
 		scriptMetadataEntity.setLastUpdate(new Date());
 	}
 
-	public String getScriptCodeForIndicatorId(String indicatorId) throws ResourceNotFoundException {
+	public byte[] getScriptCodeForIndicatorId(String indicatorId) throws ResourceNotFoundException {
 		if (!scriptMetadataRepo.existsByIndicatorId(indicatorId)){
 			logger.error("No script with indicatorId '{}' was found in database. Get script code request has no effect.", indicatorId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -302,7 +311,7 @@ public class ScriptManager {
 		}
 	}
 
-	public String getScriptCodeForScriptId(String scriptId) throws ResourceNotFoundException {
+	public byte[] getScriptCodeForScriptId(String scriptId) throws ResourceNotFoundException {
 		if (!scriptMetadataRepo.existsByScriptId(scriptId)){
 			logger.error("No script with scriptId '{}' was found in database. Get script code request has no effect.", scriptId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),

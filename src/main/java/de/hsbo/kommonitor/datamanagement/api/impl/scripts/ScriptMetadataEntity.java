@@ -35,8 +35,7 @@ public class ScriptMetadataEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate = null;
 
-	@Column(columnDefinition="text", length=10485760)
-	private String scriptCode = null;
+	private byte[] scriptCode = null;
 
 	@ManyToMany
 	@JoinTable(name = "scripts_inputparameters", joinColumns = @JoinColumn(name = "script_id", referencedColumnName = "scriptid"), inverseJoinColumns = @JoinColumn(name = "inputparameter_id", referencedColumnName = "inputparameterid"))
@@ -82,11 +81,11 @@ public class ScriptMetadataEntity {
 		this.lastUpdate = lastUpdate;
 	}
 
-	public String getScriptCode() {
+	public byte[] getScriptCode() {
 		return scriptCode;
 	}
 
-	public void setScriptCode(String scriptCode) {
+	public void setScriptCode(byte[] scriptCode) {
 		this.scriptCode = scriptCode;
 	}
 

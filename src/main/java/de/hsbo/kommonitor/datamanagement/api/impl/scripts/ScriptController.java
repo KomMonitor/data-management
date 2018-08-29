@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -193,14 +194,21 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity<String> getProcessScriptCodeForIndicator(@PathVariable("indicatorId") String indicatorId) {
+	public ResponseEntity<byte[]> getProcessScriptCodeForIndicator(@PathVariable("indicatorId") String indicatorId) {
 		logger.info("Received request to get scriptCode for associated indicatorId '{}'", indicatorId);
 		String accept = request.getHeader("Accept");
 
 		try {
-			String scriptCode = scriptManager.getScriptCodeForIndicatorId(indicatorId);
+			byte[] scriptCode = scriptManager.getScriptCodeForIndicatorId(indicatorId);
 			
-			return new ResponseEntity<String>(scriptCode, HttpStatus.OK);
+			HttpHeaders headers = new HttpHeaders();
+			
+			String fileName = "ScriptCode.js";
+            headers.add("content-disposition", "attachment; filename=" + fileName);
+
+            return ResponseEntity.ok().headers(headers)
+                    .contentType(MediaType.parseMediaType("application/javascript"))
+                    .body(scriptCode);
 
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
@@ -232,14 +240,21 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity<String> getProcessScriptCodeByScriptId(@PathVariable("scriptId") String scriptId) {
+	public ResponseEntity<byte[]> getProcessScriptCode(@PathVariable("scriptId") String scriptId) {
 		logger.info("Received request to get scriptCode for scriptId '{}'", scriptId);
 		String accept = request.getHeader("Accept");
 
 		try {
-			String scriptCode = scriptManager.getScriptCodeForScriptId(scriptId);
+			byte[] scriptCode = scriptManager.getScriptCodeForScriptId(scriptId);
 			
-			return new ResponseEntity<String>(scriptCode, HttpStatus.OK);
+			HttpHeaders headers = new HttpHeaders();
+			
+			String fileName = "ScriptCode.js";
+            headers.add("content-disposition", "attachment; filename=" + fileName);
+
+            return ResponseEntity.ok().headers(headers)
+                    .contentType(MediaType.parseMediaType("application/javascript"))
+                    .body(scriptCode);
 
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);

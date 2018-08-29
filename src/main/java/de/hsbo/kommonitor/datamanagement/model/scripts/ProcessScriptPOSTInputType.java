@@ -1,22 +1,18 @@
 package de.hsbo.kommonitor.datamanagement.model.scripts;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessInputType;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * ProcessScriptPOSTInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-29T14:14:44.040+02:00")
 
 public class ProcessScriptPOSTInputType   {
   @JsonProperty("name")
@@ -28,8 +24,8 @@ public class ProcessScriptPOSTInputType   {
   @JsonProperty("associatedIndicatorId")
   private String associatedIndicatorId = null;
 
-  @JsonProperty("scriptCode")
-  private String scriptCode = null;
+  @JsonProperty("scriptCodeBase64")
+  private String scriptCodeBase64 = null;
 
   @JsonProperty("requiredIndicatorIds")
   
@@ -97,22 +93,22 @@ public class ProcessScriptPOSTInputType   {
     this.associatedIndicatorId = associatedIndicatorId;
   }
 
-  public ProcessScriptPOSTInputType scriptCode(String scriptCode) {
-    this.scriptCode = scriptCode;
+  public ProcessScriptPOSTInputType scriptCodeBase64(String scriptCodeBase64) {
+    this.scriptCodeBase64 = scriptCodeBase64;
     return this;
   }
 
    /**
-   * the actual script code (JavaScript) as a string
-   * @return scriptCode
+   * the actual script code (JavaScript) as BASE64 encoded string
+   * @return scriptCodeBase64
   **/
-  @ApiModelProperty(required = true, value = "the actual script code (JavaScript) as a string")
-  public String getScriptCode() {
-    return scriptCode;
+  @ApiModelProperty(required = true, value = "the actual script code (JavaScript) as BASE64 encoded string")
+  public String getScriptCodeBase64() {
+    return scriptCodeBase64;
   }
 
-  public void setScriptCode(String scriptCode) {
-    this.scriptCode = scriptCode;
+  public void setScriptCodeBase64(String scriptCodeBase64) {
+    this.scriptCodeBase64 = scriptCodeBase64;
   }
 
   public ProcessScriptPOSTInputType requiredIndicatorIds(List<String> requiredIndicatorIds) {
@@ -197,7 +193,7 @@ public class ProcessScriptPOSTInputType   {
     return Objects.equals(this.name, processScriptPOSTInputType.name) &&
         Objects.equals(this.description, processScriptPOSTInputType.description) &&
         Objects.equals(this.associatedIndicatorId, processScriptPOSTInputType.associatedIndicatorId) &&
-        Objects.equals(this.scriptCode, processScriptPOSTInputType.scriptCode) &&
+        Objects.equals(this.scriptCodeBase64, processScriptPOSTInputType.scriptCodeBase64) &&
         Objects.equals(this.requiredIndicatorIds, processScriptPOSTInputType.requiredIndicatorIds) &&
         Objects.equals(this.requiredGeoresourceIds, processScriptPOSTInputType.requiredGeoresourceIds) &&
         Objects.equals(this.variableProcessParameters, processScriptPOSTInputType.variableProcessParameters);
@@ -205,7 +201,7 @@ public class ProcessScriptPOSTInputType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, description, associatedIndicatorId, scriptCode, requiredIndicatorIds, requiredGeoresourceIds, variableProcessParameters);
+    return Objects.hash(name, description, associatedIndicatorId, scriptCodeBase64, requiredIndicatorIds, requiredGeoresourceIds, variableProcessParameters);
   }
 
   @Override
@@ -216,7 +212,7 @@ public class ProcessScriptPOSTInputType   {
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    associatedIndicatorId: ").append(toIndentedString(associatedIndicatorId)).append("\n");
-    sb.append("    scriptCode: ").append(toIndentedString(scriptCode)).append("\n");
+    sb.append("    scriptCodeBase64: ").append(toIndentedString(scriptCodeBase64)).append("\n");
     sb.append("    requiredIndicatorIds: ").append(toIndentedString(requiredIndicatorIds)).append("\n");
     sb.append("    requiredGeoresourceIds: ").append(toIndentedString(requiredGeoresourceIds)).append("\n");
     sb.append("    variableProcessParameters: ").append(toIndentedString(variableProcessParameters)).append("\n");
