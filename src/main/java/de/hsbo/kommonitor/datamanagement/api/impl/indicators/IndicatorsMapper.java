@@ -46,13 +46,14 @@ public class IndicatorsMapper {
 			throws IOException {
 		IndicatorOverviewType indicatorOverviewType = new IndicatorOverviewType();
 
-		// indicatorOverviewType.setAllowedRoles(indicatorsMetadataEntity.get);
+		/*
+		 * FIXME here we simply assume that the indicator has the same timestamps for each spatial unit
+		 */
+		List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnitEntities = indicatorSpatialUnitsRepo.findByIndicatorMetadataId(indicatorsMetadataEntity.getDatasetId());
 		indicatorOverviewType.setApplicableDates(
-				IndicatorDatabaseHandler.getAvailableDates(indicatorsMetadataEntity.getDbTableName()));
-
-		List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorSpatialUnitsRepo
-				.findByIndicatorMetadataId(indicatorsMetadataEntity.getDatasetId());
-		indicatorOverviewType.setApplicableSpatialUnits(getApplicableSpatialUnitsNames(indicatorSpatialUnits));
+				IndicatorDatabaseHandler.getAvailableDates(indicatorSpatialUnitEntities.get(0).getIndicatorValueTableName()));
+		indicatorOverviewType.setApplicableSpatialUnits(getApplicableSpatialUnitsNames(indicatorSpatialUnitEntities));
+		
 		indicatorOverviewType.setApplicableTopics(getTopicNames(indicatorsMetadataEntity.getIndicatorTopics()));
 		indicatorOverviewType.setIndicatorId(indicatorsMetadataEntity.getDatasetId());
 		indicatorOverviewType.setIndicatorName(indicatorsMetadataEntity.getDatasetName());
