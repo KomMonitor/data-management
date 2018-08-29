@@ -42,7 +42,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 	@Override
 	public boolean publishDbLayerAsOgcService(String dbTableName, ResourceTypeEnum resourceType)
-			throws FileNotFoundException, IOException {
+			throws Exception {
 
 		publishDBLayerInGeoserver(dbTableName, resourceType);
 		return true;
@@ -154,7 +154,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 	}
 
 	private void publishDBLayerInGeoserver(String dbTableName, ResourceTypeEnum resourceType)
-			throws MalformedURLException {
+			throws Exception {
 		GeoServerRESTManager geoserverManager = initializeGeoserverRestManager();
 
 		GeoServerRESTReader reader = geoserverManager.getReader();
@@ -206,7 +206,13 @@ public class GeoserverManager implements OGCWebServiceManager {
 
 					logger.info("Publishing Layer '{}' on geoserver", dbTableName);
 
-					publishLayerOnGeoserver(dbTableName, publisher, targetWorkspace, targetDatastore, targetEPSG);
+					try {
+						publishLayerOnGeoserver(dbTableName, publisher, targetWorkspace, targetDatastore, targetEPSG);
+					} catch (Exception e) {
+						logger.error("Error while publishing layer to Geoserver.");
+						e.printStackTrace();
+						throw e;
+					}
 
 					logger.info("Layer should have been published as OGC service via geoserver!");
 				} else {
@@ -223,7 +229,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 	}
 
 	private static void publishLayerOnGeoserver(String relation_name, GeoServerRESTPublisher publisher,
-			String targetWorkspace, String targetDatastore, String targetEPSG) {
+			String targetWorkspace, String targetDatastore, String targetEPSG) throws Exception {
 		GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 		fte.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
 		fte.addKeyword(relation_name);
@@ -234,6 +240,9 @@ public class GeoserverManager implements OGCWebServiceManager {
 		final GSLayerEncoder layerEncoder = new GSLayerEncoder();
 
 		boolean ok = publisher.publishDBLayer(targetWorkspace, targetDatastore, fte, layerEncoder);
+		
+		if (!ok)
+			throw new Exception("Error while publishing ayer to Geoserver.");
 	}
 
 	private static void createNewDataStoreOnGeoserver(GeoServerRESTStoreManager storeManager, String targetWorkspace,
