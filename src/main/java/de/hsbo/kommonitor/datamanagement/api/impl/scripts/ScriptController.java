@@ -105,7 +105,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity<String> getProcessScriptTemplate() {
+	public ResponseEntity<byte[]> getProcessScriptTemplate() {
 		// TODO implement getTemplate!
 		/*
 		 * TODO FIXME it is not yet clear how to store and deliver the template, make individual REST endpoint?

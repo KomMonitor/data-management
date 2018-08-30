@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-29T14:25:08.011+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-30T06:52:23.226+02:00")
 
 @Api(value = "ProcessScripts", description = "the ProcessScripts API")
 public interface ProcessScriptsApi {
@@ -62,6 +62,19 @@ public interface ProcessScriptsApi {
     ResponseEntity deleteProcessScriptByScriptId(@ApiParam(value = "unique identifier of the selected script",required=true) @PathVariable("scriptId") String scriptId);
 
 
+    @ApiOperation(value = "retrieve the process script code associated to a certain indicator as JavaScript file", nickname = "getProcessScriptCode", notes = "retrieve the process script code associated to a certain indicator as JavaScript file", response = byte[].class, authorizations = {
+        @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "OK", response = byte[].class),
+        @ApiResponse(code = 400, message = "Invalid status value"),
+        @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/process-scripts/{scriptId}/scriptCode",
+        produces = { "application/javascript" }, 
+        method = RequestMethod.GET)
+    ResponseEntity<byte[]> getProcessScriptCode(@ApiParam(value = "unique identifier of the selected script",required=true) @PathVariable("scriptId") String scriptId);
+
+
     @ApiOperation(value = "retrieve the process script code associated to a certain indicator as JavaScript file", nickname = "getProcessScriptCodeForIndicator", notes = "retrieve the process script code associated to a certain indicator as JavaScript file", response = byte[].class, authorizations = {
         @Authorization(value = "basicAuth")
     }, tags={  })
@@ -73,19 +86,6 @@ public interface ProcessScriptsApi {
         produces = { "application/javascript" }, 
         method = RequestMethod.GET)
     ResponseEntity<byte[]> getProcessScriptCodeForIndicator(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
-
-
-    @ApiOperation(value = "retrieve the process script code associated to a certain indicator as JavaScript file", nickname = "getProcessScriptCodeForIndicator_0", notes = "retrieve the process script code associated to a certain indicator as JavaScript file", response = byte[].class, authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = byte[].class),
-        @ApiResponse(code = 400, message = "Invalid status value"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/process-scripts/{scriptId}/scriptCode",
-        produces = { "application/javascript" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<byte[]> getProcessScriptCode(@ApiParam(value = "unique identifier of the selected script",required=true) @PathVariable("scriptId") String scriptId);
 
 
     @ApiOperation(value = "retrieve information about the associated process script for a certain indicator", nickname = "getProcessScriptForIndicator", notes = "retrieve information about the associated process script for a certain indicator", response = ProcessScriptOverviewType.class, authorizations = {
@@ -114,17 +114,17 @@ public interface ProcessScriptsApi {
     ResponseEntity<ProcessScriptOverviewType> getProcessScriptForScriptId(@ApiParam(value = "unique identifier of the selected script",required=true) @PathVariable("scriptId") String scriptId);
 
 
-    @ApiOperation(value = "retrieve an empty script template, that defines how to implement process scripts for KomMonitor.", nickname = "getProcessScriptTemplate", notes = "retrieve an empty script template, that defines how to implement process scripts for KomMonitor. The script works as a template for a NodeJS module. Hence, it predefines required methods that are called by the executing processing engine (a NodeJS runtimne environment). As a script developer, those predefined methods have to be implemented. The template contains detailed documentation on how to implement those methods.", response = String.class, authorizations = {
+    @ApiOperation(value = "retrieve an empty script template, that defines how to implement process scripts for KomMonitor as JavaScript file.", nickname = "getProcessScriptTemplate", notes = "retrieve an empty script template, that defines how to implement process scripts for KomMonitor. The script works as a template for a NodeJS module. Hence, it predefines required methods that are called by the executing processing engine (a NodeJS runtimne environment). As a script developer, those predefined methods have to be implemented. The template contains detailed documentation on how to implement those methods.", response = byte[].class, authorizations = {
         @Authorization(value = "basicAuth")
     }, tags={  })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = String.class),
+        @ApiResponse(code = 200, message = "OK", response = byte[].class),
         @ApiResponse(code = 400, message = "Invalid status value"),
         @ApiResponse(code = 401, message = "API key is missing or invalid") })
     @RequestMapping(value = "/process-scripts/template",
-        produces = { "application/json" }, 
+        produces = { "application/javascript" }, 
         method = RequestMethod.GET)
-    ResponseEntity<String> getProcessScriptTemplate();
+    ResponseEntity<byte[]> getProcessScriptTemplate();
 
 
     @ApiOperation(value = "retrieve information about available process scripts", nickname = "getProcessScripts", notes = "retrieve information about available process scripts", response = ProcessScriptOverviewType.class, responseContainer = "array", authorizations = {
