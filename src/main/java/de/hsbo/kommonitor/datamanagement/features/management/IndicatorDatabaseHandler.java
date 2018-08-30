@@ -109,6 +109,8 @@ public class IndicatorDatabaseHandler {
 				+ "\" indicator join \"" + spatialUnitsTable + "\" spatialunit on indicator.\"" 
 				+ indicatorColumnName + "\" = CAST(spatialunit.\"" + spatialUnitColumnName + "\" AS varchar)";
 		
+		logger.info("Created the following SQL command to create or update view: '{}'", createViewCommand);
+		
 		// TODO check if works
 		statement.executeUpdate(createViewCommand);
 
@@ -133,6 +135,8 @@ public class IndicatorDatabaseHandler {
 										// go
 			} catch (Exception eek) {
 				transaction.rollback();
+				eek.printStackTrace();
+				throw eek;
 			}
 
 			transaction.close();
@@ -247,7 +251,7 @@ public class IndicatorDatabaseHandler {
 
 	}
 
-	public static void updateIndicatorFeatures(IndicatorPUTInputType indicatorData, String dbTableName) throws IOException {
+	public static void updateIndicatorFeatures(IndicatorPUTInputType indicatorData, String dbTableName) throws Exception {
 		/*
 		 * update indicator featue table with the submitted values
 		 * 
@@ -285,6 +289,9 @@ public class IndicatorDatabaseHandler {
 										// go
 			} catch (Exception eek) {
 				transaction.rollback();
+				
+				eek.printStackTrace();
+				throw eek;
 			}
 
 			transaction.close();

@@ -132,6 +132,9 @@ public class SpatialFeatureDatabaseHandler {
 									// go
 		} catch (Exception eek) {
 			transaction.rollback();
+			
+			eek.printStackTrace();
+			throw eek;
 		}
 
 		transaction.close();
@@ -147,6 +150,8 @@ public class SpatialFeatureDatabaseHandler {
 									// go
 		} catch (Exception eek) {
 			transaction.rollback();
+			eek.printStackTrace();
+			throw eek;
 		}
 
 		transaction.close();
