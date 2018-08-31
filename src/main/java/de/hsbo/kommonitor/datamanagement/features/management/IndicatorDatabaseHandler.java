@@ -14,21 +14,28 @@ import java.util.List;
 import org.geotools.data.DataAccess;
 import org.geotools.data.DataStore;
 import org.geotools.data.DefaultTransaction;
-import org.geotools.data.Query;
 import org.geotools.data.Transaction;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.filter.FilterFactoryImpl;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geojson.feature.FeatureJSON;
+import org.geotools.temporal.object.DefaultInstant;
+import org.geotools.temporal.object.DefaultPosition;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.filter.And;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.Or;
+import org.opengis.temporal.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,9 +110,13 @@ public class IndicatorDatabaseHandler {
 		String indicatorColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME;
 		String spatialUnitColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME;
 		
+		
+		
 		String createViewCommand = "create or replace view \"" + viewTableName + "\" as select indicator.*, spatialunit." + 
 				KomMonitorFeaturePropertyConstants.GEOMETRY_COLUMN_NAME + ", spatialunit.\"" + 
-				KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME + "\" from \"" + indicatorTableName
+				KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME + "\", spatialunit.\"" + 
+				KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + "\", spatialunit.\"" + 
+				KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" from \"" + indicatorTableName
 				+ "\" indicator join \"" + spatialUnitsTable + "\" spatialunit on indicator.\"" 
 				+ indicatorColumnName + "\" = CAST(spatialunit.\"" + spatialUnitColumnName + "\" AS varchar)";
 		
@@ -382,12 +393,14 @@ public class IndicatorDatabaseHandler {
 		// -1 in month, as month is 0-based
 		cal.set(year.intValue(), month.intValue() - 1, day.intValue());
 		Date date = cal.getTime();
-		String datePropertyString = createDateStringForDbProperty(date);
-		/*
-		 * TODO FIXME check if that query actually works
-		 */
-		Query query = new Query(featureViewName, null, new String[] { datePropertyString });
-		FeatureCollection features = featureSource.getFeatures(query);
+//		String datePropertyString = createDateStringForDbProperty(date);
+//		/*
+//		 * TODO FIXME check if that query actually works
+//		 */
+//		Query query = new Query(featureViewName, null, new String[] { datePropertyString });
+//		FeatureCollection features = featureSource.getFeatures(query);
+		
+		 FeatureCollection features = fetchFeaturesForDate(featureSource, date);
 
 		int indicatorFeaturesSize = features.size();
 		logger.info("Transform {} found indicator features to GeoJSON", indicatorFeaturesSize);
@@ -408,6 +421,35 @@ public class IndicatorDatabaseHandler {
 		dataStore.dispose();
 
 		return geoJson;
+	}
+	
+	private static FeatureCollection fetchFeaturesForDate(SimpleFeatureSource featureSource, Date date)
+			throws CQLException, IOException {
+		// fetch all features from table where startDate <= date and (endDate >=
+		// date || endDate = null)
+
+		FilterFactory ff = new FilterFactoryImpl();
+		//
+		// ff.before(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME,
+		// date);ExpressionF
+//		String iso8601utc = DateTimeUtil.toISO8601UTC(date);
+//		System.out.println(iso8601utc);
+
+		Instant temporalInstant = new DefaultInstant(new DefaultPosition(date));
+
+		// Simple check if property is after provided temporal instant
+		Filter endDateAfter = ff.after(ff.property(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME),
+				ff.literal(temporalInstant));
+		Filter endDateNull = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " is null");
+		Filter startDateBefore = ff.before(ff.property(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME),
+				ff.literal(temporalInstant));
+
+		Or endDateNullOrAfter = ff.or(endDateNull, endDateAfter);
+
+		And andFilter = ff.and(startDateBefore, endDateNullOrAfter);
+
+		SimpleFeatureCollection features = featureSource.getFeatures(andFilter);
+		return features;
 	}
 
 	public static void deleteIndicatorValueTable(String dbTableName) throws IOException, SQLException {

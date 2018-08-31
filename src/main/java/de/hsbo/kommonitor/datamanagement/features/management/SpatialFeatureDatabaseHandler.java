@@ -298,8 +298,8 @@ public class SpatialFeatureDatabaseHandler {
 		//
 		// ff.before(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME,
 		// date);ExpressionF
-		String iso8601utc = DateTimeUtil.toISO8601UTC(date);
-		System.out.println(iso8601utc);
+//		String iso8601utc = DateTimeUtil.toISO8601UTC(date);
+//		System.out.println(iso8601utc);
 
 		Instant temporalInstant = new DefaultInstant(new DefaultPosition(date));
 
