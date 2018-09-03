@@ -112,7 +112,7 @@ public class IndicatorsManager {
 
 	public String updateFeatures(IndicatorPUTInputType indicatorData, String indicatorId) throws Exception {
 		logger.info("Trying to update indicator features for datasetId '{}'", indicatorId);
-		if (indicatorsMetadataRepo.existsByDatasetName(indicatorId)) {
+		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
 			String spatialUnitName = indicatorData.getApplicableSpatialUnit();
 			
 			MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
@@ -162,7 +162,7 @@ public class IndicatorsManager {
 					
 					try {
 						
-						logger.info("Delete indicatorValue table if exists for tableName '{}'" + indicatorValueTableName);
+						logger.info("Delete indicatorValue table if exists for tableName '{}'", indicatorValueTableName);
 						if(indicatorValueTableName != null){
 							IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorValueTableName);
 						}
@@ -173,7 +173,7 @@ public class IndicatorsManager {
 						}
 						
 						
-						logger.info("Delete indicatorSpatialUnitJoinEntities if exists for metadataId '{}'" + indicatorId);
+						logger.info("Delete indicatorSpatialUnitJoinEntities if exists for metadataId '{}'", indicatorId);
 						if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName))
 							indicatorsSpatialUnitsRepo.deleteByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName);
 						
