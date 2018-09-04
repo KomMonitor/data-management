@@ -4,7 +4,47 @@ networks:
   kommonitor:
     name: kommonitor-network
 
+volumes:
+   db-backups:
+   geoserver-data:
+
 services:
+
+  geoserver-db:
+     image: kartoza/postgis:10.0-2.4
+     # volumes:
+        #- ./pg/postgres_data:/var/lib/postgresql
+        # - db-backups:/backups
+     ports:
+       - "25433:5432"
+     networks:
+       - kommonitor  
+     environment:
+        - USERNAME=docker
+        - PASS=docker
+        - ALLOW_IP_RANGE=0.0.0.0/0
+     restart: on-failure
+#     healthcheck:
+#       test: "exit 0"
+       
+  geoserver:
+    image: kartoza/geoserver:2.13.0
+    volumes:
+      - geoserver-data:/opt/geoserver/data_dir
+    ports:
+      - "8080:8080"
+    networks:
+      - kommonitor      
+    restart: on-failure
+    env_file:
+      - geoserver.env
+    depends_on:
+      - geoserver-db
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/ || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3   
 
   kommonitor-db:
     image: mdillon/postgis
@@ -26,8 +66,8 @@ services:
     depends_on:
       kommonitor-db:
         condition: service_started
-#      geoserver:
- #       condition: service_healthy
+      geoserver:
+        condition: service_healthy
     ports:
       - "8085:8085"
     networks:
