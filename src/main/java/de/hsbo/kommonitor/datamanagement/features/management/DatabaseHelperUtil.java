@@ -166,8 +166,12 @@ public class DatabaseHelperUtil {
 //		return indicatorsRepo.findByDatasetId(indicatorDatasetId);
 //	}
 
-	public static MetadataSpatialUnitsEntity getSpatialUnitMetadataEntity(String spatialUnitName) {
+	public static MetadataSpatialUnitsEntity getSpatialUnitMetadataEntityByName(String spatialUnitName) {
 		return spatialUnitsRepo.findByDatasetName(spatialUnitName);
+	}
+	
+	public static MetadataSpatialUnitsEntity getSpatialUnitMetadataEntityById(String spatialUnitId) {
+		return spatialUnitsRepo.findByDatasetId(spatialUnitId);
 	}
 
 	public static MetadataIndicatorsEntity getIndicatorMetadataEntity(String requiredIndicatorId) {

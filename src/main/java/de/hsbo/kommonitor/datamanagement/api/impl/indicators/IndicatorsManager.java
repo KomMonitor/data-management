@@ -527,7 +527,7 @@ public class IndicatorsManager {
 				"Create or modify entry in indicator spatial units join table for indicatorId '{}', and spatialUnitName '{}'. Set indicatorValueTable with name '{}'  and feature view with name '{}'.",
 				indicatorMetadataId, spatialUnitName, indicatorValueTableName, indicatorFeatureViewName);
 		
-		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = DatabaseHelperUtil.getSpatialUnitMetadataEntity(spatialUnitName);
+		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = DatabaseHelperUtil.getSpatialUnitMetadataEntityByName(spatialUnitName);
 		String spatialUnitId = spatialUnitMetadataEntity.getDatasetId();
 		
 		IndicatorSpatialUnitJoinEntity entity = new IndicatorSpatialUnitJoinEntity();

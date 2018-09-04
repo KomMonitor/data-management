@@ -48,6 +48,7 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
 public class IndicatorDatabaseHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(IndicatorDatabaseHandler.class);
+	private static boolean ADDITIONAL_PROPERTIES_WERE_SET = false;
 	
 	public static String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) throws IOException, CQLException, SQLException {
 
@@ -103,7 +104,7 @@ public class IndicatorDatabaseHandler {
 		 * t2.col = t1.col
 		 */
 		MetadataSpatialUnitsEntity spatialUnitEntity = DatabaseHelperUtil
-				.getSpatialUnitMetadataEntity(spatialUnitName);
+				.getSpatialUnitMetadataEntityByName(spatialUnitName);
 		String spatialUnitsTable = spatialUnitEntity.getDbTableName();
 
 		// the correct naming of the properies/columns has to be ensured within input dataset!
@@ -177,7 +178,7 @@ public class IndicatorDatabaseHandler {
 				builder.add(mappingEntry.getIndicatorValue());
 			}
 
-			features.add(builder.buildFeature(null));
+			features.add(builder.buildFeature(spatialReferenceKey));
 		}
 		return features;
 	}
@@ -291,7 +292,8 @@ public class IndicatorDatabaseHandler {
 		schema = updateSchema(schema, sampleValueMapping);
 		
 		// update schema in db to ensure all new columns are created
-		postGisStore.updateSchema(dbTableName, schema);
+		if(ADDITIONAL_PROPERTIES_WERE_SET)
+			postGisStore.updateSchema(dbTableName, schema);
 		
 		DataAccess<SimpleFeatureType, SimpleFeature> dataStore = featureSource.getDataStore();
 		
@@ -340,7 +342,7 @@ public class IndicatorDatabaseHandler {
 	}
 	
 	private static Filter createFilterForSpatialUnitId(String spatialUnitId) throws CQLException {
-		Filter filter = CQL.toFilter(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME + " is " + spatialUnitId);
+		Filter filter = CQL.toFilter(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME + " = '" + spatialUnitId + "'");
 		return filter;
 	}
 
@@ -359,6 +361,8 @@ public class IndicatorDatabaseHandler {
 		sftBuilder.setNamespaceURI(schema.getName().getNamespaceURI());
 		sftBuilder.addAll(schema.getAttributeDescriptors());
 		
+		ADDITIONAL_PROPERTIES_WERE_SET  = false;
+		
 		
 		for (IndicatorPOSTInputTypeValueMapping indicatorValueMappingEntry : sampleValueMapping) {
 			Date date = DateTimeUtil.fromLocalDate(indicatorValueMappingEntry.getTimestamp());
@@ -368,9 +372,14 @@ public class IndicatorDatabaseHandler {
 				// add new Property
 				logger.debug("Add new propert/column '{}' to table '{}'", datePropertyName, schema.getTypeName());
 				sftBuilder.add(datePropertyName, Float.class);
+				ADDITIONAL_PROPERTIES_WERE_SET = true;
 			}
 		}
-		return sftBuilder.buildFeatureType();
+		
+		if(! ADDITIONAL_PROPERTIES_WERE_SET)
+			return schema;
+		else
+			return sftBuilder.buildFeatureType();
 	}
 
 	private static boolean schemaContainsDateProperty(SimpleFeatureType schema, String datePropertyName) {
