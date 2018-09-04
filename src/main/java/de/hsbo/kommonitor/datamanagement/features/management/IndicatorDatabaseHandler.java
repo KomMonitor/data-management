@@ -227,8 +227,16 @@ public class IndicatorDatabaseHandler {
 		 */
 		int month = cal.get(Calendar.MONTH) + 1;
 		int year = cal.get(Calendar.YEAR);
+		
+		String monthString = String.valueOf(month);
+		String dayString = String.valueOf(dayOfMonth);
+		
+		if (month < 10)
+			monthString = "0" + month;
+		if (dayOfMonth < 10)
+			dayString = "0" + dayOfMonth;
 
-		String dateString = year + "-" + month + "-" + dayOfMonth;
+		String dateString = year + "-" + monthString + "-" + dayString;
 		return dateString;
 	}
 	
