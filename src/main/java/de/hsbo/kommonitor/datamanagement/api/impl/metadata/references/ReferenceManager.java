@@ -2,6 +2,8 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata.references;
 
 import java.util.List;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToGeoresources;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
@@ -13,14 +15,36 @@ public class ReferenceManager {
 
 	private static GeoresourceReferenceRepository georesourceRefRepo;
 
+	private static IndicatorsMetadataRepository indicatorsMetadataRepo;
+
+	private static GeoresourcesMetadataRepository georesourcesMetadataRepo;
+
 	public ReferenceManager(IndicatorReferenceRepository indicatorRefRepository,
-			GeoresourceReferenceRepository georesourceRefRepository) {
+			GeoresourceReferenceRepository georesourceRefRepository, IndicatorsMetadataRepository indicatorsRepo, GeoresourcesMetadataRepository georesourceRepo) {
 		indicatorRefRepo = indicatorRefRepository;
 		georesourceRefRepo = georesourceRefRepository;
+		
+		indicatorsMetadataRepo = indicatorsRepo;
+		georesourcesMetadataRepo = georesourceRepo;
 	}
 
 	public static void createReferences(List<IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources,
-			List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators, String indicatorId) {
+			List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators, String indicatorId) throws Exception {
+		
+		/*
+		 * first einsure that all referenced indicators and georesources exist!
+		 * 
+		 * else throw an error
+		 */
+		for (IndicatorPOSTInputTypeRefrencesToOtherIndicators indicatorRef : refrencesToOtherIndicators) {
+			if (!indicatorsMetadataRepo.existsByDatasetId(indicatorRef.getIndicatorId()))
+				throw new Exception("Indicator references another indicator, for which no metadata entry exists. The faulty indicatorId is: " + indicatorRef.getIndicatorId());
+		}
+		
+		for (IndicatorPOSTInputTypeRefrencesToGeoresources georesourceRef : refrencesToGeoresources) {
+			if (!georesourcesMetadataRepo.existsByDatasetId(georesourceRef.getGeoresourceId()))
+				throw new Exception("Indicator references a georesource, for which no metadata entry exists. The faulty georsourceId is: " + georesourceRef.getGeoresourceId());
+		}
 
 		List<IndicatorReferenceEntity> indicatorRefEntities = IndicatorReferenceMapper
 				.mapToEntities(refrencesToOtherIndicators, indicatorId);
@@ -35,12 +59,23 @@ public class ReferenceManager {
 	}
 
 	public static void updateReferences(List<IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources,
-			List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators, String indicatorId) {
+			List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators, String indicatorId) throws Exception {
 		/*
 		 * if resource already exists, then only update it
 		 * 
 		 * else save as new resource
 		 */
+		
+		for (IndicatorPOSTInputTypeRefrencesToOtherIndicators indicatorRef : refrencesToOtherIndicators) {
+			if (!indicatorsMetadataRepo.existsByDatasetId(indicatorRef.getIndicatorId()))
+				throw new Exception("Indicator references another indicator, for which no metadata entry exists. The faulty indicatorId is: " + indicatorRef.getIndicatorId());
+		}
+		
+		for (IndicatorPOSTInputTypeRefrencesToGeoresources georesourceRef : refrencesToGeoresources) {
+			if (!georesourcesMetadataRepo.existsByDatasetId(georesourceRef.getGeoresourceId()))
+				throw new Exception("Indicator references a georesource, for which no metadata entry exists. The faulty georsourceId is: " + georesourceRef.getGeoresourceId());
+		}
+		
 		for (IndicatorPOSTInputTypeRefrencesToOtherIndicators indicatorReference : refrencesToOtherIndicators) {
 			String referencedIndicatorId = indicatorReference.getIndicatorId();
 			if (indicatorRefRepo.existsByIndicatorIdAndReferencedIndicatorId(indicatorId, referencedIndicatorId)) {
@@ -50,6 +85,8 @@ public class ReferenceManager {
 				entity.setIndicatorId(indicatorId);
 				entity.setReferenceDescription(indicatorReference.getReferenceDescription());
 				entity.setReferencedIndicatorId(indicatorReference.getIndicatorId());
+				
+				indicatorRefRepo.saveAndFlush(entity);
 			} else {
 				// save new resource
 				indicatorRefRepo.saveAndFlush(IndicatorReferenceMapper.mapToEntity(indicatorId, indicatorReference));
@@ -66,6 +103,8 @@ public class ReferenceManager {
 				entity.setMainIndicatorId(indicatorId);
 				entity.setReferenceDescription(georesourceReference.getReferenceDescription());
 				entity.setReferencedGeoresourceId(georesourceReference.getGeoresourceId());
+				
+				georesourceRefRepo.saveAndFlush(entity);
 			} else {
 				// save new resource
 				georesourceRefRepo.saveAndFlush(GeoresourceReferenceMapper.mapToEntity(georesourceReference, indicatorId));

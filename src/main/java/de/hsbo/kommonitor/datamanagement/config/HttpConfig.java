@@ -101,7 +101,7 @@ public class HttpConfig {
     
     @Bean
     public ReferenceManager referenceManager(){
-    	return new ReferenceManager(indicatorRefRepo, georesourceRefRepo);
+    	return new ReferenceManager(indicatorRefRepo, georesourceRefRepo, indicatorsRepo, georesourceRepo);
     }
     
     @Bean
