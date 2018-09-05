@@ -26,6 +26,7 @@ import org.geotools.filter.FilterFactoryImpl;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geojson.feature.FeatureJSON;
+import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPosition;
 import org.opengis.feature.Feature;
@@ -63,7 +64,7 @@ public class SpatialFeatureDatabaseHandler {
 
 		logger.info("Parsing GeoJSON into features and schema");
 
-		FeatureJSON featureJSON = new FeatureJSON();
+		FeatureJSON featureJSON = instantiateFeatureJSON();
 		SimpleFeatureType featureSchema = featureJSON.readFeatureCollectionSchema(geoJSONFeatures, false);
 		FeatureCollection featureCollection = featureJSON.readFeatureCollection(geoJSONFeatures);
 		// GeoJSONUtil
@@ -275,7 +276,7 @@ public class SpatialFeatureDatabaseHandler {
 		String geoJson = null;
 
 		if (validFeaturesSize > 0) {
-			FeatureJSON toGeoJSON = new FeatureJSON();
+			FeatureJSON toGeoJSON = instantiateFeatureJSON();
 			StringWriter writer = new StringWriter();
 			toGeoJSON.writeFeatureCollection(features, writer);
 			geoJson = writer.toString();
@@ -367,7 +368,7 @@ public class SpatialFeatureDatabaseHandler {
 		
 		FilterFactory ff = new FilterFactoryImpl();
 
-		FeatureJSON featureJSON = new FeatureJSON();
+		FeatureJSON featureJSON = instantiateFeatureJSON();
 		SimpleFeatureType inputFeatureSchema = featureJSON.readFeatureCollectionSchema(geoJsonString, false);
 		FeatureCollection inputFeatureCollection = featureJSON.readFeatureCollection(geoJsonString);
 
@@ -386,6 +387,12 @@ public class SpatialFeatureDatabaseHandler {
 				dbTableName, numberOfModifiedEntries, numberOfInsertedEntries, numberOfEntriesMarkedAsOutdated);		
 
 		store.dispose();
+	}
+
+	private static FeatureJSON instantiateFeatureJSON() {
+		GeometryJSON geometryJSON = new GeometryJSON(KomMonitorFeaturePropertyConstants.NUMBER_OF_DECIMALS_FOR_GEOJSON_OUTPUT);
+		
+		return new FeatureJSON(geometryJSON);
 	}
 
 	private static void handleUpdateProcess(String dbTableName, Date startDate_new, Date endDate_new, FilterFactory ff,

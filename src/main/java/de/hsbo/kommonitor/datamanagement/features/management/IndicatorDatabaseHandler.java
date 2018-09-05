@@ -26,6 +26,7 @@ import org.geotools.filter.FilterFactoryImpl;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geojson.feature.FeatureJSON;
+import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPosition;
 import org.opengis.feature.simple.SimpleFeature;
@@ -47,8 +48,15 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
 
 public class IndicatorDatabaseHandler {
 
+	
 	private static Logger logger = LoggerFactory.getLogger(IndicatorDatabaseHandler.class);
 	private static boolean ADDITIONAL_PROPERTIES_WERE_SET = false;
+	
+	private static FeatureJSON instantiateFeatureJSON() {
+		GeometryJSON geometryJSON = new GeometryJSON(KomMonitorFeaturePropertyConstants.NUMBER_OF_DECIMALS_FOR_GEOJSON_OUTPUT);
+		
+		return new FeatureJSON(geometryJSON);
+	}
 	
 	public static String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) throws IOException, CQLException, SQLException {
 
@@ -425,7 +433,7 @@ public class IndicatorDatabaseHandler {
 		String geoJson = null;
 
 		if (indicatorFeaturesSize > 0) {
-			FeatureJSON toGeoJSON = new FeatureJSON();
+			FeatureJSON toGeoJSON = instantiateFeatureJSON();
 			StringWriter writer = new StringWriter();
 			toGeoJSON.writeFeatureCollection(features, writer);
 			geoJson = writer.toString();
@@ -510,7 +518,7 @@ public class IndicatorDatabaseHandler {
 		String geoJson = null;
 
 		if (indicatorFeaturesSize > 0) {
-			FeatureJSON toGeoJSON = new FeatureJSON();
+			FeatureJSON toGeoJSON = instantiateFeatureJSON();
 			StringWriter writer = new StringWriter();
 			toGeoJSON.writeFeatureCollection(features, writer);
 			geoJson = writer.toString();
