@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -276,8 +277,15 @@ public class IndicatorDatabaseHandler {
 
 		postGisStore.dispose();
 		
+		availableDates = sortDatesAscending(availableDates);
+		
 		return availableDates;
 
+	}
+
+	private static List<String> sortDatesAscending(List<String> availableDates) {
+		availableDates.sort(Comparator.naturalOrder());
+		return availableDates;
 	}
 
 	public static void updateIndicatorFeatures(IndicatorPUTInputType indicatorData, String dbTableName) throws Exception {
