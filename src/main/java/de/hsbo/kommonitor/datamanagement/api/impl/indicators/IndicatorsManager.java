@@ -64,7 +64,7 @@ public class IndicatorsManager {
 	
 	public String updateMetadata(IndicatorPATCHInputType metadata, String indicatorId) throws Exception {
 		logger.info("Trying to update indicator metadata for datasetId '{}'", indicatorId);
-		if (indicatorsMetadataRepo.existsByDatasetName(indicatorId)) {
+		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
 			MetadataIndicatorsEntity metadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
 
 			/*

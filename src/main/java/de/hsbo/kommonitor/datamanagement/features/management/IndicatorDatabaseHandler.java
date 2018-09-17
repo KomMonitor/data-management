@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.geotools.data.DataAccess;
@@ -121,11 +122,11 @@ public class IndicatorDatabaseHandler {
 		
 		
 		
-		String createViewCommand = "create or replace view \"" + viewTableName + "\" as select indicator.*, spatialunit." + 
+		String createViewCommand = "create or replace view \"" + viewTableName + "\" as select spatialunit." + 
 				KomMonitorFeaturePropertyConstants.GEOMETRY_COLUMN_NAME + ", spatialunit.\"" + 
 				KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME + "\", spatialunit.\"" + 
 				KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + "\", spatialunit.\"" + 
-				KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" from \"" + indicatorTableName
+				KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\", indicator.* from \"" + indicatorTableName
 				+ "\" indicator join \"" + spatialUnitsTable + "\" spatialunit on indicator.\"" 
 				+ indicatorColumnName + "\" = CAST(spatialunit.\"" + spatialUnitColumnName + "\" AS varchar)";
 		
@@ -290,19 +291,69 @@ public class IndicatorDatabaseHandler {
 		 */
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(dbTableName);
-		SimpleFeatureType schema = featureSource.getSchema();		
+		SimpleFeatureType schema = featureSource.getSchema();
+		
+		String typeName = schema.getTypeName();
 		
 		List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = indicatorData.getIndicatorValues();
 		/*
 		 * get sample time stamps
 		 */
 		List<IndicatorPOSTInputTypeValueMapping> sampleValueMapping = indicatorValues.get(0).getValueMapping();
-		schema = updateSchema(schema, sampleValueMapping);
+//		schema = updateSchema(schema, sampleValueMapping);
+		List<String> additionalPropertyNamesToAddAsFloatColumns = identifyNewProperties(schema, sampleValueMapping);
+		
+		postGisStore.dispose();
 		
 		// update schema in db to ensure all new columns are created
-		if(ADDITIONAL_PROPERTIES_WERE_SET)
-			postGisStore.updateSchema(dbTableName, schema);
+		if(ADDITIONAL_PROPERTIES_WERE_SET){
+			// establish JDBC connection
+			Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			Statement statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("ALTER TABLE \"" + dbTableName + "\" ");
+			
+			Iterator<String> iterator = additionalPropertyNamesToAddAsFloatColumns.iterator();
+			
+			while(iterator.hasNext()){
+				String columnName = iterator.next();
+				
+				// use dataType real, as only new timeseries will be added for indicators
+				builder.append("ADD COLUMN \"" + columnName + "\" real");
+				
+				if(iterator.hasNext()){
+					builder.append(", ");
+				}
+				else{
+					builder.append(";");
+				}
+			}
+			
+			String alterTableCommand = builder.toString();
+			
+			logger.info("Send following ALTER TABLE command to database: " + alterTableCommand);
+			
+			// TODO check if works
+			statement.executeUpdate(alterTableCommand);
+
+			statement.close();
+			jdbcConnection.close();
+			
+			// send ALTER TABLE statement to add new property
+		}
+//			postGisStore.updateSchema(typeName, schema);
 		
+		
+		
+		/*
+		 * refetch schema of database table due to updated columns!
+		 */
+		postGisStore = DatabaseHelperUtil.getPostGisDataStore();
+		featureSource = postGisStore.getFeatureSource(dbTableName);
+
 		DataAccess<SimpleFeatureType, SimpleFeature> dataStore = featureSource.getDataStore();
 		
 		if (featureSource instanceof SimpleFeatureStore) {
@@ -330,6 +381,37 @@ public class IndicatorDatabaseHandler {
 		
 	}
 
+	private static List<String> identifyNewProperties(SimpleFeatureType schema,
+			List<IndicatorPOSTInputTypeValueMapping> sampleValueMapping) {
+		List<String> newPropertyNames = new ArrayList<String>();		
+		/*
+		 * for each timestamp within indicator value mapping
+		 * 
+		 * check if columns already exists
+		 * 		then do nothing
+		 * 
+		 * if it not exists,
+		 * 		then add it to schema
+		 */
+		
+		ADDITIONAL_PROPERTIES_WERE_SET  = false;
+		
+		
+		for (IndicatorPOSTInputTypeValueMapping indicatorValueMappingEntry : sampleValueMapping) {
+			Date date = DateTimeUtil.fromLocalDate(indicatorValueMappingEntry.getTimestamp());
+			String datePropertyName = createDateStringForDbProperty(date);
+			
+			if(!schemaContainsDateProperty(schema, datePropertyName)){
+				// add new Property
+				logger.debug("Add new propert/column '{}' to table '{}'", datePropertyName, schema.getTypeName());
+				newPropertyNames.add(datePropertyName);
+				ADDITIONAL_PROPERTIES_WERE_SET = true;
+			}
+		}
+		
+		return newPropertyNames;
+	}
+
 	private static void applyModificationStatements(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues,
 			SimpleFeatureStore store) throws CQLException, IOException {
 		for (IndicatorPOSTInputTypeIndicatorValues indicatorValueMappingEntry : indicatorValues) {
@@ -354,41 +436,42 @@ public class IndicatorDatabaseHandler {
 		return filter;
 	}
 
-	private static SimpleFeatureType updateSchema(SimpleFeatureType schema,
-			List<IndicatorPOSTInputTypeValueMapping> sampleValueMapping) {
-		/*
-		 * for each timestamp within indicator value mapping
-		 * 
-		 * check if columns already exists
-		 * 		then do nothing
-		 * 
-		 * if it not exists,
-		 * 		then add it to schema
-		 */
-		SimpleFeatureTypeBuilder sftBuilder = new SimpleFeatureTypeBuilder();
-		sftBuilder.setNamespaceURI(schema.getName().getNamespaceURI());
-		sftBuilder.addAll(schema.getAttributeDescriptors());
-		
-		ADDITIONAL_PROPERTIES_WERE_SET  = false;
-		
-		
-		for (IndicatorPOSTInputTypeValueMapping indicatorValueMappingEntry : sampleValueMapping) {
-			Date date = DateTimeUtil.fromLocalDate(indicatorValueMappingEntry.getTimestamp());
-			String datePropertyName = createDateStringForDbProperty(date);
-			
-			if(!schemaContainsDateProperty(schema, datePropertyName)){
-				// add new Property
-				logger.debug("Add new propert/column '{}' to table '{}'", datePropertyName, schema.getTypeName());
-				sftBuilder.add(datePropertyName, Float.class);
-				ADDITIONAL_PROPERTIES_WERE_SET = true;
-			}
-		}
-		
-		if(! ADDITIONAL_PROPERTIES_WERE_SET)
-			return schema;
-		else
-			return sftBuilder.buildFeatureType();
-	}
+//	private static SimpleFeatureType updateSchema(SimpleFeatureType schema,
+//			List<IndicatorPOSTInputTypeValueMapping> sampleValueMapping) {
+//		/*
+//		 * for each timestamp within indicator value mapping
+//		 * 
+//		 * check if columns already exists
+//		 * 		then do nothing
+//		 * 
+//		 * if it not exists,
+//		 * 		then add it to schema
+//		 */
+//		SimpleFeatureTypeBuilder sftBuilder = new SimpleFeatureTypeBuilder();
+//		sftBuilder.setName(schema.getName());
+////		sftBuilder.setNamespaceURI(schema.getName().getNamespaceURI());
+//		sftBuilder.addAll(schema.getAttributeDescriptors());
+//		
+//		ADDITIONAL_PROPERTIES_WERE_SET  = false;
+//		
+//		
+//		for (IndicatorPOSTInputTypeValueMapping indicatorValueMappingEntry : sampleValueMapping) {
+//			Date date = DateTimeUtil.fromLocalDate(indicatorValueMappingEntry.getTimestamp());
+//			String datePropertyName = createDateStringForDbProperty(date);
+//			
+//			if(!schemaContainsDateProperty(schema, datePropertyName)){
+//				// add new Property
+//				logger.debug("Add new propert/column '{}' to table '{}'", datePropertyName, schema.getTypeName());
+//				sftBuilder.add(datePropertyName, Float.class);
+//				ADDITIONAL_PROPERTIES_WERE_SET = true;
+//			}
+//		}
+//		
+//		if(! ADDITIONAL_PROPERTIES_WERE_SET)
+//			return schema;
+//		else
+//			return sftBuilder.buildFeatureType();
+//	}
 
 	private static boolean schemaContainsDateProperty(SimpleFeatureType schema, String datePropertyName) {
 		List<AttributeDescriptor> attributeDescriptors = schema.getAttributeDescriptors();
