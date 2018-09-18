@@ -28,6 +28,7 @@ public class ScriptMetadataEntity {
 	private String scriptId = null;
 
 	private String name = null;
+	@Column(columnDefinition="text")
 	private String description = null;
 	private String indicatorId = null;
 

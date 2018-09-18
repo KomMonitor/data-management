@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -16,6 +17,7 @@ import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 @Entity(name = "MetadataIndicators")
 public class MetadataIndicatorsEntity extends AbstractMetadata {
 
+	@Column(columnDefinition="text")
 	private String processDescription = null;
 	private String unit = null;
 	private CreationTypeEnum creationType = null;

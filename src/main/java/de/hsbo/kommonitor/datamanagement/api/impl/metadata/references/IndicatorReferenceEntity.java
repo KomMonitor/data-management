@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata.references;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,6 +17,7 @@ public class IndicatorReferenceEntity {
 
 	private String indicatorId = null;
 	private String referencedIndicatorId = null;
+	@Column(columnDefinition="text")
 	private String referenceDescription = null;
 
 	public String getIndicatorId() {

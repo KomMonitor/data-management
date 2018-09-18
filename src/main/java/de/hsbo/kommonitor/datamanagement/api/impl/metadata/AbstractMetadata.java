@@ -25,11 +25,15 @@ public abstract class AbstractMetadata {
 	private String datasetId = null;
 	private String datasetName = null;
 	private String dbTableName = null;
+	@Column(columnDefinition="text")
 	private String description = null;
+	@Column(columnDefinition="text")
 	private String dataSource = null;
+	@Column(columnDefinition="text")
 	private String contact = null;
 	@Enumerated(EnumType.STRING)
 	private UpdateIntervalEnum updateIntervall = null;
+	@Column(columnDefinition="text")
 	private String jsonSchema = null;
 	private String wmsUrl = null;
 	private String wfsUrl = null;

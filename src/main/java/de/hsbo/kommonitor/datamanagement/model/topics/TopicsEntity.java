@@ -2,6 +2,7 @@ package de.hsbo.kommonitor.datamanagement.model.topics;
 
 import java.util.Collection;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -11,7 +12,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
-import de.hsbo.kommonitor.datamanagement.model.users.UsersEntity;
 
 @Entity(name = "Topics")
 public class TopicsEntity {
@@ -23,6 +23,7 @@ public class TopicsEntity {
 
 	  private String topicName = null;
 
+	  @Column(columnDefinition="text")
 	  private String topicDescription = null;
 	  
 	  /*
