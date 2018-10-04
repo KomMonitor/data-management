@@ -127,15 +127,15 @@ public class IndicatorsManager {
 				 */
 				IndicatorDatabaseHandler.updateIndicatorFeatures(indicatorData, indicatorValueTableName);
 			
-				String indicatorFeatureViewName = createOrReplaceIndicatorFeatureView(indicatorValueTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
+				indicatorValueTableName = createOrReplaceIndicatorFeatureTable(indicatorValueTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
 				
 				// handle OGC web service
-				ogcServiceManager.publishDbLayerAsOgcService(indicatorFeatureViewName, datasetTile, ResourceTypeEnum.INDICATOR);
+				ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTile, ResourceTypeEnum.INDICATOR);
 				
 				/*
 				 * set wms and wfs urls within metadata
 				 */
-				persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName, indicatorFeatureViewName);
+				persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName);
 				
 			} else{
 				logger.info(
@@ -143,16 +143,16 @@ public class IndicatorsManager {
 						indicatorId, spatialUnitName);
 				
 				String indicatorValueTableName = null;
-				String indicatorFeatureViewName = null;
 				boolean publishedAsService = false;
 				try {
-					indicatorValueTableName = createIndicatorValueTable(indicatorData.getIndicatorValues(), indicatorId);
-					indicatorFeatureViewName = createOrReplaceIndicatorFeatureView(indicatorValueTableName, spatialUnitName, indicatorId);
+					String tempIndicatorTable = createIndicatorTempTable(indicatorData.getIndicatorValues(), indicatorId);
+					indicatorValueTableName = createOrReplaceIndicatorFeatureTable(tempIndicatorTable, spatialUnitName, indicatorId);
+					deleteIndicatorTempTable(tempIndicatorTable);
 					
 					// handle OGC web service
-					publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorFeatureViewName, datasetTile, ResourceTypeEnum.INDICATOR);
+					publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTile, ResourceTypeEnum.INDICATOR);
 					
-					persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName, indicatorFeatureViewName);
+					persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName);
 				} catch (Exception e) {
 					/*
 					 * remove partially created resources and thrwo error
@@ -171,7 +171,7 @@ public class IndicatorsManager {
 						
 						logger.info("Unpublish OGC services if exists");
 						if(publishedAsService){
-							ogcServiceManager.unpublishDbLayer(indicatorFeatureViewName, ResourceTypeEnum.INDICATOR);
+							ogcServiceManager.unpublishDbLayer(indicatorValueTableName, ResourceTypeEnum.INDICATOR);
 						}
 						
 						
@@ -264,9 +264,9 @@ public class IndicatorsManager {
 		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
 			if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)){
 				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
-				String featureViewTableName = indicatorSpatialsUnitsEntity.getFeatureViewTableName();
+				String indicatorValueTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
 
-				String json = IndicatorDatabaseHandler.getValidFeatures(featureViewTableName, year, month, day);
+				String json = IndicatorDatabaseHandler.getValidFeatures(indicatorValueTableName, year, month, day);
 				return json;
 
 			} else{
@@ -293,9 +293,9 @@ public class IndicatorsManager {
 		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
 			if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)){
 				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
-				String featureViewTableName = indicatorSpatialsUnitsEntity.getFeatureViewTableName();
+				String indicatorValueTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
 
-				String json = IndicatorDatabaseHandler.getIndicatorFeatures(featureViewTableName);
+				String json = IndicatorDatabaseHandler.getIndicatorFeatures(indicatorValueTableName);
 				return json;
 
 			} else{
@@ -325,13 +325,13 @@ public class IndicatorsManager {
 			 * delete featureTables and views for each spatial unit
 			 */
 			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
-				String featureViewTableName = indicatorSpatialUnitJoinEntity.getFeatureViewTableName();
+				String indicatorValueTableName = indicatorSpatialUnitJoinEntity.getIndicatorValueTableName();
 //				IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
 				
 				IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
 				
 				// handle OGC web service
-				ogcServiceManager.unpublishDbLayer(featureViewTableName, ResourceTypeEnum.INDICATOR);
+				ogcServiceManager.unpublishDbLayer(indicatorValueTableName, ResourceTypeEnum.INDICATOR);
 			}
 			
 			/*
@@ -358,7 +358,6 @@ public class IndicatorsManager {
 		String metadataId = null;
 		String spatialUnitName = null;
 		String indicatorValueTableName = null;
-		String indicatorFeatureViewName = null;
 		boolean publishedAsService = false;
 		try {
 			/*
@@ -413,13 +412,14 @@ public class IndicatorsManager {
 			if(creationType.equals(CreationTypeEnum.INSERTION)){
 				
 				logger.info("As creationType is set to '{}', a featureTable and featureView will be created from indicator values. Also OGC publishing will be done.", creationType.toString());
-				indicatorValueTableName = createIndicatorValueTable(indicatorData.getIndicatorValues(), metadataId);
-				indicatorFeatureViewName = createOrReplaceIndicatorFeatureView(indicatorValueTableName, spatialUnitName, metadataId);
+				String indicatorTempTableName = createIndicatorTempTable(indicatorData.getIndicatorValues(), metadataId);
+				indicatorValueTableName = createOrReplaceIndicatorFeatureTable(indicatorTempTableName, spatialUnitName, metadataId);
+				deleteIndicatorTempTable(indicatorTempTableName);
 				
 				// handle OGC web service
-				publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorFeatureViewName, indicatorName, ResourceTypeEnum.INDICATOR);
+				publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, indicatorName, ResourceTypeEnum.INDICATOR);
 				
-				persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName, indicatorFeatureViewName);
+				persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName);
 				
 			} else{
 				logger.info("As creationType is set to '{}', Only the metadata entry was created. No featureTable and view have been created..", creationType.toString());
@@ -447,7 +447,7 @@ public class IndicatorsManager {
 				
 				logger.info("Unpublish OGC services if exists");
 				if(publishedAsService){
-					ogcServiceManager.unpublishDbLayer(indicatorFeatureViewName, ResourceTypeEnum.INDICATOR);
+					ogcServiceManager.unpublishDbLayer(indicatorValueTableName, ResourceTypeEnum.INDICATOR);
 				}
 				
 				
@@ -493,29 +493,38 @@ public class IndicatorsManager {
 ////		indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(metadataId, spatialUnitId)
 //	}
 
-	private String createOrReplaceIndicatorFeatureView(String indicatorValueTableName, String spatialUnitName,
+	private void deleteIndicatorTempTable(String indicatorTempTableName) throws IOException, SQLException {
+		logger.info("Deleting temporary indicator table with name {}.", indicatorTempTableName);
+
+		IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorTempTableName);;
+
+		logger.info("Completed deletion.");
+		
+	}
+
+	private String createOrReplaceIndicatorFeatureTable(String indicatorTempTableName, String spatialUnitName,
 			String metadataId) throws IOException, SQLException {
 		/*
 		 * create view joining indicator values and spatial unit features
 		 */
-		logger.info("Trying to create unique view joining indicator values and spatial unit features.");
+		logger.info("Trying to create unique table joining indicator values and spatial unit features.");
 
-		String dbViewName = IndicatorDatabaseHandler.createOrReplaceIndicatorFeatureView(indicatorValueTableName, spatialUnitName);
+		String dbViewName = IndicatorDatabaseHandler.createOrReplaceIndicatorFeatureTable(indicatorTempTableName, spatialUnitName);
 
-		logger.info("Completed creation of indicator feature view corresponding to datasetId {}. View name is {}.",
+		logger.info("Completed creation of indicator feature table corresponding to datasetId {}. Table name is {}.",
 				metadataId, dbViewName);
 
 		return dbViewName;
 	}
 
-	private String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, 
+	private String createIndicatorTempTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, 
 			String metadataId) throws CQLException, IOException, SQLException {
 		/*
 		 * write indicator values to a new unique db table
 		 */
 		logger.info("Trying to create unique table for indicator values.");
 
-		String dbTableName = IndicatorDatabaseHandler.createIndicatorValueTable(indicatorValues);
+		String dbTableName = IndicatorDatabaseHandler.createIndicatorTempTable(indicatorValues);
 
 		logger.info("Completed creation of indicator values table corresponding to datasetId {}. Table name is {}.",
 				metadataId, dbTableName);
@@ -524,10 +533,10 @@ public class IndicatorsManager {
 	}
 
 	private void persistNamesOfIndicatorTablesAndServicesInJoinTable(String indicatorMetadataId, String indicatorName, String spatialUnitName, 
-			String indicatorValueTableName, String indicatorFeatureViewName) {
+			String indicatorValueTableName) {
 		logger.info(
-				"Create or modify entry in indicator spatial units join table for indicatorId '{}', and spatialUnitName '{}'. Set indicatorValueTable with name '{}'  and feature view with name '{}'.",
-				indicatorMetadataId, spatialUnitName, indicatorValueTableName, indicatorFeatureViewName);
+				"Create or modify entry in indicator spatial units join table for indicatorId '{}', and spatialUnitName '{}'. Set indicatorValueTable with name '{}'.",
+				indicatorMetadataId, spatialUnitName, indicatorValueTableName);
 		
 		MetadataSpatialUnitsEntity spatialUnitMetadataEntity = DatabaseHelperUtil.getSpatialUnitMetadataEntityByName(spatialUnitName);
 		String spatialUnitId = spatialUnitMetadataEntity.getDatasetId();
@@ -540,14 +549,13 @@ public class IndicatorsManager {
 		if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorMetadataId, spatialUnitId))
 			entity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorMetadataId, spatialUnitId);
 		
-		entity.setFeatureViewTableName(indicatorFeatureViewName);
 		entity.setIndicatorMetadataId(indicatorMetadataId);
 		entity.setIndicatorName(indicatorName);
 		entity.setIndicatorValueTableName(indicatorValueTableName);
 		entity.setSpatialUnitId(spatialUnitId);
 		entity.setSpatialUnitName(spatialUnitName);
-		entity.setWmsUrl(ogcServiceManager.getWmsUrl(indicatorFeatureViewName));
-		entity.setWfsUrl(ogcServiceManager.getWfsUrl(indicatorFeatureViewName));
+		entity.setWmsUrl(ogcServiceManager.getWmsUrl(indicatorValueTableName));
+		entity.setWfsUrl(ogcServiceManager.getWfsUrl(indicatorValueTableName));
 		
 		indicatorsSpatialUnitsRepo.saveAndFlush(entity);
 

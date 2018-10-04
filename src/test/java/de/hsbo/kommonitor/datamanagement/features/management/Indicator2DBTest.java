@@ -32,7 +32,7 @@ public class Indicator2DBTest {
 
 		List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = indicator.getIndicatorValues();
 
-		String tableName = IndicatorDatabaseHandler.createIndicatorValueTable(indicatorValues);
+		String tableName = IndicatorDatabaseHandler.createIndicatorTempTable(indicatorValues);
 //		IndicatorDatabaseHandler.createIndicatorFeatureView(tableName, spatialUnitName)
 
 		Assert.assertTrue(tableName != null);

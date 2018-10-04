@@ -19,7 +19,6 @@ public class IndicatorSpatialUnitJoinEntity {
 	private String spatialUnitId = null;
 	private String spatialUnitName = null;
 	private String indicatorValueTableName = null;
-	private String featureViewTableName = null;
 	private String wmsUrl = null;
 	private String wfsUrl = null;
 
@@ -40,14 +39,6 @@ public class IndicatorSpatialUnitJoinEntity {
 
 	public void setSpatialUnitId(String spatialUnitId) {
 		this.spatialUnitId = spatialUnitId;
-	}
-
-	public String getFeatureViewTableName() {
-		return featureViewTableName;
-	}
-
-	public void setFeatureViewTableName(String featureViewTableName) {
-		this.featureViewTableName = featureViewTableName;
 	}
 
 	public String getEntryId() {

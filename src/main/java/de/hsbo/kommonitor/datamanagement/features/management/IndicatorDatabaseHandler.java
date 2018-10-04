@@ -51,6 +51,7 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
 public class IndicatorDatabaseHandler {
 
 	
+	private static final String TEMP_SUFFIX = "_TEMP";
 	private static final String DATE_PREFIX = "DATE_";
 	private static Logger logger = LoggerFactory.getLogger(IndicatorDatabaseHandler.class);
 	private static boolean ADDITIONAL_PROPERTIES_WERE_SET = false;
@@ -61,13 +62,13 @@ public class IndicatorDatabaseHandler {
 		return new FeatureJSON(geometryJSON);
 	}
 	
-	public static String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) throws IOException, CQLException, SQLException {
+	public static String createIndicatorTempTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) throws IOException, CQLException, SQLException {
 
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 
 		List<Date> availableDatesForIndicator = collectIndicatorDates(indicatorValues);
 
-		logger.info("Create SimpleFeatureTye for indicator");
+		logger.info("Create SimpleFeatureType for indicator");
 
 		SimpleFeatureType featureType = createSimpleFeatureTypeForIndicators(postGisStore, ResourceTypeEnum.INDICATOR,
 				availableDatesForIndicator);
@@ -102,13 +103,13 @@ public class IndicatorDatabaseHandler {
 		return featureType.getTypeName();
 	}
 
-	private static String createOrOverwriteView(String indicatorTableName,
+	private static String createOrOverwriteIndicatorFeatureTable(String indicatorTempTableName,
 			String spatialUnitName) throws IOException, SQLException {
 		Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
 
 		Statement statement = jdbcConnection.createStatement();
 
-		String viewTableName = "VIEW_" + indicatorTableName;
+		String viewTableName = indicatorTempTableName.split(TEMP_SUFFIX)[0];
 
 		/*
 		 * CREATE VIEW vw_combined AS SELECT * FROM TABLE1 t1 JOIN TABLE2 t2 ON
@@ -122,18 +123,18 @@ public class IndicatorDatabaseHandler {
 		String indicatorColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME;
 		String spatialUnitColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME;
 		
-		String createViewCommand = "DROP TABLE IF EXISTS \"" + viewTableName + "\"; CREATE TABLE \"" + viewTableName + "\" as select indicator.*, spatialunit." + 
+		String createTableCommand = "DROP TABLE IF EXISTS \"" + viewTableName + "\"; CREATE TABLE \"" + viewTableName + "\" as select indicator.*, spatialunit." + 
 				KomMonitorFeaturePropertyConstants.GEOMETRY_COLUMN_NAME + ", spatialunit.\"" + 
 				KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME + "\", spatialunit.\"" + 
 				KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + "\", spatialunit.\"" + 
-				KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" from \"" + indicatorTableName
+				KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" from \"" + indicatorTempTableName
 				+ "\" indicator join \"" + spatialUnitsTable + "\" spatialunit on indicator.\"" 
 				+ indicatorColumnName + "\" = CAST(spatialunit.\"" + spatialUnitColumnName + "\" AS varchar); ALTER TABLE \"" + viewTableName + "\" ADD PRIMARY KEY (fid);";
 		
-		logger.info("Created the following SQL command to create or update view: '{}'", createViewCommand);
+		logger.info("Created the following SQL command to create or update indicator table: '{}'", createTableCommand);
 		
 		// TODO check if works
-		statement.executeUpdate(createViewCommand);
+		statement.executeUpdate(createTableCommand);
 
 		statement.close();
 		jdbcConnection.close();
@@ -208,7 +209,7 @@ public class IndicatorDatabaseHandler {
 	private static SimpleFeatureType createSimpleFeatureTypeForIndicators(DataStore dataStore,
 			ResourceTypeEnum resourceType, List<Date> availableDatesForIndicator) throws IOException {
 		SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(resourceType, dataStore));
+		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(resourceType, dataStore) + TEMP_SUFFIX);
 		// tb.setNamespaceURI(featureSchema.getName().getNamespaceURI());
 		// tb.setCRS(featureSchema.getCoordinateReferenceSystem());
 		// tb.addAll(featureSchema.getAttributeDescriptors());
@@ -642,12 +643,12 @@ public class IndicatorDatabaseHandler {
 //		
 //	}
 
-	public static String createOrReplaceIndicatorFeatureView(String indicatorValueTableName, String spatialUnitName) throws IOException, SQLException {
+	public static String createOrReplaceIndicatorFeatureTable(String indicatorTempTableName, String spatialUnitName) throws IOException, SQLException {
 		/*
 		 * create view containing the geometry and indicatorValues
 		 * for each indicator feature also set ViewName in Metadata
 		 */
-		String viewTableName = createOrOverwriteView(indicatorValueTableName,
+		String viewTableName = createOrOverwriteIndicatorFeatureTable(indicatorTempTableName,
 				spatialUnitName);
 
 //		logger.info(
@@ -658,6 +659,5 @@ public class IndicatorDatabaseHandler {
 		
 		return viewTableName;
 	}
-
 
 }
