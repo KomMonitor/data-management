@@ -122,15 +122,13 @@ public class IndicatorDatabaseHandler {
 		String indicatorColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME;
 		String spatialUnitColumnName = KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME;
 		
-		
-		
-		String createViewCommand = "create or replace view \"" + viewTableName + "\" as select indicator.*, spatialunit." + 
+		String createViewCommand = "DROP TABLE IF EXISTS \"" + viewTableName + "\"; CREATE TABLE \"" + viewTableName + "\" as select indicator.*, spatialunit." + 
 				KomMonitorFeaturePropertyConstants.GEOMETRY_COLUMN_NAME + ", spatialunit.\"" + 
 				KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME + "\", spatialunit.\"" + 
 				KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + "\", spatialunit.\"" + 
 				KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" from \"" + indicatorTableName
 				+ "\" indicator join \"" + spatialUnitsTable + "\" spatialunit on indicator.\"" 
-				+ indicatorColumnName + "\" = CAST(spatialunit.\"" + spatialUnitColumnName + "\" AS varchar)";
+				+ indicatorColumnName + "\" = CAST(spatialunit.\"" + spatialUnitColumnName + "\" AS varchar); ALTER TABLE \"" + viewTableName + "\" ADD PRIMARY KEY (fid);";
 		
 		logger.info("Created the following SQL command to create or update view: '{}'", createViewCommand);
 		
@@ -272,8 +270,14 @@ public class IndicatorDatabaseHandler {
 			String attributeName = attributeDescriptor.getName().getLocalPart();
 
 			if (!attributeName.equalsIgnoreCase(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME)
-					&& !attributeName.equalsIgnoreCase(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME))
+					&& !attributeName.equalsIgnoreCase(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME)){
+				/*
+				 * remove date prefix from date property names
+				 */
+				attributeName = attributeName.split(DATE_PREFIX)[1];
 				availableDates.add(attributeName);
+			}
+				
 		}
 
 		postGisStore.dispose();
