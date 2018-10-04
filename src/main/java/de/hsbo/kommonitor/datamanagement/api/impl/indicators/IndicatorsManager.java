@@ -116,10 +116,12 @@ public class IndicatorsManager {
 			String spatialUnitName = indicatorData.getApplicableSpatialUnit();
 			
 			MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+			String datasetTile = indicatorMetadataEntry.getDatasetName();
 			
 			if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName)){
 				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName);
 				String indicatorValueTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
+				
 				/*
 				 * call DB tool to update features
 				 */
@@ -128,7 +130,7 @@ public class IndicatorsManager {
 				String indicatorFeatureViewName = createOrReplaceIndicatorFeatureView(indicatorValueTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
 				
 				// handle OGC web service
-				ogcServiceManager.publishDbLayerAsOgcService(indicatorFeatureViewName, ResourceTypeEnum.INDICATOR);
+				ogcServiceManager.publishDbLayerAsOgcService(indicatorFeatureViewName, datasetTile, ResourceTypeEnum.INDICATOR);
 				
 				/*
 				 * set wms and wfs urls within metadata
@@ -148,7 +150,7 @@ public class IndicatorsManager {
 					indicatorFeatureViewName = createOrReplaceIndicatorFeatureView(indicatorValueTableName, spatialUnitName, indicatorId);
 					
 					// handle OGC web service
-					publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorFeatureViewName, ResourceTypeEnum.INDICATOR);
+					publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorFeatureViewName, datasetTile, ResourceTypeEnum.INDICATOR);
 					
 					persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName, indicatorFeatureViewName);
 				} catch (Exception e) {
@@ -415,7 +417,7 @@ public class IndicatorsManager {
 				indicatorFeatureViewName = createOrReplaceIndicatorFeatureView(indicatorValueTableName, spatialUnitName, metadataId);
 				
 				// handle OGC web service
-				publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorFeatureViewName, ResourceTypeEnum.INDICATOR);
+				publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorFeatureViewName, indicatorName, ResourceTypeEnum.INDICATOR);
 				
 				persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName, indicatorFeatureViewName);
 				

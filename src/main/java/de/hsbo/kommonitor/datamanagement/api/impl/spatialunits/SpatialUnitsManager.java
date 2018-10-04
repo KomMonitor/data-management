@@ -79,7 +79,7 @@ public class SpatialUnitsManager {
 			dbTableName = createFeatureTable(featureData.getGeoJsonString(), featureData.getPeriodOfValidity(), metadataId);
 			
 			// handle OGC web service
-			publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
+			publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, ResourceTypeEnum.SPATIAL_UNIT);
 			
 			/*
 			 * set wms and wfs urls within metadata
@@ -235,6 +235,7 @@ public class SpatialUnitsManager {
 		logger.info("Trying to update spatialUnit features for datasetId '{}'", spatialUnitId);
 		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
 			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+			String datasetName = metadataEntity.getDatasetName();
 			String dbTableName = metadataEntity.getDbTableName();
 			/*
 			 * call DB tool to update features
@@ -247,7 +248,7 @@ public class SpatialUnitsManager {
 			spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
 			
 			// handle OGC web service
-			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
+			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, ResourceTypeEnum.SPATIAL_UNIT);
 			
 			/*
 			 * set wms and wfs urls within metadata

@@ -19,11 +19,10 @@ import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
-import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
+import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
@@ -85,7 +84,7 @@ public class GeoresourcesManager {
 					metadataId);
 
 			// handle OGC web service
-			publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.GEORESOURCE);
+			publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, ResourceTypeEnum.GEORESOURCE);
 
 			/*
 			 * set wms and wfs urls within metadata
@@ -338,6 +337,7 @@ public class GeoresourcesManager {
 		logger.info("Trying to update georesource features for datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetName(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+			String datasetName = metadataEntity.getDatasetName();
 			String dbTableName = metadataEntity.getDbTableName();
 			/*
 			 * call DB tool to update features
@@ -350,7 +350,7 @@ public class GeoresourcesManager {
 			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 			
 			// handle OGC web service
-			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, ResourceTypeEnum.GEORESOURCE);
+			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, ResourceTypeEnum.GEORESOURCE);
 
 			/*
 			 * set wms and wfs urls within metadata

@@ -39,10 +39,10 @@ public class GeoserverManager implements OGCWebServiceManager {
 	}
 
 	@Override
-	public boolean publishDbLayerAsOgcService(String dbTableName, ResourceTypeEnum resourceType)
+	public boolean publishDbLayerAsOgcService(String dbTableName, String title, ResourceTypeEnum resourceType)
 			throws Exception {
 
-		publishDBLayerInGeoserver(dbTableName, resourceType);
+		publishDBLayerInGeoserver(dbTableName, title, resourceType);
 		return true;
 	}
 
@@ -150,7 +150,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 		return geoserverManager;
 	}
 
-	private void publishDBLayerInGeoserver(String dbTableName, ResourceTypeEnum resourceType)
+	private void publishDBLayerInGeoserver(String dbTableName, String title, ResourceTypeEnum resourceType)
 			throws Exception {
 		GeoServerRESTManager geoserverManager = initializeGeoserverRestManager();
 
@@ -204,7 +204,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 					logger.info("Publishing Layer '{}' on geoserver", dbTableName);
 
 					try {
-						publishLayerOnGeoserver(dbTableName, publisher, targetWorkspace, targetDatastore, targetEPSG);
+						publishLayerOnGeoserver(dbTableName, title, publisher, targetWorkspace, targetDatastore, targetEPSG);
 					} catch (Exception e) {
 						logger.error("Error while publishing layer to Geoserver.");
 						e.printStackTrace();
@@ -216,24 +216,24 @@ public class GeoserverManager implements OGCWebServiceManager {
 					createNewDataStoreOnGeoserver(storeManager, targetWorkspace, targetDatastore,
 							targetSchema);
 
-					publishDBLayerInGeoserver(dbTableName, resourceType);
+					publishDBLayerInGeoserver(dbTableName, title, resourceType);
 				}
 			} else {
 				boolean created = publisher.createWorkspace(targetWorkspace);
 				if(!created)
 					throw new Exception("Error while creating workspace. Processing failed.");
 				
-				publishDBLayerInGeoserver(dbTableName, resourceType);
+				publishDBLayerInGeoserver(dbTableName, title, resourceType);
 			}
 		}
 	}
 
-	private static void publishLayerOnGeoserver(String relation_name, GeoServerRESTPublisher publisher,
+	private static void publishLayerOnGeoserver(String relation_name, String title, GeoServerRESTPublisher publisher,
 			String targetWorkspace, String targetDatastore, String targetEPSG) throws Exception {
 		GSFeatureTypeEncoder fte = new GSFeatureTypeEncoder();
 		fte.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
 		fte.addKeyword(relation_name);
-		fte.setTitle(relation_name);
+		fte.setTitle(title);
 		fte.setName(relation_name);
 		fte.setSRS(targetEPSG);
 
@@ -242,7 +242,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 		boolean ok = publisher.publishDBLayer(targetWorkspace, targetDatastore, fte, layerEncoder);
 		
 		if (!ok)
-			throw new Exception("Error while publishing ayer to Geoserver.");
+			throw new Exception("Error while publishing layer to Geoserver.");
 	}
 
 	private static void createNewDataStoreOnGeoserver(GeoServerRESTStoreManager storeManager, String targetWorkspace,

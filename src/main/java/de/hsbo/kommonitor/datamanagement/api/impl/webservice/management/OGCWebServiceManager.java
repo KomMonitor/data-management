@@ -23,12 +23,14 @@ public interface OGCWebServiceManager {
 	 * @param dbTableName
 	 *            the name of the database table that contains the spatial
 	 *            features
+	 * @param title
+	 *            the title of the layer that will be created           
 	 * @param resourceType
 	 *            the type of spatial features within the KomMonitor project
 	 * @return true, if the publishing was successful
 	 * @throws Exception 
 	 */
-	public boolean publishDbLayerAsOgcService(String dbTableName, ResourceTypeEnum resourceType) throws Exception;
+	public boolean publishDbLayerAsOgcService(String dbTableName, String title, ResourceTypeEnum resourceType) throws Exception;
 
 	/**
 	 * Unpublish the spatial dataset. After calling this operation the dataset
