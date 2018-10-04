@@ -270,8 +270,7 @@ public class IndicatorDatabaseHandler {
 			// TODO FIXME is this the correct column name?
 			String attributeName = attributeDescriptor.getName().getLocalPart();
 
-			if (!attributeName.equalsIgnoreCase(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME)
-					&& !attributeName.equalsIgnoreCase(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME)){
+			if (attributeName.contains(DATE_PREFIX)){
 				/*
 				 * remove date prefix from date property names
 				 */
