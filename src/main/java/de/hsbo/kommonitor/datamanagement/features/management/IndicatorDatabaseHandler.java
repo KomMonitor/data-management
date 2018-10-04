@@ -51,6 +51,7 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
 public class IndicatorDatabaseHandler {
 
 	
+	private static final String DATE_PREFIX = "DATE_";
 	private static Logger logger = LoggerFactory.getLogger(IndicatorDatabaseHandler.class);
 	private static boolean ADDITIONAL_PROPERTIES_WERE_SET = false;
 	
@@ -247,7 +248,7 @@ public class IndicatorDatabaseHandler {
 		if (dayOfMonth < 10)
 			dayString = "0" + dayOfMonth;
 
-		String dateString = year + "-" + monthString + "-" + dayString;
+		String dateString = DATE_PREFIX + year + "-" + monthString + "-" + dayString;
 		return dateString;
 	}
 	
