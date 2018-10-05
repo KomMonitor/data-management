@@ -116,7 +116,7 @@ public class IndicatorsManager {
 			String spatialUnitName = indicatorData.getApplicableSpatialUnit();
 			
 			MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
-			String datasetTile = indicatorMetadataEntry.getDatasetName();
+			String datasetTile = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
 			
 			if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName)){
 				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName);
@@ -200,6 +200,10 @@ public class IndicatorsManager {
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to update indicator features, but no dataset existes with datasetId " + indicatorId);
 		}
+	}
+
+	private String createTitleForWebService(String spatialUnitName, String indicatorName) {
+		return indicatorName + "_" + spatialUnitName;
 	}
 
 	public IndicatorOverviewType getIndicatorById(String indicatorId) throws IOException {
@@ -417,7 +421,7 @@ public class IndicatorsManager {
 				deleteIndicatorTempTable(indicatorTempTableName);
 				
 				// handle OGC web service
-				publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, indicatorName, ResourceTypeEnum.INDICATOR);
+				publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, createTitleForWebService(spatialUnitName, indicatorName), ResourceTypeEnum.INDICATOR);
 				
 				persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName);
 				
