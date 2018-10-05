@@ -127,7 +127,7 @@ public class IndicatorsManager {
 				 */
 				IndicatorDatabaseHandler.updateIndicatorFeatures(indicatorData, indicatorValueTableName);
 			
-				indicatorValueTableName = createOrReplaceIndicatorFeatureTable(indicatorValueTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
+//				indicatorValueTableName = createOrReplaceIndicatorFeatureTable(indicatorValueTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
 				
 				// handle OGC web service
 				ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTile, ResourceTypeEnum.INDICATOR);
