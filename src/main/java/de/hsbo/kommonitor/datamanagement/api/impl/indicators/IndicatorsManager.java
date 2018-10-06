@@ -36,6 +36,7 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
@@ -118,6 +119,8 @@ public class IndicatorsManager {
 			MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
 			String datasetTile = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
 			
+			checkInputData(indicatorData);
+			
 			if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName)){
 				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName);
 				String indicatorValueTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
@@ -139,7 +142,7 @@ public class IndicatorsManager {
 				
 			} else{
 				logger.info(
-						"No indicator dataset for the given indicatorId '{}' and spatialUnitName '{}' was found in database. Update request will create associated feature table and view for the first time. Also OGC publishment will be done",
+						"No indicator dataset for the given indicatorId '{}' and spatialUnitName '{}' was found in database. Update request will create associated feature table for the first time. Also OGC publishment will be done",
 						indicatorId, spatialUnitName);
 				
 				String indicatorValueTableName = null;
@@ -200,6 +203,20 @@ public class IndicatorsManager {
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to update indicator features, but no dataset existes with datasetId " + indicatorId);
 		}
+	}
+
+	private void checkInputData(IndicatorPUTInputType indicatorData) throws Exception {
+		List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = indicatorData.getIndicatorValues();
+		
+		for (IndicatorPOSTInputTypeIndicatorValues indicatorPOSTInputTypeIndicatorValues : indicatorValues) {
+			List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorPOSTInputTypeIndicatorValues.getValueMapping();
+			for (IndicatorPOSTInputTypeValueMapping indicatorPOSTInputTypeValueMapping : valueMapping) {
+				Float indicatorValue = indicatorPOSTInputTypeValueMapping.getIndicatorValue();
+				if(indicatorValue == null || Float.isNaN(indicatorValue))
+					throw new Exception("Input contains NULL or NAN values as indicator value. Thus aborting request to update indicator features.");
+			}
+		}
+		
 	}
 
 	private String createTitleForWebService(String spatialUnitName, String indicatorName) {
