@@ -12,15 +12,36 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPUTInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-18T20:11:44.438+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T13:17:54.570+02:00")
 
 public class IndicatorPUTInputType   {
+  @JsonProperty("defaultClassificationMapping")
+  private DefaultClassificationMappingType defaultClassificationMapping = null;
+
   @JsonProperty("applicableSpatialUnit")
   private String applicableSpatialUnit = null;
 
   @JsonProperty("indicatorValues")
   
   private List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = new ArrayList<>();
+
+  public IndicatorPUTInputType defaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+    this.defaultClassificationMapping = defaultClassificationMapping;
+    return this;
+  }
+
+   /**
+   * Get defaultClassificationMapping
+   * @return defaultClassificationMapping
+  **/
+  @ApiModelProperty(value = "")
+  public DefaultClassificationMappingType getDefaultClassificationMapping() {
+    return defaultClassificationMapping;
+  }
+
+  public void setDefaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+    this.defaultClassificationMapping = defaultClassificationMapping;
+  }
 
   public IndicatorPUTInputType applicableSpatialUnit(String applicableSpatialUnit) {
     this.applicableSpatialUnit = applicableSpatialUnit;
@@ -73,13 +94,14 @@ public class IndicatorPUTInputType   {
       return false;
     }
     IndicatorPUTInputType indicatorPUTInputType = (IndicatorPUTInputType) o;
-    return Objects.equals(this.applicableSpatialUnit, indicatorPUTInputType.applicableSpatialUnit) &&
+    return Objects.equals(this.defaultClassificationMapping, indicatorPUTInputType.defaultClassificationMapping) &&
+        Objects.equals(this.applicableSpatialUnit, indicatorPUTInputType.applicableSpatialUnit) &&
         Objects.equals(this.indicatorValues, indicatorPUTInputType.indicatorValues);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(applicableSpatialUnit, indicatorValues);
+    return Objects.hash(defaultClassificationMapping, applicableSpatialUnit, indicatorValues);
   }
 
   @Override
@@ -87,6 +109,7 @@ public class IndicatorPUTInputType   {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorPUTInputType {\n");
     
+    sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    applicableSpatialUnit: ").append(toIndentedString(applicableSpatialUnit)).append("\n");
     sb.append("    indicatorValues: ").append(toIndentedString(indicatorValues)).append("\n");
     sb.append("}");
