@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPOSTInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-27T07:50:59.124+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T08:10:08.922+02:00")
 
 public class IndicatorPOSTInputType   {
   @JsonProperty("datasetName")
@@ -37,6 +37,9 @@ public class IndicatorPOSTInputType   {
 
   @JsonProperty("creationType")
   private CreationTypeEnum creationType = null;
+
+  @JsonProperty("defaultClassificationMapping")
+  private DefaultClassificationMappingType defaultClassificationMapping = null;
 
   @JsonProperty("allowedRoles")
   
@@ -185,6 +188,24 @@ public class IndicatorPOSTInputType   {
     this.creationType = creationType;
   }
 
+  public IndicatorPOSTInputType defaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+    this.defaultClassificationMapping = defaultClassificationMapping;
+    return this;
+  }
+
+   /**
+   * Get defaultClassificationMapping
+   * @return defaultClassificationMapping
+  **/
+  @ApiModelProperty(required = true, value = "")
+  public DefaultClassificationMappingType getDefaultClassificationMapping() {
+    return defaultClassificationMapping;
+  }
+
+  public void setDefaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+    this.defaultClassificationMapping = defaultClassificationMapping;
+  }
+
   public IndicatorPOSTInputType allowedRoles(List<String> allowedRoles) {
     this.allowedRoles = allowedRoles;
     return this;
@@ -303,6 +324,7 @@ public class IndicatorPOSTInputType   {
         Objects.equals(this.processDescription, indicatorPOSTInputType.processDescription) &&
         Objects.equals(this.unit, indicatorPOSTInputType.unit) &&
         Objects.equals(this.creationType, indicatorPOSTInputType.creationType) &&
+        Objects.equals(this.defaultClassificationMapping, indicatorPOSTInputType.defaultClassificationMapping) &&
         Objects.equals(this.allowedRoles, indicatorPOSTInputType.allowedRoles) &&
         Objects.equals(this.refrencesToOtherIndicators, indicatorPOSTInputType.refrencesToOtherIndicators) &&
         Objects.equals(this.refrencesToGeoresources, indicatorPOSTInputType.refrencesToGeoresources) &&
@@ -311,7 +333,7 @@ public class IndicatorPOSTInputType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, applicableSpatialUnit, applicableTopics, metadata, processDescription, unit, creationType, allowedRoles, refrencesToOtherIndicators, refrencesToGeoresources, indicatorValues);
+    return Objects.hash(datasetName, applicableSpatialUnit, applicableTopics, metadata, processDescription, unit, creationType, defaultClassificationMapping, allowedRoles, refrencesToOtherIndicators, refrencesToGeoresources, indicatorValues);
   }
 
   @Override
@@ -326,6 +348,7 @@ public class IndicatorPOSTInputType   {
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
     sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
+    sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    refrencesToOtherIndicators: ").append(toIndentedString(refrencesToOtherIndicators)).append("\n");
     sb.append("    refrencesToGeoresources: ").append(toIndentedString(refrencesToGeoresources)).append("\n");

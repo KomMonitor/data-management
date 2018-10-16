@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-29T11:30:05.521+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T08:10:08.922+02:00")
 
 public class IndicatorOverviewType   {
   @JsonProperty("indicatorName")
@@ -57,6 +57,9 @@ public class IndicatorOverviewType   {
 
   @JsonProperty("creationType")
   private CreationTypeEnum creationType = null;
+
+  @JsonProperty("defaultClassificationMapping")
+  private DefaultClassificationMappingType defaultClassificationMapping = null;
 
   @JsonProperty("ogcServices")
   
@@ -317,6 +320,24 @@ public class IndicatorOverviewType   {
     this.creationType = creationType;
   }
 
+  public IndicatorOverviewType defaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+    this.defaultClassificationMapping = defaultClassificationMapping;
+    return this;
+  }
+
+   /**
+   * Get defaultClassificationMapping
+   * @return defaultClassificationMapping
+  **/
+  @ApiModelProperty(value = "")
+  public DefaultClassificationMappingType getDefaultClassificationMapping() {
+    return defaultClassificationMapping;
+  }
+
+  public void setDefaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+    this.defaultClassificationMapping = defaultClassificationMapping;
+  }
+
   public IndicatorOverviewType ogcServices(List<OgcServicesType> ogcServices) {
     this.ogcServices = ogcServices;
     return this;
@@ -362,12 +383,13 @@ public class IndicatorOverviewType   {
         Objects.equals(this.referencedIndicators, indicatorOverviewType.referencedIndicators) &&
         Objects.equals(this.referencedGeoresources, indicatorOverviewType.referencedGeoresources) &&
         Objects.equals(this.creationType, indicatorOverviewType.creationType) &&
+        Objects.equals(this.defaultClassificationMapping, indicatorOverviewType.defaultClassificationMapping) &&
         Objects.equals(this.ogcServices, indicatorOverviewType.ogcServices);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(indicatorName, indicatorId, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles, referencedIndicators, referencedGeoresources, creationType, ogcServices);
+    return Objects.hash(indicatorName, indicatorId, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles, referencedIndicators, referencedGeoresources, creationType, defaultClassificationMapping, ogcServices);
   }
 
   @Override
@@ -387,6 +409,7 @@ public class IndicatorOverviewType   {
     sb.append("    referencedIndicators: ").append(toIndentedString(referencedIndicators)).append("\n");
     sb.append("    referencedGeoresources: ").append(toIndentedString(referencedGeoresources)).append("\n");
     sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
+    sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    ogcServices: ").append(toIndentedString(ogcServices)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPATCHInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-27T07:50:59.124+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T08:10:08.922+02:00")
 
 public class IndicatorPATCHInputType   {
   @JsonProperty("applicableTopics")
@@ -32,6 +32,9 @@ public class IndicatorPATCHInputType   {
   @JsonProperty("allowedRoles")
   
   private List<String> allowedRoles = new ArrayList<>();
+
+  @JsonProperty("defaultClassificationMapping")
+  private DefaultClassificationMappingType defaultClassificationMapping = null;
 
   @JsonProperty("refrencesToOtherIndicators")
   
@@ -141,6 +144,24 @@ public class IndicatorPATCHInputType   {
     this.allowedRoles = allowedRoles;
   }
 
+  public IndicatorPATCHInputType defaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+    this.defaultClassificationMapping = defaultClassificationMapping;
+    return this;
+  }
+
+   /**
+   * Get defaultClassificationMapping
+   * @return defaultClassificationMapping
+  **/
+  @ApiModelProperty(value = "")
+  public DefaultClassificationMappingType getDefaultClassificationMapping() {
+    return defaultClassificationMapping;
+  }
+
+  public void setDefaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+    this.defaultClassificationMapping = defaultClassificationMapping;
+  }
+
   public IndicatorPATCHInputType refrencesToOtherIndicators(List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators) {
     this.refrencesToOtherIndicators = refrencesToOtherIndicators;
     return this;
@@ -208,13 +229,14 @@ public class IndicatorPATCHInputType   {
         Objects.equals(this.processDescription, indicatorPATCHInputType.processDescription) &&
         Objects.equals(this.unit, indicatorPATCHInputType.unit) &&
         Objects.equals(this.allowedRoles, indicatorPATCHInputType.allowedRoles) &&
+        Objects.equals(this.defaultClassificationMapping, indicatorPATCHInputType.defaultClassificationMapping) &&
         Objects.equals(this.refrencesToOtherIndicators, indicatorPATCHInputType.refrencesToOtherIndicators) &&
         Objects.equals(this.refrencesToGeoresources, indicatorPATCHInputType.refrencesToGeoresources);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(applicableTopics, metadata, processDescription, unit, allowedRoles, refrencesToOtherIndicators, refrencesToGeoresources);
+    return Objects.hash(applicableTopics, metadata, processDescription, unit, allowedRoles, defaultClassificationMapping, refrencesToOtherIndicators, refrencesToGeoresources);
   }
 
   @Override
@@ -227,6 +249,7 @@ public class IndicatorPATCHInputType   {
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    refrencesToOtherIndicators: ").append(toIndentedString(refrencesToOtherIndicators)).append("\n");
     sb.append("    refrencesToGeoresources: ").append(toIndentedString(refrencesToGeoresources)).append("\n");
     sb.append("}");
