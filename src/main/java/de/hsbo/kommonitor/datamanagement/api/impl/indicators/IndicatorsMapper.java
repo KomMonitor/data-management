@@ -12,6 +12,8 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceM
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
@@ -79,6 +81,17 @@ public class IndicatorsMapper {
 		indicatorOverviewType.setCreationType(indicatorsMetadataEntity.getCreationType());
 		
 		indicatorOverviewType.setOgcServices(generateOgcServiceOverview(indicatorSpatialUnitEntities));
+		
+		Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems = indicatorsMetadataEntity.getDefaultClassificationMappingItems();
+//		List<DefaultClassificationMappingItemType> list = new ArrayList<>(defaultClassificationMappingItems);
+//		Collections.sort(list);
+		
+		DefaultClassificationMappingType defaultClassification = new DefaultClassificationMappingType();
+		for (DefaultClassificationMappingItemType classificationItem : defaultClassificationMappingItems) {
+			defaultClassification.addItemsItem(classificationItem);
+		}
+		
+		indicatorOverviewType.setDefaultClassificationMapping(defaultClassification);
 
 		return indicatorOverviewType;
 	}

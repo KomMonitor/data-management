@@ -99,6 +99,9 @@ public class IndicatorsManager {
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 		entity.setProcessDescription(metadata.getProcessDescription());
 		entity.setUnit(metadata.getUnit());
+		
+		if(metadata.getDefaultClassificationMapping() != null)
+			entity.setDefaultClassificationMappingItems(metadata.getDefaultClassificationMapping().getItems());
 	
 
 		/*
@@ -613,6 +616,8 @@ public class IndicatorsManager {
 		entity.setProcessDescription(indicatorData.getProcessDescription());
 		entity.setUnit(indicatorData.getUnit());
 		entity.setCreationType(indicatorData.getCreationType());
+		
+		entity.setDefaultClassificationMappingItems(indicatorData.getDefaultClassificationMapping().getItems());
 
 		/*
 		 * the remaining properties cannot be set initially!

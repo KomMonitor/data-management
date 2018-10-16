@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsHelper;
 import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 @Entity(name = "MetadataIndicators")
@@ -38,6 +42,26 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	inverseJoinColumns = @JoinColumn(name = "topic_id", referencedColumnName = "topicid"))
 	private Collection<TopicsEntity> indicatorTopics;
 	
+	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="associatedIndicatorMetadata")
+//	@JoinTable(name = "metadataIndicators_defaultClassificationMapping", 
+//	joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), 
+//	inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid"))
+	private Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems;
+	
+	public Collection<DefaultClassificationMappingItemType> getDefaultClassificationMappingItems() {
+		return defaultClassificationMappingItems;
+	}
+
+	public void setDefaultClassificationMappingItems(
+			Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems) {
+		
+//		List<DefaultClassificationMappingItemType> list = new ArrayList<>(defaultClassificationMappingItems);
+//		
+//		Collections.sort(list);
+		
+		this.defaultClassificationMappingItems = defaultClassificationMappingItems;
+	}
+
 	public String getProcessDescription() {
 		return processDescription;
 	}
