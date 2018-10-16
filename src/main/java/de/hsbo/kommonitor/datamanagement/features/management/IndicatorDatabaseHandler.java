@@ -52,7 +52,7 @@ public class IndicatorDatabaseHandler {
 
 	
 	private static final String TEMP_SUFFIX = "_TEMP";
-	private static final String DATE_PREFIX = "DATE_";
+	public static final String DATE_PREFIX = "DATE_";
 	private static Logger logger = LoggerFactory.getLogger(IndicatorDatabaseHandler.class);
 	private static boolean ADDITIONAL_PROPERTIES_WERE_SET = false;
 	
