@@ -31,6 +31,7 @@ import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHa
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
@@ -76,6 +77,15 @@ public class IndicatorsManager {
 			indicatorsMetadataRepo.saveAndFlush(metadataEntity);
 			ReferenceManager.updateReferences(metadata.getRefrencesToGeoresources(), metadata.getRefrencesToOtherIndicators(),metadataEntity.getDatasetId());
 			
+			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo.findByIndicatorMetadataId(indicatorId);
+			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
+				
+				String datasetTitle = createTitleForWebService(indicatorSpatialUnitJoinEntity.getSpatialUnitName(), indicatorSpatialUnitJoinEntity.getIndicatorName());
+				
+				publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(), datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
+				
+			}
+			
 			return indicatorId;
 		} else {
 			logger.error(
@@ -120,7 +130,7 @@ public class IndicatorsManager {
 			String spatialUnitName = indicatorData.getApplicableSpatialUnit();
 			
 			MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
-			String datasetTile = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
+			String datasetTitle = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
 			
 			checkInputData(indicatorData);
 			
@@ -135,8 +145,8 @@ public class IndicatorsManager {
 			
 //				indicatorValueTableName = createOrReplaceIndicatorFeatureTable(indicatorValueTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
 				
-				// handle OGC web service
-				ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTile, ResourceTypeEnum.INDICATOR);
+				publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorValueTableName);
+				ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTitle, ResourceTypeEnum.INDICATOR);
 				
 				/*
 				 * set wms and wfs urls within metadata
@@ -156,7 +166,8 @@ public class IndicatorsManager {
 					deleteIndicatorTempTable(tempIndicatorTable);
 					
 					// handle OGC web service
-					publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTile, ResourceTypeEnum.INDICATOR);
+					publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorValueTableName);
+					publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTitle, ResourceTypeEnum.INDICATOR);
 					
 					persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName);
 				} catch (Exception e) {
@@ -206,6 +217,21 @@ public class IndicatorsManager {
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to update indicator features, but no dataset existes with datasetId " + indicatorId);
 		}
+	}
+
+	private void publishDefaultStyleForWebServices(DefaultClassificationMappingType defaultClassificationMappingType, String datasetTitle,
+			String indicatorValueTableName) throws IOException, SQLException {
+		// sorted list of ascending dates
+		List<String> availableDates = IndicatorDatabaseHandler.getAvailableDates(indicatorValueTableName);
+		//pick the most current date and use its property for default style
+		String mostCurrentDate = availableDates.get(availableDates.size()-1);
+		mostCurrentDate = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
+		
+		
+		List<Float> indicatorValues = IndicatorDatabaseHandler.getAllIndicatorValues(indicatorValueTableName, mostCurrentDate);
+		
+		// handle OGC web service
+		ogcServiceManager.createAndPublishStyle(datasetTitle, indicatorValues, defaultClassificationMappingType, mostCurrentDate);
 	}
 
 	private void checkInputData(IndicatorPUTInputType indicatorData) throws Exception {
@@ -441,6 +467,7 @@ public class IndicatorsManager {
 				deleteIndicatorTempTable(indicatorTempTableName);
 				
 				// handle OGC web service
+				publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), createTitleForWebService(spatialUnitName, indicatorName), indicatorValueTableName);
 				publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, createTitleForWebService(spatialUnitName, indicatorName), ResourceTypeEnum.INDICATOR);
 				
 				persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName);

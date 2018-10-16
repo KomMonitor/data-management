@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -657,6 +658,35 @@ public class IndicatorDatabaseHandler {
 //				indicatorTableName, viewTableName);
 		
 		return viewTableName;
+	}
+
+	public static List<Float> getAllIndicatorValues(String indicatorValueTableName, String datePropertyName) throws SQLException, IOException {
+		
+		List<Float> indicatorValues = new ArrayList<Float>();
+		
+		Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+
+		Statement statement = jdbcConnection.createStatement();
+		
+		if(!datePropertyName.startsWith(DATE_PREFIX)){
+			datePropertyName = DATE_PREFIX + datePropertyName;
+		}
+		
+		String createTableCommand = "SELECT \"" + datePropertyName + "\" FROM \"" + indicatorValueTableName + "\";";
+		
+		logger.info("Created the following SQL command to create or update indicator table: '{}'", createTableCommand);
+		
+		ResultSet result = statement.executeQuery(createTableCommand);
+		
+		while(result.next()){
+			indicatorValues.add(result.getFloat(datePropertyName));
+		}
+		
+		result.close();
+		statement.close();
+		jdbcConnection.close();
+
+		return indicatorValues;
 	}
 
 }

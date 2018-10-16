@@ -2,6 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.webservice.management;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
 import it.geosolutions.geoserver.rest.GeoServerRESTManager;
 import it.geosolutions.geoserver.rest.GeoServerRESTPublisher;
 import it.geosolutions.geoserver.rest.GeoServerRESTReader;
@@ -260,5 +262,12 @@ public class GeoserverManager implements OGCWebServiceManager {
 		
 		if(!created)
 			throw new Exception("Error while creating data store. Processing failed.");
+	}
+
+	@Override
+	public void createAndPublishStyle(String datasetTitle, List<Float> indicatorValues,
+			DefaultClassificationMappingType defaultClassificationMappingType, String mostCurrentDate) {
+		// TODO Auto-generated method stub
+		
 	}
 }
