@@ -2,8 +2,17 @@ package de.hsbo.kommonitor.datamanagement.model.indicators;
 
 import java.util.Objects;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -12,7 +21,14 @@ import io.swagger.annotations.ApiModelProperty;
 
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T10:32:04.949+02:00")
 
+@Entity(name = "DefaultClassificationMappingItems")
 public class DefaultClassificationMappingItemType   {
+	
+	 @Id
+	  @GeneratedValue(generator = "UUID")
+	  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+	  private String mappingId = null;
+	
   @JsonProperty("defaultColorAsHex")
   private String defaultColorAsHex = null;
 
@@ -23,6 +39,9 @@ public class DefaultClassificationMappingItemType   {
     this.defaultColorAsHex = defaultColorAsHex;
     return this;
   }
+  
+  @ManyToOne(fetch=FetchType.LAZY) 
+  private MetadataIndicatorsEntity associatedIndicatorMetadata;
 
    /**
    * the default color for the specified value interval as hex string inclusive leading #, i.e. '#ffffff'
