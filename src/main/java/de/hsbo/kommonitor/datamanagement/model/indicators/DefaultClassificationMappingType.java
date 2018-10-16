@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
  * DefaultClassificationMappingType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T08:10:08.922+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T10:32:04.949+02:00")
 
 public class DefaultClassificationMappingType   {
   @JsonProperty("items")
@@ -30,10 +30,10 @@ public class DefaultClassificationMappingType   {
   }
 
    /**
-   * array of classification mapping items. In combination they represent the default classification and mapping to custom rating of the indicator values
+   * array of classification mapping items. The order of the items corresponds to indicator value intervals from low to high. The number of items represents the number of classes. In combination they represent the default classification and mapping to custom rating of the indicator values
    * @return items
   **/
-  @ApiModelProperty(required = true, value = "array of classification mapping items. In combination they represent the default classification and mapping to custom rating of the indicator values")
+  @ApiModelProperty(required = true, value = "array of classification mapping items. The order of the items corresponds to indicator value intervals from low to high. The number of items represents the number of classes. In combination they represent the default classification and mapping to custom rating of the indicator values")
   public List<DefaultClassificationMappingItemType> getItems() {
     return items;
   }

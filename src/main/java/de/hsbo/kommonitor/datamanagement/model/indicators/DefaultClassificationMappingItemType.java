@@ -10,56 +10,14 @@ import io.swagger.annotations.ApiModelProperty;
  * DefaultClassificationMappingItemType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T08:10:08.922+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T10:32:04.949+02:00")
 
 public class DefaultClassificationMappingItemType   {
-  @JsonProperty("lowerInclusiveValue")
-  private Float lowerInclusiveValue = null;
-
-  @JsonProperty("upperExclusiveValue")
-  private Float upperExclusiveValue = null;
-
   @JsonProperty("defaultColorAsHex")
   private String defaultColorAsHex = null;
 
   @JsonProperty("defaultCustomRating")
   private String defaultCustomRating = null;
-
-  public DefaultClassificationMappingItemType lowerInclusiveValue(Float lowerInclusiveValue) {
-    this.lowerInclusiveValue = lowerInclusiveValue;
-    return this;
-  }
-
-   /**
-   * lower value of the value interval. This value ist inclusive, hence the specified value will be part of the interval
-   * @return lowerInclusiveValue
-  **/
-  @ApiModelProperty(required = true, value = "lower value of the value interval. This value ist inclusive, hence the specified value will be part of the interval")
-  public Float getLowerInclusiveValue() {
-    return lowerInclusiveValue;
-  }
-
-  public void setLowerInclusiveValue(Float lowerInclusiveValue) {
-    this.lowerInclusiveValue = lowerInclusiveValue;
-  }
-
-  public DefaultClassificationMappingItemType upperExclusiveValue(Float upperExclusiveValue) {
-    this.upperExclusiveValue = upperExclusiveValue;
-    return this;
-  }
-
-   /**
-   * upper value of the value interval. This value ist exclusive, hence the specified value will not be part of the interval
-   * @return upperExclusiveValue
-  **/
-  @ApiModelProperty(required = true, value = "upper value of the value interval. This value ist exclusive, hence the specified value will not be part of the interval")
-  public Float getUpperExclusiveValue() {
-    return upperExclusiveValue;
-  }
-
-  public void setUpperExclusiveValue(Float upperExclusiveValue) {
-    this.upperExclusiveValue = upperExclusiveValue;
-  }
 
   public DefaultClassificationMappingItemType defaultColorAsHex(String defaultColorAsHex) {
     this.defaultColorAsHex = defaultColorAsHex;
@@ -107,15 +65,13 @@ public class DefaultClassificationMappingItemType   {
       return false;
     }
     DefaultClassificationMappingItemType defaultClassificationMappingItemType = (DefaultClassificationMappingItemType) o;
-    return Objects.equals(this.lowerInclusiveValue, defaultClassificationMappingItemType.lowerInclusiveValue) &&
-        Objects.equals(this.upperExclusiveValue, defaultClassificationMappingItemType.upperExclusiveValue) &&
-        Objects.equals(this.defaultColorAsHex, defaultClassificationMappingItemType.defaultColorAsHex) &&
+    return Objects.equals(this.defaultColorAsHex, defaultClassificationMappingItemType.defaultColorAsHex) &&
         Objects.equals(this.defaultCustomRating, defaultClassificationMappingItemType.defaultCustomRating);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(lowerInclusiveValue, upperExclusiveValue, defaultColorAsHex, defaultCustomRating);
+    return Objects.hash(defaultColorAsHex, defaultCustomRating);
   }
 
   @Override
@@ -123,8 +79,6 @@ public class DefaultClassificationMappingItemType   {
     StringBuilder sb = new StringBuilder();
     sb.append("class DefaultClassificationMappingItemType {\n");
     
-    sb.append("    lowerInclusiveValue: ").append(toIndentedString(lowerInclusiveValue)).append("\n");
-    sb.append("    upperExclusiveValue: ").append(toIndentedString(upperExclusiveValue)).append("\n");
     sb.append("    defaultColorAsHex: ").append(toIndentedString(defaultColorAsHex)).append("\n");
     sb.append("    defaultCustomRating: ").append(toIndentedString(defaultCustomRating)).append("\n");
     sb.append("}");
