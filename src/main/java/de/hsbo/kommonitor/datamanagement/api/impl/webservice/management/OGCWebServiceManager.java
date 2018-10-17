@@ -34,12 +34,13 @@ public interface OGCWebServiceManager {
 	 *            features
 	 * @param title
 	 *            the title of the layer that will be created
+	 * @param defaultStyleName the name of the published style that will be used as default style
 	 * @param resourceType
 	 *            the type of spatial features within the KomMonitor project
 	 * @return true, if the publishing was successful
 	 * @throws Exception
 	 */
-	public boolean publishDbLayerAsOgcService(String dbTableName, String title, ResourceTypeEnum resourceType)
+	public boolean publishDbLayerAsOgcService(String dbTableName, String title, String defaultStyleName, ResourceTypeEnum resourceType)
 			throws Exception;
 
 	/**

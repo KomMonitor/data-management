@@ -84,7 +84,8 @@ public class IndicatorsManager {
 				
 				String datasetTitle = createTitleForWebService(indicatorSpatialUnitJoinEntity.getSpatialUnitName(), indicatorSpatialUnitJoinEntity.getIndicatorName());
 				
-				publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(), datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
+				String styleName = publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(), datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
+				ogcServiceManager.publishDbLayerAsOgcService(indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 				
 			}
 			
@@ -147,8 +148,8 @@ public class IndicatorsManager {
 			
 //				indicatorValueTableName = createOrReplaceIndicatorFeatureTable(indicatorValueTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
 				
-				publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorValueTableName);
-				ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTitle, ResourceTypeEnum.INDICATOR);
+				String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorValueTableName);
+				ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 				
 				/*
 				 * set wms and wfs urls within metadata
@@ -168,8 +169,8 @@ public class IndicatorsManager {
 					deleteIndicatorTempTable(tempIndicatorTable);
 					
 					// handle OGC web service
-					publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorValueTableName);
-					publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTitle, ResourceTypeEnum.INDICATOR);
+					String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorValueTableName);
+					publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 					
 					persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName);
 				} catch (Exception e) {
@@ -221,7 +222,7 @@ public class IndicatorsManager {
 		}
 	}
 
-	private void publishDefaultStyleForWebServices(DefaultClassificationMappingType defaultClassificationMappingType, String datasetTitle,
+	private String publishDefaultStyleForWebServices(DefaultClassificationMappingType defaultClassificationMappingType, String datasetTitle,
 			String indicatorValueTableName) throws Exception {
 		// sorted list of ascending dates
 		List<String> availableDates = IndicatorDatabaseHandler.getAvailableDates(indicatorValueTableName);
@@ -241,9 +242,11 @@ public class IndicatorsManager {
 		String targetPropertyName = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
 		
 		// handle OGC web service
-		ogcServiceManager.createAndPublishStyle(datasetTitle, validFeatures, defaultClassificationMappingType, targetPropertyName);
+		String styleName = ogcServiceManager.createAndPublishStyle(datasetTitle, validFeatures, defaultClassificationMappingType, targetPropertyName);
 		
 		DatabaseHelperUtil.disposePostGisDataStore(dataStore);
+		
+		return styleName;
 	}
 
 	private void checkInputData(IndicatorPUTInputType indicatorData) throws Exception {
@@ -479,8 +482,8 @@ public class IndicatorsManager {
 				deleteIndicatorTempTable(indicatorTempTableName);
 				
 				// handle OGC web service
-				publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), createTitleForWebService(spatialUnitName, indicatorName), indicatorValueTableName);
-				publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, createTitleForWebService(spatialUnitName, indicatorName), ResourceTypeEnum.INDICATOR);
+				String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), createTitleForWebService(spatialUnitName, indicatorName), indicatorValueTableName);
+				publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, createTitleForWebService(spatialUnitName, indicatorName), styleName, ResourceTypeEnum.INDICATOR);
 				
 				persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName);
 				

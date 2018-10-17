@@ -83,8 +83,8 @@ public class GeoresourcesManager {
 			dbTableName = createFeatureTable(featureData.getGeoJsonString(), featureData.getPeriodOfValidity(),
 					metadataId);
 
-			// handle OGC web service
-			publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, ResourceTypeEnum.GEORESOURCE);
+			// handle OGC web service - null parameter is defaultStyle
+			publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.GEORESOURCE);
 
 			/*
 			 * set wms and wfs urls within metadata
@@ -349,8 +349,8 @@ public class GeoresourcesManager {
 
 			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 			
-			// handle OGC web service
-			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, ResourceTypeEnum.GEORESOURCE);
+			// handle OGC web service - null parameter is defaultStyle
+			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.GEORESOURCE);
 
 			/*
 			 * set wms and wfs urls within metadata
