@@ -42,10 +42,10 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	inverseJoinColumns = @JoinColumn(name = "topic_id", referencedColumnName = "topicid"))
 	private Collection<TopicsEntity> indicatorTopics;
 	
-	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="associatedIndicatorMetadata")
-//	@JoinTable(name = "metadataIndicators_defaultClassificationMapping", 
-//	joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), 
-//	inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid"))
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "metadataIndicators_defaultClassificationMapping", 
+	joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), 
+	inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid"))
 	private Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems;
 	
 	public Collection<DefaultClassificationMappingItemType> getDefaultClassificationMappingItems() {

@@ -40,7 +40,7 @@ public class DefaultClassificationMappingItemType   {
     return this;
   }
   
-  @ManyToOne(fetch=FetchType.LAZY) 
+  @ManyToOne() 
   private MetadataIndicatorsEntity associatedIndicatorMetadata;
 
    /**
