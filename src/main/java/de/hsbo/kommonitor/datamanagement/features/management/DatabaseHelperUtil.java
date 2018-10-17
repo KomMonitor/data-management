@@ -10,11 +10,8 @@ import java.util.Properties;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
-import org.geotools.data.postgis.PostgisNGDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
@@ -181,6 +178,11 @@ public class DatabaseHelperUtil {
 
 	public static MetadataGeoresourcesEntity getGeoresourceMetadataEntity(String requiredGeoresourceId) {
 		return georesourceRepo.findByDatasetId(requiredGeoresourceId);
+	}
+
+	public static void disposePostGisDataStore(DataStore dataStore) {
+		dataStore.dispose();
+		
 	}
 
 }
