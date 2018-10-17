@@ -87,6 +87,7 @@ public class IndicatorsManager {
 				String styleName = publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(), datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
 				ogcServiceManager.publishDbLayerAsOgcService(indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 				
+				persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorSpatialUnitJoinEntity.getIndicatorName(), indicatorSpatialUnitJoinEntity.getSpatialUnitName(), indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), styleName);
 			}
 			
 			return indicatorId;
@@ -154,7 +155,7 @@ public class IndicatorsManager {
 				/*
 				 * set wms and wfs urls within metadata
 				 */
-				persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName);
+				persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName, styleName);
 				
 			} else{
 				logger.info(
@@ -172,7 +173,7 @@ public class IndicatorsManager {
 					String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorValueTableName);
 					publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 					
-					persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName);
+					persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName, styleName);
 				} catch (Exception e) {
 					/*
 					 * remove partially created resources and thrwo error
@@ -485,7 +486,7 @@ public class IndicatorsManager {
 				String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), createTitleForWebService(spatialUnitName, indicatorName), indicatorValueTableName);
 				publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, createTitleForWebService(spatialUnitName, indicatorName), styleName, ResourceTypeEnum.INDICATOR);
 				
-				persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName);
+				persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName, styleName);
 				
 			} else{
 				logger.info("As creationType is set to '{}', Only the metadata entry was created. No featureTable and view have been created..", creationType.toString());
@@ -598,7 +599,7 @@ public class IndicatorsManager {
 	}
 
 	private void persistNamesOfIndicatorTablesAndServicesInJoinTable(String indicatorMetadataId, String indicatorName, String spatialUnitName, 
-			String indicatorValueTableName) {
+			String indicatorValueTableName, String styleName) {
 		logger.info(
 				"Create or modify entry in indicator spatial units join table for indicatorId '{}', and spatialUnitName '{}'. Set indicatorValueTable with name '{}'.",
 				indicatorMetadataId, spatialUnitName, indicatorValueTableName);
@@ -621,6 +622,7 @@ public class IndicatorsManager {
 		entity.setSpatialUnitName(spatialUnitName);
 		entity.setWmsUrl(ogcServiceManager.getWmsUrl(indicatorValueTableName));
 		entity.setWfsUrl(ogcServiceManager.getWfsUrl(indicatorValueTableName));
+		entity.setDefaultStyleName(styleName);
 		
 		indicatorsSpatialUnitsRepo.saveAndFlush(entity);
 

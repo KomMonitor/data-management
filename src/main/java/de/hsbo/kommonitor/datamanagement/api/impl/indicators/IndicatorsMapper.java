@@ -105,6 +105,7 @@ public class IndicatorsMapper {
 			ogcServicesInstance.setSpatialUnit(entity.getSpatialUnitName());
 			ogcServicesInstance.setWfsUrl(entity.getWfsUrl());
 			ogcServicesInstance.setWmsUrl(entity.getWmsUrl());
+			ogcServicesInstance.setDefaultStyleName(entity.getDefaultStyleName());
 			
 			ogcServices.add(ogcServicesInstance);
 		}

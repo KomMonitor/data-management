@@ -21,6 +21,7 @@ public class IndicatorSpatialUnitJoinEntity {
 	private String indicatorValueTableName = null;
 	private String wmsUrl = null;
 	private String wfsUrl = null;
+	private String defaultStyleName = null;
 
 	public IndicatorSpatialUnitJoinEntity() {
 	};
@@ -83,6 +84,14 @@ public class IndicatorSpatialUnitJoinEntity {
 
 	public void setWfsUrl(String wfsUrl) {
 		this.wfsUrl = wfsUrl;
+	}
+
+	public String getDefaultStyleName() {
+		return defaultStyleName;
+	}
+
+	public void setDefaultStyleName(String defaultStyleName) {
+		this.defaultStyleName = defaultStyleName;
 	}
 
 }

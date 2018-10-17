@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
  * OgcServicesType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-29T11:30:05.521+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-17T13:11:37.038+02:00")
 
 public class OgcServicesType   {
   @JsonProperty("spatialUnit")
@@ -22,6 +22,9 @@ public class OgcServicesType   {
   @JsonProperty("wfsUrl")
   private String wfsUrl = null;
 
+  @JsonProperty("defaultStyleName")
+  private String defaultStyleName = null;
+
   public OgcServicesType spatialUnit(String spatialUnit) {
     this.spatialUnit = spatialUnit;
     return this;
@@ -31,7 +34,7 @@ public class OgcServicesType   {
    * the name of the spatial unit
    * @return spatialUnit
   **/
-  @ApiModelProperty(value = "the name of the spatial unit")
+  @ApiModelProperty(required = true, value = "the name of the spatial unit")
   public String getSpatialUnit() {
     return spatialUnit;
   }
@@ -76,6 +79,24 @@ public class OgcServicesType   {
     this.wfsUrl = wfsUrl;
   }
 
+  public OgcServicesType defaultStyleName(String defaultStyleName) {
+    this.defaultStyleName = defaultStyleName;
+    return this;
+  }
+
+   /**
+   * the name of the default style (SLD) that is published and applied to the associated dataset
+   * @return defaultStyleName
+  **/
+  @ApiModelProperty(required = true, value = "the name of the default style (SLD) that is published and applied to the associated dataset")
+  public String getDefaultStyleName() {
+    return defaultStyleName;
+  }
+
+  public void setDefaultStyleName(String defaultStyleName) {
+    this.defaultStyleName = defaultStyleName;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -88,12 +109,13 @@ public class OgcServicesType   {
     OgcServicesType ogcServicesType = (OgcServicesType) o;
     return Objects.equals(this.spatialUnit, ogcServicesType.spatialUnit) &&
         Objects.equals(this.wmsUrl, ogcServicesType.wmsUrl) &&
-        Objects.equals(this.wfsUrl, ogcServicesType.wfsUrl);
+        Objects.equals(this.wfsUrl, ogcServicesType.wfsUrl) &&
+        Objects.equals(this.defaultStyleName, ogcServicesType.defaultStyleName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(spatialUnit, wmsUrl, wfsUrl);
+    return Objects.hash(spatialUnit, wmsUrl, wfsUrl, defaultStyleName);
   }
 
   @Override
@@ -104,6 +126,7 @@ public class OgcServicesType   {
     sb.append("    spatialUnit: ").append(toIndentedString(spatialUnit)).append("\n");
     sb.append("    wmsUrl: ").append(toIndentedString(wmsUrl)).append("\n");
     sb.append("    wfsUrl: ").append(toIndentedString(wfsUrl)).append("\n");
+    sb.append("    defaultStyleName: ").append(toIndentedString(defaultStyleName)).append("\n");
     sb.append("}");
     return sb.toString();
   }
