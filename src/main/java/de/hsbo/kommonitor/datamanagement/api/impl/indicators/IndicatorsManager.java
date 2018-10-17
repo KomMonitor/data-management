@@ -170,10 +170,15 @@ public class IndicatorsManager {
 			
 //				indicatorValueTableName = createOrReplaceIndicatorFeatureTable(indicatorValueTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
 				
-				String styleName = indicatorSpatialsUnitsEntity.getDefaultStyleName();
+				// handle OGC web service
+				String styleName;
 				
 				if(indicatorData.getDefaultClassificationMapping() != null && indicatorData.getDefaultClassificationMapping().getItems() != null && indicatorData.getDefaultClassificationMapping().getItems().size() > 0){
 					styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorValueTableName);
+				}
+				else{
+					DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+					styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorValueTableName);
 				}
 				
 				ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
