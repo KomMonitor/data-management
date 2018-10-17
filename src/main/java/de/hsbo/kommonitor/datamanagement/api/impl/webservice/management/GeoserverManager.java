@@ -1,15 +1,37 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.webservice.management;
 
+import java.awt.Color;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import javax.xml.transform.TransformerException;
+
+import org.geotools.brewer.color.StyleGenerator;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.factory.FactoryRegistryException;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.filter.IllegalFilterException;
+import org.geotools.filter.function.Classifier;
+import org.geotools.styling.FeatureTypeConstraint;
+import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.SLDTransformer;
+import org.geotools.styling.Style;
+import org.geotools.styling.StyleFactory;
+import org.geotools.styling.StyledLayerDescriptor;
+import org.geotools.styling.UserLayer;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.expression.Function;
+import org.opengis.filter.expression.PropertyName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
 import it.geosolutions.geoserver.rest.GeoServerRESTManager;
 import it.geosolutions.geoserver.rest.GeoServerRESTPublisher;
@@ -29,6 +51,8 @@ import it.geosolutions.geoserver.rest.manager.GeoServerRESTStoreManager;
  */
 @Component
 public class GeoserverManager implements OGCWebServiceManager {
+
+	public static final String STYLE_PREFIX = "STYLE_";
 
 	private static Logger logger = LoggerFactory.getLogger(GeoserverManager.class);
 
@@ -265,9 +289,163 @@ public class GeoserverManager implements OGCWebServiceManager {
 	}
 
 	@Override
-	public void createAndPublishStyle(String datasetTitle, List<Float> indicatorValues,
-			DefaultClassificationMappingType defaultClassificationMappingType, String mostCurrentDate) {
-		// TODO Auto-generated method stub
+	public String createAndPublishStyle(String datasetTitle, FeatureCollection features,
+			DefaultClassificationMappingType defaultClassificationMappingType, String targetPropertyName) throws TransformerException, FactoryRegistryException, IllegalFilterException, MalformedURLException {
 		
+		
+		if(! targetPropertyName.startsWith(IndicatorDatabaseHandler.DATE_PREFIX))
+			targetPropertyName = IndicatorDatabaseHandler.DATE_PREFIX + targetPropertyName;
+		
+		String styleName = STYLE_PREFIX + datasetTitle;
+		
+		// execute classifiation using colorBrewer to classify the indicator values
+		
+		List<DefaultClassificationMappingItemType> classificationItems = defaultClassificationMappingType.getItems();
+		int numberOfClasses = classificationItems.size();
+		
+		// STEP 0 Set up Color Brewer
+//        ColorBrewer brewer = ColorBrewer.instance();
+
+        // STEP 1 - call a classifier function to summarise your content
+        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+        PropertyName propertyExpression = ff.property(targetPropertyName);
+
+        // classify into five categories using natural breaks (jenks)
+        Function classify = ff.function("Jenks", propertyExpression, ff.literal(numberOfClasses));
+        Classifier groups = (Classifier) classify.evaluate(features);
+
+        // STEP 2 - look up a predefined palette from color brewer
+//        String paletteName = "GrBu";
+//        Color[] colors = brewer.getPalette(paletteName).getColors(5);
+        Color[] colors = getColorsFromClassification(classificationItems);
+        
+        // STEP 3 - ask StyleGenerator to make a set of rules for the Classifier
+        // assigning features the correct color based on height
+        FeatureTypeStyle style =
+                StyleGenerator.createFeatureTypeStyle(
+                        groups,
+                        propertyExpression,
+                        colors,
+                        "Generated FeatureTypeStyle",
+                        features.getSchema().getGeometryDescriptor(),
+                        StyleGenerator.ELSEMODE_IGNORE,
+                        0.95,
+                        null);
+        
+        
+		
+		// create SLD from classes and colors for target date property
+		String sld = generateSLD(datasetTitle, targetPropertyName, style);
+		
+		// publish style
+
+		GeoServerRESTManager geoserverManager = initializeGeoserverRestManager();
+
+		GeoServerRESTReader reader = geoserverManager.getReader();
+		GeoServerRESTPublisher publisher = geoserverManager.getPublisher();
+		GeoServerRESTStoreManager storeManager = geoserverManager.getStoreManager();
+
+		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+
+		publishOrModifySldOnGeoserver(reader, publisher, targetWorkspace, styleName, sld);
+		
+		// return styleName
+		
+		return styleName;
+	}
+	
+	private String generateSLD(String datasetTitle, String mostCurrentDate, FeatureTypeStyle featureTypeStyle) throws TransformerException {
+		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+
+        StyledLayerDescriptor sld = styleFactory.createStyledLayerDescriptor();
+        sld.setName(datasetTitle + "_" + mostCurrentDate);
+        sld.setTitle(datasetTitle + "_" + mostCurrentDate);
+        sld.setAbstract(datasetTitle + "_" + mostCurrentDate);
+
+        UserLayer layer = styleFactory.createUserLayer();
+        layer.setName(datasetTitle + "_" + mostCurrentDate);
+
+//        FeatureTypeConstraint constraint =
+//                styleFactory.createFeatureTypeConstraint("Feature", Filter.INCLUDE, null);
+//
+//        layer.layerFeatureConstraints().add(constraint);
+
+        Style style = styleFactory.createStyle();
+        style.setName(datasetTitle + "_" + mostCurrentDate);
+        style.getDescription().setTitle(datasetTitle + "_" + mostCurrentDate);
+        style.getDescription().setAbstract(datasetTitle + "_" + mostCurrentDate);
+        
+        style.featureTypeStyles().add(featureTypeStyle);
+
+        // define feature type styles used to actually
+        // define how features are rendered
+        //
+        layer.userStyles().add(style);
+
+        sld.layers().add(layer);
+        
+        SLDTransformer styleTransform = new SLDTransformer();
+        String xml = styleTransform.transform(sld);
+        
+        logger.info("Generated the following SLD document: {}", xml);
+        
+        return xml;
+	}
+
+	private Color[] getColorsFromClassification(List<DefaultClassificationMappingItemType> classificationItems) {
+		Color[] colors = new Color[classificationItems.size()];
+		
+		for (int i=0; i<classificationItems.size(); i++) {
+			colors[i] = Color.decode(classificationItems.get(i).getDefaultColorAsHex());
+		}
+		return colors;
+	}
+
+//	private String createSldBody(String datasetTitle, List<Float> indicatorValues,
+//			DefaultClassificationMappingType defaultClassificationMappingType, String mostCurrentDate) {
+//		
+//		StringBuilder builder = new StringBuilder();
+//		
+//		builder.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
+//				builder.append("<StyledLayerDescriptor version=\"1.0.0\" xsi:schemaLocation=\"http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd\" xmlns=\"http://www.opengis.net/sld\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
+//
+//				builder.append("<NamedLayer>");
+//				builder.append("<Name>" + datasetTitle + "_" + mostCurrentDate + "</Name>");
+//				builder.append("<UserStyle>");
+//				builder.append("<Title>" + datasetTitle + "_" + mostCurrentDate + "</Title>");
+//				builder.append("<FeatureTypeStyle>");
+//				   
+//				/*
+//				 * now create a SLD Rule for each class intervall with the corresponding color
+//				 */
+//				
+//				
+//				
+//				builder.append("</FeatureTypeStyle>");
+//				builder.append("</UserStyle>");
+//				builder.append("</NamedLayer>");
+//				builder.append("</StyledLayerDescriptor>");
+//				
+//			      
+//			      
+//			    
+//			  
+//		
+//		String sldBody = builder.toString();
+//		
+//		
+//		
+//		return sldBody;
+//	}
+
+	private static void publishOrModifySldOnGeoserver(GeoServerRESTReader reader, GeoServerRESTPublisher publisher,
+			String targetWorkspace, String styleName, String sld) {
+		if (reader.existsStyle(targetWorkspace, styleName)) {
+			logger.info("Updating existing style " + styleName);
+			publisher.updateStyleInWorkspace(targetWorkspace, sld, styleName);
+		} else {
+			logger.info("Publishing new style " + styleName);
+			publisher.publishStyleInWorkspace(targetWorkspace, sld, styleName);
+		}
 	}
 }

@@ -1,7 +1,13 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.webservice.management;
 
+import java.net.MalformedURLException;
 import java.util.List;
 
+import javax.xml.transform.TransformerException;
+
+import org.geotools.factory.FactoryRegistryException;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.filter.IllegalFilterException;
 import org.springframework.stereotype.Component;
 
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
@@ -86,17 +92,22 @@ public interface OGCWebServiceManager {
 	 * 
 	 * @param datasetTitle
 	 *            the title of the associated layer
-	 * @param indicatorValues
-	 *            the numeric values for the specified year, which will be used
+	 * @param validFeatures
+	 *            the features containing the numeric values for the specified year, which will be used
 	 *            to compute the natural breaks classification
 	 * @param defaultClassificationMappingType
 	 *            parameters for classification process, i.e. number of classes
 	 *            and colors
-	 * @param mostCurrentDate
+	 * @param targetPropertyName
 	 *            the target property, which shall be used to apply the style.
 	 *            it corresponds to the most current indicator date
+	 * @return the name of the created and published style
+	 * @throws TransformerException 
+	 * @throws MalformedURLException 
+	 * @throws IllegalFilterException 
+	 * @throws FactoryRegistryException 
 	 */
-	public void createAndPublishStyle(String datasetTitle, List<Float> indicatorValues,
-			DefaultClassificationMappingType defaultClassificationMappingType, String mostCurrentDate);
+	public String createAndPublishStyle(String datasetTitle, FeatureCollection validFeatures,
+			DefaultClassificationMappingType defaultClassificationMappingType, String targetPropertyName) throws TransformerException, FactoryRegistryException, IllegalFilterException, MalformedURLException;
 
 }

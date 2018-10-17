@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.geotools.data.DataStore;
+import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,18 +222,28 @@ public class IndicatorsManager {
 	}
 
 	private void publishDefaultStyleForWebServices(DefaultClassificationMappingType defaultClassificationMappingType, String datasetTitle,
-			String indicatorValueTableName) throws IOException, SQLException {
+			String indicatorValueTableName) throws Exception {
 		// sorted list of ascending dates
 		List<String> availableDates = IndicatorDatabaseHandler.getAvailableDates(indicatorValueTableName);
 		//pick the most current date and use its property for default style
 		String mostCurrentDate = availableDates.get(availableDates.size()-1);
-		mostCurrentDate = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
+//		mostCurrentDate = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
+//		
+//		
+//		List<Float> indicatorValues = IndicatorDatabaseHandler.getAllIndicatorValues(indicatorValueTableName, mostCurrentDate);
+//		
+		// year-month-day
+		String[] dateComponents = mostCurrentDate.split("-");
 		
+		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+		FeatureCollection validFeatures = IndicatorDatabaseHandler.getValidFeaturesAsFeatureCollection(dataStore, indicatorValueTableName,new BigDecimal(dateComponents[0]), new BigDecimal(dateComponents[1]), new BigDecimal(dateComponents[2]));
 		
-		List<Float> indicatorValues = IndicatorDatabaseHandler.getAllIndicatorValues(indicatorValueTableName, mostCurrentDate);
+		String targetPropertyName = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
 		
 		// handle OGC web service
-		ogcServiceManager.createAndPublishStyle(datasetTitle, indicatorValues, defaultClassificationMappingType, mostCurrentDate);
+		ogcServiceManager.createAndPublishStyle(datasetTitle, validFeatures, defaultClassificationMappingType, targetPropertyName);
+		
+		DatabaseHelperUtil.disposePostGisDataStore(dataStore);
 	}
 
 	private void checkInputData(IndicatorPUTInputType indicatorData) throws Exception {
@@ -516,7 +528,6 @@ public class IndicatorsManager {
 			}
 			throw e;
 		}
-		
 		
 		return metadataId;
 	}
