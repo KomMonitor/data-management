@@ -79,17 +79,19 @@ public class IndicatorsManager {
 			indicatorsMetadataRepo.saveAndFlush(metadataEntity);
 			ReferenceManager.updateReferences(metadata.getRefrencesToGeoresources(), metadata.getRefrencesToOtherIndicators(),metadataEntity.getDatasetId());
 			
-			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo.findByIndicatorMetadataId(indicatorId);
-			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
-				
-				String datasetTitle = createTitleForWebService(indicatorSpatialUnitJoinEntity.getSpatialUnitName(), indicatorSpatialUnitJoinEntity.getIndicatorName());
-				
-				String styleName = publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(), datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
-				ogcServiceManager.publishDbLayerAsOgcService(indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
-				
-				persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorSpatialUnitJoinEntity.getIndicatorName(), indicatorSpatialUnitJoinEntity.getSpatialUnitName(), indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), styleName);
+			if(metadata.getDefaultClassificationMapping() != null && metadata.getDefaultClassificationMapping().getItems() != null && metadata.getDefaultClassificationMapping().getItems().size() > 0){
+				List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo.findByIndicatorMetadataId(indicatorId);
+				for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
+					
+					String datasetTitle = createTitleForWebService(indicatorSpatialUnitJoinEntity.getSpatialUnitName(), indicatorSpatialUnitJoinEntity.getIndicatorName());
+					
+					String styleName = publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(), datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
+					ogcServiceManager.publishDbLayerAsOgcService(indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
+					
+					persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorSpatialUnitJoinEntity.getIndicatorName(), indicatorSpatialUnitJoinEntity.getSpatialUnitName(), indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), styleName);
+				}
 			}
-			
+
 			return indicatorId;
 		} else {
 			logger.error(
@@ -149,7 +151,12 @@ public class IndicatorsManager {
 			
 //				indicatorValueTableName = createOrReplaceIndicatorFeatureTable(indicatorValueTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
 				
-				String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorValueTableName);
+				String styleName = indicatorSpatialsUnitsEntity.getDefaultStyleName();
+				
+				if(indicatorData.getDefaultClassificationMapping() != null && indicatorData.getDefaultClassificationMapping().getItems() != null && indicatorData.getDefaultClassificationMapping().getItems().size() > 0){
+					styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorValueTableName);
+				}
+				
 				ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 				
 				/*
@@ -170,7 +177,15 @@ public class IndicatorsManager {
 					deleteIndicatorTempTable(tempIndicatorTable);
 					
 					// handle OGC web service
-					String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorValueTableName);
+					String styleName;
+					
+					if(indicatorData.getDefaultClassificationMapping() != null && indicatorData.getDefaultClassificationMapping().getItems() != null && indicatorData.getDefaultClassificationMapping().getItems().size() > 0){
+						styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorValueTableName);
+					}
+					else{
+						DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+						styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorValueTableName);
+					}
 					publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 					
 					persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorValueTableName, styleName);

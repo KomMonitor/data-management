@@ -82,18 +82,25 @@ public class IndicatorsMapper {
 		
 		indicatorOverviewType.setOgcServices(generateOgcServiceOverview(indicatorSpatialUnitEntities));
 		
-		Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems = indicatorsMetadataEntity.getDefaultClassificationMappingItems();
-//		List<DefaultClassificationMappingItemType> list = new ArrayList<>(defaultClassificationMappingItems);
-//		Collections.sort(list);
-		
-		DefaultClassificationMappingType defaultClassification = new DefaultClassificationMappingType();
-		for (DefaultClassificationMappingItemType classificationItem : defaultClassificationMappingItems) {
-			defaultClassification.addItemsItem(classificationItem);
-		}
+		DefaultClassificationMappingType defaultClassification = extractDefaultClassificationMappingFromMetadata(
+				indicatorsMetadataEntity);
 		
 		indicatorOverviewType.setDefaultClassificationMapping(defaultClassification);
 
 		return indicatorOverviewType;
+	}
+
+	public static DefaultClassificationMappingType extractDefaultClassificationMappingFromMetadata(
+			MetadataIndicatorsEntity indicatorsMetadataEntity) {
+		DefaultClassificationMappingType defaultClassification = new DefaultClassificationMappingType();
+		
+		Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems = indicatorsMetadataEntity.getDefaultClassificationMappingItems();
+//		List<DefaultClassificationMappingItemType> list = new ArrayList<>(defaultClassificationMappingItems);
+//		Collections.sort(list);
+		for (DefaultClassificationMappingItemType classificationItem : defaultClassificationMappingItems) {
+			defaultClassification.addItemsItem(classificationItem);
+		}
+		return defaultClassification;
 	}
 
 	private static List<OgcServicesType> generateOgcServiceOverview(
