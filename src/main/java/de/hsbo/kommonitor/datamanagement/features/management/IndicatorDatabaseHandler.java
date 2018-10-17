@@ -689,4 +689,30 @@ public class IndicatorDatabaseHandler {
 		return indicatorValues;
 	}
 
+	public static FeatureCollection getValidFeaturesAsFeatureCollection(DataStore dataStore, String indicatorValueTableName,
+			BigDecimal year, BigDecimal month, BigDecimal day) throws IOException, CQLException {
+		logger.info("Fetch indicator features as FeatureCollection for table with name {} and timestamp '{}-{}-{}'", indicatorValueTableName, year, month, day);
+		/*
+		 * here all indicators for the requested spatial unit shall be retrieved. However, the timeseries shall be reduced
+		 * to only contain the requested timestamp
+		 */
+
+		SimpleFeatureSource featureSource = dataStore.getFeatureSource(indicatorValueTableName);
+
+		Calendar cal = Calendar.getInstance();
+		// -1 in month, as month is 0-based
+		cal.set(year.intValue(), month.intValue() - 1, day.intValue());
+		Date date = cal.getTime();
+//		String datePropertyString = createDateStringForDbProperty(date);
+//		/*
+//		 * TODO FIXME check if that query actually works
+//		 */
+//		Query query = new Query(featureViewName, null, new String[] { datePropertyString });
+//		FeatureCollection features = featureSource.getFeatures(query);
+		
+		 FeatureCollection features = fetchFeaturesForDate(featureSource, date);
+
+		return features;
+	}
+
 }
