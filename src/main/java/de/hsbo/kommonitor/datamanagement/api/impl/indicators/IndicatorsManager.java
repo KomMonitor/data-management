@@ -77,19 +77,38 @@ public class IndicatorsManager {
 			updateMetadata(metadata, metadataEntity);
 
 			indicatorsMetadataRepo.saveAndFlush(metadataEntity);
-			ReferenceManager.updateReferences(metadata.getRefrencesToGeoresources(), metadata.getRefrencesToOtherIndicators(),metadataEntity.getDatasetId());
-			
-			if(metadata.getDefaultClassificationMapping() != null && metadata.getDefaultClassificationMapping().getItems() != null && metadata.getDefaultClassificationMapping().getItems().size() > 0){
-				List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo.findByIndicatorMetadataId(indicatorId);
-				for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
-					
-					String datasetTitle = createTitleForWebService(indicatorSpatialUnitJoinEntity.getSpatialUnitName(), indicatorSpatialUnitJoinEntity.getIndicatorName());
-					
-					String styleName = publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(), datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
-					ogcServiceManager.publishDbLayerAsOgcService(indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
-					
-					persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorSpatialUnitJoinEntity.getIndicatorName(), indicatorSpatialUnitJoinEntity.getSpatialUnitName(), indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), styleName);
+			ReferenceManager.updateReferences(metadata.getRefrencesToGeoresources(),
+					metadata.getRefrencesToOtherIndicators(), metadataEntity.getDatasetId());
+
+			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo
+					.findByIndicatorMetadataId(indicatorId);
+
+			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
+
+				String datasetTitle = createTitleForWebService(indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
+						indicatorSpatialUnitJoinEntity.getIndicatorName());
+				
+				String styleName;
+				if (metadata.getDefaultClassificationMapping() != null
+						&& metadata.getDefaultClassificationMapping().getItems() != null
+						&& metadata.getDefaultClassificationMapping().getItems().size() > 0) {
+					styleName = publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(),
+							datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
+				} else {
+					DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper
+							.extractDefaultClassificationMappingFromMetadata(metadataEntity);
+					styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle,
+							indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
 				}
+
+				ogcServiceManager.publishDbLayerAsOgcService(
+						indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), datasetTitle, styleName,
+						ResourceTypeEnum.INDICATOR);
+
+				persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId,
+						indicatorSpatialUnitJoinEntity.getIndicatorName(),
+						indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
+						indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), styleName);
 			}
 
 			return indicatorId;
