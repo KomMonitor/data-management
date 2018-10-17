@@ -13,14 +13,12 @@ import org.geotools.factory.FactoryRegistryException;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.IllegalFilterException;
 import org.geotools.filter.function.Classifier;
-import org.geotools.styling.FeatureTypeConstraint;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.geotools.styling.StyledLayerDescriptor;
 import org.geotools.styling.UserLayer;
-import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.PropertyName;
@@ -298,7 +296,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 		if(! targetPropertyName.startsWith(IndicatorDatabaseHandler.DATE_PREFIX))
 			targetPropertyName = IndicatorDatabaseHandler.DATE_PREFIX + targetPropertyName;
 		
-		String styleName = STYLE_PREFIX + datasetTitle;
+		String styleName = STYLE_PREFIX + datasetTitle + "_" + targetPropertyName;
 		
 		// execute classifiation using colorBrewer to classify the indicator values
 		
