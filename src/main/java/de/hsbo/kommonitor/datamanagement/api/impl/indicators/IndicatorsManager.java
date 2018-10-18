@@ -135,8 +135,11 @@ public class IndicatorsManager {
 		entity.setProcessDescription(metadata.getProcessDescription());
 		entity.setUnit(metadata.getUnit());
 		
-		if(metadata.getDefaultClassificationMapping() != null)
+		if(metadata.getDefaultClassificationMapping() != null){
 			entity.setDefaultClassificationMappingItems(metadata.getDefaultClassificationMapping().getItems());
+			entity.setColorBrewerSchemeName(metadata.getDefaultClassificationMapping().getColorBrewerSchemeName());
+		}
+			
 	
 
 		/*
@@ -700,6 +703,8 @@ public class IndicatorsManager {
 		entity.setCreationType(indicatorData.getCreationType());
 		
 		entity.setDefaultClassificationMappingItems(indicatorData.getDefaultClassificationMapping().getItems());
+		entity.setColorBrewerSchemeName(indicatorData.getDefaultClassificationMapping().getColorBrewerSchemeName());
+		
 
 		/*
 		 * the remaining properties cannot be set initially!

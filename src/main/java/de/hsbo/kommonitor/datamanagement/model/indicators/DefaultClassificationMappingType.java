@@ -12,12 +12,33 @@ import io.swagger.annotations.ApiModelProperty;
  * DefaultClassificationMappingType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T10:32:04.949+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-18T09:58:38.339+02:00")
 
 public class DefaultClassificationMappingType   {
+  @JsonProperty("colorBrewerSchemeName")
+  private String colorBrewerSchemeName = null;
+
   @JsonProperty("items")
   
   private List<DefaultClassificationMappingItemType> items = new ArrayList<>();
+
+  public DefaultClassificationMappingType colorBrewerSchemeName(String colorBrewerSchemeName) {
+    this.colorBrewerSchemeName = colorBrewerSchemeName;
+    return this;
+  }
+
+   /**
+   * the name of the colorBrewer color scheme jused to define the colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.
+   * @return colorBrewerSchemeName
+  **/
+  @ApiModelProperty(required = true, value = "the name of the colorBrewer color scheme jused to define the colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.")
+  public String getColorBrewerSchemeName() {
+    return colorBrewerSchemeName;
+  }
+
+  public void setColorBrewerSchemeName(String colorBrewerSchemeName) {
+    this.colorBrewerSchemeName = colorBrewerSchemeName;
+  }
 
   public DefaultClassificationMappingType items(List<DefaultClassificationMappingItemType> items) {
     this.items = items;
@@ -52,12 +73,13 @@ public class DefaultClassificationMappingType   {
       return false;
     }
     DefaultClassificationMappingType defaultClassificationMappingType = (DefaultClassificationMappingType) o;
-    return Objects.equals(this.items, defaultClassificationMappingType.items);
+    return Objects.equals(this.colorBrewerSchemeName, defaultClassificationMappingType.colorBrewerSchemeName) &&
+        Objects.equals(this.items, defaultClassificationMappingType.items);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(items);
+    return Objects.hash(colorBrewerSchemeName, items);
   }
 
   @Override
@@ -65,6 +87,7 @@ public class DefaultClassificationMappingType   {
     StringBuilder sb = new StringBuilder();
     sb.append("class DefaultClassificationMappingType {\n");
     
+    sb.append("    colorBrewerSchemeName: ").append(toIndentedString(colorBrewerSchemeName)).append("\n");
     sb.append("    items: ").append(toIndentedString(items)).append("\n");
     sb.append("}");
     return sb.toString();

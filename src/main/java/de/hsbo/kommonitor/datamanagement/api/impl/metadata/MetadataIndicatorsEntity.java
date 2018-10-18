@@ -26,6 +26,8 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	private String unit = null;
 	private CreationTypeEnum creationType = null;
 	
+	private String colorBrewerSchemeName;
+	
 	/*
 	 * references to other indicators are mapped by hand
 	 * within the entity "IndicatorReferenceEntity"
@@ -113,6 +115,14 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 			return true;
 		// if code reaches this line, then the topic is not within the list
 		return false;
+	}
+
+	public String getColorBrewerSchemeName() {
+		return colorBrewerSchemeName;
+	}
+
+	public void setColorBrewerSchemeName(String colorBrewerSchemeName) {
+		this.colorBrewerSchemeName = colorBrewerSchemeName;
 	}
 
 

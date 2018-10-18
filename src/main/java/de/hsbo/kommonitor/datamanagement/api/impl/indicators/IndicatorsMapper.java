@@ -93,6 +93,7 @@ public class IndicatorsMapper {
 	public static DefaultClassificationMappingType extractDefaultClassificationMappingFromMetadata(
 			MetadataIndicatorsEntity indicatorsMetadataEntity) {
 		DefaultClassificationMappingType defaultClassification = new DefaultClassificationMappingType();
+		defaultClassification.setColorBrewerSchemeName(indicatorsMetadataEntity.getColorBrewerSchemeName());
 		
 		Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems = indicatorsMetadataEntity.getDefaultClassificationMappingItems();
 //		List<DefaultClassificationMappingItemType> list = new ArrayList<>(defaultClassificationMappingItems);
