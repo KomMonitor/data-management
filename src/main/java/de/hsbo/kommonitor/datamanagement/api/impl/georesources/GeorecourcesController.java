@@ -201,6 +201,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.add("content-disposition", "attachment; filename=" + fileName);
+			headers.add("Content-Type", "text/html; charset=utf-8");
 			byte[] JsonBytes = geoJsonFeatures.getBytes();
 
 			return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/vnd.geo+json"))
