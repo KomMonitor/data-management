@@ -48,6 +48,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
 
 public class IndicatorDatabaseHandler {
 
@@ -713,6 +714,51 @@ public class IndicatorDatabaseHandler {
 		 FeatureCollection features = fetchFeaturesForDate(featureSource, date);
 
 		return features;
+	}
+
+	public static List<IndicatorPropertiesWithoutGeomType> getIndicatorFeaturePropertiesWithoutGeometries(
+			String indicatorValueTableName) throws SQLException, IOException {
+		logger.info("Fetch indicator feature properties without geometry for table with name {}", indicatorValueTableName);
+
+		List<IndicatorPropertiesWithoutGeomType> indicatorFeaturePropertiesWithoutGeom = new ArrayList<IndicatorPropertiesWithoutGeomType>();
+		
+		Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+
+		Statement statement = jdbcConnection.createStatement();
+
+		
+		String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorValueTableName + "\";";
+		
+		logger.info("Created the following SQL command to create or update indicator table: '{}'", getFeaturePropertiesCommand);
+		
+		ResultSet result = statement.executeQuery(getFeaturePropertiesCommand);
+		
+		int columnCount = result.getMetaData().getColumnCount();
+		
+		while(result.next()){
+			
+			IndicatorPropertiesWithoutGeomType featureProps = new IndicatorPropertiesWithoutGeomType();
+			
+			//result set index start with 1!
+			for(int i=1; i<=columnCount; i++){
+
+				 if(result.getMetaData().getColumnName(i).equalsIgnoreCase(KomMonitorFeaturePropertyConstants.GEOMETRY_COLUMN_NAME)){
+					// ignore an do nothing
+				}
+				else{
+					featureProps.put(result.getMetaData().getColumnName(i), result.getString(i));
+				}
+				
+			}			
+			
+			indicatorFeaturePropertiesWithoutGeom.add(featureProps);
+		}
+		
+		result.close();
+		statement.close();
+		jdbcConnection.close();
+
+		return indicatorFeaturePropertiesWithoutGeom;
 	}
 
 }

@@ -41,6 +41,7 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
@@ -725,6 +726,36 @@ public class IndicatorsManager {
 			BigDecimal day) throws ResourceNotFoundException, IOException {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public List<IndicatorPropertiesWithoutGeomType> getIndicatorFeaturePropertiesWithoutGeometry(String indicatorId,
+			String spatialUnitId) throws SQLException, IOException, ResourceNotFoundException {
+		logger.info("Retrieving all indicator feature properties without geometries from dataset with id '{}'for spatialUnitId '{}' ", indicatorId, spatialUnitId);
+
+		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+			if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)){
+				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+				String indicatorValueTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
+
+				List<IndicatorPropertiesWithoutGeomType> indicatorFeaturePropertiesWithoutGeom = IndicatorDatabaseHandler.getIndicatorFeaturePropertiesWithoutGeometries(indicatorValueTableName);
+				return indicatorFeaturePropertiesWithoutGeom;
+
+			} else{
+				logger.error(
+						"No indicator dataset for the given indicatorId '{}' and spatialUnitId '{}' was found in database. Get request has no effect.",
+						indicatorId, spatialUnitId);
+				throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+						"Tried to get indicator features, but there is no table for the combination of indicatorId " 
+								+ indicatorId + " and spatialUnitId " + spatialUnitId);
+			}
+
+		} else {
+			logger.error(
+					"No indicator dataset with indicatorId '{}' was found in database. Get request has no effect.",
+					indicatorId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to get indicator features, but no dataset existes with datasetId " + indicatorId);
+		}
 	}
 
 

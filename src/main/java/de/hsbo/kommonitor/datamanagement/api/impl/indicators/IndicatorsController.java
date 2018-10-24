@@ -331,8 +331,18 @@ public class IndicatorsController extends BasePathController implements Indicato
 	@Override
 	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(
 			@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId) {
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Received request to get indicator feature properties for spatialUnitId '{}' and Id '{}' (without geometries)",
+				spatialUnitId, indicatorId);
+		String accept = request.getHeader("Accept");
+
+		try {
+			List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager.getIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId);
+
+			return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties, HttpStatus.OK);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
 	}
 
 }
