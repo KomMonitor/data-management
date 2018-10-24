@@ -758,5 +758,37 @@ public class IndicatorsManager {
 		}
 	}
 
+	public List<IndicatorPropertiesWithoutGeomType> getValidIndicatorFeaturePropertiesWithoutGeometry(
+			String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month, BigDecimal day) throws ResourceNotFoundException, IOException, SQLException {
+		logger.info("Retrieving valid indicator feature properties without geometries from dataset with id '{}'for spatialUnit '{}' for date '{}-{}-{}'", indicatorId, spatialUnitId,
+				year, month, day);
+
+		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+			if(indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)){
+				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+				String indicatorValueTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
+
+				List<IndicatorPropertiesWithoutGeomType> validIndicatorFeaturePropertiesWithoutGeom = 
+						IndicatorDatabaseHandler.getValidFeaturePropertiesWithoutGeometries(indicatorValueTableName, year, month, day);
+				return validIndicatorFeaturePropertiesWithoutGeom;
+
+			} else{
+				logger.error(
+						"No indicator dataset for the given indicatorId '{}' and spatialUnitId '{}' was found in database. Get request has no effect.",
+						indicatorId, spatialUnitId);
+				throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+						"Tried to get valid indicator features, but there is no table for the combination of indicatorId " 
+								+ indicatorId + " and spatialUnitId " + spatialUnitId);
+			}
+			
+		} else {
+			logger.error(
+					"No indicator dataset with datasetId '{}' was found in database. Get request has no effect.",
+					indicatorId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to get indicator features, but no dataset existes with datasetId " + indicatorId);
+		}
+	}
+
 
 }

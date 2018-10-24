@@ -321,8 +321,27 @@ public class IndicatorsController extends BasePathController implements Indicato
 			@PathVariable("indicatorId") String indicatorId,
 			@PathVariable("spatialUnitId") String spatialUnitId, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
 			@PathVariable("day") BigDecimal day) {
-		// TODO Auto-generated method stub
-		return null;
+		logger.info(
+				"Received request to get indicators feature properties without geometries for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
+				spatialUnitId, indicatorId, year, month, day);
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * retrieve the user for the specified id
+		 */
+
+		try {
+			String geoJsonFeatures = indicatorsManager.getValidIndicatorFeatures(indicatorId, spatialUnitId, year,
+					month, day);
+			List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = 
+					indicatorsManager.getValidIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, year,
+					month, day);
+
+			return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties, HttpStatus.OK);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
 	}
 
 

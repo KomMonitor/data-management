@@ -729,10 +729,57 @@ public class IndicatorDatabaseHandler {
 		
 		String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorValueTableName + "\";";
 		
-		logger.info("Created the following SQL command to create or update indicator table: '{}'", getFeaturePropertiesCommand);
+		logger.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
 		
 		ResultSet result = statement.executeQuery(getFeaturePropertiesCommand);
 		
+		addPropertiesWithoutGeometry(indicatorFeaturePropertiesWithoutGeom, result);
+		
+		result.close();
+		statement.close();
+		jdbcConnection.close();
+
+		return indicatorFeaturePropertiesWithoutGeom;
+	}
+
+	public static List<IndicatorPropertiesWithoutGeomType> getValidFeaturePropertiesWithoutGeometries(
+			String indicatorValueTableName, BigDecimal year, BigDecimal month, BigDecimal day) throws IOException, SQLException {
+		logger.info("Fetch indicator feature properties without geometry for table with name {}", indicatorValueTableName);
+
+		List<IndicatorPropertiesWithoutGeomType> indicatorFeaturePropertiesWithoutGeom = new ArrayList<IndicatorPropertiesWithoutGeomType>();
+		
+		Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+
+		Statement statement = jdbcConnection.createStatement();
+		
+		Calendar cal = Calendar.getInstance();
+		// -1 in month, as month is 0-based
+		cal.set(year.intValue(), month.intValue() - 1, day.intValue());
+		Date date = cal.getTime();
+		
+		String dateString = createDateStringForDbProperty(date);
+		dateString = dateString.split(DATE_PREFIX)[1];
+		
+		String whereClause = "WHERE \"" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + "\"::DATE <= '" + dateString + "'::DATE AND (\"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" is NULL OR \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\"::DATE >= '" + dateString + "'::DATE)";
+		
+		String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorValueTableName + "\" " + whereClause + ";";
+		
+		logger.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
+		
+		ResultSet result = statement.executeQuery(getFeaturePropertiesCommand);
+		
+		addPropertiesWithoutGeometry(indicatorFeaturePropertiesWithoutGeom, result);
+		
+		result.close();
+		statement.close();
+		jdbcConnection.close();
+
+		return indicatorFeaturePropertiesWithoutGeom;
+	}
+
+	private static void addPropertiesWithoutGeometry(
+			List<IndicatorPropertiesWithoutGeomType> indicatorFeaturePropertiesWithoutGeom, ResultSet result)
+			throws SQLException {
 		int columnCount = result.getMetaData().getColumnCount();
 		
 		while(result.next()){
@@ -758,12 +805,6 @@ public class IndicatorDatabaseHandler {
 			
 			indicatorFeaturePropertiesWithoutGeom.add(featureProps);
 		}
-		
-		result.close();
-		statement.close();
-		jdbcConnection.close();
-
-		return indicatorFeaturePropertiesWithoutGeom;
 	}
 
 }
