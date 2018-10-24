@@ -19,13 +19,14 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-31T10:37:09.246+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-24T11:17:31.441+02:00")
 
 @Api(value = "Indicators", description = "the Indicators API")
 public interface IndicatorsApi {
@@ -64,6 +65,19 @@ public interface IndicatorsApi {
     ResponseEntity deleteIndicatorByIdAndYearAndMonth(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "year for which the indicator shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which the indicator shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day);
 
 
+    @ApiOperation(value = "retrieve information about the selected indicator", nickname = "getIndicatorById", notes = "retrieve information about the selected indicator", response = IndicatorOverviewType.class, authorizations = {
+        @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "OK", response = IndicatorOverviewType.class),
+        @ApiResponse(code = 400, message = "Invalid status value"),
+        @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/indicators/{indicatorId}",
+        produces = { "application/json" }, 
+        method = RequestMethod.GET)
+    ResponseEntity<IndicatorOverviewType> getIndicatorById(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
+
+
     @ApiOperation(value = "retrieve the indicator for the selected spatial unit as GeoJSON", nickname = "getIndicatorBySpatialUnitIdAndId", notes = "retrieve the indicator for the selected spatial unit as GeoJSON", response = byte[].class, authorizations = {
         @Authorization(value = "basicAuth")
     }, tags={  })
@@ -90,6 +104,32 @@ public interface IndicatorsApi {
     ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndIdAndYearAndMonth(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "year for which the indicator shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which the indicator shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day);
 
 
+    @ApiOperation(value = "retrieve the indicator values and other properties for the selected spatial unit, year and month. It does not include the spatial geometries!", nickname = "getIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry", notes = "retrieve the indicator values and other properties for the selected spatial unit, year and month. It does not include the spatial geometries!", response = IndicatorPropertiesWithoutGeomType.class, responseContainer = "array", authorizations = {
+        @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "OK", response = IndicatorPropertiesWithoutGeomType.class, responseContainer = "array"),
+        @ApiResponse(code = 400, message = "Invalid status value"),
+        @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/indicators/{indicatorId}/{spatialUnitId}/{year}/{month}/{day}/without-geometry",
+        produces = { "application/json" }, 
+        method = RequestMethod.GET)
+    ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "year for which the indicator shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which the indicator shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day);
+
+
+    @ApiOperation(value = "retrieve the indicator values and other properties for the selected spatial unit. It does not include the spatial geometries!", nickname = "getIndicatorBySpatialUnitIdAndIdWithoutGeometry", notes = "retrieve the indicator values and other properties for the selected spatial unit. It does not include the spatial geometries!", response = IndicatorPropertiesWithoutGeomType.class, responseContainer = "array", authorizations = {
+        @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "OK", response = IndicatorPropertiesWithoutGeomType.class, responseContainer = "array"),
+        @ApiResponse(code = 400, message = "Invalid status value"),
+        @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/indicators/{indicatorId}/{spatialUnitId}/without-geometry",
+        produces = { "application/json" }, 
+        method = RequestMethod.GET)
+    ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId);
+
+
     @ApiOperation(value = "retrieve information about available indicators", nickname = "getIndicators", notes = "retrieve information about available indicators", response = IndicatorOverviewType.class, responseContainer = "array", authorizations = {
         @Authorization(value = "basicAuth")
     }, tags={  })
@@ -101,19 +141,6 @@ public interface IndicatorsApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<List<IndicatorOverviewType>> getIndicators(@ApiParam(value = "thematic topic to filter available indicators", allowableValues = "demography, environment, habitation, migration, social")  @RequestParam(value = "topic", required = false) String topic);
-
-
-    @ApiOperation(value = "retrieve information about the selected indicator", nickname = "getIndicatorsById", notes = "retrieve information about the selected indicator", response = IndicatorOverviewType.class, authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = IndicatorOverviewType.class),
-        @ApiResponse(code = 400, message = "Invalid status value"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/indicators/{indicatorId}",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<IndicatorOverviewType> getIndicatorById(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
 
 
     @ApiOperation(value = "Modify/Update the contents of the selected indicator dataset", nickname = "updateIndicatorAsBody", notes = "Modify/Update the contents of the selected indicator dataset", authorizations = {

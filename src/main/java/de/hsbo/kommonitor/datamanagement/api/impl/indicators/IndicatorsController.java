@@ -30,6 +30,7 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
 
 @Controller
 public class IndicatorsController extends BasePathController implements IndicatorsApi {
@@ -310,6 +311,28 @@ public class IndicatorsController extends BasePathController implements Indicato
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	
+	}
+
+
+
+
+	@Override
+	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
+			@PathVariable("indicatorId") String indicatorId,
+			@PathVariable("spatialUnitId") String spatialUnitId, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
+			@PathVariable("day") BigDecimal day) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+	@Override
+	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(
+			@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
