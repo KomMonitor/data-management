@@ -739,6 +739,11 @@ public class IndicatorDatabaseHandler {
 			
 			IndicatorPropertiesWithoutGeomType featureProps = new IndicatorPropertiesWithoutGeomType();
 			
+			featureProps.setSpatialUnitFeatureId(result.getString(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME));
+			featureProps.setSpatialUnitFeatureName(result.getString(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME));
+			featureProps.setValidStartDate(result.getString(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME));
+			featureProps.setValidEndDate(result.getString(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME));
+			
 			//result set index start with 1!
 			for(int i=1; i<=columnCount; i++){
 

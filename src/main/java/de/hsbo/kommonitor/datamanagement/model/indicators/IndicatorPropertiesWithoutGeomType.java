@@ -14,7 +14,18 @@ import io.swagger.annotations.ApiModelProperty;
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-24T11:17:31.441+02:00")
 
 public class IndicatorPropertiesWithoutGeomType extends HashMap<String, String>  {
-  @JsonProperty("spatialUnitFeatureId")
+  
+	/*
+	 * README
+	 * 
+	 * the properties of this type will be set directly. 
+	 * BUT, MORE IMPORTANTLY, the properties will also be set within the HashMap as Key-Value Pairs!!!
+	 * ONLY THE KEY-VALUE-PAIRS WITHIN HASHMAP WILL BE INCLUDED IN JSON RESPONSE!!
+	 * 
+	 * So do not try to moduiy their value by setting the property alone, instead modify HasMap Entry as well
+	 */
+	
+	@JsonProperty("spatialUnitFeatureId")
   private String spatialUnitFeatureId = null;
 
   @JsonProperty("spatialUnitFeatureName")
