@@ -131,7 +131,11 @@ public class IndicatorDatabaseHandler {
 				KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + "\", spatialunit.\"" + 
 				KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" from \"" + indicatorTempTableName
 				+ "\" indicator join \"" + spatialUnitsTable + "\" spatialunit on indicator.\"" 
-				+ indicatorColumnName + "\" = CAST(spatialunit.\"" + spatialUnitColumnName + "\" AS varchar); ALTER TABLE \"" + viewTableName + "\" ADD PRIMARY KEY (fid);";
+				+ indicatorColumnName + "\" = CAST(spatialunit.\"" + spatialUnitColumnName + "\" AS varchar); " + 
+				"create sequence IF NOT EXISTS seq_" + viewTableName + " increment by 1 minvalue 0 maxvalue 100000; ALTER TABLE \"" + viewTableName 
+				+ "\" ADD COLUMN unique_id int default nextval('seq_" + viewTableName + "');" + 
+				"UPDATE \"" + viewTableName + "\" SET unique_id=nextval('seq_" + viewTableName + "'); ALTER TABLE \"" + viewTableName 
+				+ "\" ADD PRIMARY KEY (unique_id);";
 		
 		logger.info("Created the following SQL command to create or update indicator table: '{}'", createTableCommand);
 		
