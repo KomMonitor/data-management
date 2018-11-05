@@ -5,6 +5,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -22,8 +23,8 @@ import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundExce
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
-import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
+import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
@@ -310,7 +311,48 @@ public class SpatialUnitsManager {
 		List<MetadataSpatialUnitsEntity> spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll();
 		List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitMeatadataEntities);
 
+		swaggerSpatialUnitsMetadata = sortSpatialUnitsHierarchically(swaggerSpatialUnitsMetadata);
+		
 		return swaggerSpatialUnitsMetadata;
+	}
+
+	private List<SpatialUnitOverviewType> sortSpatialUnitsHierarchically(
+			List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata) {
+		
+		
+		try {
+			List<SpatialUnitOverviewType> newOrder = new ArrayList<SpatialUnitOverviewType>();
+			for (SpatialUnitOverviewType spatialUnitOverviewType : swaggerSpatialUnitsMetadata) {
+				if (spatialUnitOverviewType.getNextUpperHierarchyLevel() == null){
+					newOrder.add(spatialUnitOverviewType);
+					swaggerSpatialUnitsMetadata.remove(spatialUnitOverviewType);
+					break;
+				}			
+			}
+			
+			while(swaggerSpatialUnitsMetadata.size() > 0){
+				/*
+				 * find next lower hierarchyElement
+				 */
+				SpatialUnitOverviewType lastIndexElement = newOrder.get(newOrder.size() - 1);
+				for (SpatialUnitOverviewType spatialUnitOverviewType : swaggerSpatialUnitsMetadata) {
+					// compare nextLowerHierarchyLevel of lastIndexElement to spatialUnitName of current element
+					if (lastIndexElement.getNextLowerHierarchyLevel().equalsIgnoreCase(spatialUnitOverviewType.getSpatialUnitLevel())){
+						newOrder.add(spatialUnitOverviewType);
+						swaggerSpatialUnitsMetadata.remove(spatialUnitOverviewType);
+						break;
+					}			
+				}
+			}
+			
+			return newOrder;
+		} catch (Exception e) {
+			// log error and return unsorted list
+			logger.error(e.getMessage());
+			logger.error(e.getStackTrace().toString());
+			return swaggerSpatialUnitsMetadata;
+		}
+		
 	}
 
 	public SpatialUnitOverviewType getSpatialUnitByDatasetId(String spatialUnitId)
