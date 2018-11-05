@@ -2,6 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.scripts;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundExce
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessInputType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPOSTInputType;
@@ -153,6 +155,8 @@ public class ScriptManager {
 		List<ScriptMetadataEntity> scriptEntities = scriptMetadataRepo.findAll();
 		List<ProcessScriptOverviewType> scriptsMetadata = ScriptMapper.mapToSwaggerScripts(scriptEntities);
 
+		scriptsMetadata.sort(Comparator.comparing(ProcessScriptOverviewType::getName));
+		
 		return scriptsMetadata;
 	}
 

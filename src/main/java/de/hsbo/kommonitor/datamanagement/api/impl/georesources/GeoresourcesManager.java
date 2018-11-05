@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -428,6 +429,8 @@ public class GeoresourcesManager {
 		}
 		List<GeoresourceOverviewType> swaggerGeoresourcesMetadata = GeoresourcesMapper
 				.mapToSwaggerGeoresources(georesourcesMeatadataEntities);
+		
+		swaggerGeoresourcesMetadata.sort(Comparator.comparing(GeoresourceOverviewType::getDatasetName));
 
 		return swaggerGeoresourcesMetadata;
 	}

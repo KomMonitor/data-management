@@ -1,9 +1,11 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata.references;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
 
@@ -43,6 +45,8 @@ public class IndicatorReferenceMapper {
 		for (IndicatorReferenceEntity indicatorReferenceEntity : entities) {
 			references.add(mapToSwaggerModel(indicatorReferenceEntity));
 		}
+		
+		references.sort(Comparator.comparing(IndicatorReferenceType::getReferencedIndicatorName));
 
 		return references;
 	}

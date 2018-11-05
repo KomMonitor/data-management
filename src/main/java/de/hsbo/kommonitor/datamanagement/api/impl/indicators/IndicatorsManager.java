@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -32,6 +33,7 @@ import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
@@ -337,6 +339,8 @@ public class IndicatorsManager {
 		}
 		List<IndicatorOverviewType> swaggerIndicatorsMetadata = IndicatorsMapper
 				.mapToSwaggerIndicators(indicatorsMeatadataEntities);
+		
+		swaggerIndicatorsMetadata.sort(Comparator.comparing(IndicatorOverviewType::getIndicatorName));
 		
 		return swaggerIndicatorsMetadata;
 	}

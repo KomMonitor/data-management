@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
+import java.util.Comparator;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicInputType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
@@ -71,6 +73,8 @@ public class TopicsManager {
 		
 		List<TopicsEntity> topicEntities = topicsRepo.findAll();
 		List<TopicOverviewType> topics = TopicsMapper.mapToSwaggerTopics(topicEntities);
+		
+		topics.sort(Comparator.comparing(TopicOverviewType::getTopicName));
 		
 		return topics;
 	}
