@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,11 +15,14 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPOSTInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T08:10:08.922+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-01-17T10:12:10.704+01:00")
 
 public class IndicatorPOSTInputType   {
   @JsonProperty("datasetName")
   private String datasetName = null;
+
+  @JsonProperty("indicatorType")
+  private IndicatorTypeEnum indicatorType = null;
 
   @JsonProperty("applicableSpatialUnit")
   private String applicableSpatialUnit = null;
@@ -37,6 +42,9 @@ public class IndicatorPOSTInputType   {
 
   @JsonProperty("creationType")
   private CreationTypeEnum creationType = null;
+
+  @JsonProperty("lowestSpatialUnitForComputation")
+  private String lowestSpatialUnitForComputation = null;
 
   @JsonProperty("defaultClassificationMapping")
   private DefaultClassificationMappingType defaultClassificationMapping = null;
@@ -73,6 +81,24 @@ public class IndicatorPOSTInputType   {
 
   public void setDatasetName(String datasetName) {
     this.datasetName = datasetName;
+  }
+
+  public IndicatorPOSTInputType indicatorType(IndicatorTypeEnum indicatorType) {
+    this.indicatorType = indicatorType;
+    return this;
+  }
+
+   /**
+   * indicates whether the indicator is a status indicator (values represent the extent of the watched phenomenon for a certain point in time) or a dynamic indicator (values represent the change of extent of the watched phenomenon within a certain period of time)
+   * @return indicatorType
+  **/
+  @ApiModelProperty(value = "indicates whether the indicator is a status indicator (values represent the extent of the watched phenomenon for a certain point in time) or a dynamic indicator (values represent the change of extent of the watched phenomenon within a certain period of time)")
+  public IndicatorTypeEnum getIndicatorType() {
+    return indicatorType;
+  }
+
+  public void setIndicatorType(IndicatorTypeEnum indicatorType) {
+    this.indicatorType = indicatorType;
   }
 
   public IndicatorPOSTInputType applicableSpatialUnit(String applicableSpatialUnit) {
@@ -186,6 +212,24 @@ public class IndicatorPOSTInputType   {
 
   public void setCreationType(CreationTypeEnum creationType) {
     this.creationType = creationType;
+  }
+
+  public IndicatorPOSTInputType lowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+    this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
+    return this;
+  }
+
+   /**
+   * identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)
+   * @return lowestSpatialUnitForComputation
+  **/
+  @ApiModelProperty(value = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)")
+  public String getLowestSpatialUnitForComputation() {
+    return lowestSpatialUnitForComputation;
+  }
+
+  public void setLowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+    this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
   }
 
   public IndicatorPOSTInputType defaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
@@ -318,12 +362,14 @@ public class IndicatorPOSTInputType   {
     }
     IndicatorPOSTInputType indicatorPOSTInputType = (IndicatorPOSTInputType) o;
     return Objects.equals(this.datasetName, indicatorPOSTInputType.datasetName) &&
+        Objects.equals(this.indicatorType, indicatorPOSTInputType.indicatorType) &&
         Objects.equals(this.applicableSpatialUnit, indicatorPOSTInputType.applicableSpatialUnit) &&
         Objects.equals(this.applicableTopics, indicatorPOSTInputType.applicableTopics) &&
         Objects.equals(this.metadata, indicatorPOSTInputType.metadata) &&
         Objects.equals(this.processDescription, indicatorPOSTInputType.processDescription) &&
         Objects.equals(this.unit, indicatorPOSTInputType.unit) &&
         Objects.equals(this.creationType, indicatorPOSTInputType.creationType) &&
+        Objects.equals(this.lowestSpatialUnitForComputation, indicatorPOSTInputType.lowestSpatialUnitForComputation) &&
         Objects.equals(this.defaultClassificationMapping, indicatorPOSTInputType.defaultClassificationMapping) &&
         Objects.equals(this.allowedRoles, indicatorPOSTInputType.allowedRoles) &&
         Objects.equals(this.refrencesToOtherIndicators, indicatorPOSTInputType.refrencesToOtherIndicators) &&
@@ -333,7 +379,7 @@ public class IndicatorPOSTInputType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, applicableSpatialUnit, applicableTopics, metadata, processDescription, unit, creationType, defaultClassificationMapping, allowedRoles, refrencesToOtherIndicators, refrencesToGeoresources, indicatorValues);
+    return Objects.hash(datasetName, indicatorType, applicableSpatialUnit, applicableTopics, metadata, processDescription, unit, creationType, lowestSpatialUnitForComputation, defaultClassificationMapping, allowedRoles, refrencesToOtherIndicators, refrencesToGeoresources, indicatorValues);
   }
 
   @Override
@@ -342,12 +388,14 @@ public class IndicatorPOSTInputType   {
     sb.append("class IndicatorPOSTInputType {\n");
     
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
+    sb.append("    indicatorType: ").append(toIndentedString(indicatorType)).append("\n");
     sb.append("    applicableSpatialUnit: ").append(toIndentedString(applicableSpatialUnit)).append("\n");
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
     sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
+    sb.append("    lowestSpatialUnitForComputation: ").append(toIndentedString(lowestSpatialUnitForComputation)).append("\n");
     sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    refrencesToOtherIndicators: ").append(toIndentedString(refrencesToOtherIndicators)).append("\n");

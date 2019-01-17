@@ -79,6 +79,8 @@ public class IndicatorsMapper {
 		indicatorOverviewType.setReferencedIndicators(indicatorReferences);
 		indicatorOverviewType.setUnit(indicatorsMetadataEntity.getUnit());
 		indicatorOverviewType.setCreationType(indicatorsMetadataEntity.getCreationType());
+		indicatorOverviewType.setIndicatorType(indicatorsMetadataEntity.getIndicatorType());
+		indicatorOverviewType.setLowestSpatialUnitForComputation(indicatorsMetadataEntity.getLowestSpatialUnitForComputation());
 		
 		indicatorOverviewType.setOgcServices(generateOgcServiceOverview(indicatorSpatialUnitEntities));
 		

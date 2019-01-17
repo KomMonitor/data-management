@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T08:10:08.922+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-01-17T10:12:10.704+01:00")
 
 public class IndicatorOverviewType   {
   @JsonProperty("indicatorName")
@@ -21,6 +23,9 @@ public class IndicatorOverviewType   {
 
   @JsonProperty("indicatorId")
   private String indicatorId = null;
+
+  @JsonProperty("indicatorType")
+  private IndicatorTypeEnum indicatorType = null;
 
   @JsonProperty("unit")
   private String unit = null;
@@ -57,6 +62,9 @@ public class IndicatorOverviewType   {
 
   @JsonProperty("creationType")
   private CreationTypeEnum creationType = null;
+
+  @JsonProperty("lowestSpatialUnitForComputation")
+  private String lowestSpatialUnitForComputation = null;
 
   @JsonProperty("defaultClassificationMapping")
   private DefaultClassificationMappingType defaultClassificationMapping = null;
@@ -99,6 +107,24 @@ public class IndicatorOverviewType   {
 
   public void setIndicatorId(String indicatorId) {
     this.indicatorId = indicatorId;
+  }
+
+  public IndicatorOverviewType indicatorType(IndicatorTypeEnum indicatorType) {
+    this.indicatorType = indicatorType;
+    return this;
+  }
+
+   /**
+   * indicates whether the indicator is a status indicator (values represent the extent of the watched phenomenon for a certain point in time) or a dynamic indicator (values represent the change of extent of the watched phenomenon within a certain period of time)
+   * @return indicatorType
+  **/
+  @ApiModelProperty(value = "indicates whether the indicator is a status indicator (values represent the extent of the watched phenomenon for a certain point in time) or a dynamic indicator (values represent the change of extent of the watched phenomenon within a certain period of time)")
+  public IndicatorTypeEnum getIndicatorType() {
+    return indicatorType;
+  }
+
+  public void setIndicatorType(IndicatorTypeEnum indicatorType) {
+    this.indicatorType = indicatorType;
   }
 
   public IndicatorOverviewType unit(String unit) {
@@ -320,6 +346,24 @@ public class IndicatorOverviewType   {
     this.creationType = creationType;
   }
 
+  public IndicatorOverviewType lowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+    this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
+    return this;
+  }
+
+   /**
+   * identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)
+   * @return lowestSpatialUnitForComputation
+  **/
+  @ApiModelProperty(value = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)")
+  public String getLowestSpatialUnitForComputation() {
+    return lowestSpatialUnitForComputation;
+  }
+
+  public void setLowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+    this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
+  }
+
   public IndicatorOverviewType defaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
     this.defaultClassificationMapping = defaultClassificationMapping;
     return this;
@@ -373,6 +417,7 @@ public class IndicatorOverviewType   {
     IndicatorOverviewType indicatorOverviewType = (IndicatorOverviewType) o;
     return Objects.equals(this.indicatorName, indicatorOverviewType.indicatorName) &&
         Objects.equals(this.indicatorId, indicatorOverviewType.indicatorId) &&
+        Objects.equals(this.indicatorType, indicatorOverviewType.indicatorType) &&
         Objects.equals(this.unit, indicatorOverviewType.unit) &&
         Objects.equals(this.metadata, indicatorOverviewType.metadata) &&
         Objects.equals(this.processDescription, indicatorOverviewType.processDescription) &&
@@ -383,13 +428,14 @@ public class IndicatorOverviewType   {
         Objects.equals(this.referencedIndicators, indicatorOverviewType.referencedIndicators) &&
         Objects.equals(this.referencedGeoresources, indicatorOverviewType.referencedGeoresources) &&
         Objects.equals(this.creationType, indicatorOverviewType.creationType) &&
+        Objects.equals(this.lowestSpatialUnitForComputation, indicatorOverviewType.lowestSpatialUnitForComputation) &&
         Objects.equals(this.defaultClassificationMapping, indicatorOverviewType.defaultClassificationMapping) &&
         Objects.equals(this.ogcServices, indicatorOverviewType.ogcServices);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(indicatorName, indicatorId, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles, referencedIndicators, referencedGeoresources, creationType, defaultClassificationMapping, ogcServices);
+    return Objects.hash(indicatorName, indicatorId, indicatorType, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles, referencedIndicators, referencedGeoresources, creationType, lowestSpatialUnitForComputation, defaultClassificationMapping, ogcServices);
   }
 
   @Override
@@ -399,6 +445,7 @@ public class IndicatorOverviewType   {
     
     sb.append("    indicatorName: ").append(toIndentedString(indicatorName)).append("\n");
     sb.append("    indicatorId: ").append(toIndentedString(indicatorId)).append("\n");
+    sb.append("    indicatorType: ").append(toIndentedString(indicatorType)).append("\n");
     sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
@@ -409,6 +456,7 @@ public class IndicatorOverviewType   {
     sb.append("    referencedIndicators: ").append(toIndentedString(referencedIndicators)).append("\n");
     sb.append("    referencedGeoresources: ").append(toIndentedString(referencedGeoresources)).append("\n");
     sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
+    sb.append("    lowestSpatialUnitForComputation: ").append(toIndentedString(lowestSpatialUnitForComputation)).append("\n");
     sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    ogcServices: ").append(toIndentedString(ogcServices)).append("\n");
     sb.append("}");

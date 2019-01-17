@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPATCHInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T08:10:08.922+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-01-17T10:12:10.704+01:00")
 
 public class IndicatorPATCHInputType   {
   @JsonProperty("applicableTopics")
@@ -32,6 +32,9 @@ public class IndicatorPATCHInputType   {
   @JsonProperty("allowedRoles")
   
   private List<String> allowedRoles = new ArrayList<>();
+
+  @JsonProperty("lowestSpatialUnitForComputation")
+  private String lowestSpatialUnitForComputation = null;
 
   @JsonProperty("defaultClassificationMapping")
   private DefaultClassificationMappingType defaultClassificationMapping = null;
@@ -144,6 +147,24 @@ public class IndicatorPATCHInputType   {
     this.allowedRoles = allowedRoles;
   }
 
+  public IndicatorPATCHInputType lowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+    this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
+    return this;
+  }
+
+   /**
+   * identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)
+   * @return lowestSpatialUnitForComputation
+  **/
+  @ApiModelProperty(value = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)")
+  public String getLowestSpatialUnitForComputation() {
+    return lowestSpatialUnitForComputation;
+  }
+
+  public void setLowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+    this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
+  }
+
   public IndicatorPATCHInputType defaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
     this.defaultClassificationMapping = defaultClassificationMapping;
     return this;
@@ -229,6 +250,7 @@ public class IndicatorPATCHInputType   {
         Objects.equals(this.processDescription, indicatorPATCHInputType.processDescription) &&
         Objects.equals(this.unit, indicatorPATCHInputType.unit) &&
         Objects.equals(this.allowedRoles, indicatorPATCHInputType.allowedRoles) &&
+        Objects.equals(this.lowestSpatialUnitForComputation, indicatorPATCHInputType.lowestSpatialUnitForComputation) &&
         Objects.equals(this.defaultClassificationMapping, indicatorPATCHInputType.defaultClassificationMapping) &&
         Objects.equals(this.refrencesToOtherIndicators, indicatorPATCHInputType.refrencesToOtherIndicators) &&
         Objects.equals(this.refrencesToGeoresources, indicatorPATCHInputType.refrencesToGeoresources);
@@ -236,7 +258,7 @@ public class IndicatorPATCHInputType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(applicableTopics, metadata, processDescription, unit, allowedRoles, defaultClassificationMapping, refrencesToOtherIndicators, refrencesToGeoresources);
+    return Objects.hash(applicableTopics, metadata, processDescription, unit, allowedRoles, lowestSpatialUnitForComputation, defaultClassificationMapping, refrencesToOtherIndicators, refrencesToGeoresources);
   }
 
   @Override
@@ -249,6 +271,7 @@ public class IndicatorPATCHInputType   {
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    lowestSpatialUnitForComputation: ").append(toIndentedString(lowestSpatialUnitForComputation)).append("\n");
     sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    refrencesToOtherIndicators: ").append(toIndentedString(refrencesToOtherIndicators)).append("\n");
     sb.append("    refrencesToGeoresources: ").append(toIndentedString(refrencesToGeoresources)).append("\n");

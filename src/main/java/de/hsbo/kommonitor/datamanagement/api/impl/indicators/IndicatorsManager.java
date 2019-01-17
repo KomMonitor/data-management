@@ -33,7 +33,6 @@ import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
@@ -137,6 +136,7 @@ public class IndicatorsManager {
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 		entity.setProcessDescription(metadata.getProcessDescription());
 		entity.setUnit(metadata.getUnit());
+		entity.setLowestSpatialUnitForComputation(metadata.getLowestSpatialUnitForComputation());
 		
 		if(metadata.getDefaultClassificationMapping() != null){
 			entity.setDefaultClassificationMappingItems(metadata.getDefaultClassificationMapping().getItems());
@@ -706,6 +706,8 @@ public class IndicatorsManager {
 		entity.setProcessDescription(indicatorData.getProcessDescription());
 		entity.setUnit(indicatorData.getUnit());
 		entity.setCreationType(indicatorData.getCreationType());
+		entity.setIndicatorType(indicatorData.getIndicatorType());
+		entity.setLowestSpatialUnitForComputation(indicatorData.getLowestSpatialUnitForComputation());
 		
 		entity.setDefaultClassificationMappingItems(indicatorData.getDefaultClassificationMapping().getItems());
 		entity.setColorBrewerSchemeName(indicatorData.getDefaultClassificationMapping().getColorBrewerSchemeName());

@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsHelper;
 import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 @Entity(name = "MetadataIndicators")
@@ -25,6 +26,8 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	private String processDescription = null;
 	private String unit = null;
 	private CreationTypeEnum creationType = null;
+	private IndicatorTypeEnum indicatorType = null;
+	private String lowestSpatialUnitForComputation = null;
 	
 	private String colorBrewerSchemeName;
 	
@@ -123,6 +126,22 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 
 	public void setColorBrewerSchemeName(String colorBrewerSchemeName) {
 		this.colorBrewerSchemeName = colorBrewerSchemeName;
+	}
+
+	public IndicatorTypeEnum getIndicatorType() {
+		return indicatorType;
+	}
+
+	public void setIndicatorType(IndicatorTypeEnum indicatorType) {
+		this.indicatorType = indicatorType;
+	}
+
+	public String getLowestSpatialUnitForComputation() {
+		return lowestSpatialUnitForComputation;
+	}
+
+	public void setLowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+		this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
 	}
 
 
