@@ -110,8 +110,8 @@ public class DatabaseHelperUtil {
 //			properties.load(SpatialFeatureDatabaseHandler.class.getResourceAsStream("/application-docker.properties"));
 //		}
 		
-		System.out.println("DB HOST: " + env.getProperty("database.host"));
-		System.out.println("DB URL COMPLETE: " + env.getProperty("spring.datasource.url"));
+//		System.out.println("DB HOST: " + env.getProperty("database.host"));
+//		System.out.println("DB URL COMPLETE: " + env.getProperty("spring.datasource.url"));
 			
 
 		Map<String, Object> params = new HashMap<>();
