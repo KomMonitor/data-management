@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * GeoresourceOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-02-12T12:29:26.738+01:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-02-12T21:13:46.924+01:00")
 
 public class GeoresourceOverviewType   {
   @JsonProperty("datasetName")
@@ -43,8 +43,12 @@ public class GeoresourceOverviewType   {
   @JsonProperty("poiSymbolBootstrap3Name")
   private String poiSymbolBootstrap3Name = null;
 
+
   @JsonProperty("poiMarkerColor")
   private PoiMarkerColorEnum poiMarkerColor = null;
+  
+  @JsonProperty("poiSymbolColor")
+  private PoiSymbolColorEnum poiSymbolColor = null;
 
   @JsonProperty("wmsUrl")
   private String wmsUrl = null;
@@ -197,10 +201,10 @@ public class GeoresourceOverviewType   {
   }
 
    /**
-   * If georesource is a POI then custom POI marker symbol styling can be done by specifying one of the following color names
+   * If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)
    * @return poiSymbolBootstrap3Name
   **/
-  @ApiModelProperty(value = "If georesource is a POI then custom POI marker symbol styling can be done by specifying one of the following color names")
+  @ApiModelProperty(value = "If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)")
   public String getPoiSymbolBootstrap3Name() {
     return poiSymbolBootstrap3Name;
   }
@@ -215,16 +219,34 @@ public class GeoresourceOverviewType   {
   }
 
    /**
-   * If georesource is a POI then custom POI marker color can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)
+   * If georesource is a POI then custom POI marker color can be set by specifying one of the following color names
    * @return poiMarkerColor
   **/
-  @ApiModelProperty(value = "If georesource is a POI then custom POI marker color can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)")
+  @ApiModelProperty(value = "If georesource is a POI then custom POI marker color can be set by specifying one of the following color names")
   public PoiMarkerColorEnum getPoiMarkerColor() {
     return poiMarkerColor;
   }
 
   public void setPoiMarkerColor(PoiMarkerColorEnum poiMarkerColor) {
     this.poiMarkerColor = poiMarkerColor;
+  }
+
+  public GeoresourceOverviewType poiSymbolColor(PoiSymbolColorEnum poiSymbolColor) {
+    this.poiSymbolColor = poiSymbolColor;
+    return this;
+  }
+
+   /**
+   * If georesource is a POI then custom POI symbol color can be set by specifying one of the following color names
+   * @return poiSymbolColor
+  **/
+  @ApiModelProperty(value = "If georesource is a POI then custom POI symbol color can be set by specifying one of the following color names")
+  public PoiSymbolColorEnum getPoiSymbolColor() {
+    return poiSymbolColor;
+  }
+
+  public void setPoiSymbolColor(PoiSymbolColorEnum poiSymbolColor) {
+    this.poiSymbolColor = poiSymbolColor;
   }
 
   public GeoresourceOverviewType wmsUrl(String wmsUrl) {
@@ -282,13 +304,14 @@ public class GeoresourceOverviewType   {
         Objects.equals(this.isPOI, georesourceOverviewType.isPOI) &&
         Objects.equals(this.poiSymbolBootstrap3Name, georesourceOverviewType.poiSymbolBootstrap3Name) &&
         Objects.equals(this.poiMarkerColor, georesourceOverviewType.poiMarkerColor) &&
+        Objects.equals(this.poiSymbolColor, georesourceOverviewType.poiSymbolColor) &&
         Objects.equals(this.wmsUrl, georesourceOverviewType.wmsUrl) &&
         Objects.equals(this.wfsUrl, georesourceOverviewType.wfsUrl);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodOfValidity, applicableTopics, allowedRoles, isPOI, poiSymbolBootstrap3Name, poiMarkerColor, wmsUrl, wfsUrl);
+    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodOfValidity, applicableTopics, allowedRoles, isPOI, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor, wmsUrl, wfsUrl);
   }
 
   @Override
@@ -305,6 +328,7 @@ public class GeoresourceOverviewType   {
     sb.append("    isPOI: ").append(toIndentedString(isPOI)).append("\n");
     sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");
     sb.append("    poiMarkerColor: ").append(toIndentedString(poiMarkerColor)).append("\n");
+    sb.append("    poiSymbolColor: ").append(toIndentedString(poiSymbolColor)).append("\n");
     sb.append("    wmsUrl: ").append(toIndentedString(wmsUrl)).append("\n");
     sb.append("    wfsUrl: ").append(toIndentedString(wfsUrl)).append("\n");
     sb.append("}");

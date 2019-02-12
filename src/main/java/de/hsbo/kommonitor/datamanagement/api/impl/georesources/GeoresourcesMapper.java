@@ -50,6 +50,7 @@ public class GeoresourcesMapper {
 		dataset.setIsPOI(georesourceMetadataEntity.isPOI());
 		dataset.setPoiSymbolBootstrap3Name(georesourceMetadataEntity.getPoiSymbolBootstrap3Name());
 		dataset.setPoiMarkerColor(georesourceMetadataEntity.getPoiMarkerColor());
+		dataset.setPoiSymbolColor(georesourceMetadataEntity.getPoiSymbolColor());
 		
 		dataset.setWmsUrl(georesourceMetadataEntity.getWmsUrl());
 		dataset.setWfsUrl(georesourceMetadataEntity.getWfsUrl());

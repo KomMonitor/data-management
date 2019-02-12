@@ -205,6 +205,7 @@ public class GeoresourcesManager {
 		entity.setPOI(featureData.isIsPOI());
 		entity.setPoiSymbolBootstrap3Name(featureData.getPoiSymbolBootstrap3Name());
 		entity.setPoiMarkerColor(featureData.getPoiMarkerColor());
+		entity.setPoiSymbolColor(featureData.getPoiSymbolColor());
 
 		/*
 		 * add topic to referenced topics, but only if topic is not yet included!
@@ -408,6 +409,7 @@ public class GeoresourcesManager {
 		entity.setPOI(metadata.isIsPOI());
 		entity.setPoiSymbolBootstrap3Name(metadata.getPoiSymbolBootstrap3Name());
 		entity.setPoiMarkerColor(metadata.getPoiMarkerColor());
+		entity.setPoiSymbolColor(metadata.getPoiSymbolColor());
 
 		/*
 		 * add topic to referenced topics, bu only if topic is not yet included!

@@ -11,6 +11,7 @@ import javax.persistence.ManyToMany;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsHelper;
 import de.hsbo.kommonitor.datamanagement.model.georesources.PoiMarkerColorEnum;
+import de.hsbo.kommonitor.datamanagement.model.georesources.PoiSymbolColorEnum;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 @Entity(name = "MetadataGeoresources")
@@ -21,6 +22,8 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 	private boolean isPOI;
 	
 	private PoiMarkerColorEnum poiMarkerColor;
+	
+	private PoiSymbolColorEnum poiSymbolColor;
 	
 	private String poiSymbolBootstrap3Name;
 
@@ -87,6 +90,14 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 
 	public void setPoiSymbolBootstrap3Name(String poiSymbolBootstrap3Name) {
 		this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
+	}
+
+	public PoiSymbolColorEnum getPoiSymbolColor() {
+		return poiSymbolColor;
+	}
+
+	public void setPoiSymbolColor(PoiSymbolColorEnum poiSymbolColor) {
+		this.poiSymbolColor = poiSymbolColor;
 	}
 
 }
