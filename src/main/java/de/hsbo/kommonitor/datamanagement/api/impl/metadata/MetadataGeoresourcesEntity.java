@@ -16,6 +16,8 @@ import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 public class MetadataGeoresourcesEntity extends AbstractMetadata {
 
 	private int sridEpsg;
+	
+	private boolean isPOI;
 
 	@ManyToMany
 	@JoinTable(name = "metadataGeoresources_topics", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), inverseJoinColumns = @JoinColumn(name = "topic_id", referencedColumnName = "topicid"))
@@ -56,6 +58,14 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 			return true;
 		// if code reaches this line, then the topic is not within the list
 		return false;
+	}
+
+	public boolean isPOI() {
+		return isPOI;
+	}
+
+	public void setPOI(boolean isPOI) {
+		this.isPOI = isPOI;
 	}
 
 }

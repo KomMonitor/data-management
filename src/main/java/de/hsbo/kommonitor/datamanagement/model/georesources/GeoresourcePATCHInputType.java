@@ -1,19 +1,19 @@
 package de.hsbo.kommonitor.datamanagement.model.georesources;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * GeoresourcePATCHInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-02-12T08:08:25.323+01:00")
 
 public class GeoresourcePATCHInputType   {
   @JsonProperty("metadata")
@@ -26,6 +26,9 @@ public class GeoresourcePATCHInputType   {
   @JsonProperty("applicableTopics")
   
   private List<String> applicableTopics = new ArrayList<>();
+
+  @JsonProperty("isPOI")
+  private Boolean isPOI = false;
 
   public GeoresourcePATCHInputType metadata(CommonMetadataType metadata) {
     this.metadata = metadata;
@@ -94,6 +97,24 @@ public class GeoresourcePATCHInputType   {
     this.applicableTopics = applicableTopics;
   }
 
+  public GeoresourcePATCHInputType isPOI(Boolean isPOI) {
+    this.isPOI = isPOI;
+    return this;
+  }
+
+   /**
+   * boolean value indicating if the dataset contains points of interest
+   * @return isPOI
+  **/
+  @ApiModelProperty(value = "boolean value indicating if the dataset contains points of interest")
+  public Boolean isIsPOI() {
+    return isPOI;
+  }
+
+  public void setIsPOI(Boolean isPOI) {
+    this.isPOI = isPOI;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -106,12 +127,13 @@ public class GeoresourcePATCHInputType   {
     GeoresourcePATCHInputType georesourcePATCHInputType = (GeoresourcePATCHInputType) o;
     return Objects.equals(this.metadata, georesourcePATCHInputType.metadata) &&
         Objects.equals(this.allowedRoles, georesourcePATCHInputType.allowedRoles) &&
-        Objects.equals(this.applicableTopics, georesourcePATCHInputType.applicableTopics);
+        Objects.equals(this.applicableTopics, georesourcePATCHInputType.applicableTopics) &&
+        Objects.equals(this.isPOI, georesourcePATCHInputType.isPOI);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(metadata, allowedRoles, applicableTopics);
+    return Objects.hash(metadata, allowedRoles, applicableTopics, isPOI);
   }
 
   @Override
@@ -122,6 +144,7 @@ public class GeoresourcePATCHInputType   {
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
+    sb.append("    isPOI: ").append(toIndentedString(isPOI)).append("\n");
     sb.append("}");
     return sb.toString();
   }

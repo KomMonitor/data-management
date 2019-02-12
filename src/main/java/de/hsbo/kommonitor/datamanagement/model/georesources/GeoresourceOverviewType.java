@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * GeoresourceOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-08-02T08:44:45.917+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-02-12T08:08:25.323+01:00")
 
 public class GeoresourceOverviewType   {
   @JsonProperty("datasetName")
@@ -36,6 +36,9 @@ public class GeoresourceOverviewType   {
   @JsonProperty("allowedRoles")
   
   private List<String> allowedRoles = null;
+
+  @JsonProperty("isPOI")
+  private Boolean isPOI = null;
 
   @JsonProperty("wmsUrl")
   private String wmsUrl = null;
@@ -164,6 +167,24 @@ public class GeoresourceOverviewType   {
     this.allowedRoles = allowedRoles;
   }
 
+  public GeoresourceOverviewType isPOI(Boolean isPOI) {
+    this.isPOI = isPOI;
+    return this;
+  }
+
+   /**
+   * boolean value indicating if the dataset contains points of interest
+   * @return isPOI
+  **/
+  @ApiModelProperty(required = true, value = "boolean value indicating if the dataset contains points of interest")
+  public Boolean isIsPOI() {
+    return isPOI;
+  }
+
+  public void setIsPOI(Boolean isPOI) {
+    this.isPOI = isPOI;
+  }
+
   public GeoresourceOverviewType wmsUrl(String wmsUrl) {
     this.wmsUrl = wmsUrl;
     return this;
@@ -216,13 +237,14 @@ public class GeoresourceOverviewType   {
         Objects.equals(this.availablePeriodOfValidity, georesourceOverviewType.availablePeriodOfValidity) &&
         Objects.equals(this.applicableTopics, georesourceOverviewType.applicableTopics) &&
         Objects.equals(this.allowedRoles, georesourceOverviewType.allowedRoles) &&
+        Objects.equals(this.isPOI, georesourceOverviewType.isPOI) &&
         Objects.equals(this.wmsUrl, georesourceOverviewType.wmsUrl) &&
         Objects.equals(this.wfsUrl, georesourceOverviewType.wfsUrl);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodOfValidity, applicableTopics, allowedRoles, wmsUrl, wfsUrl);
+    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodOfValidity, applicableTopics, allowedRoles, isPOI, wmsUrl, wfsUrl);
   }
 
   @Override
@@ -236,6 +258,7 @@ public class GeoresourceOverviewType   {
     sb.append("    availablePeriodOfValidity: ").append(toIndentedString(availablePeriodOfValidity)).append("\n");
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    isPOI: ").append(toIndentedString(isPOI)).append("\n");
     sb.append("    wmsUrl: ").append(toIndentedString(wmsUrl)).append("\n");
     sb.append("    wfsUrl: ").append(toIndentedString(wfsUrl)).append("\n");
     sb.append("}");

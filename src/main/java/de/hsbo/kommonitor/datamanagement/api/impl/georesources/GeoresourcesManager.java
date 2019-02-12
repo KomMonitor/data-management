@@ -202,6 +202,7 @@ public class GeoresourcesManager {
 		entity.setLastUpdate(lastUpdate);
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
+		entity.setPOI(featureData.isIsPOI());
 
 		/*
 		 * add topic to referenced topics, but only if topic is not yet included!
@@ -402,6 +403,7 @@ public class GeoresourcesManager {
 		entity.setLastUpdate(lastUpdate);
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
+		entity.setPOI(metadata.isIsPOI());
 
 		/*
 		 * add topic to referenced topics, bu only if topic is not yet included!

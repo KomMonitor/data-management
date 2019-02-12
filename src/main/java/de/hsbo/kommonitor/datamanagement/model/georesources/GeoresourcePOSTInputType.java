@@ -1,20 +1,20 @@
 package de.hsbo.kommonitor.datamanagement.model.georesources;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * GeoresourcePOSTInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-02-12T08:08:25.323+01:00")
 
 public class GeoresourcePOSTInputType   {
   @JsonProperty("datasetName")
@@ -33,6 +33,9 @@ public class GeoresourcePOSTInputType   {
   @JsonProperty("applicableTopics")
   
   private List<String> applicableTopics = new ArrayList<>();
+
+  @JsonProperty("isPOI")
+  private Boolean isPOI = false;
 
   @JsonProperty("jsonSchema")
   private String jsonSchema = null;
@@ -143,6 +146,24 @@ public class GeoresourcePOSTInputType   {
     this.applicableTopics = applicableTopics;
   }
 
+  public GeoresourcePOSTInputType isPOI(Boolean isPOI) {
+    this.isPOI = isPOI;
+    return this;
+  }
+
+   /**
+   * boolean value indicating if the dataset contains points of interest
+   * @return isPOI
+  **/
+  @ApiModelProperty(value = "boolean value indicating if the dataset contains points of interest")
+  public Boolean isIsPOI() {
+    return isPOI;
+  }
+
+  public void setIsPOI(Boolean isPOI) {
+    this.isPOI = isPOI;
+  }
+
   public GeoresourcePOSTInputType jsonSchema(String jsonSchema) {
     this.jsonSchema = jsonSchema;
     return this;
@@ -194,13 +215,14 @@ public class GeoresourcePOSTInputType   {
         Objects.equals(this.metadata, georesourcePOSTInputType.metadata) &&
         Objects.equals(this.allowedRoles, georesourcePOSTInputType.allowedRoles) &&
         Objects.equals(this.applicableTopics, georesourcePOSTInputType.applicableTopics) &&
+        Objects.equals(this.isPOI, georesourcePOSTInputType.isPOI) &&
         Objects.equals(this.jsonSchema, georesourcePOSTInputType.jsonSchema) &&
         Objects.equals(this.geoJsonString, georesourcePOSTInputType.geoJsonString);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, periodOfValidity, metadata, allowedRoles, applicableTopics, jsonSchema, geoJsonString);
+    return Objects.hash(datasetName, periodOfValidity, metadata, allowedRoles, applicableTopics, isPOI, jsonSchema, geoJsonString);
   }
 
   @Override
@@ -213,6 +235,7 @@ public class GeoresourcePOSTInputType   {
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
+    sb.append("    isPOI: ").append(toIndentedString(isPOI)).append("\n");
     sb.append("    jsonSchema: ").append(toIndentedString(jsonSchema)).append("\n");
     sb.append("    geoJsonString: ").append(toIndentedString(geoJsonString)).append("\n");
     sb.append("}");
