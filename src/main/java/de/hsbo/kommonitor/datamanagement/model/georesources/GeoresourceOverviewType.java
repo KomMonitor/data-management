@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * GeoresourceOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-02-12T08:08:25.323+01:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-02-12T12:29:26.738+01:00")
 
 public class GeoresourceOverviewType   {
   @JsonProperty("datasetName")
@@ -39,6 +39,12 @@ public class GeoresourceOverviewType   {
 
   @JsonProperty("isPOI")
   private Boolean isPOI = null;
+
+  @JsonProperty("poiSymbolBootstrap3Name")
+  private String poiSymbolBootstrap3Name = null;
+
+  @JsonProperty("poiMarkerColor")
+  private PoiMarkerColorEnum poiMarkerColor = null;
 
   @JsonProperty("wmsUrl")
   private String wmsUrl = null;
@@ -185,6 +191,42 @@ public class GeoresourceOverviewType   {
     this.isPOI = isPOI;
   }
 
+  public GeoresourceOverviewType poiSymbolBootstrap3Name(String poiSymbolBootstrap3Name) {
+    this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
+    return this;
+  }
+
+   /**
+   * If georesource is a POI then custom POI marker symbol styling can be done by specifying one of the following color names
+   * @return poiSymbolBootstrap3Name
+  **/
+  @ApiModelProperty(value = "If georesource is a POI then custom POI marker symbol styling can be done by specifying one of the following color names")
+  public String getPoiSymbolBootstrap3Name() {
+    return poiSymbolBootstrap3Name;
+  }
+
+  public void setPoiSymbolBootstrap3Name(String poiSymbolBootstrap3Name) {
+    this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
+  }
+
+  public GeoresourceOverviewType poiMarkerColor(PoiMarkerColorEnum poiMarkerColor) {
+    this.poiMarkerColor = poiMarkerColor;
+    return this;
+  }
+
+   /**
+   * If georesource is a POI then custom POI marker color can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)
+   * @return poiMarkerColor
+  **/
+  @ApiModelProperty(value = "If georesource is a POI then custom POI marker color can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)")
+  public PoiMarkerColorEnum getPoiMarkerColor() {
+    return poiMarkerColor;
+  }
+
+  public void setPoiMarkerColor(PoiMarkerColorEnum poiMarkerColor) {
+    this.poiMarkerColor = poiMarkerColor;
+  }
+
   public GeoresourceOverviewType wmsUrl(String wmsUrl) {
     this.wmsUrl = wmsUrl;
     return this;
@@ -238,13 +280,15 @@ public class GeoresourceOverviewType   {
         Objects.equals(this.applicableTopics, georesourceOverviewType.applicableTopics) &&
         Objects.equals(this.allowedRoles, georesourceOverviewType.allowedRoles) &&
         Objects.equals(this.isPOI, georesourceOverviewType.isPOI) &&
+        Objects.equals(this.poiSymbolBootstrap3Name, georesourceOverviewType.poiSymbolBootstrap3Name) &&
+        Objects.equals(this.poiMarkerColor, georesourceOverviewType.poiMarkerColor) &&
         Objects.equals(this.wmsUrl, georesourceOverviewType.wmsUrl) &&
         Objects.equals(this.wfsUrl, georesourceOverviewType.wfsUrl);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodOfValidity, applicableTopics, allowedRoles, isPOI, wmsUrl, wfsUrl);
+    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodOfValidity, applicableTopics, allowedRoles, isPOI, poiSymbolBootstrap3Name, poiMarkerColor, wmsUrl, wfsUrl);
   }
 
   @Override
@@ -259,6 +303,8 @@ public class GeoresourceOverviewType   {
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    isPOI: ").append(toIndentedString(isPOI)).append("\n");
+    sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");
+    sb.append("    poiMarkerColor: ").append(toIndentedString(poiMarkerColor)).append("\n");
     sb.append("    wmsUrl: ").append(toIndentedString(wmsUrl)).append("\n");
     sb.append("    wfsUrl: ").append(toIndentedString(wfsUrl)).append("\n");
     sb.append("}");

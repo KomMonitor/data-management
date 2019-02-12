@@ -10,6 +10,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsHelper;
+import de.hsbo.kommonitor.datamanagement.model.georesources.PoiMarkerColorEnum;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 @Entity(name = "MetadataGeoresources")
@@ -18,6 +19,10 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 	private int sridEpsg;
 	
 	private boolean isPOI;
+	
+	private PoiMarkerColorEnum poiMarkerColor;
+	
+	private String poiSymbolBootstrap3Name;
 
 	@ManyToMany
 	@JoinTable(name = "metadataGeoresources_topics", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), inverseJoinColumns = @JoinColumn(name = "topic_id", referencedColumnName = "topicid"))
@@ -66,6 +71,22 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 
 	public void setPOI(boolean isPOI) {
 		this.isPOI = isPOI;
+	}
+
+	public PoiMarkerColorEnum getPoiMarkerColor() {
+		return poiMarkerColor;
+	}
+
+	public void setPoiMarkerColor(PoiMarkerColorEnum poiMarkerColor) {
+		this.poiMarkerColor = poiMarkerColor;
+	}
+
+	public String getPoiSymbolBootstrap3Name() {
+		return poiSymbolBootstrap3Name;
+	}
+
+	public void setPoiSymbolBootstrap3Name(String poiSymbolBootstrap3Name) {
+		this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
 	}
 
 }

@@ -203,6 +203,8 @@ public class GeoresourcesManager {
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 		entity.setPOI(featureData.isIsPOI());
+		entity.setPoiSymbolBootstrap3Name(featureData.getPoiSymbolBootstrap3Name());
+		entity.setPoiMarkerColor(featureData.getPoiMarkerColor());
 
 		/*
 		 * add topic to referenced topics, but only if topic is not yet included!
@@ -404,6 +406,8 @@ public class GeoresourcesManager {
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 		entity.setPOI(metadata.isIsPOI());
+		entity.setPoiSymbolBootstrap3Name(metadata.getPoiSymbolBootstrap3Name());
+		entity.setPoiMarkerColor(metadata.getPoiMarkerColor());
 
 		/*
 		 * add topic to referenced topics, bu only if topic is not yet included!

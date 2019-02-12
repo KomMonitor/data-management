@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * GeoresourcePOSTInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-02-12T08:08:25.323+01:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-02-12T12:29:26.738+01:00")
 
 public class GeoresourcePOSTInputType   {
   @JsonProperty("datasetName")
@@ -36,6 +36,13 @@ public class GeoresourcePOSTInputType   {
 
   @JsonProperty("isPOI")
   private Boolean isPOI = false;
+
+  @JsonProperty("poiSymbolBootstrap3Name")
+  private String poiSymbolBootstrap3Name = null;
+
+
+  @JsonProperty("poiMarkerColor")
+  private PoiMarkerColorEnum poiMarkerColor = null;
 
   @JsonProperty("jsonSchema")
   private String jsonSchema = null;
@@ -164,6 +171,42 @@ public class GeoresourcePOSTInputType   {
     this.isPOI = isPOI;
   }
 
+  public GeoresourcePOSTInputType poiSymbolBootstrap3Name(String poiSymbolBootstrap3Name) {
+    this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
+    return this;
+  }
+
+   /**
+   * If georesource is a POI then custom POI marker symbol styling can be done by specifying one of the following color names
+   * @return poiSymbolBootstrap3Name
+  **/
+  @ApiModelProperty(value = "If georesource is a POI then custom POI marker symbol styling can be done by specifying one of the following color names")
+  public String getPoiSymbolBootstrap3Name() {
+    return poiSymbolBootstrap3Name;
+  }
+
+  public void setPoiSymbolBootstrap3Name(String poiSymbolBootstrap3Name) {
+    this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
+  }
+
+  public GeoresourcePOSTInputType poiMarkerColor(PoiMarkerColorEnum poiMarkerColor) {
+    this.poiMarkerColor = poiMarkerColor;
+    return this;
+  }
+
+   /**
+   * If georesource is a POI then custom POI marker color can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)
+   * @return poiMarkerColor
+  **/
+  @ApiModelProperty(value = "If georesource is a POI then custom POI marker color can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)")
+  public PoiMarkerColorEnum getPoiMarkerColor() {
+    return poiMarkerColor;
+  }
+
+  public void setPoiMarkerColor(PoiMarkerColorEnum poiMarkerColor) {
+    this.poiMarkerColor = poiMarkerColor;
+  }
+
   public GeoresourcePOSTInputType jsonSchema(String jsonSchema) {
     this.jsonSchema = jsonSchema;
     return this;
@@ -216,13 +259,15 @@ public class GeoresourcePOSTInputType   {
         Objects.equals(this.allowedRoles, georesourcePOSTInputType.allowedRoles) &&
         Objects.equals(this.applicableTopics, georesourcePOSTInputType.applicableTopics) &&
         Objects.equals(this.isPOI, georesourcePOSTInputType.isPOI) &&
+        Objects.equals(this.poiSymbolBootstrap3Name, georesourcePOSTInputType.poiSymbolBootstrap3Name) &&
+        Objects.equals(this.poiMarkerColor, georesourcePOSTInputType.poiMarkerColor) &&
         Objects.equals(this.jsonSchema, georesourcePOSTInputType.jsonSchema) &&
         Objects.equals(this.geoJsonString, georesourcePOSTInputType.geoJsonString);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, periodOfValidity, metadata, allowedRoles, applicableTopics, isPOI, jsonSchema, geoJsonString);
+    return Objects.hash(datasetName, periodOfValidity, metadata, allowedRoles, applicableTopics, isPOI, poiSymbolBootstrap3Name, poiMarkerColor, jsonSchema, geoJsonString);
   }
 
   @Override
@@ -236,6 +281,8 @@ public class GeoresourcePOSTInputType   {
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
     sb.append("    isPOI: ").append(toIndentedString(isPOI)).append("\n");
+    sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");
+    sb.append("    poiMarkerColor: ").append(toIndentedString(poiMarkerColor)).append("\n");
     sb.append("    jsonSchema: ").append(toIndentedString(jsonSchema)).append("\n");
     sb.append("    geoJsonString: ").append(toIndentedString(geoJsonString)).append("\n");
     sb.append("}");

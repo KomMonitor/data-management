@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  * GeoresourcePATCHInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-02-12T08:08:25.323+01:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-02-12T12:29:26.738+01:00")
 
 public class GeoresourcePATCHInputType   {
   @JsonProperty("metadata")
@@ -29,6 +29,13 @@ public class GeoresourcePATCHInputType   {
 
   @JsonProperty("isPOI")
   private Boolean isPOI = false;
+
+  @JsonProperty("poiSymbolBootstrap3Name")
+  private String poiSymbolBootstrap3Name = null;
+
+
+  @JsonProperty("poiMarkerColor")
+  private PoiMarkerColorEnum poiMarkerColor = null;
 
   public GeoresourcePATCHInputType metadata(CommonMetadataType metadata) {
     this.metadata = metadata;
@@ -115,6 +122,42 @@ public class GeoresourcePATCHInputType   {
     this.isPOI = isPOI;
   }
 
+  public GeoresourcePATCHInputType poiSymbolBootstrap3Name(String poiSymbolBootstrap3Name) {
+    this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
+    return this;
+  }
+
+   /**
+   * If georesource is a POI then custom POI marker symbol styling can be done by specifying one of the following color names
+   * @return poiSymbolBootstrap3Name
+  **/
+  @ApiModelProperty(value = "If georesource is a POI then custom POI marker symbol styling can be done by specifying one of the following color names")
+  public String getPoiSymbolBootstrap3Name() {
+    return poiSymbolBootstrap3Name;
+  }
+
+  public void setPoiSymbolBootstrap3Name(String poiSymbolBootstrap3Name) {
+    this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
+  }
+
+  public GeoresourcePATCHInputType poiMarkerColor(PoiMarkerColorEnum poiMarkerColor) {
+    this.poiMarkerColor = poiMarkerColor;
+    return this;
+  }
+
+   /**
+   * If georesource is a POI then custom POI marker color can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)
+   * @return poiMarkerColor
+  **/
+  @ApiModelProperty(value = "If georesource is a POI then custom POI marker color can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)")
+  public PoiMarkerColorEnum getPoiMarkerColor() {
+    return poiMarkerColor;
+  }
+
+  public void setPoiMarkerColor(PoiMarkerColorEnum poiMarkerColor) {
+    this.poiMarkerColor = poiMarkerColor;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -128,12 +171,14 @@ public class GeoresourcePATCHInputType   {
     return Objects.equals(this.metadata, georesourcePATCHInputType.metadata) &&
         Objects.equals(this.allowedRoles, georesourcePATCHInputType.allowedRoles) &&
         Objects.equals(this.applicableTopics, georesourcePATCHInputType.applicableTopics) &&
-        Objects.equals(this.isPOI, georesourcePATCHInputType.isPOI);
+        Objects.equals(this.isPOI, georesourcePATCHInputType.isPOI) &&
+        Objects.equals(this.poiSymbolBootstrap3Name, georesourcePATCHInputType.poiSymbolBootstrap3Name) &&
+        Objects.equals(this.poiMarkerColor, georesourcePATCHInputType.poiMarkerColor);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(metadata, allowedRoles, applicableTopics, isPOI);
+    return Objects.hash(metadata, allowedRoles, applicableTopics, isPOI, poiSymbolBootstrap3Name, poiMarkerColor);
   }
 
   @Override
@@ -145,6 +190,8 @@ public class GeoresourcePATCHInputType   {
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
     sb.append("    isPOI: ").append(toIndentedString(isPOI)).append("\n");
+    sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");
+    sb.append("    poiMarkerColor: ").append(toIndentedString(poiMarkerColor)).append("\n");
     sb.append("}");
     return sb.toString();
   }
