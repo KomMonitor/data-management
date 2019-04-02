@@ -2,6 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.webservice.management;
 
 public class GeoserverPropertiesConstants {
 	
+	public static final String OGC_ENABLE_SERVICE_PUBLICATION = "ogc.enable_service_publication";
 	public static final String REST_URL = "rest.url";
 	public static final String REST_USER = "rest.user";
 	public static final String REST_PASSWORD = "rest.password";

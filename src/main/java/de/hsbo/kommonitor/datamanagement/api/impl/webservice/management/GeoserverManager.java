@@ -65,86 +65,123 @@ public class GeoserverManager implements OGCWebServiceManager {
 	@Override
 	public boolean publishDbLayerAsOgcService(String dbTableName, String title, String defaultStyleName, ResourceTypeEnum resourceType)
 			throws Exception {
+		
+		if(Boolean.parseBoolean(env.getProperty(GeoserverPropertiesConstants.OGC_ENABLE_SERVICE_PUBLICATION))){
+			publishDBLayerInGeoserver(dbTableName, title, defaultStyleName, resourceType);
+			return true;
+		}
+		else{
+			logger.info("OGC service management will be skipped according to service configuration. No publishing/unpublishing of layers is possible.");
+			return false;
+		}
 
-		publishDBLayerInGeoserver(dbTableName, title, defaultStyleName, resourceType);
-		return true;
 	}
 
 	@Override
 	public boolean unpublishDbLayer(String dbTableName, ResourceTypeEnum resourceType) throws MalformedURLException {
-		GeoServerRESTManager geoserverManager = initializeGeoserverRestManager();
+		
+		if(Boolean.parseBoolean(env.getProperty(GeoserverPropertiesConstants.OGC_ENABLE_SERVICE_PUBLICATION))){
+			GeoServerRESTManager geoserverManager = initializeGeoserverRestManager();
 
-		GeoServerRESTReader reader = geoserverManager.getReader();
-		GeoServerRESTPublisher publisher = geoserverManager.getPublisher();
+			GeoServerRESTReader reader = geoserverManager.getReader();
+			GeoServerRESTPublisher publisher = geoserverManager.getPublisher();
 
-		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
-		String targetDatastore = null;
-		String targetSchema = null;
+			String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+			String targetDatastore = null;
+			String targetSchema = null;
 
-		switch (resourceType) {
-		case SPATIAL_UNIT:
-			targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_SPATIALUNITS);
-			targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_SPATIALUNITS);
-			break;
-		case GEORESOURCE:
-			targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
-			targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
-			break;
-		case INDICATOR:
-			targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_INDICATORS);
-			targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_INDICATORS);
-			break;
+			switch (resourceType) {
+			case SPATIAL_UNIT:
+				targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_SPATIALUNITS);
+				targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_SPATIALUNITS);
+				break;
+			case GEORESOURCE:
+				targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
+				targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
+				break;
+			case INDICATOR:
+				targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_INDICATORS);
+				targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_INDICATORS);
+				break;
 
-		default:
-			targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
-			targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
-			break;
+			default:
+				targetDatastore = env.getProperty(GeoserverPropertiesConstants.DATASTORE_GEORESOURCES);
+				targetSchema = env.getProperty(GeoserverPropertiesConstants.DB_SCHEMA_GEORESOURCES);
+				break;
+			}
+			
+			if (reader.existsFeatureType(targetWorkspace, targetDatastore, dbTableName)) {
+				logger.info("Removing FeatureType '{}' on geoserver.", dbTableName);
+				publisher.unpublishFeatureType(targetWorkspace, targetDatastore, dbTableName);
+			}
+
+			if (reader.existsLayer(targetWorkspace, dbTableName)
+					|| (reader.getLayer(targetWorkspace, dbTableName) != null)) {
+				publisher.removeLayer(targetWorkspace, dbTableName);
+				logger.info("Removing Layer '{}' on geoserver", dbTableName);
+			}
+			return true;
+		}
+		else{
+			logger.info("OGC service management will be skipped according to service configuration. No publishing/unpublishing of layers is possible.");
+			return false;
 		}
 		
-		if (reader.existsFeatureType(targetWorkspace, targetDatastore, dbTableName)) {
-			logger.info("Removing FeatureType '{}' on geoserver.", dbTableName);
-			publisher.unpublishFeatureType(targetWorkspace, targetDatastore, dbTableName);
-		}
-
-		if (reader.existsLayer(targetWorkspace, dbTableName)
-				|| (reader.getLayer(targetWorkspace, dbTableName) != null)) {
-			publisher.removeLayer(targetWorkspace, dbTableName);
-			logger.info("Removing Layer '{}' on geoserver", dbTableName);
-		}
-		return true;
 	}
 
 	@Override
 	public String getWmsUrl(String dbTableName) {
-		// example: http://localhost:8080/geoserver/kommonitor/SPATIAL_UNIT_5/ows?service=WMS&request=GetCapabilities
-		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
-		String wmsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/"+ dbTableName + "/wms?service=WMS&request=GetCapabilities";
 		
-		logger.info("created WMS URL '{}' for dbTable '{}'", wmsUrl, dbTableName);
 		
-		return wmsUrl;
+		if(Boolean.parseBoolean(env.getProperty(GeoserverPropertiesConstants.OGC_ENABLE_SERVICE_PUBLICATION))){
+			// example: http://localhost:8080/geoserver/kommonitor/SPATIAL_UNIT_5/ows?service=WMS&request=GetCapabilities
+			String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+			String wmsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/"+ dbTableName + "/wms?service=WMS&request=GetCapabilities";
+			
+			logger.info("created WMS URL '{}' for dbTable '{}'", wmsUrl, dbTableName);
+			
+			return wmsUrl;
+		}
+		else{
+			logger.info("OGC service management will be skipped according to service configuration. No OGC service layer can exist.");
+			return "";
+		}
 	}
 
 	@Override
-	public String getWfsUrl(String dbTableName) {
-		// example: http://localhost:8080/geoserver/kommonitor/SPATIAL_UNIT_5/ows?service=WFS&request=GetCapabilities
-		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
-		String wfsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/"+ dbTableName + "/wfs?service=WFS&request=GetCapabilities";
+	public String getWfsUrl(String dbTableName) {	
 		
-		logger.info("created WFS URL '{}' for dbTable '{}'", wfsUrl, dbTableName);
-		
-		return wfsUrl;
+		if(Boolean.parseBoolean(env.getProperty(GeoserverPropertiesConstants.OGC_ENABLE_SERVICE_PUBLICATION))){
+			// example: http://localhost:8080/geoserver/kommonitor/SPATIAL_UNIT_5/ows?service=WFS&request=GetCapabilities
+			String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+			String wfsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/"+ dbTableName + "/wfs?service=WFS&request=GetCapabilities";
+			
+			logger.info("created WFS URL '{}' for dbTable '{}'", wfsUrl, dbTableName);
+			
+			return wfsUrl;
+		}
+		else{
+			logger.info("OGC service management will be skipped according to service configuration. No OGC service layer can exist.");
+			return "";
+		}
 	}
 
 	@Override
 	public String getWcsUrl(String dbTableName) {
-		// example: http://localhost:8080/geoserver/kommonitor/SPATIAL_UNIT_5/ows?service=WCS&request=GetCapabilities
-		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
-		String wcsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/"+ dbTableName + "/wcs?service=WCS&request=GetCapabilities";
 		
-		logger.info("created WCS URL '{}' for dbTable '{}'", wcsUrl, dbTableName);
-		
-		return wcsUrl;
+		if(Boolean.parseBoolean(env.getProperty(GeoserverPropertiesConstants.OGC_ENABLE_SERVICE_PUBLICATION))){
+			// example: http://localhost:8080/geoserver/kommonitor/SPATIAL_UNIT_5/ows?service=WCS&request=GetCapabilities
+			String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+			String wcsUrl = env.getProperty(GeoserverPropertiesConstants.REST_URL) + "/" + targetWorkspace + "/"+ dbTableName + "/wcs?service=WCS&request=GetCapabilities";
+			
+			logger.info("created WCS URL '{}' for dbTable '{}'", wcsUrl, dbTableName);
+			
+			return wcsUrl;
+		}
+		else{
+			logger.info("OGC service management will be skipped according to service configuration. No OGC service layer can exist.");
+			return "";
+		}
 	}
 
 //	private static void parseResourceFiles() throws IOException, FileNotFoundException {
@@ -292,66 +329,71 @@ public class GeoserverManager implements OGCWebServiceManager {
 	public String createAndPublishStyle(String datasetTitle, FeatureCollection features,
 			DefaultClassificationMappingType defaultClassificationMappingType, String targetPropertyName) throws TransformerException, FactoryRegistryException, IllegalFilterException, MalformedURLException {
 		
-		
-		if(! targetPropertyName.startsWith(IndicatorDatabaseHandler.DATE_PREFIX))
-			targetPropertyName = IndicatorDatabaseHandler.DATE_PREFIX + targetPropertyName;
-		
-		String styleName = STYLE_PREFIX + datasetTitle + "_" + targetPropertyName;
-		
-		// execute classifiation using colorBrewer to classify the indicator values
-		
-		List<DefaultClassificationMappingItemType> classificationItems = defaultClassificationMappingType.getItems();
-		int numberOfClasses = classificationItems.size();
-		
-		// STEP 0 Set up Color Brewer
-//        ColorBrewer brewer = ColorBrewer.instance();
+		if(Boolean.parseBoolean(env.getProperty(GeoserverPropertiesConstants.OGC_ENABLE_SERVICE_PUBLICATION))){
+			if(! targetPropertyName.startsWith(IndicatorDatabaseHandler.DATE_PREFIX))
+				targetPropertyName = IndicatorDatabaseHandler.DATE_PREFIX + targetPropertyName;
+			
+			String styleName = STYLE_PREFIX + datasetTitle + "_" + targetPropertyName;
+			
+			// execute classifiation using colorBrewer to classify the indicator values
+			
+			List<DefaultClassificationMappingItemType> classificationItems = defaultClassificationMappingType.getItems();
+			int numberOfClasses = classificationItems.size();
+			
+			// STEP 0 Set up Color Brewer
+//	        ColorBrewer brewer = ColorBrewer.instance();
 
-        // STEP 1 - call a classifier function to summarise your content
-        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
-        PropertyName propertyExpression = ff.property(targetPropertyName);
+	        // STEP 1 - call a classifier function to summarise your content
+	        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+	        PropertyName propertyExpression = ff.property(targetPropertyName);
 
-        // classify into five categories using natural breaks (jenks)
-        Function classify = ff.function("Jenks", propertyExpression, ff.literal(numberOfClasses));
-        Classifier groups = (Classifier) classify.evaluate(features);
+	        // classify into five categories using natural breaks (jenks)
+	        Function classify = ff.function("Jenks", propertyExpression, ff.literal(numberOfClasses));
+	        Classifier groups = (Classifier) classify.evaluate(features);
 
-        // STEP 2 - look up a predefined palette from color brewer
-//        String paletteName = "GrBu";
-//        Color[] colors = brewer.getPalette(paletteName).getColors(5);
-        Color[] colors = getColorsFromClassification(classificationItems);
-        
-        // STEP 3 - ask StyleGenerator to make a set of rules for the Classifier
-        // assigning features the correct color based on height
-        FeatureTypeStyle style =
-                StyleGenerator.createFeatureTypeStyle(
-                        groups,
-                        propertyExpression,
-                        colors,
-                        "Generated FeatureTypeStyle",
-                        features.getSchema().getGeometryDescriptor(),
-                        StyleGenerator.ELSEMODE_IGNORE,
-                        0.95,
-                        null);
-        
-        
-		
-		// create SLD from classes and colors for target date property
-		String sld = generateSLD(datasetTitle, targetPropertyName, style);
-		
-		// publish style
+	        // STEP 2 - look up a predefined palette from color brewer
+//	        String paletteName = "GrBu";
+//	        Color[] colors = brewer.getPalette(paletteName).getColors(5);
+	        Color[] colors = getColorsFromClassification(classificationItems);
+	        
+	        // STEP 3 - ask StyleGenerator to make a set of rules for the Classifier
+	        // assigning features the correct color based on height
+	        FeatureTypeStyle style =
+	                StyleGenerator.createFeatureTypeStyle(
+	                        groups,
+	                        propertyExpression,
+	                        colors,
+	                        "Generated FeatureTypeStyle",
+	                        features.getSchema().getGeometryDescriptor(),
+	                        StyleGenerator.ELSEMODE_IGNORE,
+	                        0.95,
+	                        null);
+	        
+	        
+			
+			// create SLD from classes and colors for target date property
+			String sld = generateSLD(datasetTitle, targetPropertyName, style);
+			
+			// publish style
 
-		GeoServerRESTManager geoserverManager = initializeGeoserverRestManager();
+			GeoServerRESTManager geoserverManager = initializeGeoserverRestManager();
 
-		GeoServerRESTReader reader = geoserverManager.getReader();
-		GeoServerRESTPublisher publisher = geoserverManager.getPublisher();
-		GeoServerRESTStoreManager storeManager = geoserverManager.getStoreManager();
+			GeoServerRESTReader reader = geoserverManager.getReader();
+			GeoServerRESTPublisher publisher = geoserverManager.getPublisher();
+			GeoServerRESTStoreManager storeManager = geoserverManager.getStoreManager();
 
-		String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
+			String targetWorkspace = env.getProperty(GeoserverPropertiesConstants.WORKSPACE);
 
-		publishOrModifySldOnGeoserver(reader, publisher, targetWorkspace, styleName, sld);
-		
-		// return styleName
-		
-		return styleName;
+			publishOrModifySldOnGeoserver(reader, publisher, targetWorkspace, styleName, sld);
+			
+			// return styleName
+			
+			return styleName;
+		}
+		else{
+			logger.info("OGC service management will be skipped according to service configuration. No publishing/unpublishing of styles is possible.");
+			return "";
+		}
 	}
 	
 	private String generateSLD(String datasetTitle, String mostCurrentDate, FeatureTypeStyle featureTypeStyle) throws TransformerException {
