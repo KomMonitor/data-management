@@ -309,6 +309,7 @@ public class SpatialUnitsManager {
 		logger.info("Retrieving all spatialUnits metadata from db");
 
 		List<MetadataSpatialUnitsEntity> spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll();
+		logger.info("Retrieved a total number of {} entries for spatialUnits metadata from db. Convert them to JSON Output structure and return.", spatialUnitMeatadataEntities.size());
 		List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitMeatadataEntities);
 
 		swaggerSpatialUnitsMetadata = sortSpatialUnitsHierarchically(swaggerSpatialUnitsMetadata);
@@ -349,7 +350,7 @@ public class SpatialUnitsManager {
 		} catch (Exception e) {
 			// log error and return unsorted list
 			logger.error(e.getMessage());
-			logger.error(e.getStackTrace().toString());
+			e.printStackTrace();
 			return swaggerSpatialUnitsMetadata;
 		}
 		

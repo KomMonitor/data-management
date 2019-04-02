@@ -142,15 +142,15 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		 */
 		try {
 			
-			if (accept != null && accept.contains("application/json")) {
+//			if (accept != null && accept.contains("application/json")) {
 
 				List<SpatialUnitOverviewType> spatialunitsMetadata = spatialUnitsManager.getAllSpatialUnitsMetadata();
 
 				return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
-
-			} else {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+//
+//			} else {
+//				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//			}
 			
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
