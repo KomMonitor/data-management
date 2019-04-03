@@ -32,6 +32,12 @@
     </properties>
 
     <dependencies>
+    
+    	<!-- <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency> -->
 
 
         <!-- Spring -->
@@ -265,7 +271,7 @@
 
     <build>
         <plugins>
-            <plugin>
+<!--             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
@@ -287,7 +293,7 @@
                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>
                 </configuration>
-            </plugin>
+            </plugin> -->
         </plugins>
     </build>
 
