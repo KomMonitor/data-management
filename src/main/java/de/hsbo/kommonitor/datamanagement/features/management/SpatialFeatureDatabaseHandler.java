@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.GeometrySimplifierUtil;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
@@ -255,7 +256,7 @@ public class SpatialFeatureDatabaseHandler {
 		return validityPeriod;
 	}
 
-	public static String getValidFeatures(Date date, String dbTableName) throws Exception {
+	public static String getValidFeatures(Date date, String dbTableName, String simplifyGeometries) throws Exception {
 		/*
 		 * fetch all features from table where startDate <= date and (endDate >=
 		 * date || endDate = null)
@@ -269,6 +270,8 @@ public class SpatialFeatureDatabaseHandler {
 
 		SimpleFeatureSource featureSource = dataStore.getFeatureSource(dbTableName);
 		features = fetchFeaturesForDate(featureSource, date);
+		
+		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
 
 		int validFeaturesSize = features.size();
 		logger.info("Transform {} found features to GeoJSON", validFeaturesSize);

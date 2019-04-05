@@ -6,25 +6,26 @@
 package de.hsbo.kommonitor.datamanagement.api;
 
 import java.math.BigDecimal;
+import java.util.List;
 
-import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
-
-import java.util.List;
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-04-05T10:56:22.201+02:00")
 
 @Api(value = "Georesources", description = "the Georesources API")
 public interface GeoresourcesApi {
@@ -62,8 +63,9 @@ public interface GeoresourcesApi {
     @RequestMapping(value = "/georesources/{georesourceId}/{year}/{month}/{day}",
         method = RequestMethod.DELETE)
     ResponseEntity deleteGeoresourceByIdAndYearAndMonth(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day);
-    
-    @ApiOperation(value = "retrieve information about available features of different geo-resource datasets", nickname = "getGeoresources", notes = "retrieve information about available features of different geo-resource datasets", response = GeoresourceOverviewType.class, responseContainer = "array", authorizations = {
+
+
+    @ApiOperation(value = "retrieve information about available features of different geo-resource datasets", nickname = "getGeoresource", notes = "retrieve information about available features of different geo-resource datasets", response = GeoresourceOverviewType.class, responseContainer = "array", authorizations = {
         @Authorization(value = "basicAuth")
     }, tags={  })
     @ApiResponses(value = { 
@@ -99,7 +101,7 @@ public interface GeoresourcesApi {
     @RequestMapping(value = "/georesources/{georesourceId}/{year}/{month}/{day}",
         produces = { "application/octed-stream" }, 
         method = RequestMethod.GET)
-    ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonth(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day);
+    ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonth(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries);
 
 
     @ApiOperation(value = "retrieve the JSON schema for the selected geo-resource dataset", nickname = "getGeoresourceSchemaByLevel", notes = "retrieve the JSON schema for the selected geo-resource dataset. The JSON schema indicates the property structure of the dataset.", response = String.class, authorizations = {

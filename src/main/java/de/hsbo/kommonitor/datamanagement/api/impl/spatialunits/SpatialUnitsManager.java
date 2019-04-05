@@ -375,7 +375,7 @@ public class SpatialUnitsManager {
 	}
 
 	public String getValidSpatialUnitFeatures(String spatialUnitId, BigDecimal year, BigDecimal month,
-			BigDecimal day) throws Exception {
+			BigDecimal day, String simplifyGeometries) throws Exception {
 		Calendar calender = Calendar.getInstance();
 		calender.set(year.intValue(), month.intValueExact()-1, day.intValue());
 		java.util.Date date = calender.getTime();
@@ -386,7 +386,7 @@ public class SpatialUnitsManager {
 	
 		String dbTableName = metadataEntity.getDbTableName();
 			
-		String geoJson = SpatialFeatureDatabaseHandler.getValidFeatures(date, dbTableName);
+		String geoJson = SpatialFeatureDatabaseHandler.getValidFeatures(date, dbTableName, simplifyGeometries);
 		return geoJson;
 		
 		}else {
