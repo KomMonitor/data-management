@@ -26,7 +26,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-24T11:17:31.441+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-04-05T10:56:22.201+02:00")
 
 @Api(value = "Indicators", description = "the Indicators API")
 public interface IndicatorsApi {
@@ -88,7 +88,7 @@ public interface IndicatorsApi {
     @RequestMapping(value = "/indicators/{indicatorId}/{spatialUnitId}",
         produces = { "application/octed-stream" }, 
         method = RequestMethod.GET)
-    ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndId(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId);
+    ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndId(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries);
 
 
     @ApiOperation(value = "retrieve the indicator for the selected spatial unit, year and month as GeoJSON", nickname = "getIndicatorBySpatialUnitIdAndIdAndYearAndMonth", notes = "retrieve the indicator for the selected spatial unit, year and month as GeoJSON", response = byte[].class, authorizations = {
@@ -101,7 +101,7 @@ public interface IndicatorsApi {
     @RequestMapping(value = "/indicators/{indicatorId}/{spatialUnitId}/{year}/{month}/{day}",
         produces = { "application/octed-stream" }, 
         method = RequestMethod.GET)
-    ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndIdAndYearAndMonth(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "year for which the indicator shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which the indicator shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day);
+    ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndIdAndYearAndMonth(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "year for which the indicator shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which the indicator shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries);
 
 
     @ApiOperation(value = "retrieve the indicator values and other properties for the selected spatial unit, year and month. It does not include the spatial geometries!", nickname = "getIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry", notes = "retrieve the indicator values and other properties for the selected spatial unit, year and month. It does not include the spatial geometries!", response = IndicatorPropertiesWithoutGeomType.class, responseContainer = "array", authorizations = {

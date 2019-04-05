@@ -141,13 +141,14 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 	@Override
 	public ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndId(@PathVariable("indicatorId") String indicatorId,
-			@PathVariable("spatialUnitId") String spatialUnitId) {
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries) {
 		logger.info("Received request to get indicators features for spatialUnitId '{}' and Id '{}' ",
 				spatialUnitId, indicatorId);
 		String accept = request.getHeader("Accept");
 
 		try {
-			String geoJsonFeatures = indicatorsManager.getIndicatorFeatures(indicatorId, spatialUnitId);
+			String geoJsonFeatures = indicatorsManager.getIndicatorFeatures(indicatorId, spatialUnitId, simplifyGeometries);
 			String fileName = "IndicatorFeatures_" + spatialUnitId + "_" + indicatorId + ".json";
 
 			HttpHeaders headers = new HttpHeaders();
@@ -166,7 +167,8 @@ public class IndicatorsController extends BasePathController implements Indicato
 	@Override
 	public ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId,
 			@PathVariable("spatialUnitId") String spatialUnitId, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
-			@PathVariable("day") BigDecimal day) {
+			@PathVariable("day") BigDecimal day,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries) {
 		logger.info(
 				"Received request to get indicators features for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
 				spatialUnitId, indicatorId, year, month, day);
@@ -178,7 +180,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 		try {
 			String geoJsonFeatures = indicatorsManager.getValidIndicatorFeatures(indicatorId, spatialUnitId, year,
-					month, day);
+					month, day, simplifyGeometries);
 			String fileName = "IndicatorFeatures_" + spatialUnitId + "_" + indicatorId + "_" + year + "-" + month
 					+ "-" + day + ".json";
 
@@ -331,8 +333,6 @@ public class IndicatorsController extends BasePathController implements Indicato
 		 */
 
 		try {
-			String geoJsonFeatures = indicatorsManager.getValidIndicatorFeatures(indicatorId, spatialUnitId, year,
-					month, day);
 			List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = 
 					indicatorsManager.getValidIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, year,
 					month, day);

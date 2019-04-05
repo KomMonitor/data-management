@@ -304,7 +304,7 @@ public class GeoresourcesManager {
 		return swaggerGeoresourceMetadata;
 	}
 
-	public String getValidGeoresourceFeatures(String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day)
+	public String getValidGeoresourceFeatures(String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day, String simplifyGeometries)
 			throws Exception {
 		Calendar calender = Calendar.getInstance();
 		calender.set(year.intValue(), month.intValueExact() - 1, day.intValue());
@@ -317,7 +317,7 @@ public class GeoresourcesManager {
 
 			String dbTableName = metadataEntity.getDbTableName();
 
-			String geoJson = SpatialFeatureDatabaseHandler.getValidFeatures(date, dbTableName);
+			String geoJson = SpatialFeatureDatabaseHandler.getValidFeatures(date, dbTableName, simplifyGeometries);
 			return geoJson;
 
 		} else {

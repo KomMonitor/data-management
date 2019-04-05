@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
@@ -24,7 +25,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-07-31T10:37:09.246+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-04-05T10:56:22.201+02:00")
 
 @Api(value = "SpatialUnits", description = "the SpatialUnits API")
 public interface SpatialUnitsApi {
@@ -62,7 +63,7 @@ public interface SpatialUnitsApi {
     @RequestMapping(value = "/spatial-units/{spatialUnitId}/{year}/{month}/{day}",
         method = RequestMethod.DELETE)
     ResponseEntity deleteSpatialUnitByIdAndYearAndMonth(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day);
-    
+
 
     @ApiOperation(value = "retrieve information about available features of different spatial units/levels", nickname = "getSpatialUnits", notes = "retrieve information about available features of different spatial units/levels", response = SpatialUnitOverviewType.class, responseContainer = "array", authorizations = {
         @Authorization(value = "basicAuth")
@@ -100,7 +101,7 @@ public interface SpatialUnitsApi {
     @RequestMapping(value = "/spatial-units/{spatialUnitId}/{year}/{month}/{day}",
         produces = { "application/octed-stream" }, 
         method = RequestMethod.GET)
-    ResponseEntity<byte[]> getSpatialUnitsByIdAndYearAndMonth(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day);
+    ResponseEntity<byte[]> getSpatialUnitsByIdAndYearAndMonth(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries);
 
 
     @ApiOperation(value = "retrieve the JSON schema for the selected spatial unit/level", nickname = "getSpatialUnitsSchemaById", notes = "retrieve the JSON schema for the selected spatial unit/level. The JSON schema indicates the property structure of the dataset.", response = String.class, authorizations = {

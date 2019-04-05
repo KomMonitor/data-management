@@ -191,12 +191,13 @@ public class GeorecourcesController extends BasePathController implements Geores
 
 	@Override
 	public ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonth(@PathVariable("georesourceId") String georesourceId, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
-			@PathVariable("day") BigDecimal day) {
+			@PathVariable("day") BigDecimal day,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries) {
 		logger.info("Received request to get georesource features for datasetId '{}'", georesourceId);
 		String accept = request.getHeader("Accept");
 
 		try {
-			String geoJsonFeatures = georesourcesManager.getValidGeoresourceFeatures(georesourceId, year, month, day);
+			String geoJsonFeatures = georesourcesManager.getValidGeoresourceFeatures(georesourceId, year, month, day, simplifyGeometries);
 			String fileName = "GeoresourceFeatures_" + georesourceId + "_" + year + "-" + month + "-" + day + ".json";
 
 			HttpHeaders headers = new HttpHeaders();

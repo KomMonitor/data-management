@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -185,7 +186,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 	@Override
 	public ResponseEntity<byte[]> getSpatialUnitsByIdAndYearAndMonth(@PathVariable("spatialUnitId") String spatialUnitId, @PathVariable("year") BigDecimal year,
-			@PathVariable("month") BigDecimal month, @PathVariable("day") BigDecimal day) {
+			@PathVariable("month") BigDecimal month, @PathVariable("day") BigDecimal day,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries) {
 		logger.info("Received request to get spatialUnit features for datasetId '{}'", spatialUnitId);
 		String accept = request.getHeader("Accept");
 
@@ -195,7 +197,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 		try {
 			String geoJsonFeatures = spatialUnitsManager.getValidSpatialUnitFeatures(spatialUnitId, year, month,
-					day);
+					day, simplifyGeometries);
 			String fileName = "SpatialUnitFeatures_" + spatialUnitId + "_" + year + "-" + month + "-" + day
 					+ ".json";
 

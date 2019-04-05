@@ -370,7 +370,7 @@ public class IndicatorsManager {
 	}
 
 	public String getValidIndicatorFeatures(String indicatorId, String spatialUnitId, BigDecimal year,
-			BigDecimal month, BigDecimal day)throws Exception {
+			BigDecimal month, BigDecimal day, String simplifyGeometries)throws Exception {
 		logger.info("Retrieving valid indicator features from Dataset with id '{}'for spatialUnit '{}' for date '{}-{}-{}'", indicatorId, spatialUnitId,
 				year, month, day);
 
@@ -379,7 +379,7 @@ public class IndicatorsManager {
 				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
 				String indicatorValueTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
 
-				String json = IndicatorDatabaseHandler.getValidFeatures(indicatorValueTableName, year, month, day);
+				String json = IndicatorDatabaseHandler.getValidFeatures(indicatorValueTableName, year, month, day, simplifyGeometries);
 				return json;
 
 			} else{
@@ -400,7 +400,7 @@ public class IndicatorsManager {
 		}
 	}
 
-	public String getIndicatorFeatures(String indicatorId, String spatialUnitId) throws Exception{
+	public String getIndicatorFeatures(String indicatorId, String spatialUnitId, String simplifyGeometries) throws Exception{
 		logger.info("Retrieving all indicator features from Dataset with id '{}'for spatialUnitId '{}' ", indicatorId, spatialUnitId);
 
 		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
@@ -408,7 +408,7 @@ public class IndicatorsManager {
 				IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
 				String indicatorValueTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
 
-				String json = IndicatorDatabaseHandler.getIndicatorFeatures(indicatorValueTableName);
+				String json = IndicatorDatabaseHandler.getIndicatorFeatures(indicatorValueTableName, simplifyGeometries);
 				return json;
 
 			} else{

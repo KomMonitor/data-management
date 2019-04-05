@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.GeometrySimplifierUtil;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
@@ -506,8 +507,8 @@ public class IndicatorDatabaseHandler {
 		return false;
 	}
 
-	public static String getValidFeatures(String featureViewName, BigDecimal year, BigDecimal month, BigDecimal day) throws Exception {
-		logger.info("Fetch indicator features for table with name {} and timestamp '{}-{}-{}'", featureViewName, year, month, day);
+	public static String getValidFeatures(String featureViewName, BigDecimal year, BigDecimal month, BigDecimal day, String simplifyGeometries) throws Exception {
+		logger.info("Fetch indicator features for table with name {} and timestamp '{}-{}-{}' and simplificationType '{}'", featureViewName, year, month, day, simplifyGeometries);
 		/*
 		 * here all indicators for the requested spatial unit shall be retrieved. However, the timeseries shall be reduced
 		 * to only contain the requested timestamp
@@ -528,6 +529,8 @@ public class IndicatorDatabaseHandler {
 //		FeatureCollection features = featureSource.getFeatures(query);
 		
 		 FeatureCollection features = fetchFeaturesForDate(featureSource, date);
+		 
+		 features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
 
 		int indicatorFeaturesSize = features.size();
 		logger.info("Transform {} found indicator features to GeoJSON", indicatorFeaturesSize);
@@ -604,7 +607,7 @@ public class IndicatorDatabaseHandler {
 		
 	}
 
-	public static String getIndicatorFeatures(String featureViewTableName) throws Exception {
+	public static String getIndicatorFeatures(String featureViewTableName, String simplifyGeometries) throws Exception {
 
 		logger.info("Fetch indicator features for table with name {}", featureViewTableName);
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
@@ -613,6 +616,8 @@ public class IndicatorDatabaseHandler {
 		SimpleFeatureSource featureSource = dataStore.getFeatureSource(featureViewTableName);
 
 		FeatureCollection features = featureSource.getFeatures();
+		
+		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
 
 		int indicatorFeaturesSize = features.size();
 		logger.info("Transform {} found indicator features to GeoJSON", indicatorFeaturesSize);
@@ -628,7 +633,7 @@ public class IndicatorDatabaseHandler {
 			dataStore.dispose();
 			throw new Exception("No features could be retrieved for the specified indicator feature table.");
 		}
-
+		
 		dataStore.dispose();
 
 		return geoJson;
