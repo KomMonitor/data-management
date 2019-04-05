@@ -28,7 +28,7 @@ public class GeometrySimplifierUtil {
 		
 		logger.info("Performing geometry simplification process according to parameter simplifyGeometries='{}'", simplifyGeometries);
 		
-		SimplifyGeometriesEnum simplificationType = SimplifyGeometriesEnum.fromValue(simplifyGeometries);
+		SimplifyGeometriesEnum simplificationType = SimplifyGeometriesEnum.fromName(simplifyGeometries);
 		logger.info("Instantiated geometry simplification type {} with simplificiation value {}", simplificationType.toString(), simplificationType.getValue());
 
 		if (simplifyGeometries.equalsIgnoreCase(SimplifyGeometriesEnum.ORIGINAL.toString())) {
