@@ -10,8 +10,8 @@ public class KomMonitorFeaturePropertyConstants {
 	public static final String ARISEN_FROM_NAME = "arisenFrom";
 	
 	
-	public static final String SPATIAL_UNIT_FEATURE_ID_NAME = "spatialUnitFeatureId";
-	public static final String SPATIAL_UNIT_FEATURE_NAME_NAME = "spatialUnitFeatureName";
+	public static final String SPATIAL_UNIT_FEATURE_ID_NAME = "ID";
+	public static final String SPATIAL_UNIT_FEATURE_NAME_NAME = "NAME";
 	
 	public static final int NUMBER_OF_DECIMALS_FOR_GEOJSON_OUTPUT = 13;
 

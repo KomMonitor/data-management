@@ -25,11 +25,11 @@ public class IndicatorPropertiesWithoutGeomType extends HashMap<String, String> 
 	 * So do not try to moduiy their value by setting the property alone, instead modify HasMap Entry as well
 	 */
 	
-	@JsonProperty("spatialUnitFeatureId")
-  private String spatialUnitFeatureId = null;
+	@JsonProperty("ID")
+  private String id = null;
 
-  @JsonProperty("spatialUnitFeatureName")
-  private String spatialUnitFeatureName = null;
+  @JsonProperty("NAME")
+  private String name = null;
 
   @JsonProperty("validStartDate")
   private String validStartDate = null;
@@ -37,40 +37,40 @@ public class IndicatorPropertiesWithoutGeomType extends HashMap<String, String> 
   @JsonProperty("validEndDate")
   private String validEndDate = null;
 
-  public IndicatorPropertiesWithoutGeomType spatialUnitFeatureId(String spatialUnitFeatureId) {
-    this.spatialUnitFeatureId = spatialUnitFeatureId;
+  public IndicatorPropertiesWithoutGeomType id(String id) {
+    this.id = id;
     return this;
   }
 
    /**
    * the id of the spatial feature
-   * @return spatialUnitFeatureId
+   * @return id
   **/
   @ApiModelProperty(required = true, value = "the id of the spatial feature")
-  public String getSpatialUnitFeatureId() {
-    return spatialUnitFeatureId;
+  public String getId() {
+    return id;
   }
 
-  public void setSpatialUnitFeatureId(String spatialUnitFeatureId) {
-    this.spatialUnitFeatureId = spatialUnitFeatureId;
+  public void setId(String id) {
+    this.id = id;
   }
 
-  public IndicatorPropertiesWithoutGeomType spatialUnitFeatureName(String spatialUnitFeatureName) {
-    this.spatialUnitFeatureName = spatialUnitFeatureName;
+  public IndicatorPropertiesWithoutGeomType name(String name) {
+    this.name = name;
     return this;
   }
 
    /**
    * the name of the spatial feature
-   * @return spatialUnitFeatureName
+   * @return name
   **/
   @ApiModelProperty(required = true, value = "the name of the spatial feature")
-  public String getSpatialUnitFeatureName() {
-    return spatialUnitFeatureName;
+  public String getName() {
+    return name;
   }
 
-  public void setSpatialUnitFeatureName(String spatialUnitFeatureName) {
-    this.spatialUnitFeatureName = spatialUnitFeatureName;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public IndicatorPropertiesWithoutGeomType validStartDate(String validStartDate) {
@@ -119,8 +119,8 @@ public class IndicatorPropertiesWithoutGeomType extends HashMap<String, String> 
       return false;
     }
     IndicatorPropertiesWithoutGeomType indicatorPropertiesWithoutGeomType = (IndicatorPropertiesWithoutGeomType) o;
-    return Objects.equals(this.spatialUnitFeatureId, indicatorPropertiesWithoutGeomType.spatialUnitFeatureId) &&
-        Objects.equals(this.spatialUnitFeatureName, indicatorPropertiesWithoutGeomType.spatialUnitFeatureName) &&
+    return Objects.equals(this.id, indicatorPropertiesWithoutGeomType.id) &&
+        Objects.equals(this.name, indicatorPropertiesWithoutGeomType.name) &&
         Objects.equals(this.validStartDate, indicatorPropertiesWithoutGeomType.validStartDate) &&
         Objects.equals(this.validEndDate, indicatorPropertiesWithoutGeomType.validEndDate) &&
         super.equals(o);
@@ -128,7 +128,7 @@ public class IndicatorPropertiesWithoutGeomType extends HashMap<String, String> 
 
   @Override
   public int hashCode() {
-    return Objects.hash(spatialUnitFeatureId, spatialUnitFeatureName, validStartDate, validEndDate, super.hashCode());
+    return Objects.hash(id, name, validStartDate, validEndDate, super.hashCode());
   }
 
   @Override
@@ -136,8 +136,8 @@ public class IndicatorPropertiesWithoutGeomType extends HashMap<String, String> 
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorPropertiesWithoutGeomType {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    spatialUnitFeatureId: ").append(toIndentedString(spatialUnitFeatureId)).append("\n");
-    sb.append("    spatialUnitFeatureName: ").append(toIndentedString(spatialUnitFeatureName)).append("\n");
+    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    validStartDate: ").append(toIndentedString(validStartDate)).append("\n");
     sb.append("    validEndDate: ").append(toIndentedString(validEndDate)).append("\n");
     sb.append("}");
