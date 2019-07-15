@@ -133,7 +133,7 @@ public class IndicatorDatabaseHandler {
 				KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" from \"" + indicatorTempTableName
 				+ "\" indicator join \"" + spatialUnitsTable + "\" spatialunit on indicator.\"" 
 				+ indicatorColumnName + "\" = CAST(spatialunit.\"" + spatialUnitColumnName + "\" AS varchar); " + 
-				"create sequence IF NOT EXISTS seq_" + viewTableName + " increment by 1 minvalue 0 maxvalue 100000; ALTER TABLE \"" + viewTableName 
+				"create sequence IF NOT EXISTS seq_" + viewTableName + " increment by 1 minvalue 0 maxvalue 1000000; ALTER TABLE \"" + viewTableName 
 				+ "\" ADD COLUMN unique_id int default nextval('seq_" + viewTableName + "');" + 
 				"UPDATE \"" + viewTableName + "\" SET unique_id=nextval('seq_" + viewTableName + "'); ALTER TABLE \"" + viewTableName 
 				+ "\" ADD PRIMARY KEY (unique_id);";
@@ -795,8 +795,8 @@ public class IndicatorDatabaseHandler {
 			
 			IndicatorPropertiesWithoutGeomType featureProps = new IndicatorPropertiesWithoutGeomType();
 			
-			featureProps.setSpatialUnitFeatureId(result.getString(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME));
-			featureProps.setSpatialUnitFeatureName(result.getString(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME));
+			featureProps.setId(result.getString(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME));
+			featureProps.setName(result.getString(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME));
 			featureProps.setValidStartDate(result.getString(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME));
 			featureProps.setValidEndDate(result.getString(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME));
 			

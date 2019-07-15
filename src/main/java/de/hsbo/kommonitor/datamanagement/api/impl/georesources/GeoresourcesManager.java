@@ -340,7 +340,7 @@ public class GeoresourcesManager {
 	public String updateFeatures(GeoresourcePUTInputType featureData, String georesourceId)
 			throws Exception {
 		logger.info("Trying to update georesource features for datasetId '{}'", georesourceId);
-		if (georesourcesMetadataRepo.existsByDatasetName(georesourceId)) {
+		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 			String datasetName = metadataEntity.getDatasetName();
 			String dbTableName = metadataEntity.getDbTableName();
@@ -374,7 +374,7 @@ public class GeoresourcesManager {
 
 	public String updateMetadata(GeoresourcePATCHInputType metadata, String georesourceId) throws Exception {
 		logger.info("Trying to update georesource metadata for datasetId '{}'", georesourceId);
-		if (georesourcesMetadataRepo.existsByDatasetName(georesourceId)) {
+		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
 			/*
