@@ -18,10 +18,13 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.feature.type.AttributeDescriptorImpl;
+import org.geotools.feature.type.AttributeTypeImpl;
 import org.geotools.filter.FilterFactoryImpl;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
@@ -32,6 +35,8 @@ import org.geotools.temporal.object.DefaultPosition;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.AttributeType;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -171,9 +176,68 @@ public class SpatialFeatureDatabaseHandler {
 		/*
 		 * add KomMonitor specific properties!
 		 */
-		tb.add(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, Date.class);
-		tb.add(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, Date.class);
-		tb.add(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME, String.class);
+		
+		/*
+		 * if property already exists then insert it as DATE!!!!!!
+		 * so we must update the property type to Date
+		 */
+		
+		AttributeDescriptor attributeDescriptor_startDate = tb.get(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+		AttributeDescriptor attributeDescriptor_endDate = tb.get(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+		AttributeDescriptor attributeDescriptor_arisenFrom = tb.get(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME);
+		if(attributeDescriptor_startDate == null){
+			tb.add(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, Date.class);
+		}
+		else {
+
+			AttributeTypeBuilder builder = new AttributeTypeBuilder();
+			builder.setName("DateType");
+			builder.setBinding(Date.class);
+			builder.setNillable(true);
+			AttributeType buildType = builder.buildType();
+			attributeDescriptor_startDate = new AttributeDescriptorImpl(buildType,
+					attributeDescriptor_startDate.getName(), attributeDescriptor_startDate.getMinOccurs(),
+					attributeDescriptor_startDate.getMaxOccurs(), attributeDescriptor_startDate.isNillable(),
+					attributeDescriptor_startDate.getDefaultValue());
+			
+			tb.set(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, attributeDescriptor_startDate);
+		}
+			
+		if(attributeDescriptor_endDate == null){
+			tb.add(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, Date.class);
+		}
+		else {
+
+			AttributeTypeBuilder builder = new AttributeTypeBuilder();
+			builder.setName("DateType");
+			builder.setBinding(Date.class);
+			builder.setNillable(true);
+			AttributeType buildType = builder.buildType();
+			attributeDescriptor_endDate = new AttributeDescriptorImpl(buildType,
+					attributeDescriptor_endDate.getName(), attributeDescriptor_endDate.getMinOccurs(),
+					attributeDescriptor_endDate.getMaxOccurs(), attributeDescriptor_endDate.isNillable(),
+					attributeDescriptor_endDate.getDefaultValue());
+
+			tb.set(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, attributeDescriptor_endDate);
+		}
+		
+		if(attributeDescriptor_arisenFrom == null){
+			tb.add(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME, String.class);
+		}
+		else {
+
+			AttributeTypeBuilder builder = new AttributeTypeBuilder();
+			builder.setName("DateType");
+			builder.setBinding(String.class);
+			builder.setNillable(true);
+			AttributeType buildType = builder.buildType();
+			attributeDescriptor_arisenFrom = new AttributeDescriptorImpl(buildType,
+					attributeDescriptor_arisenFrom.getName(), attributeDescriptor_arisenFrom.getMinOccurs(),
+					attributeDescriptor_arisenFrom.getMaxOccurs(), attributeDescriptor_arisenFrom.isNillable(),
+					attributeDescriptor_arisenFrom.getDefaultValue());
+
+			tb.set(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME, attributeDescriptor_arisenFrom);
+		}
 
 		return tb.buildFeatureType();
 	}
