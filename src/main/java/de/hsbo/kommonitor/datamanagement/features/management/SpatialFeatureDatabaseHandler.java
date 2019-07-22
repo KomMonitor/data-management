@@ -471,15 +471,15 @@ public class SpatialFeatureDatabaseHandler {
 			
 			SimpleFeatureCollection dbFeatures = featureSource.getFeatures();
 
-			compareInputFeaturesToDbFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
-					newFeaturesToBeAdded, dbFeatures, sfStore);
-			
 			/*
 			 * check all dbEntries, if they might have to be assigned with a new endDate in case
 			 * they are no longer present in the inputFeatures
 			 */
 			
 			compareDbFeaturesToInputFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
+					newFeaturesToBeAdded, dbFeatures, sfStore);
+			
+			compareInputFeaturesToDbFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
 					newFeaturesToBeAdded, dbFeatures, sfStore);
 		}
 	}
