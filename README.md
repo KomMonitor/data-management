@@ -19,4 +19,17 @@ Change default port value in application.properties
 ## TODO
 More description will be added soon.
 
-## More TODO
+## License and Third Party Libs
+According to [52°North Best Practices for Java License Management](https://wiki.52north.org/Documentation/BestPracticeLicenseManagementInSoftwareProjects) the POM contains following plugins
+
+ - license-maven-plugin by mycila (used to check and generate license headers for source code files)
+    - ```mvn license:check```
+    - ```mvn license:format```
+ - maven-license-plugin by codehaus (used to generate an overview of Third Party dependencies as THIRD-PARTY.txt)
+    - ```mvn clean generate-resources``` (creates file under target/generated-resources/license/THIRD-PARTY.txt)
+ - maven-notice-plugin (used to create and maintain a NOTICE file containing a short list of third party dependencies)   
+    - ```mvn notice:check``` (checks whether NOTICE file exists and is up-to-date)
+    - ```mvn notice:generate``` (generates NOTICE file based on POM dependencies)
+ 
+Note that project build may fail if any of the configured prerequisits according to these plugins is not fulfilled.
+ 
