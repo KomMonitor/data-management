@@ -71,11 +71,11 @@ defaultEPSG=EPSG:4326
 
 After adjusting the configuration to your target environment, you may continue to build the service as described next.
 
-### JAR / WAR File
-#### JAR
-As a Spring Boot application the typical build format is a single runnable <b>JAR</b>, which is also set as project default. Simpay run the command `mvn clean install` or `mvn clean package` to create the runnable JAR file within the <b>target</b> folder.
+#### JAR / WAR File
+##### JAR
+As a Spring Boot application the typical build format is a single runnable <b>JAR</b>, which is also set as project default. Simply run the command `mvn clean install` or `mvn clean package` to create the runnable JAR file within the <b>target</b> folder.
 
-#### WAR
+##### WAR
 However, you might need to create a WAR archive in some scenarios. To create a WAR archive, following the [Baeldung Guide](https://www.baeldung.com/spring-boot-war-tomcat-deploy), you must adjust the associated settings in `pom.xml` file:
 
 1. Look for the `<packaging>JAR</packaging>` setting and change it to `<packaging>WAR</packaging>`
@@ -117,16 +117,29 @@ public class Runner extends SpringBootServletInitializer{
 After these adjustments you can run the command `mvn clean install` or `mvn clean package`, which will create the corresponding <b>WAR</b> file in the folder <b>target</b>.
 
 ### Docker
-text
+The <b>KomMonitor Data Management REST API</b> can also be build and deployed as Docker image. The project contains the associated `Dockerfile` and an exemplar `docker-compose.yml` on project root level. The `Dockerfile` already expects a pre-built <b>JAR</b> file of the service. So, before building the docker image, you must build the runnable <b>JAR</b> via maven.
+
+When building the docker image (i.e. `docker build -t data-management-api:latest .`), the profile `docker` is used. In contrast to the default profile, the `docker` profile consumes the associated `src/main/resources/application-docker.properties`, which makes use of environment variables to declare relevant settings (as described in the [Configuration](#Configuration) section above). For instance check out the exemplar [docker-compose.yml](./docker-compose.yml) file. It specifies two services, `kommonitor-db` as required PostGIS database container and the actual `kommonitor-data-management-api` container. The latter depends on the database container and contains an `environment` section to define the required settings (connection details to other services etc.).
+
+A more advanced setup including a Geoserver as docker container is also given at [docker-compose_managementAndGeoserver.yml](./docker-compose_managementAndGeoserver.yml).
 
 ## User Guide
-text
+TODO
 
 ## Contribution - Developer Information
-infos for developers and how to contribute to the project
+This section contains information for developers.
 
 ### How to Contribute
-text
+The technical lead of the whole <b>KomMonitor</b> spatial data infrastructure currently lies at the Bochum University of Applied Sciences, Department of Geodesy. We invite you to participate in the project and in the software development process. If you are interested, please contact any of the following persons:
+
+|    Name   |   Organization    |    Mail    |
+| :-------------: |:-------------:| :-----:|
+| Christian Danowski-Buhren | Bochum University of Applied Sciences | christian.danowski-buhren@hs-bochum.de |
+| Andreas Wytzisk  |  | Andreas-Wytzisk@hs-bochum.de |
+| Ulrike Klein | Bochum University of Applied Sciences | christian.danowski-buhren@hs-bochum.de | Ulrike.Klein@hs-bochum.de |
+
+### Branching
+The `master` branch contains latest stable releases. The `develop` branch is the main development branch that will be merged into the `master` branch from time to time. Any other branch focuses certain bug fixes or feature requests.
 
 ### License and Third Party Lib POM Plugins
 According to [52°North Best Practices for Java License Management](https://wiki.52north.org/Documentation/BestPracticeLicenseManagementInSoftwareProjects) the POM contains following plugins
