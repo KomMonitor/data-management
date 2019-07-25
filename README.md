@@ -73,7 +73,7 @@ After adjusting the configuration to your target environment, you may continue t
 
 #### JAR / WAR File
 ##### JAR
-As a Spring Boot application the typical build format is a single runnable <b>JAR</b>, which is also set as project default. Simply run the command `mvn clean install` or `mvn clean package` to create the runnable JAR file within the <b>target</b> folder.
+As a Spring Boot application the typical build format is a single runnable <b>JAR</b>, which is also set as project default. Simply run the command `mvn clean install` or `mvn clean package` to create the runnable JAR file within the <b>target</b> folder. To run the JAR locally, simply call `start java -Dfile.encoding=utf-8 -jar kommonitor-data-management-api-1.0.0.jar` from the target directory of the project, which will serve the application at `localhost:<PORT>` (i.e. `localhost:8085` per default). In a browser call  ``localhost:<PORT>/swagger-ui.html`` to inspect the REST API.
 
 ##### WAR
 However, you might need to create a WAR archive in some scenarios. To create a WAR archive, following the [Baeldung Guide](https://www.baeldung.com/spring-boot-war-tomcat-deploy), you must adjust the associated settings in `pom.xml` file:
@@ -114,7 +114,7 @@ public class Runner extends SpringBootServletInitializer{
 }
 ```
 
-After these adjustments you can run the command `mvn clean install` or `mvn clean package`, which will create the corresponding <b>WAR</b> file in the folder <b>target</b>.
+After these adjustments you can run the command `mvn clean install` or `mvn clean package`, which will create the corresponding <b>WAR</b> file in the folder <b>target</b>. Deploy it somewhere, e.g. in Tomcat, to launch the app. Assuming the WAR file is named `kommonitor-data-management-api-1.0.0.WAR` and Tomcat is started locally on port 8080, you may reach the service via `localhost:8080/kommonitor-data-management-api-1.0.0`. In a browser call  ``localhost:8080/kommonitor-data-management-api-1.0.0/swagger-ui.html`` to inspect the REST API.
 
 ### Docker
 The <b>KomMonitor Data Management REST API</b> can also be build and deployed as Docker image. The project contains the associated `Dockerfile` and an exemplar `docker-compose.yml` on project root level. The `Dockerfile` already expects a pre-built <b>JAR</b> file of the service. So, before building the docker image, you must build the runnable <b>JAR</b> via maven.
