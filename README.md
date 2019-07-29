@@ -2,6 +2,30 @@
 
 This projects implements a REST API that persists and manages all relevant data within the KomMonitor project.
 
+**Table of Content**
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
+
+- [KomMonitor DataManagement REST API](#kommonitor-datamanagement-rest-api)
+	- [Background Information Concerning KomMonitor Spatial Data Infrastructure](#background-information-concerning-kommonitor-spatial-data-infrastructure)
+		- [Architecture Overview](#architecture-overview)
+	- [Overview](#overview)
+	- [Installation / Building Information](#installation-building-information)
+		- [Configuration](#configuration)
+			- [application.properties - Configure Database Access and Deployment Details of other Services](#applicationproperties-configure-database-access-and-deployment-details-of-other-services)
+			- [JAR / WAR File](#jar-war-file)
+				- [JAR](#jar)
+				- [WAR](#war)
+		- [Docker](#docker)
+	- [User Guide](#user-guide)
+	- [Contribution - Developer Information](#contribution-developer-information)
+		- [How to Contribute](#how-to-contribute)
+		- [Branching](#branching)
+		- [License and Third Party Lib POM Plugins](#license-and-third-party-lib-pom-plugins)
+	- [Contact](#contact)
+	- [Credits and Contributing Organizations](#credits-and-contributing-organizations)
+
+<!-- /TOC -->
+
 ## Background Information Concerning KomMonitor Spatial Data Infrastructure
 This software is part of a spatial data infrastructure called [KomMonitor](http://kommonitor.de), which is a shortcut for German "Kommunales Monitoring" (Municipal monitoring). Funded by the <i>German Federal Ministry of Education and Research</i> municipal actors from the cities Essen and Mülheim cooperate with scientists from the Ruhr University Bochum and the Bochum University of Applied Sciences in order to create a monitoring infrastructure to support planning processes within local governments. I.e., by monitoring certain planning aspects from various topics like demography, social, environment, habitation and other, whose spatio-temporal variation and development can be measured in the form of indicators, [KomMonitor](http://kommonitor.de) may act as a <i>Spatial Decision Support System</i>. Amongst others, the following goals and key aspects are focused:
 1. cross-sectional data from several topics
