@@ -929,7 +929,7 @@ public class SpatialFeatureDatabaseHandler {
 					// adjust timeline of the others
 					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDateInputFeature, filterForPreviousDbFeatureId);	
 					numberOfModifiedEntries++;
-					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, endDateInputFeature, filterForPreviousDbFeatureId);	
+					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, endDateInputFeature, filterForLaterDbFeatureId);	
 					numberOfModifiedEntries++;
 					
 					newFeaturesToBeAdded.add((SimpleFeature) inputFeature);
