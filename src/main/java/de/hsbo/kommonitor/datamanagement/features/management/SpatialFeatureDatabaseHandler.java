@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.geotools.data.DataStore;
+import org.geotools.data.DataUtilities;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -772,20 +773,27 @@ public class SpatialFeatureDatabaseHandler {
 			- if it most former --> easy set as new most former, endDate (if not present) cannot be further as the one of first dbEntry
 			- if it is in the middle --> if = any startDate --> modify that entry but take care of endDate wjhich must only be as far as the next entry
 			- if it is in the middle --> if != any startDate --> new entry but take care of endDates of former and later feature (adjust endDates and startDates if required)
-		 */
+		 */		
 		
 		Date startDateInputFeature = null;
 		Date endDateInputFeature = null;
 		
-		if(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME) != null){
+		boolean hasValidStartDateProperty = inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME) != null;
+		if(hasValidStartDateProperty){
 			startDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();			
 		}
-		if(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME) != null){
+		boolean hasValidEndDateProperty = inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME) != null;
+		if(hasValidEndDateProperty){
 			endDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
 		}
 		
+		if(! hasValidEndDateProperty || ! hasValidStartDateProperty){
+			inputFeature = reTypeFeatureToIncludeMissingKomMonitorProperties(inputFeature);
+		}	
+
 		if (startDateInputFeature == null){
 			startDateInputFeature = startDate_new;
+			
 			((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDateInputFeature);
 		}
 		if (endDateInputFeature == null){
@@ -951,6 +959,34 @@ public class SpatialFeatureDatabaseHandler {
 				}
 			}
 		}
+	}
+
+	private static Feature reTypeFeatureToIncludeMissingKomMonitorProperties(Feature inputFeature) {
+		SimpleFeatureType featureType = ((SimpleFeature) inputFeature).getFeatureType();
+		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+		builder.setName(featureType.getName());
+		builder.setNamespaceURI(featureType.getName().getNamespaceURI());
+		builder.setCRS(featureType.getCoordinateReferenceSystem());
+		builder.addAll(featureType.getAttributeDescriptors());
+		builder.setDefaultGeometry(featureType.getGeometryDescriptor().getLocalName());
+		
+		AttributeDescriptor attributeDescriptor_startDate = builder.get(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+		AttributeDescriptor attributeDescriptor_endDate = builder.get(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+		AttributeDescriptor attributeDescriptor_arisenFrom = builder.get(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME);
+		if(attributeDescriptor_startDate == null){
+			builder.add(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, Date.class);
+		}
+		if(attributeDescriptor_endDate == null){
+			builder.add(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, Date.class);
+		}
+		if(attributeDescriptor_arisenFrom == null){
+			builder.add(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME, String.class);
+		}
+		
+		SimpleFeatureType newFeatureType = builder.buildFeatureType();
+		
+		inputFeature = DataUtilities.reType(newFeatureType, (SimpleFeature) inputFeature);
+		return inputFeature;
 	}
 
 	private static boolean hasSameProperties(Feature inputFeature, Feature dbFeature) {
