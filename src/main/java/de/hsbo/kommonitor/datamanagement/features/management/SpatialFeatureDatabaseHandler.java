@@ -879,8 +879,11 @@ public class SpatialFeatureDatabaseHandler {
 					numberOfModifiedEntries++;
 				}
 				else{
+					if (correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1) != null){
+						Date startDateOfNextDbFeature = (Date) correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1).getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+						((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDateOfNextDbFeature);						
+					}	
 					// modify each property 
-					((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDateOfNextDbFeature);
 					
 					Collection<Property> properties = inputFeature.getProperties();
 					
