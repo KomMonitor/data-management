@@ -590,16 +590,16 @@ public class SpatialFeatureDatabaseHandler {
 			 * 
 			 * compare their starting dates and end dates
 			 * 
-			 * if (starting date of db feature is <= starting date of input features) --> mark as outdated if edndate of db feature == null | later than start date of input features
+			 * only investigate features whose starting date lies within the time period of the input features
 			 * 
-			 * else if (starting date of db feature is later than starting date of input features) --> assume input features are historical, so set 
+			 * because
 			 * 
+			 * if db feature is another time period (historical or future) then it is irrelevant for the target time period of input features
 			 * 
-			 * only investigate those DB features that have a validStartDate before the validEndDate of the inputFeatures!
+			 * but if db feature with a starting date within time period of input feature is found that is no longer within input collection
+			 * then we must remove it from db!
 			 * 
-			 * mark all as outdated whose ID is not present in inputFeatures
-			 * 
-			 * but only if the validStartDate of the DB feature lies before the validEndDate of the request/input feature!!!!
+			 * --> always expect full datasets!!!!
 			 */		
 
 			FeatureIterator dbFeaturesIterator = dbFeatures.features();
@@ -608,31 +608,28 @@ public class SpatialFeatureDatabaseHandler {
 				Feature dbFeature = dbFeaturesIterator.next();				
 				
 				if (!dbFeatureIdIsWithinInputFeatures(String.valueOf(dbFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME).getValue()), inputFeatureCollection)){
-//					
-//					Date compareDate = dbFeature.getProperty(KomMonitorFeaturePropertyConstants.);
-//					
-//					// if there is no endDate within request, than 
-//					if(compareDate == null){
-//						if (endDate_new == null){
-//							compareDate = startDate_new;
-//						}
-//						else{
-//							compareDate = endDate_new;
-//						}
-//					}
-//					
-//					if(endDate_new != null){
-//						// we deal with data
-//					}
-//					
-					
-					// mark as outdated by setting validEndDate to dubmitted start date
-					numberOfEntriesMarkedAsOutdated++;
-					Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeature);
-					
-					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDate_new, filterForDbFeatureId);
-				}
 
+					// compare db feature start date to input time period
+					boolean dbFeatureIsWithinInputTimePeriod = false;
+					Date dbFeatureStartDate = (Date) dbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+					
+					if(dbFeatureStartDate.equals(startDate_new) || dbFeatureStartDate.after(startDate_new)){
+						// if no endDate was specified
+						if (endDate_new == null){
+							dbFeatureIsWithinInputTimePeriod = true;
+						}
+						else if (dbFeatureStartDate.before(endDate_new)){
+							dbFeatureIsWithinInputTimePeriod = true;							
+						}
+					}
+					
+					if(dbFeatureIsWithinInputTimePeriod){
+						// delete the feature from db as it is no longer present in the updated input feature collection for the target 
+						// time period
+						Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeature);
+						sfStore.removeFeatures(filterForDbFeatureId);
+					}					
+				}
 			}
 
 			dbFeaturesIterator.close();
