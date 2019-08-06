@@ -206,9 +206,9 @@ public class IndicatorsManager {
 				String indicatorValueTableName = null;
 				boolean publishedAsService = false;
 				try {
-					String tempIndicatorTable = createIndicatorTempTable(indicatorData.getIndicatorValues(), indicatorId);
-					indicatorValueTableName = createOrReplaceIndicatorFeatureTable(tempIndicatorTable, spatialUnitName, indicatorId);
-					deleteIndicatorTempTable(tempIndicatorTable);
+					String tempIndicatorTable = createIndicatorValueTable(indicatorData.getIndicatorValues(), indicatorId);
+					indicatorValueTableName = createOrReplaceIndicatorView(tempIndicatorTable, spatialUnitName, indicatorId);
+					deleteIndicatorValueTable(tempIndicatorTable);
 					
 					// handle OGC web service
 					String styleName;
@@ -474,7 +474,7 @@ public class IndicatorsManager {
 	public String addIndicator(IndicatorPOSTInputType indicatorData) throws Exception {
 		String metadataId = null;
 		String spatialUnitName = null;
-		String indicatorValueTableName = null;
+		String indicatorViewTableName = null;
 		boolean publishedAsService = false;
 		try {
 			/*
@@ -529,15 +529,15 @@ public class IndicatorsManager {
 			if(creationType.equals(CreationTypeEnum.INSERTION)){
 				
 				logger.info("As creationType is set to '{}', a featureTable and featureView will be created from indicator values. Also OGC publishing will be done.", creationType.toString());
-				String indicatorTempTableName = createIndicatorTempTable(indicatorData.getIndicatorValues(), metadataId);
-				indicatorValueTableName = createOrReplaceIndicatorFeatureTable(indicatorTempTableName, spatialUnitName, metadataId);
-				deleteIndicatorTempTable(indicatorTempTableName);
+				String indicatorValueTableName = createIndicatorValueTable(indicatorData.getIndicatorValues(), metadataId);
+				indicatorViewTableName = createOrReplaceIndicatorView(indicatorValueTableName, spatialUnitName, metadataId);
+//				deleteIndicatorValueTable(indicatorTempTableName);
 				
 				// handle OGC web service
-				String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), createTitleForWebService(spatialUnitName, indicatorName), indicatorValueTableName);
-				publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorValueTableName, createTitleForWebService(spatialUnitName, indicatorName), styleName, ResourceTypeEnum.INDICATOR);
+				String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), createTitleForWebService(spatialUnitName, indicatorName), indicatorViewTableName);
+				publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, createTitleForWebService(spatialUnitName, indicatorName), styleName, ResourceTypeEnum.INDICATOR);
 				
-				persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorValueTableName, styleName);
+				persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorViewTableName, styleName);
 				
 			} else{
 				logger.info("As creationType is set to '{}', Only the metadata entry was created. No featureTable and view have been created..", creationType.toString());
@@ -558,14 +558,14 @@ public class IndicatorsManager {
 						indicatorsMetadataRepo.deleteByDatasetId(metadataId);
 				}
 				
-				logger.info("Delete indicatorValue table if exists for tableName '{}'" + indicatorValueTableName);
-				if(indicatorValueTableName != null){
-					IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorValueTableName);
+				logger.info("Delete indicatorValue table if exists for tableName '{}'" + indicatorViewTableName);
+				if(indicatorViewTableName != null){
+					IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorViewTableName);
 				}
 				
 				logger.info("Unpublish OGC services if exists");
 				if(publishedAsService){
-					ogcServiceManager.unpublishDbLayer(indicatorValueTableName, ResourceTypeEnum.INDICATOR);
+					ogcServiceManager.unpublishDbLayer(indicatorViewTableName, ResourceTypeEnum.INDICATOR);
 				}
 				
 				
@@ -610,7 +610,7 @@ public class IndicatorsManager {
 ////		indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(metadataId, spatialUnitId)
 //	}
 
-	private void deleteIndicatorTempTable(String indicatorTempTableName) throws IOException, SQLException {
+	private void deleteIndicatorValueTable(String indicatorTempTableName) throws IOException, SQLException {
 		logger.info("Deleting temporary indicator table with name {}.", indicatorTempTableName);
 
 		IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorTempTableName);;
@@ -619,14 +619,14 @@ public class IndicatorsManager {
 		
 	}
 
-	private String createOrReplaceIndicatorFeatureTable(String indicatorTempTableName, String spatialUnitName,
+	private String createOrReplaceIndicatorView(String indicatorTempTableName, String spatialUnitName,
 			String metadataId) throws IOException, SQLException {
 		/*
 		 * create view joining indicator values and spatial unit features
 		 */
 		logger.info("Trying to create unique table joining indicator values and spatial unit features.");
 
-		String dbViewName = IndicatorDatabaseHandler.createOrReplaceIndicatorFeatureTable(indicatorTempTableName, spatialUnitName);
+		String dbViewName = IndicatorDatabaseHandler.createOrReplaceIndicatorView(indicatorTempTableName, spatialUnitName);
 
 		logger.info("Completed creation of indicator feature table corresponding to datasetId {}. Table name is {}.",
 				metadataId, dbViewName);
@@ -634,14 +634,14 @@ public class IndicatorsManager {
 		return dbViewName;
 	}
 
-	private String createIndicatorTempTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, 
+	private String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, 
 			String metadataId) throws CQLException, IOException, SQLException {
 		/*
 		 * write indicator values to a new unique db table
 		 */
 		logger.info("Trying to create unique table for indicator values.");
 
-		String dbTableName = IndicatorDatabaseHandler.createIndicatorTempTable(indicatorValues);
+		String dbTableName = IndicatorDatabaseHandler.createIndicatorValueTable(indicatorValues);
 
 		logger.info("Completed creation of indicator values table corresponding to datasetId {}. Table name is {}.",
 				metadataId, dbTableName);
