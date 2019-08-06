@@ -843,7 +843,7 @@ public class SpatialFeatureDatabaseHandler {
 			int indexOfLaterDbFeature = -1;
 			int indexOfDbFeatureWithEqualStartDate = -1;
 			
-			for (int i=0; i<correspondingDbFeatures.size()-1; i++){
+			for (int i=0; i<correspondingDbFeatures.size(); i++){
 				Feature dbFeature = correspondingDbFeatures.get(i);
 				Date dbFeatureStartDate = (Date) dbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
 				
