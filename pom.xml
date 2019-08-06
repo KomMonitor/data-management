@@ -287,7 +287,7 @@
 					<useMissingFile>true</useMissingFile>
 					<fileTemplate>misc/license-as-csv.ftl</fileTemplate>
 				</configuration>
-				<executions>
+				<!-- <executions>
 					<execution>
 						<id>first</id>
 						<goals>
@@ -295,7 +295,7 @@
 						</goals>
 						<phase>generate-resources</phase>
 					</execution>
-				</executions>
+				</executions> -->
 			</plugin>
 			<plugin>
 				<groupId>org.jasig.maven</groupId>
@@ -309,7 +309,7 @@
 					</licenseMapping>
 					<generateChildNotices>false</generateChildNotices>
 				</configuration>
-				<executions>
+				<!-- <executions>
 					<execution>
 						<id>check-license</id>
 						<phase>initialize</phase>
@@ -317,7 +317,7 @@
 							<goal>check</goal>
 						</goals>
 					</execution>
-				</executions>
+				</executions> -->
 			</plugin>
 			<plugin>
                 <groupId>com.mycila</groupId>
