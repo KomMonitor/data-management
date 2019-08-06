@@ -867,7 +867,8 @@ public class SpatialFeatureDatabaseHandler {
 				Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeatureToModify);
 				
 				// sanity check on endDate
-				if (correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1) != null){
+				// only if there is a subsequent feature
+				if (correspondingDbFeatures.size() > (indexOfDbFeatureWithEqualStartDate + 1)){
 					Date startDateOfNextDbFeature = (Date) correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1).getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
 					if (endDateInputFeature == null || endDateInputFeature.after(startDateOfNextDbFeature)){
 						endDateInputFeature = startDateOfNextDbFeature;
@@ -879,7 +880,8 @@ public class SpatialFeatureDatabaseHandler {
 					numberOfModifiedEntries++;
 				}
 				else{
-					if (correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1) != null){
+					// only if there is a subsequent feature
+					if (correspondingDbFeatures.size() > (indexOfDbFeatureWithEqualStartDate + 1)){
 						Date startDateOfNextDbFeature = (Date) correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1).getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
 						((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDateOfNextDbFeature);						
 					}	
