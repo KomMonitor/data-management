@@ -440,7 +440,7 @@ public class SpatialFeatureDatabaseHandler {
 		Date startDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getStartDate());
 		Date endDate_new = null;
 		if (periodOfValidity.getEndDate() != null)
-			DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
+			endDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
 		
 		FilterFactory ff = new FilterFactoryImpl();
 
