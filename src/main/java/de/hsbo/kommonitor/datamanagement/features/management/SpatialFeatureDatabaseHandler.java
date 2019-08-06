@@ -711,15 +711,22 @@ public class SpatialFeatureDatabaseHandler {
 	}
 
 	private static void insertNewFeatures(Date startDate_new, Date endDate_new, FilterFactory ff,
-			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureStore sfStore) throws IOException {
+			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureStore sfStore) throws IOException, CQLException {
 		List<FeatureId> newFeatureIds = sfStore.addFeatures(newFeaturesToBeAdded);
 		numberOfInsertedEntries = newFeatureIds.size();
 		
+		// only update those new features whose startDate and/or endDate are not already set!
+		// each feature might have an individual setting here in contrast to global setting
+		// ONLY ADJUST FILTER TO INLCUDE QUERY WHERE startDATE is null || endDATE is null
+		
 		Set<Identifier> featureIdSet = new HashSet<Identifier>();
 		featureIdSet.addAll(newFeatureIds);
-		Filter filterForNewFeatures = ff.id(featureIdSet);
-		sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new, filterForNewFeatures);
-		sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new, filterForNewFeatures);
+		Filter filter_startDateIsNull = CQL.toFilter("\"" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + "\" IS NULL");
+		Filter filter_endDateIsNull = CQL.toFilter("\"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" IS NULL");
+		Filter filterForNewFeatures_startDate = ff.and(ff.id(featureIdSet), filter_startDateIsNull);
+		Filter filterForNewFeatures_endDate = ff.and(ff.id(featureIdSet), filter_endDateIsNull);
+		sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new, filterForNewFeatures_startDate);
+		sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new, filterForNewFeatures_endDate);
 	}
 
 	private static void compareInputFeatureToDbFeatures(Date startDate_new, Date endDate_new, FilterFactory ff,
