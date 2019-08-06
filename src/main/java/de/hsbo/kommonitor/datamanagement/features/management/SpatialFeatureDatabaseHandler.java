@@ -507,6 +507,7 @@ public class SpatialFeatureDatabaseHandler {
 		
 		List<AttributeDescriptor> inputAttributeDescriptors = inputFeatureSchema.getAttributeDescriptors();
 		List<AttributeDescriptor> dbAttributeDescriptors = dbSchema.getAttributeDescriptors();
+		int numberOfVerifiedDbProperties = 0;
 		
 		List<AttributeDescriptor> newProperties = new ArrayList<AttributeDescriptor>(); 
 		
@@ -515,8 +516,8 @@ public class SpatialFeatureDatabaseHandler {
 			for (AttributeDescriptor dbAttributeDesc : dbAttributeDescriptors) {
 				if (inputAttributeDesc.getName().equals(dbAttributeDesc.getName())){
 					dbTableContainsProperty = true;	
-					// remove it to clarify at the end, whether all db properties are still present in inputFeatures schema
-					dbAttributeDescriptors.remove(dbAttributeDesc);
+					// to clarify at the end, whether all db properties are still present in inputFeatures schema
+					numberOfVerifiedDbProperties ++;
 					break;
 				}
 			}
@@ -527,7 +528,7 @@ public class SpatialFeatureDatabaseHandler {
 			}
 		}
 		
-		if(dbAttributeDescriptors.size() > 0){
+		if(numberOfVerifiedDbProperties < dbAttributeDescriptors.size()){
 			// obviously the inputFeatures do not have all previously defined attributes
 			MISSING_PROPERTIES_DETECTED = true;
 		}
