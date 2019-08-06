@@ -860,7 +860,7 @@ public class SpatialFeatureDatabaseHandler {
 				}
 			}
 			
-			if (indexOfDbFeatureWithEqualStartDate > 0){
+			if (indexOfDbFeatureWithEqualStartDate >= 0){
 				// perform an update of an existing db feature
 				// make sanity checks on end date
 				Feature dbFeatureToModify = correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate);
