@@ -454,22 +454,43 @@ public class IndicatorDatabaseHandler {
 
 	private static void applyModificationStatements(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues,
 			SimpleFeatureStore store) throws CQLException, IOException {
+		
+		DefaultFeatureCollection newFeaturesToBeAdded = new DefaultFeatureCollection();
+		
 		for (IndicatorPOSTInputTypeIndicatorValues indicatorValueMappingEntry : indicatorValues) {
 			String spatialReferenceKey = indicatorValueMappingEntry.getSpatialReferenceKey();
+			Filter filter = createFilterForSpatialUnitId(spatialReferenceKey);
 			List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorValueMappingEntry
 					.getValueMapping();
-
-			for (IndicatorPOSTInputTypeValueMapping valueMappingEntry : valueMapping) {
-				Date dateColumn = DateTimeUtil.fromLocalDate(valueMappingEntry.getTimestamp());
-				String dateColumnName = createDateStringForDbProperty(dateColumn);
-				
-				Filter filter = createFilterForSpatialUnitId(spatialReferenceKey);
-				
-				store.modifyFeatures(dateColumnName, valueMappingEntry.getIndicatorValue(), filter);
-			}
 			
+			// no existing feature was found for the current spatial ref key
+			// hence add to newFeaturesToBeAdded;
+			if(store.getFeatures(filter).isEmpty()){
+				SimpleFeatureType featureType = store.getSchema();
+				
+				SimpleFeatureBuilder sfBuilder = new SimpleFeatureBuilder(featureType);
+				sfBuilder.set(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME, spatialReferenceKey);
+				for (IndicatorPOSTInputTypeValueMapping valueMappingEntry : valueMapping) {
+					Date dateColumn = DateTimeUtil.fromLocalDate(valueMappingEntry.getTimestamp());
+					String dateColumnName = createDateStringForDbProperty(dateColumn);			
+					sfBuilder.set(dateColumnName, valueMappingEntry.getIndicatorValue());
+				}
+				newFeaturesToBeAdded.add(sfBuilder.buildFeature(null));
+			}
+			else{
+				for (IndicatorPOSTInputTypeValueMapping valueMappingEntry : valueMapping) {
+					Date dateColumn = DateTimeUtil.fromLocalDate(valueMappingEntry.getTimestamp());
+					String dateColumnName = createDateStringForDbProperty(dateColumn);			
+					store.modifyFeatures(dateColumnName, valueMappingEntry.getIndicatorValue(), filter);
+				}
+			}	
 		}
-	}
+		
+		// add any new features id required
+		if (newFeaturesToBeAdded.size() > 0){
+			store.addFeatures(newFeaturesToBeAdded);
+		}
+	}	
 	
 	private static Filter createFilterForSpatialUnitId(String spatialUnitId) throws CQLException {
 		Filter filter = CQL.toFilter(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME + " = '" + spatialUnitId + "'");
