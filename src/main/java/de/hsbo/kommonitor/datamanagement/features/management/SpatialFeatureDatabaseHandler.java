@@ -774,8 +774,15 @@ public class SpatialFeatureDatabaseHandler {
 			- if it is in the middle --> if != any startDate --> new entry but take care of endDates of former and later feature (adjust endDates and startDates if required)
 		 */
 		
-		Date startDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
-		Date endDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
+		Date startDateInputFeature = null;
+		Date endDateInputFeature = null;
+		
+		if(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME) != null){
+			startDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();			
+		}
+		if(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME) != null){
+			endDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
+		}
 		
 		if (startDateInputFeature == null){
 			startDateInputFeature = startDate_new;
