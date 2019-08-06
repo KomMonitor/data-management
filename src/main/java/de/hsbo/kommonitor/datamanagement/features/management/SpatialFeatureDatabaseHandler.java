@@ -786,10 +786,12 @@ public class SpatialFeatureDatabaseHandler {
 		
 		if (startDateInputFeature == null){
 			startDateInputFeature = startDate_new;
+			((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDateInputFeature);
 		}
 		if (endDateInputFeature == null){
 			endDateInputFeature = endDate_new;
-		}
+			((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDateInputFeature);
+		}		
 		
 		Feature latestDbFeature = correspondingDbFeatures.get(correspondingDbFeatures.size() - 1);
 		Feature earliestDbFeature = correspondingDbFeatures.get(0);
