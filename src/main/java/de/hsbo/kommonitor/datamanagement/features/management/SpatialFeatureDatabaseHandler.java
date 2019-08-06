@@ -867,10 +867,12 @@ public class SpatialFeatureDatabaseHandler {
 				Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeatureToModify);
 				
 				// sanity check on endDate
-				Date startDateOfNextDbFeature = (Date) correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1).getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
-				if (endDateInputFeature == null || endDateInputFeature.after(startDateOfNextDbFeature)){
-					endDateInputFeature = startDateOfNextDbFeature;
-				}
+				if (correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1) != null){
+					Date startDateOfNextDbFeature = (Date) correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1).getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+					if (endDateInputFeature == null || endDateInputFeature.after(startDateOfNextDbFeature)){
+						endDateInputFeature = startDateOfNextDbFeature;
+					}
+				}				
 				
 				if (hasSameGeometry(inputFeature, dbFeatureToModify) && hasSameProperties(inputFeature, dbFeatureToModify)){									
 					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDateInputFeature, filterForDbFeatureId);
