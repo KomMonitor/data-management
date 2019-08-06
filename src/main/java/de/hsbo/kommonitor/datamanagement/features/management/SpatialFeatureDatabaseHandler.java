@@ -612,7 +612,7 @@ public class SpatialFeatureDatabaseHandler {
 
 					// compare db feature start date to input time period
 					boolean dbFeatureIsWithinInputTimePeriod = false;
-					Date dbFeatureStartDate = (Date) dbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+					Date dbFeatureStartDate = (Date) dbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
 					
 					if(dbFeatureStartDate.equals(startDate_new) || dbFeatureStartDate.after(startDate_new)){
 						// if no endDate was specified
@@ -774,8 +774,8 @@ public class SpatialFeatureDatabaseHandler {
 			- if it is in the middle --> if != any startDate --> new entry but take care of endDates of former and later feature (adjust endDates and startDates if required)
 		 */
 		
-		Date startDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
-		Date endDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+		Date startDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+		Date endDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
 		
 		if (startDateInputFeature == null){
 			startDateInputFeature = startDate_new;
@@ -786,8 +786,8 @@ public class SpatialFeatureDatabaseHandler {
 		
 		Feature latestDbFeature = correspondingDbFeatures.get(correspondingDbFeatures.size() - 1);
 		Feature earliestDbFeature = correspondingDbFeatures.get(0);
-		Date latestStartDateOfDBFeatures = (Date) latestDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
-		Date earliestStartDateOfDBFeatures = (Date) earliestDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+		Date latestStartDateOfDBFeatures = (Date) latestDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+		Date earliestStartDateOfDBFeatures = (Date) earliestDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
 		
 		// check against latest feature
 		if(startDateInputFeature.after(latestStartDateOfDBFeatures)){
@@ -838,7 +838,7 @@ public class SpatialFeatureDatabaseHandler {
 			
 			for (int i=0; i<correspondingDbFeatures.size()-1; i++){
 				Feature dbFeature = correspondingDbFeatures.get(i);
-				Date dbFeatureStartDate = (Date) dbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+				Date dbFeatureStartDate = (Date) dbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
 				
 				// find the first dbFeature whose start date is equal to input feature start date
 				// or is after input features start date
@@ -860,7 +860,7 @@ public class SpatialFeatureDatabaseHandler {
 				Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeatureToModify);
 				
 				// sanity check on endDate
-				Date startDateOfNextDbFeature = (Date) correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1).getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+				Date startDateOfNextDbFeature = (Date) correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1).getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
 				if (endDateInputFeature == null || endDateInputFeature.after(startDateOfNextDbFeature)){
 					endDateInputFeature = startDateOfNextDbFeature;
 				}
@@ -888,9 +888,9 @@ public class SpatialFeatureDatabaseHandler {
 				Filter filterForPreviousDbFeatureId = createFilterForUniqueFeatureId(ff, previousDbFeature);
 				Filter filterForLaterDbFeatureId = createFilterForUniqueFeatureId(ff, laterDbFeature);
 				
-				Date previousDbFeatureEndDate = (Date) previousDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
-				Date laterDbFeatureStartDate = (Date) laterDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
-				Date laterDbFeatureEndDate = (Date) laterDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+				Date previousDbFeatureEndDate = (Date) previousDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
+				Date laterDbFeatureStartDate = (Date) laterDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+				Date laterDbFeatureEndDate = (Date) laterDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
 				
 				// if end date overlaps with later start date then cut if off at later start date
 				if (endDateInputFeature.after(laterDbFeatureStartDate)){
