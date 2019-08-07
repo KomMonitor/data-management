@@ -272,59 +272,103 @@ public class SpatialFeatureDatabaseHandler {
 
 	public static AvailablePeriodOfValidityType getAvailablePeriodOfValidity(String dbTableName)
 			throws IOException, SQLException {
-		Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
-
-		Statement statement = jdbcConnection.createStatement();
-		ResultSet rs = statement.executeQuery("SELECT min(\"" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME
-				+ "\") FROM \"" + dbTableName + "\"");
-
-		AvailablePeriodOfValidityType validityPeriod = new AvailablePeriodOfValidityType();
-		if (rs.next()) { // check if a result was returned
-			validityPeriod.setEarliestStartDate(DateTimeUtil.toLocalDate(rs.getDate(1)));
-		}
-
-		rs.close();
-		statement.close();
-
-		// handle endDate
-		statement = jdbcConnection.createStatement();
-
-		// be sure to quote the identifier!
-		rs = statement.executeQuery("SELECT \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" FROM \""
-				+ dbTableName + "\" WHERE \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" = null");
-
-		if (rs.next()) { // check if a result was returned
-			/*
-			 * the result set has results. Thus there are features with endDate
-			 * == null
-			 * 
-			 * Thus there is no known latestEndDate to be set
-			 */
-			validityPeriod.setEndDate(null);
-		} else {
-			/*
-			 * we have to find the latest endDate (maxValue)
-			 */
-			// be sure to quote the identifier!
-			rs = statement.executeQuery("SELECT max(\"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME
+		
+		Connection jdbcConnection = null;
+		Statement statement = null;
+		ResultSet rs = null;
+		
+		AvailablePeriodOfValidityType validityPeriod = null;
+		
+		try {
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			statement = jdbcConnection.createStatement();
+			rs = statement.executeQuery("SELECT min(\"" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME
 					+ "\") FROM \"" + dbTableName + "\"");
+
+			validityPeriod = new AvailablePeriodOfValidityType();
 			if (rs.next()) { // check if a result was returned
-				/*
-				 * latestEndDate might be null, if it was never set
-				 * 
-				 * then it indicates, that there is no end date and all data is
-				 * st
-				 */
-				java.sql.Date latestEndDate = rs.getDate(1);
-				if (latestEndDate != null)
-					validityPeriod.setEndDate(DateTimeUtil.toLocalDate(latestEndDate));
+				validityPeriod.setEarliestStartDate(DateTimeUtil.toLocalDate(rs.getDate(1)));
 			}
 
+			rs.close();
+		} catch (Exception e) {
+			try {
+				rs.close();
+				statement.close();
+				jdbcConnection.close();				
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				rs.close();
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
 		}
-		rs.close();
-		statement.close();
+		
+		try {
+			// handle endDate
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			statement = jdbcConnection.createStatement();
 
-		jdbcConnection.close();
+			// be sure to quote the identifier!
+			rs = statement.executeQuery("SELECT \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" FROM \""
+					+ dbTableName + "\" WHERE \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" = null");
+
+			if (rs.next()) { // check if a result was returned
+				/*
+				 * the result set has results. Thus there are features with endDate
+				 * == null
+				 * 
+				 * Thus there is no known latestEndDate to be set
+				 */
+				validityPeriod.setEndDate(null);
+			} else {
+				/*
+				 * we have to find the latest endDate (maxValue)
+				 */
+				// be sure to quote the identifier!
+				rs = statement.executeQuery("SELECT max(\"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME
+						+ "\") FROM \"" + dbTableName + "\"");
+				if (rs.next()) { // check if a result was returned
+					/*
+					 * latestEndDate might be null, if it was never set
+					 * 
+					 * then it indicates, that there is no end date and all data is
+					 * st
+					 */
+					java.sql.Date latestEndDate = rs.getDate(1);
+					if (latestEndDate != null)
+						validityPeriod.setEndDate(DateTimeUtil.toLocalDate(latestEndDate));
+				}
+
+			}
+			rs.close();
+		} catch (Exception e) {
+			try {
+				rs.close();
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				rs.close();
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+
 		return validityPeriod;
 	}
 
@@ -542,40 +586,58 @@ public class SpatialFeatureDatabaseHandler {
 
 	private static void appendNewPropertyColumnsInDbTable(String dbTableName, List<AttributeDescriptor> newProperties)
 			throws IOException, SQLException {
-		// establish JDBC connection
-		Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
 		
-		Statement statement = jdbcConnection.createStatement();
+		Connection jdbcConnection = null;
+		Statement statement = null;
 		
-		StringBuilder builder = new StringBuilder();
-		
-		builder.append("ALTER TABLE \"" + dbTableName + "\" ");
-		
-		Iterator<AttributeDescriptor> iterator = newProperties.iterator();
-		
-		while(iterator.hasNext()){
-			AttributeDescriptor property = iterator.next();
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			statement = jdbcConnection.createStatement();
 			
-			// use dataType varchar, to import new columns as string
-			builder.append("ADD COLUMN \"" + property.getName() + "\" varchar");
+			StringBuilder builder = new StringBuilder();
 			
-			if(iterator.hasNext()){
-				builder.append(", ");
+			builder.append("ALTER TABLE \"" + dbTableName + "\" ");
+			
+			Iterator<AttributeDescriptor> iterator = newProperties.iterator();
+			
+			while(iterator.hasNext()){
+				AttributeDescriptor property = iterator.next();
+				
+				// use dataType varchar, to import new columns as string
+				builder.append("ADD COLUMN \"" + property.getName() + "\" varchar");
+				
+				if(iterator.hasNext()){
+					builder.append(", ");
+				}
+				else{
+					builder.append(";");
+				}
 			}
-			else{
-				builder.append(";");
+			
+			String alterTableCommand = builder.toString();
+			
+			logger.info("Send following ALTER TABLE command to database: " + alterTableCommand);
+			
+			// TODO check if works
+			statement.executeUpdate(alterTableCommand);
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
 			}
 		}
-		
-		String alterTableCommand = builder.toString();
-		
-		logger.info("Send following ALTER TABLE command to database: " + alterTableCommand);
-		
-		// TODO check if works
-		statement.executeUpdate(alterTableCommand);
-
-		statement.close();
-		jdbcConnection.close();
 	}
 
 	private static void compareDbFeaturesToInputFeatures(String dbTableName, Date startDate_new, Date endDate_new,
