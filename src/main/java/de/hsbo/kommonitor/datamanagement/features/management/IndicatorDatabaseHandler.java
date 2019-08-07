@@ -275,7 +275,7 @@ public class IndicatorDatabaseHandler {
 		return dateString;
 	}
 	
-	public static List<String> getAvailableDates(String dbTableName) throws IOException {
+	public static List<String> getAvailableDates(String viewTableName) throws IOException {
 		List<String> availableDates = new ArrayList<String>();
 		/*
 		 * indicator db tables have two columns that are not required: - fid -
@@ -286,7 +286,7 @@ public class IndicatorDatabaseHandler {
 		 */
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 
-		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(dbTableName);
+		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(viewTableName);
 		SimpleFeatureType schema = featureSource.getSchema();
 		List<AttributeDescriptor> attributeDescriptors = schema.getAttributeDescriptors();
 
@@ -742,15 +742,15 @@ public class IndicatorDatabaseHandler {
 		return indicatorValues;
 	}
 
-	public static FeatureCollection getValidFeaturesAsFeatureCollection(DataStore dataStore, String indicatorValueTableName,
+	public static FeatureCollection getValidFeaturesAsFeatureCollection(DataStore dataStore, String indicatorViewTableName,
 			BigDecimal year, BigDecimal month, BigDecimal day) throws IOException, CQLException {
-		logger.info("Fetch indicator features as FeatureCollection for table with name {} and timestamp '{}-{}-{}'", indicatorValueTableName, year, month, day);
+		logger.info("Fetch indicator features as FeatureCollection for table with name {} and timestamp '{}-{}-{}'", indicatorViewTableName, year, month, day);
 		/*
 		 * here all indicators for the requested spatial unit shall be retrieved. However, the timeseries shall be reduced
 		 * to only contain the requested timestamp
 		 */
 
-		SimpleFeatureSource featureSource = dataStore.getFeatureSource(indicatorValueTableName);
+		SimpleFeatureSource featureSource = dataStore.getFeatureSource(indicatorViewTableName);
 
 		Calendar cal = Calendar.getInstance();
 		// -1 in month, as month is 0-based
@@ -769,8 +769,8 @@ public class IndicatorDatabaseHandler {
 	}
 
 	public static List<IndicatorPropertiesWithoutGeomType> getIndicatorFeaturePropertiesWithoutGeometries(
-			String indicatorValueTableName) throws SQLException, IOException {
-		logger.info("Fetch indicator feature properties without geometry for table with name {}", indicatorValueTableName);
+			String indicatorViewTableName) throws SQLException, IOException {
+		logger.info("Fetch indicator feature properties without geometry for table with name {}", indicatorViewTableName);
 
 		List<IndicatorPropertiesWithoutGeomType> indicatorFeaturePropertiesWithoutGeom = new ArrayList<IndicatorPropertiesWithoutGeomType>();
 		
@@ -779,7 +779,7 @@ public class IndicatorDatabaseHandler {
 		Statement statement = jdbcConnection.createStatement();
 
 		
-		String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorValueTableName + "\";";
+		String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorViewTableName + "\";";
 		
 		logger.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
 		
@@ -795,8 +795,8 @@ public class IndicatorDatabaseHandler {
 	}
 
 	public static List<IndicatorPropertiesWithoutGeomType> getValidFeaturePropertiesWithoutGeometries(
-			String indicatorValueTableName, BigDecimal year, BigDecimal month, BigDecimal day) throws IOException, SQLException {
-		logger.info("Fetch indicator feature properties without geometry for table with name {}", indicatorValueTableName);
+			String indicatorViewTableName, BigDecimal year, BigDecimal month, BigDecimal day) throws IOException, SQLException {
+		logger.info("Fetch indicator feature properties without geometry for table with name {}", indicatorViewTableName);
 
 		List<IndicatorPropertiesWithoutGeomType> indicatorFeaturePropertiesWithoutGeom = new ArrayList<IndicatorPropertiesWithoutGeomType>();
 		
@@ -814,7 +814,7 @@ public class IndicatorDatabaseHandler {
 		
 		String whereClause = "WHERE \"" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + "\"::DATE <= '" + dateString + "'::DATE AND (\"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" is NULL OR \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\"::DATE >= '" + dateString + "'::DATE)";
 		
-		String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorValueTableName + "\" " + whereClause + ";";
+		String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorViewTableName + "\" " + whereClause + ";";
 		
 		logger.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
 		
