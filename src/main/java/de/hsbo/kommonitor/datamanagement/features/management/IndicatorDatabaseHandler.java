@@ -112,7 +112,7 @@ public class IndicatorDatabaseHandler {
 		
 		Connection jdbcConnection = null;
 		Statement statement = null;
-		String viewTableName = indicatorValueTableName.split(VALUE_SUFFIX)[0] + VIEW_SUFFIX;
+		String viewTableName = getViewTableNameFromValueTableName(indicatorValueTableName);
 		
 		try {
 			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
@@ -143,7 +143,7 @@ public class IndicatorDatabaseHandler {
 //					"UPDATE \"" + viewTableName + "\" SET unique_id=nextval('seq_" + viewTableName + "'); ALTER TABLE \"" + viewTableName 
 //					+ "\" ADD PRIMARY KEY (unique_id);";
 			
-			String createViewCommand = "create or replace view \"" + viewTableName + "\" as select indicator.*, spatialunit." + 
+			String createViewCommand = "drop view if exists \"" + viewTableName + "\"; create view \"" + viewTableName + "\" as select indicator.*, spatialunit." + 
 					KomMonitorFeaturePropertyConstants.GEOMETRY_COLUMN_NAME + ", spatialunit.\"" + 
 					KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME + "\", spatialunit.\"" + 
 					KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + "\", spatialunit.\"" + 
@@ -183,6 +183,10 @@ public class IndicatorDatabaseHandler {
 		
 
 		return viewTableName;
+	}
+
+	private static String getViewTableNameFromValueTableName(String indicatorValueTableName) {
+		return indicatorValueTableName.split(VALUE_SUFFIX)[0] + VIEW_SUFFIX;
 	}
 
 	private static void persistIndicator(DataStore postGisStore, SimpleFeatureType featureType,
@@ -252,7 +256,7 @@ public class IndicatorDatabaseHandler {
 	private static SimpleFeatureType createSimpleFeatureTypeForIndicators(DataStore dataStore,
 			ResourceTypeEnum resourceType, List<Date> availableDatesForIndicator) throws IOException {
 		SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(resourceType, dataStore) + VALUE_SUFFIX);
+		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(resourceType, dataStore, VALUE_SUFFIX));
 		// tb.setNamespaceURI(featureSchema.getName().getNamespaceURI());
 		// tb.setCRS(featureSchema.getCoordinateReferenceSystem());
 		// tb.addAll(featureSchema.getAttributeDescriptors());
@@ -347,7 +351,7 @@ public class IndicatorDatabaseHandler {
 		 * 
 		 */
 		
-		String indicatorValueTableName = indicatorDbViewName.split(VIEW_SUFFIX)[0] + VALUE_SUFFIX;
+		String indicatorValueTableName = getValueTableNameFromViewTableName(indicatorDbViewName);
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(indicatorValueTableName);
 		SimpleFeatureType schema = featureSource.getSchema();
@@ -455,6 +459,10 @@ public class IndicatorDatabaseHandler {
 		
 		postGisStore.dispose();
 		
+	}
+
+	private static String getValueTableNameFromViewTableName(String indicatorDbViewName) {
+		return indicatorDbViewName.split(VIEW_SUFFIX)[0] + VALUE_SUFFIX;
 	}
 
 	private static List<String> identifyNewProperties(SimpleFeatureType schema,
@@ -671,7 +679,7 @@ public class IndicatorDatabaseHandler {
 			statement = jdbcConnection.createStatement();
 			
 			String dropTableCommand = "drop view \"" + dbViewName + "\" CASCADE;";
-			String valueTableName = dbViewName.split(VIEW_SUFFIX)[0] + VALUE_SUFFIX;
+			String valueTableName = getValueTableNameFromViewTableName(dbViewName);
 			dropTableCommand += "drop table \"" + valueTableName + "\" CASCADE";
 			
 			// TODO check if works
@@ -744,7 +752,7 @@ public class IndicatorDatabaseHandler {
 //		
 //	}
 
-	public static String createOrReplaceIndicatorView(String indicatorValueTableName, String spatialUnitName) throws IOException, SQLException {
+	public static String createOrReplaceIndicatorView_fromValueTableName(String indicatorValueTableName, String spatialUnitName) throws IOException, SQLException {
 		/*
 		 * create view containing the geometry and indicatorValues
 		 * for each indicator feature also set ViewName in Metadata
@@ -759,6 +767,12 @@ public class IndicatorDatabaseHandler {
 //				indicatorTableName, viewTableName);
 		
 		return viewTableName;
+	}
+	
+	public static String createOrReplaceIndicatorView_fromViewTableName(String indicatorViewTableName,
+			String spatialUnitName) throws IOException, SQLException {
+		String valueTableName = getValueTableNameFromViewTableName(indicatorViewTableName);
+		return createOrOverwriteIndicatorView(valueTableName, spatialUnitName);
 	}
 
 	public static List<Float> getAllIndicatorValues(String indicatorValueTableName, String datePropertyName) throws SQLException, IOException {

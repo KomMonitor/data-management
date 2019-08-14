@@ -178,7 +178,7 @@ public class IndicatorsManager {
 				 */
 				IndicatorDatabaseHandler.updateIndicatorFeatures(indicatorData, indicatorViewTableName);
 			
-//				indicatorValueTableName = createOrReplaceIndicatorFeatureTable(indicatorValueTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
+				indicatorViewTableName = createOrReplaceIndicatorView_fromViewName(indicatorViewTableName, spatialUnitName, indicatorMetadataEntry.getDatasetId());
 				
 				// handle OGC web service
 				String styleName;
@@ -207,7 +207,7 @@ public class IndicatorsManager {
 				boolean publishedAsService = false;
 				try {
 					String indicatorValueTable = createIndicatorValueTable(indicatorData.getIndicatorValues(), indicatorId);
-					indicatorViewTableName = createOrReplaceIndicatorView(indicatorValueTable, spatialUnitName, indicatorId);
+					indicatorViewTableName = createOrReplaceIndicatorView_fromValueTableName(indicatorValueTable, spatialUnitName, indicatorId);
 //					deleteIndicatorValueTable(indicatorValueTable);
 					
 					// handle OGC web service
@@ -530,7 +530,7 @@ public class IndicatorsManager {
 				
 				logger.info("As creationType is set to '{}', a featureTable and featureView will be created from indicator values. Also OGC publishing will be done.", creationType.toString());
 				String indicatorValueTableName = createIndicatorValueTable(indicatorData.getIndicatorValues(), metadataId);
-				indicatorViewTableName = createOrReplaceIndicatorView(indicatorValueTableName, spatialUnitName, metadataId);
+				indicatorViewTableName = createOrReplaceIndicatorView_fromValueTableName(indicatorValueTableName, spatialUnitName, metadataId);
 //				deleteIndicatorValueTable(indicatorTempTableName);
 				
 				// handle OGC web service
@@ -619,14 +619,29 @@ public class IndicatorsManager {
 		
 	}
 
-	private String createOrReplaceIndicatorView(String indicatorValueTableName, String spatialUnitName,
+	private String createOrReplaceIndicatorView_fromValueTableName(String indicatorValueableName, String spatialUnitName,
 			String metadataId) throws IOException, SQLException {
 		/*
 		 * create view joining indicator values and spatial unit features
 		 */
 		logger.info("Trying to create unique table joining indicator values and spatial unit features.");
 
-		String dbViewName = IndicatorDatabaseHandler.createOrReplaceIndicatorView(indicatorValueTableName, spatialUnitName);
+		String dbViewName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromValueTableName(indicatorValueableName, spatialUnitName);
+
+		logger.info("Completed creation of indicator feature table corresponding to datasetId {}. Table name is {}.",
+				metadataId, dbViewName);
+
+		return dbViewName;
+	}
+	
+	private String createOrReplaceIndicatorView_fromViewName(String indicatorViewTableName, String spatialUnitName,
+			String metadataId) throws IOException, SQLException {
+		/*
+		 * create view joining indicator values and spatial unit features
+		 */
+		logger.info("Trying to create unique table joining indicator values and spatial unit features.");
+
+		String dbViewName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, spatialUnitName);
 
 		logger.info("Completed creation of indicator feature table corresponding to datasetId {}. Table name is {}.",
 				metadataId, dbViewName);

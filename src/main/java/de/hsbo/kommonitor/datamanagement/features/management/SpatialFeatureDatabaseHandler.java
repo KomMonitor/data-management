@@ -175,7 +175,7 @@ public class SpatialFeatureDatabaseHandler {
 	private static SimpleFeatureType enrichWithKomMonitorProperties(SimpleFeatureType featureSchema,
 			DataStore dataStore, ResourceTypeEnum resourceType) throws IOException {
 		SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(resourceType, dataStore));
+		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(resourceType, dataStore, ""));
 		tb.setNamespaceURI(featureSchema.getName().getNamespaceURI());
 		tb.setCRS(featureSchema.getCoordinateReferenceSystem());
 		tb.addAll(featureSchema.getAttributeDescriptors());
