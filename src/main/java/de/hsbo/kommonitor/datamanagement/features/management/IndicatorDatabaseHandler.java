@@ -192,7 +192,6 @@ public class IndicatorDatabaseHandler {
 	private static void persistIndicator(DataStore postGisStore, SimpleFeatureType featureType,
 			DefaultFeatureCollection featureCollection) throws IOException {
 		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(featureType.getTypeName());
-		if (featureSource instanceof SimpleFeatureStore) {
 			SimpleFeatureStore store = (SimpleFeatureStore) featureSource; // write
 																			// access!
 
@@ -211,8 +210,6 @@ public class IndicatorDatabaseHandler {
 			transaction.close();
 
 			logger.info("Features should have been added to table with name {}", featureType.getTypeName());
-
-		}
 	}
 
 	private static List<SimpleFeature> constructSimpleFeatures(
@@ -436,7 +433,6 @@ public class IndicatorDatabaseHandler {
 
 		DataAccess<SimpleFeatureType, SimpleFeature> dataStore = featureSource.getDataStore();
 		
-		if (featureSource instanceof SimpleFeatureStore) {
 			SimpleFeatureStore store = (SimpleFeatureStore) featureSource; // write
 																			// access!
 			Transaction transaction = new DefaultTransaction("Update features in Table " + indicatorValueTableName);
@@ -455,7 +451,6 @@ public class IndicatorDatabaseHandler {
 			}
 
 			transaction.close();
-		}
 		
 		postGisStore.dispose();
 		
