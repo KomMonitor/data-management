@@ -128,6 +128,9 @@ public class IndicatorsManager {
 		entity.setContact(genericMetadata.getContact());
 		entity.setDataSource(genericMetadata.getDatasource());
 		entity.setDescription(genericMetadata.getDescription());
+		entity.setDataBasis(genericMetadata.getDatabasis());
+		entity.setNote(genericMetadata.getNote());
+		entity.setLiterature(genericMetadata.getLiterature());
 
 		java.util.Date lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
 		if (lastUpdate == null)
@@ -136,7 +139,7 @@ public class IndicatorsManager {
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 		entity.setProcessDescription(metadata.getProcessDescription());
 		entity.setUnit(metadata.getUnit());
-		entity.setLowestSpatialUnitForComputation(metadata.getLowestSpatialUnitForComputation());
+		entity.setLowestSpatialUnitForComputation(metadata.getLowestSpatialUnitForComputation());	
 		
 		if(metadata.getDefaultClassificationMapping() != null){
 			entity.setDefaultClassificationMappingItems(metadata.getDefaultClassificationMapping().getItems());
@@ -149,6 +152,11 @@ public class IndicatorsManager {
 		 * add topic to referenced topics, bu only if topic is not yet included!
 		 */
 		entity.addTopicsIfNotExist(metadata.getApplicableTopics());
+		
+		entity.setAbbreviation(metadata.getAbbreviation());
+		entity.setHeadlineIndicator(metadata.isIsHeadlineIndicator());
+		entity.setInterpretation(metadata.getInterpretation());
+		entity.setTags(metadata.getTags());
 
 		// persist in db
 		indicatorsMetadataRepo.saveAndFlush(entity);
@@ -711,6 +719,9 @@ public class IndicatorsManager {
 		entity.setDatasetName(indicatorData.getDatasetName());
 		entity.setDataSource(genericMetadata.getDatasource());
 		entity.setDescription(genericMetadata.getDescription());
+		entity.setDataBasis(genericMetadata.getDatabasis());
+		entity.setNote(genericMetadata.getNote());
+		entity.setLiterature(genericMetadata.getLiterature());
 
 		java.util.Date lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
 		if (lastUpdate == null)
@@ -730,6 +741,11 @@ public class IndicatorsManager {
 		
 		entity.setDefaultClassificationMappingItems(indicatorData.getDefaultClassificationMapping().getItems());
 		entity.setColorBrewerSchemeName(indicatorData.getDefaultClassificationMapping().getColorBrewerSchemeName());
+		
+		entity.setAbbreviation(indicatorData.getAbbreviation());
+		entity.setHeadlineIndicator(indicatorData.isIsHeadlineIndicator());
+		entity.setInterpretation(indicatorData.getInterpretation());
+		entity.setTags(indicatorData.getTags());
 		
 
 		/*

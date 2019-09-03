@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPATCHInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-01-17T10:12:10.704+01:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-09-03T12:29:21.035+02:00")
 
 public class IndicatorPATCHInputType   {
   @JsonProperty("applicableTopics")
@@ -38,6 +38,19 @@ public class IndicatorPATCHInputType   {
 
   @JsonProperty("defaultClassificationMapping")
   private DefaultClassificationMappingType defaultClassificationMapping = null;
+
+  @JsonProperty("abbreviation")
+  private String abbreviation = null;
+
+  @JsonProperty("interpretation")
+  private String interpretation = null;
+
+  @JsonProperty("isHeadlineIndicator")
+  private Boolean isHeadlineIndicator = false;
+
+  @JsonProperty("tags")
+  
+  private List<String> tags = new ArrayList<>();
 
   @JsonProperty("refrencesToOtherIndicators")
   
@@ -183,6 +196,83 @@ public class IndicatorPATCHInputType   {
     this.defaultClassificationMapping = defaultClassificationMapping;
   }
 
+  public IndicatorPATCHInputType abbreviation(String abbreviation) {
+    this.abbreviation = abbreviation;
+    return this;
+  }
+
+   /**
+   * abbreviated mark of the indicator
+   * @return abbreviation
+  **/
+  @ApiModelProperty(required = true, value = "abbreviated mark of the indicator")
+  public String getAbbreviation() {
+    return abbreviation;
+  }
+
+  public void setAbbreviation(String abbreviation) {
+    this.abbreviation = abbreviation;
+  }
+
+  public IndicatorPATCHInputType interpretation(String interpretation) {
+    this.interpretation = interpretation;
+    return this;
+  }
+
+   /**
+   * interpretation of the indicator values
+   * @return interpretation
+  **/
+  @ApiModelProperty(required = true, value = "interpretation of the indicator values")
+  public String getInterpretation() {
+    return interpretation;
+  }
+
+  public void setInterpretation(String interpretation) {
+    this.interpretation = interpretation;
+  }
+
+  public IndicatorPATCHInputType isHeadlineIndicator(Boolean isHeadlineIndicator) {
+    this.isHeadlineIndicator = isHeadlineIndicator;
+    return this;
+  }
+
+   /**
+   * boolean value indicating if the indicator is a headline indicator
+   * @return isHeadlineIndicator
+  **/
+  @ApiModelProperty(required = true, value = "boolean value indicating if the indicator is a headline indicator")
+  public Boolean isIsHeadlineIndicator() {
+    return isHeadlineIndicator;
+  }
+
+  public void setIsHeadlineIndicator(Boolean isHeadlineIndicator) {
+    this.isHeadlineIndicator = isHeadlineIndicator;
+  }
+
+  public IndicatorPATCHInputType tags(List<String> tags) {
+    this.tags = tags;
+    return this;
+  }
+
+  public IndicatorPATCHInputType addTagsItem(String tagsItem) {
+    this.tags.add(tagsItem);
+    return this;
+  }
+
+   /**
+   * list of tag labels for the indicator
+   * @return tags
+  **/
+  @ApiModelProperty(required = true, value = "list of tag labels for the indicator")
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
+
   public IndicatorPATCHInputType refrencesToOtherIndicators(List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators) {
     this.refrencesToOtherIndicators = refrencesToOtherIndicators;
     return this;
@@ -252,13 +342,17 @@ public class IndicatorPATCHInputType   {
         Objects.equals(this.allowedRoles, indicatorPATCHInputType.allowedRoles) &&
         Objects.equals(this.lowestSpatialUnitForComputation, indicatorPATCHInputType.lowestSpatialUnitForComputation) &&
         Objects.equals(this.defaultClassificationMapping, indicatorPATCHInputType.defaultClassificationMapping) &&
+        Objects.equals(this.abbreviation, indicatorPATCHInputType.abbreviation) &&
+        Objects.equals(this.interpretation, indicatorPATCHInputType.interpretation) &&
+        Objects.equals(this.isHeadlineIndicator, indicatorPATCHInputType.isHeadlineIndicator) &&
+        Objects.equals(this.tags, indicatorPATCHInputType.tags) &&
         Objects.equals(this.refrencesToOtherIndicators, indicatorPATCHInputType.refrencesToOtherIndicators) &&
         Objects.equals(this.refrencesToGeoresources, indicatorPATCHInputType.refrencesToGeoresources);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(applicableTopics, metadata, processDescription, unit, allowedRoles, lowestSpatialUnitForComputation, defaultClassificationMapping, refrencesToOtherIndicators, refrencesToGeoresources);
+    return Objects.hash(applicableTopics, metadata, processDescription, unit, allowedRoles, lowestSpatialUnitForComputation, defaultClassificationMapping, abbreviation, interpretation, isHeadlineIndicator, tags, refrencesToOtherIndicators, refrencesToGeoresources);
   }
 
   @Override
@@ -273,6 +367,10 @@ public class IndicatorPATCHInputType   {
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    lowestSpatialUnitForComputation: ").append(toIndentedString(lowestSpatialUnitForComputation)).append("\n");
     sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
+    sb.append("    abbreviation: ").append(toIndentedString(abbreviation)).append("\n");
+    sb.append("    interpretation: ").append(toIndentedString(interpretation)).append("\n");
+    sb.append("    isHeadlineIndicator: ").append(toIndentedString(isHeadlineIndicator)).append("\n");
+    sb.append("    tags: ").append(toIndentedString(tags)).append("\n");
     sb.append("    refrencesToOtherIndicators: ").append(toIndentedString(refrencesToOtherIndicators)).append("\n");
     sb.append("    refrencesToGeoresources: ").append(toIndentedString(refrencesToGeoresources)).append("\n");
     sb.append("}");
