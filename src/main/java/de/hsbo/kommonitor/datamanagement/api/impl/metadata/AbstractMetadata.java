@@ -30,6 +30,12 @@ public abstract class AbstractMetadata {
 	@Column(columnDefinition="text")
 	private String dataSource = null;
 	@Column(columnDefinition="text")
+	private String dataBasis = null;
+	@Column(columnDefinition="text")
+	private String note = null;
+	@Column(columnDefinition="text")
+	private String literature = null;
+	@Column(columnDefinition="text")
 	private String contact = null;
 	@Enumerated(EnumType.STRING)
 	private UpdateIntervalEnum updateIntervall = null;
@@ -104,6 +110,24 @@ public abstract class AbstractMetadata {
 	}
 	public String getDatasetId() {
 		return datasetId;
+	}
+	public String getDataBasis() {
+		return dataBasis;
+	}
+	public void setDataBasis(String dataBasis) {
+		this.dataBasis = dataBasis;
+	}
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
+	}
+	public String getLiterature() {
+		return literature;
+	}
+	public void setLiterature(String literature) {
+		this.literature = literature;
 	}
 	
 	

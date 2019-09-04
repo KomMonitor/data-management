@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-01-17T10:12:10.704+01:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-09-03T12:29:21.035+02:00")
 
 public class IndicatorOverviewType   {
   @JsonProperty("indicatorName")
@@ -72,6 +70,19 @@ public class IndicatorOverviewType   {
   @JsonProperty("ogcServices")
   
   private List<OgcServicesType> ogcServices = new ArrayList<>();
+
+  @JsonProperty("abbreviation")
+  private String abbreviation = null;
+
+  @JsonProperty("interpretation")
+  private String interpretation = null;
+
+  @JsonProperty("isHeadlineIndicator")
+  private Boolean isHeadlineIndicator = false;
+
+  @JsonProperty("tags")
+  
+  private List<String> tags = new ArrayList<>();
 
   public IndicatorOverviewType indicatorName(String indicatorName) {
     this.indicatorName = indicatorName;
@@ -405,6 +416,83 @@ public class IndicatorOverviewType   {
     this.ogcServices = ogcServices;
   }
 
+  public IndicatorOverviewType abbreviation(String abbreviation) {
+    this.abbreviation = abbreviation;
+    return this;
+  }
+
+   /**
+   * abbreviated mark of the indicator
+   * @return abbreviation
+  **/
+  @ApiModelProperty(required = true, value = "abbreviated mark of the indicator")
+  public String getAbbreviation() {
+    return abbreviation;
+  }
+
+  public void setAbbreviation(String abbreviation) {
+    this.abbreviation = abbreviation;
+  }
+
+  public IndicatorOverviewType interpretation(String interpretation) {
+    this.interpretation = interpretation;
+    return this;
+  }
+
+   /**
+   * interpretation of the indicator values
+   * @return interpretation
+  **/
+  @ApiModelProperty(required = true, value = "interpretation of the indicator values")
+  public String getInterpretation() {
+    return interpretation;
+  }
+
+  public void setInterpretation(String interpretation) {
+    this.interpretation = interpretation;
+  }
+
+  public IndicatorOverviewType isHeadlineIndicator(Boolean isHeadlineIndicator) {
+    this.isHeadlineIndicator = isHeadlineIndicator;
+    return this;
+  }
+
+   /**
+   * boolean value indicating if the indicator is a headline indicator
+   * @return isHeadlineIndicator
+  **/
+  @ApiModelProperty(required = true, value = "boolean value indicating if the indicator is a headline indicator")
+  public Boolean isIsHeadlineIndicator() {
+    return isHeadlineIndicator;
+  }
+
+  public void setIsHeadlineIndicator(Boolean isHeadlineIndicator) {
+    this.isHeadlineIndicator = isHeadlineIndicator;
+  }
+
+  public IndicatorOverviewType tags(List<String> tags) {
+    this.tags = tags;
+    return this;
+  }
+
+  public IndicatorOverviewType addTagsItem(String tagsItem) {
+    this.tags.add(tagsItem);
+    return this;
+  }
+
+   /**
+   * list of tag labels for the indicator
+   * @return tags
+  **/
+  @ApiModelProperty(required = true, value = "list of tag labels for the indicator")
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -430,12 +518,16 @@ public class IndicatorOverviewType   {
         Objects.equals(this.creationType, indicatorOverviewType.creationType) &&
         Objects.equals(this.lowestSpatialUnitForComputation, indicatorOverviewType.lowestSpatialUnitForComputation) &&
         Objects.equals(this.defaultClassificationMapping, indicatorOverviewType.defaultClassificationMapping) &&
-        Objects.equals(this.ogcServices, indicatorOverviewType.ogcServices);
+        Objects.equals(this.ogcServices, indicatorOverviewType.ogcServices) &&
+        Objects.equals(this.abbreviation, indicatorOverviewType.abbreviation) &&
+        Objects.equals(this.interpretation, indicatorOverviewType.interpretation) &&
+        Objects.equals(this.isHeadlineIndicator, indicatorOverviewType.isHeadlineIndicator) &&
+        Objects.equals(this.tags, indicatorOverviewType.tags);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(indicatorName, indicatorId, indicatorType, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles, referencedIndicators, referencedGeoresources, creationType, lowestSpatialUnitForComputation, defaultClassificationMapping, ogcServices);
+    return Objects.hash(indicatorName, indicatorId, indicatorType, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles, referencedIndicators, referencedGeoresources, creationType, lowestSpatialUnitForComputation, defaultClassificationMapping, ogcServices, abbreviation, interpretation, isHeadlineIndicator, tags);
   }
 
   @Override
@@ -459,6 +551,10 @@ public class IndicatorOverviewType   {
     sb.append("    lowestSpatialUnitForComputation: ").append(toIndentedString(lowestSpatialUnitForComputation)).append("\n");
     sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    ogcServices: ").append(toIndentedString(ogcServices)).append("\n");
+    sb.append("    abbreviation: ").append(toIndentedString(abbreviation)).append("\n");
+    sb.append("    interpretation: ").append(toIndentedString(interpretation)).append("\n");
+    sb.append("    isHeadlineIndicator: ").append(toIndentedString(isHeadlineIndicator)).append("\n");
+    sb.append("    tags: ").append(toIndentedString(tags)).append("\n");
     sb.append("}");
     return sb.toString();
   }
