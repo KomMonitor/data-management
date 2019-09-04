@@ -60,12 +60,12 @@ Configuration distinguishes between two main categories.
 The central configuration file is located at ```src/main/resources/application.properties```. Several important aspects must match your target environment when deploying the service. These are:
 
 - name and port:
-```
+```java
 server.port=8085
 spring.application.name=kommonitor-data-access-api
 ```
 - database connection (to PostGIS database):
-```
+```java
 spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL9Dialect
 spring.datasource.driverClassName=org.postgresql.Driver
 # adjust following parameters to your target environment
@@ -77,7 +77,7 @@ database.port=5432
 database.name=kommonitor_midterm
 ```
 - GeoServer connection (optional - it can be disabled):
-```
+```java
 # properties for geoserver connection
 # true enables geoserver publishment; false will disable it
 ogc.enable_service_publication = false;
@@ -104,7 +104,7 @@ However, you might need to create a WAR archive in some scenarios. To create a W
 
 1. Look for the `<packaging>JAR</packaging>` setting and change it to `<packaging>WAR</packaging>`
 2. Look for the follwing commented out dependency
-```
+```java
 <!-- <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -112,7 +112,7 @@ However, you might need to create a WAR archive in some scenarios. To create a W
 </dependency> -->
 ```
 and enable it by removing the comment characters
-```
+```java
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -120,7 +120,7 @@ and enable it by removing the comment characters
 </dependency>
 ```
 3. The entry point of the service located at `src/main/java/de/hsbo/kommonitor/datamanagement/Runner.java` already implements the required <i>SpringBootServletInitializer</i> interface. <u>Hence you must not change anything here</u>.
-```
+```java
 package de.hsbo.kommonitor.datamanagement;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

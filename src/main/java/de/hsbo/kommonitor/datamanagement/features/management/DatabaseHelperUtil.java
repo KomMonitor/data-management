@@ -62,12 +62,12 @@ public class DatabaseHelperUtil {
 
 	}
 
-	public static String createUniqueTableNameForResourceType(ResourceTypeEnum resourceType, DataStore dataStore)
+	public static String createUniqueTableNameForResourceType(ResourceTypeEnum resourceType, DataStore dataStore,  String indicator_value_suffix)
 			throws IOException {
 		int numberSuffix = 0;
 		String resourceTypeName = resourceType.name();
 
-		String potentialDBTableName = createPotentialDBTableName(resourceTypeName, numberSuffix);
+		String potentialDBTableName = createPotentialDBTableName(resourceTypeName, numberSuffix, indicator_value_suffix);
 
 		SimpleFeatureSource featureSource = null;
 		boolean uniqueTableNameFound = false;
@@ -87,15 +87,15 @@ public class DatabaseHelperUtil {
 				break;
 			} else {
 				// increment suffix and try again
-				potentialDBTableName = createPotentialDBTableName(resourceTypeName, numberSuffix++);
+				potentialDBTableName = createPotentialDBTableName(resourceTypeName, numberSuffix++,  indicator_value_suffix);
 			}
 		} while (!uniqueTableNameFound);
 
 		return potentialDBTableName;
 	}
 
-	private static String createPotentialDBTableName(String resourceTypeName, int numberSuffix) {
-		return resourceTypeName + "_" + numberSuffix;
+	private static String createPotentialDBTableName(String resourceTypeName, int numberSuffix, String indicator_value_suffix) {
+		return resourceTypeName + "_" + numberSuffix + indicator_value_suffix;
 	}
 
 	public static DataStore getPostGisDataStore() throws IOException {

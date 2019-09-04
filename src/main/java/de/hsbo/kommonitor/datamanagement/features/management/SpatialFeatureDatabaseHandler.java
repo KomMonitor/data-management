@@ -6,12 +6,17 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.geotools.data.DataStore;
+import org.geotools.data.DataUtilities;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -24,7 +29,6 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.feature.type.AttributeDescriptorImpl;
-import org.geotools.feature.type.AttributeTypeImpl;
 import org.geotools.filter.FilterFactoryImpl;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
@@ -33,6 +37,7 @@ import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.temporal.object.DefaultInstant;
 import org.geotools.temporal.object.DefaultPosition;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -63,6 +68,9 @@ public class SpatialFeatureDatabaseHandler {
 	private static int numberOfInsertedEntries;
 	private static int numberOfEntriesMarkedAsOutdated;
 	private static boolean inputFeaturesHaveArisonFromAttribute;
+	
+	private static boolean ADDITIONAL_PROPERTIES_WERE_SET = false;
+	private static boolean MISSING_PROPERTIES_DETECTED = false;
 
 	public static String writeGeoJSONFeaturesToDatabase(ResourceTypeEnum resourceType, String geoJSONFeatures,
 			PeriodOfValidityType periodOfValidity, String correspondingMetadataDatasetId)
@@ -167,7 +175,7 @@ public class SpatialFeatureDatabaseHandler {
 	private static SimpleFeatureType enrichWithKomMonitorProperties(SimpleFeatureType featureSchema,
 			DataStore dataStore, ResourceTypeEnum resourceType) throws IOException {
 		SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(resourceType, dataStore));
+		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(resourceType, dataStore, ""));
 		tb.setNamespaceURI(featureSchema.getName().getNamespaceURI());
 		tb.setCRS(featureSchema.getCoordinateReferenceSystem());
 		tb.addAll(featureSchema.getAttributeDescriptors());
@@ -264,59 +272,103 @@ public class SpatialFeatureDatabaseHandler {
 
 	public static AvailablePeriodOfValidityType getAvailablePeriodOfValidity(String dbTableName)
 			throws IOException, SQLException {
-		Connection jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
-
-		Statement statement = jdbcConnection.createStatement();
-		ResultSet rs = statement.executeQuery("SELECT min(\"" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME
-				+ "\") FROM \"" + dbTableName + "\"");
-
-		AvailablePeriodOfValidityType validityPeriod = new AvailablePeriodOfValidityType();
-		if (rs.next()) { // check if a result was returned
-			validityPeriod.setEarliestStartDate(DateTimeUtil.toLocalDate(rs.getDate(1)));
-		}
-
-		rs.close();
-		statement.close();
-
-		// handle endDate
-		statement = jdbcConnection.createStatement();
-
-		// be sure to quote the identifier!
-		rs = statement.executeQuery("SELECT \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" FROM \""
-				+ dbTableName + "\" WHERE \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" = null");
-
-		if (rs.next()) { // check if a result was returned
-			/*
-			 * the result set has results. Thus there are features with endDate
-			 * == null
-			 * 
-			 * Thus there is no known latestEndDate to be set
-			 */
-			validityPeriod.setEndDate(null);
-		} else {
-			/*
-			 * we have to find the latest endDate (maxValue)
-			 */
-			// be sure to quote the identifier!
-			rs = statement.executeQuery("SELECT max(\"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME
+		
+		Connection jdbcConnection = null;
+		Statement statement = null;
+		ResultSet rs = null;
+		
+		AvailablePeriodOfValidityType validityPeriod = null;
+		
+		try {
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			statement = jdbcConnection.createStatement();
+			rs = statement.executeQuery("SELECT min(\"" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME
 					+ "\") FROM \"" + dbTableName + "\"");
+
+			validityPeriod = new AvailablePeriodOfValidityType();
 			if (rs.next()) { // check if a result was returned
-				/*
-				 * latestEndDate might be null, if it was never set
-				 * 
-				 * then it indicates, that there is no end date and all data is
-				 * st
-				 */
-				java.sql.Date latestEndDate = rs.getDate(1);
-				if (latestEndDate != null)
-					validityPeriod.setEndDate(DateTimeUtil.toLocalDate(latestEndDate));
+				validityPeriod.setEarliestStartDate(DateTimeUtil.toLocalDate(rs.getDate(1)));
 			}
 
+			rs.close();
+		} catch (Exception e) {
+			try {
+				rs.close();
+				statement.close();
+				jdbcConnection.close();				
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				rs.close();
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
 		}
-		rs.close();
-		statement.close();
+		
+		try {
+			// handle endDate
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			statement = jdbcConnection.createStatement();
 
-		jdbcConnection.close();
+			// be sure to quote the identifier!
+			rs = statement.executeQuery("SELECT \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" FROM \""
+					+ dbTableName + "\" WHERE \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" = null");
+
+			if (rs.next()) { // check if a result was returned
+				/*
+				 * the result set has results. Thus there are features with endDate
+				 * == null
+				 * 
+				 * Thus there is no known latestEndDate to be set
+				 */
+				validityPeriod.setEndDate(null);
+			} else {
+				/*
+				 * we have to find the latest endDate (maxValue)
+				 */
+				// be sure to quote the identifier!
+				rs = statement.executeQuery("SELECT max(\"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME
+						+ "\") FROM \"" + dbTableName + "\"");
+				if (rs.next()) { // check if a result was returned
+					/*
+					 * latestEndDate might be null, if it was never set
+					 * 
+					 * then it indicates, that there is no end date and all data is
+					 * st
+					 */
+					java.sql.Date latestEndDate = rs.getDate(1);
+					if (latestEndDate != null)
+						validityPeriod.setEndDate(DateTimeUtil.toLocalDate(latestEndDate));
+				}
+
+			}
+			rs.close();
+		} catch (Exception e) {
+			try {
+				rs.close();
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				rs.close();
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+
 		return validityPeriod;
 	}
 
@@ -409,9 +461,9 @@ public class SpatialFeatureDatabaseHandler {
 		/*
 		 * idea: check all features from input:
 		 * 
-		 * if (feature exists in db with the same geometry), then only update
+		 * if (feature exists in db with the same geometry and identical property values), then only update
 		 * the validity period else (feature does not exist at all or has
-		 * different geometry) then if (only geometry changed, id remains) then
+		 * different geometry or different property values) then if (only geometry/propeties changed, id remains) then
 		 * insert as new feature and set validity period end date for the OLD
 		 * feature else (completely new feature with new id) then insert as new
 		 * feature
@@ -426,12 +478,14 @@ public class SpatialFeatureDatabaseHandler {
 		numberOfInsertedEntries = 0;
 		numberOfEntriesMarkedAsOutdated = 0;
 		inputFeaturesHaveArisonFromAttribute = false;
+		ADDITIONAL_PROPERTIES_WERE_SET = false;
+		MISSING_PROPERTIES_DETECTED = false;
 		
 		
 		Date startDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getStartDate());
 		Date endDate_new = null;
 		if (periodOfValidity.getEndDate() != null)
-			DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
+			endDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
 		
 		FilterFactory ff = new FilterFactoryImpl();
 
@@ -447,7 +501,7 @@ public class SpatialFeatureDatabaseHandler {
 		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
 		SimpleFeatureSource featureSource = store.getFeatureSource(dbTableName);
 		
-		handleUpdateProcess(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection, newFeaturesToBeAdded,
+		handleUpdateProcess(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema, inputFeatureCollection, newFeaturesToBeAdded,
 				featureSource);
 
 		logger.info("Update of feature table {} was successful. Modified {} entries. Added {} new entries. Marked {} entries as outdated.",
@@ -463,13 +517,17 @@ public class SpatialFeatureDatabaseHandler {
 	}
 
 	private static void handleUpdateProcess(String dbTableName, Date startDate_new, Date endDate_new, FilterFactory ff,
-			FeatureCollection inputFeatureCollection, DefaultFeatureCollection newFeaturesToBeAdded,
+			SimpleFeatureType inputFeatureSchema, FeatureCollection inputFeatureCollection, DefaultFeatureCollection newFeaturesToBeAdded,
 			SimpleFeatureSource featureSource) throws IOException, Exception {
 		if (featureSource instanceof SimpleFeatureStore) {
 			SimpleFeatureStore sfStore = (SimpleFeatureStore) featureSource; // write
 																				// access!
 			
+			
+			
 			SimpleFeatureCollection dbFeatures = featureSource.getFeatures();
+			
+			compareSchemas(inputFeatureSchema, featureSource.getSchema(), dbTableName);
 
 			/*
 			 * check all dbEntries, if they might have to be assigned with a new endDate in case
@@ -484,6 +542,104 @@ public class SpatialFeatureDatabaseHandler {
 		}
 	}
 
+	private static void compareSchemas(SimpleFeatureType inputFeatureSchema, SimpleFeatureType dbSchema,
+			String dbTableName) throws SQLException, IOException {
+		/*
+		 * Compare input schema to DB schema
+		 * 
+		 * if input schema contains any property, that is not within db schema, then add that property to DB schema (enrich feature table with new column)
+		 */
+		
+		List<AttributeDescriptor> inputAttributeDescriptors = inputFeatureSchema.getAttributeDescriptors();
+		List<AttributeDescriptor> dbAttributeDescriptors = dbSchema.getAttributeDescriptors();
+		int numberOfVerifiedDbProperties = 0;
+		
+		List<AttributeDescriptor> newProperties = new ArrayList<AttributeDescriptor>(); 
+		
+		for (AttributeDescriptor inputAttributeDesc : inputAttributeDescriptors) {
+			boolean dbTableContainsProperty = false;
+			for (AttributeDescriptor dbAttributeDesc : dbAttributeDescriptors) {
+				if (inputAttributeDesc.getName().equals(dbAttributeDesc.getName())){
+					dbTableContainsProperty = true;	
+					// to clarify at the end, whether all db properties are still present in inputFeatures schema
+					numberOfVerifiedDbProperties ++;
+					break;
+				}
+			}
+			
+			if(!dbTableContainsProperty){
+				ADDITIONAL_PROPERTIES_WERE_SET = true;
+				newProperties.add(inputAttributeDesc);
+			}
+		}
+		
+		if(numberOfVerifiedDbProperties < dbAttributeDescriptors.size()){
+			// obviously the inputFeatures do not have all previously defined attributes
+			MISSING_PROPERTIES_DETECTED = true;
+		}
+		
+		// update schema in db to ensure all new columns are created
+		if(ADDITIONAL_PROPERTIES_WERE_SET){
+			appendNewPropertyColumnsInDbTable(dbTableName, newProperties);
+		}		
+	}
+
+	private static void appendNewPropertyColumnsInDbTable(String dbTableName, List<AttributeDescriptor> newProperties)
+			throws IOException, SQLException {
+		
+		Connection jdbcConnection = null;
+		Statement statement = null;
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("ALTER TABLE \"" + dbTableName + "\" ");
+			
+			Iterator<AttributeDescriptor> iterator = newProperties.iterator();
+			
+			while(iterator.hasNext()){
+				AttributeDescriptor property = iterator.next();
+				
+				// use dataType varchar, to import new columns as string
+				builder.append("ADD COLUMN \"" + property.getName() + "\" varchar");
+				
+				if(iterator.hasNext()){
+					builder.append(", ");
+				}
+				else{
+					builder.append(";");
+				}
+			}
+			
+			String alterTableCommand = builder.toString();
+			
+			logger.info("Send following ALTER TABLE command to database: " + alterTableCommand);
+			
+			// TODO check if works
+			statement.executeUpdate(alterTableCommand);
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+	}
+
 	private static void compareDbFeaturesToInputFeatures(String dbTableName, Date startDate_new, Date endDate_new,
 			FilterFactory ff, FeatureCollection inputFeatureCollection, DefaultFeatureCollection newFeaturesToBeAdded,
 			SimpleFeatureCollection dbFeatures, SimpleFeatureStore sfStore) throws Exception {
@@ -494,21 +650,50 @@ public class SpatialFeatureDatabaseHandler {
 			/*
 			 * now compare each of the database features with the inputFeatures
 			 * 
-			 * mark all as outdated whose ID is not present in inputFeatures
-			 */
+			 * identify those database features, that are not within input features
+			 * 
+			 * compare their starting dates and end dates
+			 * 
+			 * only investigate features whose starting date lies within the time period of the input features
+			 * 
+			 * because
+			 * 
+			 * if db feature is another time period (historical or future) then it is irrelevant for the target time period of input features
+			 * 
+			 * but if db feature with a starting date within time period of input feature is found that is no longer within input collection
+			 * then we must remove it from db!
+			 * 
+			 * --> always expect full datasets!!!!
+			 */		
 
 			FeatureIterator dbFeaturesIterator = dbFeatures.features();
 
 			while (dbFeaturesIterator.hasNext()) {
-				Feature dbFeature = dbFeaturesIterator.next();
+				Feature dbFeature = dbFeaturesIterator.next();				
+				
 				if (!dbFeatureIdIsWithinInputFeatures(String.valueOf(dbFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME).getValue()), inputFeatureCollection)){
-					// mark as outdated by setting validEndDate to dubmitted start date
-					numberOfEntriesMarkedAsOutdated++;
-					Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeature);
-					
-					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDate_new, filterForDbFeatureId);
-				}
 
+					// compare db feature start date to input time period
+					boolean dbFeatureIsWithinInputTimePeriod = false;
+					Date dbFeatureStartDate = (Date) dbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+					
+					if(dbFeatureStartDate.equals(startDate_new) || dbFeatureStartDate.after(startDate_new)){
+						// if no endDate was specified
+						if (endDate_new == null){
+							dbFeatureIsWithinInputTimePeriod = true;
+						}
+						else if (dbFeatureStartDate.before(endDate_new)){
+							dbFeatureIsWithinInputTimePeriod = true;							
+						}
+					}
+					
+					if(dbFeatureIsWithinInputTimePeriod){
+						// delete the feature from db as it is no longer present in the updated input feature collection for the target 
+						// time period
+						Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeature);
+						sfStore.removeFeatures(filterForDbFeatureId);
+					}					
+				}
 			}
 
 			dbFeaturesIterator.close();
@@ -587,28 +772,47 @@ public class SpatialFeatureDatabaseHandler {
 	}
 
 	private static void insertNewFeatures(Date startDate_new, Date endDate_new, FilterFactory ff,
-			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureStore sfStore) throws IOException {
+			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureStore sfStore) throws IOException, CQLException {
 		List<FeatureId> newFeatureIds = sfStore.addFeatures(newFeaturesToBeAdded);
 		numberOfInsertedEntries = newFeatureIds.size();
 		
+		// only update those new features whose startDate and/or endDate are not already set!
+		// each feature might have an individual setting here in contrast to global setting
+		// ONLY ADJUST FILTER TO INLCUDE QUERY WHERE startDATE is null || endDATE is null
+		
 		Set<Identifier> featureIdSet = new HashSet<Identifier>();
 		featureIdSet.addAll(newFeatureIds);
-		Filter filterForNewFeatures = ff.id(featureIdSet);
-		sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new, filterForNewFeatures);
-		sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new, filterForNewFeatures);
+		Filter filter_startDateIsNull = CQL.toFilter("\"" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + "\" IS NULL");
+		Filter filter_endDateIsNull = CQL.toFilter("\"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" IS NULL");
+		Filter filterForNewFeatures_startDate = ff.and(ff.id(featureIdSet), filter_startDateIsNull);
+		Filter filterForNewFeatures_endDate = ff.and(ff.id(featureIdSet), filter_endDateIsNull);
+		sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new, filterForNewFeatures_startDate);
+		sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new, filterForNewFeatures_endDate);
 	}
 
 	private static void compareInputFeatureToDbFeatures(Date startDate_new, Date endDate_new, FilterFactory ff,
 			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureStore sfStore,
 			SimpleFeatureCollection dbFeatures, FeatureIterator inputFeaturesIterator) throws IOException {
+		
+		/*
+		 * 
+		(how to ensure that there is always exactly one valid entry for each point in time?)
+		  - endDate can only be null once 
+		  - always sort all dbEntries according to startTime, then identify where the inut feature is located and decide what to do
+			- if is most actual --> easy set as new most current, set endDate for old feature
+			- if it most former --> easy set as new most former, endDate (if not present) cannot be further as the one of first dbEntry
+			- if it is in the middle --> if = any startDate --> modify that entry but take care of endDate wjhich must only be as far as the next entry
+			- if it is in the middle --> if != any startDate --> new entry but take care of endDates of former and later feature (adjust endDates and startDates if required)
+		 */
+		
 		Feature inputFeature = inputFeaturesIterator.next();
 
-		Feature correspondingDbFeature = findCorrespondingDbFeatureById(inputFeature, dbFeatures);
+		List<Feature> correspondingDbFeatures = findCorrespondingDbFeaturesById(inputFeature, dbFeatures);
 
-		if (correspondingDbFeature != null) {
-			// compare geometries
-			compareGeometries(startDate_new, endDate_new, ff, newFeaturesToBeAdded, sfStore, inputFeature,
-					correspondingDbFeature);
+		if (correspondingDbFeatures != null && correspondingDbFeatures.size() > 0) {
+			// compare geometries, attributes and period of validty
+			compareFeatures(startDate_new, endDate_new, ff, newFeaturesToBeAdded, sfStore, inputFeature,
+					correspondingDbFeatures);
 		}else{
 			/*
 			 * no corresponding db feature entry has been found.
@@ -618,46 +822,267 @@ public class SpatialFeatureDatabaseHandler {
 		}
 	}
 
-	private static void compareGeometries(Date startDate_new, Date endDate_new, FilterFactory ff,
+	private static void compareFeatures(Date startDate_new, Date endDate_new, FilterFactory ff,
 			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureStore sfStore, Feature inputFeature,
-			Feature correspondingDbFeature) throws IOException {
-		Geometry dbGeometry = (Geometry) correspondingDbFeature.getDefaultGeometryProperty().getValue();
-		Geometry inputGeometry = (Geometry) inputFeature.getDefaultGeometryProperty().getValue();
-		Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, correspondingDbFeature);
-		if (dbGeometry.equals(inputGeometry)) {
-			// same object --> only update validity period!
-			// create modify statement and add to transaction!
-			
-			boolean wasUpdated = false;
-			
-			//set validStartDate, if new one is earlier
-			Date dbFeatureStartDate = (Date) correspondingDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
-			if (startDate_new.before(dbFeatureStartDate)){
-				wasUpdated = true;
-				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new, filterForDbFeatureId);
-			}
-			
-			// setvalidEndDate, if new one is later or null
-			Date dbFeatureEndDate = (Date) correspondingDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
-			if (endDate_new == null || endDate_new.after(dbFeatureEndDate)){
-				wasUpdated = true;
-				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new, filterForDbFeatureId);
-			}
-			
-			// increase counter if necessary
-			if (wasUpdated)
-				numberOfModifiedEntries++;
-		} else {
-			// same id but different geometry --> hence mark old object as outdated
-			// and add new inputFeature to newFeaturesToBeAdded
-			numberOfEntriesMarkedAsOutdated++;
-			
-			// to mark old feature as outdated set the validEndData to the submitted startDate of the new feature
-			sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDate_new, filterForDbFeatureId);
-			
-			// add inputFeature to newFeaturesToBeAdded will be processed later together with all other new features
-			newFeaturesToBeAdded.add((SimpleFeature)inputFeature);
+			List<Feature> correspondingDbFeatures) throws IOException {
+		
+		/*
+		 * 
+		(how to ensure that there is always exactly one valid entry for each point in time?)
+		  - endDate can only be null once 
+		  - always sort all dbEntries according to startTime, then identify where the inut feature is located and decide what to do
+			- if is most actual --> easy set as new most current, set endDate for old feature
+			- if it most former --> easy set as new most former, endDate (if not present) cannot be further as the one of first dbEntry
+			- if it is in the middle --> if = any startDate --> modify that entry but take care of endDate wjhich must only be as far as the next entry
+			- if it is in the middle --> if != any startDate --> new entry but take care of endDates of former and later feature (adjust endDates and startDates if required)
+		 */		
+		
+		Date startDateInputFeature = null;
+		Date endDateInputFeature = null;
+		
+		boolean hasValidStartDateProperty = inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME) != null;
+		if(hasValidStartDateProperty){
+			startDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();			
 		}
+		boolean hasValidEndDateProperty = inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME) != null;
+		if(hasValidEndDateProperty){
+			endDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
+		}
+		
+		if(! hasValidEndDateProperty || ! hasValidStartDateProperty){
+			inputFeature = reTypeFeatureToIncludeMissingKomMonitorProperties(inputFeature);
+		}	
+
+		if (startDateInputFeature == null){
+			startDateInputFeature = startDate_new;
+			
+			((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDateInputFeature);
+		}
+		if (endDateInputFeature == null){
+			endDateInputFeature = endDate_new;
+			((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDateInputFeature);
+		}		
+		
+		Feature latestDbFeature = correspondingDbFeatures.get(correspondingDbFeatures.size() - 1);
+		Feature earliestDbFeature = correspondingDbFeatures.get(0);
+		Date latestStartDateOfDBFeatures = (Date) latestDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+		Date earliestStartDateOfDBFeatures = (Date) earliestDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+		
+		// check against latest feature
+		if(startDateInputFeature.after(latestStartDateOfDBFeatures)){
+			
+			// compare geometry and properties
+			// if same geometry and same properties then simply update the DB feature to new endDate
+			
+			// if other geometry or other property values (or new properties) then insert as new feature
+			Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, latestDbFeature);
+			
+			if (hasSameGeometry(inputFeature, latestDbFeature) && hasSameProperties(inputFeature, latestDbFeature)){				
+				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDateInputFeature, filterForDbFeatureId);
+				numberOfModifiedEntries++;
+			}
+			else{
+				// modify endDate of dbFeature to new start date				
+				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDateInputFeature, filterForDbFeatureId);
+				numberOfModifiedEntries++;
+				numberOfEntriesMarkedAsOutdated++;
+				newFeaturesToBeAdded.add((SimpleFeature)inputFeature);
+			}			
+		}
+		// check against earliest feature
+		else if (startDateInputFeature.before(earliestStartDateOfDBFeatures)){
+			// compare geometry and properties
+						// if same geometry and same properties then simply update the DB feature to new startDate
+						
+						// if other geometry or other property values (or new properties) then insert as new feature
+			Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, earliestDbFeature);
+			
+			if (hasSameGeometry(inputFeature, earliestDbFeature) && hasSameProperties(inputFeature, earliestDbFeature)){				
+				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDateInputFeature, filterForDbFeatureId);
+				numberOfModifiedEntries++;
+			}
+			else{
+				// if endDate of input feature is unset or after startDate of dbFeature then use startDate of dbFeature as new endDate
+				if (endDateInputFeature == null || endDateInputFeature.after(earliestStartDateOfDBFeatures)){
+					((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, earliestStartDateOfDBFeatures);
+				}
+				newFeaturesToBeAdded.add((SimpleFeature)inputFeature);
+			}	
+		}
+		// must be somewhere in the middle along the timeline so there are previous and later feature
+		else{
+			int indexOfPreviousDbFeature = -1;
+			int indexOfLaterDbFeature = -1;
+			int indexOfDbFeatureWithEqualStartDate = -1;
+			
+			for (int i=0; i<correspondingDbFeatures.size(); i++){
+				Feature dbFeature = correspondingDbFeatures.get(i);
+				Date dbFeatureStartDate = (Date) dbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+				
+				// find the first dbFeature whose start date is equal to input feature start date
+				// or is after input features start date
+				if (startDateInputFeature.equals(dbFeatureStartDate)){
+					indexOfDbFeatureWithEqualStartDate = i;
+					break;
+				}
+				if (startDateInputFeature.before(dbFeatureStartDate)){
+					indexOfLaterDbFeature = i;
+					indexOfPreviousDbFeature = i-1;
+					break;
+				}
+			}
+			
+			if (indexOfDbFeatureWithEqualStartDate >= 0){
+				// perform an update of an existing db feature
+				// make sanity checks on end date
+				Feature dbFeatureToModify = correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate);
+				Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeatureToModify);
+				
+				// sanity check on endDate
+				// only if there is a subsequent feature
+				if (correspondingDbFeatures.size() > (indexOfDbFeatureWithEqualStartDate + 1)){
+					Date startDateOfNextDbFeature = (Date) correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1).getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+					if (endDateInputFeature == null || endDateInputFeature.after(startDateOfNextDbFeature)){
+						endDateInputFeature = startDateOfNextDbFeature;
+					}
+				}				
+				
+				if (hasSameGeometry(inputFeature, dbFeatureToModify) && hasSameProperties(inputFeature, dbFeatureToModify)){									
+					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDateInputFeature, filterForDbFeatureId);
+					numberOfModifiedEntries++;
+				}
+				else{
+					// only if there is a subsequent feature
+					if (correspondingDbFeatures.size() > (indexOfDbFeatureWithEqualStartDate + 1)){
+						Date startDateOfNextDbFeature = (Date) correspondingDbFeatures.get(indexOfDbFeatureWithEqualStartDate + 1).getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+						((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDateOfNextDbFeature);						
+					}	
+					// modify each property 
+					
+					Collection<Property> properties = inputFeature.getProperties();
+					
+					for (Property property : properties) {
+						sfStore.modifyFeatures(property.getName(), property.getValue(), filterForDbFeatureId);						
+					}
+					numberOfModifiedEntries++;
+				}
+				
+			}
+			else{
+				Feature previousDbFeature = correspondingDbFeatures.get(indexOfPreviousDbFeature);
+				Feature laterDbFeature = correspondingDbFeatures.get(indexOfLaterDbFeature);
+				Filter filterForPreviousDbFeatureId = createFilterForUniqueFeatureId(ff, previousDbFeature);
+				Filter filterForLaterDbFeatureId = createFilterForUniqueFeatureId(ff, laterDbFeature);
+				
+				Date previousDbFeatureEndDate = (Date) previousDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
+				Date laterDbFeatureStartDate = (Date) laterDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+				Date laterDbFeatureEndDate = (Date) laterDbFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
+				
+				// if end date overlaps with later start date then cut if off at later start date
+				if (endDateInputFeature.after(laterDbFeatureStartDate)){
+					endDateInputFeature = laterDbFeatureStartDate;
+					((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, laterDbFeatureStartDate);					
+				}
+				// it is a new feature insertion in the middle
+				
+				// now we know the neighbour features.
+				// compare geometry and attributes to them
+				
+				// if equal then we might just update the timestamps of the surrounding features
+				
+				// if not equqal, then insert as new feature and adjust surrounding features
+				
+				boolean isSameGeomAndProperties_previousFeature = hasSameGeometry(inputFeature, previousDbFeature) && hasSameProperties(inputFeature, previousDbFeature);
+				boolean isSameGeomAndProperties_laterFeature = hasSameGeometry(inputFeature, laterDbFeature) && hasSameProperties(inputFeature, laterDbFeature);
+				
+				// geom and properties are equal to both surrounding features
+				if (isSameGeomAndProperties_previousFeature){
+					// make timeLine fitting for input object
+					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDateInputFeature, filterForPreviousDbFeatureId);	
+					numberOfModifiedEntries++;
+				}
+				if (isSameGeomAndProperties_laterFeature){
+					// make timeLine fitting for input object
+					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, endDateInputFeature, filterForLaterDbFeatureId);	
+					numberOfModifiedEntries++;
+				}
+				
+				// geom and props are not equal
+				if (!isSameGeomAndProperties_previousFeature || !isSameGeomAndProperties_laterFeature){
+					// insert as new feature
+					// adjust timeline of the others
+					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDateInputFeature, filterForPreviousDbFeatureId);	
+					numberOfModifiedEntries++;
+					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, endDateInputFeature, filterForLaterDbFeatureId);	
+					numberOfModifiedEntries++;
+					
+					newFeaturesToBeAdded.add((SimpleFeature) inputFeature);
+					numberOfInsertedEntries++;
+				}
+			}
+		}
+	}
+
+	private static Feature reTypeFeatureToIncludeMissingKomMonitorProperties(Feature inputFeature) {
+		SimpleFeatureType featureType = ((SimpleFeature) inputFeature).getFeatureType();
+		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+		builder.setName(featureType.getName());
+		builder.setNamespaceURI(featureType.getName().getNamespaceURI());
+		builder.setCRS(featureType.getCoordinateReferenceSystem());
+		builder.addAll(featureType.getAttributeDescriptors());
+		builder.setDefaultGeometry(featureType.getGeometryDescriptor().getLocalName());
+		
+		AttributeDescriptor attributeDescriptor_startDate = builder.get(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+		AttributeDescriptor attributeDescriptor_endDate = builder.get(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+		AttributeDescriptor attributeDescriptor_arisenFrom = builder.get(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME);
+		if(attributeDescriptor_startDate == null){
+			builder.add(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, Date.class);
+		}
+		if(attributeDescriptor_endDate == null){
+			builder.add(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, Date.class);
+		}
+		if(attributeDescriptor_arisenFrom == null){
+			builder.add(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME, String.class);
+		}
+		
+		SimpleFeatureType newFeatureType = builder.buildFeatureType();
+		
+		inputFeature = DataUtilities.reType(newFeatureType, (SimpleFeature) inputFeature);
+		return inputFeature;
+	}
+
+	private static boolean hasSameProperties(Feature inputFeature, Feature dbFeature) {
+		// check properties and propety values
+		
+		// input feature might contain new properties
+		
+		// ADDITIONAL_PROPERTIES_WERE_SET is set in compareSchemas()
+		if (ADDITIONAL_PROPERTIES_WERE_SET || MISSING_PROPERTIES_DETECTED)
+			return false;
+		else{
+			Collection<Property> inputProperties = inputFeature.getProperties();
+			Collection<Property> dbProperties = dbFeature.getProperties();
+			
+			for (Property dbProperty : dbProperties) {
+				for (Property inputProperty : inputProperties) {
+					if (dbProperty.getName().equals(inputProperty.getName())){
+						if (! dbProperty.getValue().equals(inputProperty.getValue())){
+							return false;
+						}
+					}
+				}
+			}
+		}
+		
+		// if code reaches this then assume that all properties were identical
+		return true;
+	}
+
+	private static boolean hasSameGeometry(Feature inputFeature, Feature dbFeature) {
+		Geometry dbGeometry = (Geometry) dbFeature.getDefaultGeometryProperty().getValue();
+		Geometry inputGeometry = (Geometry) inputFeature.getDefaultGeometryProperty().getValue();
+		
+		return dbGeometry.equals(inputGeometry);
 	}
 
 	private static Filter createFilterForUniqueFeatureId(FilterFactory ff, Feature correspondingDbFeature) {
@@ -669,30 +1094,43 @@ public class SpatialFeatureDatabaseHandler {
 		return filterForFeatureId;
 	}
 
-	private static Feature findCorrespondingDbFeatureById(Feature inputFeature, SimpleFeatureCollection dbFeatures) {
+	private static List<Feature> findCorrespondingDbFeaturesById(Feature inputFeature, SimpleFeatureCollection dbFeatures) {
+		
+		//  find all db features that have the sme featureIF
+		
+		// then sort them according to validStartDate 
+		List<Feature> identifiedDbFeatures = new ArrayList<Feature>();
 		SimpleFeatureIterator dbFeatureIterator = dbFeatures.features();
+		
+
+		String inputFeatureId = String.valueOf(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME).getValue());
 		
 		while (dbFeatureIterator.hasNext()){
 			SimpleFeature dbFeature = dbFeatureIterator.next();
-			/*
-			 * if both have the same id AND validEndDate is null OR in the future
-			 * then we have found the feature
-			 * 
-			 * --> although there might be multiple features with the same ID already,
-			 * only one geometry can be currently valid!!! 
-			 */
-			Date validEndDate = (Date) dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
-			Date now = new Date();
 			
-			String inputFeatureId = String.valueOf(inputFeature.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME).getValue());
 			String dbFeatureId = String.valueOf(dbFeature.getAttribute(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME));
-			if(inputFeatureId.equals(dbFeatureId)
-					&& (validEndDate == null || validEndDate.after(now))){
-				dbFeatureIterator.close();
-				return dbFeature;
+			if(inputFeatureId.equals(dbFeatureId)){
+				identifiedDbFeatures.add(dbFeature);				
 			}			
 		}
-		// if code reaches this, then no dvFeature was found
-		return null;
+		
+		// sort if number is more than 1
+		if (identifiedDbFeatures.size() > 1){
+			identifiedDbFeatures.sort(new Comparator<Feature>() 	
+			{
+
+				@Override
+				public int compare(Feature o1, Feature o2) {
+					// compare by validStartDate
+					Date startDate1 = (Date) o1.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+					Date startDate2 = (Date) o2.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+					
+					return startDate1.compareTo(startDate2);					
+				}
+			});
+		}
+		
+		dbFeatureIterator.close();
+		return identifiedDbFeatures;
 	}
 }
