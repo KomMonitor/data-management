@@ -71,6 +71,9 @@ public class IndicatorsMapper {
 		metadata.setLastUpdate(DateTimeUtil.toLocalDate(indicatorsMetadataEntity.getLastUpdate()));
 		metadata.setSridEPSG(null);
 		metadata.setUpdateInterval(indicatorsMetadataEntity.getUpdateIntervall());
+		metadata.setDatabasis(indicatorsMetadataEntity.getDataBasis());
+		metadata.setNote(indicatorsMetadataEntity.getNote());
+		metadata.setLiterature(indicatorsMetadataEntity.getLiterature());
 
 		indicatorOverviewType.setMetadata(metadata);
 
@@ -88,6 +91,11 @@ public class IndicatorsMapper {
 				indicatorsMetadataEntity);
 		
 		indicatorOverviewType.setDefaultClassificationMapping(defaultClassification);
+		
+		indicatorOverviewType.setAbbreviation(indicatorsMetadataEntity.getAbbreviation());
+		indicatorOverviewType.setIsHeadlineIndicator(indicatorsMetadataEntity.isHeadlineIndicator());;
+		indicatorOverviewType.setInterpretation(indicatorsMetadataEntity.getInterpretation());
+		indicatorOverviewType.setTags(indicatorsMetadataEntity.getTags());
 
 		return indicatorOverviewType;
 	}
