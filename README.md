@@ -150,6 +150,71 @@ A more advanced setup including a Geoserver as docker container is also given at
 ## User Guide
 TODO
 
+### Registration Order of Resources
+
+When integration data and resources into KomMonitor you the follwing order of requests is recommended:
+
+1. Register/Manage relevant **roles** via REST `POST` and `PUT` operations on endpoint `/roles`
+2. Register/Manage relevant **users** via REST `POST` and `PUT` operations on endpoint `/user`
+3. Register/Manage relevant **topics** via REST `POST` and `PUT` operations on endpoint `/topics`
+4. Register/Manage relevant **georesources** via REST `POST`, `PATCH` and `PUT` operations on endpoint `/georesources` - georesources might be used to compute indicators or are simply used for display in web client
+5. Register/Manage relevant **spatial units** via REST `POST`, `PATCH` and `PUT` operations on endpoint `/spatial-units` - this step must be performed before registration of indicators, as a spatial join of indicator time series data to associated spatial unit features must be performed within the database.
+6. Register/Manage relevant **indicators** via REST `POST`, `PATCH` and `PUT` operations on endpoint `/indicators` and take care of associated topics, spatial units, georesources, etc.
+7. Register/Manage relevant **process-scripts** via REST `POST` and `PUT` operations on endpoint `/process-scripts` - required for all indicators that shall be computed by KomMonitor **Processing Engine**.
+
+### Data Schema Information for Spatial Resources
+#### Spatial Resources (Spatial Units, Georesources)
+Concerning spatial resources (i.e. **spatial units**, **georesources**) KomMonitor expects a predefined attribution for certain property information. Within *POST* and *PUT* requests to the resource endpoints `/spatial-units` and `/georesources`, GeoJSON FeatuerCollection strings are submitted containing the relevant features for the respective **spatial unit** or **georesource**. As GeoJSON features certain property information about each feature is delivered within the respective `feature.properties` object, such as name, id an other properties. KomMonitor requires highly important information to be encoded in specific properties with dedicated property names. To be precise, each spatial feature of the aforementioned resource types should have the following information:
+
+|    Feature Information   |   Property Name required by KomMonitor     |    Mandatory?    |
+| :-------------: |:-------------:| :-----:|
+| unique IDENTIFIER of the spatial feature | **ID** | yes |
+| unique NAME of the spatial feature (required for display in web client) | **NAME** | yes |
+| PERIOD OF VALIDITY (a time period to define a lifespan for the respective element. Within this lifespan the feature is marked as valid. E.g. this is used to query features for a dedicated timestamp, only returning the valid features) | **validStartDate** and **validEndDate**, each following the pattern *YYYY-MM-DD* | if not provided as GeoJSON properties for each individual feature, a generic period of validity can be specified within parameter **periodOfValidity**.**startDate** and **periodOfValidity**.**endDate**, again following the pattern *YYYY-MM-DD*|
+| ARISON FROM (an *ID* reference to a former spatial feature that over time evolved into the respective feature - i.e. if a spatial district A evolves into two new smaller districts *B* and *C*, then *B* and *C* might carry the information that the have arisen from *A*) | **arisonFrom** | no |
+
+When integrating data into KomMonitor those property settings must be respected. All other components of the **KomMonitor Spatial Data Infrastructure** make use of those spatial feature properties and, thus rely on the existence of those properties with those exact property names.
+
+#### Indicators
+For **indicators**, only the time series information can be submitted within *POST* and *PUT* requests against REST endpoint `/indicators` (in request parameter `indicatorValues`), not the underlying spatial features. However, the **unique identifier** of the associated spatial feature must be submitted (in request property `indicatorValues.spatialReferenceKey`) in order to allow the spatial join of indicator timeseries to spatial features within the KomMonitor database. Hereby the unique identifier must match the identifier of the associated spatial feature that was registered before. The name of the associated spatial unit dataset is submitted in request parameter `applicableSpatialUnit`. Any timestamp of a submitted time series entry must follow the pattern **YYYY-MM-DD**.
+
+### Add Indicators with and without Timeseries data
+
+Depending on the `creationType` of an indicator, the actual time series data is either submitted via POST and PUT requests or it can be computed by the KomMonitor **Processing Engine**. During registration of an indicator via `POST` operation on REST endpoint `/indicators`, the request parameter `creationType` distinguishes between `"creationType": "INSERTION"` or `"creationType": "COMPUTATION"`. If `"creationType": "INSERTION"` is chosen, then the request parameter `indicatorValues` must contain an array of time series values according to the following schema:
+
+```
+"indicatorValues": [
+    {
+      "spatialReferenceKey": "spatialReferenceKey",
+      "valueMapping": [
+        {
+          "indicatorValue": 0.8008282,
+          "timestamp": "2000-01-23"
+        },
+        {
+          "indicatorValue": 0.8008282,
+          "timestamp": "2000-01-23"
+        }
+      ]
+    },
+    {
+      "spatialReferenceKey": "spatialReferenceKey",
+      "valueMapping": [
+        {
+          "indicatorValue": 0.8008282,
+          "timestamp": "2000-01-23"
+        },
+        {
+          "indicatorValue": 0.8008282,
+          "timestamp": "2000-01-23"
+        }
+      ]
+    }
+  ]
+```
+
+If instead `"creationType": "COMPUTATION"` is chosen, then the request parameter `indicatorValues` can remain empty, as the indicator values are computed later with the help of the KomMonitor **Processing Engine** and an associated **process script** that must be registered within KomMonitor via the REST endpoint `/process-scripts`.
+
 ## Contribution - Developer Information
 This section contains information for developers.
 
