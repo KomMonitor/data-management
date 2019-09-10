@@ -171,7 +171,7 @@ Concerning spatial resources (i.e. **spatial units**, **georesources**) KomMonit
 | unique IDENTIFIER of the spatial feature | **ID** | yes |
 | unique NAME of the spatial feature (required for display in web client) | **NAME** | yes |
 | PERIOD OF VALIDITY (a time period to define a lifespan for the respective element. Within this lifespan the feature is marked as valid. E.g. this is used to query features for a dedicated timestamp, only returning the valid features) | **validStartDate** and **validEndDate**, each following the pattern *YYYY-MM-DD* | if not provided as GeoJSON properties for each individual feature, a generic period of validity can be specified within parameter **periodOfValidity**.**startDate** and **periodOfValidity**.**endDate**, again following the pattern *YYYY-MM-DD*|
-| arisen FROM (an *ID* reference to a former spatial feature that over time evolved into the respective feature - i.e. if a spatial district A evolves into two new smaller districts *B* and *C*, then *B* and *C* might carry the information that the have arisen from *A*) | **arisenFrom** | no |
+| ARISEN FROM (an *ID* reference to a former spatial feature that over time evolved into the respective feature - i.e. if a spatial district A evolves into two new smaller districts *B* and *C*, then *B* and *C* might carry the information that the have arisen from *A*) | **arisenFrom** | no |
 
 When integrating data into KomMonitor those property settings must be respected. All other components of the **KomMonitor Spatial Data Infrastructure** make use of those spatial feature properties and, thus rely on the existence of those properties with those exact property names.
 
