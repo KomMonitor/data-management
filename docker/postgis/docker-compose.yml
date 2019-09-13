@@ -1,0 +1,13 @@
+version: '3'
+services:
+  kommonitor-postgis:
+    build: .
+    image: hsbo/kommonitor-db-postgres:1.0.0
+    container_name: kommonitor_db
+    ports:
+      - 5433:5432
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
