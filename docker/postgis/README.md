@@ -4,4 +4,4 @@
 
 then
 
-1. `docker-compose build && docker-compose up`
+2. `docker-compose up`
