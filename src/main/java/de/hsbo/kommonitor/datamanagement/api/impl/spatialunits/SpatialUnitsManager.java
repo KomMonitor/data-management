@@ -320,6 +320,9 @@ public class SpatialUnitsManager {
 	private List<SpatialUnitOverviewType> sortSpatialUnitsHierarchically(
 			List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata) {
 		
+		List<SpatialUnitOverviewType> backupCopy = new ArrayList<SpatialUnitOverviewType>(swaggerSpatialUnitsMetadata.size());
+		backupCopy.addAll(swaggerSpatialUnitsMetadata);
+		
 		
 		try {
 			List<SpatialUnitOverviewType> newOrder = new ArrayList<SpatialUnitOverviewType>();
@@ -331,19 +334,34 @@ public class SpatialUnitsManager {
 				}			
 			}
 			
+			int loopFinisher = 100;
+			int counter = 0;
+			
 			while(swaggerSpatialUnitsMetadata.size() > 0){
 				/*
 				 * find next lower hierarchyElement
 				 */
 				SpatialUnitOverviewType lastIndexElement = newOrder.get(newOrder.size() - 1);
 				for (SpatialUnitOverviewType spatialUnitOverviewType : swaggerSpatialUnitsMetadata) {
-					// compare nextLowerHierarchyLevel of lastIndexElement to spatialUnitName of current element
-					if (lastIndexElement.getNextLowerHierarchyLevel().equalsIgnoreCase(spatialUnitOverviewType.getSpatialUnitLevel())){
+					if(lastIndexElement.getNextLowerHierarchyLevel() == null){
 						newOrder.add(spatialUnitOverviewType);
 						swaggerSpatialUnitsMetadata.remove(spatialUnitOverviewType);
 						break;
-					}			
+					}
+					// compare nextLowerHierarchyLevel of lastIndexElement to spatialUnitName of current element
+					else if (lastIndexElement.getNextLowerHierarchyLevel().equalsIgnoreCase(spatialUnitOverviewType.getSpatialUnitLevel())){
+						newOrder.add(spatialUnitOverviewType);
+						swaggerSpatialUnitsMetadata.remove(spatialUnitOverviewType);
+						break;
+					}
+					else if (counter >= loopFinisher){
+						newOrder.addAll(swaggerSpatialUnitsMetadata);
+						swaggerSpatialUnitsMetadata.removeAll(swaggerSpatialUnitsMetadata);
+						break;
+					}
 				}
+				
+				counter++;
 			}
 			
 			return newOrder;
@@ -351,7 +369,7 @@ public class SpatialUnitsManager {
 			// log error and return unsorted list
 			logger.error(e.getMessage());
 			e.printStackTrace();
-			return swaggerSpatialUnitsMetadata;
+			return backupCopy;
 		}
 		
 	}
