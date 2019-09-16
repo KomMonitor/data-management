@@ -194,6 +194,9 @@ public class GeoresourcesManager {
 		entity.setDatasetName(featureData.getDatasetName());
 		entity.setDataSource(genericMetadata.getDatasource());
 		entity.setDescription(genericMetadata.getDescription());
+		entity.setDataBasis(genericMetadata.getDatabasis());
+		entity.setNote(genericMetadata.getNote());
+		entity.setLiterature(genericMetadata.getLiterature());
 		entity.setJsonSchema(featureData.getJsonSchema());
 
 		java.util.Date lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
@@ -399,6 +402,9 @@ public class GeoresourcesManager {
 		entity.setContact(genericMetadata.getContact());
 		entity.setDataSource(genericMetadata.getDatasource());
 		entity.setDescription(genericMetadata.getDescription());
+		entity.setDataBasis(genericMetadata.getDatabasis());
+		entity.setNote(genericMetadata.getNote());
+		entity.setLiterature(genericMetadata.getLiterature());
 
 		java.util.Date lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
 		if (lastUpdate == null)

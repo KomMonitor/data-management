@@ -42,6 +42,9 @@ public class GeoresourcesMapper {
 				.setLastUpdate(DateTimeUtil.toLocalDate(georesourceMetadataEntity.getLastUpdate()));
 		commonMetadata.setSridEPSG(new BigDecimal(georesourceMetadataEntity.getSridEpsg()));
 		commonMetadata.setUpdateInterval(georesourceMetadataEntity.getUpdateIntervall());
+		commonMetadata.setDatabasis(georesourceMetadataEntity.getDataBasis());
+		commonMetadata.setNote(georesourceMetadataEntity.getNote());
+		commonMetadata.setLiterature(georesourceMetadataEntity.getLiterature());
 		dataset.setMetadata(commonMetadata);
 
 		dataset.datasetName(georesourceMetadataEntity.getDatasetName());

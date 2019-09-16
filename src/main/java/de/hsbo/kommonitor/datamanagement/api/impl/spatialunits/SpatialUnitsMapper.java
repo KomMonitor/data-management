@@ -28,6 +28,9 @@ public class SpatialUnitsMapper {
 		commonMetadata.setLastUpdate(DateTimeUtil.toLocalDate(spatialUnitEntity.getLastUpdate()));
 		commonMetadata.setSridEPSG(new BigDecimal(spatialUnitEntity.getSridEpsg()));
 		commonMetadata.setUpdateInterval(spatialUnitEntity.getUpdateIntervall());
+		commonMetadata.setDatabasis(spatialUnitEntity.getDataBasis());
+		commonMetadata.setNote(spatialUnitEntity.getNote());
+		commonMetadata.setLiterature(spatialUnitEntity.getLiterature());
 		dataset.setMetadata(commonMetadata);
 		
 		dataset.setNextLowerHierarchyLevel(spatialUnitEntity.getNextLowerHierarchyLevel());
