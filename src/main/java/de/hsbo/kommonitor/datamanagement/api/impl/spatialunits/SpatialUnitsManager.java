@@ -86,6 +86,8 @@ public class SpatialUnitsManager {
 			 * set wms and wfs urls within metadata
 			 */
 			updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
+			
+			updateSpatialUnitHierarchy_onAdd(metadataId, featureData);
 		} catch (Exception e) {
 			/*
 			 * remove partially created resources and thrwo error
@@ -121,6 +123,57 @@ public class SpatialUnitsManager {
 		
 		
 		return metadataId;
+	}
+
+	private void updateSpatialUnitHierarchy_onAdd(String metadataId, SpatialUnitPOSTInputType featureData) {
+		/*
+		 * automatically update metadata entries with respect to hierarchy
+		 * 
+		 * 
+		 */
+		
+		List<MetadataSpatialUnitsEntity> matchingEntriesForNextLowerHierarchy = spatialUnitsMetadataRepo.findByNextLowerHierarchyLevel(featureData.getNextLowerHierarchyLevel());
+		
+		for (MetadataSpatialUnitsEntity metadataSpatialUnitsEntity : matchingEntriesForNextLowerHierarchy) {
+			if (! metadataSpatialUnitsEntity.getDatasetId().equalsIgnoreCase(metadataId)){
+				metadataSpatialUnitsEntity.setNextLowerHierarchyLevel(featureData.getSpatialUnitLevel());
+			}
+		}
+		
+		List<MetadataSpatialUnitsEntity> matchingEntriesForNextUpperHierarchy = spatialUnitsMetadataRepo.findByNextUpperHierarchyLevel(featureData.getNextUpperHierarchyLevel());
+		
+		for (MetadataSpatialUnitsEntity metadataSpatialUnitsEntity : matchingEntriesForNextUpperHierarchy) {
+			if (! metadataSpatialUnitsEntity.getDatasetId().equalsIgnoreCase(metadataId)){
+				metadataSpatialUnitsEntity.setNextUpperHierarchyLevel(featureData.getSpatialUnitLevel());
+			}
+		}
+		
+	}
+	
+	private void updateSpatialUnitHierarchy_onDelete(String metadataId) {
+		/*
+		 * automatically update metadata entries with respect to hierarchy
+		 * 
+		 * 
+		 */
+		
+		MetadataSpatialUnitsEntity deleteEntry = spatialUnitsMetadataRepo.findByDatasetId(metadataId);
+		
+		List<MetadataSpatialUnitsEntity> matchingEntriesForNextLowerHierarchy = spatialUnitsMetadataRepo.findByNextLowerHierarchyLevel(deleteEntry.getDatasetName());
+		
+		for (MetadataSpatialUnitsEntity metadataSpatialUnitsEntity : matchingEntriesForNextLowerHierarchy) {
+			if (! metadataSpatialUnitsEntity.getDatasetId().equalsIgnoreCase(metadataId)){
+				metadataSpatialUnitsEntity.setNextLowerHierarchyLevel(deleteEntry.getNextLowerHierarchyLevel());
+			}
+		}
+		
+		List<MetadataSpatialUnitsEntity> matchingEntriesForNextUpperHierarchy = spatialUnitsMetadataRepo.findByNextUpperHierarchyLevel(deleteEntry.getDatasetName());
+		
+		for (MetadataSpatialUnitsEntity metadataSpatialUnitsEntity : matchingEntriesForNextUpperHierarchy) {
+			if (! metadataSpatialUnitsEntity.getDatasetId().equalsIgnoreCase(metadataId)){
+				metadataSpatialUnitsEntity.setNextUpperHierarchyLevel(deleteEntry.getNextUpperHierarchyLevel());
+			}
+		}		
 	}
 
 	private void updateMetadataWithOgcServiceUrls(String metadataId, String dbTableName) {
@@ -217,6 +270,10 @@ public class SpatialUnitsManager {
 			 * delete featureTable
 			 */
 			SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);
+			
+			// update spatial unit hierarchy and make it consistent again
+			updateSpatialUnitHierarchy_onDelete(spatialUnitId);
+			
 			/*
 			 * delete metadata entry
 			 */
