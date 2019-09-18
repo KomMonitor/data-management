@@ -64,7 +64,19 @@ public interface SpatialUnitsApi {
         method = RequestMethod.DELETE)
     ResponseEntity deleteSpatialUnitByIdAndYearAndMonth(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day);
 
+    @ApiOperation(value = "retrieve all feature entries for all applicable periods of validity for the selected spatial unit/level (hence might contain each feature multiple times if they exist for different periods of validity)", nickname = "getAllSpatialUnitFeaturesById", notes = "retrieve all feature entries for all applicable periods of validity for the selected spatial unit/level (hence might contain each feature multiple times if they exist for different periods of validity)", response = String.class, authorizations = {
+            @Authorization(value = "basicAuth")
+        }, tags={  })
+        @ApiResponses(value = { 
+            @ApiResponse(code = 200, message = "OK", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid status value"),
+            @ApiResponse(code = 401, message = "API key is missing or invalid") })
+        @RequestMapping(value = "/spatial-units/{spatialUnitId}/allFeatures",
+            produces = { "application/json" }, 
+            method = RequestMethod.GET)
+        ResponseEntity<byte[]> getAllSpatialUnitFeaturesById(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries);
 
+    
     @ApiOperation(value = "retrieve information about available features of different spatial units/levels", nickname = "getSpatialUnits", notes = "retrieve information about available features of different spatial units/levels", response = SpatialUnitOverviewType.class, responseContainer = "array", authorizations = {
         @Authorization(value = "basicAuth")
     }, tags={  })

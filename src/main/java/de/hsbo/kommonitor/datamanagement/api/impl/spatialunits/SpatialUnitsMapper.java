@@ -19,7 +19,7 @@ public class SpatialUnitsMapper {
 		
 		dataset.setSpatialUnitId(spatialUnitEntity.getDatasetId());
 		
-		dataset.setAvailablePeriodOfValidity(SpatialFeatureDatabaseHandler.getAvailablePeriodOfValidity(spatialUnitEntity.getDbTableName()));
+		dataset.setAvailablePeriodsOfValidity(SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(spatialUnitEntity.getDbTableName()));
 		
 		CommonMetadataType commonMetadata = new CommonMetadataType();
 		commonMetadata.setContact(spatialUnitEntity.getContact());

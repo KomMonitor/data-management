@@ -454,6 +454,24 @@ public class SpatialUnitsManager {
 		
 		return spatialUnitMetadataEntity.getJsonSchema();
 	}
+	
+	public String getAllSpatialUnitFeatures(String spatialUnitId, String simplifyGeometries) throws Exception {
+		logger.info("Retrieving all spatialUnit Features from Dataset '{}'", spatialUnitId);
+		
+		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+	
+		String dbTableName = metadataEntity.getDbTableName();
+			
+		String geoJson = SpatialFeatureDatabaseHandler.getAllFeatures(dbTableName, simplifyGeometries);
+		return geoJson;
+		
+		}else {
+			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Get request has no effect.", spatialUnitId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to get spatialUnit features, but no dataset existes with datasetId " + spatialUnitId);
+		}
+	}
 
 	public String getValidSpatialUnitFeatures(String spatialUnitId, BigDecimal year, BigDecimal month,
 			BigDecimal day, String simplifyGeometries) throws Exception {
@@ -482,8 +500,5 @@ public class SpatialUnitsManager {
 		// TODO fill method
 		return false;
 	}
-	
-	
-
 	
 }

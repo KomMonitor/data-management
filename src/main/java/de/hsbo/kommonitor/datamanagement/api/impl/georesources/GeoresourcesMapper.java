@@ -31,8 +31,8 @@ public class GeoresourcesMapper {
 			throws IOException, SQLException {
 		GeoresourceOverviewType dataset = new GeoresourceOverviewType();
 
-		dataset.setAvailablePeriodOfValidity(
-				SpatialFeatureDatabaseHandler.getAvailablePeriodOfValidity(georesourceMetadataEntity.getDbTableName()));
+		dataset.setAvailablePeriodsOfValidity(
+				SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(georesourceMetadataEntity.getDbTableName()));
 
 		CommonMetadataType commonMetadata = new CommonMetadataType();
 		commonMetadata.setContact(georesourceMetadataEntity.getContact());

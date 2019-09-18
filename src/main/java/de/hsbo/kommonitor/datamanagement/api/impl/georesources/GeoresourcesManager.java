@@ -306,6 +306,25 @@ public class GeoresourcesManager {
 
 		return swaggerGeoresourceMetadata;
 	}
+	
+	public String getAllGeoresourceFeatures(String georesourceId, String simplifyGeometries) throws Exception {
+
+		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+
+			String dbTableName = metadataEntity.getDbTableName();
+
+			String geoJson = SpatialFeatureDatabaseHandler.getAllFeatures(dbTableName, simplifyGeometries);
+			return geoJson;
+
+		} else {
+			logger.error(
+					"No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
+					georesourceId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
+		}
+	}
 
 	public String getValidGeoresourceFeatures(String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day, String simplifyGeometries)
 			throws Exception {
@@ -473,5 +492,7 @@ public class GeoresourcesManager {
 
 		return georesourcesMeatadataEntities;
 	}
+
+	
 
 }
