@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -28,6 +29,14 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	private CreationTypeEnum creationType = null;
 	private IndicatorTypeEnum indicatorType = null;
 	private String lowestSpatialUnitForComputation = null;
+	private String abbreviation = null;
+	private boolean isHeadlineIndicator = false;
+	private String interpretation = null;
+	
+	@ElementCollection
+    @CollectionTable(name = "indicator_tags", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"))
+    @Column(name = "tag")
+    private List<String> tags;
 	
 	private String colorBrewerSchemeName;
 	
@@ -142,6 +151,38 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 
 	public void setLowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
 		this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
+	}
+
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
+	}
+
+	public boolean isHeadlineIndicator() {
+		return isHeadlineIndicator;
+	}
+
+	public void setHeadlineIndicator(boolean isHeadlineIndicator) {
+		this.isHeadlineIndicator = isHeadlineIndicator;
+	}
+
+	public String getInterpretation() {
+		return interpretation;
+	}
+
+	public void setInterpretation(String interpretation) {
+		this.interpretation = interpretation;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 
 

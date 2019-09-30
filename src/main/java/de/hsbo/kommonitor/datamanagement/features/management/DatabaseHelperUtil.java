@@ -62,12 +62,12 @@ public class DatabaseHelperUtil {
 
 	}
 
-	public static String createUniqueTableNameForResourceType(ResourceTypeEnum resourceType, DataStore dataStore)
+	public static String createUniqueTableNameForResourceType(ResourceTypeEnum resourceType, DataStore dataStore,  String indicator_value_suffix)
 			throws IOException {
 		int numberSuffix = 0;
 		String resourceTypeName = resourceType.name();
 
-		String potentialDBTableName = createPotentialDBTableName(resourceTypeName, numberSuffix);
+		String potentialDBTableName = createPotentialDBTableName(resourceTypeName, numberSuffix, indicator_value_suffix);
 
 		SimpleFeatureSource featureSource = null;
 		boolean uniqueTableNameFound = false;
@@ -87,15 +87,15 @@ public class DatabaseHelperUtil {
 				break;
 			} else {
 				// increment suffix and try again
-				potentialDBTableName = createPotentialDBTableName(resourceTypeName, numberSuffix++);
+				potentialDBTableName = createPotentialDBTableName(resourceTypeName, numberSuffix++,  indicator_value_suffix);
 			}
 		} while (!uniqueTableNameFound);
 
 		return potentialDBTableName;
 	}
 
-	private static String createPotentialDBTableName(String resourceTypeName, int numberSuffix) {
-		return resourceTypeName + "_" + numberSuffix;
+	private static String createPotentialDBTableName(String resourceTypeName, int numberSuffix, String indicator_value_suffix) {
+		return resourceTypeName + "_" + numberSuffix + indicator_value_suffix;
 	}
 
 	public static DataStore getPostGisDataStore() throws IOException {
@@ -140,8 +140,10 @@ public class DatabaseHelperUtil {
 //			properties.load(SpatialFeatureDatabaseHandler.class.getResourceAsStream("/application-docker.properties"));
 //		}
 
-		String url = "jdbc:postgresql://" + env.getProperty("database.host") + "/"
-				+ env.getProperty("database.name");
+		String url = "jdbc:postgresql://" + env.getProperty("database.host") + ":"
+                + env.getProperty("database.port") +"/"
+                + env.getProperty("database.name");
+
 		Properties props = new Properties();
 		props.setProperty("user", env.getProperty("spring.datasource.username"));
 		props.setProperty("password", env.getProperty("spring.datasource.password"));

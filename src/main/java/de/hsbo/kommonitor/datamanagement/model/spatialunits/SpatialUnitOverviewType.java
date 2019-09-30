@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -30,8 +30,8 @@ public class SpatialUnitOverviewType   {
   @JsonProperty("nextUpperHierarchyLevel")
   private String nextUpperHierarchyLevel = null;
 
-  @JsonProperty("availablePeriodOfValidity")
-  private AvailablePeriodOfValidityType availablePeriodOfValidity = null;
+  @JsonProperty("availablePeriodsOfValidity")
+  private AvailablePeriodsOfValidityType availablePeriodsOfValidity = null;
 
   @JsonProperty("wmsUrl")
   private String wmsUrl = null;
@@ -129,8 +129,8 @@ public class SpatialUnitOverviewType   {
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
   }
 
-  public SpatialUnitOverviewType availablePeriodOfValidity(AvailablePeriodOfValidityType availablePeriodOfValidity) {
-    this.availablePeriodOfValidity = availablePeriodOfValidity;
+  public SpatialUnitOverviewType availablePeriodOfValidity(AvailablePeriodsOfValidityType availablePeriodsOfValidity) {
+    this.availablePeriodsOfValidity = availablePeriodsOfValidity;
     return this;
   }
 
@@ -139,12 +139,12 @@ public class SpatialUnitOverviewType   {
    * @return availablePeriodOfValidity
   **/
   @ApiModelProperty(value = "")
-  public AvailablePeriodOfValidityType getAvailablePeriodOfValidity() {
-    return availablePeriodOfValidity;
+  public AvailablePeriodsOfValidityType getAvailablePeriodsOfValidity() {
+    return availablePeriodsOfValidity;
   }
 
-  public void setAvailablePeriodOfValidity(AvailablePeriodOfValidityType availablePeriodOfValidity) {
-    this.availablePeriodOfValidity = availablePeriodOfValidity;
+  public void setAvailablePeriodsOfValidity(AvailablePeriodsOfValidityType availablePeriodsOfValidity) {
+    this.availablePeriodsOfValidity = availablePeriodsOfValidity;
   }
 
   public SpatialUnitOverviewType wmsUrl(String wmsUrl) {
@@ -198,14 +198,14 @@ public class SpatialUnitOverviewType   {
         Objects.equals(this.metadata, spatialUnitOverviewType.metadata) &&
         Objects.equals(this.nextLowerHierarchyLevel, spatialUnitOverviewType.nextLowerHierarchyLevel) &&
         Objects.equals(this.nextUpperHierarchyLevel, spatialUnitOverviewType.nextUpperHierarchyLevel) &&
-        Objects.equals(this.availablePeriodOfValidity, spatialUnitOverviewType.availablePeriodOfValidity) &&
+        Objects.equals(this.availablePeriodsOfValidity, spatialUnitOverviewType.availablePeriodsOfValidity) &&
         Objects.equals(this.wmsUrl, spatialUnitOverviewType.wmsUrl) &&
         Objects.equals(this.wfsUrl, spatialUnitOverviewType.wfsUrl);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(spatialUnitId, spatialUnitLevel, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, availablePeriodOfValidity, wmsUrl, wfsUrl);
+    return Objects.hash(spatialUnitId, spatialUnitLevel, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, availablePeriodsOfValidity, wmsUrl, wfsUrl);
   }
 
   @Override
@@ -218,7 +218,7 @@ public class SpatialUnitOverviewType   {
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    nextLowerHierarchyLevel: ").append(toIndentedString(nextLowerHierarchyLevel)).append("\n");
     sb.append("    nextUpperHierarchyLevel: ").append(toIndentedString(nextUpperHierarchyLevel)).append("\n");
-    sb.append("    availablePeriodOfValidity: ").append(toIndentedString(availablePeriodOfValidity)).append("\n");
+    sb.append("    availablePeriodOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
     sb.append("    wmsUrl: ").append(toIndentedString(wmsUrl)).append("\n");
     sb.append("    wfsUrl: ").append(toIndentedString(wfsUrl)).append("\n");
     sb.append("}");
