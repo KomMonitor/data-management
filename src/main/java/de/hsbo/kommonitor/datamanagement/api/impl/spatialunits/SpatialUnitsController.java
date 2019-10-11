@@ -183,12 +183,39 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 		
 	}
+	
+	@Override
+	public ResponseEntity<byte[]> getAllSpatialUnitFeaturesById(@PathVariable("spatialUnitId") String spatialUnitId, 
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries) {
+		logger.info("Received request to get spatialUnit features for datasetId '{}' and simplifyGeometries parameter '{}'", spatialUnitId, simplifyGeometries);
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * retrieve the user for the specified id
+		 */
+
+		try {
+			String geoJsonFeatures = spatialUnitsManager.getAllSpatialUnitFeatures(spatialUnitId, simplifyGeometries);
+			String fileName = "SpatialUnitFeatures_" + spatialUnitId + "_all.json";
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("content-disposition", "attachment; filename=" + fileName);
+			headers.add("Content-Type", "application/json; charset=utf-8");
+			byte[] JsonBytes = geoJsonFeatures.getBytes();
+
+			return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/vnd.geo+json"))
+					.body(JsonBytes);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
 
 	@Override
 	public ResponseEntity<byte[]> getSpatialUnitsByIdAndYearAndMonth(@PathVariable("spatialUnitId") String spatialUnitId, @PathVariable("year") BigDecimal year,
 			@PathVariable("month") BigDecimal month, @PathVariable("day") BigDecimal day,
 			@RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries) {
-		logger.info("Received request to get spatialUnit features for datasetId '{}'", spatialUnitId);
+		logger.info("Received request to get spatialUnit features for datasetId '{}' and simplifyGeometries parameter '{}'", spatialUnitId, simplifyGeometries);
 		String accept = request.getHeader("Accept");
 
 		/*

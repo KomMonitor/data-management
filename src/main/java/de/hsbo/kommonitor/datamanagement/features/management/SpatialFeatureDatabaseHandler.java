@@ -56,7 +56,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.GeometrySimplifierUtil;
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
@@ -270,24 +270,35 @@ public class SpatialFeatureDatabaseHandler {
 
 
 
-	public static AvailablePeriodOfValidityType getAvailablePeriodOfValidity(String dbTableName)
+	public static AvailablePeriodsOfValidityType getAvailablePeriodsOfValidity(String dbTableName)
 			throws IOException, SQLException {
 		
 		Connection jdbcConnection = null;
 		Statement statement = null;
 		ResultSet rs = null;
 		
-		AvailablePeriodOfValidityType validityPeriod = null;
-		
+		AvailablePeriodsOfValidityType validityPeriods = null;
+
 		try {
 			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
 			statement = jdbcConnection.createStatement();
-			rs = statement.executeQuery("SELECT min(\"" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME
-					+ "\") FROM \"" + dbTableName + "\"");
+			
+			// EXAMPLE SELECT DISTINCT "validStartDate","validEndDate" FROM "GEORESOURCE_10";
+			rs = statement.executeQuery("SELECT DISTINCT \"" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME
+					+ "\", \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME
+					+ "\" FROM \"" + dbTableName + "\"");
 
-			validityPeriod = new AvailablePeriodOfValidityType();
-			if (rs.next()) { // check if a result was returned
-				validityPeriod.setEarliestStartDate(DateTimeUtil.toLocalDate(rs.getDate(1)));
+			validityPeriods = new AvailablePeriodsOfValidityType();
+			while (rs.next()) { // check if a result was returned
+				PeriodOfValidityType period = new PeriodOfValidityType();
+				
+				Date potentialStartDate = rs.getDate(1);
+				Date potentialEndDate = rs.getDate(2);
+				period.setStartDate(DateTimeUtil.toLocalDate(potentialStartDate));
+				if(potentialEndDate != null){
+					period.setEndDate(DateTimeUtil.toLocalDate(potentialEndDate));
+				}				
+				validityPeriods.add(period);
 			}
 
 			rs.close();
@@ -311,65 +322,48 @@ public class SpatialFeatureDatabaseHandler {
 			}
 		}
 		
-		try {
-			// handle endDate
-			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
-			statement = jdbcConnection.createStatement();
+		return validityPeriods;
+	}
+	
+	public static String getAllFeatures(String dbTableName, String simplifyGeometries) throws Exception {
+		/*
+		 * fetch all features from table
+		 * 
+		 * then transform the featureCollection to GeoJSON! return geojsonString
+		 */
+		logger.info("Fetch all features for from table with name {}", dbTableName);
+		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
-			// be sure to quote the identifier!
-			rs = statement.executeQuery("SELECT \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" FROM \""
-					+ dbTableName + "\" WHERE \"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" = null");
+		FeatureCollection features;
 
-			if (rs.next()) { // check if a result was returned
-				/*
-				 * the result set has results. Thus there are features with endDate
-				 * == null
-				 * 
-				 * Thus there is no known latestEndDate to be set
-				 */
-				validityPeriod.setEndDate(null);
-			} else {
-				/*
-				 * we have to find the latest endDate (maxValue)
-				 */
-				// be sure to quote the identifier!
-				rs = statement.executeQuery("SELECT max(\"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME
-						+ "\") FROM \"" + dbTableName + "\"");
-				if (rs.next()) { // check if a result was returned
-					/*
-					 * latestEndDate might be null, if it was never set
-					 * 
-					 * then it indicates, that there is no end date and all data is
-					 * st
-					 */
-					java.sql.Date latestEndDate = rs.getDate(1);
-					if (latestEndDate != null)
-						validityPeriod.setEndDate(DateTimeUtil.toLocalDate(latestEndDate));
-				}
+		SimpleFeatureSource featureSource = dataStore.getFeatureSource(dbTableName);
+		features = featureSource.getFeatures();
+		
+		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
 
-			}
-			rs.close();
-		} catch (Exception e) {
-			try {
-				rs.close();
-				statement.close();
-				jdbcConnection.close();
-			} catch (Exception e2) {
-				
-			}
-			
-			throw e;
-		} finally{
-			try {
-				rs.close();
-				statement.close();
-				jdbcConnection.close();
-			} catch (Exception e2) {
-				
-			}
+		int validFeaturesSize = features.size();
+		logger.info("Transform {} found features to GeoJSON", validFeaturesSize);
+
+		String geoJson = null;
+
+		if (validFeaturesSize > 0) {
+			FeatureJSON toGeoJSON = instantiateFeatureJSON();
+			StringWriter writer = new StringWriter();
+			toGeoJSON.writeFeatureCollection(features, writer);
+			geoJson = writer.toString();
+		} else {
+			dataStore.dispose();
+			throw new Exception("No valid features could be retrieved for the specified date.");
 		}
 
-		return validityPeriod;
+		dataStore.dispose();
+
+		return geoJson;
+	}
+
+	private static FeatureCollection fetchAllFeatures(SimpleFeatureSource featureSource) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public static String getValidFeatures(Date date, String dbTableName, String simplifyGeometries) throws Exception {
