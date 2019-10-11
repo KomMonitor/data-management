@@ -19,7 +19,7 @@ public class SpatialUnitsMapper {
 		
 		dataset.setSpatialUnitId(spatialUnitEntity.getDatasetId());
 		
-		dataset.setAvailablePeriodOfValidity(SpatialFeatureDatabaseHandler.getAvailablePeriodOfValidity(spatialUnitEntity.getDbTableName()));
+		dataset.setAvailablePeriodsOfValidity(SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(spatialUnitEntity.getDbTableName()));
 		
 		CommonMetadataType commonMetadata = new CommonMetadataType();
 		commonMetadata.setContact(spatialUnitEntity.getContact());
@@ -28,6 +28,9 @@ public class SpatialUnitsMapper {
 		commonMetadata.setLastUpdate(DateTimeUtil.toLocalDate(spatialUnitEntity.getLastUpdate()));
 		commonMetadata.setSridEPSG(new BigDecimal(spatialUnitEntity.getSridEpsg()));
 		commonMetadata.setUpdateInterval(spatialUnitEntity.getUpdateIntervall());
+		commonMetadata.setDatabasis(spatialUnitEntity.getDataBasis());
+		commonMetadata.setNote(spatialUnitEntity.getNote());
+		commonMetadata.setLiterature(spatialUnitEntity.getLiterature());
 		dataset.setMetadata(commonMetadata);
 		
 		dataset.setNextLowerHierarchyLevel(spatialUnitEntity.getNextLowerHierarchyLevel());
