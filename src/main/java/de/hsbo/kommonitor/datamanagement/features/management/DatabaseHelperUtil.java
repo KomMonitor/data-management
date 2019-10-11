@@ -140,8 +140,10 @@ public class DatabaseHelperUtil {
 //			properties.load(SpatialFeatureDatabaseHandler.class.getResourceAsStream("/application-docker.properties"));
 //		}
 
-		String url = "jdbc:postgresql://" + env.getProperty("database.host") + "/"
-				+ env.getProperty("database.name");
+		String url = "jdbc:postgresql://" + env.getProperty("database.host") + ":"
+                + env.getProperty("database.port") +"/"
+                + env.getProperty("database.name");
+
 		Properties props = new Properties();
 		props.setProperty("user", env.getProperty("spring.datasource.username"));
 		props.setProperty("password", env.getProperty("spring.datasource.password"));

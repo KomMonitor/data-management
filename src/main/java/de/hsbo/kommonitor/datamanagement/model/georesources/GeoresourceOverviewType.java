@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -26,8 +26,8 @@ public class GeoresourceOverviewType   {
   @JsonProperty("metadata")
   private CommonMetadataType metadata = null;
 
-  @JsonProperty("availablePeriodOfValidity")
-  private AvailablePeriodOfValidityType availablePeriodOfValidity = null;
+  @JsonProperty("availablePeriodsOfValidity")
+  private AvailablePeriodsOfValidityType availablePeriodsOfValidity = null;
 
   @JsonProperty("applicableTopics")
   
@@ -110,8 +110,8 @@ public class GeoresourceOverviewType   {
     this.metadata = metadata;
   }
 
-  public GeoresourceOverviewType availablePeriodOfValidity(AvailablePeriodOfValidityType availablePeriodOfValidity) {
-    this.availablePeriodOfValidity = availablePeriodOfValidity;
+  public GeoresourceOverviewType availablePeriodsOfValidity(AvailablePeriodsOfValidityType availablePeriodOfValidity) {
+    this.availablePeriodsOfValidity = availablePeriodOfValidity;
     return this;
   }
 
@@ -120,12 +120,12 @@ public class GeoresourceOverviewType   {
    * @return availablePeriodOfValidity
   **/
   @ApiModelProperty(value = "")
-  public AvailablePeriodOfValidityType getAvailablePeriodOfValidity() {
-    return availablePeriodOfValidity;
+  public AvailablePeriodsOfValidityType getAvailablePeriodsOfValidity() {
+    return availablePeriodsOfValidity;
   }
 
-  public void setAvailablePeriodOfValidity(AvailablePeriodOfValidityType availablePeriodOfValidity) {
-    this.availablePeriodOfValidity = availablePeriodOfValidity;
+  public void setAvailablePeriodsOfValidity(AvailablePeriodsOfValidityType availablePeriodsOfValidity) {
+    this.availablePeriodsOfValidity = availablePeriodsOfValidity;
   }
 
   public GeoresourceOverviewType applicableTopics(List<String> applicableTopics) {
@@ -298,7 +298,7 @@ public class GeoresourceOverviewType   {
     return Objects.equals(this.datasetName, georesourceOverviewType.datasetName) &&
         Objects.equals(this.georesourceId, georesourceOverviewType.georesourceId) &&
         Objects.equals(this.metadata, georesourceOverviewType.metadata) &&
-        Objects.equals(this.availablePeriodOfValidity, georesourceOverviewType.availablePeriodOfValidity) &&
+        Objects.equals(this.availablePeriodsOfValidity, georesourceOverviewType.availablePeriodsOfValidity) &&
         Objects.equals(this.applicableTopics, georesourceOverviewType.applicableTopics) &&
         Objects.equals(this.allowedRoles, georesourceOverviewType.allowedRoles) &&
         Objects.equals(this.isPOI, georesourceOverviewType.isPOI) &&
@@ -311,7 +311,7 @@ public class GeoresourceOverviewType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodOfValidity, applicableTopics, allowedRoles, isPOI, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor, wmsUrl, wfsUrl);
+    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodsOfValidity, applicableTopics, allowedRoles, isPOI, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor, wmsUrl, wfsUrl);
   }
 
   @Override
@@ -322,7 +322,7 @@ public class GeoresourceOverviewType   {
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
     sb.append("    georesourceId: ").append(toIndentedString(georesourceId)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
-    sb.append("    availablePeriodOfValidity: ").append(toIndentedString(availablePeriodOfValidity)).append("\n");
+    sb.append("    availablePeriodOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
     sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    isPOI: ").append(toIndentedString(isPOI)).append("\n");
