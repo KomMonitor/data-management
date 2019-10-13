@@ -17,7 +17,7 @@
         <version>2.0.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    
+
     <licenses>
         <license>
             <name>GPLv2</name>
@@ -40,7 +40,7 @@
     </properties>
 
     <dependencies>
-    
+
     	<!-- <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
@@ -49,7 +49,7 @@
 
 
         <!-- Spring -->
-        
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -67,7 +67,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
 	    </dependency>
-	    
+
 	    <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -212,13 +212,13 @@
            <artifactId>gt-geojson</artifactId>
            <version>${geotools.version}</version>
        </dependency>
-       
+
 		<dependency>
 			<groupId>org.geotools.jdbc</groupId>
 			<artifactId>gt-jdbc-postgis</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-brewer</artifactId>
@@ -287,7 +287,7 @@
 					<useMissingFile>true</useMissingFile>
 					<fileTemplate>misc/license-as-csv.ftl</fileTemplate>
 				</configuration>
-				<!-- <executions>
+				 <executions>
 					<execution>
 						<id>first</id>
 						<goals>
@@ -295,7 +295,7 @@
 						</goals>
 						<phase>generate-resources</phase>
 					</execution>
-				</executions> -->
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jasig.maven</groupId>
@@ -309,7 +309,7 @@
 					</licenseMapping>
 					<generateChildNotices>false</generateChildNotices>
 				</configuration>
-				<!-- <executions>
+				 <executions>
 					<execution>
 						<id>check-license</id>
 						<phase>initialize</phase>
@@ -317,7 +317,7 @@
 							<goal>check</goal>
 						</goals>
 					</execution>
-				</executions> -->
+				</executions> 
 			</plugin>
 			<plugin>
                 <groupId>com.mycila</groupId>
@@ -346,7 +346,7 @@
                         <year>${project.inceptionYear}-${currentYearDynamic}</year>
                     </properties>
                 </configuration>
-                <executions> <execution> <id>check-license</id> <phase>initialize</phase> 
+                <executions> <execution> <id>check-license</id> <phase>initialize</phase>
                     <goals> <goal>format</goal> </goals> </execution> </executions>
             </plugin> -->
             <plugin>
