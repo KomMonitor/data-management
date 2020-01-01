@@ -20,6 +20,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
@@ -48,6 +50,9 @@ public class SpatialUnitsManager {
 	
 	@Autowired
 	SpatialUnitsMetadataRepository spatialUnitsMetadataRepo;
+	
+	@Autowired
+	private IndicatorsManager indicatorsManager;
 	
 	@Autowired
 	OGCWebServiceManager ogcServiceManager;
@@ -269,13 +274,19 @@ public class SpatialUnitsManager {
 		logger.info("Trying to delete spatialUnit dataset with datasetId '{}'", spatialUnitId);
 		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)){
 			String dbTableName = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId).getDbTableName();
+			
+			/*
+			 * delete all associated indicator layers
+			 */
+			deleteAssociatedIndicatorLayers(spatialUnitId);
+			
 			/*
 			 * delete featureTable
 			 */
 			SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);
 			
 			// update spatial unit hierarchy and make it consistent again
-			updateSpatialUnitHierarchy_onDelete(spatialUnitId);
+			updateSpatialUnitHierarchy_onDelete(spatialUnitId);		
 			
 			/*
 			 * delete metadata entry
@@ -292,6 +303,21 @@ public class SpatialUnitsManager {
 		}
 	}
 
+	private boolean deleteAssociatedIndicatorLayers(String spatialUnitId) throws Exception {
+		logger.info("Must delete and unpublish all indicator data tables and views that are associated to submitted spatial unit with id '{}'", spatialUnitId);
+		/*
+		 * identify all indicator layers for the spatialUnitId and delete/unpublish them
+		 */
+		
+		return indicatorsManager.deleteIndicatorLayersForSpatialUnitId(spatialUnitId);
+		
+	}
+
+	public boolean deleteSpatialUnitDatasetByIdAndDate(String spatialUnitId, BigDecimal year, BigDecimal month, BigDecimal day) throws ResourceNotFoundException, IOException {
+		// TODO fill method
+		return false;
+	}
+	
 	public String updateFeatures(SpatialUnitPUTInputType featureData, String spatialUnitId) throws Exception {
 		logger.info("Trying to update spatialUnit features for datasetId '{}'", spatialUnitId);
 		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
@@ -494,11 +520,6 @@ public class SpatialUnitsManager {
 					"Tried to get spatialUnit features, but no dataset existes with datasetId " + spatialUnitId);
 		}
 		
-	}
-
-	public boolean deleteSpatialUnitDatasetByIdAndDate(String spatialUnitId, BigDecimal year, BigDecimal month, BigDecimal day) throws ResourceNotFoundException, IOException {
-		// TODO fill method
-		return false;
 	}
 	
 }

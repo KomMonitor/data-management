@@ -5,6 +5,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -510,6 +511,48 @@ public class IndicatorsManager {
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
 		}
+	}
+	
+	public boolean deleteIndicatorLayersForSpatialUnitId(String spatialUnitId) throws Exception {
+		logger.info("Trying to delete all indicator layers associated with the spatialUnitId '{}'", spatialUnitId);
+		if (indicatorsSpatialUnitsRepo.existsBySpatialUnitId(spatialUnitId)) {
+			List<IndicatorSpatialUnitJoinEntity> indicatorDatasetsForSpatialUnit = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
+			
+			List<String> indicatorNames = new ArrayList<String>();
+			
+			/*
+			 * delete featureTables and views for each indicator dataset
+			 */
+			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorDatasetsForSpatialUnit) {
+				String indicatorViewTableName = indicatorSpatialUnitJoinEntity.getIndicatorValueTableName();
+//				IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
+				
+				IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
+				
+				// handle OGC web service
+				ogcServiceManager.unpublishDbLayer(indicatorViewTableName, ResourceTypeEnum.INDICATOR);
+								
+				
+				/*
+				 * delete entry from indicatorsMetadataRepo
+				 */
+				indicatorsSpatialUnitsRepo.deleteByIndicatorMetadataIdAndSpatialUnitId(indicatorSpatialUnitJoinEntity.getIndicatorMetadataId(), spatialUnitId);
+				
+				indicatorNames.add(indicatorSpatialUnitJoinEntity.getIndicatorName());
+			}	
+			
+			logger.info("Deleted indicator layers associated to spatialUnitId '{}' for a tota number of {} indicator datasets", spatialUnitId, indicatorDatasetsForSpatialUnit.size());
+			logger.info("The names of the affected indicators are: {}", indicatorNames);
+				
+			return true;
+		} else {
+			logger.error(
+					"No indicator dataset associated to a spatial unit with id '{}' was found in database. Delete request has no effect.",
+					spatialUnitId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to delete indicator layers for spatial unit, but no dataset exists that is associated to a spatial unit with id " + spatialUnitId);
+		}
+		
 	}
 
 	public boolean deleteIndicatorDatasetByIdAndDate(String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month,
