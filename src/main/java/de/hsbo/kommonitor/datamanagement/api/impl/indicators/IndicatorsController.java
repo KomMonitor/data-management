@@ -78,7 +78,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 	@Override
 	public ResponseEntity deleteIndicatorByIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId,
 			@PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
-			@PathVariable("day") BigDecimal day) {
+			@PathVariable("day") BigDecimal day) throws Exception {
 		logger.info("Received request to delete indicator for indicatorId '{}' and Date '{}-{}-{}'", indicatorId, year, month, day);
 
 		String accept = request.getHeader("Accept");

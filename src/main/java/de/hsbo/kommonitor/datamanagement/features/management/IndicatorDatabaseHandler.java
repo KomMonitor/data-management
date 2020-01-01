@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -698,6 +699,81 @@ public class IndicatorDatabaseHandler {
 				
 			}
 		}		
+		
+	}
+	
+	public static void deleteIndicatorTimeStamp(String indicatorDbViewName, BigDecimal year, BigDecimal month, BigDecimal day) throws Exception {
+		/*
+		 * delete column for the given timestamp
+		 * 
+		 */
+		
+		boolean foundExistingDateColumn = false;
+		
+		String indicatorValueTableName = getValueTableNameFromViewTableName(indicatorDbViewName);
+		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
+		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(indicatorValueTableName);
+		SimpleFeatureType schema = featureSource.getSchema();
+		
+		Date date = new GregorianCalendar(year.intValue(), month.intValue() - 1, day.intValue()).getTime();
+		logger.info("parsing date from submitted date components. Submitted components were 'year: {}, month: {}, day: {}'. As Java time treats month 0-based, the follwing date will be used: 'year-month(-1)-day {}-{}-{}'", year, month, day, year, month.intValue()-1, day);
+		String datePropertyName = createDateStringForDbProperty(date);
+		
+		if(!schemaContainsDateProperty(schema, datePropertyName)){
+			// add new Property
+			logger.debug("Found matching date column for propert/column '{}' of table '{}'", datePropertyName, schema.getTypeName());
+			foundExistingDateColumn = true;
+		}
+		
+		postGisStore.dispose();
+		
+		// update schema in db to ensure all new columns are created
+		if(foundExistingDateColumn){
+			
+			Connection jdbcConnection = null;
+			Statement statement = null;
+			
+			try {
+				// establish JDBC connection
+				jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+				
+				statement = jdbcConnection.createStatement();
+				
+				StringBuilder builder = new StringBuilder();
+				
+				builder.append("ALTER TABLE \"" + indicatorValueTableName + "\" ");
+
+				String columnName = datePropertyName;
+
+				// use dataType real, as only new timeseries will be added for
+				// indicators
+				builder.append("DROP COLUMN \"" + columnName + "\" CASCADE;");
+
+				String alterTableCommand = builder.toString();
+				
+				logger.info("Send following ALTER TABLE command to database: " + alterTableCommand);
+				
+				// TODO check if works
+				statement.executeUpdate(alterTableCommand);
+			} catch (Exception e) {
+				try {
+					statement.close();
+					jdbcConnection.close();
+				} catch (Exception e2) {
+					
+				}
+				
+				throw e;
+			} finally{
+				try {
+					statement.close();
+					jdbcConnection.close();
+				} catch (Exception e2) {
+					
+				}
+			}
+
+		}
 		
 	}
 

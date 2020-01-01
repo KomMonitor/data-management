@@ -513,9 +513,49 @@ public class IndicatorsManager {
 	}
 
 	public boolean deleteIndicatorDatasetByIdAndDate(String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month,
-			BigDecimal day) throws ResourceNotFoundException, IOException {
-		// TODO Auto-generated method stub
-		return false;
+			BigDecimal day) throws Exception {
+		logger.info("Trying to delete indicator dataset with datasetId '{}' and spatialUnitId '{}' and date '{}-{}-{}'", indicatorId, spatialUnitId, year, month, day);
+		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+			IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+		
+			/*
+			 * delete featureTable and views for each spatial unit
+			 */
+			String indicatorViewTableName = indicatorForSpatialUnit.getIndicatorValueTableName();
+//			IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
+			
+
+			/*
+			 * delete timestamp for indicator and spatial unit
+			 */
+			IndicatorDatabaseHandler.deleteIndicatorTimeStamp(indicatorForSpatialUnit.getIndicatorValueTableName(), year, month, day);
+			
+			
+			/*
+			 * republish indicator layer as OGC service
+			 */
+			String spatialUnitName = indicatorForSpatialUnit.getSpatialUnitName();
+			MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+			
+			String datasetTitle = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
+			
+			String styleName;
+			
+			DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+			styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
+			
+			// handle OGC web service
+			ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
+
+			ReferenceManager.removeReferences(indicatorId);
+			return true;
+		} else {
+			logger.error(
+					"No indicator dataset with datasetId '{}' was found in database. Delete request has no effect.",
+					indicatorId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
+		}
 	}
 
 	public String addIndicator(IndicatorPOSTInputType indicatorData) throws Exception {
