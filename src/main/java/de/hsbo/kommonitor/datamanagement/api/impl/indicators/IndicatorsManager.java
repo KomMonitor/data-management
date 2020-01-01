@@ -478,6 +478,45 @@ public class IndicatorsManager {
 					"Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
 		}
 	}
+	
+	public boolean deleteIndicatorDatasetByIdAndSpatialUnitId(String indicatorId, String spatialUnitId) throws Exception {
+		logger.info("Trying to delete indicator dataset with datasetId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
+		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+			IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+
+			/*
+			 * delete featureTable and views for each spatial unit
+			 */
+			String indicatorViewTableName = indicatorForSpatialUnit.getIndicatorValueTableName();
+//			IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
+			
+			IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorForSpatialUnit.getIndicatorValueTableName());
+			
+			// handle OGC web service
+			ogcServiceManager.unpublishDbLayer(indicatorViewTableName, ResourceTypeEnum.INDICATOR);
+			
+			
+			/*
+			 * delete entry from indicatorsMetadataRepo
+			 */
+			indicatorsSpatialUnitsRepo.deleteByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+
+			ReferenceManager.removeReferences(indicatorId);
+			return true;
+		} else {
+			logger.error(
+					"No indicator dataset with datasetId '{}' was found in database. Delete request has no effect.",
+					indicatorId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
+		}
+	}
+
+	public boolean deleteIndicatorDatasetByIdAndDate(String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month,
+			BigDecimal day) throws ResourceNotFoundException, IOException {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	public String addIndicator(IndicatorPOSTInputType indicatorData) throws Exception {
 		String metadataId = null;
@@ -761,12 +800,6 @@ public class IndicatorsManager {
 				entity.getDatasetId());
 
 		return entity.getDatasetId();
-	}
-
-	public boolean deleteIndicatorDatasetByIdAndDate(String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month,
-			BigDecimal day) throws ResourceNotFoundException, IOException {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	public List<IndicatorPropertiesWithoutGeomType> getIndicatorFeaturePropertiesWithoutGeometry(String indicatorId,

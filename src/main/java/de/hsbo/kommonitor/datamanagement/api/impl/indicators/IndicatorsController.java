@@ -50,7 +50,29 @@ public class IndicatorsController extends BasePathController implements Indicato
 		this.request = request;
 	}
 
+	@Override
+	public ResponseEntity deleteIndicatorByIdAndSpatialUnitId(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId) throws Exception {
+		logger.info("Received request to delete indicator for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
 
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * delete topic with the specified id
+		 */
+
+		boolean isDeleted;
+		try {
+			isDeleted = indicatorsManager.deleteIndicatorDatasetByIdAndSpatialUnitId(indicatorId, spatialUnitId);
+
+			if (isDeleted)
+				return new ResponseEntity<>(HttpStatus.OK);
+
+		} catch (ResourceNotFoundException | IOException e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 
 	@Override

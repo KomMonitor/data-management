@@ -53,6 +53,14 @@ public interface IndicatorsApi {
         method = RequestMethod.DELETE)
     ResponseEntity deleteIndicatorById(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
 
+	@ApiOperation(value = "Delete the features/contents of the selected indicator dataset for the selected spatial unit", nickname = "deleteIndicatorByIdAndSpatialUnitId", notes = "Delete the features/contents of the selected indicator dataset for the selected spatial unit", authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/indicators/{indicatorId}/{spatialUnitId}", method = RequestMethod.DELETE)
+	ResponseEntity deleteIndicatorByIdAndSpatialUnitId(
+			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
+			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId) throws Exception;
 
     @ApiOperation(value = "Delete the features/contents of the selected indicator dataset, selected by year and month", nickname = "deleteIndicatorByIdAndYearAndMonth", notes = "Delete the features/contents of the selected indicator dataset, selected by year and month", authorizations = {
         @Authorization(value = "basicAuth")
