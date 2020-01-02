@@ -273,7 +273,7 @@ public class IndicatorDatabaseHandler {
 		return tb.buildFeatureType();
 	}
 
-	private static String createDateStringForDbProperty(Date date) {
+	public static String createDateStringForDbProperty(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 

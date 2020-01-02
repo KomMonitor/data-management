@@ -34,6 +34,11 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	private String interpretation = null;
 	
 	@ElementCollection
+    @CollectionTable(name = "indicator_timestamps", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"))
+    @Column(name = "timestamp")
+    private List<String> availableTimestamps;
+	
+	@ElementCollection
     @CollectionTable(name = "indicator_tags", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"))
     @Column(name = "tag")
     private List<String> tags;
@@ -183,6 +188,51 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 
 	public void setTags(List<String> tags) {
 		this.tags = tags;
+	}
+
+	public List<String> getAvailableTimestamps() {
+		return availableTimestamps;
+	}
+
+	public void setAvailableTimestamps(List<String> availableTimestamps) {
+		this.availableTimestamps = availableTimestamps;
+	}
+	
+	public void addTimestampIfNotExist(String timestamp)throws Exception {
+		if (this.availableTimestamps == null)
+			this.availableTimestamps = new ArrayList<>();
+
+		if (!timestampAlreadyInTimestampReferences(timestamp, this.availableTimestamps))
+			this.availableTimestamps.add(timestamp);
+	}
+	
+	public void addTimestampsIfNotExist(List<String> timestamps)throws Exception {
+		if (this.availableTimestamps == null)
+			this.availableTimestamps = new ArrayList<>();
+
+		for (String timestamp : timestamps) {
+			/*
+			 * add timestamp if not exists
+			 */
+			if (!timestampAlreadyInTimestampReferences(timestamp, this.availableTimestamps))
+				this.availableTimestamps.add(timestamp);
+		}
+	}
+
+	private boolean timestampAlreadyInTimestampReferences(String timestamp, List<String> availableTimestamps) {
+		if (availableTimestamps.contains(timestamp))
+			return true;
+		// if code reaches this line, then the topic is not within the list
+		return false;
+	}
+	
+	public void removeTimestampIfExists(String timestamp)throws Exception {
+		if (this.availableTimestamps == null)
+			this.availableTimestamps = new ArrayList<>();
+		
+		if (this.availableTimestamps.contains(timestamp)){
+			this.availableTimestamps.remove(timestamp);
+		}
 	}
 
 

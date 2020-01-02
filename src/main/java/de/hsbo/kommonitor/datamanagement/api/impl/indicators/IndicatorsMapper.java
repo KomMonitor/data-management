@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
@@ -24,8 +25,11 @@ public class IndicatorsMapper {
 
 	private static IndicatorSpatialUnitsRepository indicatorSpatialUnitsRepo;
 	
-	public IndicatorsMapper(IndicatorSpatialUnitsRepository indicatorSpatialUnitsRepository){
+	private static IndicatorsMetadataRepository indicatorMetadataRepo;
+	
+	public IndicatorsMapper(IndicatorSpatialUnitsRepository indicatorSpatialUnitsRepository, IndicatorsMetadataRepository indicatorMetadataRepository){
 		indicatorSpatialUnitsRepo = indicatorSpatialUnitsRepository;
+		indicatorMetadataRepo = indicatorMetadataRepository;
 	}
 
 	public static List<IndicatorOverviewType> mapToSwaggerIndicators(
@@ -54,10 +58,21 @@ public class IndicatorsMapper {
 		 */
 		List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnitEntities = indicatorSpatialUnitsRepo.findByIndicatorMetadataId(indicatorsMetadataEntity.getDatasetId());
 		if(indicatorSpatialUnitEntities != null && indicatorSpatialUnitEntities.size() > 0){
-			indicatorOverviewType.setApplicableDates(
-					IndicatorDatabaseHandler.getAvailableDates(indicatorSpatialUnitEntities.get(0).getIndicatorValueTableName()));
-			indicatorOverviewType.setApplicableSpatialUnits(getApplicableSpatialUnitsNames(indicatorSpatialUnitEntities));
+			/*
+			 * TODO FIXME quick and dirty database modification of indicator timestamps
+			 * 
+			 * here a quick and dirty way is commented out that can reset indicator timestamps by accessing an exemplar indicator layer and inspecting the available timestamps
+			 * it can be reenabled to quickly overwrite/reset the associated metadata within indicator metadata entity
+			 */
+//			List<String> availableDates = IndicatorDatabaseHandler.getAvailableDates(indicatorSpatialUnitEntities.get(0).getIndicatorValueTableName());
+//			indicatorsMetadataEntity.setAvailableTimestamps(availableDates);
+//			indicatorMetadataRepo.saveAndFlush(indicatorsMetadataEntity);			
 			
+			List<String> availableTimestamps = indicatorsMetadataEntity.getAvailableTimestamps();
+			availableTimestamps.sort(Comparator.naturalOrder());
+			indicatorOverviewType.setApplicableDates(availableTimestamps);
+			
+			indicatorOverviewType.setApplicableSpatialUnits(getApplicableSpatialUnitsNames(indicatorSpatialUnitEntities));		
 		}
 		
 		indicatorOverviewType.setApplicableTopics(getTopicNames(indicatorsMetadataEntity.getIndicatorTopics()));
