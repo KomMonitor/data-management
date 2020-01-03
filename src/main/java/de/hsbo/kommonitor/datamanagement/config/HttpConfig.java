@@ -11,10 +11,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.GeoresourcesPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceMapper;
@@ -36,6 +38,9 @@ public class HttpConfig {
 	
 	@Autowired
 	private GeoresourcesMetadataRepository georesourceRepo;
+	
+	@Autowired
+	private GeoresourcesPeriodsOfValidityRepository georesourcePeriodsOfValidityRepo;
 	
 	@Autowired
 	private IndicatorsMetadataRepository indicatorsRepo;
@@ -87,6 +92,11 @@ public class HttpConfig {
     @Bean
     public IndicatorsMapper indicatorMapper(){
     	return new IndicatorsMapper(indicatorSpatialUnitsRepo, indicatorsRepo);
+    }
+    
+    @Bean
+    public GeoresourcesMapper georesourcesMapper(){
+    	return new GeoresourcesMapper(georesourceRepo, georesourcePeriodsOfValidityRepo);
     }
     
     @Bean

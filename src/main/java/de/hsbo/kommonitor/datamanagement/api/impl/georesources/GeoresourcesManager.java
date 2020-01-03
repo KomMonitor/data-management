@@ -2,7 +2,6 @@ package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
@@ -19,11 +18,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.GeoresourcesPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
@@ -47,6 +49,9 @@ public class GeoresourcesManager {
 
 	@Autowired
 	GeoresourcesMetadataRepository georesourcesMetadataRepo;
+	
+	@Autowired
+	GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepo;
 	
 	@Autowired
 	OGCWebServiceManager ogcServiceManager;
@@ -79,18 +84,21 @@ public class GeoresourcesManager {
 				throw new Exception("Georesource already exists. Aborting add georesource request.");
 			}
 
-			metadataId = createMetadata(featureData);
+			MetadataGeoresourcesEntity georesourceMetadataEntity = createMetadata(featureData);
+			metadataId = georesourceMetadataEntity.getDatasetId();
 
 			dbTableName = createFeatureTable(featureData.getGeoJsonString(), featureData.getPeriodOfValidity(),
 					metadataId);
 
 			// handle OGC web service - null parameter is defaultStyle
 			publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.GEORESOURCE);
-
+			
 			/*
 			 * set wms and wfs urls within metadata
 			 */
 			updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
+			
+			updatePeriodsOfValidity(georesourceMetadataEntity);
 
 			return metadataId;
 		} catch (Exception e) {
@@ -125,6 +133,18 @@ public class GeoresourcesManager {
 			}
 			throw e;
 		}
+	}
+
+	private void updatePeriodsOfValidity(MetadataGeoresourcesEntity georesourceMetadataEntity) throws Exception {
+		AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(georesourceMetadataEntity.getDbTableName());		
+		for (PeriodOfValidityType periodOfValidityType : availablePeriodsOfValidity) {
+			PeriodOfValidityEntity_georesources periodEntity = new PeriodOfValidityEntity_georesources(periodOfValidityType);
+			if(! periodsOfValidityRepo.existsByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate())){
+				periodsOfValidityRepo.saveAndFlush(periodEntity);
+			}			
+			georesourceMetadataEntity.addPeriodOfValidityIfNotExists(periodEntity);
+		}
+		georesourcesMetadataRepo.saveAndFlush(georesourceMetadataEntity);	
 	}
 
 	private void updateMetadataWithOgcServiceUrls(String metadataId, String dbTableName) {
@@ -179,7 +199,7 @@ public class GeoresourcesManager {
 
 	}
 
-	private String createMetadata(GeoresourcePOSTInputType featureData) throws Exception {
+	private MetadataGeoresourcesEntity createMetadata(GeoresourcePOSTInputType featureData) throws Exception {
 		/*
 		 * create instance of MetadataGeoresourceEntity
 		 * 
@@ -227,7 +247,7 @@ public class GeoresourcesManager {
 		logger.info("Completed to add georesource metadata entry for georesource dataset with id {}.",
 				entity.getDatasetId());
 
-		return entity.getDatasetId();
+		return entity;
 	}
 
 	public boolean deleteGeoresourceDatasetById(String georesourceId) throws Exception {
@@ -297,7 +317,7 @@ public class GeoresourcesManager {
 		return false;
 	}
 
-	public GeoresourceOverviewType getGeoresourceByDatasetId(String georesourceId) throws IOException, SQLException {
+	public GeoresourceOverviewType getGeoresourceByDatasetId(String georesourceId) throws Exception {
 		logger.info("Retrieving georesources metadata for datasetId '{}'", georesourceId);
 
 		MetadataGeoresourcesEntity georesourceMetadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
@@ -384,6 +404,8 @@ public class GeoresourcesManager {
 			 */
 			updateMetadataWithOgcServiceUrls(metadataEntity.getDatasetId(), dbTableName);
 			
+			updatePeriodsOfValidity(metadataEntity);
+			
 			return georesourceId;
 		} else {
 			logger.error(
@@ -445,7 +467,7 @@ public class GeoresourcesManager {
 		georesourcesMetadataRepo.saveAndFlush(entity);
 	}
 
-	public List<GeoresourceOverviewType> getAllGeoresourcesMetadata(String topic) throws IOException, SQLException {
+	public List<GeoresourceOverviewType> getAllGeoresourcesMetadata(String topic) throws Exception {
 		/*
 		 * topic is an optional parameter and thus might be null! then get all
 		 * datasets!

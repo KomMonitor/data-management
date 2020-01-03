@@ -1,11 +1,13 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
+import java.time.LocalDate;
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.time.LocalDate;
 
 /**
  * definition of the period of validity of a certain dataset
@@ -21,7 +23,16 @@ public class PeriodOfValidityType   {
   @JsonProperty("endDate")
   private LocalDate endDate = null;
 
-  public PeriodOfValidityType startDate(LocalDate startDate) {
+  public PeriodOfValidityType(PeriodOfValidityEntity_georesources periodOfValidityEntity_georesources) {
+	this.endDate = periodOfValidityEntity_georesources.getEndDate();
+	this.startDate = periodOfValidityEntity_georesources.getStartDate();
+}
+
+public PeriodOfValidityType() {
+	// TODO Auto-generated constructor stub
+}
+
+public PeriodOfValidityType startDate(LocalDate startDate) {
     this.startDate = startDate;
     return this;
   }
