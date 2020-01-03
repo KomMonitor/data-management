@@ -17,11 +17,13 @@ import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.GeoresourcesPeriodsOfValidityRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.SpatialUnitsPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsHelper;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
@@ -41,6 +43,9 @@ public class HttpConfig {
 	
 	@Autowired
 	private GeoresourcesPeriodsOfValidityRepository georesourcePeriodsOfValidityRepo;
+	
+	@Autowired
+	private SpatialUnitsPeriodsOfValidityRepository spatialUnitsPeriodsOfValidityRepo;
 	
 	@Autowired
 	private IndicatorsMetadataRepository indicatorsRepo;
@@ -97,6 +102,11 @@ public class HttpConfig {
     @Bean
     public GeoresourcesMapper georesourcesMapper(){
     	return new GeoresourcesMapper(georesourceRepo, georesourcePeriodsOfValidityRepo);
+    }
+    
+    @Bean
+    public SpatialUnitsMapper spatialUnitsMapper(){
+    	return new SpatialUnitsMapper(spatialUnitsRepo, spatialUnitsPeriodsOfValidityRepo);
     }
     
     @Bean
