@@ -50,7 +50,7 @@ private static GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepo;
 		 * it can be reenabled to quickly overwrite/reset the associated metadata within georesource metadata entity
 		 */
 //		AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(georesourceMetadataEntity.getDbTableName());		
-//		periodsOfValidityRepo.deleteAll();
+//		// periodsOfValidityRepo.deleteAll();
 //		for (PeriodOfValidityType periodOfValidityType : availablePeriodsOfValidity) {
 //			PeriodOfValidityEntity_georesources periodEntity = new PeriodOfValidityEntity_georesources(periodOfValidityType);
 //			periodsOfValidityRepo.saveAndFlush(periodEntity);
