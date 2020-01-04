@@ -11,7 +11,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.In
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
@@ -75,7 +74,7 @@ public class IndicatorsMapper {
 			indicatorOverviewType.setApplicableSpatialUnits(getApplicableSpatialUnitsNames(indicatorSpatialUnitEntities));		
 		}
 		
-		indicatorOverviewType.setApplicableTopics(getTopicNames(indicatorsMetadataEntity.getIndicatorTopics()));
+		indicatorOverviewType.setTopicReference(indicatorsMetadataEntity.getTopicReference());
 		indicatorOverviewType.setIndicatorId(indicatorsMetadataEntity.getDatasetId());
 		indicatorOverviewType.setIndicatorName(indicatorsMetadataEntity.getDatasetName());
 
@@ -98,6 +97,7 @@ public class IndicatorsMapper {
 		indicatorOverviewType.setUnit(indicatorsMetadataEntity.getUnit());
 		indicatorOverviewType.setCreationType(indicatorsMetadataEntity.getCreationType());
 		indicatorOverviewType.setIndicatorType(indicatorsMetadataEntity.getIndicatorType());
+		indicatorOverviewType.setCharacteristicValue(indicatorsMetadataEntity.getCharacteristicValue());
 		indicatorOverviewType.setLowestSpatialUnitForComputation(indicatorsMetadataEntity.getLowestSpatialUnitForComputation());
 		
 		indicatorOverviewType.setOgcServices(generateOgcServiceOverview(indicatorSpatialUnitEntities));

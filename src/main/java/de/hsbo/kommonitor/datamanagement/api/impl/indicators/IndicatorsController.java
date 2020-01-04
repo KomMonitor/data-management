@@ -220,8 +220,8 @@ public class IndicatorsController extends BasePathController implements Indicato
 	}
 
 	@Override
-	public ResponseEntity<List<IndicatorOverviewType>> getIndicators(@RequestParam(value = "topic", required = false) String topic) {
-		logger.info("Received request to get all indicators metadata for topic {}", topic);
+	public ResponseEntity<List<IndicatorOverviewType>> getIndicators() {
+		logger.info("Received request to get all indicators metadata");
 		String accept = request.getHeader("Accept");
 
 		/*
@@ -233,7 +233,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 			
 			if (accept != null && accept.contains("application/json")) {
 
-				List<IndicatorOverviewType> spatialunitsMetadata = indicatorsManager.getAllIndicatorsMetadata(topic);
+				List<IndicatorOverviewType> spatialunitsMetadata = indicatorsManager.getAllIndicatorsMetadata();
 
 				return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
 

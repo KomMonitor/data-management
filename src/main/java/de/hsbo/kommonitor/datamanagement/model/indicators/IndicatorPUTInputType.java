@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPUTInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-10-16T13:17:54.570+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-01-04T23:04:55.031+01:00")
 
 public class IndicatorPUTInputType   {
   @JsonProperty("defaultClassificationMapping")

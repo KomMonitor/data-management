@@ -137,19 +137,14 @@ public interface IndicatorsApi {
         method = RequestMethod.GET)
     ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId);
 
-
-    @ApiOperation(value = "retrieve information about available indicators", nickname = "getIndicators", notes = "retrieve information about available indicators", response = IndicatorOverviewType.class, responseContainer = "array", authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = IndicatorOverviewType.class, responseContainer = "array"),
-        @ApiResponse(code = 400, message = "Invalid status value"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/indicators",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<IndicatorOverviewType>> getIndicators(@ApiParam(value = "thematic topic to filter available indicators", allowableValues = "demography, environment, habitation, migration, social")  @RequestParam(value = "topic", required = false) String topic);
-
+	@ApiOperation(value = "retrieve information about available indicators", nickname = "getIndicators", notes = "retrieve information about available indicators", response = IndicatorOverviewType.class, responseContainer = "array", authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "OK", response = IndicatorOverviewType.class, responseContainer = "array"),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/indicators", produces = { "application/json" }, method = RequestMethod.GET)
+	ResponseEntity<List<IndicatorOverviewType>> getIndicators();
 
     @ApiOperation(value = "Modify/Update the contents of the selected indicator dataset", nickname = "updateIndicatorAsBody", notes = "Modify/Update the contents of the selected indicator dataset", authorizations = {
         @Authorization(value = "basicAuth")
