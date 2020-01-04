@@ -3,7 +3,6 @@ package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -32,7 +31,6 @@ import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewT
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 @Transactional
 @Repository
@@ -226,14 +224,15 @@ public class GeoresourcesManager {
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 		entity.setPOI(featureData.isIsPOI());
+		entity.setLOI(featureData.isIsLOI());
+		entity.setAOI(featureData.isIsAOI());
 		entity.setPoiSymbolBootstrap3Name(featureData.getPoiSymbolBootstrap3Name());
 		entity.setPoiMarkerColor(featureData.getPoiMarkerColor());
 		entity.setPoiSymbolColor(featureData.getPoiSymbolColor());
-
-		/*
-		 * add topic to referenced topics, but only if topic is not yet included!
-		 */
-		entity.addTopicsIfNotExist(featureData.getApplicableTopics());
+		entity.setLoiColor(featureData.getLoiColor());
+		entity.setLoiDashArrayString(featureData.getLoiDashArrayString());
+		
+		entity.setTopicReference(featureData.getTopicReference());
 
 		/*
 		 * the remaining properties cannot be set initially!
@@ -439,6 +438,8 @@ public class GeoresourcesManager {
 
 	private void updateMetadata(GeoresourcePATCHInputType metadata, MetadataGeoresourcesEntity entity)
 			throws Exception {
+		entity.setDatasetName(metadata.getDatasetName());
+		
 		CommonMetadataType genericMetadata = metadata.getMetadata();
 		entity.setContact(genericMetadata.getContact());
 		entity.setDataSource(genericMetadata.getDatasource());
@@ -454,67 +455,35 @@ public class GeoresourcesManager {
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 		entity.setPOI(metadata.isIsPOI());
+		entity.setLOI(metadata.isIsLOI());
+		entity.setAOI(metadata.isIsAOI());
 		entity.setPoiSymbolBootstrap3Name(metadata.getPoiSymbolBootstrap3Name());
 		entity.setPoiMarkerColor(metadata.getPoiMarkerColor());
 		entity.setPoiSymbolColor(metadata.getPoiSymbolColor());
-
-		/*
-		 * add topic to referenced topics, bu only if topic is not yet included!
-		 */
-		entity.addTopicsIfNotExist(metadata.getApplicableTopics());
+		entity.setLoiColor(metadata.getLoiColor());
+		entity.setLoiDashArrayString(metadata.getLoiDashArrayString());
+		
+		entity.setTopicReference(metadata.getTopicReference());		
 
 		// persist in db
 		georesourcesMetadataRepo.saveAndFlush(entity);
 	}
 
-	public List<GeoresourceOverviewType> getAllGeoresourcesMetadata(String topic) throws Exception {
+	public List<GeoresourceOverviewType> getAllGeoresourcesMetadata() throws Exception {
 		/*
 		 * topic is an optional parameter and thus might be null! then get all
 		 * datasets!
 		 */
-		logger.info("Retrieving all georesources metadata for optional topic {} from db", topic);
+		logger.info("Retrieving all georesources metadata from db");
 
 		List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll();
-
-		if (topic != null) {
-			/*
-			 * remove all entities that do not correspond to the topic
-			 */
-			georesourcesMeatadataEntities = removeEntitiesNotAssociatedToTopic(georesourcesMeatadataEntities, topic);
-		}
+		
 		List<GeoresourceOverviewType> swaggerGeoresourcesMetadata = GeoresourcesMapper
 				.mapToSwaggerGeoresources(georesourcesMeatadataEntities);
 		
 		swaggerGeoresourcesMetadata.sort(Comparator.comparing(GeoresourceOverviewType::getDatasetName));
 
 		return swaggerGeoresourcesMetadata;
-	}
-
-	private List<MetadataGeoresourcesEntity> removeEntitiesNotAssociatedToTopic(
-			List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities, String topic) {
-
-		boolean isTopicIncluded = false;
-
-		for (MetadataGeoresourcesEntity metadataGeoresourcesEntity : georesourcesMeatadataEntities) {
-			Collection<TopicsEntity> georesourcesTopics = metadataGeoresourcesEntity.getGeoresourcesTopics();
-
-			for (TopicsEntity topicsEntity : georesourcesTopics) {
-				if (topicsEntity.getTopicName().equals(topic)) {
-					isTopicIncluded = true;
-					break;
-				}
-			}
-
-			if (!isTopicIncluded)
-				georesourcesMeatadataEntities.remove(metadataGeoresourcesEntity);
-
-			// reset boolean value for the next iteration / element
-			isTopicIncluded = false;
-		}
-
-		return georesourcesMeatadataEntities;
-	}
-
-	
+	}	
 
 }

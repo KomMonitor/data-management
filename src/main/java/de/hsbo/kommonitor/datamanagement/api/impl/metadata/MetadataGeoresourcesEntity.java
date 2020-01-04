@@ -2,19 +2,14 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsHelper;
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.PoiMarkerColorEnum;
 import de.hsbo.kommonitor.datamanagement.model.georesources.PoiSymbolColorEnum;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 @Entity(name = "MetadataGeoresources")
 public class MetadataGeoresourcesEntity extends AbstractMetadata {
@@ -23,15 +18,23 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 	
 	private boolean isPOI;
 	
+	private boolean isLOI;
+	
+	private boolean isAOI;
+	
+	private String topicReference;
+	
 	private PoiMarkerColorEnum poiMarkerColor;
 	
 	private PoiSymbolColorEnum poiSymbolColor;
 	
 	private String poiSymbolBootstrap3Name;
+	
+	private String loiColor = null;
 
-	@ManyToMany
-	@JoinTable(name = "metadataGeoresources_topics", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), inverseJoinColumns = @JoinColumn(name = "topic_id", referencedColumnName = "topicid"))
-	private Collection<TopicsEntity> georesourcesTopics;
+	private String loiDashArrayString = null;
+	
+	private String aoiColor = null;
 	
 	@ManyToMany
 	@JoinTable(name = "metadataGeoresources_periodsOfValidity", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), inverseJoinColumns = @JoinColumn(name = "period_of_validity_id", referencedColumnName = "periodofvalidityid"))
@@ -43,35 +46,6 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 
 	public void setSridEpsg(int sridEpsg) {
 		this.sridEpsg = sridEpsg;
-	}
-
-	public Collection<TopicsEntity> getGeoresourcesTopics() {
-		return georesourcesTopics;
-	}
-
-	public void setGeoresourcesTopics(Collection<TopicsEntity> georesourcesTopics) {
-		this.georesourcesTopics = georesourcesTopics;
-	}
-
-	public void addTopicsIfNotExist(List<String> applicableTopics) throws Exception {
-		if (this.georesourcesTopics == null)
-			this.georesourcesTopics = new ArrayList<>();
-
-		for (String topic : applicableTopics) {
-			/*
-			 * add topic if not exists
-			 */
-			if (!topicAlreadyInTopicReferences(topic, applicableTopics))
-				this.georesourcesTopics.add(TopicsHelper.getTopicByName(topic));
-		}
-	}
-
-	private boolean topicAlreadyInTopicReferences(String topic, List<String> applicableTopics) throws Exception {
-		TopicsEntity topicEntity = TopicsHelper.getTopicByName(topic);
-		if (applicableTopics.contains(topicEntity))
-			return true;
-		// if code reaches this line, then the topic is not within the list
-		return false;
 	}
 	
 	public void addPeriodOfValidityIfNotExists(PeriodOfValidityEntity_georesources periodEntity) throws Exception {
@@ -128,6 +102,54 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 
 	public void setGeoresourcesPeriodsOfValidity(Collection<PeriodOfValidityEntity_georesources> georesourcesPeriodsOfValidity) {
 		this.georesourcesPeriodsOfValidity = georesourcesPeriodsOfValidity;
+	}
+
+	public boolean isLOI() {
+		return isLOI;
+	}
+
+	public void setLOI(boolean isLOI) {
+		this.isLOI = isLOI;
+	}
+
+	public boolean isAOI() {
+		return isAOI;
+	}
+
+	public void setAOI(boolean isAOI) {
+		this.isAOI = isAOI;
+	}
+
+	public String getTopicReference() {
+		return topicReference;
+	}
+
+	public void setTopicReference(String topicReference) {
+		this.topicReference = topicReference;
+	}
+
+	public String getLoiColor() {
+		return loiColor;
+	}
+
+	public void setLoiColor(String loiColor) {
+		this.loiColor = loiColor;
+	}
+
+	public String getLoiDashArrayString() {
+		return loiDashArrayString;
+	}
+
+	public void setLoiDashArrayString(String loiDashArrayString) {
+		this.loiDashArrayString = loiDashArrayString;
+	}
+
+	public String getAoiColor() {
+		return aoiColor;
+	}
+
+	public void setAoiColor(String aoiColor) {
+		this.aoiColor = aoiColor;
 	}
 
 }

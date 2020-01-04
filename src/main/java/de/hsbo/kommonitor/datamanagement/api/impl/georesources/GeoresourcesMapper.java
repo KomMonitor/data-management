@@ -9,12 +9,10 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.GeoresourcesPeriodsOf
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 public class GeoresourcesMapper {
 	
@@ -82,24 +80,20 @@ private static GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepo;
 
 		dataset.datasetName(georesourceMetadataEntity.getDatasetName());
 		dataset.setGeoresourceId(georesourceMetadataEntity.getDatasetId());
-		dataset.setApplicableTopics(getSwaggerTopicStrings(georesourceMetadataEntity.getGeoresourcesTopics()));
+		dataset.setTopicReference(georesourceMetadataEntity.getTopicReference());
 		dataset.setIsPOI(georesourceMetadataEntity.isPOI());
+		dataset.setIsLOI(georesourceMetadataEntity.isLOI());
+		dataset.setIsAOI(georesourceMetadataEntity.isAOI());
 		dataset.setPoiSymbolBootstrap3Name(georesourceMetadataEntity.getPoiSymbolBootstrap3Name());
 		dataset.setPoiMarkerColor(georesourceMetadataEntity.getPoiMarkerColor());
 		dataset.setPoiSymbolColor(georesourceMetadataEntity.getPoiSymbolColor());
+		dataset.setLoiColor(georesourceMetadataEntity.getLoiColor());
+		dataset.setLoiDashArrayString(georesourceMetadataEntity.getLoiDashArrayString());
+		dataset.setAoiColor(georesourceMetadataEntity.getAoiColor());
 		
 		dataset.setWmsUrl(georesourceMetadataEntity.getWmsUrl());
 		dataset.setWfsUrl(georesourceMetadataEntity.getWfsUrl());
 
 		return dataset;
-	}
-
-	private static List<String> getSwaggerTopicStrings(Collection<TopicsEntity> georesourcesTopics) {
-		List<String> topicStrings = new ArrayList<String>(georesourcesTopics.size());
-
-		for (TopicsEntity topicEntity : georesourcesTopics) {
-			topicStrings.add(topicEntity.getTopicName());
-		}
-		return topicStrings;
 	}
 }

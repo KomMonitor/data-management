@@ -1,17 +1,17 @@
 package de.hsbo.kommonitor.datamanagement.model.georesources;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * GeoresourcePUTInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-01-04T22:26:48.964+01:00")
 
 public class GeoresourcePUTInputType   {
   @JsonProperty("periodOfValidity")

@@ -136,8 +136,8 @@ public class GeorecourcesController extends BasePathController implements Geores
 	}
 
 	@Override
-	public ResponseEntity<List<GeoresourceOverviewType>> getGeoresources(@RequestParam(value = "topic", required = false) String topic) {
-		logger.info("Received request to get all georesources metadata for topic {}", topic);
+	public ResponseEntity<List<GeoresourceOverviewType>> getGeoresources() {
+		logger.info("Received request to get all georesources metadata");
 		/*
 		 * topic is an optional parameter and thus may be null!
 		 */
@@ -152,7 +152,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 			
 			if (accept != null && accept.contains("application/json")) {
 
-				List<GeoresourceOverviewType> georesourcesMetadata = georesourcesManager.getAllGeoresourcesMetadata(topic);
+				List<GeoresourceOverviewType> georesourcesMetadata = georesourcesManager.getAllGeoresourcesMetadata();
 
 				return new ResponseEntity<>(georesourcesMetadata, HttpStatus.OK);
 
