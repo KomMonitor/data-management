@@ -521,6 +521,7 @@ public class IndicatorsManager {
 		logger.info("Trying to delete all indicator layers associated with the spatialUnitId '{}'", spatialUnitId);
 		if (indicatorsSpatialUnitsRepo.existsBySpatialUnitId(spatialUnitId)) {
 			List<IndicatorSpatialUnitJoinEntity> indicatorDatasetsForSpatialUnit = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
+			int numberOfIndicatorLayersToDelete = indicatorDatasetsForSpatialUnit.size();
 			
 			List<String> indicatorNames = new ArrayList<String>();
 			
@@ -544,8 +545,8 @@ public class IndicatorsManager {
 				
 				indicatorNames.add(indicatorSpatialUnitJoinEntity.getIndicatorName());
 			}	
-			
-			logger.info("Deleted indicator layers associated to spatialUnitId '{}' for a tota number of {} indicator datasets", spatialUnitId, indicatorDatasetsForSpatialUnit.size());
+						
+			logger.info("Deleted indicator layers associated to spatialUnitId '{}' for a total number of {} indicator datasets", spatialUnitId, numberOfIndicatorLayersToDelete);
 			logger.info("The names of the affected indicators are: {}", indicatorNames);
 				
 			return true;
