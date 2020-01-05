@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundExce
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicInputType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
+import javassist.NotFoundException;
 
 @Transactional
 @Repository
@@ -54,6 +56,15 @@ public class TopicsManager {
 		 * 
 		 * and after that add it as subtopic
 		 */
+		
+		/*
+		 * first we make an empty list of subtopics
+		 * 
+		 * as we assume that in each requests (POST or PUT) the whole topics hierarchy is delivered
+		 * --> hence we build it each time anew
+		 */
+		topicEntity.setSubTopics(new ArrayList<TopicsEntity>());
+		
 		for (TopicInputType subTopic : subTopics) {
 			
 			TopicsEntity subTopicEntity = null;
@@ -141,6 +152,27 @@ public class TopicsManager {
 			logger.error("No topic with id '{}' was found in database. Delete request has no effect.", topicId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Tried to delete topic, but no topic existes with id " + topicId);
 		}
+	}
+
+	public String updateTopic(TopicInputType topicData, String topicId) throws Exception {
+		logger.info("Trying to update topic with topicId '{}'", topicId);
+		
+		if(topicsRepo.existsByTopicId(topicId)){
+			TopicsEntity topic = topicsRepo.findByTopicId(topicId);
+			topic.setTopicName(topicData.getTopicName());
+			topic.setTopicDescription(topicData.getTopicDescription());
+			topic.setTopicType(topicData.getTopicType());
+			
+			handleSubTopics(topic, topicData.getSubTopics());
+			
+			topicsRepo.saveAndFlush(topic);
+			
+			return topic.getTopicId();
+		}
+		else{
+			logger.error("No topic with topicId '{}' was found. Thus aborting update topic request.", topicId);
+			throw new NotFoundException("No topic was found for specified topicId. Aborting update topic request.");
+		}		
 	}
 
 }

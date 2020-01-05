@@ -144,4 +144,37 @@ public class TopicsController extends BasePathController implements TopicsApi {
 		}
 	}
 
+	@Override
+	public ResponseEntity updateTopic(String topicId, TopicInputType topicData) {
+		logger.info("Received request to update topic with topicId '{}'", topicId);
+
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * analyse input data and save it within database
+		 */
+		
+		try {
+			topicId = topicsManager.updateTopic(topicData, topicId);
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+
+		}
+
+		if (topicId != null) {
+			HttpHeaders responseHeaders = new HttpHeaders();
+
+			String location = topicId;
+			try {
+				responseHeaders.setLocation(new URI(location));
+			} catch (URISyntaxException e) {
+				// return ApiResponseUtil.createResponseEntityFromException(e);
+			}
+
+			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 }
