@@ -1,6 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -141,17 +142,34 @@ public class TopicsManager {
 	public boolean deleteTopicById(String topicId) throws ResourceNotFoundException {
 		logger.info("Trying to delete topic with topicId '{}'", topicId);
 		
-		/*
-		 * TODO FIXME first delete subTopic relations?
-		 */
-		
 		if (topicsRepo.existsByTopicId(topicId)){
+			TopicsEntity topic = topicsRepo.findByTopicId(topicId);
+			
+			deleteAllSubTopicsAndRelations(topic);					
+			
 			topicsRepo.deleteByTopicId(topicId);
 			return true;
 		}else{
 			logger.error("No topic with id '{}' was found in database. Delete request has no effect.", topicId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Tried to delete topic, but no topic existes with id " + topicId);
 		}
+	}
+
+	private void deleteAllSubTopicsAndRelations(TopicsEntity topic) {
+		Collection<TopicsEntity> subTopics = topic.getSubTopics();
+		
+		// delete subTopic relation
+		topic.setSubTopics(new ArrayList<TopicsEntity>());
+		topicsRepo.saveAndFlush(topic);
+		
+		// delete all subtopic entities
+		for (TopicsEntity subTopic : subTopics) {
+			if (subTopic.getSubTopics().size() > 0){
+				deleteAllSubTopicsAndRelations(subTopic);
+				topicsRepo.deleteByTopicId(subTopic.getTopicId());
+			}
+		}
+		
 	}
 
 	public String updateTopic(TopicInputType topicData, String topicId) throws Exception {
