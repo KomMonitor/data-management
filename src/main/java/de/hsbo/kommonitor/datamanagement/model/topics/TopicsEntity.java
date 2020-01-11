@@ -6,11 +6,14 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity(name = "Topics")
 public class TopicsEntity {
@@ -27,7 +30,9 @@ public class TopicsEntity {
 	  
 	  private TopicTypeEnum topicType = null;
 	  
-	  @ElementCollection
+	  @ElementCollection(fetch = FetchType.EAGER)
+//	  @OnDelete(action= OnDeleteAction.CASCADE)
+//	  @JoinColumn(name = "main_topic_id", referencedColumnName = "topicId")
 	  @CollectionTable(name = "topics_subtopics", joinColumns = @JoinColumn(name = "main_topic_id", referencedColumnName = "topicId"))
 	  @Column(name = "sub_topic")
 	  private Collection<TopicsEntity> subTopics;

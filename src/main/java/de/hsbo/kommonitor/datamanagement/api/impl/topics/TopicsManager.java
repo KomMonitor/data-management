@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicInputType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.topics.TopicTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 import javassist.NotFoundException;
 
@@ -145,9 +147,15 @@ public class TopicsManager {
 		if (topicsRepo.existsByTopicId(topicId)){
 			TopicsEntity topic = topicsRepo.findByTopicId(topicId);
 			
+			// delete any associated entries in topics_subtopics table
+			// by iterating over all main topics and check if specified topic has a subtopic relation
+			if(topic.getTopicType().equals(TopicTypeEnum.SUB)){
+				deleteSubTopicEntriesFromParentTopics(topicId);
+			}			
+			
 			deleteAllSubTopicsAndRelations(topic);					
 			
-			topicsRepo.deleteByTopicId(topicId);
+			topicsRepo.delete(topic);
 			return true;
 		}else{
 			logger.error("No topic with id '{}' was found in database. Delete request has no effect.", topicId);
@@ -155,20 +163,58 @@ public class TopicsManager {
 		}
 	}
 
+	private void deleteSubTopicEntriesFromParentTopics(String subTopicId) {
+		List<TopicsEntity> allTopics = topicsRepo.findAll();
+		
+		for (TopicsEntity topicsEntity : allTopics) {
+			// for all main topics check if Topic with subTopicIf must be removed
+//			if(topicsEntity.getTopicType().equals(TopicTypeEnum.MAIN)){
+				
+				Collection<TopicsEntity> subTopics = topicsEntity.getSubTopics();
+				
+				for (Iterator i = subTopics.iterator(); i.hasNext();) {
+					TopicsEntity nextSubTopic = (TopicsEntity)i.next();
+					if(nextSubTopic.getTopicId().equals(subTopicId)){
+					    i.remove();
+					}
+					
+				}				
+				
+				topicsEntity.setSubTopics(subTopics);
+				
+				topicsRepo.saveAndFlush(topicsEntity);
+//			}
+		}
+		
+	}
+
 	private void deleteAllSubTopicsAndRelations(TopicsEntity topic) {
 		Collection<TopicsEntity> subTopics = topic.getSubTopics();
 		
 		// delete subTopic relation
-		topic.setSubTopics(new ArrayList<TopicsEntity>());
+		for (Iterator i = subTopics.iterator(); i.hasNext();) {
+			TopicsEntity topicEntity = (TopicsEntity)i.next();
+			deleteAllSubTopicsAndRelations(topicEntity);
+		    i.remove();
+		}
+		
+		topic.setSubTopics(subTopics);
+		
 		topicsRepo.saveAndFlush(topic);
 		
-		// delete all subtopic entities
-		for (TopicsEntity subTopic : subTopics) {
-			if (subTopic.getSubTopics().size() > 0){
-				deleteAllSubTopicsAndRelations(subTopic);
-				topicsRepo.deleteByTopicId(subTopic.getTopicId());
-			}
-		}
+		
+//		if(subTopics.size() > 0){
+//			// delete all subtopic entities
+//			for (TopicsEntity subTopic : subTopics) {
+//				if (subTopic.getSubTopics().size() > 0){
+//					deleteAllSubTopicsAndRelations(subTopic);
+//					subTopics.remove(subTopic);
+//					topic.setSubTopics(subTopics);
+//					topicsRepo.saveAndFlush(topic);
+//					topicsRepo.deleteByTopicId(subTopic.getTopicId());
+//				}
+//			}
+//		}
 		
 	}
 
