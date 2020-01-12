@@ -15,6 +15,9 @@ import io.swagger.annotations.ApiModelProperty;
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-01-04T23:51:22.008+01:00")
 
 public class TopicInputType   {
+  @JsonProperty("topicId")
+  private String topicId = null;
+
   @JsonProperty("topicName")
   private String topicName = null;
 
@@ -107,6 +110,14 @@ public class TopicInputType   {
   public void setSubTopics(List<TopicInputType> subTopics) {
     this.subTopics = subTopics;
   }
+  
+  public String getTopicId() {
+	return topicId;
+}
+
+public void setTopicId(String topicId) {
+	this.topicId = topicId;
+}
 
 
   @Override
