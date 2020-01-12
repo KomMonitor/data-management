@@ -195,26 +195,15 @@ public class TopicsManager {
 		for (Iterator i = subTopics.iterator(); i.hasNext();) {
 			TopicsEntity topicEntity = (TopicsEntity)i.next();
 			deleteAllSubTopicsAndRelations(topicEntity);
+			
+			// delete subTopic entity
+			topicsRepo.delete(topicEntity);
 		    i.remove();
 		}
 		
 		topic.setSubTopics(subTopics);
 		
 		topicsRepo.saveAndFlush(topic);
-		
-		
-//		if(subTopics.size() > 0){
-//			// delete all subtopic entities
-//			for (TopicsEntity subTopic : subTopics) {
-//				if (subTopic.getSubTopics().size() > 0){
-//					deleteAllSubTopicsAndRelations(subTopic);
-//					subTopics.remove(subTopic);
-//					topic.setSubTopics(subTopics);
-//					topicsRepo.saveAndFlush(topic);
-//					topicsRepo.deleteByTopicId(subTopic.getTopicId());
-//				}
-//			}
-//		}
 		
 	}
 
