@@ -185,8 +185,22 @@ public class ScriptManager {
 
 	private void deleteAssociatedScriptInputParameters(ScriptMetadataEntity scriptMetadata) {
 		Collection<ScriptInputParameterEntity> scriptInputParameters = scriptMetadata.getScriptInputParameters();
-		for (ScriptInputParameterEntity scriptInputParameterEntity : scriptInputParameters) {
-			inputParameterRepo.deleteByInputParameterId(scriptInputParameterEntity.getInputParameterId());
+		List<String> scriptInputParameterIds = new ArrayList<String>();
+		
+		// delete subTopic relation
+		for (Iterator i = scriptInputParameters.iterator(); i.hasNext();) {
+			ScriptInputParameterEntity scriptInputParameterEntity = (ScriptInputParameterEntity)i.next();
+			scriptInputParameterIds.add(scriptInputParameterEntity.getInputParameterId());
+		    i.remove();
+		}
+		
+		scriptMetadata.setScriptInputParameters(scriptInputParameters);
+		
+		scriptMetadataRepo.saveAndFlush(scriptMetadata);
+		
+		
+		for (String scriptInputParameterId : scriptInputParameterIds) {
+			inputParameterRepo.deleteByInputParameterId(scriptInputParameterId);
 		}
 	}
 
