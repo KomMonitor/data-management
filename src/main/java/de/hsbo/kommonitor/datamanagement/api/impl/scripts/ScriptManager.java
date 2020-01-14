@@ -420,15 +420,22 @@ public class ScriptManager {
 	public boolean deleteScriptsByGeoresourceId(String georesourceId) throws ResourceNotFoundException {
 		List<ScriptMetadataEntity> scriptsEntities = scriptMetadataRepo.findAll();
 		
+		List<String> affectedScriptIds = new ArrayList<String>();
+		
 		for (ScriptMetadataEntity scriptMetadataEntity : scriptsEntities) {
 			Collection<MetadataGeoresourcesEntity> requiredGeoresources = scriptMetadataEntity.getRequiredGeoresources();
 			
 			for (MetadataGeoresourcesEntity metadataGeoresourcesEntity : requiredGeoresources) {
 				if (metadataGeoresourcesEntity.getDatasetId().equals(georesourceId)){
 					logger.info("Delete script with ID {} and NAME {} for georesource with ID {}", scriptMetadataEntity.getScriptId(), scriptMetadataEntity.getName(), georesourceId);
-					deleteScriptByScriptId(scriptMetadataEntity.getScriptId());
+					affectedScriptIds.add(scriptMetadataEntity.getScriptId());
+					break;
 				}
 			}
+		}
+		
+		for (String affectedScriptId : affectedScriptIds) {
+			deleteScriptByScriptId(affectedScriptId);
 		}
 		return true;
 	}
@@ -437,15 +444,21 @@ public class ScriptManager {
 		
 		List<ScriptMetadataEntity> scriptsEntities = scriptMetadataRepo.findAll();
 		
+		List<String> affectedScriptIds = new ArrayList<String>();
+		
 		for (ScriptMetadataEntity scriptMetadataEntity : scriptsEntities) {
 			Collection<MetadataIndicatorsEntity> requiredIndicators = scriptMetadataEntity.getRequiredIndicators();
 			
 			for (MetadataIndicatorsEntity metadataIndicatorsEntity : requiredIndicators) {
 				if (metadataIndicatorsEntity.getDatasetId().equals(indicatorId)){
 					logger.info("Delete script with ID {} and NAME {} for indicator with ID {}", scriptMetadataEntity.getScriptId(), scriptMetadataEntity.getName(), indicatorId);
-					deleteScriptByScriptId(scriptMetadataEntity.getScriptId());
+					affectedScriptIds.add(scriptMetadataEntity.getScriptId());
 				}
 			}
+		}
+		
+		for (String affectedScriptId : affectedScriptIds) {
+			deleteScriptByScriptId(affectedScriptId);
 		}
 		
 		if(scriptMetadataRepo.existsByIndicatorId(indicatorId)){
