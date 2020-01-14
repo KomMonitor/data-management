@@ -17,9 +17,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.GeoresourcesPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
+import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
@@ -53,6 +55,12 @@ public class GeoresourcesManager {
 	
 	@Autowired
 	OGCWebServiceManager ogcServiceManager;
+	
+	@Autowired
+	private IndicatorsManager indicatorsManager;
+	
+	@Autowired
+	private ScriptManager scriptManager;
 
 	public String addGeoresource(GeoresourcePOSTInputType featureData) throws Exception {
 		
@@ -252,7 +260,14 @@ public class GeoresourcesManager {
 	public boolean deleteGeoresourceDatasetById(String georesourceId) throws Exception {
 		logger.info("Trying to delete georesource dataset with datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
-			String dbTableName = georesourcesMetadataRepo.findByDatasetId(georesourceId).getDbTableName();
+			
+			boolean deletedReferences = indicatorsManager.deleteIndicatorReferencesByGeoresource(georesourceId);
+			
+			boolean deleteScriptsForGeoresource = scriptManager.deleteScriptsByGeoresourceId(georesourceId);
+			
+			MetadataGeoresourcesEntity georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+			
+			String dbTableName = georesourceEntity.getDbTableName();
 			/*
 			 * delete featureTable
 			 */

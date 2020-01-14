@@ -28,6 +28,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.In
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
@@ -68,6 +69,9 @@ public class IndicatorsManager {
 	
 	@Autowired
 	OGCWebServiceManager ogcServiceManager;
+	
+	@Autowired
+	ScriptManager scriptManager;
 	
 	public String updateMetadata(IndicatorPATCHInputType metadata, String indicatorId) throws Exception {
 		logger.info("Trying to update indicator metadata for datasetId '{}'", indicatorId);
@@ -436,8 +440,15 @@ public class IndicatorsManager {
 	public boolean deleteIndicatorDatasetById(String indicatorId) throws Exception {
 		logger.info("Trying to delete indicator dataset with datasetId '{}'", indicatorId);
 		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+			
+			ReferenceManager.removeReferences(indicatorId);
+			
+			boolean deleteScriptsForIndicators = scriptManager.deleteScriptsByIndicatorsId(indicatorId);
+			
 			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo.findByIndicatorMetadataId(indicatorId);
 
+			
+			
 			/*
 			 * delete featureTables and views for each spatial unit
 			 */
@@ -460,7 +471,6 @@ public class IndicatorsManager {
 			 * delete metadata entry
 			 */
 			indicatorsMetadataRepo.deleteByDatasetId(indicatorId);
-			ReferenceManager.removeReferences(indicatorId);
 			return true;
 		} else {
 			logger.error(
@@ -476,6 +486,10 @@ public class IndicatorsManager {
 		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
 			IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
 
+			ReferenceManager.removeReferences(indicatorId);
+			
+			boolean deleteScriptsForIndicators = scriptManager.deleteScriptsByIndicatorsId(indicatorId);
+			
 			/*
 			 * delete featureTable and views for each spatial unit
 			 */
@@ -492,8 +506,7 @@ public class IndicatorsManager {
 			 * delete entry from indicatorsMetadataRepo
 			 */
 			indicatorsSpatialUnitsRepo.deleteByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
-
-			ReferenceManager.removeReferences(indicatorId);
+			
 			return true;
 		} else {
 			logger.error(
@@ -582,8 +595,6 @@ public class IndicatorsManager {
 			
 			// handle OGC web service
 			ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
-
-			ReferenceManager.removeReferences(indicatorId);
 			return true;
 		} else {
 			logger.error(
@@ -970,6 +981,10 @@ public class IndicatorsManager {
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to get indicator features, but no dataset existes with datasetId " + indicatorId);
 		}
+	}
+
+	public boolean deleteIndicatorReferencesByGeoresource(String georesourceId) {		
+		return ReferenceManager.removeReferencesByGeoresourceId(georesourceId);
 	}
 
 

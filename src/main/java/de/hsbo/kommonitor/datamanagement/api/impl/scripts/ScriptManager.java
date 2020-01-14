@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -20,7 +21,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundExce
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessInputType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPOSTInputType;
@@ -131,6 +131,11 @@ public class ScriptManager {
 			 */
 			deleteAssociatedScriptInputParameters(scriptMetadata);
 			
+			/*
+			 * also remove all corresponding processInputParameters
+			 */
+			deleteAssociatedRequiredResourceParameters(scriptMetadata);
+			
 			// now delete script metadata entity
 			scriptMetadataRepo.deleteByIndicatorId(indicatorId);
 			
@@ -140,6 +145,42 @@ public class ScriptManager {
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to delete script dataset, but no script metadata exists with indicatorId " + indicatorId);
 		}
+	}
+
+	private void deleteAssociatedRequiredResourceParameters(ScriptMetadataEntity scriptMetadata) {
+		deleteAssociatedRequiredGeoresources(scriptMetadata);
+		deleteAssociatedRequiredIndicators(scriptMetadata);
+		
+	}
+
+	private void deleteAssociatedRequiredGeoresources(ScriptMetadataEntity scriptMetadata) {
+		Collection<MetadataGeoresourcesEntity> requiredGeoresources = scriptMetadata.getRequiredGeoresources();
+		
+		// delete subTopic relation
+		for (Iterator i = requiredGeoresources.iterator(); i.hasNext();) {
+			MetadataGeoresourcesEntity requiredGeoresourceEntity = (MetadataGeoresourcesEntity)i.next();
+		    i.remove();
+		}
+		
+		scriptMetadata.setRequiredGeoresources(requiredGeoresources);
+		
+		scriptMetadataRepo.saveAndFlush(scriptMetadata);
+		
+	}
+	
+	private void deleteAssociatedRequiredIndicators(ScriptMetadataEntity scriptMetadata) {
+		Collection<MetadataIndicatorsEntity> requiredIndicators = scriptMetadata.getRequiredIndicators();
+		
+		// delete subTopic relation
+		for (Iterator i = requiredIndicators.iterator(); i.hasNext();) {
+			MetadataIndicatorsEntity requiredIndicatorEntity = (MetadataIndicatorsEntity)i.next();
+		    i.remove();
+		}
+		
+		scriptMetadata.setRequiredIndicators(requiredIndicators);
+		
+		scriptMetadataRepo.saveAndFlush(scriptMetadata);
+		
 	}
 
 	private void deleteAssociatedScriptInputParameters(ScriptMetadataEntity scriptMetadata) {
@@ -358,6 +399,47 @@ public class ScriptManager {
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to update script, but no script exists for associated scriptId " + scriptId);
 		}
+	}
+
+	public boolean deleteScriptsByGeoresourceId(String georesourceId) throws ResourceNotFoundException {
+		List<ScriptMetadataEntity> scriptsEntities = scriptMetadataRepo.findAll();
+		
+		for (ScriptMetadataEntity scriptMetadataEntity : scriptsEntities) {
+			Collection<MetadataGeoresourcesEntity> requiredGeoresources = scriptMetadataEntity.getRequiredGeoresources();
+			
+			for (MetadataGeoresourcesEntity metadataGeoresourcesEntity : requiredGeoresources) {
+				if (metadataGeoresourcesEntity.getDatasetId().equals(georesourceId)){
+					logger.info("Delete script with ID {} and NAME {} for georesource with ID {}", scriptMetadataEntity.getScriptId(), scriptMetadataEntity.getName(), georesourceId);
+					deleteScriptByScriptId(scriptMetadataEntity.getScriptId());
+				}
+			}
+		}
+		return true;
+	}
+
+	public boolean deleteScriptsByIndicatorsId(String indicatorId) throws ResourceNotFoundException {			
+		
+		List<ScriptMetadataEntity> scriptsEntities = scriptMetadataRepo.findAll();
+		
+		for (ScriptMetadataEntity scriptMetadataEntity : scriptsEntities) {
+			Collection<MetadataIndicatorsEntity> requiredIndicators = scriptMetadataEntity.getRequiredIndicators();
+			
+			for (MetadataIndicatorsEntity metadataIndicatorsEntity : requiredIndicators) {
+				if (metadataIndicatorsEntity.getDatasetId().equals(indicatorId)){
+					logger.info("Delete script with ID {} and NAME {} for indicator with ID {}", scriptMetadataEntity.getScriptId(), scriptMetadataEntity.getName(), indicatorId);
+					deleteScriptByScriptId(scriptMetadataEntity.getScriptId());
+				}
+			}
+		}
+		
+		if(scriptMetadataRepo.existsByIndicatorId(indicatorId)){
+			ScriptMetadataEntity scriptForIndicatorId = scriptMetadataRepo.findByIndicatorId(indicatorId);
+			
+			logger.info("Delete script with ID {} and NAME {} for indicator with ID {}", scriptForIndicatorId.getScriptId(), scriptForIndicatorId.getName(), indicatorId);
+			scriptMetadataRepo.deleteByIndicatorId(indicatorId);
+		}
+		
+		return true;
 	}
 	
 
