@@ -358,6 +358,8 @@ public class ScriptManager {
 			 * also remove all corresponding processInputParameters
 			 */
 			deleteAssociatedScriptInputParameters(scriptMetadata);
+			deleteAssociatedRequiredGeoresources(scriptMetadata);
+			deleteAssociatedRequiredIndicators(scriptMetadata);
 			
 			// now delete script metadata entity
 			scriptMetadataRepo.deleteByScriptId(scriptId);
