@@ -147,7 +147,10 @@ public class GeoresourcesManager {
 			PeriodOfValidityEntity_georesources periodEntity = new PeriodOfValidityEntity_georesources(periodOfValidityType);
 			if(! periodsOfValidityRepo.existsByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate())){
 				periodsOfValidityRepo.saveAndFlush(periodEntity);
-			}			
+			}	
+			else{
+				periodEntity = periodsOfValidityRepo.findByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate());
+			}
 			georesourceMetadataEntity.addPeriodOfValidityIfNotExists(periodEntity);
 		}
 		georesourcesMetadataRepo.saveAndFlush(georesourceMetadataEntity);	
