@@ -4,14 +4,14 @@ import java.time.LocalDate;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
-
 public interface SpatialUnitsPeriodsOfValidityRepository extends JpaRepository<PeriodOfValidityEntity_spatialUnits, Long> {
-	TopicsEntity findByPeriodOfValidityId(String periodOfValidityId);
+	PeriodOfValidityEntity_spatialUnits findByPeriodOfValidityId(String periodOfValidityId);
     
     boolean existsByPeriodOfValidityId(String periodOfValidityId);
     
     void deleteByPeriodOfValidityId(String periodOfValidityId);
 
 	boolean existsByStartDateAndEndDate(LocalDate startDate, LocalDate endDate);
+
+	PeriodOfValidityEntity_spatialUnits findByStartDateAndEndDate(LocalDate startDate, LocalDate endDate);
 }

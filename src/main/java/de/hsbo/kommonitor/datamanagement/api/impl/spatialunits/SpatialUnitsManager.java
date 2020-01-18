@@ -143,7 +143,10 @@ public class SpatialUnitsManager {
 			PeriodOfValidityEntity_spatialUnits periodEntity = new PeriodOfValidityEntity_spatialUnits(periodOfValidityType);
 			if(! periodsOfValidityRepo.existsByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate())){
 				periodsOfValidityRepo.saveAndFlush(periodEntity);
-			}			
+			}		
+			else{
+				periodEntity = periodsOfValidityRepo.findByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate());
+			}
 			spatialUnitsMetadataEntity.addPeriodOfValidityIfNotExists(periodEntity);
 		}
 		spatialUnitsMetadataRepo.saveAndFlush(spatialUnitsMetadataEntity);	
