@@ -133,16 +133,17 @@ public class SpatialFeatureDatabaseHandler {
 	private static void initializePeriodOfValidityForAllEntries(PeriodOfValidityType periodOfValidity,
 			SimpleFeatureType featureSchema, SimpleFeatureStore store) throws CQLException, IOException {
 		Transaction transaction;
-		Filter filter = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + " is null");
+		Filter filter_startDate = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + " is null");
+		Filter filter_endDate = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " is null");
 
 		transaction = new DefaultTransaction(
 				"Modify (initialize periodOfValidity) features in Table " + featureSchema.getTypeName());
 		store.setTransaction(transaction);
 		try {
 			store.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME,
-					periodOfValidity.getStartDate(), filter);
+					periodOfValidity.getStartDate(), filter_startDate);
 			store.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, periodOfValidity.getEndDate(),
-					filter);
+					filter_endDate);
 			transaction.commit(); // actually writes out the features in one
 									// go
 		} catch (Exception eek) {
