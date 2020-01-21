@@ -42,6 +42,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -835,13 +836,38 @@ public class SpatialFeatureDatabaseHandler {
 		Date startDateInputFeature = null;
 		Date endDateInputFeature = null;
 		
-		boolean hasValidStartDateProperty = inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME) != null;
+		Property startDateProperty = inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+		boolean hasValidStartDateProperty = startDateProperty != null;
 		if(hasValidStartDateProperty){
-			startDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();			
+			PropertyType type = startDateProperty.getType();
+			Object startDateProperyValue = startDateProperty.getValue();
+			if(startDateProperyValue instanceof String){
+				startDateInputFeature = DateTimeUtil.fromISO8601UTC((String) startDateProperyValue);
+				 
+			}
+			else if (startDateProperyValue instanceof Date){
+				startDateInputFeature = (Date) startDateProperyValue;	
+			}
+			else{
+				startDateInputFeature = (Date) startDateProperyValue;		
+			}	
 		}
-		boolean hasValidEndDateProperty = inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME) != null;
+		Property endDateProperty = inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+		boolean hasValidEndDateProperty = endDateProperty != null;
 		if(hasValidEndDateProperty){
-			endDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
+			PropertyType type = endDateProperty.getType();
+			Object endDateProperyValue = endDateProperty.getValue();
+			if(endDateProperyValue instanceof String){
+				endDateInputFeature = DateTimeUtil.fromISO8601UTC((String) endDateProperyValue);
+				 
+			}
+			else if (endDateProperyValue instanceof Date){
+				endDateInputFeature = (Date) endDateProperyValue;	
+			}
+			else{
+				endDateInputFeature = (Date) endDateProperyValue;		
+			}
+			endDateInputFeature = (Date) endDateProperty.getValue();
 		}
 		
 		if(! hasValidEndDateProperty || ! hasValidStartDateProperty){
