@@ -39,14 +39,12 @@ public class DateTimeUtil {
 			
 			return fromLocalDate(localDate);
 		} catch (Exception e) {
-			logger.info("Failed to parse dateString '{}' as LocalDate. Check if input String follows ISO8601 rules. Will return null instead.");
 			
 			try {
 				LocalDateTime localDateTime = fromISO8601UTC_localDateTime(dateStr);
 				
 				return fromLocalDateTime(localDateTime);
 			} catch (Exception e2) {
-				logger.info("Failed to parse dateString '{}' as LocalDateTime. Check if input String follows ISO8601 rules. Will return null instead.");
 			}
 		}
 		
@@ -63,7 +61,7 @@ public class DateTimeUtil {
 		try {
 			return LocalDate.parse(dateStr);
 		} catch (Exception e) {
-			logger.info("Failed to parse dateString '{}' as LocalDate. Check if input String follows ISO8601 rules. Will return null instead.");
+			logger.info("Failed to parse dateString '{}' as LocalDate. Check if input String follows ISO8601 rules. Will return null instead.", dateStr);
 		}
 
 		return null;
@@ -75,7 +73,7 @@ public class DateTimeUtil {
 		try {
 			return LocalDateTime.parse(dateStr);
 		} catch (Exception e) {
-			logger.info("Failed to parse dateString '{}' as LocalDateTime. Check if input String follows ISO8601 rules. Will return null instead.");
+			logger.info("Failed to parse dateString '{}' as LocalDateTime. Check if input String follows ISO8601 rules. Will return null instead.", dateStr);
 		}
 
 		return null;
