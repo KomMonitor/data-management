@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -883,6 +884,16 @@ public class SpatialFeatureDatabaseHandler {
 			endDateInputFeature = endDate_new;
 			((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDateInputFeature);
 		}		
+		
+		// sort db features according to startDate ascending
+		Collections.sort(correspondingDbFeatures, new Comparator<Feature>() {
+			  @Override
+			  public int compare(Feature feat1, Feature feat2) {
+			    Object startDate_feat1_object = feat1.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+				Object startDate_feat2_object = feat2.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+				return ((Date) startDate_feat1_object).compareTo((Date) startDate_feat2_object);
+			  }
+			});
 		
 		Feature latestDbFeature = correspondingDbFeatures.get(correspondingDbFeatures.size() - 1);
 		Feature earliestDbFeature = correspondingDbFeatures.get(0);
