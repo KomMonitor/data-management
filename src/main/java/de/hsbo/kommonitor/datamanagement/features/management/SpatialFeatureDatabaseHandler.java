@@ -43,6 +43,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -545,10 +546,29 @@ public class SpatialFeatureDatabaseHandler {
 		 * Compare input schema to DB schema
 		 * 
 		 * if input schema contains any property, that is not within db schema, then add that property to DB schema (enrich feature table with new column)
+		 * 
+		 * only inspect those properties that are not required by KomMonitor
 		 */
 		
-		List<AttributeDescriptor> inputAttributeDescriptors = inputFeatureSchema.getAttributeDescriptors();
-		List<AttributeDescriptor> dbAttributeDescriptors = dbSchema.getAttributeDescriptors();
+		List<AttributeDescriptor> inputAttributeDescriptors_original = inputFeatureSchema.getAttributeDescriptors();
+		List<AttributeDescriptor> dbAttributeDescriptors_original = dbSchema.getAttributeDescriptors();
+		
+		List<AttributeDescriptor> inputAttributeDescriptors = new ArrayList<AttributeDescriptor>();
+		List<AttributeDescriptor> dbAttributeDescriptors = new ArrayList<AttributeDescriptor>();
+		
+		// remove KomMonitor related properties prior to inspection
+		for (AttributeDescriptor dbAttributeDescriptor : dbAttributeDescriptors_original) {
+			if (! isKomMonitorAttributeDescriptor(dbAttributeDescriptor)){
+				dbAttributeDescriptors.add(dbAttributeDescriptor);
+			}
+		}
+		
+		for (AttributeDescriptor inputAttributeDescriptor : inputAttributeDescriptors_original) {
+			if (! isKomMonitorAttributeDescriptor(inputAttributeDescriptor)){
+				inputAttributeDescriptors.add(inputAttributeDescriptor);
+			}
+		}
+		
 		int numberOfVerifiedDbProperties = 0;
 		
 		List<AttributeDescriptor> newProperties = new ArrayList<AttributeDescriptor>(); 
@@ -571,6 +591,7 @@ public class SpatialFeatureDatabaseHandler {
 		}
 		
 		if(numberOfVerifiedDbProperties < dbAttributeDescriptors.size()){
+			// check if the 
 			// obviously the inputFeatures do not have all previously defined attributes
 			MISSING_PROPERTIES_DETECTED = true;
 		}
@@ -579,6 +600,23 @@ public class SpatialFeatureDatabaseHandler {
 		if(ADDITIONAL_PROPERTIES_WERE_SET){
 			appendNewPropertyColumnsInDbTable(dbTableName, newProperties);
 		}		
+	}
+
+	private static boolean isKomMonitorAttributeDescriptor(AttributeDescriptor attributeDescriptor) {
+		String name = attributeDescriptor.getName().toString();
+		
+		if(name.equals(KomMonitorFeaturePropertyConstants.GEOMETRY_COLUMN_NAME) || 
+			name.equals(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME) ||
+			name.equals(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME) ||
+			name.equals(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME) || 
+			name.equals(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME) || 
+			name.equals(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME) || 
+			name.equals(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME)){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 
 	private static void appendNewPropertyColumnsInDbTable(String dbTableName, List<AttributeDescriptor> newProperties)
@@ -1096,13 +1134,21 @@ public class SpatialFeatureDatabaseHandler {
 			Collection<Property> dbProperties = dbFeature.getProperties();
 			
 			for (Property dbProperty : dbProperties) {
-				for (Property inputProperty : inputProperties) {
-					if (dbProperty.getName().equals(inputProperty.getName())){
-						if (! dbProperty.getValue().equals(inputProperty.getValue())){
-							return false;
+				// do not compare star and end date as they might be encoded differently
+				if(! dbProperty.getName().toString().equalsIgnoreCase(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME) && 
+				! dbProperty.getName().toString().equalsIgnoreCase(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME) &&
+				! dbProperty.getName().toString().equalsIgnoreCase(KomMonitorFeaturePropertyConstants.GEOMETRY_COLUMN_NAME) &&
+				! dbProperty.getName().toString().equalsIgnoreCase(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME) &&
+				! dbProperty.getName().toString().equalsIgnoreCase(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME)){
+					for (Property inputProperty : inputProperties) {
+						if (dbProperty.getName().equals(inputProperty.getName())){
+							if (! dbProperty.getValue().equals(inputProperty.getValue())){
+								return false;
+							}
 						}
 					}
 				}
+				
 			}
 		}
 		
