@@ -1,7 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -50,7 +50,7 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 	
 	public void addPeriodOfValidityIfNotExists(PeriodOfValidityEntity_georesources periodEntity) throws Exception {
 		if (this.georesourcesPeriodsOfValidity == null)
-			this.georesourcesPeriodsOfValidity = new ArrayList<PeriodOfValidityEntity_georesources>();
+			this.georesourcesPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_georesources>();
 
 			if (!this.georesourcesPeriodsOfValidity.contains(periodEntity))
 				this.georesourcesPeriodsOfValidity.add(periodEntity);
@@ -58,7 +58,7 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 	
 	public void removePeriodOfValidityIfExists(PeriodOfValidityEntity_georesources periodEntity) throws Exception {
 		if (this.georesourcesPeriodsOfValidity == null)
-			this.georesourcesPeriodsOfValidity = new ArrayList<PeriodOfValidityEntity_georesources>();
+			this.georesourcesPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_georesources>();
 
 			if (this.georesourcesPeriodsOfValidity.contains(periodEntity))
 				this.georesourcesPeriodsOfValidity.remove(periodEntity);

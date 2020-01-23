@@ -67,7 +67,8 @@ public class IndicatorsMapper {
 //			indicatorsMetadataEntity.setAvailableTimestamps(availableDates);
 //			indicatorMetadataRepo.saveAndFlush(indicatorsMetadataEntity);			
 			
-			List<String> availableTimestamps = indicatorsMetadataEntity.getAvailableTimestamps();
+			Collection<String> availableTimestamps_collection = indicatorsMetadataEntity.getAvailableTimestamps();
+			List<String> availableTimestamps = new ArrayList<>(availableTimestamps_collection);
 			availableTimestamps.sort(Comparator.naturalOrder());
 			indicatorOverviewType.setApplicableDates(availableTimestamps);
 			
@@ -109,8 +110,8 @@ public class IndicatorsMapper {
 		
 		indicatorOverviewType.setAbbreviation(indicatorsMetadataEntity.getAbbreviation());
 		indicatorOverviewType.setIsHeadlineIndicator(indicatorsMetadataEntity.isHeadlineIndicator());;
-		indicatorOverviewType.setInterpretation(indicatorsMetadataEntity.getInterpretation());
-		indicatorOverviewType.setTags(indicatorsMetadataEntity.getTags());
+		indicatorOverviewType.setInterpretation(indicatorsMetadataEntity.getInterpretation());		
+		indicatorOverviewType.setTags(new ArrayList<String>(indicatorsMetadataEntity.getTags()));
 
 		return indicatorOverviewType;
 	}
