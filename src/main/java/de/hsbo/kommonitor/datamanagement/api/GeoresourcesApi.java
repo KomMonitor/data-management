@@ -42,6 +42,13 @@ public interface GeoresourcesApi {
         method = RequestMethod.POST)
     ResponseEntity addGeoresourceAsBody(@ApiParam(value = "feature data" ,required=true )   @RequestBody GeoresourcePOSTInputType featureData);
 
+	@ApiOperation(value = "Delete all features/contents of the selected geo-resource dataset", nickname = "deleteAllGeoresourceFeaturesById", notes = "Delete all features/contents of the selected geo-resource dataset", authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/georesources/{georesourceId}/allFeatures", method = RequestMethod.DELETE)
+	ResponseEntity deleteAllGeoresourceFeaturesById(
+			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId);
 
     @ApiOperation(value = "Delete the features/contents of the selected geo-resource dataset", nickname = "deleteGeoresourceById", notes = "Delete the features/contents of the selected geo-resource dataset", authorizations = {
         @Authorization(value = "basicAuth")

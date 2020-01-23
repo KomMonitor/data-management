@@ -63,6 +63,10 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 			if (this.georesourcesPeriodsOfValidity.contains(periodEntity))
 				this.georesourcesPeriodsOfValidity.remove(periodEntity);
 	}
+	
+	public void setPeriodsOfValidity(Collection<PeriodOfValidityEntity_georesources> periods){
+		this.georesourcesPeriodsOfValidity = periods;
+	}
 
 	public boolean isPOI() {
 		return isPOI;

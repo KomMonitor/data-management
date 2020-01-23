@@ -43,7 +43,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -1210,5 +1209,85 @@ public class SpatialFeatureDatabaseHandler {
 		
 		dbFeatureIterator.close();
 		return identifiedDbFeatures;
+	}
+
+	public static void deleteAllFeaturesFromFeatureTable(ResourceTypeEnum georesource, String dbTableName) throws Exception {
+		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
+		SimpleFeatureSource featureSource = store.getFeatureSource(dbTableName);
+		
+		SimpleFeatureType schema = featureSource.getSchema();
+		
+		List<AttributeDescriptor> dbAttributeDescriptors_original = schema.getAttributeDescriptors();
+		
+		List<AttributeDescriptor> dbAttributeDescriptors = new ArrayList<AttributeDescriptor>();
+		
+		// remove KomMonitor related properties prior to inspection
+		for (AttributeDescriptor dbAttributeDescriptor : dbAttributeDescriptors_original) {
+			if (! isKomMonitorAttributeDescriptor(dbAttributeDescriptor)){
+				dbAttributeDescriptors.add(dbAttributeDescriptor);
+			}
+		}
+		
+		store.dispose();
+		
+		Connection jdbcConnection = null;
+		Statement statement = null;
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("DELETE FROM \"" + dbTableName + "\"; ");
+			
+			if(dbAttributeDescriptors.size() > 0){
+				builder.append("ALTER TABLE \"" + dbTableName + "\" ");
+				
+				Iterator<AttributeDescriptor> iterator = dbAttributeDescriptors.iterator();
+				
+				while(iterator.hasNext()){
+					AttributeDescriptor property = iterator.next();
+					
+					// use dataType varchar, to import new columns as string
+					builder.append("DROP COLUMN \"" + property.getName() + "\" ");
+					
+					if(iterator.hasNext()){
+						builder.append(", ");
+					}
+					else{
+						builder.append(";");
+					}
+				}
+			}
+			
+			String deleteCommand = builder.toString();
+			
+			logger.info("Send following DELETE/ALTER TABLE command to database: " + deleteCommand);
+			
+			// TODO check if works
+			statement.executeUpdate(deleteCommand);
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+
+		logger.info("Deletion of all features and their properties from feature table {} was successful.",
+				dbTableName);		
+
 	}
 }

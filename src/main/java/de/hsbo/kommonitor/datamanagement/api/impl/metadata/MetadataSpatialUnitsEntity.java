@@ -61,6 +61,10 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata {
 				this.spatialUnitsPeriodsOfValidity.remove(periodEntity);
 	}
 	
+	public void setPeriodsOfValidity(ArrayList<PeriodOfValidityEntity_spatialUnits> periods) {
+		this.spatialUnitsPeriodsOfValidity = periods;
+	}
+	
 	
 	
 }
