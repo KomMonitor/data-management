@@ -241,12 +241,15 @@ public class IndicatorDatabaseHandler {
 	private static List<Date> collectIndicatorDates(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) {
 		List<Date> availableDates = new ArrayList<>();
 
-		List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorValues.get(0).getValueMapping();
+		if(indicatorValues.size() > 0){
+			List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorValues.get(0).getValueMapping();
 
-		for (IndicatorPOSTInputTypeValueMapping entry : valueMapping) {
-//			availableDates.add(java.sql.Date.valueOf(entry.getTimestamp()));
-			availableDates.add(DateTimeUtil.fromLocalDate(entry.getTimestamp()));
+			for (IndicatorPOSTInputTypeValueMapping entry : valueMapping) {
+//				availableDates.add(java.sql.Date.valueOf(entry.getTimestamp()));
+				availableDates.add(DateTimeUtil.fromLocalDate(entry.getTimestamp()));
+			}
 		}
+		
 
 		return availableDates;
 	}
