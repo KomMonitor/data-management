@@ -87,6 +87,30 @@ public class GeorecourcesController extends BasePathController implements Geores
 	}
 
 	@Override
+	public ResponseEntity deleteAllGeoresourceFeaturesById(@PathVariable("georesourceId") String georesourceId) {
+		logger.info("Received request to delete all georesource features for datasetId '{}'", georesourceId);
+
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * delete topic with the specified id
+		 */
+
+		boolean isDeleted;
+		try {
+			isDeleted = georesourcesManager.deleteAllGeoresourceFeaturesById(georesourceId);
+
+			if (isDeleted)
+				return new ResponseEntity<>(HttpStatus.OK);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@Override
 	public ResponseEntity deleteGeoresourceById(@PathVariable("georesourceId") String georesourceId) {
 		logger.info("Received request to delete georesource for datasetId '{}'", georesourceId);
 
@@ -136,8 +160,8 @@ public class GeorecourcesController extends BasePathController implements Geores
 	}
 
 	@Override
-	public ResponseEntity<List<GeoresourceOverviewType>> getGeoresources(@RequestParam(value = "topic", required = false) String topic) {
-		logger.info("Received request to get all georesources metadata for topic {}", topic);
+	public ResponseEntity<List<GeoresourceOverviewType>> getGeoresources() {
+		logger.info("Received request to get all georesources metadata");
 		/*
 		 * topic is an optional parameter and thus may be null!
 		 */
@@ -152,7 +176,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 			
 			if (accept != null && accept.contains("application/json")) {
 
-				List<GeoresourceOverviewType> georesourcesMetadata = georesourcesManager.getAllGeoresourcesMetadata(topic);
+				List<GeoresourceOverviewType> georesourcesMetadata = georesourcesManager.getAllGeoresourcesMetadata();
 
 				return new ResponseEntity<>(georesourcesMetadata, HttpStatus.OK);
 

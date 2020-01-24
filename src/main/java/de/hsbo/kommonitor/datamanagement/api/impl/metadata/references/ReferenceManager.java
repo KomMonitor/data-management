@@ -132,4 +132,11 @@ public class ReferenceManager {
 			georesourceRefRepo.deleteByMainIndicatorId(indicatorId);
 
 	}
+
+	public static boolean removeReferencesByGeoresourceId(String georesourceId) {
+		if(georesourceRefRepo.existsByReferencedGeoresourceId(georesourceId))
+			georesourceRefRepo.deleteByReferencedGeoresourceId(georesourceId);
+		
+		return true;
+	}
 }

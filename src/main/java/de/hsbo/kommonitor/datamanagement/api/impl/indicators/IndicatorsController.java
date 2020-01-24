@@ -50,13 +50,35 @@ public class IndicatorsController extends BasePathController implements Indicato
 		this.request = request;
 	}
 
+	@Override
+	public ResponseEntity deleteIndicatorByIdAndSpatialUnitId(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId) throws Exception {
+		logger.info("Received request to delete indicator for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
 
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * delete topic with the specified id
+		 */
+
+		boolean isDeleted;
+		try {
+			isDeleted = indicatorsManager.deleteIndicatorDatasetByIdAndSpatialUnitId(indicatorId, spatialUnitId);
+
+			if (isDeleted)
+				return new ResponseEntity<>(HttpStatus.OK);
+
+		} catch (ResourceNotFoundException | IOException e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 
 	@Override
 	public ResponseEntity deleteIndicatorByIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId,
 			@PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
-			@PathVariable("day") BigDecimal day) {
+			@PathVariable("day") BigDecimal day) throws Exception {
 		logger.info("Received request to delete indicator for indicatorId '{}' and Date '{}-{}-{}'", indicatorId, year, month, day);
 
 		String accept = request.getHeader("Accept");
@@ -198,8 +220,8 @@ public class IndicatorsController extends BasePathController implements Indicato
 	}
 
 	@Override
-	public ResponseEntity<List<IndicatorOverviewType>> getIndicators(@RequestParam(value = "topic", required = false) String topic) {
-		logger.info("Received request to get all indicators metadata for topic {}", topic);
+	public ResponseEntity<List<IndicatorOverviewType>> getIndicators() {
+		logger.info("Received request to get all indicators metadata");
 		String accept = request.getHeader("Accept");
 
 		/*
@@ -211,7 +233,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 			
 			if (accept != null && accept.contains("application/json")) {
 
-				List<IndicatorOverviewType> spatialunitsMetadata = indicatorsManager.getAllIndicatorsMetadata(topic);
+				List<IndicatorOverviewType> spatialunitsMetadata = indicatorsManager.getAllIndicatorsMetadata();
 
 				return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
 

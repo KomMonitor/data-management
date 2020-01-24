@@ -5,22 +5,23 @@
  */
 package de.hsbo.kommonitor.datamanagement.api;
 
-import io.swagger.annotations.*;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicInputType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
-
-import java.util.List;
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-01-05T01:37:49.273+01:00")
 
 @Api(value = "Topics", description = "the Topics API")
 public interface TopicsApi {
@@ -73,5 +74,18 @@ public interface TopicsApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<List<TopicOverviewType>> getTopics();
+
+
+    @ApiOperation(value = "Modify topic information", nickname = "updateTopic", notes = "Modify topic information", authorizations = {
+        @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 401, message = "API key is missing or invalid"),
+        @ApiResponse(code = 405, message = "Invalid input") })
+    @RequestMapping(value = "/topics/{topicId}",
+        consumes = { "application/json" },
+        method = RequestMethod.PUT)
+    ResponseEntity updateTopic(@ApiParam(value = "unique identifier of the topic",required=true) @PathVariable("topicId") String topicId,@ApiParam(value = "topic input data" ,required=true )   @RequestBody TopicInputType topicData);
 
 }

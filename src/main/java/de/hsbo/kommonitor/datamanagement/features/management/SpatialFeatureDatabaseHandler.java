@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -42,6 +43,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -133,16 +135,17 @@ public class SpatialFeatureDatabaseHandler {
 	private static void initializePeriodOfValidityForAllEntries(PeriodOfValidityType periodOfValidity,
 			SimpleFeatureType featureSchema, SimpleFeatureStore store) throws CQLException, IOException {
 		Transaction transaction;
-		Filter filter = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + " is null");
+		Filter filter_startDate = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + " is null");
+		Filter filter_endDate = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " is null");
 
 		transaction = new DefaultTransaction(
 				"Modify (initialize periodOfValidity) features in Table " + featureSchema.getTypeName());
 		store.setTransaction(transaction);
 		try {
 			store.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME,
-					periodOfValidity.getStartDate(), filter);
+					periodOfValidity.getStartDate(), filter_startDate);
 			store.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, periodOfValidity.getEndDate(),
-					filter);
+					filter_endDate);
 			transaction.commit(); // actually writes out the features in one
 									// go
 		} catch (Exception eek) {
@@ -542,10 +545,29 @@ public class SpatialFeatureDatabaseHandler {
 		 * Compare input schema to DB schema
 		 * 
 		 * if input schema contains any property, that is not within db schema, then add that property to DB schema (enrich feature table with new column)
+		 * 
+		 * only inspect those properties that are not required by KomMonitor
 		 */
 		
-		List<AttributeDescriptor> inputAttributeDescriptors = inputFeatureSchema.getAttributeDescriptors();
-		List<AttributeDescriptor> dbAttributeDescriptors = dbSchema.getAttributeDescriptors();
+		List<AttributeDescriptor> inputAttributeDescriptors_original = inputFeatureSchema.getAttributeDescriptors();
+		List<AttributeDescriptor> dbAttributeDescriptors_original = dbSchema.getAttributeDescriptors();
+		
+		List<AttributeDescriptor> inputAttributeDescriptors = new ArrayList<AttributeDescriptor>();
+		List<AttributeDescriptor> dbAttributeDescriptors = new ArrayList<AttributeDescriptor>();
+		
+		// remove KomMonitor related properties prior to inspection
+		for (AttributeDescriptor dbAttributeDescriptor : dbAttributeDescriptors_original) {
+			if (! isKomMonitorAttributeDescriptor(dbAttributeDescriptor)){
+				dbAttributeDescriptors.add(dbAttributeDescriptor);
+			}
+		}
+		
+		for (AttributeDescriptor inputAttributeDescriptor : inputAttributeDescriptors_original) {
+			if (! isKomMonitorAttributeDescriptor(inputAttributeDescriptor)){
+				inputAttributeDescriptors.add(inputAttributeDescriptor);
+			}
+		}
+		
 		int numberOfVerifiedDbProperties = 0;
 		
 		List<AttributeDescriptor> newProperties = new ArrayList<AttributeDescriptor>(); 
@@ -568,6 +590,7 @@ public class SpatialFeatureDatabaseHandler {
 		}
 		
 		if(numberOfVerifiedDbProperties < dbAttributeDescriptors.size()){
+			// check if the 
 			// obviously the inputFeatures do not have all previously defined attributes
 			MISSING_PROPERTIES_DETECTED = true;
 		}
@@ -576,6 +599,23 @@ public class SpatialFeatureDatabaseHandler {
 		if(ADDITIONAL_PROPERTIES_WERE_SET){
 			appendNewPropertyColumnsInDbTable(dbTableName, newProperties);
 		}		
+	}
+
+	private static boolean isKomMonitorAttributeDescriptor(AttributeDescriptor attributeDescriptor) {
+		String name = attributeDescriptor.getName().toString();
+		
+		if(name.equals(KomMonitorFeaturePropertyConstants.GEOMETRY_COLUMN_NAME) || 
+			name.equals(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME) ||
+			name.equals(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME) ||
+			name.equals(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME) || 
+			name.equals(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME) || 
+			name.equals(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME) || 
+			name.equals(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME)){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 
 	private static void appendNewPropertyColumnsInDbTable(String dbTableName, List<AttributeDescriptor> newProperties)
@@ -834,13 +874,38 @@ public class SpatialFeatureDatabaseHandler {
 		Date startDateInputFeature = null;
 		Date endDateInputFeature = null;
 		
-		boolean hasValidStartDateProperty = inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME) != null;
+		Property startDateProperty = inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+		boolean hasValidStartDateProperty = startDateProperty != null;
 		if(hasValidStartDateProperty){
-			startDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();			
+			PropertyType type = startDateProperty.getType();
+			Object startDateProperyValue = startDateProperty.getValue();
+			if(startDateProperyValue instanceof String){
+				startDateInputFeature = DateTimeUtil.fromISO8601UTC((String) startDateProperyValue);
+				 
+			}
+			else if (startDateProperyValue instanceof Date){
+				startDateInputFeature = (Date) startDateProperyValue;	
+			}
+			else{
+				startDateInputFeature = (Date) startDateProperyValue;		
+			}	
 		}
-		boolean hasValidEndDateProperty = inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME) != null;
+		Property endDateProperty = inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+		boolean hasValidEndDateProperty = endDateProperty != null;
 		if(hasValidEndDateProperty){
-			endDateInputFeature = (Date) inputFeature.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
+			PropertyType type = endDateProperty.getType();
+			Object endDateProperyValue = endDateProperty.getValue();
+			if(endDateProperyValue instanceof String){
+				endDateInputFeature = DateTimeUtil.fromISO8601UTC((String) endDateProperyValue);
+				 
+			}
+			else if (endDateProperyValue instanceof Date){
+				endDateInputFeature = (Date) endDateProperyValue;	
+			}
+			else{
+				endDateInputFeature = (Date) endDateProperyValue;		
+			}
+			endDateInputFeature = (Date) endDateProperty.getValue();
 		}
 		
 		if(! hasValidEndDateProperty || ! hasValidStartDateProperty){
@@ -856,6 +921,16 @@ public class SpatialFeatureDatabaseHandler {
 			endDateInputFeature = endDate_new;
 			((SimpleFeature)inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDateInputFeature);
 		}		
+		
+		// sort db features according to startDate ascending
+		Collections.sort(correspondingDbFeatures, new Comparator<Feature>() {
+			  @Override
+			  public int compare(Feature feat1, Feature feat2) {
+			    Object startDate_feat1_object = feat1.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+				Object startDate_feat2_object = feat2.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+				return ((Date) startDate_feat1_object).compareTo((Date) startDate_feat2_object);
+			  }
+			});
 		
 		Feature latestDbFeature = correspondingDbFeatures.get(correspondingDbFeatures.size() - 1);
 		Feature earliestDbFeature = correspondingDbFeatures.get(0);
@@ -1058,13 +1133,21 @@ public class SpatialFeatureDatabaseHandler {
 			Collection<Property> dbProperties = dbFeature.getProperties();
 			
 			for (Property dbProperty : dbProperties) {
-				for (Property inputProperty : inputProperties) {
-					if (dbProperty.getName().equals(inputProperty.getName())){
-						if (! dbProperty.getValue().equals(inputProperty.getValue())){
-							return false;
+				// do not compare star and end date as they might be encoded differently
+				if(! dbProperty.getName().toString().equalsIgnoreCase(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME) && 
+				! dbProperty.getName().toString().equalsIgnoreCase(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME) &&
+				! dbProperty.getName().toString().equalsIgnoreCase(KomMonitorFeaturePropertyConstants.GEOMETRY_COLUMN_NAME) &&
+				! dbProperty.getName().toString().equalsIgnoreCase(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME) &&
+				! dbProperty.getName().toString().equalsIgnoreCase(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME)){
+					for (Property inputProperty : inputProperties) {
+						if (dbProperty.getName().equals(inputProperty.getName())){
+							if (! dbProperty.getValue().equals(inputProperty.getValue())){
+								return false;
+							}
 						}
 					}
 				}
+				
 			}
 		}
 		
@@ -1126,5 +1209,85 @@ public class SpatialFeatureDatabaseHandler {
 		
 		dbFeatureIterator.close();
 		return identifiedDbFeatures;
+	}
+
+	public static void deleteAllFeaturesFromFeatureTable(ResourceTypeEnum georesource, String dbTableName) throws Exception {
+		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
+		SimpleFeatureSource featureSource = store.getFeatureSource(dbTableName);
+		
+		SimpleFeatureType schema = featureSource.getSchema();
+		
+		List<AttributeDescriptor> dbAttributeDescriptors_original = schema.getAttributeDescriptors();
+		
+		List<AttributeDescriptor> dbAttributeDescriptors = new ArrayList<AttributeDescriptor>();
+		
+		// remove KomMonitor related properties prior to inspection
+		for (AttributeDescriptor dbAttributeDescriptor : dbAttributeDescriptors_original) {
+			if (! isKomMonitorAttributeDescriptor(dbAttributeDescriptor)){
+				dbAttributeDescriptors.add(dbAttributeDescriptor);
+			}
+		}
+		
+		store.dispose();
+		
+		Connection jdbcConnection = null;
+		Statement statement = null;
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("DELETE FROM \"" + dbTableName + "\"; ");
+			
+			if(dbAttributeDescriptors.size() > 0){
+				builder.append("ALTER TABLE \"" + dbTableName + "\" ");
+				
+				Iterator<AttributeDescriptor> iterator = dbAttributeDescriptors.iterator();
+				
+				while(iterator.hasNext()){
+					AttributeDescriptor property = iterator.next();
+					
+					// use dataType varchar, to import new columns as string
+					builder.append("DROP COLUMN \"" + property.getName() + "\" ");
+					
+					if(iterator.hasNext()){
+						builder.append(", ");
+					}
+					else{
+						builder.append(";");
+					}
+				}
+			}
+			
+			String deleteCommand = builder.toString();
+			
+			logger.info("Send following DELETE/ALTER TABLE command to database: " + deleteCommand);
+			
+			// TODO check if works
+			statement.executeUpdate(deleteCommand);
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+
+		logger.info("Deletion of all features and their properties from feature table {} was successful.",
+				dbTableName);		
+
 	}
 }

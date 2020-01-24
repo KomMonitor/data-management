@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -216,36 +217,45 @@ public class IndicatorDatabaseHandler {
 			List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, SimpleFeatureBuilder builder) {
 		List<SimpleFeature> features = new ArrayList<>();
 
-		for (IndicatorPOSTInputTypeIndicatorValues indicatorEntry : indicatorValues) {
-			/*
-			 * type has attributes 1. spatialUnitId 2. one attribute for each
-			 * timeStamp
-			 */
-			String spatialReferenceKey = indicatorEntry.getSpatialReferenceKey();
+		if(indicatorValues != null && indicatorValues.size() > 0){
+			for (IndicatorPOSTInputTypeIndicatorValues indicatorEntry : indicatorValues) {
+				/*
+				 * type has attributes 1. spatialUnitId 2. one attribute for each
+				 * timeStamp
+				 */
+				String spatialReferenceKey = indicatorEntry.getSpatialReferenceKey();
 
-			builder.add(spatialReferenceKey);
+				builder.add(spatialReferenceKey);
 
-			List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorEntry.getValueMapping();
-			for (IndicatorPOSTInputTypeValueMapping mappingEntry : valueMapping) {
-				// String dateString =
-				// createDateStringForDbProperty(java.sql.Date.valueOf(timestamp));
-				builder.add(mappingEntry.getIndicatorValue());
+				List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorEntry.getValueMapping();
+				for (IndicatorPOSTInputTypeValueMapping mappingEntry : valueMapping) {
+					// String dateString =
+					// createDateStringForDbProperty(java.sql.Date.valueOf(timestamp));
+					builder.add(mappingEntry.getIndicatorValue());
+				}
+
+				features.add(builder.buildFeature(spatialReferenceKey));
 			}
-
-			features.add(builder.buildFeature(spatialReferenceKey));
 		}
+		
 		return features;
 	}
 
 	private static List<Date> collectIndicatorDates(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) {
 		List<Date> availableDates = new ArrayList<>();
 
-		List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorValues.get(0).getValueMapping();
-
-		for (IndicatorPOSTInputTypeValueMapping entry : valueMapping) {
-//			availableDates.add(java.sql.Date.valueOf(entry.getTimestamp()));
-			availableDates.add(DateTimeUtil.fromLocalDate(entry.getTimestamp()));
+		if(indicatorValues == null || indicatorValues.size() == 0){
+			logger.info("submitted post body included null or empty list of indicatorValues. Hence no timestamp values can be created.");
 		}
+		else{
+			List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorValues.get(0).getValueMapping();
+
+			for (IndicatorPOSTInputTypeValueMapping entry : valueMapping) {
+//				availableDates.add(java.sql.Date.valueOf(entry.getTimestamp()));
+				availableDates.add(DateTimeUtil.fromLocalDate(entry.getTimestamp()));
+			}
+		}
+		
 
 		return availableDates;
 	}
@@ -272,7 +282,7 @@ public class IndicatorDatabaseHandler {
 		return tb.buildFeatureType();
 	}
 
-	private static String createDateStringForDbProperty(Date date) {
+	public static String createDateStringForDbProperty(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 
@@ -356,103 +366,109 @@ public class IndicatorDatabaseHandler {
 		String typeName = schema.getTypeName();
 		
 		List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = indicatorData.getIndicatorValues();
-		/*
-		 * get sample time stamps
-		 */
-		List<IndicatorPOSTInputTypeValueMapping> sampleValueMapping = indicatorValues.get(0).getValueMapping();
-//		schema = updateSchema(schema, sampleValueMapping);
-		List<String> additionalPropertyNamesToAddAsFloatColumns = identifyNewProperties(schema, sampleValueMapping);
-		
-		postGisStore.dispose();
-		
-		// update schema in db to ensure all new columns are created
-		if(ADDITIONAL_PROPERTIES_WERE_SET){
-			
-			Connection jdbcConnection = null;
-			Statement statement = null;
-			
-			try {
-				// establish JDBC connection
-				jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
-				
-				statement = jdbcConnection.createStatement();
-				
-				StringBuilder builder = new StringBuilder();
-				
-				builder.append("ALTER TABLE \"" + indicatorValueTableName + "\" ");
-				
-				Iterator<String> iterator = additionalPropertyNamesToAddAsFloatColumns.iterator();
-				
-				while(iterator.hasNext()){
-					String columnName = iterator.next();
-					
-					// use dataType real, as only new timeseries will be added for indicators
-					builder.append("ADD COLUMN \"" + columnName + "\" real");
-					
-					if(iterator.hasNext()){
-						builder.append(", ");
-					}
-					else{
-						builder.append(";");
-					}
-				}
-				
-				String alterTableCommand = builder.toString();
-				
-				logger.info("Send following ALTER TABLE command to database: " + alterTableCommand);
-				
-				// TODO check if works
-				statement.executeUpdate(alterTableCommand);
-			} catch (Exception e) {
-				try {
-					statement.close();
-					jdbcConnection.close();
-				} catch (Exception e2) {
-					
-				}
-				
-				throw e;
-			} finally{
-				try {
-					statement.close();
-					jdbcConnection.close();
-				} catch (Exception e2) {
-					
-				}
-			}
-
+		if(indicatorValues == null || indicatorValues.size() == 0){
+			logger.info("submitted put body included null or empty list of indicatorValues. Hence no changes can be applied.");
+			throw new Exception("submitted put body included null or empty list of indicatorValues");
 		}
-		
-		
-		
-		/*
-		 * refetch schema of database table due to updated columns!
-		 */
-		postGisStore = DatabaseHelperUtil.getPostGisDataStore();
-		featureSource = postGisStore.getFeatureSource(indicatorValueTableName);
-
-		DataAccess<SimpleFeatureType, SimpleFeature> dataStore = featureSource.getDataStore();
-		
-			SimpleFeatureStore store = (SimpleFeatureStore) featureSource; // write
-																			// access!
-			Transaction transaction = new DefaultTransaction("Update features in Table " + indicatorValueTableName);
+		else if(indicatorValues.size() > 0){
+			/*
+			 * get sample time stamps
+			 */
+			List<IndicatorPOSTInputTypeValueMapping> sampleValueMapping = indicatorValues.get(0).getValueMapping();
+//			schema = updateSchema(schema, sampleValueMapping);
+			List<String> additionalPropertyNamesToAddAsFloatColumns = identifyNewProperties(schema, sampleValueMapping);
 			
-			try {
-
-				applyModificationStatements(indicatorValues, store);
-
-				transaction.commit(); // actually writes out the features in one
-										// go
-			} catch (Exception eek) {
-				transaction.rollback();
+			postGisStore.dispose();
+			
+			// update schema in db to ensure all new columns are created
+			if(ADDITIONAL_PROPERTIES_WERE_SET){
 				
-				eek.printStackTrace();
-				throw eek;
-			}
+				Connection jdbcConnection = null;
+				Statement statement = null;
+				
+				try {
+					// establish JDBC connection
+					jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+					
+					statement = jdbcConnection.createStatement();
+					
+					StringBuilder builder = new StringBuilder();
+					
+					builder.append("ALTER TABLE \"" + indicatorValueTableName + "\" ");
+					
+					Iterator<String> iterator = additionalPropertyNamesToAddAsFloatColumns.iterator();
+					
+					while(iterator.hasNext()){
+						String columnName = iterator.next();
+						
+						// use dataType real, as only new timeseries will be added for indicators
+						builder.append("ADD COLUMN \"" + columnName + "\" real");
+						
+						if(iterator.hasNext()){
+							builder.append(", ");
+						}
+						else{
+							builder.append(";");
+						}
+					}
+					
+					String alterTableCommand = builder.toString();
+					
+					logger.info("Send following ALTER TABLE command to database: " + alterTableCommand);
+					
+					// TODO check if works
+					statement.executeUpdate(alterTableCommand);
+				} catch (Exception e) {
+					try {
+						statement.close();
+						jdbcConnection.close();
+					} catch (Exception e2) {
+						
+					}
+					
+					throw e;
+				} finally{
+					try {
+						statement.close();
+						jdbcConnection.close();
+					} catch (Exception e2) {
+						
+					}
+				}
 
-			transaction.close();
-		
-		postGisStore.dispose();
+			}
+			
+			
+			
+			/*
+			 * refetch schema of database table due to updated columns!
+			 */
+			postGisStore = DatabaseHelperUtil.getPostGisDataStore();
+			featureSource = postGisStore.getFeatureSource(indicatorValueTableName);
+
+			DataAccess<SimpleFeatureType, SimpleFeature> dataStore = featureSource.getDataStore();
+			
+				SimpleFeatureStore store = (SimpleFeatureStore) featureSource; // write
+																				// access!
+				Transaction transaction = new DefaultTransaction("Update features in Table " + indicatorValueTableName);
+				
+				try {
+
+					applyModificationStatements(indicatorValues, store);
+
+					transaction.commit(); // actually writes out the features in one
+											// go
+				} catch (Exception eek) {
+					transaction.rollback();
+					
+					eek.printStackTrace();
+					throw eek;
+				}
+
+				transaction.close();
+			
+			postGisStore.dispose();
+		}
 		
 	}
 
@@ -496,34 +512,37 @@ public class IndicatorDatabaseHandler {
 		
 		DefaultFeatureCollection newFeaturesToBeAdded = new DefaultFeatureCollection();
 		
-		for (IndicatorPOSTInputTypeIndicatorValues indicatorValueMappingEntry : indicatorValues) {
-			String spatialReferenceKey = indicatorValueMappingEntry.getSpatialReferenceKey();
-			Filter filter = createFilterForSpatialUnitId(spatialReferenceKey);
-			List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorValueMappingEntry
-					.getValueMapping();
-			
-			// no existing feature was found for the current spatial ref key
-			// hence add to newFeaturesToBeAdded;
-			if(store.getFeatures(filter).isEmpty()){
-				SimpleFeatureType featureType = store.getSchema();
+		if(indicatorValues != null && indicatorValues.size() > 0){
+			for (IndicatorPOSTInputTypeIndicatorValues indicatorValueMappingEntry : indicatorValues) {
+				String spatialReferenceKey = indicatorValueMappingEntry.getSpatialReferenceKey();
+				Filter filter = createFilterForSpatialUnitId(spatialReferenceKey);
+				List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorValueMappingEntry
+						.getValueMapping();
 				
-				SimpleFeatureBuilder sfBuilder = new SimpleFeatureBuilder(featureType);
-				sfBuilder.set(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME, spatialReferenceKey);
-				for (IndicatorPOSTInputTypeValueMapping valueMappingEntry : valueMapping) {
-					Date dateColumn = DateTimeUtil.fromLocalDate(valueMappingEntry.getTimestamp());
-					String dateColumnName = createDateStringForDbProperty(dateColumn);			
-					sfBuilder.set(dateColumnName, valueMappingEntry.getIndicatorValue());
+				// no existing feature was found for the current spatial ref key
+				// hence add to newFeaturesToBeAdded;
+				if(store.getFeatures(filter).isEmpty()){
+					SimpleFeatureType featureType = store.getSchema();
+					
+					SimpleFeatureBuilder sfBuilder = new SimpleFeatureBuilder(featureType);
+					sfBuilder.set(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME, spatialReferenceKey);
+					for (IndicatorPOSTInputTypeValueMapping valueMappingEntry : valueMapping) {
+						Date dateColumn = DateTimeUtil.fromLocalDate(valueMappingEntry.getTimestamp());
+						String dateColumnName = createDateStringForDbProperty(dateColumn);			
+						sfBuilder.set(dateColumnName, valueMappingEntry.getIndicatorValue());
+					}
+					newFeaturesToBeAdded.add(sfBuilder.buildFeature(null));
 				}
-				newFeaturesToBeAdded.add(sfBuilder.buildFeature(null));
+				else{
+					for (IndicatorPOSTInputTypeValueMapping valueMappingEntry : valueMapping) {
+						Date dateColumn = DateTimeUtil.fromLocalDate(valueMappingEntry.getTimestamp());
+						String dateColumnName = createDateStringForDbProperty(dateColumn);			
+						store.modifyFeatures(dateColumnName, valueMappingEntry.getIndicatorValue(), filter);
+					}
+				}	
 			}
-			else{
-				for (IndicatorPOSTInputTypeValueMapping valueMappingEntry : valueMapping) {
-					Date dateColumn = DateTimeUtil.fromLocalDate(valueMappingEntry.getTimestamp());
-					String dateColumnName = createDateStringForDbProperty(dateColumn);			
-					store.modifyFeatures(dateColumnName, valueMappingEntry.getIndicatorValue(), filter);
-				}
-			}	
 		}
+		
 		
 		// add any new features id required
 		if (newFeaturesToBeAdded.size() > 0){
@@ -698,6 +717,81 @@ public class IndicatorDatabaseHandler {
 				
 			}
 		}		
+		
+	}
+	
+	public static void deleteIndicatorTimeStamp(String indicatorDbViewName, BigDecimal year, BigDecimal month, BigDecimal day) throws Exception {
+		/*
+		 * delete column for the given timestamp
+		 * 
+		 */
+		
+		boolean foundExistingDateColumn = false;
+		
+		String indicatorValueTableName = getValueTableNameFromViewTableName(indicatorDbViewName);
+		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
+		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(indicatorValueTableName);
+		SimpleFeatureType schema = featureSource.getSchema();
+		
+		Date date = new GregorianCalendar(year.intValue(), month.intValue() - 1, day.intValue()).getTime();
+		logger.info("parsing date from submitted date components. Submitted components were 'year: {}, month: {}, day: {}'. As Java time treats month 0-based, the follwing date will be used: 'year-month(-1)-day {}-{}-{}'", year, month, day, year, month.intValue()-1, day);
+		String datePropertyName = createDateStringForDbProperty(date);
+		
+		if(!schemaContainsDateProperty(schema, datePropertyName)){
+			// add new Property
+			logger.debug("Found matching date column for propert/column '{}' of table '{}'", datePropertyName, schema.getTypeName());
+			foundExistingDateColumn = true;
+		}
+		
+		postGisStore.dispose();
+		
+		// update schema in db to ensure all new columns are created
+		if(foundExistingDateColumn){
+			
+			Connection jdbcConnection = null;
+			Statement statement = null;
+			
+			try {
+				// establish JDBC connection
+				jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+				
+				statement = jdbcConnection.createStatement();
+				
+				StringBuilder builder = new StringBuilder();
+				
+				builder.append("ALTER TABLE \"" + indicatorValueTableName + "\" ");
+
+				String columnName = datePropertyName;
+
+				// use dataType real, as only new timeseries will be added for
+				// indicators
+				builder.append("DROP COLUMN \"" + columnName + "\" CASCADE;");
+
+				String alterTableCommand = builder.toString();
+				
+				logger.info("Send following ALTER TABLE command to database: " + alterTableCommand);
+				
+				// TODO check if works
+				statement.executeUpdate(alterTableCommand);
+			} catch (Exception e) {
+				try {
+					statement.close();
+					jdbcConnection.close();
+				} catch (Exception e2) {
+					
+				}
+				
+				throw e;
+			} finally{
+				try {
+					statement.close();
+					jdbcConnection.close();
+				} catch (Exception e2) {
+					
+				}
+			}
+
+		}
 		
 	}
 
