@@ -1,44 +1,48 @@
-package de.hsbo.kommonitor.datamanagement.model;
+package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_spatialUnits;
-import io.swagger.annotations.ApiModel;
+import org.hibernate.annotations.GenericGenerator;
+
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * definition of the period of validity of a certain dataset
  */
-@ApiModel(description = "definition of the period of validity of a certain dataset")
+@Entity(name = "PeriodsOfValidity_georesources")
+public class PeriodOfValidityEntity_georesources   {
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
-
-public class PeriodOfValidityType   {
-  @JsonProperty("startDate")
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+	private String periodOfValidityId = null;
+	
   private LocalDate startDate = null;
 
-  @JsonProperty("endDate")
   private LocalDate endDate = null;
+  
+  @ManyToMany(mappedBy = "georesourcesPeriodsOfValidity")
+  private Collection<MetadataGeoresourcesEntity> metadataGeoresources;  
 
-  public PeriodOfValidityType(PeriodOfValidityEntity_georesources periodOfValidityEntity_georesources) {
-	this.endDate = periodOfValidityEntity_georesources.getEndDate();
-	this.startDate = periodOfValidityEntity_georesources.getStartDate();
+  public PeriodOfValidityEntity_georesources() {
+
 }
 
-public PeriodOfValidityType() {
+  public PeriodOfValidityEntity_georesources(PeriodOfValidityType periodType) {
 	// TODO Auto-generated constructor stub
+	  this.endDate = periodType.getEndDate();
+	  this.startDate = periodType.getStartDate();
 }
 
-public PeriodOfValidityType(PeriodOfValidityEntity_spatialUnits periodOfValidityEntity_spatialUnits) {
-	this.endDate = periodOfValidityEntity_spatialUnits.getEndDate();
-	this.startDate = periodOfValidityEntity_spatialUnits.getStartDate();
-}
-
-public PeriodOfValidityType startDate(LocalDate startDate) {
+public PeriodOfValidityEntity_georesources startDate(LocalDate startDate) {
     this.startDate = startDate;
     return this;
   }
@@ -56,7 +60,7 @@ public PeriodOfValidityType startDate(LocalDate startDate) {
     this.startDate = startDate;
   }
 
-  public PeriodOfValidityType endDate(LocalDate endDate) {
+  public PeriodOfValidityEntity_georesources endDate(LocalDate endDate) {
     this.endDate = endDate;
     return this;
   }
@@ -83,7 +87,7 @@ public PeriodOfValidityType startDate(LocalDate startDate) {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    PeriodOfValidityType periodOfValidityType = (PeriodOfValidityType) o;
+    PeriodOfValidityEntity_georesources periodOfValidityType = (PeriodOfValidityEntity_georesources) o;
     return Objects.equals(this.startDate, periodOfValidityType.startDate) &&
         Objects.equals(this.endDate, periodOfValidityType.endDate);
   }

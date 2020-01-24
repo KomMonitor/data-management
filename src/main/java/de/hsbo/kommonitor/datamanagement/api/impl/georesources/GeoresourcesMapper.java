@@ -1,23 +1,32 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.GeoresourcesPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 public class GeoresourcesMapper {
+	
+private static GeoresourcesMetadataRepository georesourceMetadataRepo;
+
+private static GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepo;
+	
+	public GeoresourcesMapper(GeoresourcesMetadataRepository georesourceMetadataRepository, GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepository){
+		georesourceMetadataRepo = georesourceMetadataRepository;
+		periodsOfValidityRepo = periodsOfValidityRepository;
+	}
 
 	public static List<GeoresourceOverviewType> mapToSwaggerGeoresources(
-			List<MetadataGeoresourcesEntity> georesourcesEntities) throws IOException, SQLException {
+			List<MetadataGeoresourcesEntity> georesourcesEntities) throws Exception {
 		List<GeoresourceOverviewType> metadatasets = new ArrayList<GeoresourceOverviewType>(
 				georesourcesEntities.size());
 
@@ -28,11 +37,33 @@ public class GeoresourcesMapper {
 	}
 
 	public static GeoresourceOverviewType mapToSwaggerGeoresource(MetadataGeoresourcesEntity georesourceMetadataEntity)
-			throws IOException, SQLException {
+			throws Exception {
 		GeoresourceOverviewType dataset = new GeoresourceOverviewType();
 
+		
+		/*
+		 * TODO FIXME quick and dirty database modification of georesource periodsOfValidity
+		 * 
+		 * here a quick and dirty way is commented out that can reset georesource periodsOfValidity by accessing georesource layer and inspecting the available timestamps
+		 * it can be reenabled to quickly overwrite/reset the associated metadata within georesource metadata entity
+		 */
+//		AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(georesourceMetadataEntity.getDbTableName());		
+//		// periodsOfValidityRepo.deleteAll();
+//		for (PeriodOfValidityType periodOfValidityType : availablePeriodsOfValidity) {
+//			PeriodOfValidityEntity_georesources periodEntity = new PeriodOfValidityEntity_georesources(periodOfValidityType);
+//			periodsOfValidityRepo.saveAndFlush(periodEntity);
+//			georesourceMetadataEntity.addPeriodOfValidityIfNotExists(periodEntity);
+//		}
+//		georesourceMetadataRepo.saveAndFlush(georesourceMetadataEntity);	
+		
+		Collection<PeriodOfValidityEntity_georesources> georesourcesPeriodsOfValidityEntities = georesourceMetadataEntity.getGeoresourcesPeriodsOfValidity();		
+		AvailablePeriodsOfValidityType availablePeriodsOfValidityType = new AvailablePeriodsOfValidityType();
+		for (PeriodOfValidityEntity_georesources periodOfValidityEntity_georesources : georesourcesPeriodsOfValidityEntities) {
+			availablePeriodsOfValidityType.add(new PeriodOfValidityType(periodOfValidityEntity_georesources));
+		}
+		
 		dataset.setAvailablePeriodsOfValidity(
-				SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(georesourceMetadataEntity.getDbTableName()));
+				availablePeriodsOfValidityType);
 
 		CommonMetadataType commonMetadata = new CommonMetadataType();
 		commonMetadata.setContact(georesourceMetadataEntity.getContact());
@@ -49,24 +80,20 @@ public class GeoresourcesMapper {
 
 		dataset.datasetName(georesourceMetadataEntity.getDatasetName());
 		dataset.setGeoresourceId(georesourceMetadataEntity.getDatasetId());
-		dataset.setApplicableTopics(getSwaggerTopicStrings(georesourceMetadataEntity.getGeoresourcesTopics()));
+		dataset.setTopicReference(georesourceMetadataEntity.getTopicReference());
 		dataset.setIsPOI(georesourceMetadataEntity.isPOI());
+		dataset.setIsLOI(georesourceMetadataEntity.isLOI());
+		dataset.setIsAOI(georesourceMetadataEntity.isAOI());
 		dataset.setPoiSymbolBootstrap3Name(georesourceMetadataEntity.getPoiSymbolBootstrap3Name());
 		dataset.setPoiMarkerColor(georesourceMetadataEntity.getPoiMarkerColor());
 		dataset.setPoiSymbolColor(georesourceMetadataEntity.getPoiSymbolColor());
+		dataset.setLoiColor(georesourceMetadataEntity.getLoiColor());
+		dataset.setLoiDashArrayString(georesourceMetadataEntity.getLoiDashArrayString());
+		dataset.setAoiColor(georesourceMetadataEntity.getAoiColor());
 		
 		dataset.setWmsUrl(georesourceMetadataEntity.getWmsUrl());
 		dataset.setWfsUrl(georesourceMetadataEntity.getWfsUrl());
 
 		return dataset;
-	}
-
-	private static List<String> getSwaggerTopicStrings(Collection<TopicsEntity> georesourcesTopics) {
-		List<String> topicStrings = new ArrayList<String>(georesourcesTopics.size());
-
-		for (TopicsEntity topicEntity : georesourcesTopics) {
-			topicStrings.add(topicEntity.getTopicName());
-		}
-		return topicStrings;
 	}
 }

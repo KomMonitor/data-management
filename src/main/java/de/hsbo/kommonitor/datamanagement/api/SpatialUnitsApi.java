@@ -42,6 +42,13 @@ public interface SpatialUnitsApi {
         method = RequestMethod.POST)
     ResponseEntity addSpatialUnitAsBody(@ApiParam(value = "feature data" ,required=true )   @RequestBody SpatialUnitPOSTInputType featureData);
 
+	@ApiOperation(value = "Delete all features/contents of the selected spatial-unit dataset", nickname = "deleteAllSpatialUnitFeaturesById", notes = "Delete all features/contents of the selected spatial-unit dataset", authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/spatial-units/{spatialUnitId}/allFeatures", method = RequestMethod.DELETE)
+	ResponseEntity deleteAllSpatialUnitFeaturesById(
+			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId);
 
     @ApiOperation(value = "Delete the features/contents of the selected spatial-unit", nickname = "deleteSpatialUnitById", notes = "Delete the features/contents of the selected spatial-unit", authorizations = {
         @Authorization(value = "basicAuth")
