@@ -53,7 +53,10 @@ import org.opengis.filter.identity.Identifier;
 import org.opengis.temporal.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.codec.DecodingException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
@@ -82,7 +85,12 @@ public class SpatialFeatureDatabaseHandler {
 
 		FeatureJSON featureJSON = instantiateFeatureJSON();
 		SimpleFeatureType featureSchema = featureJSON.readFeatureCollectionSchema(geoJSONFeatures, false);
-		FeatureCollection featureCollection = featureJSON.readFeatureCollection(geoJSONFeatures);
+		
+		org.geojson.FeatureCollection featureCollection_jackson = 
+				new ObjectMapper().readValue(geoJSONFeatures, org.geojson.FeatureCollection.class);
+		
+		
+		FeatureCollection featureCollection = toGeoToolsFeatureCollection(featureCollection_jackson);
 		// GeoJSONUtil
 		// .readFeatureCollection(stream);
 
@@ -111,6 +119,31 @@ public class SpatialFeatureDatabaseHandler {
 		postGisStore.dispose();
 
 		return featureSchema.getTypeName();
+	}
+
+	private static FeatureCollection toGeoToolsFeatureCollection(org.geojson.FeatureCollection featureCollection_jackson) throws JsonProcessingException, IOException {
+        Iterator<org.geojson.Feature> featureIterator = featureCollection_jackson.iterator();
+        
+        FeatureJSON featureJSON = new FeatureJSON();
+        ObjectMapper mapper = new ObjectMapper();
+        
+        DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
+
+        // Each SimpleFeature will be then read by the use of GeoTools and handled separately, in order to avoid
+        // parsing issues.
+        while (featureIterator.hasNext()) {
+            org.geojson.Feature jakcsonFeature = featureIterator.next();
+            SimpleFeature simpleFeature = featureJSON.readFeature(mapper.writeValueAsString(jakcsonFeature));
+            try {
+            	featureCollection.add(simpleFeature);
+            } catch (DecodingException ex) {
+                logger.error(String.format("Decoding failed for feature %s", simpleFeature.getID()));
+                logger.debug(String.format("Failed feature decoding attributes: %s", simpleFeature.getAttributes()));
+            }
+        }
+        
+        return featureCollection;
+
 	}
 
 	private static void persistSpatialResource(PeriodOfValidityType periodOfValidity, SimpleFeatureType featureSchema,
@@ -488,7 +521,11 @@ public class SpatialFeatureDatabaseHandler {
 
 		FeatureJSON featureJSON = instantiateFeatureJSON();
 		SimpleFeatureType inputFeatureSchema = featureJSON.readFeatureCollectionSchema(geoJsonString, false);
-		FeatureCollection inputFeatureCollection = featureJSON.readFeatureCollection(geoJsonString);
+//		FeatureCollection inputFeatureCollection = featureJSON.readFeatureCollection(geoJsonString);
+		org.geojson.FeatureCollection inputFeatureCollection_jackson = 
+				new ObjectMapper().readValue(geoJsonString, org.geojson.FeatureCollection.class);
+		
+		FeatureCollection inputFeatureCollection = toGeoToolsFeatureCollection(inputFeatureCollection_jackson);
 
 		DefaultFeatureCollection newFeaturesToBeAdded = new DefaultFeatureCollection();
 
