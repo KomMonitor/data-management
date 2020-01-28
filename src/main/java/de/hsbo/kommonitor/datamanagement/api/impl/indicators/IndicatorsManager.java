@@ -517,7 +517,7 @@ public class IndicatorsManager {
 		}
 	}
 	
-	public boolean deleteIndicatorLayersForSpatialUnitId(String spatialUnitId) throws Exception {
+	public boolean deleteIndicatorLayersForSpatialUnitId(String spatialUnitId) throws Exception{
 		logger.info("Trying to delete all indicator layers associated with the spatialUnitId '{}'", spatialUnitId);
 		if (indicatorsSpatialUnitsRepo.existsBySpatialUnitId(spatialUnitId)) {
 			List<IndicatorSpatialUnitJoinEntity> indicatorDatasetsForSpatialUnit = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
@@ -554,8 +554,9 @@ public class IndicatorsManager {
 			logger.error(
 					"No indicator dataset associated to a spatial unit with id '{}' was found in database. Delete request has no effect.",
 					spatialUnitId);
-			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to delete indicator layers for spatial unit, but no dataset exists that is associated to a spatial unit with id " + spatialUnitId);
+//			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+//					"Tried to delete indicator layers for spatial unit, but no dataset exists that is associated to a spatial unit with id " + spatialUnitId);
+			return false;
 		}
 		
 	}
