@@ -351,7 +351,7 @@ public class IndicatorsManager {
 		return indicatorName + "_" + spatialUnitName;
 	}
 
-	public IndicatorOverviewType getIndicatorById(String indicatorId) throws IOException {
+	public IndicatorOverviewType getIndicatorById(String indicatorId) throws Exception {
 		logger.info("Retrieving indicator metadata for datasetId '{}'", indicatorId);
 		MetadataIndicatorsEntity indicatorsMetadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);	
 		
@@ -364,7 +364,7 @@ public class IndicatorsManager {
 		return swaggerIndicatorMetadata;
 	}
 
-	public List<IndicatorOverviewType> getAllIndicatorsMetadata() throws IOException, SQLException  {
+	public List<IndicatorOverviewType> getAllIndicatorsMetadata() throws Exception  {
 		logger.info("Retrieving all indicators metadata from db");
 
 		List<MetadataIndicatorsEntity> indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll();

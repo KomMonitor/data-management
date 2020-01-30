@@ -96,7 +96,7 @@ public class HttpConfig {
     
     @Bean
     public IndicatorsMapper indicatorMapper(){
-    	return new IndicatorsMapper(indicatorSpatialUnitsRepo, indicatorsRepo);
+    	return new IndicatorsMapper(indicatorSpatialUnitsRepo, indicatorsRepo, spatialUnitsRepo);
     }
     
     @Bean

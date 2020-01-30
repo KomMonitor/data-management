@@ -21,7 +21,6 @@ import org.springframework.stereotype.Repository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_spatialUnits;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.SpatialUnitsPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
@@ -469,7 +468,7 @@ public class SpatialUnitsManager {
 		return swaggerSpatialUnitsMetadata;
 	}
 
-	private List<SpatialUnitOverviewType> sortSpatialUnitsHierarchically(
+	public static List<SpatialUnitOverviewType> sortSpatialUnitsHierarchically(
 			List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata) {
 		
 		List<SpatialUnitOverviewType> backupCopy = new ArrayList<SpatialUnitOverviewType>(swaggerSpatialUnitsMetadata.size());
