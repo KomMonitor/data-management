@@ -29,8 +29,10 @@ import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.feature.GeometryAttributeImpl;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.feature.type.AttributeDescriptorImpl;
+import org.geotools.feature.type.GeometryDescriptorImpl;
 import org.geotools.filter.FilterFactoryImpl;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
@@ -44,6 +46,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -78,6 +81,7 @@ public class SpatialFeatureDatabaseHandler {
 
 	private static boolean ADDITIONAL_PROPERTIES_WERE_SET = false;
 	private static boolean MISSING_PROPERTIES_DETECTED = false;
+	private static boolean DATASET_CONTAINS_MULTIPOLYGON = false;
 
 	public static String writeGeoJSONFeaturesToDatabase(ResourceTypeEnum resourceType, String geoJSONFeatures,
 			PeriodOfValidityType periodOfValidity, String correspondingMetadataDatasetId)
@@ -141,6 +145,14 @@ public class SpatialFeatureDatabaseHandler {
 		while (featureIterator.hasNext()) {
 			org.geojson.Feature jakcsonFeature = featureIterator.next();
 			SimpleFeature simpleFeature = featureJSON.readFeature(mapper.writeValueAsString(jakcsonFeature));
+			
+			GeometryType featureType = simpleFeature.getDefaultGeometryProperty().getType();
+			String typeName = featureType.getBinding().getTypeName();
+			
+			if(typeName.contains("MultiPolygon")){
+				DATASET_CONTAINS_MULTIPOLYGON  = true;
+			}
+			
 			try {
 				boolean add = geotoolsFeatures.add(simpleFeature);
 
@@ -227,9 +239,19 @@ public class SpatialFeatureDatabaseHandler {
 		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(resourceType, dataStore, ""));
 		tb.setNamespaceURI(featureSchema.getName().getNamespaceURI());
 		tb.setCRS(featureSchema.getCoordinateReferenceSystem());
-		tb.addAll(featureSchema.getAttributeDescriptors());
+		List<AttributeDescriptor> attributeDescriptors = featureSchema.getAttributeDescriptors();
+		List<AttributeDescriptor> usableAttributeDescriptors = new ArrayList<>();
+		for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
+			if (!(attributeDescriptor instanceof GeometryDescriptorImpl)){
+				
+				usableAttributeDescriptors.add(attributeDescriptor);
+			}
+		}
+		tb.addAll(usableAttributeDescriptors);
+//		tb.setDefaultGeometry(featureSchema.getGeometryDescriptor().getLocalName());
+		tb.add(featureSchema.getGeometryDescriptor().getLocalName(), Geometry.class);
 		tb.setDefaultGeometry(featureSchema.getGeometryDescriptor().getLocalName());
-
+		
 		/*
 		 * add KomMonitor specific properties!
 		 */
