@@ -29,7 +29,6 @@ import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.GeometryAttributeImpl;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.feature.type.AttributeDescriptorImpl;
 import org.geotools.feature.type.GeometryDescriptorImpl;
@@ -63,6 +62,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.GeometrySimplifierUtil;
@@ -1312,8 +1313,24 @@ public class SpatialFeatureDatabaseHandler {
 	private static boolean hasSameGeometry(Feature inputFeature, Feature dbFeature) {
 		Geometry dbGeometry = (Geometry) dbFeature.getDefaultGeometryProperty().getValue();
 		Geometry inputGeometry = (Geometry) inputFeature.getDefaultGeometryProperty().getValue();
+		
+		// round input geometries to 6 decimals
+		PrecisionModel precision = new PrecisionModel(1000000);		
 
-		return dbGeometry.equals(inputGeometry);
+		// reduce coordinates in order to prevent topology exceptions
+		// test out, which number of decimals is appropriate
+		// for WGS 84 inputs, the 6th decimal represents decimeter precision
+		dbGeometry = GeometryPrecisionReducer.reduce(dbGeometry, precision); 
+		inputGeometry = GeometryPrecisionReducer.reduce(inputGeometry, precision); 
+		
+		try {
+			return dbGeometry.equals(inputGeometry);
+		} catch (Exception e) {
+			logger.error("Geometry comparison failed with error: {}", e.getMessage());
+			logger.info("Geometry comparison will return false");
+		}
+		
+		return false;
 	}
 
 	private static Filter createFilterForUniqueFeatureId(FilterFactory ff, Feature correspondingDbFeature) {
