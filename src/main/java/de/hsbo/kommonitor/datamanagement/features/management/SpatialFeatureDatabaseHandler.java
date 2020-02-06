@@ -1016,7 +1016,6 @@ public class SpatialFeatureDatabaseHandler {
 			} else {
 				endDateInputFeature = (Date) endDateProperyValue;
 			}
-			endDateInputFeature = (Date) endDateProperty.getValue();
 		}
 
 		if (!hasValidEndDateProperty || !hasValidStartDateProperty) {
