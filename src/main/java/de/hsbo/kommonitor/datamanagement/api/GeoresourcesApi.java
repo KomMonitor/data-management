@@ -42,6 +42,13 @@ public interface GeoresourcesApi {
         method = RequestMethod.POST)
     ResponseEntity addGeoresourceAsBody(@ApiParam(value = "feature data" ,required=true )   @RequestBody GeoresourcePOSTInputType featureData);
 
+	@ApiOperation(value = "Delete all features/contents of the selected geo-resource dataset", nickname = "deleteAllGeoresourceFeaturesById", notes = "Delete all features/contents of the selected geo-resource dataset", authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/georesources/{georesourceId}/allFeatures", method = RequestMethod.DELETE)
+	ResponseEntity deleteAllGeoresourceFeaturesById(
+			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId);
 
     @ApiOperation(value = "Delete the features/contents of the selected geo-resource dataset", nickname = "deleteGeoresourceById", notes = "Delete the features/contents of the selected geo-resource dataset", authorizations = {
         @Authorization(value = "basicAuth")
@@ -78,18 +85,14 @@ public interface GeoresourcesApi {
         ResponseEntity<byte[]> getAllGeoresourceFeaturesById(@ApiParam(value = "the identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries);
 
     
-    @ApiOperation(value = "retrieve information about available features of different geo-resource datasets", nickname = "getGeoresource", notes = "retrieve information about available features of different geo-resource datasets", response = GeoresourceOverviewType.class, responseContainer = "array", authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = GeoresourceOverviewType.class, responseContainer = "array"),
-        @ApiResponse(code = 400, message = "Invalid status value"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/georesources",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<GeoresourceOverviewType>> getGeoresources(@ApiParam(value = "thematic topic to filter available geo-resource", allowableValues = "demography, environment, habitation, migration, social")  @RequestParam(value = "topic", required = false) String topic);
-
+	@ApiOperation(value = "retrieve information about available features of different geo-resource datasets", nickname = "getGeoresources", notes = "retrieve information about available features of different geo-resource datasets", response = GeoresourceOverviewType.class, responseContainer = "array", authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "OK", response = GeoresourceOverviewType.class, responseContainer = "array"),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/georesources", produces = { "application/json" }, method = RequestMethod.GET)
+	ResponseEntity<List<GeoresourceOverviewType>> getGeoresources();
 
     @ApiOperation(value = "retrieve information about available features of the selected geo-resource dataset", nickname = "getGeoresourceById", notes = "retrieve information about available features of the selected geo-resource dataset", response = GeoresourceOverviewType.class, authorizations = {
         @Authorization(value = "basicAuth")

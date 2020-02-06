@@ -13,7 +13,11 @@ public interface GeoresourceReferenceRepository extends JpaRepository <Georesour
 	boolean existsByMainIndicatorId(String mainIndicatorId);
 	
 	boolean existsByMainIndicatorIdAndReferencedGeoresourceId(String indicatorId, String referencedGeoresourceId);
+	
+	boolean existsByReferencedGeoresourceId(String referencedGeoresourceId);
 
 	void deleteByMainIndicatorId(String mainIndicatorId);
+	
+	void deleteByReferencedGeoresourceId(String referencedGeoresourceId);
 
 }

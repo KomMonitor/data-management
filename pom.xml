@@ -257,6 +257,13 @@
            <version>${hibernate.version}</version>
        </dependency>
 
+		<dependency>
+			<groupId>de.grundid.opendatalab</groupId>
+			<artifactId>geojson-jackson</artifactId>
+			<version>1.8.1</version>
+		</dependency>
+       
+
        <!-- Geoserver Manager -->
        <dependency>
          <groupId>it.geosolutions</groupId>
