@@ -294,7 +294,7 @@
 					<useMissingFile>true</useMissingFile>
 					<fileTemplate>misc/license-as-csv.ftl</fileTemplate>
 				</configuration>
-				<!-- <executions>
+				 <!-- <executions>
 					<execution>
 						<id>first</id>
 						<goals>
@@ -302,7 +302,7 @@
 						</goals>
 						<phase>generate-resources</phase>
 					</execution>
-				</executions> -->
+				</executions>  -->
 			</plugin>
 			<plugin>
 				<groupId>org.jasig.maven</groupId>
@@ -414,7 +414,7 @@
                 <checksumPolicy>ignore</checksumPolicy>
             </snapshots>
         </repository>
-        <repository>
+        <!-- <repository>
             <id>maven central</id>
             <name>central repo for geoserver</name>
             <url>http://central.maven.org/maven2</url>
@@ -423,7 +423,7 @@
                 <updatePolicy>always</updatePolicy>
                 <checksumPolicy>ignore</checksumPolicy>
             </snapshots>
-        </repository>
+        </repository> -->
         <repository>
             <id>geotoolkit</id>
             <name>central repo for geoserver</name>
