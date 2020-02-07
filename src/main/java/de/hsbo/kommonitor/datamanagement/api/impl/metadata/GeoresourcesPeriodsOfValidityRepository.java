@@ -1,6 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,5 +14,5 @@ public interface GeoresourcesPeriodsOfValidityRepository extends JpaRepository<P
 
 	boolean existsByStartDateAndEndDate(LocalDate startDate, LocalDate endDate);
 
-	PeriodOfValidityEntity_georesources findByStartDateAndEndDate(LocalDate startDate, LocalDate endDate);
+	List<PeriodOfValidityEntity_georesources> findByStartDateAndEndDate(LocalDate startDate, LocalDate endDate);
 }

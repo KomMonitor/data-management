@@ -149,7 +149,8 @@ public class SpatialUnitsManager {
 				periodsOfValidityRepo.saveAndFlush(periodEntity);
 			}		
 			else{
-				periodEntity = periodsOfValidityRepo.findByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate());
+				// should there be duplicate entries for same start and end date we simply take the first entry
+				periodEntity = periodsOfValidityRepo.findByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate()).get(0);
 			}
 			spatialUnitsMetadataEntity.addPeriodOfValidityIfNotExists(periodEntity);
 		}
