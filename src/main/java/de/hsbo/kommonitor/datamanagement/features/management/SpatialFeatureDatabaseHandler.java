@@ -45,7 +45,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -82,7 +81,6 @@ public class SpatialFeatureDatabaseHandler {
 
 	private static boolean ADDITIONAL_PROPERTIES_WERE_SET = false;
 	private static boolean MISSING_PROPERTIES_DETECTED = false;
-	private static boolean DATASET_CONTAINS_MULTIPOLYGON = false;
 
 	public static String writeGeoJSONFeaturesToDatabase(ResourceTypeEnum resourceType, String geoJSONFeatures,
 			PeriodOfValidityType periodOfValidity, String correspondingMetadataDatasetId)
@@ -146,13 +144,6 @@ public class SpatialFeatureDatabaseHandler {
 		while (featureIterator.hasNext()) {
 			org.geojson.Feature jakcsonFeature = featureIterator.next();
 			SimpleFeature simpleFeature = featureJSON.readFeature(mapper.writeValueAsString(jakcsonFeature));
-			
-			GeometryType featureType = simpleFeature.getDefaultGeometryProperty().getType();
-			String typeName = featureType.getBinding().getTypeName();
-			
-			if(typeName.contains("MultiPolygon")){
-				DATASET_CONTAINS_MULTIPOLYGON  = true;
-			}
 			
 			try {
 				boolean add = geotoolsFeatures.add(simpleFeature);
