@@ -498,7 +498,7 @@ public class SpatialFeatureDatabaseHandler {
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
 		String geoJsonString = featureData.getGeoJsonString();
 
-		updateSpatialFeaturTable(dbTableName, periodOfValidity, geoJsonString);
+		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString);
 	}
 
 	public static void updateSpatialUnitFeatures(SpatialUnitPUTInputType featureData, String dbTableName)
@@ -507,10 +507,10 @@ public class SpatialFeatureDatabaseHandler {
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
 		String geoJsonString = featureData.getGeoJsonString();
 
-		updateSpatialFeaturTable(dbTableName, periodOfValidity, geoJsonString);
+		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString);
 	}
 
-	private static void updateSpatialFeaturTable(String dbTableName, PeriodOfValidityType periodOfValidity,
+	private static void updateSpatialFeatureTable(String dbTableName, PeriodOfValidityType periodOfValidity,
 			String geoJsonString) throws IOException, Exception {
 		/*
 		 * idea: check all features from input:
