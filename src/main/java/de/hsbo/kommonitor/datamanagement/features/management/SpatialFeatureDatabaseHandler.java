@@ -26,7 +26,6 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.AttributeTypeBuilder;
-import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -556,7 +555,7 @@ public class SpatialFeatureDatabaseHandler {
 
 		FeatureCollection inputFeatureCollection = toGeoToolsFeatureCollection(inputFeatureCollection_jackson, inputFeatureSchema);
 
-		DefaultFeatureCollection newFeaturesToBeAdded = new DefaultFeatureCollection();
+		List<SimpleFeature> newFeaturesToBeAdded = new ArrayList<SimpleFeature>();
 
 		if (inputFeatureSchema.getDescriptor(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME) != null)
 			inputFeaturesHaveArisonFromAttribute = true;
@@ -583,7 +582,7 @@ public class SpatialFeatureDatabaseHandler {
 
 	private static void handleUpdateProcess(String dbTableName, Date startDate_new, Date endDate_new, FilterFactory ff,
 			SimpleFeatureType inputFeatureSchema, FeatureCollection inputFeatureCollection,
-			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureSource featureSource)
+			List<SimpleFeature> newFeaturesToBeAdded, SimpleFeatureSource featureSource)
 			throws IOException, Exception {
 		if (featureSource instanceof SimpleFeatureStore) {
 			SimpleFeatureStore sfStore = (SimpleFeatureStore) featureSource; // write
@@ -601,7 +600,7 @@ public class SpatialFeatureDatabaseHandler {
 			compareDbFeaturesToInputFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
 					newFeaturesToBeAdded, dbFeatures, sfStore);
 
-			compareInputFeaturesToDbFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
+			compareInputFeaturesToDbFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema, inputFeatureCollection,
 					newFeaturesToBeAdded, dbFeatures, sfStore);
 		}
 	}
@@ -744,7 +743,7 @@ public class SpatialFeatureDatabaseHandler {
 	}
 
 	private static void compareDbFeaturesToInputFeatures(String dbTableName, Date startDate_new, Date endDate_new,
-			FilterFactory ff, FeatureCollection inputFeatureCollection, DefaultFeatureCollection newFeaturesToBeAdded,
+			FilterFactory ff, FeatureCollection inputFeatureCollection, List<SimpleFeature> newFeaturesToBeAdded,
 			SimpleFeatureCollection dbFeatures, SimpleFeatureStore sfStore) throws Exception {
 		DefaultTransaction transaction = new DefaultTransaction(
 				"Compare database features to inputFeatures and mark database features as outdated that are not valid anymore in Table "
@@ -844,7 +843,7 @@ public class SpatialFeatureDatabaseHandler {
 	}
 
 	private static void compareInputFeaturesToDbFeatures(String dbTableName, Date startDate_new, Date endDate_new,
-			FilterFactory ff, FeatureCollection inputFeatureCollection, DefaultFeatureCollection newFeaturesToBeAdded,
+			FilterFactory ff, SimpleFeatureType inputFeatureSchema, FeatureCollection inputFeatureCollection, List<SimpleFeature> newFeaturesToBeAdded,
 			SimpleFeatureCollection dbFeatures, SimpleFeatureStore sfStore) throws IOException, Exception {
 		DefaultTransaction transaction = new DefaultTransaction(
 				"Compare inputFeatures to database features and modify database features where necessary in Table "
@@ -878,7 +877,7 @@ public class SpatialFeatureDatabaseHandler {
 			 * hence we have to modify this properties according to the input
 			 * data
 			 */
-			insertNewFeatures(startDate_new, endDate_new, ff, newFeaturesToBeAdded, sfStore);
+			insertNewFeatures(startDate_new, endDate_new, ff, inputFeatureSchema, newFeaturesToBeAdded, sfStore);
 
 			transaction.commit(); // actually writes out the features in one
 			// go
@@ -894,9 +893,12 @@ public class SpatialFeatureDatabaseHandler {
 	}
 
 	private static void insertNewFeatures(Date startDate_new, Date endDate_new, FilterFactory ff,
-			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureStore sfStore)
+			SimpleFeatureType inputFeatureSchema, List<SimpleFeature> newFeaturesToBeAdded, SimpleFeatureStore sfStore)
 			throws IOException, CQLException {
-		List<FeatureId> newFeatureIds = sfStore.addFeatures(newFeaturesToBeAdded);
+		
+		SimpleFeatureCollection collection = new ListFeatureCollection(inputFeatureSchema, newFeaturesToBeAdded);
+		
+		List<FeatureId> newFeatureIds = sfStore.addFeatures(collection);
 		numberOfInsertedEntries = newFeatureIds.size();
 
 		// only update those new features whose startDate and/or endDate are not
@@ -921,7 +923,7 @@ public class SpatialFeatureDatabaseHandler {
 	}
 
 	private static void compareInputFeatureToDbFeatures(Date startDate_new, Date endDate_new, FilterFactory ff,
-			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureStore sfStore,
+			List<SimpleFeature> newFeaturesToBeAdded, SimpleFeatureStore sfStore,
 			SimpleFeatureCollection dbFeatures, FeatureIterator inputFeaturesIterator) throws IOException {
 
 		/*
@@ -958,7 +960,7 @@ public class SpatialFeatureDatabaseHandler {
 	}
 
 	private static void compareFeatures(Date startDate_new, Date endDate_new, FilterFactory ff,
-			DefaultFeatureCollection newFeaturesToBeAdded, SimpleFeatureStore sfStore, Feature inputFeature,
+			List<SimpleFeature> newFeaturesToBeAdded, SimpleFeatureStore sfStore, Feature inputFeature,
 			List<Feature> correspondingDbFeatures) throws IOException {
 
 		/*
