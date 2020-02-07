@@ -43,12 +43,7 @@ public class DateTimeUtil {
 		 * detect dots and take first string
 		 */
 
-		if (dateStr.contains(".")) {
-			logger.info("Detected dot in dateString. Will remove substring to aquire following string: '{}'",
-					dateStr.split("\\.")[0]);
-			// must escape dot in regex
-			dateStr = dateStr.split("\\.")[0];
-		}
+		dateStr = removeTailingDotSubstrings(dateStr);
 
 		try {
 			LocalDate localDate = fromISO8601UTC_localDate(dateStr);
@@ -68,6 +63,16 @@ public class DateTimeUtil {
 
 	}
 
+	private static String removeTailingDotSubstrings(String dateStr) {
+		if (dateStr.contains(".")) {
+			logger.info("Detected dot in dateString. Will remove substring to aquire following string: '{}'",
+					dateStr.split("\\.")[0]);
+			// must escape dot in regex
+			dateStr = dateStr.split("\\.")[0];
+		}
+		return dateStr;
+	}
+
 	private static Date fromLocalDateTime(LocalDateTime localDateTime) {
 		return java.sql.Date.valueOf(localDateTime.toLocalDate());
 	}
@@ -83,12 +88,7 @@ public class DateTimeUtil {
 		 * detect dots and take first string
 		 */
 
-		if (dateStr.contains(".")) {
-			logger.info("Detected dot in dateString. Will remove substring to aquire following string: '{}'",
-					dateStr.split("\\.")[0]);
-			// must escape dot in regex
-			dateStr = dateStr.split("\\.")[0];
-		}
+		dateStr = removeTailingDotSubstrings(dateStr);
 
 		try {
 			return LocalDate.parse(dateStr);
@@ -113,12 +113,7 @@ public class DateTimeUtil {
 		 * detect dots and take first string
 		 */
 
-		if (dateStr.contains(".")) {
-			logger.info("Detected dot in dateString. Will remove substring to aquire following string: '{}'",
-					dateStr.split("\\.")[0]);
-			// must escape dot in regex
-			dateStr = dateStr.split("\\.")[0];
-		}
+		dateStr = removeTailingDotSubstrings(dateStr);
 
 		try {
 			return LocalDateTime.parse(dateStr);
