@@ -779,33 +779,38 @@ public class SpatialFeatureDatabaseHandler {
 			while (dbFeaturesIterator.hasNext()) {
 				Feature dbFeature = dbFeaturesIterator.next();
 
-				if (!dbFeatureIdIsWithinInputFeatures(String.valueOf(dbFeature
-						.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME).getValue()),
-						inputFeatureCollection)) {
+				Property dbFeatureIdProperty = dbFeature
+						.getProperty(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME);
+				if(dbFeatureIdProperty != null){
+					Object dbFeatureIdValue = dbFeatureIdProperty.getValue();
+					if (!dbFeatureIdIsWithinInputFeatures(String.valueOf(dbFeatureIdValue),
+							inputFeatureCollection)) {
 
-					// compare db feature start date to input time period
-					boolean dbFeatureIsWithinInputTimePeriod = false;
-					Date dbFeatureStartDate = (Date) dbFeature
-							.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+						// compare db feature start date to input time period
+						boolean dbFeatureIsWithinInputTimePeriod = false;
+						Date dbFeatureStartDate = (Date) dbFeature
+								.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
 
-					if (dbFeatureStartDate.equals(startDate_new) || dbFeatureStartDate.after(startDate_new)) {
-						// if no endDate was specified
-						if (endDate_new == null) {
-							dbFeatureIsWithinInputTimePeriod = true;
-						} else if (dbFeatureStartDate.before(endDate_new)) {
-							dbFeatureIsWithinInputTimePeriod = true;
+						if (dbFeatureStartDate.equals(startDate_new) || dbFeatureStartDate.after(startDate_new)) {
+							// if no endDate was specified
+							if (endDate_new == null) {
+								dbFeatureIsWithinInputTimePeriod = true;
+							} else if (dbFeatureStartDate.before(endDate_new)) {
+								dbFeatureIsWithinInputTimePeriod = true;
+							}
+						}
+
+						if (dbFeatureIsWithinInputTimePeriod) {
+							// delete the feature from db as it is no longer present
+							// in the updated input feature collection for the
+							// target
+							// time period
+							Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeature);
+							sfStore.removeFeatures(filterForDbFeatureId);
 						}
 					}
-
-					if (dbFeatureIsWithinInputTimePeriod) {
-						// delete the feature from db as it is no longer present
-						// in the updated input feature collection for the
-						// target
-						// time period
-						Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeature);
-						sfStore.removeFeatures(filterForDbFeatureId);
-					}
 				}
+				
 			}
 
 			dbFeaturesIterator.close();
