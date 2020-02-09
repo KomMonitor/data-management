@@ -139,13 +139,18 @@ public class SpatialUnitsManager {
 	
 	private void updatePeriodsOfValidity(MetadataSpatialUnitsEntity spatialUnitsMetadataEntity) throws Exception {
 		AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(spatialUnitsMetadataEntity.getDbTableName());		
+		
+		// reset periodsOfValidity
+		spatialUnitsMetadataEntity.setPeriodsOfValidity(new ArrayList<PeriodOfValidityEntity_spatialUnits>());
+		
 		for (PeriodOfValidityType periodOfValidityType : availablePeriodsOfValidity) {
 			PeriodOfValidityEntity_spatialUnits periodEntity = new PeriodOfValidityEntity_spatialUnits(periodOfValidityType);
 			if(! periodsOfValidityRepo.existsByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate())){
 				periodsOfValidityRepo.saveAndFlush(periodEntity);
 			}		
 			else{
-				periodEntity = periodsOfValidityRepo.findByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate());
+				// should there be duplicate entries for same start and end date we simply take the first entry
+				periodEntity = periodsOfValidityRepo.findByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate()).get(0);
 			}
 			spatialUnitsMetadataEntity.addPeriodOfValidityIfNotExists(periodEntity);
 		}
@@ -291,6 +296,40 @@ public class SpatialUnitsManager {
 		
 		return entity;
 	}
+	
+	public boolean deleteAllSpatialUnitFeaturesByDatasetById(String spatialUnitId) throws Exception {
+		logger.info("Trying to delete all spatialUnit features from dataset with datasetId '{}'", spatialUnitId);
+		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+			MetadataSpatialUnitsEntity metadataEntity= spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+			String datasetName = metadataEntity.getDatasetName();
+			String dbTableName = metadataEntity.getDbTableName();
+			/*
+			 * call DB tool to delete features
+			 */
+			SpatialFeatureDatabaseHandler.deleteAllFeaturesFromFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);
+			
+			// set lastUpdate in metadata in case of successful update
+			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
+			
+			spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
+			
+			// handle OGC web service - null parameter is defaultStyle
+			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
+			
+			/*
+			 * set wms and wfs urls within metadata
+			 */
+			updateMetadataWithOgcServiceUrls(metadataEntity.getDatasetId(), dbTableName);
+			
+			updatePeriodsOfValidity(metadataEntity);
+			
+			return true;
+		} else {
+			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Delete request has no effect.", spatialUnitId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to delete all spatialUnit features for dataset, but no dataset existes with datasetId " + spatialUnitId);
+		}
+	}
 
 	public boolean deleteSpatialUnitDatasetById(String spatialUnitId) throws Exception {
 		logger.info("Trying to delete spatialUnit dataset with datasetId '{}'", spatialUnitId);
@@ -430,7 +469,7 @@ public class SpatialUnitsManager {
 		return swaggerSpatialUnitsMetadata;
 	}
 
-	private List<SpatialUnitOverviewType> sortSpatialUnitsHierarchically(
+	public static List<SpatialUnitOverviewType> sortSpatialUnitsHierarchically(
 			List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata) {
 		
 		List<SpatialUnitOverviewType> backupCopy = new ArrayList<SpatialUnitOverviewType>(swaggerSpatialUnitsMetadata.size());

@@ -83,6 +83,30 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
+	public ResponseEntity deleteAllSpatialUnitFeaturesById(@PathVariable("spatialUnitId") String spatialUnitId) {
+		logger.info("Received request to delete all spatialUnit features for datasetName '{}'", spatialUnitId);
+
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * delete topic with the specified id
+		 */
+
+		boolean isDeleted;
+		try {
+			isDeleted = spatialUnitsManager.deleteAllSpatialUnitFeaturesByDatasetById(spatialUnitId);
+
+			if (isDeleted)
+				return new ResponseEntity<>(HttpStatus.OK);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@Override
 	public ResponseEntity deleteSpatialUnitById(@PathVariable("spatialUnitId") String spatialUnitId) {
 		logger.info("Received request to delete spatialUnit for datasetName '{}'", spatialUnitId);
 

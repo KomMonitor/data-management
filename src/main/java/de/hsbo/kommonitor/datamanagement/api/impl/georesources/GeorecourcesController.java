@@ -87,6 +87,30 @@ public class GeorecourcesController extends BasePathController implements Geores
 	}
 
 	@Override
+	public ResponseEntity deleteAllGeoresourceFeaturesById(@PathVariable("georesourceId") String georesourceId) {
+		logger.info("Received request to delete all georesource features for datasetId '{}'", georesourceId);
+
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * delete topic with the specified id
+		 */
+
+		boolean isDeleted;
+		try {
+			isDeleted = georesourcesManager.deleteAllGeoresourceFeaturesById(georesourceId);
+
+			if (isDeleted)
+				return new ResponseEntity<>(HttpStatus.OK);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@Override
 	public ResponseEntity deleteGeoresourceById(@PathVariable("georesourceId") String georesourceId) {
 		logger.info("Received request to delete georesource for datasetId '{}'", georesourceId);
 

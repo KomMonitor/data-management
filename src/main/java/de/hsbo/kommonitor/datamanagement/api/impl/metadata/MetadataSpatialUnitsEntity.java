@@ -2,6 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -47,7 +48,7 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata {
 	
 	public void addPeriodOfValidityIfNotExists(PeriodOfValidityEntity_spatialUnits periodEntity) throws Exception {
 		if (this.spatialUnitsPeriodsOfValidity == null)
-			this.spatialUnitsPeriodsOfValidity = new ArrayList<PeriodOfValidityEntity_spatialUnits>();
+			this.spatialUnitsPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_spatialUnits>();
 
 			if (!this.spatialUnitsPeriodsOfValidity.contains(periodEntity))
 				this.spatialUnitsPeriodsOfValidity.add(periodEntity);
@@ -55,10 +56,14 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata {
 	
 	public void removePeriodOfValidityIfExists(PeriodOfValidityEntity_spatialUnits periodEntity) throws Exception {
 		if (this.spatialUnitsPeriodsOfValidity == null)
-			this.spatialUnitsPeriodsOfValidity = new ArrayList<PeriodOfValidityEntity_spatialUnits>();
+			this.spatialUnitsPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_spatialUnits>();
 
 			if (this.spatialUnitsPeriodsOfValidity.contains(periodEntity))
 				this.spatialUnitsPeriodsOfValidity.remove(periodEntity);
+	}
+	
+	public void setPeriodsOfValidity(ArrayList<PeriodOfValidityEntity_spatialUnits> periods) {
+		this.spatialUnitsPeriodsOfValidity = periods;
 	}
 	
 	

@@ -2,6 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
@@ -143,13 +144,18 @@ public class GeoresourcesManager {
 
 	private void updatePeriodsOfValidity(MetadataGeoresourcesEntity georesourceMetadataEntity) throws Exception {
 		AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(georesourceMetadataEntity.getDbTableName());		
+		
+		// reset periodsOfValidity
+		georesourceMetadataEntity.setPeriodsOfValidity(new ArrayList<PeriodOfValidityEntity_georesources>());
+		
 		for (PeriodOfValidityType periodOfValidityType : availablePeriodsOfValidity) {
 			PeriodOfValidityEntity_georesources periodEntity = new PeriodOfValidityEntity_georesources(periodOfValidityType);
 			if(! periodsOfValidityRepo.existsByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate())){
 				periodsOfValidityRepo.saveAndFlush(periodEntity);
 			}	
 			else{
-				periodEntity = periodsOfValidityRepo.findByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate());
+				// should there be duplicate entries for same start and end date we simply take the first entry
+				periodEntity = periodsOfValidityRepo.findByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate()).get(0);
 			}
 			georesourceMetadataEntity.addPeriodOfValidityIfNotExists(periodEntity);
 		}
@@ -242,6 +248,7 @@ public class GeoresourcesManager {
 		entity.setPoiSymbolColor(featureData.getPoiSymbolColor());
 		entity.setLoiColor(featureData.getLoiColor());
 		entity.setLoiDashArrayString(featureData.getLoiDashArrayString());
+		entity.setAoiColor(featureData.getAoiColor());
 		
 		entity.setTopicReference(featureData.getTopicReference());
 
@@ -258,6 +265,42 @@ public class GeoresourcesManager {
 				entity.getDatasetId());
 
 		return entity;
+	}
+	
+	public boolean deleteAllGeoresourceFeaturesById(String georesourceId) throws Exception {
+		logger.info("Trying to delete all georesource features for dataset with datasetId '{}'", georesourceId);
+		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+			
+			MetadataGeoresourcesEntity georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+			
+			String dbTableName = georesourceEntity.getDbTableName();
+			/*
+			 * delete features and their properties
+			 */
+			SpatialFeatureDatabaseHandler.deleteAllFeaturesFromFeatureTable(ResourceTypeEnum.GEORESOURCE, dbTableName);
+
+			georesourceEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
+
+			georesourcesMetadataRepo.saveAndFlush(georesourceEntity);
+			
+			// handle OGC web service - null parameter is defaultStyle
+			ogcServiceManager.publishDbLayerAsOgcService(dbTableName, georesourceEntity.getDatasetName(), null, ResourceTypeEnum.GEORESOURCE);
+
+			/*
+			 * set wms and wfs urls within metadata
+			 */
+			updateMetadataWithOgcServiceUrls(georesourceEntity.getDatasetId(), dbTableName);
+			
+			updatePeriodsOfValidity(georesourceEntity);
+
+			return true;
+		} else {
+			logger.error(
+					"No georesource dataset with datasetName '{}' was found in database. Delete request has no effect.",
+					georesourceId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to delete georesource features, but no dataset existes with datasetId " + georesourceId);
+		}
 	}
 
 	public boolean deleteGeoresourceDatasetById(String georesourceId) throws Exception {
@@ -480,6 +523,7 @@ public class GeoresourcesManager {
 		entity.setPoiSymbolColor(metadata.getPoiSymbolColor());
 		entity.setLoiColor(metadata.getLoiColor());
 		entity.setLoiDashArrayString(metadata.getLoiDashArrayString());
+		entity.setAoiColor(metadata.getAoiColor());
 		
 		entity.setTopicReference(metadata.getTopicReference());		
 
@@ -502,6 +546,8 @@ public class GeoresourcesManager {
 		swaggerGeoresourcesMetadata.sort(Comparator.comparing(GeoresourceOverviewType::getDatasetName));
 
 		return swaggerGeoresourcesMetadata;
-	}	
+	}
+
+		
 
 }

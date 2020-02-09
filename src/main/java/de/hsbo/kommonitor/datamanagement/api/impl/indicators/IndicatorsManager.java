@@ -351,7 +351,7 @@ public class IndicatorsManager {
 		return indicatorName + "_" + spatialUnitName;
 	}
 
-	public IndicatorOverviewType getIndicatorById(String indicatorId) throws IOException {
+	public IndicatorOverviewType getIndicatorById(String indicatorId) throws Exception {
 		logger.info("Retrieving indicator metadata for datasetId '{}'", indicatorId);
 		MetadataIndicatorsEntity indicatorsMetadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);	
 		
@@ -364,7 +364,7 @@ public class IndicatorsManager {
 		return swaggerIndicatorMetadata;
 	}
 
-	public List<IndicatorOverviewType> getAllIndicatorsMetadata() throws IOException, SQLException  {
+	public List<IndicatorOverviewType> getAllIndicatorsMetadata() throws Exception  {
 		logger.info("Retrieving all indicators metadata from db");
 
 		List<MetadataIndicatorsEntity> indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll();
@@ -517,7 +517,7 @@ public class IndicatorsManager {
 		}
 	}
 	
-	public boolean deleteIndicatorLayersForSpatialUnitId(String spatialUnitId) throws Exception {
+	public boolean deleteIndicatorLayersForSpatialUnitId(String spatialUnitId) throws Exception{
 		logger.info("Trying to delete all indicator layers associated with the spatialUnitId '{}'", spatialUnitId);
 		if (indicatorsSpatialUnitsRepo.existsBySpatialUnitId(spatialUnitId)) {
 			List<IndicatorSpatialUnitJoinEntity> indicatorDatasetsForSpatialUnit = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
@@ -554,8 +554,9 @@ public class IndicatorsManager {
 			logger.error(
 					"No indicator dataset associated to a spatial unit with id '{}' was found in database. Delete request has no effect.",
 					spatialUnitId);
-			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to delete indicator layers for spatial unit, but no dataset exists that is associated to a spatial unit with id " + spatialUnitId);
+//			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+//					"Tried to delete indicator layers for spatial unit, but no dataset exists that is associated to a spatial unit with id " + spatialUnitId);
+			return false;
 		}
 		
 	}
@@ -749,7 +750,9 @@ public class IndicatorsManager {
 				LocalDate timestamp_localDate = indicatorPOSTInputTypeValueMapping.getTimestamp();
 				Date timestamp_date = DateTimeUtil.fromLocalDate(timestamp_localDate);
 				
-				String timestamp_propertyName = IndicatorDatabaseHandler.createDateStringForDbProperty(timestamp_date);			
+				String timestamp_propertyName = IndicatorDatabaseHandler.createDateStringForDbProperty(timestamp_date);	
+				// replace Date prefix!!!!!! we only require the date itself here
+				timestamp_propertyName = timestamp_propertyName.replace(IndicatorDatabaseHandler.DATE_PREFIX, "");
 				timestamps.add(timestamp_propertyName);
 			}
 			
@@ -764,6 +767,7 @@ public class IndicatorsManager {
 		Date date = new GregorianCalendar(year.intValue(), month.intValue() - 1, day.intValue()).getTime();
 		logger.info("parsing date from submitted date components. Submitted components were 'year: {}, month: {}, day: {}'. As Java time treats month 0-based, the follwing date will be used: 'year-month(-1)-day {}-{}-{}'", year, month, day, year, month.intValue()-1, day);
 		String datePropertyName = IndicatorDatabaseHandler.createDateStringForDbProperty(date);
+		datePropertyName = datePropertyName.replace(IndicatorDatabaseHandler.DATE_PREFIX, "");
 		
 		indicatorMetadataEntry.removeTimestampIfExists(datePropertyName);
 		

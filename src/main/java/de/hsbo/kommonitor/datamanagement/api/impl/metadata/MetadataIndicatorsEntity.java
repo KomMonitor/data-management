@@ -1,7 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -37,12 +37,12 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	@ElementCollection
     @CollectionTable(name = "indicator_timestamps", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"))
     @Column(name = "timestamp")
-    private List<String> availableTimestamps;
+    private Collection<String> availableTimestamps;
 	
 	@ElementCollection
     @CollectionTable(name = "indicator_tags", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"))
     @Column(name = "tag")
-    private List<String> tags;
+    private Collection<String> tags;
 	
 	private String colorBrewerSchemeName;
 	
@@ -148,7 +148,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 		this.interpretation = interpretation;
 	}
 
-	public List<String> getTags() {
+	public Collection<String> getTags() {
 		return tags;
 	}
 
@@ -156,7 +156,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 		this.tags = tags;
 	}
 
-	public List<String> getAvailableTimestamps() {
+	public Collection<String> getAvailableTimestamps() {
 		return availableTimestamps;
 	}
 
@@ -166,15 +166,15 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	
 	public void addTimestampIfNotExist(String timestamp)throws Exception {
 		if (this.availableTimestamps == null)
-			this.availableTimestamps = new ArrayList<>();
+			this.availableTimestamps = new HashSet<String>();
 
 		if (!timestampAlreadyInTimestampReferences(timestamp, this.availableTimestamps))
 			this.availableTimestamps.add(timestamp);
 	}
 	
-	public void addTimestampsIfNotExist(List<String> timestamps)throws Exception {
+	public void addTimestampsIfNotExist(Collection<String> timestamps)throws Exception {
 		if (this.availableTimestamps == null)
-			this.availableTimestamps = new ArrayList<>();
+			this.availableTimestamps = new HashSet<>();
 
 		for (String timestamp : timestamps) {
 			/*
@@ -185,7 +185,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 		}
 	}
 
-	private boolean timestampAlreadyInTimestampReferences(String timestamp, List<String> availableTimestamps) {
+	private boolean timestampAlreadyInTimestampReferences(String timestamp, Collection<String> availableTimestamps) {
 		if (availableTimestamps.contains(timestamp))
 			return true;
 		// if code reaches this line, then the topic is not within the list
@@ -194,7 +194,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	
 	public void removeTimestampIfExists(String timestamp)throws Exception {
 		if (this.availableTimestamps == null)
-			this.availableTimestamps = new ArrayList<>();
+			this.availableTimestamps = new HashSet<>();
 		
 		if (this.availableTimestamps.contains(timestamp)){
 			this.availableTimestamps.remove(timestamp);

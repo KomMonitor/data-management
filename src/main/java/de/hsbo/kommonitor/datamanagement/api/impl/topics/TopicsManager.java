@@ -124,7 +124,9 @@ public class TopicsManager {
 	public List<TopicOverviewType> getTopics() {
 		logger.info("Retrieving all topics from db");
 		
-		List<TopicsEntity> topicEntities = topicsRepo.findAll();
+		// only return main topics as they include the sub topics in use!!!
+		// hence, do not show sub topics on first tier of returned JSON structure but only as subTopics of the respective main topics
+		List<TopicsEntity> topicEntities = topicsRepo.findByTopicType(TopicTypeEnum.MAIN);
 		List<TopicOverviewType> topics = TopicsMapper.mapToSwaggerTopics(topicEntities);
 		
 		topics.sort(Comparator.comparing(TopicOverviewType::getTopicName));

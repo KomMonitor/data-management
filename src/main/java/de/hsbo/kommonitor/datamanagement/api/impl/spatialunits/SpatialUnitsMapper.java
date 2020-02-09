@@ -9,7 +9,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsE
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_spatialUnits;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.SpatialUnitsPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
