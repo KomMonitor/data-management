@@ -39,11 +39,12 @@
         <hibernate.version>5.2.12.Final</hibernate.version>
     </properties>
 
+
     <dependencies>
+
         <dependency>
             <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-2-starter</artifactId>
-            <version>4.0.0.Final</version>
+            <artifactId>keycloak-spring-boot-starter</artifactId>
         </dependency>
     
     	<!-- <dependency>
@@ -286,6 +287,14 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.keycloak.bom</groupId>
+                <artifactId>keycloak-adapter-bom</artifactId>
+                <version>8.0.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

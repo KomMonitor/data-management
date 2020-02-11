@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +36,8 @@ public class InitialUserRolesSetup implements ApplicationListener<ContextRefresh
 	@Autowired
 	private PrivilegesRepository privilegeRepository;
 
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
+//	@Autowired
+//	private BCryptPasswordEncoder passwordEncoder;
 
 	@Override
 	@Transactional
@@ -70,7 +70,7 @@ public class InitialUserRolesSetup implements ApplicationListener<ContextRefresh
 					.findByRoleName(InitialAuthenticationSetupConstants.INITIAL_ADMIN_ROLE_NAME);
 			UsersEntity user = new UsersEntity();
 			user.setUserName(InitialAuthenticationSetupConstants.INITIAL_ADMIN_USER_NAME);
-			user.setPassword(passwordEncoder.encode(InitialAuthenticationSetupConstants.INITIAL_ADMIN_PASSWORD));
+//			user.setPassword(passwordEncoder.encode(InitialAuthenticationSetupConstants.INITIAL_ADMIN_PASSWORD));
 			user.setUserRoles(Arrays.asList(adminRolesEntity));
 			userRepository.save(user);
 		}
