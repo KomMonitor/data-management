@@ -34,7 +34,7 @@ public class DateTimeUtil {
 		//
 		// return null;
 
-		logger.info("Try to parse date or dateTime from following string: {}", dateStr);
+//		logger.info("Try to parse date or dateTime from following string: {}", dateStr);
 
 		/*
 		 * 1999-12-31T23:00:00.000+0000
@@ -65,8 +65,8 @@ public class DateTimeUtil {
 
 	private static String removeTailingDotSubstrings(String dateStr) {
 		if (dateStr.contains(".")) {
-			logger.info("Detected dot in dateString. Will remove substring to aquire following string: '{}'",
-					dateStr.split("\\.")[0]);
+//			logger.info("Detected dot in dateString. Will remove substring to aquire following string: '{}'",
+//					dateStr.split("\\.")[0]);
 			// must escape dot in regex
 			dateStr = dateStr.split("\\.")[0];
 		}
@@ -79,7 +79,7 @@ public class DateTimeUtil {
 
 	public static LocalDate fromISO8601UTC_localDate(String dateStr) {
 
-		logger.info("Try to parse date or dateTime from following string: {}", dateStr);
+//		logger.info("Try to parse date or dateTime from following string: {}", dateStr);
 
 		/*
 		 * 1999-12-31T23:00:00.000+0000
@@ -104,7 +104,7 @@ public class DateTimeUtil {
 
 	public static LocalDateTime fromISO8601UTC_localDateTime(String dateStr) {
 
-		logger.info("Try to parse date or dateTime from following string: {}", dateStr);
+//		logger.info("Try to parse date or dateTime from following string: {}", dateStr);
 
 		/*
 		 * 1999-12-31T23:00:00.000+0000
