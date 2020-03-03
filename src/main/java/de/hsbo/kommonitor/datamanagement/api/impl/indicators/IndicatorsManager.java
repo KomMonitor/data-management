@@ -85,12 +85,18 @@ public class IndicatorsManager {
 			
 			logger.info("Trying to update indicator using follwing parameters: name '{}', characteristicValue '{}', indicatorType '{}', creationType '{}'", indicatorName, characteristicValue, indicatorType, creationType.toString());
 
-			
-			if (indicatorsMetadataRepo.existsByDatasetNameAndCharacteristicValueAndIndicatorType(indicatorName, characteristicValue, indicatorType)) {
-				logger.error(
-						"The indicator metadataset with datasetName '{}', characteristicValue '{}' and indicatorType '{}' already exists. Thus aborting add indicator request.",
-						indicatorName, characteristicValue, indicatorType);
-				throw new Exception("Indicator for indicatorName, characteristicValue and indicatorType already exists. Aborting update indicator request.");
+			/*
+			 * check if there are changes to key-properties 
+			 * 
+			 * if there are changes then we must check, if the combination of three key properties already exists!
+			 */
+			if(keyPropertiesHaveChanged(metadataEntity, indicatorName, characteristicValue, indicatorType)){
+				if (indicatorsMetadataRepo.existsByDatasetNameAndCharacteristicValueAndIndicatorType(indicatorName, characteristicValue, indicatorType)) {
+					logger.error(
+							"The indicator metadataset with datasetName '{}', characteristicValue '{}' and indicatorType '{}' already exists. Thus aborting update indicator request.",
+							indicatorName, characteristicValue, indicatorType);
+					throw new Exception("Indicator for indicatorName, characteristicValue and indicatorType already exists. Aborting update indicator request.");
+				}
 			}
 
 			/*
@@ -141,6 +147,26 @@ public class IndicatorsManager {
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to update indicator metadata, but no dataset existes with datasetId " + indicatorId);
 		}
+	}
+
+	private boolean keyPropertiesHaveChanged(MetadataIndicatorsEntity metadataEntity, String indicatorName,
+			String characteristicValue, IndicatorTypeEnum indicatorType) {
+		
+		if(! metadataEntity.getDatasetName().equalsIgnoreCase(indicatorName)){
+			return true;
+		}
+		// characteristic value might be null, so check for that first
+		if(metadataEntity.getCharacteristicValue() != null){
+			if(! metadataEntity.getCharacteristicValue().equalsIgnoreCase(characteristicValue)){
+				return true;
+			}
+		}
+		
+		if(! metadataEntity.getIndicatorType().equals(indicatorType)){
+			return true;
+		}
+		
+		return false;
 	}
 
 	private void updateMetadata(IndicatorPATCHInputType metadata, MetadataIndicatorsEntity entity) throws Exception{
