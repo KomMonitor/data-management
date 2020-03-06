@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -207,7 +208,7 @@ public class IndicatorsManager {
 		entity.setAbbreviation(metadata.getAbbreviation());
 		entity.setHeadlineIndicator(metadata.isIsHeadlineIndicator());
 		entity.setInterpretation(metadata.getInterpretation());
-		entity.setTags(metadata.getTags());
+		entity.setTags(new HashSet<String>(metadata.getTags()));
 
 		// persist in db
 		indicatorsMetadataRepo.saveAndFlush(entity);
@@ -930,7 +931,7 @@ public class IndicatorsManager {
 		entity.setAbbreviation(indicatorData.getAbbreviation());
 		entity.setHeadlineIndicator(indicatorData.isIsHeadlineIndicator());
 		entity.setInterpretation(indicatorData.getInterpretation());
-		entity.setTags(indicatorData.getTags());
+		entity.setTags(new HashSet<String>(indicatorData.getTags()));
 		
 
 		/*
