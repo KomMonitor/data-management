@@ -608,6 +608,8 @@ public class IndicatorsManager {
 			indicatorMetadataEntry = deleteTimestampInMetadataEntry(year, month, day, indicatorMetadataEntry);	
 			indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
 			
+			indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName());
+			
 			/*
 			 * republish indicator layer as OGC service
 			 */
