@@ -737,7 +737,7 @@ public class IndicatorDatabaseHandler {
 		logger.info("parsing date from submitted date components. Submitted components were 'year: {}, month: {}, day: {}'. As Java time treats month 0-based, the follwing date will be used: 'year-month(-1)-day {}-{}-{}'", year, month, day, year, month.intValue()-1, day);
 		String datePropertyName = createDateStringForDbProperty(date);
 		
-		if(!schemaContainsDateProperty(schema, datePropertyName)){
+		if(schemaContainsDateProperty(schema, datePropertyName)){
 			// add new Property
 			logger.debug("Found matching date column for propert/column '{}' of table '{}'", datePropertyName, schema.getTypeName());
 			foundExistingDateColumn = true;
