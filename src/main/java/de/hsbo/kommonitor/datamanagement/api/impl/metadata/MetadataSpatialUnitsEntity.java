@@ -38,12 +38,12 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata {
 	public void setNextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
 		this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
 	}
-	public Collection<PeriodOfValidityEntity_spatialUnits> getSpatialUnitsPeriodsOfValidity() {
-		return spatialUnitsPeriodsOfValidity;
+	public HashSet<PeriodOfValidityEntity_spatialUnits> getSpatialUnitsPeriodsOfValidity() {
+		return new HashSet<PeriodOfValidityEntity_spatialUnits>(spatialUnitsPeriodsOfValidity);
 	}
 	public void setSpatialUnitsPeriodsOfValidity(
 			Collection<PeriodOfValidityEntity_spatialUnits> spatialUnitsPeriodsOfValidity) {
-		this.spatialUnitsPeriodsOfValidity = spatialUnitsPeriodsOfValidity;
+		this.spatialUnitsPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_spatialUnits>(spatialUnitsPeriodsOfValidity);
 	}
 	
 	public void addPeriodOfValidityIfNotExists(PeriodOfValidityEntity_spatialUnits periodEntity) throws Exception {
@@ -63,7 +63,7 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata {
 	}
 	
 	public void setPeriodsOfValidity(ArrayList<PeriodOfValidityEntity_spatialUnits> periods) {
-		this.spatialUnitsPeriodsOfValidity = periods;
+		this.spatialUnitsPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_spatialUnits>(periods);
 	}
 	
 	

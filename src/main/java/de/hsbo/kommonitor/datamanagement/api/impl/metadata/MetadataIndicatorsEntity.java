@@ -61,8 +61,8 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid"))
 	private Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems;
 	
-	public Collection<DefaultClassificationMappingItemType> getDefaultClassificationMappingItems() {
-		return defaultClassificationMappingItems;
+	public HashSet<DefaultClassificationMappingItemType> getDefaultClassificationMappingItems() {
+		return new HashSet<DefaultClassificationMappingItemType>(defaultClassificationMappingItems);
 	}
 
 	public void setDefaultClassificationMappingItems(
@@ -72,7 +72,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 //		
 //		Collections.sort(list);
 		
-		this.defaultClassificationMappingItems = defaultClassificationMappingItems;
+		this.defaultClassificationMappingItems = new HashSet<DefaultClassificationMappingItemType>(defaultClassificationMappingItems);
 	}
 
 	public String getProcessDescription() {
@@ -156,7 +156,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	}
 
 	public HashSet<String> getAvailableTimestamps() {
-		return new HashSet(availableTimestamps);
+		return new HashSet<String>(availableTimestamps);
 	}
 
 	public void setAvailableTimestamps(HashSet<String> availableTimestamps) {
