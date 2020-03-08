@@ -88,6 +88,7 @@ private static GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepo;
 		dataset.setPoiMarkerColor(georesourceMetadataEntity.getPoiMarkerColor());
 		dataset.setPoiSymbolColor(georesourceMetadataEntity.getPoiSymbolColor());
 		dataset.setLoiColor(georesourceMetadataEntity.getLoiColor());
+		dataset.setLoiWidth(new BigDecimal(georesourceMetadataEntity.getLoiWidth()));
 		dataset.setLoiDashArrayString(georesourceMetadataEntity.getLoiDashArrayString());
 		dataset.setAoiColor(georesourceMetadataEntity.getAoiColor());
 		

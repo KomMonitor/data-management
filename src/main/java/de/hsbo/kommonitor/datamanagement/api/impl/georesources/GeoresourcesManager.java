@@ -247,6 +247,7 @@ public class GeoresourcesManager {
 		entity.setPoiMarkerColor(featureData.getPoiMarkerColor());
 		entity.setPoiSymbolColor(featureData.getPoiSymbolColor());
 		entity.setLoiColor(featureData.getLoiColor());
+		entity.setLoiWidth(featureData.getLoiWidth().intValue());
 		entity.setLoiDashArrayString(featureData.getLoiDashArrayString());
 		entity.setAoiColor(featureData.getAoiColor());
 		
@@ -522,6 +523,7 @@ public class GeoresourcesManager {
 		entity.setPoiMarkerColor(metadata.getPoiMarkerColor());
 		entity.setPoiSymbolColor(metadata.getPoiSymbolColor());
 		entity.setLoiColor(metadata.getLoiColor());
+		entity.setLoiWidth(metadata.getLoiWidth().intValue());
 		entity.setLoiDashArrayString(metadata.getLoiDashArrayString());
 		entity.setAoiColor(metadata.getAoiColor());
 		

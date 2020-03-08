@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.model.georesources;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * GeoresourcePATCHInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-01-04T22:26:48.964+01:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-03-08T20:17:51.649+01:00")
 
 public class GeoresourcePATCHInputType   {
   @JsonProperty("metadata")
@@ -41,6 +42,9 @@ public class GeoresourcePATCHInputType   {
   @JsonProperty("loiColor")
   private String loiColor = null;
 
+  @JsonProperty("loiWidth")
+  private BigDecimal loiWidth = null;
+
   @JsonProperty("loiDashArrayString")
   private String loiDashArrayString = null;
 
@@ -50,8 +54,10 @@ public class GeoresourcePATCHInputType   {
   @JsonProperty("poiSymbolBootstrap3Name")
   private String poiSymbolBootstrap3Name = null;
 
+
   @JsonProperty("poiMarkerColor")
   private PoiMarkerColorEnum poiMarkerColor = null;
+
 
   @JsonProperty("poiSymbolColor")
   private PoiSymbolColorEnum poiSymbolColor = null;
@@ -127,7 +133,7 @@ public class GeoresourcePATCHInputType   {
    * id of the last topic hierarchy entity 
    * @return topicReference
   **/
-  @ApiModelProperty(required = true, value = "id of the last topic hierarchy entity ")
+  @ApiModelProperty(value = "id of the last topic hierarchy entity ")
   public String getTopicReference() {
     return topicReference;
   }
@@ -206,6 +212,24 @@ public class GeoresourcePATCHInputType   {
 
   public void setLoiColor(String loiColor) {
     this.loiColor = loiColor;
+  }
+
+  public GeoresourcePATCHInputType loiWidth(BigDecimal loiWidth) {
+    this.loiWidth = loiWidth;
+    return this;
+  }
+
+   /**
+   * display width for lines of interest (number of pixels in leaflet)
+   * @return loiWidth
+  **/
+  @ApiModelProperty(value = "display width for lines of interest (number of pixels in leaflet)")
+  public BigDecimal getLoiWidth() {
+    return loiWidth;
+  }
+
+  public void setLoiWidth(BigDecimal loiWidth) {
+    this.loiWidth = loiWidth;
   }
 
   public GeoresourcePATCHInputType loiDashArrayString(String loiDashArrayString) {
@@ -316,6 +340,7 @@ public class GeoresourcePATCHInputType   {
         Objects.equals(this.isLOI, georesourcePATCHInputType.isLOI) &&
         Objects.equals(this.isAOI, georesourcePATCHInputType.isAOI) &&
         Objects.equals(this.loiColor, georesourcePATCHInputType.loiColor) &&
+        Objects.equals(this.loiWidth, georesourcePATCHInputType.loiWidth) &&
         Objects.equals(this.loiDashArrayString, georesourcePATCHInputType.loiDashArrayString) &&
         Objects.equals(this.aoiColor, georesourcePATCHInputType.aoiColor) &&
         Objects.equals(this.poiSymbolBootstrap3Name, georesourcePATCHInputType.poiSymbolBootstrap3Name) &&
@@ -325,7 +350,7 @@ public class GeoresourcePATCHInputType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(metadata, datasetName, allowedRoles, topicReference, isPOI, isLOI, isAOI, loiColor, loiDashArrayString, aoiColor, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor);
+    return Objects.hash(metadata, datasetName, allowedRoles, topicReference, isPOI, isLOI, isAOI, loiColor, loiWidth, loiDashArrayString, aoiColor, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor);
   }
 
   @Override
@@ -341,6 +366,7 @@ public class GeoresourcePATCHInputType   {
     sb.append("    isLOI: ").append(toIndentedString(isLOI)).append("\n");
     sb.append("    isAOI: ").append(toIndentedString(isAOI)).append("\n");
     sb.append("    loiColor: ").append(toIndentedString(loiColor)).append("\n");
+    sb.append("    loiWidth: ").append(toIndentedString(loiWidth)).append("\n");
     sb.append("    loiDashArrayString: ").append(toIndentedString(loiDashArrayString)).append("\n");
     sb.append("    aoiColor: ").append(toIndentedString(aoiColor)).append("\n");
     sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");

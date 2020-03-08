@@ -31,6 +31,8 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 	private String poiSymbolBootstrap3Name;
 	
 	private String loiColor = null;
+	
+	private Integer loiWidth = null;
 
 	private String loiDashArrayString = null;
 	
@@ -154,6 +156,14 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 
 	public void setAoiColor(String aoiColor) {
 		this.aoiColor = aoiColor;
+	}
+
+	public Integer getLoiWidth() {
+		return loiWidth;
+	}
+
+	public void setLoiWidth(Integer loiWidth) {
+		this.loiWidth = loiWidth;
 	}
 
 }
