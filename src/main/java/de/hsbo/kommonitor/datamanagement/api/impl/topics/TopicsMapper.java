@@ -24,6 +24,7 @@ public class TopicsMapper {
 		topic.setTopicName(topicEntity.getTopicName());
 		topic.setTopicDescription(topicEntity.getTopicDescription());
 		topic.setTopicType(topicEntity.getTopicType());
+		topic.setTopicResource(topicEntity.getTopicResource());
 		topic.setSubTopics(mapToSwaggerSubTopics(topicEntity.getSubTopics()));
 		
 		return topic;
