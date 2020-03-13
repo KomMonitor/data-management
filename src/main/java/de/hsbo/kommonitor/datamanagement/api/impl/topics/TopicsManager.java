@@ -223,10 +223,13 @@ public class TopicsManager {
 			TopicTypeEnum topicType = topicData.getTopicType();
 			TopicResourceEnum topicResource = topicData.getTopicResource();
 			
-			if(topicsRepo.existsByTopicNameAndTopicTypeAndTopicResource(topicName, topicType, topicResource)){
-				logger.error("The topic with topicName '{}' and topicType '{}' and topicResource '{}' already exists. Thus aborting update topic request.", topicName, topicType, topicResource);
-				throw new Exception("Topic with the combination of topicType, topicResource and topicName already exists. Aborting update topic request.");
-			}
+			// here code must at least check, if the information for the topicId was changed and only then throw error if the combination already exists.
+			
+			
+//			if(topicsRepo.existsByTopicNameAndTopicTypeAndTopicResource(topicName, topicType, topicResource)){
+//				logger.error("The topic with topicName '{}' and topicType '{}' and topicResource '{}' already exists. Thus aborting update topic request.", topicName, topicType, topicResource);
+//				throw new Exception("Topic with the combination of topicType, topicResource and topicName already exists. Aborting update topic request.");
+//			}
 			
 			TopicsEntity topic = topicsRepo.findByTopicId(topicId);
 			topic.setTopicName(topicName);
