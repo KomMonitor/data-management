@@ -560,17 +560,12 @@ public class SpatialFeatureDatabaseHandler {
 		if (inputFeatureSchema.getDescriptor(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME) != null)
 			inputFeaturesHaveArisonFromAttribute = true;
 
-		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
-		SimpleFeatureSource featureSource = store.getFeatureSource(dbTableName);
-
 		handleUpdateProcess(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema, inputFeatureCollection,
-				newFeaturesToBeAdded, featureSource);
+				newFeaturesToBeAdded);
 
 		logger.info(
 				"Update of feature table {} was successful. Modified {} entries. Added {} new entries. Marked {} entries as outdated.",
 				dbTableName, numberOfModifiedEntries, numberOfInsertedEntries, numberOfEntriesMarkedAsOutdated);
-
-		store.dispose();
 	}
 
 	private static FeatureJSON instantiateFeatureJSON() {
@@ -582,15 +577,28 @@ public class SpatialFeatureDatabaseHandler {
 
 	private static void handleUpdateProcess(String dbTableName, Date startDate_new, Date endDate_new, FilterFactory ff,
 			SimpleFeatureType inputFeatureSchema, FeatureCollection inputFeatureCollection,
-			List<SimpleFeature> newFeaturesToBeAdded, SimpleFeatureSource featureSource)
+			List<SimpleFeature> newFeaturesToBeAdded)
 			throws IOException, Exception {
-		if (featureSource instanceof SimpleFeatureStore) {
+		
+		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
+		SimpleFeatureSource featureSource = store.getFeatureSource(dbTableName);
+		
+		if (featureSource instanceof SimpleFeatureStore) {			
+
+			SimpleFeatureType dbSchema = featureSource.getSchema();
+			compareSchemas(inputFeatureSchema, dbSchema, dbTableName);
+			
+			// reretrieve feature source if new properties were added
+			if(ADDITIONAL_PROPERTIES_WERE_SET){
+				store.dispose();
+				store = DatabaseHelperUtil.getPostGisDataStore();
+				featureSource = store.getFeatureSource(dbTableName);
+				dbSchema = featureSource.getSchema();
+			}		
+			
 			SimpleFeatureStore sfStore = (SimpleFeatureStore) featureSource; // write
-																				// access!
-
+			// access!
 			SimpleFeatureCollection dbFeatures = featureSource.getFeatures();
-
-			compareSchemas(inputFeatureSchema, featureSource.getSchema(), dbTableName);
 
 			/*
 			 * check all dbEntries, if they might have to be assigned with a new
@@ -603,6 +611,7 @@ public class SpatialFeatureDatabaseHandler {
 			compareInputFeaturesToDbFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema, inputFeatureCollection,
 					newFeaturesToBeAdded, dbFeatures, sfStore);
 		}
+		store.dispose();
 	}
 
 	private static void compareSchemas(SimpleFeatureType inputFeatureSchema, SimpleFeatureType dbSchema,
@@ -1293,7 +1302,7 @@ public class SpatialFeatureDatabaseHandler {
 								.equalsIgnoreCase(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME)) {
 					for (Property inputProperty : inputProperties) {
 						if (dbProperty.getName().equals(inputProperty.getName())) {
-							if (!dbProperty.getValue().equals(inputProperty.getValue())) {
+							if (dbProperty.getValue() != null && !dbProperty.getValue().equals(inputProperty.getValue())) {
 								return false;
 							}
 						}
