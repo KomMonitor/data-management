@@ -53,7 +53,11 @@ public class CommonMetadataType   {
     
     HALF_YEARLY("HALF_YEARLY"),
     
-    YEARLY("YEARLY");
+    YEARLY("YEARLY"),
+	  
+	DAILY("DAILY"),
+	
+	WEEKLY("WEEKLY");
 
     private String value;
 
