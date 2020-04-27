@@ -3,6 +3,8 @@ package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.GeoresourcesPeriodsOfValidityRepository;
@@ -57,10 +59,29 @@ private static GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepo;
 //		georesourceMetadataRepo.saveAndFlush(georesourceMetadataEntity);	
 		
 		Collection<PeriodOfValidityEntity_georesources> georesourcesPeriodsOfValidityEntities = georesourceMetadataEntity.getGeoresourcesPeriodsOfValidity();		
+		
+		Comparator<PeriodOfValidityEntity_georesources> compareByTimePeriod = new Comparator<PeriodOfValidityEntity_georesources>() {
+		    @Override
+		    public int compare(PeriodOfValidityEntity_georesources o1, PeriodOfValidityEntity_georesources o2) {
+		        int result =  o1.getStartDate().compareTo(o2.getStartDate());
+		        
+		        if (result == 0) {
+		        	result = o1.getEndDate().compareTo(o2.getEndDate());
+		        }
+		        
+		        return result;
+		    }
+		};
+		
+		// sort periods from prior dates to later dates
+		List<PeriodOfValidityEntity_georesources> georesourcesPeriodsOfValidityEntities_asOrderedList = new ArrayList<>(georesourcesPeriodsOfValidityEntities);
+		Collections.sort(georesourcesPeriodsOfValidityEntities_asOrderedList, compareByTimePeriod);		
+		
 		AvailablePeriodsOfValidityType availablePeriodsOfValidityType = new AvailablePeriodsOfValidityType();
-		for (PeriodOfValidityEntity_georesources periodOfValidityEntity_georesources : georesourcesPeriodsOfValidityEntities) {
+		for (PeriodOfValidityEntity_georesources periodOfValidityEntity_georesources : georesourcesPeriodsOfValidityEntities_asOrderedList) {
 			availablePeriodsOfValidityType.add(new PeriodOfValidityType(periodOfValidityEntity_georesources));
 		}
+		
 		
 		dataset.setAvailablePeriodsOfValidity(
 				availablePeriodsOfValidityType);
