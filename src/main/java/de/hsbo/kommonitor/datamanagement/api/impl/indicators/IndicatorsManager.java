@@ -337,27 +337,32 @@ public class IndicatorsManager {
 			String indicatorViewTableName) throws Exception {
 		// sorted list of ascending dates
 		List<String> availableDates = IndicatorDatabaseHandler.getAvailableDates(indicatorViewTableName);
-		//pick the most current date and use its property for default style
-		String mostCurrentDate = availableDates.get(availableDates.size()-1);
-//		mostCurrentDate = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
-//		
-//		
-//		List<Float> indicatorValues = IndicatorDatabaseHandler.getAllIndicatorValues(indicatorValueTableName, mostCurrentDate);
-//		
-		// year-month-day
-		String[] dateComponents = mostCurrentDate.split("-");
 		
-		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
-		FeatureCollection validFeatures = IndicatorDatabaseHandler.getValidFeaturesAsFeatureCollection(dataStore, indicatorViewTableName,new BigDecimal(dateComponents[0]), new BigDecimal(dateComponents[1]), new BigDecimal(dateComponents[2]));
+		if(availableDates != null && availableDates.size() > 0) {
+			//pick the most current date and use its property for default style
+			String mostCurrentDate = availableDates.get(availableDates.size()-1);
+//			mostCurrentDate = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
+//			
+//			
+//			List<Float> indicatorValues = IndicatorDatabaseHandler.getAllIndicatorValues(indicatorValueTableName, mostCurrentDate);
+//			
+			// year-month-day
+			String[] dateComponents = mostCurrentDate.split("-");
+			
+			DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+			FeatureCollection validFeatures = IndicatorDatabaseHandler.getValidFeaturesAsFeatureCollection(dataStore, indicatorViewTableName,new BigDecimal(dateComponents[0]), new BigDecimal(dateComponents[1]), new BigDecimal(dateComponents[2]));
+			
+			String targetPropertyName = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
+			
+			// handle OGC web service
+			String styleName = ogcServiceManager.createAndPublishStyle(datasetTitle, validFeatures, defaultClassificationMappingType, targetPropertyName);
+			
+			DatabaseHelperUtil.disposePostGisDataStore(dataStore);
+			return styleName;
+		}
 		
-		String targetPropertyName = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
 		
-		// handle OGC web service
-		String styleName = ogcServiceManager.createAndPublishStyle(datasetTitle, validFeatures, defaultClassificationMappingType, targetPropertyName);
-		
-		DatabaseHelperUtil.disposePostGisDataStore(dataStore);
-		
-		return styleName;
+		return null;
 	}
 
 	private void checkInputData(IndicatorPUTInputType indicatorData) throws Exception {
