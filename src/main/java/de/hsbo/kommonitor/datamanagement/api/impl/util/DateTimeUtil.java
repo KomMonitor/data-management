@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import org.slf4j.Logger;
@@ -74,7 +75,9 @@ public class DateTimeUtil {
 	}
 
 	private static Date fromLocalDateTime(LocalDateTime localDateTime) {
-		return java.sql.Date.valueOf(localDateTime.toLocalDate());
+		
+		Date date = new GregorianCalendar(localDateTime.getYear(), localDateTime.getMonthValue() - 1, localDateTime.getDayOfMonth()).getTime();
+		return date;
 	}
 
 	public static LocalDate fromISO8601UTC_localDate(String dateStr) {
@@ -128,7 +131,10 @@ public class DateTimeUtil {
 	}
 
 	public static Date fromLocalDate(LocalDate date) {
-		return java.sql.Date.valueOf(date);
+		
+		Date date2 = new GregorianCalendar(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth()).getTime();
+		
+		return date2;
 	}
 
 	public static LocalDate toLocalDate(Date date) {

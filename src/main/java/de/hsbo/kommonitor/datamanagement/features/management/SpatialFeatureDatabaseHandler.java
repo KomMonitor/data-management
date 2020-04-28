@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -143,6 +144,22 @@ public class SpatialFeatureDatabaseHandler {
 		while (featureIterator.hasNext()) {
 			org.geojson.Feature jakcsonFeature = featureIterator.next();
 			SimpleFeature simpleFeature = featureJSON.readFeature(mapper.writeValueAsString(jakcsonFeature));
+			
+			/*
+			 * modify period of validity entries if present, to set hours/minutes/seconds to 0
+			 */
+			Object startDate = simpleFeature.getAttribute(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+			Object endDate = simpleFeature.getAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+			if(startDate != null) {
+				Date startDate_date = DateTimeUtil.fromISO8601UTC((String)startDate);
+				
+				simpleFeature.setAttribute(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_date);
+			}
+			if(endDate != null) {
+				Date endDate_date = DateTimeUtil.fromISO8601UTC((String)endDate);
+				
+				simpleFeature.setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_date);
+			}
 			
 			try {
 				boolean add = geotoolsFeatures.add(simpleFeature);
