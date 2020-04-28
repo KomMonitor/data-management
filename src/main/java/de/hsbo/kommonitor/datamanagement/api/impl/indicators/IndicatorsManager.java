@@ -772,7 +772,7 @@ public class IndicatorsManager {
 		
 		List<String> timestamps = new ArrayList<String>();
 		
-		if (indicatorValues != null){
+		if (indicatorValues != null && indicatorValues.size() > 0){
 			List<IndicatorPOSTInputTypeValueMapping> exampleValueMapping = indicatorValues.get(0).getValueMapping();
 			
 			for (IndicatorPOSTInputTypeValueMapping indicatorPOSTInputTypeValueMapping : exampleValueMapping) {
