@@ -625,11 +625,15 @@ public class IndicatorsManager {
 			
 			String styleName;
 			
-			DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
-			styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
-			
-			// handle OGC web service
-			ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
+			try {
+				DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+				styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
+				
+				// handle OGC web service
+				ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
+			} catch (Exception e) {
+				logger.error("Error while publishing as OGC service. Error is: \n{}", e);
+			}			
 			return true;
 		} else {
 			logger.error(

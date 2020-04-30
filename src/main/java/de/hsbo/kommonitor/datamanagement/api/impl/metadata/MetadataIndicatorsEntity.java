@@ -199,7 +199,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 		if (this.availableTimestamps == null)
 			this.availableTimestamps = new HashSet<>();
 		
-		if (this.availableTimestamps.contains(timestamp)){
+		while (this.availableTimestamps.contains(timestamp)){
 			this.availableTimestamps.remove(timestamp);
 		}
 		
