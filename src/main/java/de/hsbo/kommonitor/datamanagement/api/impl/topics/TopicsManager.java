@@ -43,6 +43,14 @@ public class TopicsManager {
 	TopicsRepository topicsRepo;
 
 	public String addTopic(TopicInputType topicData) throws Exception {
+		String topicName = topicData.getTopicName();
+		TopicResourceEnum topicResource = topicData.getTopicResource();
+		TopicTypeEnum topicType = topicData.getTopicType();
+		if(topicsRepo.existsByTopicNameAndTopicTypeAndTopicResource(topicName, topicType, topicResource)){
+			logger.error("The topic with topicName '{}' and topicType '{}' and topicResource '{}' already exists. Thus aborting add topic request.", topicName, topicType, topicResource);
+			throw new Exception("Topic with the combination of topicType, topicResource and topicName already exists. Aborting add topic request.");
+		}
+		
 		TopicsEntity topic = tryPersistTopicWithoutSubtopics(topicData);		
 		
 		topic = handleSubTopics(topic, topicData.getSubTopics());
@@ -67,18 +75,26 @@ public class TopicsManager {
 		 * as we assume that in each requests (POST or PUT) the whole topics hierarchy is delivered
 		 * --> hence we build it each time anew
 		 */
+		Collection<TopicsEntity> currentSubTopics = topicEntity.getSubTopics();
+		
+		
 		topicEntity.setSubTopics(new ArrayList<TopicsEntity>());
 		
 		for (TopicInputType subTopic : subTopics) {
 			
 			TopicsEntity subTopicEntity = null;
 			
-			if (! topicsRepo.existsByTopicName(subTopic.getTopicName())){
+//			if (! topicsRepo.existsByTopicName(subTopic.getTopicName())){
+//				subTopicEntity = tryPersistTopicWithoutSubtopics(subTopic);
+//				
+//			}
+			if (! isAlreadyInSubtopics_byName(subTopic, currentSubTopics)){
 				subTopicEntity = tryPersistTopicWithoutSubtopics(subTopic);
 				
 			}
 			else{
-				subTopicEntity = topicsRepo.findByTopicName(subTopic.getTopicName());
+//				subTopicEntity = topicsRepo.findByTopicName(subTopic.getTopicName());
+				subTopicEntity = getCurrentSubTopic_byName(subTopic, currentSubTopics);
 			}
 			
 			topicEntity.addSubTopicIfNotExists(subTopicEntity);
@@ -88,6 +104,25 @@ public class TopicsManager {
 		}
 		
 		return topicEntity;
+	}
+
+	private TopicsEntity getCurrentSubTopic_byName(TopicInputType subTopicCandidate, Collection<TopicsEntity> currentSubTopics) {
+		for (TopicsEntity currentSubTopic : currentSubTopics) {
+			if(currentSubTopic.getTopicName().equals(subTopicCandidate.getTopicName())) {
+				return currentSubTopic;
+			}
+		}
+		return null;
+	}
+
+	private boolean isAlreadyInSubtopics_byName(TopicInputType subTopicCandidate, Collection<TopicsEntity> currentSubTopics) {
+		
+		for (TopicsEntity currentSubTopic : currentSubTopics) {
+			if(currentSubTopic.getTopicName().equals(subTopicCandidate.getTopicName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private TopicsEntity tryPersistTopicWithoutSubtopics(TopicInputType topicData) throws Exception {
@@ -105,11 +140,6 @@ public class TopicsManager {
 		 * 
 		 * return id
 		 */
-		
-		if(topicsRepo.existsByTopicNameAndTopicTypeAndTopicResource(topicName, topicType, topicResource)){
-			logger.error("The topic with topicName '{}' and topicType '{}' and topicResource '{}' already exists. Thus aborting add topic request.", topicName, topicType, topicResource);
-			throw new Exception("Topic with the combination of topicType, topicResource and topicName already exists. Aborting add topic request.");
-		}
 			
 		
 		TopicsEntity topic = new TopicsEntity();
