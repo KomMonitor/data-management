@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -579,6 +578,8 @@ public class SpatialFeatureDatabaseHandler {
 
 		handleUpdateProcess(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema, inputFeatureCollection,
 				newFeaturesToBeAdded);
+		
+		DatabaseHelperUtil.runVacuumAnalyse(dbTableName);
 
 		logger.info(
 				"Update of feature table {} was successful. Modified {} entries. Added {} new entries. Marked {} entries as outdated.",
