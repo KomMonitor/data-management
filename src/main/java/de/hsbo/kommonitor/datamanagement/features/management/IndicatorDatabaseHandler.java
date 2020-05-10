@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,7 +14,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.geotools.data.DataAccess;
 import org.geotools.data.DataStore;
@@ -480,20 +478,18 @@ public class IndicatorDatabaseHandler {
 	private static void addNewColumnsToTable(String indicatorValueTableName,
 			List<String> additionalPropertyNamesToAddAsFloatColumns) throws Exception {
 		Connection jdbcConnection = null;
-		PreparedStatement alterTableStmt = null;
+		Statement alterTableStmt = null;
 		
 		try {
 			// establish JDBC connection
 			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
-			alterTableStmt = jdbcConnection.prepareStatement("ALTER TABLE \"" + indicatorValueTableName + "\" ADD COLUMN '?' real");
+			alterTableStmt = jdbcConnection.createStatement();
 			
 			Iterator<String> iterator = additionalPropertyNamesToAddAsFloatColumns.iterator();
 			
 			while(iterator.hasNext()){
 				String columnName = iterator.next();
-				alterTableStmt.setString(1, columnName);
-				alterTableStmt.addBatch();
-
+				alterTableStmt.addBatch("ALTER TABLE \"" + indicatorValueTableName + "\" ADD COLUMN \"" + columnName + "\" real");
 			}
 			
 			logger.info("Adding new DATABASE COLUMNS...");
