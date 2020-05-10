@@ -485,7 +485,7 @@ public class IndicatorDatabaseHandler {
 		try {
 			// establish JDBC connection
 			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
-			alterTableStmt = jdbcConnection.prepareStatement("ALTER TABLE \"" + indicatorValueTableName + "\" ADD COLUMN \"?\" real");
+			alterTableStmt = jdbcConnection.prepareStatement("ALTER TABLE \"" + indicatorValueTableName + "\" ADD COLUMN '?' real");
 			
 			Iterator<String> iterator = additionalPropertyNamesToAddAsFloatColumns.iterator();
 			
