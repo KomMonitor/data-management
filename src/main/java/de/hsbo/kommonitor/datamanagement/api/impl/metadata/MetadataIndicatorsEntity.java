@@ -2,7 +2,6 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -62,8 +61,8 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid"))
 	private Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems;
 	
-	public Collection<DefaultClassificationMappingItemType> getDefaultClassificationMappingItems() {
-		return defaultClassificationMappingItems;
+	public HashSet<DefaultClassificationMappingItemType> getDefaultClassificationMappingItems() {
+		return new HashSet<DefaultClassificationMappingItemType>(defaultClassificationMappingItems);
 	}
 
 	public void setDefaultClassificationMappingItems(
@@ -73,7 +72,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 //		
 //		Collections.sort(list);
 		
-		this.defaultClassificationMappingItems = defaultClassificationMappingItems;
+		this.defaultClassificationMappingItems = new HashSet<DefaultClassificationMappingItemType>(defaultClassificationMappingItems);
 	}
 
 	public String getProcessDescription() {
@@ -148,19 +147,19 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 		this.interpretation = interpretation;
 	}
 
-	public Collection<String> getTags() {
-		return tags;
+	public HashSet<String> getTags() {
+		return new HashSet<String>(tags);
 	}
 
-	public void setTags(List<String> tags) {
+	public void setTags(HashSet<String> tags) {
 		this.tags = tags;
 	}
 
-	public Collection<String> getAvailableTimestamps() {
-		return availableTimestamps;
+	public HashSet<String> getAvailableTimestamps() {
+		return new HashSet<String>(availableTimestamps);
 	}
 
-	public void setAvailableTimestamps(List<String> availableTimestamps) {
+	public void setAvailableTimestamps(HashSet<String> availableTimestamps) {
 		this.availableTimestamps = availableTimestamps;
 	}
 	
@@ -170,6 +169,8 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 
 		if (!timestampAlreadyInTimestampReferences(timestamp, this.availableTimestamps))
 			this.availableTimestamps.add(timestamp);
+		
+		this.availableTimestamps = new HashSet<String>(this.availableTimestamps);
 	}
 	
 	public void addTimestampsIfNotExist(Collection<String> timestamps)throws Exception {
@@ -183,6 +184,8 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 			if (!timestampAlreadyInTimestampReferences(timestamp, this.availableTimestamps))
 				this.availableTimestamps.add(timestamp);
 		}
+		
+		this.availableTimestamps = new HashSet<String>(this.availableTimestamps);
 	}
 
 	private boolean timestampAlreadyInTimestampReferences(String timestamp, Collection<String> availableTimestamps) {
@@ -196,9 +199,11 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 		if (this.availableTimestamps == null)
 			this.availableTimestamps = new HashSet<>();
 		
-		if (this.availableTimestamps.contains(timestamp)){
+		while (this.availableTimestamps.contains(timestamp)){
 			this.availableTimestamps.remove(timestamp);
 		}
+		
+		this.availableTimestamps = new HashSet<String>(this.availableTimestamps);
 	}
 
 	public String getCharacteristicValue() {

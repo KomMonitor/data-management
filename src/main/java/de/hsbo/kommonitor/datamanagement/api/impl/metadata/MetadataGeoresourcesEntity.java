@@ -31,6 +31,8 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 	private String poiSymbolBootstrap3Name;
 	
 	private String loiColor = null;
+	
+	private Integer loiWidth = null;
 
 	private String loiDashArrayString = null;
 	
@@ -65,7 +67,7 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 	}
 	
 	public void setPeriodsOfValidity(Collection<PeriodOfValidityEntity_georesources> periods){
-		this.georesourcesPeriodsOfValidity = periods;
+		this.georesourcesPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_georesources>(periods);
 	}
 
 	public boolean isPOI() {
@@ -100,12 +102,12 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 		this.poiSymbolColor = poiSymbolColor;
 	}
 
-	public Collection<PeriodOfValidityEntity_georesources> getGeoresourcesPeriodsOfValidity() {
-		return georesourcesPeriodsOfValidity;
+	public HashSet<PeriodOfValidityEntity_georesources> getGeoresourcesPeriodsOfValidity() {
+		return new HashSet<PeriodOfValidityEntity_georesources>(georesourcesPeriodsOfValidity);
 	}
 
 	public void setGeoresourcesPeriodsOfValidity(Collection<PeriodOfValidityEntity_georesources> georesourcesPeriodsOfValidity) {
-		this.georesourcesPeriodsOfValidity = georesourcesPeriodsOfValidity;
+		this.georesourcesPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_georesources>(georesourcesPeriodsOfValidity);
 	}
 
 	public boolean isLOI() {
@@ -154,6 +156,14 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 
 	public void setAoiColor(String aoiColor) {
 		this.aoiColor = aoiColor;
+	}
+
+	public Integer getLoiWidth() {
+		return loiWidth;
+	}
+
+	public void setLoiWidth(Integer loiWidth) {
+		this.loiWidth = loiWidth;
 	}
 
 }

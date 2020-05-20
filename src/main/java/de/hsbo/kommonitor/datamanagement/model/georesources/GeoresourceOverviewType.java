@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.model.georesources;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * GeoresourceOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-01-04T22:26:48.964+01:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-03-08T20:17:51.649+01:00")
 
 public class GeoresourceOverviewType   {
   @JsonProperty("datasetName")
@@ -47,6 +48,9 @@ public class GeoresourceOverviewType   {
 
   @JsonProperty("loiColor")
   private String loiColor = null;
+
+  @JsonProperty("loiWidth")
+  private BigDecimal loiWidth = null;
 
   @JsonProperty("loiDashArrayString")
   private String loiDashArrayString = null;
@@ -257,6 +261,24 @@ public class GeoresourceOverviewType   {
     this.loiColor = loiColor;
   }
 
+  public GeoresourceOverviewType loiWidth(BigDecimal loiWidth) {
+    this.loiWidth = loiWidth;
+    return this;
+  }
+
+   /**
+   * display width for lines of interest (number of pixels in leaflet)
+   * @return loiWidth
+  **/
+  @ApiModelProperty(value = "display width for lines of interest (number of pixels in leaflet)")
+  public BigDecimal getLoiWidth() {
+    return loiWidth;
+  }
+
+  public void setLoiWidth(BigDecimal loiWidth) {
+    this.loiWidth = loiWidth;
+  }
+
   public GeoresourceOverviewType loiDashArrayString(String loiDashArrayString) {
     this.loiDashArrayString = loiDashArrayString;
     return this;
@@ -403,6 +425,7 @@ public class GeoresourceOverviewType   {
         Objects.equals(this.isLOI, georesourceOverviewType.isLOI) &&
         Objects.equals(this.isAOI, georesourceOverviewType.isAOI) &&
         Objects.equals(this.loiColor, georesourceOverviewType.loiColor) &&
+        Objects.equals(this.loiWidth, georesourceOverviewType.loiWidth) &&
         Objects.equals(this.loiDashArrayString, georesourceOverviewType.loiDashArrayString) &&
         Objects.equals(this.aoiColor, georesourceOverviewType.aoiColor) &&
         Objects.equals(this.poiSymbolBootstrap3Name, georesourceOverviewType.poiSymbolBootstrap3Name) &&
@@ -414,7 +437,7 @@ public class GeoresourceOverviewType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodsOfValidity, topicReference, allowedRoles, isPOI, isLOI, isAOI, loiColor, loiDashArrayString, aoiColor, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor, wmsUrl, wfsUrl);
+    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodsOfValidity, topicReference, allowedRoles, isPOI, isLOI, isAOI, loiColor, loiWidth, loiDashArrayString, aoiColor, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor, wmsUrl, wfsUrl);
   }
 
   @Override
@@ -432,6 +455,7 @@ public class GeoresourceOverviewType   {
     sb.append("    isLOI: ").append(toIndentedString(isLOI)).append("\n");
     sb.append("    isAOI: ").append(toIndentedString(isAOI)).append("\n");
     sb.append("    loiColor: ").append(toIndentedString(loiColor)).append("\n");
+    sb.append("    loiWidth: ").append(toIndentedString(loiWidth)).append("\n");
     sb.append("    loiDashArrayString: ").append(toIndentedString(loiDashArrayString)).append("\n");
     sb.append("    aoiColor: ").append(toIndentedString(aoiColor)).append("\n");
     sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");

@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.model.georesources;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * GeoresourcePOSTInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-01-04T22:26:48.964+01:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-03-08T20:17:51.649+01:00")
 
 public class GeoresourcePOSTInputType   {
   @JsonProperty("datasetName")
@@ -44,6 +45,9 @@ public class GeoresourcePOSTInputType   {
 
   @JsonProperty("loiColor")
   private String loiColor = null;
+
+  @JsonProperty("loiWidth")
+  private BigDecimal loiWidth = null;
 
   @JsonProperty("loiDashArrayString")
   private String loiDashArrayString = null;
@@ -155,7 +159,7 @@ public class GeoresourcePOSTInputType   {
    * id of the last topic hierarchy entity
    * @return topicReference
   **/
-  @ApiModelProperty(required = true, value = "id of the last topic hierarchy entity")
+  @ApiModelProperty(value = "id of the last topic hierarchy entity")
   public String getTopicReference() {
     return topicReference;
   }
@@ -234,6 +238,24 @@ public class GeoresourcePOSTInputType   {
 
   public void setLoiColor(String loiColor) {
     this.loiColor = loiColor;
+  }
+
+  public GeoresourcePOSTInputType loiWidth(BigDecimal loiWidth) {
+    this.loiWidth = loiWidth;
+    return this;
+  }
+
+   /**
+   * display width for lines of interest (number of pixels in leaflet)
+   * @return loiWidth
+  **/
+  @ApiModelProperty(value = "display width for lines of interest (number of pixels in leaflet)")
+  public BigDecimal getLoiWidth() {
+    return loiWidth;
+  }
+
+  public void setLoiWidth(BigDecimal loiWidth) {
+    this.loiWidth = loiWidth;
   }
 
   public GeoresourcePOSTInputType loiDashArrayString(String loiDashArrayString) {
@@ -335,7 +357,7 @@ public class GeoresourcePOSTInputType   {
    * a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.
    * @return jsonSchema
   **/
-  @ApiModelProperty(required = true, value = "a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.")
+  @ApiModelProperty(value = "a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.")
   public String getJsonSchema() {
     return jsonSchema;
   }
@@ -353,7 +375,7 @@ public class GeoresourcePOSTInputType   {
    * a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset
    * @return geoJsonString
   **/
-  @ApiModelProperty(required = true, value = "a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset")
+  @ApiModelProperty(value = "a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset")
   public String getGeoJsonString() {
     return geoJsonString;
   }
@@ -381,6 +403,7 @@ public class GeoresourcePOSTInputType   {
         Objects.equals(this.isLOI, georesourcePOSTInputType.isLOI) &&
         Objects.equals(this.isAOI, georesourcePOSTInputType.isAOI) &&
         Objects.equals(this.loiColor, georesourcePOSTInputType.loiColor) &&
+        Objects.equals(this.loiWidth, georesourcePOSTInputType.loiWidth) &&
         Objects.equals(this.loiDashArrayString, georesourcePOSTInputType.loiDashArrayString) &&
         Objects.equals(this.aoiColor, georesourcePOSTInputType.aoiColor) &&
         Objects.equals(this.poiSymbolBootstrap3Name, georesourcePOSTInputType.poiSymbolBootstrap3Name) &&
@@ -392,7 +415,7 @@ public class GeoresourcePOSTInputType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, periodOfValidity, metadata, allowedRoles, topicReference, isPOI, isLOI, isAOI, loiColor, loiDashArrayString, aoiColor, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor, jsonSchema, geoJsonString);
+    return Objects.hash(datasetName, periodOfValidity, metadata, allowedRoles, topicReference, isPOI, isLOI, isAOI, loiColor, loiWidth, loiDashArrayString, aoiColor, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor, jsonSchema, geoJsonString);
   }
 
   @Override
@@ -409,6 +432,7 @@ public class GeoresourcePOSTInputType   {
     sb.append("    isLOI: ").append(toIndentedString(isLOI)).append("\n");
     sb.append("    isAOI: ").append(toIndentedString(isAOI)).append("\n");
     sb.append("    loiColor: ").append(toIndentedString(loiColor)).append("\n");
+    sb.append("    loiWidth: ").append(toIndentedString(loiWidth)).append("\n");
     sb.append("    loiDashArrayString: ").append(toIndentedString(loiDashArrayString)).append("\n");
     sb.append("    aoiColor: ").append(toIndentedString(aoiColor)).append("\n");
     sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");

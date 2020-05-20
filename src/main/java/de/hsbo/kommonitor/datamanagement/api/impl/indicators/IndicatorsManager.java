@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -85,12 +86,18 @@ public class IndicatorsManager {
 			
 			logger.info("Trying to update indicator using follwing parameters: name '{}', characteristicValue '{}', indicatorType '{}', creationType '{}'", indicatorName, characteristicValue, indicatorType, creationType.toString());
 
-			
-			if (indicatorsMetadataRepo.existsByDatasetNameAndCharacteristicValueAndIndicatorType(indicatorName, characteristicValue, indicatorType)) {
-				logger.error(
-						"The indicator metadataset with datasetName '{}', characteristicValue '{}' and indicatorType '{}' already exists. Thus aborting add indicator request.",
-						indicatorName, characteristicValue, indicatorType);
-				throw new Exception("Indicator for indicatorName, characteristicValue and indicatorType already exists. Aborting update indicator request.");
+			/*
+			 * check if there are changes to key-properties 
+			 * 
+			 * if there are changes then we must check, if the combination of three key properties already exists!
+			 */
+			if(keyPropertiesHaveChanged(metadataEntity, indicatorName, characteristicValue, indicatorType)){
+				if (indicatorsMetadataRepo.existsByDatasetNameAndCharacteristicValueAndIndicatorType(indicatorName, characteristicValue, indicatorType)) {
+					logger.error(
+							"The indicator metadataset with datasetName '{}', characteristicValue '{}' and indicatorType '{}' already exists. Thus aborting update indicator request.",
+							indicatorName, characteristicValue, indicatorType);
+					throw new Exception("Indicator for indicatorName, characteristicValue and indicatorType already exists. Aborting update indicator request.");
+				}
 			}
 
 			/*
@@ -143,6 +150,26 @@ public class IndicatorsManager {
 		}
 	}
 
+	private boolean keyPropertiesHaveChanged(MetadataIndicatorsEntity metadataEntity, String indicatorName,
+			String characteristicValue, IndicatorTypeEnum indicatorType) {
+		
+		if(! metadataEntity.getDatasetName().equalsIgnoreCase(indicatorName)){
+			return true;
+		}
+		// characteristic value might be null, so check for that first
+		if(metadataEntity.getCharacteristicValue() != null){
+			if(! metadataEntity.getCharacteristicValue().equalsIgnoreCase(characteristicValue)){
+				return true;
+			}
+		}
+		
+		if(! metadataEntity.getIndicatorType().equals(indicatorType)){
+			return true;
+		}
+		
+		return false;
+	}
+
 	private void updateMetadata(IndicatorPATCHInputType metadata, MetadataIndicatorsEntity entity) throws Exception{
 		entity.setDatasetName(metadata.getDatasetName());
 		entity.setCharacteristicValue(metadata.getCharacteristicValue());
@@ -181,7 +208,7 @@ public class IndicatorsManager {
 		entity.setAbbreviation(metadata.getAbbreviation());
 		entity.setHeadlineIndicator(metadata.isIsHeadlineIndicator());
 		entity.setInterpretation(metadata.getInterpretation());
-		entity.setTags(metadata.getTags());
+		entity.setTags(new HashSet<String>(metadata.getTags()));
 
 		// persist in db
 		indicatorsMetadataRepo.saveAndFlush(entity);
@@ -310,27 +337,32 @@ public class IndicatorsManager {
 			String indicatorViewTableName) throws Exception {
 		// sorted list of ascending dates
 		List<String> availableDates = IndicatorDatabaseHandler.getAvailableDates(indicatorViewTableName);
-		//pick the most current date and use its property for default style
-		String mostCurrentDate = availableDates.get(availableDates.size()-1);
-//		mostCurrentDate = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
-//		
-//		
-//		List<Float> indicatorValues = IndicatorDatabaseHandler.getAllIndicatorValues(indicatorValueTableName, mostCurrentDate);
-//		
-		// year-month-day
-		String[] dateComponents = mostCurrentDate.split("-");
 		
-		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
-		FeatureCollection validFeatures = IndicatorDatabaseHandler.getValidFeaturesAsFeatureCollection(dataStore, indicatorViewTableName,new BigDecimal(dateComponents[0]), new BigDecimal(dateComponents[1]), new BigDecimal(dateComponents[2]));
+		if(availableDates != null && availableDates.size() > 0) {
+			//pick the most current date and use its property for default style
+			String mostCurrentDate = availableDates.get(availableDates.size()-1);
+//			mostCurrentDate = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
+//			
+//			
+//			List<Float> indicatorValues = IndicatorDatabaseHandler.getAllIndicatorValues(indicatorValueTableName, mostCurrentDate);
+//			
+			// year-month-day
+			String[] dateComponents = mostCurrentDate.split("-");
+			
+			DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+			FeatureCollection validFeatures = IndicatorDatabaseHandler.getValidFeaturesAsFeatureCollection(dataStore, indicatorViewTableName,new BigDecimal(dateComponents[0]), new BigDecimal(dateComponents[1]), new BigDecimal(dateComponents[2]));
+			
+			String targetPropertyName = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
+			
+			// handle OGC web service
+			String styleName = ogcServiceManager.createAndPublishStyle(datasetTitle, validFeatures, defaultClassificationMappingType, targetPropertyName);
+			
+			DatabaseHelperUtil.disposePostGisDataStore(dataStore);
+			return styleName;
+		}
 		
-		String targetPropertyName = IndicatorDatabaseHandler.DATE_PREFIX + mostCurrentDate;
 		
-		// handle OGC web service
-		String styleName = ogcServiceManager.createAndPublishStyle(datasetTitle, validFeatures, defaultClassificationMappingType, targetPropertyName);
-		
-		DatabaseHelperUtil.disposePostGisDataStore(dataStore);
-		
-		return styleName;
+		return null;
 	}
 
 	private void checkInputData(IndicatorPUTInputType indicatorData) throws Exception {
@@ -486,9 +518,9 @@ public class IndicatorsManager {
 		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
 			IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
 
-			ReferenceManager.removeReferences(indicatorId);
+//			ReferenceManager.removeReferences(indicatorId);
 			
-			boolean deleteScriptsForIndicators = scriptManager.deleteScriptsByIndicatorsId(indicatorId);
+//			boolean deleteScriptsForIndicators = scriptManager.deleteScriptsByIndicatorsId(indicatorId);
 			
 			/*
 			 * delete featureTable and views for each spatial unit
@@ -582,6 +614,8 @@ public class IndicatorsManager {
 			indicatorMetadataEntry = deleteTimestampInMetadataEntry(year, month, day, indicatorMetadataEntry);	
 			indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
 			
+			indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName());
+			
 			/*
 			 * republish indicator layer as OGC service
 			 */
@@ -591,11 +625,15 @@ public class IndicatorsManager {
 			
 			String styleName;
 			
-			DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
-			styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
-			
-			// handle OGC web service
-			ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
+			try {
+				DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+				styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
+				
+				// handle OGC web service
+				ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
+			} catch (Exception e) {
+				logger.error("Error while publishing as OGC service. Error is: \n{}", e);
+			}			
 			return true;
 		} else {
 			logger.error(
@@ -743,7 +781,7 @@ public class IndicatorsManager {
 		
 		List<String> timestamps = new ArrayList<String>();
 		
-		if (indicatorValues != null){
+		if (indicatorValues != null && indicatorValues.size() > 0){
 			List<IndicatorPOSTInputTypeValueMapping> exampleValueMapping = indicatorValues.get(0).getValueMapping();
 			
 			for (IndicatorPOSTInputTypeValueMapping indicatorPOSTInputTypeValueMapping : exampleValueMapping) {
@@ -902,7 +940,7 @@ public class IndicatorsManager {
 		entity.setAbbreviation(indicatorData.getAbbreviation());
 		entity.setHeadlineIndicator(indicatorData.isIsHeadlineIndicator());
 		entity.setInterpretation(indicatorData.getInterpretation());
-		entity.setTags(indicatorData.getTags());
+		entity.setTags(new HashSet<String>(indicatorData.getTags()));
 		
 
 		/*

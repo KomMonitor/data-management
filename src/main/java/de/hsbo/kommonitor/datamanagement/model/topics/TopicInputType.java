@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
  * TopicInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-01-04T23:51:22.008+01:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-03-08T20:17:51.649+01:00")
 
 public class TopicInputType   {
   @JsonProperty("topicId")
@@ -27,9 +27,30 @@ public class TopicInputType   {
   @JsonProperty("topicType")
   private TopicTypeEnum topicType = null;
 
+  @JsonProperty("topicResource")
+  private TopicResourceEnum topicResource = null;
+
   @JsonProperty("subTopics")
   
   private List<TopicInputType> subTopics = null;
+
+  public TopicInputType topicId(String topicId) {
+    this.topicId = topicId;
+    return this;
+  }
+
+   /**
+   * the topic identifier
+   * @return topicId
+  **/
+  @ApiModelProperty(value = "the topic identifier")
+  public String getTopicId() {
+    return topicId;
+  }
+
+  public void setTopicId(String topicId) {
+    this.topicId = topicId;
+  }
 
   public TopicInputType topicName(String topicName) {
     this.topicName = topicName;
@@ -76,13 +97,31 @@ public class TopicInputType   {
    * topic type indicating if the topic object is a subtopic or a main topic - only topics of type 'sub' shall be subTopics of topics with type 'main'
    * @return topicType
   **/
-  @ApiModelProperty(value = "topic type indicating if the topic object is a subtopic or a main topic - only topics of type 'sub' shall be subTopics of topics with type 'main'")
+  @ApiModelProperty(required = true, value = "topic type indicating if the topic object is a subtopic or a main topic - only topics of type 'sub' shall be subTopics of topics with type 'main'")
   public TopicTypeEnum getTopicType() {
     return topicType;
   }
 
   public void setTopicType(TopicTypeEnum topicType) {
     this.topicType = topicType;
+  }
+
+  public TopicInputType topicResource(TopicResourceEnum topicResource) {
+    this.topicResource = topicResource;
+    return this;
+  }
+
+   /**
+   * topic resource indicating if the topic object corresponds to an indicator or to a georesource
+   * @return topicResource
+  **/
+  @ApiModelProperty(value = "topic resource indicating if the topic object corresponds to an indicator or to a georesource")
+  public TopicResourceEnum getTopicResource() {
+    return topicResource;
+  }
+
+  public void setTopicResource(TopicResourceEnum topicResource) {
+    this.topicResource = topicResource;
   }
 
   public TopicInputType subTopics(List<TopicInputType> subTopics) {
@@ -110,14 +149,6 @@ public class TopicInputType   {
   public void setSubTopics(List<TopicInputType> subTopics) {
     this.subTopics = subTopics;
   }
-  
-  public String getTopicId() {
-	return topicId;
-}
-
-public void setTopicId(String topicId) {
-	this.topicId = topicId;
-}
 
 
   @Override
@@ -129,15 +160,17 @@ public void setTopicId(String topicId) {
       return false;
     }
     TopicInputType topicInputType = (TopicInputType) o;
-    return Objects.equals(this.topicName, topicInputType.topicName) &&
+    return Objects.equals(this.topicId, topicInputType.topicId) &&
+        Objects.equals(this.topicName, topicInputType.topicName) &&
         Objects.equals(this.topicDescription, topicInputType.topicDescription) &&
         Objects.equals(this.topicType, topicInputType.topicType) &&
+        Objects.equals(this.topicResource, topicInputType.topicResource) &&
         Objects.equals(this.subTopics, topicInputType.subTopics);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(topicName, topicDescription, topicType, subTopics);
+    return Objects.hash(topicId, topicName, topicDescription, topicType, topicResource, subTopics);
   }
 
   @Override
@@ -145,9 +178,11 @@ public void setTopicId(String topicId) {
     StringBuilder sb = new StringBuilder();
     sb.append("class TopicInputType {\n");
     
+    sb.append("    topicId: ").append(toIndentedString(topicId)).append("\n");
     sb.append("    topicName: ").append(toIndentedString(topicName)).append("\n");
     sb.append("    topicDescription: ").append(toIndentedString(topicDescription)).append("\n");
     sb.append("    topicType: ").append(toIndentedString(topicType)).append("\n");
+    sb.append("    topicResource: ").append(toIndentedString(topicResource)).append("\n");
     sb.append("    subTopics: ").append(toIndentedString(subTopics)).append("\n");
     sb.append("}");
     return sb.toString();

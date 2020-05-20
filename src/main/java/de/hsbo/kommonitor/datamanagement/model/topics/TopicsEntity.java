@@ -27,6 +27,8 @@ public class TopicsEntity {
 	  
 	  private TopicTypeEnum topicType = null;
 	  
+	  private TopicResourceEnum topicResource = null;
+	  
 	  @ElementCollection()
 //	  @OnDelete(action= OnDeleteAction.CASCADE)
 //	  @JoinColumn(name = "main_topic_id", referencedColumnName = "topicId")
@@ -81,6 +83,16 @@ public class TopicsEntity {
 
 	public void setTopicType(TopicTypeEnum topicType) {
 		this.topicType = topicType;
+	}
+
+
+	public TopicResourceEnum getTopicResource() {
+		return topicResource;
+	}
+
+
+	public void setTopicResource(TopicResourceEnum topicResource) {
+		this.topicResource = topicResource;
 	}
 
 

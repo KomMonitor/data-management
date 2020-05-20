@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class DateTimeUtil {
 		//
 		// return null;
 
-		logger.info("Try to parse date or dateTime from following string: {}", dateStr);
+//		logger.info("Try to parse date or dateTime from following string: {}", dateStr);
 
 		/*
 		 * 1999-12-31T23:00:00.000+0000
@@ -65,8 +66,8 @@ public class DateTimeUtil {
 
 	private static String removeTailingDotSubstrings(String dateStr) {
 		if (dateStr.contains(".")) {
-			logger.info("Detected dot in dateString. Will remove substring to aquire following string: '{}'",
-					dateStr.split("\\.")[0]);
+//			logger.info("Detected dot in dateString. Will remove substring to aquire following string: '{}'",
+//					dateStr.split("\\.")[0]);
 			// must escape dot in regex
 			dateStr = dateStr.split("\\.")[0];
 		}
@@ -74,12 +75,14 @@ public class DateTimeUtil {
 	}
 
 	private static Date fromLocalDateTime(LocalDateTime localDateTime) {
-		return java.sql.Date.valueOf(localDateTime.toLocalDate());
+		
+		Date date = new GregorianCalendar(localDateTime.getYear(), localDateTime.getMonthValue() - 1, localDateTime.getDayOfMonth()).getTime();
+		return date;
 	}
 
 	public static LocalDate fromISO8601UTC_localDate(String dateStr) {
 
-		logger.info("Try to parse date or dateTime from following string: {}", dateStr);
+//		logger.info("Try to parse date or dateTime from following string: {}", dateStr);
 
 		/*
 		 * 1999-12-31T23:00:00.000+0000
@@ -104,7 +107,7 @@ public class DateTimeUtil {
 
 	public static LocalDateTime fromISO8601UTC_localDateTime(String dateStr) {
 
-		logger.info("Try to parse date or dateTime from following string: {}", dateStr);
+//		logger.info("Try to parse date or dateTime from following string: {}", dateStr);
 
 		/*
 		 * 1999-12-31T23:00:00.000+0000
@@ -128,7 +131,10 @@ public class DateTimeUtil {
 	}
 
 	public static Date fromLocalDate(LocalDate date) {
-		return java.sql.Date.valueOf(date);
+		
+		Date date2 = new GregorianCalendar(date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth()).getTime();
+		
+		return date2;
 	}
 
 	public static LocalDate toLocalDate(Date date) {

@@ -3,6 +3,8 @@ package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
@@ -47,10 +49,31 @@ public class SpatialUnitsMapper {
 //		spatialUnitsMetadataRepo.saveAndFlush(spatialUnitEntity);	
 		
 		Collection<PeriodOfValidityEntity_spatialUnits> spatialUnitsPeriodsOfValidityEntities = spatialUnitEntity.getSpatialUnitsPeriodsOfValidity();		
-		AvailablePeriodsOfValidityType availablePeriodsOfValidityType = new AvailablePeriodsOfValidityType();
-		for (PeriodOfValidityEntity_spatialUnits periodOfValidityEntity_spatialUnits : spatialUnitsPeriodsOfValidityEntities) {
-			availablePeriodsOfValidityType.add(new PeriodOfValidityType(periodOfValidityEntity_spatialUnits));
-		}
+		
+		
+		
+		// sort periods from prior dates to later dates
+		
+		Comparator<PeriodOfValidityEntity_spatialUnits> compareByTimePeriod = new Comparator<PeriodOfValidityEntity_spatialUnits>() {
+		    @Override
+		    public int compare(PeriodOfValidityEntity_spatialUnits o1, PeriodOfValidityEntity_spatialUnits o2) {
+		        int result =  o1.getStartDate().compareTo(o2.getStartDate());
+		        
+		        if (result == 0) {
+		        	result = o1.getEndDate().compareTo(o2.getEndDate());
+		        }
+		        
+		        return result;
+		    }
+		};
+		
+				List<PeriodOfValidityEntity_spatialUnits> spatialUnitsPeriodsOfValidityEntities_asOrderedList = new ArrayList<>(spatialUnitsPeriodsOfValidityEntities);
+				Collections.sort(spatialUnitsPeriodsOfValidityEntities_asOrderedList, compareByTimePeriod);		
+				
+				AvailablePeriodsOfValidityType availablePeriodsOfValidityType = new AvailablePeriodsOfValidityType();
+				for (PeriodOfValidityEntity_spatialUnits periodOfValidityEntity_spatialUnits : spatialUnitsPeriodsOfValidityEntities_asOrderedList) {
+					availablePeriodsOfValidityType.add(new PeriodOfValidityType(periodOfValidityEntity_spatialUnits));
+				}
 		
 		dataset.setAvailablePeriodsOfValidity(
 				availablePeriodsOfValidityType);

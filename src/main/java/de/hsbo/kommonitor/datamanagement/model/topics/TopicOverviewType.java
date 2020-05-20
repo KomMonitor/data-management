@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
  * TopicOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-01-04T23:51:22.008+01:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-03-08T20:17:51.649+01:00")
 
 public class TopicOverviewType   {
   @JsonProperty("topicId")
@@ -27,11 +27,12 @@ public class TopicOverviewType   {
   @JsonProperty("topicType")
   private TopicTypeEnum topicType = null;
 
+  @JsonProperty("topicResource")
+  private TopicResourceEnum topicResource = null;
+
   @JsonProperty("subTopics")
   
   private List<TopicOverviewType> subTopics = null;
-  
-  public TopicOverviewType(){}
 
   public TopicOverviewType(String topicId) {
 	this.topicId = topicId;
@@ -100,13 +101,31 @@ public TopicOverviewType topicId(String topicId) {
    * topic type indicating if the topic object is a subtopic or a main topic - only topics of type 'sub' shall be subTopics of topics with type 'main'
    * @return topicType
   **/
-  @ApiModelProperty(value = "topic type indicating if the topic object is a subtopic or a main topic - only topics of type 'sub' shall be subTopics of topics with type 'main'")
+  @ApiModelProperty(required = true, value = "topic type indicating if the topic object is a subtopic or a main topic - only topics of type 'sub' shall be subTopics of topics with type 'main'")
   public TopicTypeEnum getTopicType() {
     return topicType;
   }
 
   public void setTopicType(TopicTypeEnum topicType) {
     this.topicType = topicType;
+  }
+
+  public TopicOverviewType topicResource(TopicResourceEnum topicResource) {
+    this.topicResource = topicResource;
+    return this;
+  }
+
+   /**
+   * topic resource indicating if the topic object corresponds to an indicator or to a georesource
+   * @return topicResource
+  **/
+  @ApiModelProperty(value = "topic resource indicating if the topic object corresponds to an indicator or to a georesource")
+  public TopicResourceEnum getTopicResource() {
+    return topicResource;
+  }
+
+  public void setTopicResource(TopicResourceEnum topicResource) {
+    this.topicResource = topicResource;
   }
 
   public TopicOverviewType subTopics(List<TopicOverviewType> subTopics) {
@@ -149,12 +168,13 @@ public TopicOverviewType topicId(String topicId) {
         Objects.equals(this.topicName, topicOverviewType.topicName) &&
         Objects.equals(this.topicDescription, topicOverviewType.topicDescription) &&
         Objects.equals(this.topicType, topicOverviewType.topicType) &&
+        Objects.equals(this.topicResource, topicOverviewType.topicResource) &&
         Objects.equals(this.subTopics, topicOverviewType.subTopics);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(topicId, topicName, topicDescription, topicType, subTopics);
+    return Objects.hash(topicId, topicName, topicDescription, topicType, topicResource, subTopics);
   }
 
   @Override
@@ -166,6 +186,7 @@ public TopicOverviewType topicId(String topicId) {
     sb.append("    topicName: ").append(toIndentedString(topicName)).append("\n");
     sb.append("    topicDescription: ").append(toIndentedString(topicDescription)).append("\n");
     sb.append("    topicType: ").append(toIndentedString(topicType)).append("\n");
+    sb.append("    topicResource: ").append(toIndentedString(topicResource)).append("\n");
     sb.append("    subTopics: ").append(toIndentedString(subTopics)).append("\n");
     sb.append("}");
     return sb.toString();

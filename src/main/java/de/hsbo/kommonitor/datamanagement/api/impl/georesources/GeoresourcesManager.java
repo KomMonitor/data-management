@@ -247,6 +247,12 @@ public class GeoresourcesManager {
 		entity.setPoiMarkerColor(featureData.getPoiMarkerColor());
 		entity.setPoiSymbolColor(featureData.getPoiSymbolColor());
 		entity.setLoiColor(featureData.getLoiColor());
+		if (featureData.getLoiWidth() != null){
+			entity.setLoiWidth(featureData.getLoiWidth().intValue());
+		}
+		else{
+			entity.setLoiWidth(3);
+		}
 		entity.setLoiDashArrayString(featureData.getLoiDashArrayString());
 		entity.setAoiColor(featureData.getAoiColor());
 		
@@ -522,6 +528,13 @@ public class GeoresourcesManager {
 		entity.setPoiMarkerColor(metadata.getPoiMarkerColor());
 		entity.setPoiSymbolColor(metadata.getPoiSymbolColor());
 		entity.setLoiColor(metadata.getLoiColor());
+		if (metadata.getLoiWidth() != null){
+			entity.setLoiWidth(metadata.getLoiWidth().intValue());
+		}
+		else{
+			entity.setLoiWidth(3);
+		}
+		
 		entity.setLoiDashArrayString(metadata.getLoiDashArrayString());
 		entity.setAoiColor(metadata.getAoiColor());
 		
