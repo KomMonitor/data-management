@@ -3,10 +3,14 @@ package de.hsbo.kommonitor.datamanagement.features.management;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
@@ -184,6 +188,322 @@ public class DatabaseHelperUtil {
 
 	public static void disposePostGisDataStore(DataStore dataStore) {
 		dataStore.dispose();
+		
+	}
+
+	public static Map<String, String> getExistingIndexDefinitions(String indicatorValueTableName) throws Exception {
+		Connection jdbcConnection = null;
+		Statement statement = null;
+		
+		Map<String, String> indexMap = new HashMap<String, String>();
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("SELECT indexname, indexdef FROM  pg_indexes WHERE tablename = '" + indicatorValueTableName + "' ");
+			
+			String selectCommand = builder.toString();
+			
+			// TODO check if works
+			ResultSet resultSet = statement.executeQuery(selectCommand);
+			
+			while(resultSet.next()) {
+				
+				indexMap.put(resultSet.getString("indexname"), resultSet.getString("indexdef"));
+
+			}
+			
+			resultSet.close();			
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}		
+		
+		return indexMap;
+
+	}
+
+	public static Map<String, String> getExistingConstraintDefinitions(String indicatorValueTableName) throws Exception {
+		Connection jdbcConnection = null;
+		Statement statement = null;
+		
+		Map<String, String> constraintsMap = new HashMap<String, String>();
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("SELECT conrelid::regclass AS table_from ,conname,pg_get_constraintdef(c.oid) FROM   pg_constraint c JOIN   pg_namespace n ON n.oid = c.connamespace WHERE conname LIKE '%" + 
+					indicatorValueTableName + "%' AND contype IN ('f', 'p ') AND  n.nspname = 'public';");
+			
+			String selectCommand = builder.toString();
+			
+			// TODO check if works
+			ResultSet resultSet = statement.executeQuery(selectCommand);
+			
+			while(resultSet.next()) {
+				
+				constraintsMap.put(resultSet.getString("conname"), resultSet.getString("pg_get_constraintdef"));
+
+			}
+			
+			resultSet.close();			
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}		
+		
+		return constraintsMap;
+	}
+
+	public static void dropIndices(Map<String, String> existingIndexDefinitionsForTable, String indicatorValueTableName) throws Exception {
+		Connection jdbcConnection = null;
+		Statement statement = null;		
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			Set<String> keySet = existingIndexDefinitionsForTable.keySet();
+			
+			for (String indexName : keySet) {
+				builder.append("DROP INDEX IF EXISTS \"" + indexName +  "\";");
+			}
+			
+			String dropIndexCommand = builder.toString();			
+			statement.executeUpdate(dropIndexCommand);		
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+		
+	}
+
+	public static void dropConstraints(Map<String, String> existingConstraintsDefinitionsForTable, String indicatorValueTableName) throws Exception {
+		Connection jdbcConnection = null;
+		Statement statement = null;		
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			Set<String> keySet = existingConstraintsDefinitionsForTable.keySet();	
+			Iterator<String> iterator = keySet.iterator();
+			
+			builder.append("ALTER TABLE \"" + indicatorValueTableName + "\" ");
+			
+			
+			while(iterator.hasNext()) {				
+				String constraintName = iterator.next();
+				builder.append("DROP CONSTRAINT IF EXISTS \"" + constraintName +  "\"");
+				
+				if(iterator.hasNext()){
+					builder.append(", ");
+				}
+				else{
+					builder.append(";");
+				}
+			}
+			
+			String dropConstraintCommand = builder.toString();			
+			statement.executeUpdate(dropConstraintCommand);		
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+		
+	}
+
+	public static void reinsertConstraints(String indicatorValueTableName,
+			Map<String, String> constraintsDefinitionsForTable) throws Exception {
+		
+		Connection jdbcConnection = null;
+		Statement statement = null;		
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			Set<String> keySet = constraintsDefinitionsForTable.keySet();	
+			Iterator<String> iterator = keySet.iterator();
+			
+			builder.append("ALTER TABLE \"" + indicatorValueTableName + "\" ");
+			
+			
+			while(iterator.hasNext()) {				
+				String constraintName = iterator.next();
+				String random = String.valueOf(Math.random());
+				builder.append("ADD CONSTRAINT \"" + indicatorValueTableName + "_" + random + "\" " + constraintsDefinitionsForTable.get(constraintName) +  "");
+				
+				if(iterator.hasNext()){
+					builder.append(", ");
+				}
+				else{
+					builder.append(";");
+				}
+			}
+			
+			String addConstraintCommand = builder.toString();			
+			statement.executeUpdate(addConstraintCommand);		
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+	}
+
+	public static void reinsertIndices(String indicatorValueTableName,
+			Map<String, String> indexDefinitionsForTable) throws Exception {
+		Connection jdbcConnection = null;
+		Statement statement = null;		
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			Set<String> keySet = indexDefinitionsForTable.keySet();
+			
+			for (String indexName : keySet) {
+				builder.append( indexDefinitionsForTable.get(indexName) + ";");
+			}
+			
+			String insertIndexCommand = builder.toString();			
+			statement.executeUpdate(insertIndexCommand);		
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+		
+	}
+
+	public static void runVacuumAnalyse(String indicatorValueTableName) throws Exception {
+		Connection jdbcConnection = null;
+		Statement statement = null;		
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+
+			builder.append("VACUUM ANALYZE \"" + indicatorValueTableName + "\";");
+			
+			String insertIndexCommand = builder.toString();			
+			statement.executeUpdate(insertIndexCommand);		
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
 		
 	}
 

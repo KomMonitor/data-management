@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.hsbo.kommonitor</groupId>
@@ -15,13 +15,14 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.0.1.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
+        <!-- lookup parent from repository -->
     </parent>
-    
+
     <licenses>
         <license>
-            <name>GPLv2</name>
-            <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+            <name>GPL-v3.0</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -49,10 +50,17 @@
 
 
         <!-- Spring -->
-        
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+        <!-- define as runtime scope -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -66,12 +74,19 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-	    </dependency>
-	    
-	    <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+        </dependency>
+        
+        <!-- define as runtime scope -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
 
         <!-- Consul dependencies -->
         <!-- <dependency>
@@ -84,19 +99,19 @@
         </dependency> -->
 
 
-<!-- Date Time support -->
-         <dependency>
-<groupId>com.fasterxml.jackson.module</groupId>
-<artifactId>jackson-module-parameter-names</artifactId>
-         </dependency>
-         <dependency>
-<groupId>com.fasterxml.jackson.datatype</groupId>
-<artifactId>jackson-datatype-jdk8</artifactId>
-         </dependency>
-         <dependency>
-<groupId>com.fasterxml.jackson.datatype</groupId>
-<artifactId>jackson-datatype-jsr310</artifactId>
-         </dependency>
+        <!-- Date Time support -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
 
 
 
@@ -270,6 +285,7 @@
 		    <artifactId>jaxb-runtime</artifactId>
 		    <version>2.3.2</version>
 		</dependency>
+
     </dependencies>
 
     <dependencyManagement>
@@ -286,47 +302,47 @@
 
     <build>
         <plugins>
-        	<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>2.0.0</version>
-				<configuration>
-					<useMissingFile>true</useMissingFile>
-					<fileTemplate>misc/license-as-csv.ftl</fileTemplate>
-				</configuration>
-				<!-- <executions>
-					<execution>
-						<id>first</id>
-						<goals>
-							<goal>add-third-party</goal>
-						</goals>
-						<phase>generate-resources</phase>
-					</execution>
-				</executions> -->
-			</plugin>
-			<plugin>
-				<groupId>org.jasig.maven</groupId>
-				<artifactId>maven-notice-plugin</artifactId>
-				<version>1.1.0</version>
-				<configuration>
-					<noticeTemplate>misc/NOTICE.template</noticeTemplate>
-					<licenseMapping>
-						<param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
-						<param>misc/license-mappings.xml</param>
-					</licenseMapping>
-					<generateChildNotices>false</generateChildNotices>
-				</configuration>
-				<!-- <executions>
-					<execution>
-						<id>check-license</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions> -->
-			</plugin>
-			<plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <configuration>
+                    <useMissingFile>true</useMissingFile>
+                    <fileTemplate>misc/license-as-csv.ftl</fileTemplate>
+                </configuration>
+                <!-- <executions>
+                        <execution>
+                                <id>first</id>
+                                <goals>
+                                        <goal>add-third-party</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                        </execution>
+                </executions>  -->
+            </plugin>
+            <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>maven-notice-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <noticeTemplate>misc/NOTICE.template</noticeTemplate>
+                    <licenseMapping>
+                        <param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
+                        <param>misc/license-mappings.xml</param>
+                    </licenseMapping>
+                    <generateChildNotices>false</generateChildNotices>
+                </configuration>
+                <!-- <executions>
+                        <execution>
+                                <id>check-license</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                        <goal>check</goal>
+                                </goals>
+                        </execution>
+                </executions> -->
+            </plugin>
+            <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <inherited>false</inherited>
@@ -354,7 +370,7 @@
                     </properties>
                 </configuration>
                 <!-- <executions> <execution> <id>check-license</id> <phase>initialize</phase> 
-                    <goals> <goal>format</goal> </goals> </execution> </executions> -->
+                <goals> <goal>format</goal> </goals> </execution> </executions> -->
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -412,6 +428,7 @@
 	        <releases><enabled>true</enabled></releases>
 	      </repository>
         <repository>
+
             <id>boundless</id>
             <name>boundless repo for geoserver</name>
             <url>https://repo.boundlessgeo.com/main/</url>
@@ -421,7 +438,7 @@
                 <checksumPolicy>ignore</checksumPolicy>
             </snapshots>
         </repository>
-        <repository>
+        <!-- <repository>
             <id>maven central</id>
             <name>central repo for geoserver</name>
             <url>http://central.maven.org/maven2</url>
@@ -430,7 +447,7 @@
                 <updatePolicy>always</updatePolicy>
                 <checksumPolicy>ignore</checksumPolicy>
             </snapshots>
-        </repository>
+        </repository> -->
         <repository>
             <id>geotoolkit</id>
             <name>central repo for geoserver</name>

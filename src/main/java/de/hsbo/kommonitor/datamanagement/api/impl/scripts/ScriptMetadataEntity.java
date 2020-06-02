@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.scripts;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -90,47 +91,47 @@ public class ScriptMetadataEntity {
 		this.scriptCode = scriptCode;
 	}
 
-	public Collection<ScriptInputParameterEntity> getScriptInputParameters() {
-		return scriptInputParameters;
+	public HashSet<ScriptInputParameterEntity> getScriptInputParameters() {
+		return new HashSet<ScriptInputParameterEntity>(scriptInputParameters);
 	}
 
 	public void setScriptInputParameters(Collection<ScriptInputParameterEntity> scriptInputParameters) {
-		this.scriptInputParameters = scriptInputParameters;
+		this.scriptInputParameters = new HashSet<ScriptInputParameterEntity>(scriptInputParameters);
 	}
 
 	public void addScriptInputParameter(ScriptInputParameterEntity scriptInputParameter) {
 		if (this.scriptInputParameters == null) {
-			this.scriptInputParameters = new ArrayList<ScriptInputParameterEntity>();
+			this.scriptInputParameters = new HashSet<ScriptInputParameterEntity>();
 		}
 		this.scriptInputParameters.add(scriptInputParameter);
 	}
 
-	public Collection<MetadataIndicatorsEntity> getRequiredIndicators() {
-		return requiredIndicators;
+	public HashSet<MetadataIndicatorsEntity> getRequiredIndicators() {
+		return new HashSet<MetadataIndicatorsEntity>(requiredIndicators);
 	}
 
 	public void setRequiredIndicators(Collection<MetadataIndicatorsEntity> requiredIndicators) {
-		this.requiredIndicators = requiredIndicators;
+		this.requiredIndicators = new HashSet<MetadataIndicatorsEntity>(requiredIndicators);
 	}
 
 	public void addRequiredIndicator(MetadataIndicatorsEntity requiredIndicator) {
 		if (this.requiredIndicators == null) {
-			this.requiredIndicators = new ArrayList<MetadataIndicatorsEntity>();
+			this.requiredIndicators = new HashSet<MetadataIndicatorsEntity>();
 		}
 		this.requiredIndicators.add(requiredIndicator);
 	}
 
-	public Collection<MetadataGeoresourcesEntity> getRequiredGeoresources() {
-		return requiredGeoresources;
+	public HashSet<MetadataGeoresourcesEntity> getRequiredGeoresources() {
+		return new HashSet<MetadataGeoresourcesEntity>(requiredGeoresources);
 	}
 
 	public void setRequiredGeoresources(Collection<MetadataGeoresourcesEntity> requiredGeoresources) {
-		this.requiredGeoresources = requiredGeoresources;
+		this.requiredGeoresources = new HashSet<MetadataGeoresourcesEntity>(requiredGeoresources);
 	}
 
 	public void addRequiredGeoresources(MetadataGeoresourcesEntity requiredGeoressource) {
 		if (this.requiredGeoresources == null) {
-			this.requiredGeoresources = new ArrayList<MetadataGeoresourcesEntity>();
+			this.requiredGeoresources = new HashSet<MetadataGeoresourcesEntity>();
 		}
 		this.requiredGeoresources.add(requiredGeoressource);
 	}

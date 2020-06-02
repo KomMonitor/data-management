@@ -13,11 +13,14 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-09-03T12:29:21.035+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-01-04T23:04:55.031+01:00")
 
 public class IndicatorOverviewType   {
   @JsonProperty("indicatorName")
   private String indicatorName = null;
+
+  @JsonProperty("characteristicValue")
+  private String characteristicValue = null;
 
   @JsonProperty("indicatorId")
   private String indicatorId = null;
@@ -42,9 +45,8 @@ public class IndicatorOverviewType   {
   
   private List<String> applicableDates = new ArrayList<>();
 
-  @JsonProperty("applicableTopics")
-  
-  private List<String> applicableTopics = new ArrayList<>();
+  @JsonProperty("topicReference")
+  private String topicReference = null;
 
   @JsonProperty("allowedRoles")
   
@@ -100,6 +102,24 @@ public class IndicatorOverviewType   {
 
   public void setIndicatorName(String indicatorName) {
     this.indicatorName = indicatorName;
+  }
+
+  public IndicatorOverviewType characteristicValue(String characteristicValue) {
+    this.characteristicValue = characteristicValue;
+    return this;
+  }
+
+   /**
+   * the distuingishing characteristic value of the indicator
+   * @return characteristicValue
+  **/
+  @ApiModelProperty(required = true, value = "the distuingishing characteristic value of the indicator")
+  public String getCharacteristicValue() {
+    return characteristicValue;
+  }
+
+  public void setCharacteristicValue(String characteristicValue) {
+    this.characteristicValue = characteristicValue;
   }
 
   public IndicatorOverviewType indicatorId(String indicatorId) {
@@ -238,27 +258,22 @@ public class IndicatorOverviewType   {
     this.applicableDates = applicableDates;
   }
 
-  public IndicatorOverviewType applicableTopics(List<String> applicableTopics) {
-    this.applicableTopics = applicableTopics;
-    return this;
-  }
-
-  public IndicatorOverviewType addApplicableTopicsItem(String applicableTopicsItem) {
-    this.applicableTopics.add(applicableTopicsItem);
+  public IndicatorOverviewType topicReference(String topicReference) {
+    this.topicReference = topicReference;
     return this;
   }
 
    /**
-   * array of thematic categories for which the dataset is applicable. Note that the used topicName has to be defined under /topics
-   * @return applicableTopics
+   * id of the last topic hierarchy entity 
+   * @return topicReference
   **/
-  @ApiModelProperty(required = true, value = "array of thematic categories for which the dataset is applicable. Note that the used topicName has to be defined under /topics")
-  public List<String> getApplicableTopics() {
-    return applicableTopics;
+  @ApiModelProperty(required = true, value = "id of the last topic hierarchy entity ")
+  public String getTopicReference() {
+    return topicReference;
   }
 
-  public void setApplicableTopics(List<String> applicableTopics) {
-    this.applicableTopics = applicableTopics;
+  public void setTopicReference(String topicReference) {
+    this.topicReference = topicReference;
   }
 
   public IndicatorOverviewType allowedRoles(List<String> allowedRoles) {
@@ -504,6 +519,7 @@ public class IndicatorOverviewType   {
     }
     IndicatorOverviewType indicatorOverviewType = (IndicatorOverviewType) o;
     return Objects.equals(this.indicatorName, indicatorOverviewType.indicatorName) &&
+        Objects.equals(this.characteristicValue, indicatorOverviewType.characteristicValue) &&
         Objects.equals(this.indicatorId, indicatorOverviewType.indicatorId) &&
         Objects.equals(this.indicatorType, indicatorOverviewType.indicatorType) &&
         Objects.equals(this.unit, indicatorOverviewType.unit) &&
@@ -511,7 +527,7 @@ public class IndicatorOverviewType   {
         Objects.equals(this.processDescription, indicatorOverviewType.processDescription) &&
         Objects.equals(this.applicableSpatialUnits, indicatorOverviewType.applicableSpatialUnits) &&
         Objects.equals(this.applicableDates, indicatorOverviewType.applicableDates) &&
-        Objects.equals(this.applicableTopics, indicatorOverviewType.applicableTopics) &&
+        Objects.equals(this.topicReference, indicatorOverviewType.topicReference) &&
         Objects.equals(this.allowedRoles, indicatorOverviewType.allowedRoles) &&
         Objects.equals(this.referencedIndicators, indicatorOverviewType.referencedIndicators) &&
         Objects.equals(this.referencedGeoresources, indicatorOverviewType.referencedGeoresources) &&
@@ -527,7 +543,7 @@ public class IndicatorOverviewType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(indicatorName, indicatorId, indicatorType, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, applicableTopics, allowedRoles, referencedIndicators, referencedGeoresources, creationType, lowestSpatialUnitForComputation, defaultClassificationMapping, ogcServices, abbreviation, interpretation, isHeadlineIndicator, tags);
+    return Objects.hash(indicatorName, characteristicValue, indicatorId, indicatorType, unit, metadata, processDescription, applicableSpatialUnits, applicableDates, topicReference, allowedRoles, referencedIndicators, referencedGeoresources, creationType, lowestSpatialUnitForComputation, defaultClassificationMapping, ogcServices, abbreviation, interpretation, isHeadlineIndicator, tags);
   }
 
   @Override
@@ -536,6 +552,7 @@ public class IndicatorOverviewType   {
     sb.append("class IndicatorOverviewType {\n");
     
     sb.append("    indicatorName: ").append(toIndentedString(indicatorName)).append("\n");
+    sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");
     sb.append("    indicatorId: ").append(toIndentedString(indicatorId)).append("\n");
     sb.append("    indicatorType: ").append(toIndentedString(indicatorType)).append("\n");
     sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
@@ -543,7 +560,7 @@ public class IndicatorOverviewType   {
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    applicableSpatialUnits: ").append(toIndentedString(applicableSpatialUnits)).append("\n");
     sb.append("    applicableDates: ").append(toIndentedString(applicableDates)).append("\n");
-    sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
+    sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    referencedIndicators: ").append(toIndentedString(referencedIndicators)).append("\n");
     sb.append("    referencedGeoresources: ").append(toIndentedString(referencedGeoresources)).append("\n");

@@ -13,12 +13,23 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPATCHInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-09-03T12:29:21.035+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-01-04T23:51:22.008+01:00")
 
 public class IndicatorPATCHInputType   {
-  @JsonProperty("applicableTopics")
+  @JsonProperty("datasetName")
+  private String datasetName = null;
+
+  @JsonProperty("characteristicValue")
+  private String characteristicValue = null;
   
-  private List<String> applicableTopics = new ArrayList<>();
+  @JsonProperty("indicatorType")
+  private IndicatorTypeEnum indicatorType = null;
+
+  @JsonProperty("creationType")
+  private CreationTypeEnum creationType = null;
+
+  @JsonProperty("topicReference")
+  private String topicReference = null;
 
   @JsonProperty("metadata")
   private CommonMetadataType metadata = null;
@@ -60,27 +71,94 @@ public class IndicatorPATCHInputType   {
   
   private List<IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources = null;
 
-  public IndicatorPATCHInputType applicableTopics(List<String> applicableTopics) {
-    this.applicableTopics = applicableTopics;
-    return this;
-  }
-
-  public IndicatorPATCHInputType addApplicableTopicsItem(String applicableTopicsItem) {
-    this.applicableTopics.add(applicableTopicsItem);
+  public IndicatorPATCHInputType datasetName(String datasetName) {
+    this.datasetName = datasetName;
     return this;
   }
 
    /**
-   * array of thematic categories for which the dataset is applicable. Note that the used topicName has to be defined under /topics
-   * @return applicableTopics
+   * the meaningful name of the indicator
+   * @return datasetName
   **/
-  @ApiModelProperty(required = true, value = "array of thematic categories for which the dataset is applicable. Note that the used topicName has to be defined under /topics")
-  public List<String> getApplicableTopics() {
-    return applicableTopics;
+  @ApiModelProperty(value = "the meaningful name of the indicator")
+  public String getDatasetName() {
+    return datasetName;
   }
 
-  public void setApplicableTopics(List<String> applicableTopics) {
-    this.applicableTopics = applicableTopics;
+  public void setDatasetName(String datasetName) {
+    this.datasetName = datasetName;
+  }
+
+  public IndicatorPATCHInputType characteristicValue(String characteristicValue) {
+    this.characteristicValue = characteristicValue;
+    return this;
+  }
+
+   /**
+   * the distuingishing characteristic value of the indicator
+   * @return characteristicValue
+  **/
+  @ApiModelProperty(value = "the distuingishing characteristic value of the indicator")
+  public String getCharacteristicValue() {
+    return characteristicValue;
+  }
+
+  public void setCharacteristicValue(String characteristicValue) {
+    this.characteristicValue = characteristicValue;
+  }
+
+  public IndicatorPATCHInputType indicatorType(IndicatorTypeEnum indicatorType) {
+    this.indicatorType = indicatorType;
+    return this;
+  }
+
+   /**
+   * indicates whether the indicator is a status indicator (values represent the extent of the watched phenomenon for a certain point in time) or a dynamic indicator (values represent the change of extent of the watched phenomenon within a certain period of time)
+   * @return indicatorType
+  **/
+  @ApiModelProperty(value = "indicates whether the indicator is a status indicator (values represent the extent of the watched phenomenon for a certain point in time) or a dynamic indicator (values represent the change of extent of the watched phenomenon within a certain period of time)")
+  public IndicatorTypeEnum getIndicatorType() {
+    return indicatorType;
+  }
+
+  public void setIndicatorType(IndicatorTypeEnum indicatorType) {
+    this.indicatorType = indicatorType;
+  }
+
+  public IndicatorPATCHInputType creationType(CreationTypeEnum creationType) {
+    this.creationType = creationType;
+    return this;
+  }
+
+   /**
+   * indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)
+   * @return creationType
+  **/
+  @ApiModelProperty(value = "indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)")
+  public CreationTypeEnum getCreationType() {
+    return creationType;
+  }
+
+  public void setCreationType(CreationTypeEnum creationType) {
+    this.creationType = creationType;
+  }
+
+  public IndicatorPATCHInputType topicReference(String topicReference) {
+    this.topicReference = topicReference;
+    return this;
+  }
+
+   /**
+   * id of the last topic hierarchy entity 
+   * @return topicReference
+  **/
+  @ApiModelProperty(required = true, value = "id of the last topic hierarchy entity ")
+  public String getTopicReference() {
+    return topicReference;
+  }
+
+  public void setTopicReference(String topicReference) {
+    this.topicReference = topicReference;
   }
 
   public IndicatorPATCHInputType metadata(CommonMetadataType metadata) {
@@ -335,7 +413,11 @@ public class IndicatorPATCHInputType   {
       return false;
     }
     IndicatorPATCHInputType indicatorPATCHInputType = (IndicatorPATCHInputType) o;
-    return Objects.equals(this.applicableTopics, indicatorPATCHInputType.applicableTopics) &&
+    return Objects.equals(this.datasetName, indicatorPATCHInputType.datasetName) &&
+        Objects.equals(this.characteristicValue, indicatorPATCHInputType.characteristicValue) &&
+        Objects.equals(this.indicatorType, indicatorPATCHInputType.indicatorType) &&
+        Objects.equals(this.creationType, indicatorPATCHInputType.creationType) &&
+        Objects.equals(this.topicReference, indicatorPATCHInputType.topicReference) &&
         Objects.equals(this.metadata, indicatorPATCHInputType.metadata) &&
         Objects.equals(this.processDescription, indicatorPATCHInputType.processDescription) &&
         Objects.equals(this.unit, indicatorPATCHInputType.unit) &&
@@ -352,7 +434,7 @@ public class IndicatorPATCHInputType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(applicableTopics, metadata, processDescription, unit, allowedRoles, lowestSpatialUnitForComputation, defaultClassificationMapping, abbreviation, interpretation, isHeadlineIndicator, tags, refrencesToOtherIndicators, refrencesToGeoresources);
+    return Objects.hash(datasetName, characteristicValue, indicatorType, creationType, topicReference, metadata, processDescription, unit, allowedRoles, lowestSpatialUnitForComputation, defaultClassificationMapping, abbreviation, interpretation, isHeadlineIndicator, tags, refrencesToOtherIndicators, refrencesToGeoresources);
   }
 
   @Override
@@ -360,7 +442,11 @@ public class IndicatorPATCHInputType   {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorPATCHInputType {\n");
     
-    sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
+    sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
+    sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");
+    sb.append("    indicatorType: ").append(toIndentedString(indicatorType)).append("\n");
+    sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
+    sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    unit: ").append(toIndentedString(unit)).append("\n");

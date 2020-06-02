@@ -35,5 +35,7 @@ public interface IndicatorSpatialUnitsRepository extends JpaRepository<Indicator
 	void deleteBySpatialUnitName(String spatialUnitName);
 
 	void deleteByIndicatorMetadataIdAndSpatialUnitName(String indicatorMetadataId, String spatialUnitName);
+	
+	void deleteByIndicatorMetadataIdAndSpatialUnitId(String indicatorMetadataId, String spatialUnitId);
 
 }
