@@ -9,24 +9,9 @@
 		</encoder>
 	</appender>
 
-	<appender name="TIME_BASED_FILE"
-		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>logs/data-access-api.log</file>
-		<rollingPolicy
-			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<!-- daily rollover -->
-			<fileNamePattern>logs/data-access-api.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
-			<maxHistory>30</maxHistory>
-		</rollingPolicy>
 
-		<encoder>
-			<pattern>%relative [%thread] %-5level %logger{35} - %msg%n</pattern>
-		</encoder>
-	</appender>
-
-	<root level="debug">
+	<root level="error">
 		<appender-ref ref="STDOUT" />
-		<appender-ref ref="TIME_BASED_FILE" />
 	</root>
 
 </configuration>
