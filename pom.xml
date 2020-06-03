@@ -34,7 +34,7 @@
         <spring-cloud.version>Finchley.M9</spring-cloud.version>
         <logstash.logback.version>5.0</logstash.logback.version>
         <docker.image.prefix>kommonitor</docker.image.prefix>
-        <springfox.version>2.7.0</springfox.version>
+        <springfox.version>2.9.2</springfox.version>
         <geotools.version>19.0</geotools.version>
         <postgresql.version>42.1.4</postgresql.version>
         <hibernate.version>5.2.12.Final</hibernate.version>
@@ -42,6 +42,12 @@
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.keycloak</groupId>
