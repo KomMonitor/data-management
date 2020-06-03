@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @ComponentScan("de.hsbo.kommonitor")
@@ -15,4 +16,3 @@ public class Runner extends SpringBootServletInitializer{
         SpringApplication.run(Runner.class, args);
     }
 }
-//test
