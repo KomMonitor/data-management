@@ -13,11 +13,14 @@ import io.swagger.annotations.ApiModelProperty;
  * IndicatorPOSTInputType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-09-03T12:29:21.035+02:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-01-04T23:04:55.031+01:00")
 
 public class IndicatorPOSTInputType   {
   @JsonProperty("datasetName")
   private String datasetName = null;
+
+  @JsonProperty("characteristicValue")
+  private String characteristicValue = null;
 
   @JsonProperty("indicatorType")
   private IndicatorTypeEnum indicatorType = null;
@@ -25,9 +28,8 @@ public class IndicatorPOSTInputType   {
   @JsonProperty("applicableSpatialUnit")
   private String applicableSpatialUnit = null;
 
-  @JsonProperty("applicableTopics")
-  
-  private List<String> applicableTopics = new ArrayList<>();
+  @JsonProperty("topicReference")
+  private String topicReference = null;
 
   @JsonProperty("metadata")
   private CommonMetadataType metadata = null;
@@ -94,6 +96,24 @@ public class IndicatorPOSTInputType   {
     this.datasetName = datasetName;
   }
 
+  public IndicatorPOSTInputType characteristicValue(String characteristicValue) {
+    this.characteristicValue = characteristicValue;
+    return this;
+  }
+
+   /**
+   * the distuingishing characteristic value of the indicator
+   * @return characteristicValue
+  **/
+  @ApiModelProperty(required = true, value = "the distuingishing characteristic value of the indicator")
+  public String getCharacteristicValue() {
+    return characteristicValue;
+  }
+
+  public void setCharacteristicValue(String characteristicValue) {
+    this.characteristicValue = characteristicValue;
+  }
+
   public IndicatorPOSTInputType indicatorType(IndicatorTypeEnum indicatorType) {
     this.indicatorType = indicatorType;
     return this;
@@ -130,27 +150,22 @@ public class IndicatorPOSTInputType   {
     this.applicableSpatialUnit = applicableSpatialUnit;
   }
 
-  public IndicatorPOSTInputType applicableTopics(List<String> applicableTopics) {
-    this.applicableTopics = applicableTopics;
-    return this;
-  }
-
-  public IndicatorPOSTInputType addApplicableTopicsItem(String applicableTopicsItem) {
-    this.applicableTopics.add(applicableTopicsItem);
+  public IndicatorPOSTInputType topicReference(String topicReference) {
+    this.topicReference = topicReference;
     return this;
   }
 
    /**
-   * array of thematic categories for which the dataset is applicable. Note that the used topicName has to be defined under /topics
-   * @return applicableTopics
+   * id of the last topic hierarchy entity 
+   * @return topicReference
   **/
-  @ApiModelProperty(required = true, value = "array of thematic categories for which the dataset is applicable. Note that the used topicName has to be defined under /topics")
-  public List<String> getApplicableTopics() {
-    return applicableTopics;
+  @ApiModelProperty(required = true, value = "id of the last topic hierarchy entity ")
+  public String getTopicReference() {
+    return topicReference;
   }
 
-  public void setApplicableTopics(List<String> applicableTopics) {
-    this.applicableTopics = applicableTopics;
+  public void setTopicReference(String topicReference) {
+    this.topicReference = topicReference;
   }
 
   public IndicatorPOSTInputType metadata(CommonMetadataType metadata) {
@@ -450,9 +465,10 @@ public class IndicatorPOSTInputType   {
     }
     IndicatorPOSTInputType indicatorPOSTInputType = (IndicatorPOSTInputType) o;
     return Objects.equals(this.datasetName, indicatorPOSTInputType.datasetName) &&
+        Objects.equals(this.characteristicValue, indicatorPOSTInputType.characteristicValue) &&
         Objects.equals(this.indicatorType, indicatorPOSTInputType.indicatorType) &&
         Objects.equals(this.applicableSpatialUnit, indicatorPOSTInputType.applicableSpatialUnit) &&
-        Objects.equals(this.applicableTopics, indicatorPOSTInputType.applicableTopics) &&
+        Objects.equals(this.topicReference, indicatorPOSTInputType.topicReference) &&
         Objects.equals(this.metadata, indicatorPOSTInputType.metadata) &&
         Objects.equals(this.processDescription, indicatorPOSTInputType.processDescription) &&
         Objects.equals(this.unit, indicatorPOSTInputType.unit) &&
@@ -471,7 +487,7 @@ public class IndicatorPOSTInputType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, indicatorType, applicableSpatialUnit, applicableTopics, metadata, processDescription, unit, creationType, abbreviation, interpretation, isHeadlineIndicator, tags, lowestSpatialUnitForComputation, defaultClassificationMapping, allowedRoles, refrencesToOtherIndicators, refrencesToGeoresources, indicatorValues);
+    return Objects.hash(datasetName, characteristicValue, indicatorType, applicableSpatialUnit, topicReference, metadata, processDescription, unit, creationType, abbreviation, interpretation, isHeadlineIndicator, tags, lowestSpatialUnitForComputation, defaultClassificationMapping, allowedRoles, refrencesToOtherIndicators, refrencesToGeoresources, indicatorValues);
   }
 
   @Override
@@ -480,9 +496,10 @@ public class IndicatorPOSTInputType   {
     sb.append("class IndicatorPOSTInputType {\n");
     
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
+    sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");
     sb.append("    indicatorType: ").append(toIndentedString(indicatorType)).append("\n");
     sb.append("    applicableSpatialUnit: ").append(toIndentedString(applicableSpatialUnit)).append("\n");
-    sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
+    sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    unit: ").append(toIndentedString(unit)).append("\n");

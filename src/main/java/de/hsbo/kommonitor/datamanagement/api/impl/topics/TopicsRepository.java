@@ -1,7 +1,11 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import de.hsbo.kommonitor.datamanagement.model.topics.TopicResourceEnum;
+import de.hsbo.kommonitor.datamanagement.model.topics.TopicTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
 public interface TopicsRepository extends JpaRepository<TopicsEntity, Long> {
@@ -14,4 +18,9 @@ public interface TopicsRepository extends JpaRepository<TopicsEntity, Long> {
     boolean existsByTopicName(String topicName);
     
     void deleteByTopicId(String topicId);
+
+	List<TopicsEntity> findByTopicType(TopicTypeEnum topicType);
+
+	boolean existsByTopicNameAndTopicTypeAndTopicResource(String topicName, TopicTypeEnum topicType,
+			TopicResourceEnum topicResource);
 }

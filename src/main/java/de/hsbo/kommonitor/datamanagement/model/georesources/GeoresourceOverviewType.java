@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.model.georesources;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * GeoresourceOverviewType
  */
 
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-02-12T21:13:46.924+01:00")
+@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2020-03-08T20:17:51.649+01:00")
 
 public class GeoresourceOverviewType   {
   @JsonProperty("datasetName")
@@ -29,9 +30,8 @@ public class GeoresourceOverviewType   {
   @JsonProperty("availablePeriodsOfValidity")
   private AvailablePeriodsOfValidityType availablePeriodsOfValidity = null;
 
-  @JsonProperty("applicableTopics")
-  
-  private List<String> applicableTopics = new ArrayList<>();
+  @JsonProperty("topicReference")
+  private String topicReference = null;
 
   @JsonProperty("allowedRoles")
   
@@ -40,13 +40,30 @@ public class GeoresourceOverviewType   {
   @JsonProperty("isPOI")
   private Boolean isPOI = null;
 
+  @JsonProperty("isLOI")
+  private Boolean isLOI = false;
+
+  @JsonProperty("isAOI")
+  private Boolean isAOI = false;
+
+  @JsonProperty("loiColor")
+  private String loiColor = null;
+
+  @JsonProperty("loiWidth")
+  private BigDecimal loiWidth = null;
+
+  @JsonProperty("loiDashArrayString")
+  private String loiDashArrayString = null;
+
+  @JsonProperty("aoiColor")
+  private String aoiColor = null;
+
   @JsonProperty("poiSymbolBootstrap3Name")
   private String poiSymbolBootstrap3Name = null;
 
-
   @JsonProperty("poiMarkerColor")
   private PoiMarkerColorEnum poiMarkerColor = null;
-  
+
   @JsonProperty("poiSymbolColor")
   private PoiSymbolColorEnum poiSymbolColor = null;
 
@@ -110,16 +127,16 @@ public class GeoresourceOverviewType   {
     this.metadata = metadata;
   }
 
-  public GeoresourceOverviewType availablePeriodsOfValidity(AvailablePeriodsOfValidityType availablePeriodOfValidity) {
-    this.availablePeriodsOfValidity = availablePeriodOfValidity;
+  public GeoresourceOverviewType availablePeriodsOfValidity(AvailablePeriodsOfValidityType availablePeriodsOfValidity) {
+    this.availablePeriodsOfValidity = availablePeriodsOfValidity;
     return this;
   }
 
    /**
-   * Get availablePeriodOfValidity
-   * @return availablePeriodOfValidity
+   * Get availablePeriodsOfValidity
+   * @return availablePeriodsOfValidity
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(required = true, value = "")
   public AvailablePeriodsOfValidityType getAvailablePeriodsOfValidity() {
     return availablePeriodsOfValidity;
   }
@@ -128,27 +145,22 @@ public class GeoresourceOverviewType   {
     this.availablePeriodsOfValidity = availablePeriodsOfValidity;
   }
 
-  public GeoresourceOverviewType applicableTopics(List<String> applicableTopics) {
-    this.applicableTopics = applicableTopics;
-    return this;
-  }
-
-  public GeoresourceOverviewType addApplicableTopicsItem(String applicableTopicsItem) {
-    this.applicableTopics.add(applicableTopicsItem);
+  public GeoresourceOverviewType topicReference(String topicReference) {
+    this.topicReference = topicReference;
     return this;
   }
 
    /**
-   * array of thematic categories for which the dataset is applicable. Note that the used topicName has to be defined under /topics
-   * @return applicableTopics
+   * id of the last topic hierarchy entity 
+   * @return topicReference
   **/
-  @ApiModelProperty(required = true, value = "array of thematic categories for which the dataset is applicable. Note that the used topicName has to be defined under /topics")
-  public List<String> getApplicableTopics() {
-    return applicableTopics;
+  @ApiModelProperty(required = true, value = "id of the last topic hierarchy entity ")
+  public String getTopicReference() {
+    return topicReference;
   }
 
-  public void setApplicableTopics(List<String> applicableTopics) {
-    this.applicableTopics = applicableTopics;
+  public void setTopicReference(String topicReference) {
+    this.topicReference = topicReference;
   }
 
   public GeoresourceOverviewType allowedRoles(List<String> allowedRoles) {
@@ -193,6 +205,114 @@ public class GeoresourceOverviewType   {
 
   public void setIsPOI(Boolean isPOI) {
     this.isPOI = isPOI;
+  }
+
+  public GeoresourceOverviewType isLOI(Boolean isLOI) {
+    this.isLOI = isLOI;
+    return this;
+  }
+
+   /**
+   * boolean value indicating if the dataset contains lines of interest
+   * @return isLOI
+  **/
+  @ApiModelProperty(required = true, value = "boolean value indicating if the dataset contains lines of interest")
+  public Boolean isIsLOI() {
+    return isLOI;
+  }
+
+  public void setIsLOI(Boolean isLOI) {
+    this.isLOI = isLOI;
+  }
+
+  public GeoresourceOverviewType isAOI(Boolean isAOI) {
+    this.isAOI = isAOI;
+    return this;
+  }
+
+   /**
+   * boolean value indicating if the dataset contains areas of interest
+   * @return isAOI
+  **/
+  @ApiModelProperty(required = true, value = "boolean value indicating if the dataset contains areas of interest")
+  public Boolean isIsAOI() {
+    return isAOI;
+  }
+
+  public void setIsAOI(Boolean isAOI) {
+    this.isAOI = isAOI;
+  }
+
+  public GeoresourceOverviewType loiColor(String loiColor) {
+    this.loiColor = loiColor;
+    return this;
+  }
+
+   /**
+   * color name or color code (i.e. hex number) for lines of interest
+   * @return loiColor
+  **/
+  @ApiModelProperty(value = "color name or color code (i.e. hex number) for lines of interest")
+  public String getLoiColor() {
+    return loiColor;
+  }
+
+  public void setLoiColor(String loiColor) {
+    this.loiColor = loiColor;
+  }
+
+  public GeoresourceOverviewType loiWidth(BigDecimal loiWidth) {
+    this.loiWidth = loiWidth;
+    return this;
+  }
+
+   /**
+   * display width for lines of interest (number of pixels in leaflet)
+   * @return loiWidth
+  **/
+  @ApiModelProperty(value = "display width for lines of interest (number of pixels in leaflet)")
+  public BigDecimal getLoiWidth() {
+    return loiWidth;
+  }
+
+  public void setLoiWidth(BigDecimal loiWidth) {
+    this.loiWidth = loiWidth;
+  }
+
+  public GeoresourceOverviewType loiDashArrayString(String loiDashArrayString) {
+    this.loiDashArrayString = loiDashArrayString;
+    return this;
+  }
+
+   /**
+   * sring of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)
+   * @return loiDashArrayString
+  **/
+  @ApiModelProperty(value = "sring of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)")
+  public String getLoiDashArrayString() {
+    return loiDashArrayString;
+  }
+
+  public void setLoiDashArrayString(String loiDashArrayString) {
+    this.loiDashArrayString = loiDashArrayString;
+  }
+
+  public GeoresourceOverviewType aoiColor(String aoiColor) {
+    this.aoiColor = aoiColor;
+    return this;
+  }
+
+   /**
+   * color name or color code (i.e. hex number) for areas of interest
+   * @return aoiColor
+  **/
+  @ApiModelProperty(value = "color name or color code (i.e. hex number) for areas of interest")
+  public String getAoiColor() {
+    return aoiColor;
+  }
+
+  public void setAoiColor(String aoiColor) {
+    this.aoiColor = aoiColor;
   }
 
   public GeoresourceOverviewType poiSymbolBootstrap3Name(String poiSymbolBootstrap3Name) {
@@ -299,9 +419,15 @@ public class GeoresourceOverviewType   {
         Objects.equals(this.georesourceId, georesourceOverviewType.georesourceId) &&
         Objects.equals(this.metadata, georesourceOverviewType.metadata) &&
         Objects.equals(this.availablePeriodsOfValidity, georesourceOverviewType.availablePeriodsOfValidity) &&
-        Objects.equals(this.applicableTopics, georesourceOverviewType.applicableTopics) &&
+        Objects.equals(this.topicReference, georesourceOverviewType.topicReference) &&
         Objects.equals(this.allowedRoles, georesourceOverviewType.allowedRoles) &&
         Objects.equals(this.isPOI, georesourceOverviewType.isPOI) &&
+        Objects.equals(this.isLOI, georesourceOverviewType.isLOI) &&
+        Objects.equals(this.isAOI, georesourceOverviewType.isAOI) &&
+        Objects.equals(this.loiColor, georesourceOverviewType.loiColor) &&
+        Objects.equals(this.loiWidth, georesourceOverviewType.loiWidth) &&
+        Objects.equals(this.loiDashArrayString, georesourceOverviewType.loiDashArrayString) &&
+        Objects.equals(this.aoiColor, georesourceOverviewType.aoiColor) &&
         Objects.equals(this.poiSymbolBootstrap3Name, georesourceOverviewType.poiSymbolBootstrap3Name) &&
         Objects.equals(this.poiMarkerColor, georesourceOverviewType.poiMarkerColor) &&
         Objects.equals(this.poiSymbolColor, georesourceOverviewType.poiSymbolColor) &&
@@ -311,7 +437,7 @@ public class GeoresourceOverviewType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodsOfValidity, applicableTopics, allowedRoles, isPOI, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor, wmsUrl, wfsUrl);
+    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodsOfValidity, topicReference, allowedRoles, isPOI, isLOI, isAOI, loiColor, loiWidth, loiDashArrayString, aoiColor, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor, wmsUrl, wfsUrl);
   }
 
   @Override
@@ -322,10 +448,16 @@ public class GeoresourceOverviewType   {
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
     sb.append("    georesourceId: ").append(toIndentedString(georesourceId)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
-    sb.append("    availablePeriodOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
-    sb.append("    applicableTopics: ").append(toIndentedString(applicableTopics)).append("\n");
+    sb.append("    availablePeriodsOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
+    sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    isPOI: ").append(toIndentedString(isPOI)).append("\n");
+    sb.append("    isLOI: ").append(toIndentedString(isLOI)).append("\n");
+    sb.append("    isAOI: ").append(toIndentedString(isAOI)).append("\n");
+    sb.append("    loiColor: ").append(toIndentedString(loiColor)).append("\n");
+    sb.append("    loiWidth: ").append(toIndentedString(loiWidth)).append("\n");
+    sb.append("    loiDashArrayString: ").append(toIndentedString(loiDashArrayString)).append("\n");
+    sb.append("    aoiColor: ").append(toIndentedString(aoiColor)).append("\n");
     sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");
     sb.append("    poiMarkerColor: ").append(toIndentedString(poiMarkerColor)).append("\n");
     sb.append("    poiSymbolColor: ").append(toIndentedString(poiSymbolColor)).append("\n");

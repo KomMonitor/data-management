@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.hsbo.kommonitor</groupId>
@@ -15,13 +15,14 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.0.1.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
+        <!-- lookup parent from repository -->
     </parent>
-    
+
     <licenses>
         <license>
-            <name>GPLv2</name>
-            <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+            <name>GPL-v3.0</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -33,26 +34,45 @@
         <spring-cloud.version>Finchley.M9</spring-cloud.version>
         <logstash.logback.version>5.0</logstash.logback.version>
         <docker.image.prefix>kommonitor</docker.image.prefix>
-        <springfox.version>2.7.0</springfox.version>
+        <springfox.version>2.9.2</springfox.version>
         <geotools.version>19.0</geotools.version>
         <postgresql.version>42.1.4</postgresql.version>
         <hibernate.version>5.2.12.Final</hibernate.version>
     </properties>
 
+
     <dependencies>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-boot-starter</artifactId>
+        </dependency>
     
-    	<!-- <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency> -->
+        <!-- <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-tomcat</artifactId>
+                <scope>provided</scope>
+        </dependency> -->
 
 
         <!-- Spring -->
-        
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+        <!-- define as runtime scope -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -66,12 +86,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-	    </dependency>
-	    
-	    <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+        </dependency>
+        
+        <!-- define as runtime scope -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- Consul dependencies -->
         <!-- <dependency>
@@ -84,19 +106,19 @@
         </dependency> -->
 
 
-<!-- Date Time support -->
-         <dependency>
-<groupId>com.fasterxml.jackson.module</groupId>
-<artifactId>jackson-module-parameter-names</artifactId>
-         </dependency>
-         <dependency>
-<groupId>com.fasterxml.jackson.datatype</groupId>
-<artifactId>jackson-datatype-jdk8</artifactId>
-         </dependency>
-         <dependency>
-<groupId>com.fasterxml.jackson.datatype</groupId>
-<artifactId>jackson-datatype-jsr310</artifactId>
-         </dependency>
+        <!-- Date Time support -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
 
 
 
@@ -126,143 +148,157 @@
         </dependency>
 
         <!-- Geotools -->
-       <!-- Geotools support -->
+        <!-- Geotools support -->
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-coverage</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-hsql</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-wkt</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-grid</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geotiff</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-main</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-api</artifactId>
+            <version>${geotools.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-cql</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-data</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-opengis</artifactId>
+            <version>${geotools.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-referencing</artifactId>
+            <version>${geotools.version}</version>
+            <type>jar</type>
+        </dependency>
+        <!-- <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-metadata</artifactId>
+                <version>${geotools.version}</version>
+        </dependency> -->
+        <!-- <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-data</artifactId>
+                <version>${geotools.version}</version>
+        </dependency> -->
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-shapefile</artifactId>
+            <version>${geotools.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geopkg</artifactId>
+            <version>${geotools.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geojson</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geotools.jdbc</groupId>
+            <artifactId>gt-jdbc-postgis</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-brewer</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+
+        <!-- PostgeSQL support -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Hibernate -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-spatial</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.grundid.opendatalab</groupId>
+            <artifactId>geojson-jackson</artifactId>
+            <version>1.8.1</version>
+        </dependency>
+
+         <!-- required for Java 9 + -->
        <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-coverage</artifactId>
-           <version>${geotools.version}</version>
-       </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-epsg-hsql</artifactId>
-           <version>${geotools.version}</version>
-       </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-epsg-wkt</artifactId>
-           <version>${geotools.version}</version>
-       </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-grid</artifactId>
-           <version>${geotools.version}</version>
-       </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-geotiff</artifactId>
-           <version>${geotools.version}</version>
-       </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-main</artifactId>
-           <version>${geotools.version}</version>
-       </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-api</artifactId>
-           <version>${geotools.version}</version>
-           <type>jar</type>
-       </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-cql</artifactId>
-           <version>${geotools.version}</version>
-       </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-data</artifactId>
-           <version>${geotools.version}</version>
-       </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-opengis</artifactId>
-           <version>${geotools.version}</version>
-           <type>jar</type>
-       </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-referencing</artifactId>
-           <version>${geotools.version}</version>
-           <type>jar</type>
-       </dependency>
-       <!-- <dependency>
-               <groupId>org.geotools</groupId>
-               <artifactId>gt-metadata</artifactId>
-               <version>${geotools.version}</version>
-       </dependency> -->
-       <!-- <dependency>
-               <groupId>org.geotools</groupId>
-               <artifactId>gt-data</artifactId>
-               <version>${geotools.version}</version>
-       </dependency> -->
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-shapefile</artifactId>
-           <version>${geotools.version}</version>
-           <type>jar</type>
-       </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-geopkg</artifactId>
-           <version>${geotools.version}</version>
-           <type>jar</type>
-       </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-geojson</artifactId>
-           <version>${geotools.version}</version>
-       </dependency>
-       
-		<dependency>
-			<groupId>org.geotools.jdbc</groupId>
-			<artifactId>gt-jdbc-postgis</artifactId>
-			<version>${geotools.version}</version>
+		    <groupId>org.glassfish.jaxb</groupId>
+		    <artifactId>jaxb-runtime</artifactId>
+		    <version>2.3.2</version>
 		</dependency>
-		
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-brewer</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-
-       <!-- PostgeSQL support -->
-       <dependency>
-           <groupId>org.postgresql</groupId>
-           <artifactId>postgresql</artifactId>
-           <version>${postgresql.version}</version>
-       </dependency>
 
 
-       <dependency>
-           <groupId>junit</groupId>
-           <artifactId>junit</artifactId>
-           <scope>test</scope>
-       </dependency>
-
-       <!-- Hibernate -->
-       <dependency>
-           <groupId>org.hibernate</groupId>
-           <artifactId>hibernate-entitymanager</artifactId>
-           <version>${hibernate.version}</version>
-       </dependency>
-       <dependency>
-           <groupId>org.hibernate</groupId>
-           <artifactId>hibernate-core</artifactId>
-           <version>${hibernate.version}</version>
-           <type>jar</type>
-       </dependency>
-       <dependency>
-           <groupId>org.hibernate</groupId>
-           <artifactId>hibernate-spatial</artifactId>
-           <version>${hibernate.version}</version>
-       </dependency>
-
-       <!-- Geoserver Manager -->
-       <dependency>
-         <groupId>it.geosolutions</groupId>
-         <artifactId>geoserver-manager</artifactId>
-         <version>1.7.0</version>
-       </dependency>
+        <!-- Geoserver Manager -->
+        <dependency>
+            <groupId>it.geosolutions</groupId>
+            <artifactId>geoserver-manager</artifactId>
+            <version>1.7.0</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -274,52 +310,60 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.keycloak.bom</groupId>
+                <artifactId>keycloak-adapter-bom</artifactId>
+                <version>10.0.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <build>
         <plugins>
-        	<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>2.0.0</version>
-				<configuration>
-					<useMissingFile>true</useMissingFile>
-					<fileTemplate>misc/license-as-csv.ftl</fileTemplate>
-				</configuration>
-				<!-- <executions>
-					<execution>
-						<id>first</id>
-						<goals>
-							<goal>add-third-party</goal>
-						</goals>
-						<phase>generate-resources</phase>
-					</execution>
-				</executions> -->
-			</plugin>
-			<plugin>
-				<groupId>org.jasig.maven</groupId>
-				<artifactId>maven-notice-plugin</artifactId>
-				<version>1.1.0</version>
-				<configuration>
-					<noticeTemplate>misc/NOTICE.template</noticeTemplate>
-					<licenseMapping>
-						<param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
-						<param>misc/license-mappings.xml</param>
-					</licenseMapping>
-					<generateChildNotices>false</generateChildNotices>
-				</configuration>
-				<!-- <executions>
-					<execution>
-						<id>check-license</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions> -->
-			</plugin>
-			<plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <configuration>
+                    <useMissingFile>true</useMissingFile>
+                    <fileTemplate>misc/license-as-csv.ftl</fileTemplate>
+                </configuration>
+                <!-- <executions>
+                        <execution>
+                                <id>first</id>
+                                <goals>
+                                        <goal>add-third-party</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                        </execution>
+                </executions>  -->
+            </plugin>
+            <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>maven-notice-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <noticeTemplate>misc/NOTICE.template</noticeTemplate>
+                    <licenseMapping>
+                        <param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
+                        <param>misc/license-mappings.xml</param>
+                    </licenseMapping>
+                    <generateChildNotices>false</generateChildNotices>
+                </configuration>
+                <!-- <executions>
+                        <execution>
+                                <id>check-license</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                        <goal>check</goal>
+                                </goals>
+                        </execution>
+                </executions> -->
+            </plugin>
+            <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <inherited>false</inherited>
@@ -347,7 +391,7 @@
                     </properties>
                 </configuration>
                 <!-- <executions> <execution> <id>check-license</id> <phase>initialize</phase> 
-                    <goals> <goal>format</goal> </goals> </execution> </executions> -->
+                <goals> <goal>format</goal> </goals> </execution> </executions> -->
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -398,6 +442,24 @@
             <url>http://download.osgeo.org/webdav/geotools/</url>
         </repository>
         <repository>
+	        <id>osgeo2</id>
+	        <name>OSGeo Release Repository</name>
+	        <url>https://repo.osgeo.org/repository/release/</url>
+	        <snapshots><enabled>false</enabled></snapshots>
+	        <releases><enabled>true</enabled></releases>
+	      </repository>
+        <repository>
+            <id>geotools</id>
+            <name>Geotools Repo</name>
+            <url>https://repo.osgeo.org/repository/release/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository> 
+        <repository>
             <id>boundless</id>
             <name>boundless repo for geoserver</name>
             <url>http://repo.boundlessgeo.com/main/</url>
@@ -407,7 +469,7 @@
                 <checksumPolicy>ignore</checksumPolicy>
             </snapshots>
         </repository>
-        <repository>
+        <!-- <repository>
             <id>maven central</id>
             <name>central repo for geoserver</name>
             <url>http://central.maven.org/maven2</url>
@@ -416,7 +478,7 @@
                 <updatePolicy>always</updatePolicy>
                 <checksumPolicy>ignore</checksumPolicy>
             </snapshots>
-        </repository>
+        </repository> -->
         <repository>
             <id>geotoolkit</id>
             <name>central repo for geoserver</name>

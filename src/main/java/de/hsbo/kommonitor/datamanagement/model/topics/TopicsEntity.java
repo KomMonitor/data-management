@@ -2,16 +2,15 @@ package de.hsbo.kommonitor.datamanagement.model.topics;
 
 import java.util.Collection;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
 
 import org.hibernate.annotations.GenericGenerator;
-
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 
 @Entity(name = "Topics")
 public class TopicsEntity {
@@ -26,15 +25,20 @@ public class TopicsEntity {
 	  @Column(columnDefinition="text")
 	  private String topicDescription = null;
 	  
+	  private TopicTypeEnum topicType = null;
+	  
+	  private TopicResourceEnum topicResource = null;
+	  
+	  @ElementCollection()
+//	  @OnDelete(action= OnDeleteAction.CASCADE)
+//	  @JoinColumn(name = "main_topic_id", referencedColumnName = "topicId")
+	  @CollectionTable(name = "topics_subtopics", joinColumns = @JoinColumn(name = "main_topic_id", referencedColumnName = "topicId"))
+	  @Column(name = "sub_topic")
+	  private Collection<TopicsEntity> subTopics;
+	  
 	  /*
 	   * default constructor is required by hibernate / jpa
 	   */
-	  
-	  @ManyToMany(mappedBy = "georesourcesTopics")
-	    private Collection<MetadataGeoresourcesEntity> metadataGeoresources;
-	  
-	  @ManyToMany(mappedBy = "indicatorTopics")
-	    private Collection<MetadataIndicatorsEntity> metadataIndicators;
 	  
 	  public TopicsEntity(){
 		  
@@ -70,5 +74,49 @@ public class TopicsEntity {
 	  public void setTopicDescription(String topicDescription) {
 	    this.topicDescription = topicDescription;
 	  }
+
+
+	public TopicTypeEnum getTopicType() {
+		return topicType;
+	}
+
+
+	public void setTopicType(TopicTypeEnum topicType) {
+		this.topicType = topicType;
+	}
+
+
+	public TopicResourceEnum getTopicResource() {
+		return topicResource;
+	}
+
+
+	public void setTopicResource(TopicResourceEnum topicResource) {
+		this.topicResource = topicResource;
+	}
+
+
+	public Collection<TopicsEntity> getSubTopics() {
+		return subTopics;
+	}
+
+
+	public void setSubTopics(Collection<TopicsEntity> subTopics) {
+		this.subTopics = subTopics;
+	}
+	
+	public void addSubTopicsIfNotExists(Collection<TopicsEntity> subTopics) {
+		for (TopicsEntity topicsEntity : subTopics) {
+			if(! this.subTopics.contains(topicsEntity)){
+				this.subTopics.add(topicsEntity);
+			}
+		}
+	}
+	
+	public void addSubTopicIfNotExists(TopicsEntity subTopic) {
+		if(! this.subTopics.contains(subTopic)){
+			this.subTopics.add(subTopic);
+		}
+	}
 
 }

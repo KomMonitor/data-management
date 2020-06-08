@@ -37,6 +37,7 @@ This project includes:
   Filter Encoding Specification Model under Lesser General Public License (LGPL)
   Filter Encoding Specification XML Support under Lesser General Public License (LGPL)
   Filter XML Support under Lesser General Public License (LGPL)
+  GeoJson POJOs for Jackson under The Apache Software License, Version 2.0
   GeoJSON Support under Lesser General Public License (LGPL)
   geolatte-geom under LGPL 3.0
   GeoPackage Module under Lesser General Public License (LGPL)
