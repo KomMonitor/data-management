@@ -4,15 +4,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import javax.transaction.Transactional;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import org.geotools.data.DataStore;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.text.cql2.CQLException;
@@ -67,6 +64,9 @@ public class IndicatorsManager {
 	
 	@Autowired
 	private IndicatorSpatialUnitsRepository indicatorsSpatialUnitsRepo;
+
+	@Autowired
+	private RolesRepository rolesRepository;
 	
 	@Autowired
 	OGCWebServiceManager ogcServiceManager;
@@ -683,6 +683,7 @@ public class IndicatorsManager {
 			metadataId = null;
 			
 			indicatorMetadataEntity = createMetadata(indicatorData);
+			indicatorMetadataEntity.setRoles(retrieveRoles(indicatorData.getAllowedRoles()));
 			metadataId = indicatorMetadataEntity.getDatasetId();
 
 			ReferenceManager.createReferences(indicatorData.getRefrencesToGeoresources(), 
@@ -752,6 +753,20 @@ public class IndicatorsManager {
 		
 		return metadataId;
 	}
+
+	private Collection<RolesEntity> retrieveRoles(List<String> roleIds) throws ResourceNotFoundException {
+	    Collection<RolesEntity> allowedRoles = new ArrayList<>();
+	    for (String id : roleIds) {
+	        RolesEntity role = rolesRepository.findByRoleId(id);
+	        if(role == null) {
+	            throw new ResourceNotFoundException(400, String.format("The requested role %s does not exist.", id));
+            }
+	        if (!allowedRoles.contains(role)) {
+                allowedRoles.add(role);
+            }
+        }
+	    return allowedRoles;
+    }
 
 //	private void handleInitialIndicatorPersistanceAndPublishing(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, String indicatorName,
 //			String spatialUnitName, String metadataId) throws CQLException, IOException, SQLException, Exception {
