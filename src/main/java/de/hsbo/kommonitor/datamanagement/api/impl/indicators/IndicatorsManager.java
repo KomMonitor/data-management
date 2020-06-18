@@ -684,7 +684,6 @@ public class IndicatorsManager {
 			metadataId = null;
 			
 			indicatorMetadataEntity = createMetadata(indicatorData);
-			indicatorMetadataEntity.setRoles(retrieveRoles(indicatorData.getAllowedRoles()));
 			metadataId = indicatorMetadataEntity.getDatasetId();
 
 			ReferenceManager.createReferences(indicatorData.getRefrencesToGeoresources(), 
@@ -965,6 +964,8 @@ public class IndicatorsManager {
 		entity.setDbTableName(null);
 		entity.setWfsUrl(null);
 		entity.setWmsUrl(null);
+
+		entity.setRoles(retrieveRoles(indicatorData.getAllowedRoles()));
 		
 		/*
 		 * process availableTimestamps property for indicator metadata entity
