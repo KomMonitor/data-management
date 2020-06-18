@@ -2,13 +2,12 @@ package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import javax.transaction.Transactional;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +52,9 @@ public class GeoresourcesManager {
 	
 	@Autowired
 	GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepo;
+
+	@Autowired
+	private RolesRepository rolesRepository;
 	
 	@Autowired
 	OGCWebServiceManager ogcServiceManager;
@@ -140,6 +142,20 @@ public class GeoresourcesManager {
 			}
 			throw e;
 		}
+	}
+
+	private Collection<RolesEntity> retrieveRoles(List<String> roleIds) throws ResourceNotFoundException {
+		Collection<RolesEntity> allowedRoles = new ArrayList<>();
+		for (String id : roleIds) {
+			RolesEntity role = rolesRepository.findByRoleId(id);
+			if(role == null) {
+				throw new ResourceNotFoundException(400, String.format("The requested role %s does not exist.", id));
+			}
+			if (!allowedRoles.contains(role)) {
+				allowedRoles.add(role);
+			}
+		}
+		return allowedRoles;
 	}
 
 	private void updatePeriodsOfValidity(MetadataGeoresourcesEntity georesourceMetadataEntity) throws Exception {
@@ -264,6 +280,8 @@ public class GeoresourcesManager {
 		entity.setDbTableName(null);
 		entity.setWfsUrl(null);
 		entity.setWmsUrl(null);
+
+		entity.setRoles(retrieveRoles(featureData.getAllowedRoles()));
 
 		// persist in db
 		georesourcesMetadataRepo.saveAndFlush(entity);
@@ -538,7 +556,8 @@ public class GeoresourcesManager {
 		entity.setLoiDashArrayString(metadata.getLoiDashArrayString());
 		entity.setAoiColor(metadata.getAoiColor());
 		
-		entity.setTopicReference(metadata.getTopicReference());		
+		entity.setTopicReference(metadata.getTopicReference());
+		entity.setRoles(retrieveRoles(metadata.getAllowedRoles()));
 
 		// persist in db
 		georesourcesMetadataRepo.saveAndFlush(entity);
