@@ -1,9 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
@@ -21,6 +19,8 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceTy
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.OgcServicesType;
+import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 
@@ -71,7 +71,7 @@ public class IndicatorsMapper {
 			/*
 			 * TODO FIXME quick and dirty database modification of indicator
 			 * timestamps
-			 * 
+			 *
 			 * here a quick and dirty way is commented out that can reset
 			 * indicator timestamps by accessing an exemplar indicator layer and
 			 * inspecting the available timestamps it can be reenabled to
@@ -131,8 +131,16 @@ public class IndicatorsMapper {
 		;
 		indicatorOverviewType.setInterpretation(indicatorsMetadataEntity.getInterpretation());
 		indicatorOverviewType.setTags(new ArrayList<String>(indicatorsMetadataEntity.getTags()));
+		indicatorOverviewType.setAllowedRoles(getAllowedRoleIds(indicatorsMetadataEntity.getRoles()));
 
 		return indicatorOverviewType;
+	}
+
+	private static List<String> getAllowedRoleIds(HashSet<RolesEntity> roles) {
+		return roles
+				.stream()
+				.map(r -> r.getRoleId())
+				.collect(Collectors.toList());
 	}
 
 	public static DefaultClassificationMappingType extractDefaultClassificationMappingFromMetadata(
@@ -178,7 +186,7 @@ public class IndicatorsMapper {
 		List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray = spatialUnitsRepo.findAll();
 		List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitsMetadataArray);
 
-		
+
 		swaggerSpatialUnitsMetadata = SpatialUnitsManager.sortSpatialUnitsHierarchically(swaggerSpatialUnitsMetadata);
 
 		List<String> orderedSpatialUnitNames = new ArrayList<String>();
