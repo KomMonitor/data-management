@@ -191,7 +191,8 @@ public class IndicatorsManager {
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 		entity.setProcessDescription(metadata.getProcessDescription());
 		entity.setUnit(metadata.getUnit());
-		entity.setLowestSpatialUnitForComputation(metadata.getLowestSpatialUnitForComputation());	
+		entity.setLowestSpatialUnitForComputation(metadata.getLowestSpatialUnitForComputation());
+		entity.setRoles(retrieveRoles(metadata.getAllowedRoles()));
 		
 		if(metadata.getDefaultClassificationMapping() != null){
 			entity.setDefaultClassificationMappingItems(metadata.getDefaultClassificationMapping().getItems());
