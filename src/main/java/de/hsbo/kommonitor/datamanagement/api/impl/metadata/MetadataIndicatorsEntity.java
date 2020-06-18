@@ -224,7 +224,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 		this.topicReference = topicReference;
 	}
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany()
     @JoinTable(name = "metadataIndicators_roles",
             joinColumns = @JoinColumn(name = "metadataindicators_id", referencedColumnName = "datasetid"),
             inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "roleid"))
