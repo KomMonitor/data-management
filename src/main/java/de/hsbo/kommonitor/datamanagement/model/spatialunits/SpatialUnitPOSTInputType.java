@@ -1,10 +1,13 @@
 package de.hsbo.kommonitor.datamanagement.model.spatialunits;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -35,6 +38,9 @@ public class SpatialUnitPOSTInputType   {
 
   @JsonProperty("geoJsonString")
   private String geoJsonString = null;
+
+  @JsonProperty("allowedRoles")
+  private List<String> allowedRoles = new ArrayList<>();
 
   public SpatialUnitPOSTInputType spatialUnitLevel(String spatialUnitLevel) {
     this.spatialUnitLevel = spatialUnitLevel;
@@ -162,6 +168,29 @@ public class SpatialUnitPOSTInputType   {
     this.geoJsonString = geoJsonString;
   }
 
+  public SpatialUnitPOSTInputType allowedRoles(List<String> allowedRoles) {
+    this.allowedRoles = allowedRoles;
+    return this;
+  }
+
+  public SpatialUnitPOSTInputType addAllowedRolesItem(String allowedRolesItem) {
+    this.allowedRoles.add(allowedRolesItem);
+    return this;
+  }
+
+  /**
+   * list of role identifiers that have read access rights for this dataset
+   * @return allowedRoles
+   **/
+  @ApiModelProperty(required = true, value = "list of role identifiers that have read access rights for this dataset")
+  public List<String> getAllowedRoles() {
+    return allowedRoles;
+  }
+
+  public void setAllowedRoles(List<String> allowedRoles) {
+    this.allowedRoles = allowedRoles;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -178,12 +207,13 @@ public class SpatialUnitPOSTInputType   {
         Objects.equals(this.nextLowerHierarchyLevel, spatialUnitPOSTInputType.nextLowerHierarchyLevel) &&
         Objects.equals(this.nextUpperHierarchyLevel, spatialUnitPOSTInputType.nextUpperHierarchyLevel) &&
         Objects.equals(this.jsonSchema, spatialUnitPOSTInputType.jsonSchema) &&
-        Objects.equals(this.geoJsonString, spatialUnitPOSTInputType.geoJsonString);
+        Objects.equals(this.geoJsonString, spatialUnitPOSTInputType.geoJsonString) &&
+        Objects.equals(this.allowedRoles, spatialUnitPOSTInputType.allowedRoles);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(spatialUnitLevel, periodOfValidity, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, jsonSchema, geoJsonString);
+    return Objects.hash(spatialUnitLevel, periodOfValidity, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, jsonSchema, geoJsonString, allowedRoles);
   }
 
   @Override
@@ -198,6 +228,7 @@ public class SpatialUnitPOSTInputType   {
     sb.append("    nextUpperHierarchyLevel: ").append(toIndentedString(nextUpperHierarchyLevel)).append("\n");
     sb.append("    jsonSchema: ").append(toIndentedString(jsonSchema)).append("\n");
     sb.append("    geoJsonString: ").append(toIndentedString(geoJsonString)).append("\n");
+    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("}");
     return sb.toString();
   }

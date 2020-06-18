@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +57,9 @@ public class SpatialUnitsManager {
 	
 	@Autowired
 	SpatialUnitsPeriodsOfValidityRepository periodsOfValidityRepo;
+
+	@Autowired
+	private RolesRepository rolesRepository;
 	
 	@Autowired
 	private IndicatorsManager indicatorsManager;
@@ -253,7 +259,7 @@ public class SpatialUnitsManager {
 		logger.info("Updating successful");
 	}
 
-	private MetadataSpatialUnitsEntity createMetadata(SpatialUnitPOSTInputType featureData) {
+	private MetadataSpatialUnitsEntity createMetadata(SpatialUnitPOSTInputType featureData) throws ResourceNotFoundException {
 		/*
 		 * create instance of MetadataSpatialUnitsEntity
 		 * 
@@ -288,6 +294,8 @@ public class SpatialUnitsManager {
 		entity.setDbTableName(null);
 		entity.setWfsUrl(null);
 		entity.setWmsUrl(null);
+
+		entity.setRoles(retrieveRoles(featureData.getAllowedRoles()));
 		
 		// persist in db
 		spatialUnitsMetadataRepo.saveAndFlush(entity);
@@ -295,6 +303,20 @@ public class SpatialUnitsManager {
 		logger.info("Completed to add spatialUnit metadata entry for spatialUnit dataset with id {}.", entity.getDatasetId());
 		
 		return entity;
+	}
+
+	private Collection<RolesEntity> retrieveRoles(List<String> roleIds) throws ResourceNotFoundException {
+		Collection<RolesEntity> allowedRoles = new ArrayList<>();
+		for (String id : roleIds) {
+			RolesEntity role = rolesRepository.findByRoleId(id);
+			if(role == null) {
+				throw new ResourceNotFoundException(400, String.format("The requested role %s does not exist.", id));
+			}
+			if (!allowedRoles.contains(role)) {
+				allowedRoles.add(role);
+			}
+		}
+		return allowedRoles;
 	}
 	
 	public boolean deleteAllSpatialUnitFeaturesByDatasetById(String spatialUnitId) throws Exception {
@@ -432,7 +454,7 @@ public class SpatialUnitsManager {
 		}
 	}
 
-	private void updateMetadata(SpatialUnitPATCHInputType metadata, MetadataSpatialUnitsEntity entity) {
+	private void updateMetadata(SpatialUnitPATCHInputType metadata, MetadataSpatialUnitsEntity entity) throws ResourceNotFoundException {
 		
 		CommonMetadataType genericMetadata = metadata.getMetadata();
 		entity.setContact(genericMetadata.getContact());
@@ -450,6 +472,7 @@ public class SpatialUnitsManager {
 		entity.setNextUpperHierarchyLevel(metadata.getNextUpperHierarchyLevel());
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
+		entity.setRoles(retrieveRoles(metadata.getAllowedRoles()));
 		
 		/*
 		 * dbTable name and OGC service urls may not be set here!

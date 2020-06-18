@@ -1,5 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,7 +20,21 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata {
 	
 	@ManyToMany
 	@JoinTable(name = "metadataSpatialUnits_periodsOfValidity", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), inverseJoinColumns = @JoinColumn(name = "period_of_validity_id", referencedColumnName = "periodofvalidityid"))
-	private Collection<PeriodOfValidityEntity_spatialUnits> spatialUnitsPeriodsOfValidity;	
+	private Collection<PeriodOfValidityEntity_spatialUnits> spatialUnitsPeriodsOfValidity;
+
+	@ManyToMany()
+	@JoinTable(name = "metadataSpatialUnits_roles",
+			joinColumns = @JoinColumn(name = "metadataspatialunits_id", referencedColumnName = "datasetid"),
+			inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "roleid"))
+	private Collection<RolesEntity> roles;
+
+	public HashSet<RolesEntity> getRoles() {
+		return new HashSet<RolesEntity>(roles);
+	}
+
+	public void setRoles(Collection<RolesEntity> roles) {
+		this.roles = new HashSet<RolesEntity>(roles);
+	}
 	
 	public int getSridEpsg() {
 		return sridEpsg;
