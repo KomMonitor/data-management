@@ -2,6 +2,8 @@ package de.hsbo.kommonitor.datamanagement.auth;
 
 import org.keycloak.KeycloakPrincipal;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.Set;
 
@@ -10,10 +12,16 @@ import java.util.Set;
  *
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
+@Component
+@RequestScope
 public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal> {
 
     @Value("${keycloak.resource}")
     private String clientId;
+
+    public KeycloakAuthInfoProvider() {
+        super();
+    }
 
     public KeycloakAuthInfoProvider(KeycloakPrincipal principal) {
         super(principal);
@@ -31,11 +39,11 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
 
     @Override
     public boolean hasRealmRole(String role) {
-        return getPrincipal().getKeycloakSecurityContext().getToken().getRealmAccess().getRoles().contains(role);
+        return getPrincipal().getKeycloakSecurityContext().getToken().getRealmAccess().isUserInRole(role);
     }
 
     @Override
     public boolean hasClientRole(String role) {
-        return getPrincipal().getKeycloakSecurityContext().getToken().getResourceAccess(clientId).getRoles().contains(role);
+        return getPrincipal().getKeycloakSecurityContext().getToken().getResourceAccess(clientId).isUserInRole(role);
     }
 }

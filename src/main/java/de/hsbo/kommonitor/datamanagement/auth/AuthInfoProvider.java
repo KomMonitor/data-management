@@ -14,9 +14,16 @@ public abstract class AuthInfoProvider<T extends Principal> {
     private Class<T> type = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())
             .getActualTypeArguments()[0];
 
-    private final T principal;
+    private T principal;
+
+    public AuthInfoProvider() {
+    }
 
     public AuthInfoProvider(T principal) {
+        this.principal = principal;
+    }
+
+    public void setPrincipal(T principal) {
         this.principal = principal;
     }
 
