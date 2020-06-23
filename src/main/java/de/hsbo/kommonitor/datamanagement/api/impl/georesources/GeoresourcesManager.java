@@ -3,10 +3,12 @@ package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
@@ -568,13 +570,36 @@ public class GeoresourcesManager {
 		 * topic is an optional parameter and thus might be null! then get all
 		 * datasets!
 		 */
-		logger.info("Retrieving all georesources metadata from db");
+		logger.info("Retrieving all public georesources metadata from db");
 
-		List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll();
+		List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll().stream()
+				.filter(g -> g.getRoles().isEmpty())
+				.collect(Collectors.toList());;
 		
 		List<GeoresourceOverviewType> swaggerGeoresourcesMetadata = GeoresourcesMapper
 				.mapToSwaggerGeoresources(georesourcesMeatadataEntities);
 		
+		swaggerGeoresourcesMetadata.sort(Comparator.comparing(GeoresourceOverviewType::getDatasetName));
+
+		return swaggerGeoresourcesMetadata;
+	}
+
+	public List<GeoresourceOverviewType> getAllGeoresourcesMetadata(AuthInfoProvider provider) throws Exception {
+		logger.info("Retrieving secured georesources metadata from db");
+
+		List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll().stream()
+				.filter(g -> {
+					for (RolesEntity role : g.getRoles()) {
+						if (provider.hasRealmRole(role.getRoleName())) {
+							return true;
+						}
+					}
+					return false;
+				}).collect(Collectors.toList());;
+
+		List<GeoresourceOverviewType> swaggerGeoresourcesMetadata = GeoresourcesMapper
+				.mapToSwaggerGeoresources(georesourcesMeatadataEntities);
+
 		swaggerGeoresourcesMetadata.sort(Comparator.comparing(GeoresourceOverviewType::getDatasetName));
 
 		return swaggerGeoresourcesMetadata;

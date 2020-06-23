@@ -6,6 +6,7 @@
 package de.hsbo.kommonitor.datamanagement.api;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,9 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
+
+import javax.servlet.ServletRequest;
+
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-04-05T10:56:22.201+02:00")
 
 @Api(value = "Georesources", description = "the Georesources API")
@@ -85,14 +89,23 @@ public interface GeoresourcesApi {
         ResponseEntity<byte[]> getAllGeoresourceFeaturesById(@ApiParam(value = "the identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries);
 
     
-	@ApiOperation(value = "retrieve information about available features of different geo-resource datasets", nickname = "getGeoresources", notes = "retrieve information about available features of different geo-resource datasets", response = GeoresourceOverviewType.class, responseContainer = "array", authorizations = {
-			@Authorization(value = "basicAuth") }, tags = {})
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "OK", response = GeoresourceOverviewType.class, responseContainer = "array"),
-			@ApiResponse(code = 400, message = "Invalid status value"),
-			@ApiResponse(code = 401, message = "API key is missing or invalid") })
-	@RequestMapping(value = "/georesources", produces = { "application/json" }, method = RequestMethod.GET)
-	ResponseEntity<List<GeoresourceOverviewType>> getGeoresources();
+	@ApiOperation(value = "retrieve information about available features of different public geo-resource datasets", nickname = "getPublicGeoresources", notes = "retrieve information about available features of different public geo-resource datasets", response = GeoresourceOverviewType.class, responseContainer = "array", authorizations = {
+            @Authorization(value = "basicAuth") }, tags = {})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", response = GeoresourceOverviewType.class, responseContainer = "array"),
+            @ApiResponse(code = 400, message = "Invalid status value"),
+            @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/georesources/public", produces = { "application/json" }, method = RequestMethod.GET)
+    ResponseEntity<List<GeoresourceOverviewType>> getPublicGeoresources();
+
+    @ApiOperation(value = "retrieve information about available features of different geo-resource datasets", nickname = "getGeoresources", notes = "retrieve information about available features of different geo-resource datasets", response = GeoresourceOverviewType.class, responseContainer = "array", authorizations = {
+            @Authorization(value = "basicAuth") }, tags = {})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", response = GeoresourceOverviewType.class, responseContainer = "array"),
+            @ApiResponse(code = 400, message = "Invalid status value"),
+            @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/georesources", produces = { "application/json" }, method = RequestMethod.GET)
+    ResponseEntity<List<GeoresourceOverviewType>> getGeoresources(Principal principal);
 
     @ApiOperation(value = "retrieve information about available features of the selected geo-resource dataset", nickname = "getGeoresourceById", notes = "retrieve information about available features of the selected geo-resource dataset", response = GeoresourceOverviewType.class, authorizations = {
         @Authorization(value = "basicAuth")
