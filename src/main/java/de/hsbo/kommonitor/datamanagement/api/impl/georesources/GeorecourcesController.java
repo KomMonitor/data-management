@@ -202,37 +202,21 @@ public class GeorecourcesController extends BasePathController implements Geores
         logger.info("Received request to get all georesources metadata");
 
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
-
-        logger.info("Roles from GeoresourcesController: " + provider.getRealmRoles());
-        /*
-         * topic is an optional parameter and thus may be null!
-         */
         String accept = request.getHeader("Accept");
-
-        /*
-         * retrieve all available users
-         *
-         * return them to client
-         */
         try {
-
             if (accept != null && accept.contains("application/json")) {
-
                 List<GeoresourceOverviewType> georesourcesMetadata = georesourcesManager.getAllGeoresourcesMetadata(provider);
-
                 return new ResponseEntity<>(georesourcesMetadata, HttpStatus.OK);
-
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
         } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
         }
     }
 
     @Override
-    public ResponseEntity<GeoresourceOverviewType> getGeoresourceById(@PathVariable("georesourceId") String georesourceId) {
+    public ResponseEntity<GeoresourceOverviewType> getPublicGeoresourceById(@PathVariable("georesourceId") String georesourceId) {
         logger.info("Received request to get georesource metadata for datasetId '{}'", georesourceId);
         String accept = request.getHeader("Accept");
 
@@ -244,6 +228,31 @@ public class GeorecourcesController extends BasePathController implements Geores
 
 
                 GeoresourceOverviewType georesourceMetadata = georesourcesManager.getGeoresourceByDatasetId(georesourceId);
+
+                return new ResponseEntity<>(georesourceMetadata, HttpStatus.OK);
+
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<GeoresourceOverviewType> getGeoresourceById(@PathVariable("georesourceId") String georesourceId, Principal principal) {
+        logger.info("Received request to get georesource metadata for datasetId '{}'", georesourceId);
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+        /*
+         * retrieve the user for the specified id
+         */
+        try {
+            if (accept != null && accept.contains("application/json")) {
+
+
+                GeoresourceOverviewType georesourceMetadata = georesourcesManager.getGeoresourceByDatasetId(georesourceId, provider);
 
                 return new ResponseEntity<>(georesourceMetadata, HttpStatus.OK);
 

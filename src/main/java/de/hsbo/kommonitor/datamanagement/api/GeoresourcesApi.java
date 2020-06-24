@@ -95,7 +95,7 @@ public interface GeoresourcesApi {
             @ApiResponse(code = 200, message = "OK", response = GeoresourceOverviewType.class, responseContainer = "array"),
             @ApiResponse(code = 400, message = "Invalid status value"),
             @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/georesources/public", produces = { "application/json" }, method = RequestMethod.GET)
+    @RequestMapping(value = "/public/georesources", produces = { "application/json" }, method = RequestMethod.GET)
     ResponseEntity<List<GeoresourceOverviewType>> getPublicGeoresources();
 
     @ApiOperation(value = "retrieve information about available features of different geo-resource datasets", nickname = "getGeoresources", notes = "retrieve information about available features of different geo-resource datasets", response = GeoresourceOverviewType.class, responseContainer = "array", authorizations = {
@@ -114,10 +114,22 @@ public interface GeoresourcesApi {
         @ApiResponse(code = 200, message = "OK", response = GeoresourceOverviewType.class),
         @ApiResponse(code = 400, message = "Invalid status value"),
         @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/georesources/{georesourceId}",
+    @RequestMapping(value = "/public/georesources/{georesourceId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<GeoresourceOverviewType> getGeoresourceById(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId);
+    ResponseEntity<GeoresourceOverviewType> getPublicGeoresourceById(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId);
+
+    @ApiOperation(value = "retrieve information about available features of the selected geo-resource dataset", nickname = "getGeoresourceById", notes = "retrieve information about available features of the selected geo-resource dataset", response = GeoresourceOverviewType.class, authorizations = {
+            @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", response = GeoresourceOverviewType.class),
+            @ApiResponse(code = 400, message = "Invalid status value"),
+            @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/georesources/{georesourceId}",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<GeoresourceOverviewType> getGeoresourceById(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId, Principal principal);
 
 
     @ApiOperation(value = "retrieve the features according to the selected geo-resource dataset and selected year and month as GeoJSON", nickname = "getGeoresourceByIdAndYearAndMonth", notes = "retrieve the features according to the selected geo-resource dataset and selected year and month as GeoJSON", response = byte[].class, authorizations = {
