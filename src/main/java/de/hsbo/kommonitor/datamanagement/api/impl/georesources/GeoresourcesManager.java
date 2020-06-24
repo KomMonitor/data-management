@@ -422,7 +422,7 @@ public class GeoresourcesManager {
 
         MetadataGeoresourcesEntity georesourceMetadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
-        if (!hasAllowedRole(authInfoProvider, georesourceMetadataEntity)) {
+        if (georesourceMetadataEntity == null || !hasAllowedRole(authInfoProvider, georesourceMetadataEntity)) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
         }
 
@@ -437,6 +437,33 @@ public class GeoresourcesManager {
 
         if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
             MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+
+            if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+            }
+
+            String dbTableName = metadataEntity.getDbTableName();
+
+            String geoJson = SpatialFeatureDatabaseHandler.getAllFeatures(dbTableName, simplifyGeometries);
+            return geoJson;
+
+        } else {
+            logger.error(
+                    "No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
+                    georesourceId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
+        }
+    }
+
+    public String getAllGeoresourceFeatures(String georesourceId, String simplifyGeometries, AuthInfoProvider authInfoProvider) throws Exception {
+
+        if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+            MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+
+            if (metadataEntity == null || !hasAllowedRole(authInfoProvider, metadataEntity)) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+            }
 
             String dbTableName = metadataEntity.getDbTableName();
 
