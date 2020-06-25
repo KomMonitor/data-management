@@ -150,7 +150,7 @@ public interface GeoresourcesApi {
             @ApiResponse(code = 200, message = "OK", response = byte[].class),
             @ApiResponse(code = 400, message = "Invalid status value"),
             @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/georesources/{georesourceId}/{year}/{month}/{day}",
+    @RequestMapping(value = "/public/georesources/{georesourceId}/{year}/{month}/{day}",
             produces = { "application/octed-stream" },
             method = RequestMethod.GET)
     ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonth(@ApiParam(value = "identifier of the public geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries);
