@@ -371,7 +371,12 @@ public class GeorecourcesController extends BasePathController implements Geores
 
         if (accept != null && accept.contains("application/json")) {
 
-            String jsonSchema = georesourcesManager.getJsonSchemaForDatasetName(georesourceId);
+            String jsonSchema = null;
+            try {
+                jsonSchema = georesourcesManager.getJsonSchemaForDatasetName(georesourceId);
+            } catch (ResourceNotFoundException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
 
             return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
 
@@ -389,7 +394,12 @@ public class GeorecourcesController extends BasePathController implements Geores
 
         if (accept != null && accept.contains("application/json")) {
 
-            String jsonSchema = georesourcesManager.getJsonSchemaForDatasetName(georesourceId, provider);
+            String jsonSchema = null;
+            try {
+                jsonSchema = georesourcesManager.getJsonSchemaForDatasetName(georesourceId, provider);
+            } catch (ResourceNotFoundException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
 
             return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
 
