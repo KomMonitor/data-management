@@ -19,12 +19,10 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
     @Value("${keycloak.resource}")
     private String clientId;
 
-    public KeycloakAuthInfoProvider() {
-        super();
-    }
 
-    public KeycloakAuthInfoProvider(KeycloakPrincipal principal) {
+    public KeycloakAuthInfoProvider(KeycloakPrincipal principal, String clientId) {
         super(principal);
+        this.clientId = clientId;
     }
 
     @Override
