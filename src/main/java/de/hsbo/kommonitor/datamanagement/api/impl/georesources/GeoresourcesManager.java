@@ -490,6 +490,39 @@ public class GeoresourcesManager {
         if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
             MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
+            if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+            }
+
+            String dbTableName = metadataEntity.getDbTableName();
+
+            String geoJson = SpatialFeatureDatabaseHandler.getValidFeatures(date, dbTableName, simplifyGeometries);
+            return geoJson;
+
+        } else {
+            logger.error(
+                    "No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
+                    georesourceId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
+        }
+    }
+
+    public String getValidGeoresourceFeatures(String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day, String simplifyGeometries, AuthInfoProvider authInfoProvider)
+            throws Exception {
+        Calendar calender = Calendar.getInstance();
+        calender.set(year.intValue(), month.intValueExact() - 1, day.intValue());
+        java.util.Date date = calender.getTime();
+        logger.info("Retrieving valid georesource features from Dataset with id '{}' for date '{}'", georesourceId,
+                date);
+
+        if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+            MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+
+            if (metadataEntity == null || !hasAllowedRole(authInfoProvider, metadataEntity)) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+            }
+
             String dbTableName = metadataEntity.getDbTableName();
 
             String geoJson = SpatialFeatureDatabaseHandler.getValidFeatures(date, dbTableName, simplifyGeometries);

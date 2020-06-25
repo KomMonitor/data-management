@@ -311,7 +311,7 @@ public class GeorecourcesController extends BasePathController implements Geores
     }
 
     @Override
-    public ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonth(@PathVariable("georesourceId") String georesourceId, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
+    public ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonth(@PathVariable("georesourceId") String georesourceId, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
                                                                     @PathVariable("day") BigDecimal day,
                                                                     @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
         logger.info("Received request to get georesource features for datasetId '{}' and simplifyGeometries parameter '{}'", georesourceId, simplifyGeometries);
@@ -319,6 +319,32 @@ public class GeorecourcesController extends BasePathController implements Geores
 
         try {
             String geoJsonFeatures = georesourcesManager.getValidGeoresourceFeatures(georesourceId, year, month, day, simplifyGeometries);
+            String fileName = "GeoresourceFeatures_" + georesourceId + "_" + year + "-" + month + "-" + day + ".json";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("content-disposition", "attachment; filename=" + fileName);
+            headers.add("Content-Type", "application/json; charset=utf-8");
+            byte[] JsonBytes = geoJsonFeatures.getBytes();
+
+            return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/vnd.geo+json"))
+                    .body(JsonBytes);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonth(@PathVariable("georesourceId") String georesourceId, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
+                                                                    @PathVariable("day") BigDecimal day,
+                                                                    @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries, Principal principal) {
+        logger.info("Received request to get georesource features for datasetId '{}' and simplifyGeometries parameter '{}'", georesourceId, simplifyGeometries);
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+            String geoJsonFeatures = georesourcesManager.getValidGeoresourceFeatures(georesourceId, year, month, day, simplifyGeometries, provider);
             String fileName = "GeoresourceFeatures_" + georesourceId + "_" + year + "-" + month + "-" + day + ".json";
 
             HttpHeaders headers = new HttpHeaders();
