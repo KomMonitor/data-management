@@ -168,6 +168,17 @@ public interface GeoresourcesApi {
         method = RequestMethod.GET)
     ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonth(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries, Principal principal);
 
+    @ApiOperation(value = "retrieve the JSON schema for the selected public geo-resource dataset", nickname = "getPublicGeoresourceSchemaByLevel", notes = "retrieve the JSON schema for the selected public geo-resource dataset. The JSON schema indicates the property structure of the dataset.", response = String.class, authorizations = {
+            @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid status value"),
+            @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/public/georesources/{georesourceId}/schema",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<String> getPublicGeoresourceSchemaByLevel(@ApiParam(value = "the identifier of the public geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId);
 
     @ApiOperation(value = "retrieve the JSON schema for the selected geo-resource dataset", nickname = "getGeoresourceSchemaByLevel", notes = "retrieve the JSON schema for the selected geo-resource dataset. The JSON schema indicates the property structure of the dataset.", response = String.class, authorizations = {
         @Authorization(value = "basicAuth")
@@ -179,7 +190,7 @@ public interface GeoresourcesApi {
     @RequestMapping(value = "/georesources/{georesourceId}/schema",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<String> getGeoresourceSchemaByLevel(@ApiParam(value = "the identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId);
+    ResponseEntity<String> getGeoresourceSchemaByLevel(@ApiParam(value = "the identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId, Principal principal);
 
 
     @ApiOperation(value = "Modify/Update the features of the selected geo-resource dataset", nickname = "updateGeoresourceAsBody", notes = "Modify/Update the features of the selected geo-resource dataset.  The interface expects a full upload of all geometries for the spatial unit. Internally, those geometries are compared to the existing ones to mark 'old' geometries that are no longer in use as outdated. Hence, each geometric object is only persisted once and its use is controlled by time validity marks.", authorizations = {

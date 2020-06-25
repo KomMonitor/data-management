@@ -537,12 +537,29 @@ public class GeoresourcesManager {
         }
     }
 
-    public String getJsonSchemaForDatasetName(String georesourceId) {
+    public String getJsonSchemaForDatasetName(String georesourceId) throws ResourceNotFoundException {
         logger.info("Retrieving georesource jsonSchema for datasetId '{}'", georesourceId);
 
-        MetadataGeoresourcesEntity spatialUnitMetadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+        MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
-        return spatialUnitMetadataEntity.getJsonSchema();
+        if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+        }
+
+
+        return metadataEntity.getJsonSchema();
+    }
+
+    public String getJsonSchemaForDatasetName(String georesourceId, AuthInfoProvider authInfoProvider) throws ResourceNotFoundException {
+        logger.info("Retrieving georesource jsonSchema for datasetId '{}'", georesourceId);
+
+        MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+
+        if (metadataEntity == null || !hasAllowedRole(authInfoProvider, metadataEntity)) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+        }
+
+        return metadataEntity.getJsonSchema();
     }
 
     public String updateFeatures(GeoresourcePUTInputType featureData, String georesourceId)

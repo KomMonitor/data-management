@@ -361,7 +361,7 @@ public class GeorecourcesController extends BasePathController implements Geores
     }
 
     @Override
-    public ResponseEntity<String> getGeoresourceSchemaByLevel(@PathVariable("georesourceId") String georesourceId) {
+    public ResponseEntity<String> getPublicGeoresourceSchemaByLevel(@PathVariable("georesourceId") String georesourceId) {
         logger.info("Received request to get georesource metadata for datasetId '{}'", georesourceId);
         String accept = request.getHeader("Accept");
 
@@ -372,6 +372,24 @@ public class GeorecourcesController extends BasePathController implements Geores
         if (accept != null && accept.contains("application/json")) {
 
             String jsonSchema = georesourcesManager.getJsonSchemaForDatasetName(georesourceId);
+
+            return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
+
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> getGeoresourceSchemaByLevel(@PathVariable("georesourceId") String georesourceId, Principal principal) {
+        logger.info("Received request to get georesource metadata for datasetId '{}'", georesourceId);
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        if (accept != null && accept.contains("application/json")) {
+
+            String jsonSchema = georesourcesManager.getJsonSchemaForDatasetName(georesourceId, provider);
 
             return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
 
