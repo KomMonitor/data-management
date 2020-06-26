@@ -1,17 +1,25 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
-
-import javax.transaction.Transactional;
-
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_spatialUnits;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.SpatialUnitsPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
+import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,22 +28,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_spatialUnits;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.SpatialUnitsPeriodsOfValidityRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
-import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
-import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
+import javax.transaction.Transactional;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Repository
@@ -480,9 +480,22 @@ public class SpatialUnitsManager {
     }
 
     public List<SpatialUnitOverviewType> getAllSpatialUnitsMetadata() throws Exception {
+        return getAllSpatialUnitsMetadata(null);
+    }
+
+    public List<SpatialUnitOverviewType> getAllSpatialUnitsMetadata(AuthInfoProvider provider) throws Exception {
         logger.info("Retrieving all spatialUnits metadata from db");
 
-        List<MetadataSpatialUnitsEntity> spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll();
+        List<MetadataSpatialUnitsEntity> spatialUnitMeatadataEntities;
+
+        if (provider == null) {
+            spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll().stream()
+                    .filter(s -> s.getRoles().isEmpty()).collect(Collectors.toList());
+        } else {
+            spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll().stream()
+                    .filter(s -> hasAllowedRole(provider, s)).collect(Collectors.toList());
+        }
+
         logger.info("Retrieved a total number of {} entries for spatialUnits metadata from db. Convert them to JSON Output structure and return.", spatialUnitMeatadataEntities.size());
         List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitMeatadataEntities);
 
@@ -547,29 +560,42 @@ public class SpatialUnitsManager {
 
     }
 
-    public SpatialUnitOverviewType getSpatialUnitByDatasetId(String spatialUnitId)
+    public SpatialUnitOverviewType getSpatialUnitByDatasetId(String spatialUnitId) throws Exception {
+        return getSpatialUnitByDatasetId(spatialUnitId, null);
+    }
+
+    public SpatialUnitOverviewType getSpatialUnitByDatasetId(String spatialUnitId, AuthInfoProvider provider)
             throws Exception {
         logger.info("Retrieving spatialUnit metadata for datasetId '{}'", spatialUnitId);
 
-        MetadataSpatialUnitsEntity spatialUnitMetadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+        MetadataSpatialUnitsEntity spatialUnitMetadataEntity = fetchEntity(provider, spatialUnitId);
+
         SpatialUnitOverviewType swaggerSpatialUnitMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnit(spatialUnitMetadataEntity);
 
         return swaggerSpatialUnitMetadata;
     }
 
-    public String getJsonSchemaForDatasetId(String spatialUnitId) {
+    public String getJsonSchemaForDatasetId(String spatialUnitId) throws ResourceNotFoundException {
+        return getJsonSchemaForDatasetId(spatialUnitId, null);
+    }
+
+    public String getJsonSchemaForDatasetId(String spatialUnitId, AuthInfoProvider provider) throws ResourceNotFoundException {
         logger.info("Retrieving spatialUnit jsonSchema for datasetId '{}'", spatialUnitId);
 
-        MetadataSpatialUnitsEntity spatialUnitMetadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+        MetadataSpatialUnitsEntity spatialUnitMetadataEntity = fetchEntity(provider, spatialUnitId);
 
         return spatialUnitMetadataEntity.getJsonSchema();
     }
 
     public String getAllSpatialUnitFeatures(String spatialUnitId, String simplifyGeometries) throws Exception {
+        return getAllSpatialUnitFeatures(spatialUnitId, simplifyGeometries, null);
+    }
+
+    public String getAllSpatialUnitFeatures(String spatialUnitId, String simplifyGeometries, AuthInfoProvider provider) throws Exception {
         logger.info("Retrieving all spatialUnit Features from Dataset '{}'", spatialUnitId);
 
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
-            MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+            MetadataSpatialUnitsEntity metadataEntity = fetchEntity(provider, spatialUnitId);
 
             String dbTableName = metadataEntity.getDbTableName();
 
@@ -585,13 +611,19 @@ public class SpatialUnitsManager {
 
     public String getValidSpatialUnitFeatures(String spatialUnitId, BigDecimal year, BigDecimal month,
                                               BigDecimal day, String simplifyGeometries) throws Exception {
+        return getValidSpatialUnitFeatures(spatialUnitId, year, month, day, simplifyGeometries, null);
+    }
+
+
+    public String getValidSpatialUnitFeatures(String spatialUnitId, BigDecimal year, BigDecimal month,
+                                              BigDecimal day, String simplifyGeometries, AuthInfoProvider provider) throws Exception {
         Calendar calender = Calendar.getInstance();
         calender.set(year.intValue(), month.intValueExact() - 1, day.intValue());
         java.util.Date date = calender.getTime();
         logger.info("Retrieving valid spatialUnit Features from Dataset '{}' for date '{}'", spatialUnitId, date);
 
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
-            MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+            MetadataSpatialUnitsEntity metadataEntity = fetchEntity(provider, spatialUnitId);
 
             String dbTableName = metadataEntity.getDbTableName();
 
@@ -604,6 +636,29 @@ public class SpatialUnitsManager {
                     "Tried to get spatialUnit features, but no dataset existes with datasetId " + spatialUnitId);
         }
 
+    }
+
+    private MetadataSpatialUnitsEntity fetchEntity(AuthInfoProvider provider, String spatialUnitId) throws ResourceNotFoundException {
+        MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+        if (provider == null) {
+            if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
+                        "was not found.", spatialUnitId));
+            }
+        } else {
+            if (metadataEntity == null || !hasAllowedRole(provider, metadataEntity)) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
+                        "was not found.", spatialUnitId));
+            }
+        }
+        return metadataEntity;
+    }
+
+    private boolean hasAllowedRole(AuthInfoProvider authInfoProvider, MetadataSpatialUnitsEntity spatialUnitsMetadataEntity) {
+        return spatialUnitsMetadataEntity.getRoles() == null ||
+                spatialUnitsMetadataEntity.getRoles().isEmpty() ||
+                spatialUnitsMetadataEntity.getRoles().stream()
+                        .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
     }
 
 }
