@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,355 +38,349 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWit
 @Controller
 public class IndicatorsController extends BasePathController implements IndicatorsApi {
 
-	private static Logger logger = LoggerFactory.getLogger(IndicatorsController.class);
+    private static Logger logger = LoggerFactory.getLogger(IndicatorsController.class);
 
-	private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-	private final HttpServletRequest request;
+    private final HttpServletRequest request;
 
-	@Autowired
-	IndicatorsManager indicatorsManager;
+    @Autowired
+    IndicatorsManager indicatorsManager;
 
-	@org.springframework.beans.factory.annotation.Autowired
-	public IndicatorsController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
-	}
+    @Autowired
+    private AuthInfoProviderFactory authInfoProviderFactory;
 
-	@Override
-	public ResponseEntity deleteIndicatorByIdAndSpatialUnitId(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId) throws Exception {
-		logger.info("Received request to delete indicator for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
+    @org.springframework.beans.factory.annotation.Autowired
+    public IndicatorsController(ObjectMapper objectMapper, HttpServletRequest request) {
+        this.objectMapper = objectMapper;
+        this.request = request;
+    }
 
-		String accept = request.getHeader("Accept");
+    @Override
+    public ResponseEntity deleteIndicatorByIdAndSpatialUnitId(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId) throws Exception {
+        logger.info("Received request to delete indicator for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
 
-		/*
-		 * delete topic with the specified id
-		 */
+        String accept = request.getHeader("Accept");
 
-		boolean isDeleted;
-		try {
-			isDeleted = indicatorsManager.deleteIndicatorDatasetByIdAndSpatialUnitId(indicatorId, spatialUnitId);
+        /*
+         * delete topic with the specified id
+         */
 
-			if (isDeleted)
-				return new ResponseEntity<>(HttpStatus.OK);
+        boolean isDeleted;
+        try {
+            isDeleted = indicatorsManager.deleteIndicatorDatasetByIdAndSpatialUnitId(indicatorId, spatialUnitId);
 
-		} catch (ResourceNotFoundException | IOException e) {
-			return ApiUtils.createResponseEntityFromException(e);
-		}
+            if (isDeleted)
+                return new ResponseEntity<>(HttpStatus.OK);
 
-		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+        } catch (ResourceNotFoundException | IOException e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
 
-
-	@Override
-	public ResponseEntity deleteIndicatorByIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId,
-			@PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
-			@PathVariable("day") BigDecimal day) throws Exception {
-		logger.info("Received request to delete indicator for indicatorId '{}' and Date '{}-{}-{}'", indicatorId, year, month, day);
-
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * delete topic with the specified id
-		 */
-
-		boolean isDeleted;
-		try {
-			isDeleted = indicatorsManager.deleteIndicatorDatasetByIdAndDate(indicatorId, spatialUnitId, year, month, day);
-
-			if (isDeleted)
-				return new ResponseEntity<>(HttpStatus.OK);
-
-		} catch (ResourceNotFoundException | IOException e) {
-			return ApiUtils.createResponseEntityFromException(e);
-		}
-
-		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 
-	@Override
-	public ResponseEntity addIndicatorAsBody(@RequestBody IndicatorPOSTInputType indicatorData) {
-		logger.info("Received request to insert new indicator");
+    @Override
+    public ResponseEntity deleteIndicatorByIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId,
+                                                             @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
+                                                             @PathVariable("day") BigDecimal day) throws Exception {
+        logger.info("Received request to delete indicator for indicatorId '{}' and Date '{}-{}-{}'", indicatorId, year, month, day);
 
-		String accept = request.getHeader("Accept");
+        String accept = request.getHeader("Accept");
 
-		/*
-		 * analyse input data and save it within database
-		 */
-		String indicatorMetadataId;
-		try {
-			indicatorMetadataId = indicatorsManager.addIndicator(indicatorData);
-		} catch (Exception e1) {
-			return ApiUtils.createResponseEntityFromException(e1);
+        /*
+         * delete topic with the specified id
+         */
 
-		}
+        boolean isDeleted;
+        try {
+            isDeleted = indicatorsManager.deleteIndicatorDatasetByIdAndDate(indicatorId, spatialUnitId, year, month, day);
 
-		if (indicatorMetadataId != null) {
-			HttpHeaders responseHeaders = new HttpHeaders();
+            if (isDeleted)
+                return new ResponseEntity<>(HttpStatus.OK);
 
-			String location = indicatorMetadataId;
-			try {
-				responseHeaders.setLocation(new URI(location));
-			} catch (URISyntaxException e) {
-				// return ApiResponseUtil.createResponseEntityFromException(e);
-			}
+        } catch (ResourceNotFoundException | IOException e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
 
-			return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-
-	@Override
-	public ResponseEntity deleteIndicatorById(@PathVariable("indicatorId") String indicatorId) {
-		logger.info("Received request to delete indicator for indicatorId '{}'", indicatorId);
-
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * delete topic with the specified id
-		 */
-
-		boolean isDeleted;
-		try {
-			isDeleted = indicatorsManager.deleteIndicatorDatasetById(indicatorId);
-
-			if (isDeleted)
-				return new ResponseEntity<>(HttpStatus.OK);
-
-		} catch (Exception e) {
-			return ApiUtils.createResponseEntityFromException(e);
-		}
-
-		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 
+    @Override
+    public ResponseEntity addIndicatorAsBody(@RequestBody IndicatorPOSTInputType indicatorData) {
+        logger.info("Received request to insert new indicator");
 
-	@Override
-	public ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndId(@PathVariable("indicatorId") String indicatorId,
+        String accept = request.getHeader("Accept");
+
+        /*
+         * analyse input data and save it within database
+         */
+        String indicatorMetadataId;
+        try {
+            indicatorMetadataId = indicatorsManager.addIndicator(indicatorData);
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+
+        }
+
+        if (indicatorMetadataId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = indicatorMetadataId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                // return ApiResponseUtil.createResponseEntityFromException(e);
+            }
+
+            return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity deleteIndicatorById(@PathVariable("indicatorId") String indicatorId) {
+        logger.info("Received request to delete indicator for indicatorId '{}'", indicatorId);
+
+        String accept = request.getHeader("Accept");
+
+        /*
+         * delete topic with the specified id
+         */
+
+        boolean isDeleted;
+        try {
+            isDeleted = indicatorsManager.deleteIndicatorDatasetById(indicatorId);
+
+            if (isDeleted)
+                return new ResponseEntity<>(HttpStatus.OK);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    @Override
+    public ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndId(@PathVariable("indicatorId") String indicatorId,
+                                                                   @PathVariable("spatialUnitId") String spatialUnitId,
+                                                                   @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
+                                                                   Principal principal) {
+        logger.info("Received request to get indicators features for spatialUnitId '{}' and Id '{}' ",
+                spatialUnitId, indicatorId);
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+            String geoJsonFeatures = indicatorsManager.getIndicatorFeatures(indicatorId, spatialUnitId, simplifyGeometries, provider);
+            String fileName = "IndicatorFeatures_" + spatialUnitId + "_" + indicatorId + ".json";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("content-disposition", "attachment; filename=" + fileName);
+            headers.add("Content-Type", "application/json; charset=utf-8");
+            byte[] JsonBytes = geoJsonFeatures.getBytes();
+
+            return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/vnd.geo+json"))
+                    .body(JsonBytes);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId,
+                                                                                  @PathVariable("spatialUnitId") String spatialUnitId,
+                                                                                  @PathVariable("year") BigDecimal year,
+                                                                                  @PathVariable("month") BigDecimal month,
+                                                                                  @PathVariable("day") BigDecimal day,
+                                                                                  @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
+                                                                                  Principal principal) {
+        logger.info(
+                "Received request to get indicators features for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
+                spatialUnitId, indicatorId, year, month, day);
+        String accept = request.getHeader("Accept");
+
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+            String geoJsonFeatures = indicatorsManager.getValidIndicatorFeatures(indicatorId, spatialUnitId, year,
+                    month, day, simplifyGeometries, provider);
+            String fileName = "IndicatorFeatures_" + spatialUnitId + "_" + indicatorId + "_" + year + "-" + month
+                    + "-" + day + ".json";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("content-disposition", "attachment; filename=" + fileName);
+            headers.add("Content-Type", "application/json; charset=utf-8");
+            byte[] JsonBytes = geoJsonFeatures.getBytes();
+
+            return ResponseEntity.ok().headers(headers)
+                    .contentType(MediaType.parseMediaType("application/vnd.geo+json")).body(JsonBytes);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<IndicatorOverviewType>> getIndicators(Principal principal) {
+        logger.info("Received request to get all indicators metadata");
+        String accept = request.getHeader("Accept");
+
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+
+            if (accept != null && accept.contains("application/json")) {
+
+                List<IndicatorOverviewType> spatialunitsMetadata = indicatorsManager.getAllIndicatorsMetadata(provider);
+
+                return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
+
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<IndicatorOverviewType> getIndicatorById(@PathVariable("indicatorId") String indicatorId, Principal principal) {
+        logger.info("Received request to get indicator metadata for indicatorId '{}'", indicatorId);
+        String accept = request.getHeader("Accept");
+
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                IndicatorOverviewType indicatorMetadata = indicatorsManager.getIndicatorById(indicatorId, provider);
+                return new ResponseEntity<>(indicatorMetadata, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity updateIndicatorAsBody(@PathVariable("indicatorId") String indicatorId, @RequestBody IndicatorPUTInputType indicatorData) {
+        logger.info("Received request to update indicator features for indicator '{}'", indicatorId);
+
+        String accept = request.getHeader("Accept");
+
+        /*
+         * analyse input data and save it within database
+         */
+
+        try {
+            indicatorId = indicatorsManager.updateFeatures(indicatorData, indicatorId);
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+
+        }
+
+        if (indicatorId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = indicatorId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity updateIndicatorMetadataAsBody(@PathVariable("indicatorId") String indicatorId, @RequestBody IndicatorPATCHInputType metadata) {
+        logger.info("Received request to update indicator metadata for indicatorId '{}'", indicatorId);
+
+        String accept = request.getHeader("Accept");
+
+        /*
+         * analyse input data and save it within database
+         */
+
+        try {
+            indicatorId = indicatorsManager.updateMetadata(metadata, indicatorId);
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+
+        }
+
+        if (indicatorId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = indicatorId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+
+    @Override
+    public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
+            @PathVariable("indicatorId") String indicatorId,
+            @PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("year") BigDecimal year,
+			@PathVariable("month") BigDecimal month,
+            @PathVariable("day") BigDecimal day,
+			Principal principal) {
+        logger.info(
+                "Received request to get indicators feature properties without geometries for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
+                spatialUnitId, indicatorId, year, month, day);
+        String accept = request.getHeader("Accept");
+
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+            List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties =
+                    indicatorsManager.getValidIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, year,
+                            month, day, provider);
+            return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties, HttpStatus.OK);
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+
+    @Override
+    public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(
+            @PathVariable("indicatorId") String indicatorId,
 			@PathVariable("spatialUnitId") String spatialUnitId,
-			@RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries) {
-		logger.info("Received request to get indicators features for spatialUnitId '{}' and Id '{}' ",
-				spatialUnitId, indicatorId);
-		String accept = request.getHeader("Accept");
+			Principal principal) {
+        logger.info("Received request to get indicator feature properties for spatialUnitId '{}' and Id '{}' (without geometries)",
+                spatialUnitId, indicatorId);
+        String accept = request.getHeader("Accept");
 
-		try {
-			String geoJsonFeatures = indicatorsManager.getIndicatorFeatures(indicatorId, spatialUnitId, simplifyGeometries);
-			String fileName = "IndicatorFeatures_" + spatialUnitId + "_" + indicatorId + ".json";
-
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("content-disposition", "attachment; filename=" + fileName);
-			headers.add("Content-Type", "application/json; charset=utf-8");
-			byte[] JsonBytes = geoJsonFeatures.getBytes();
-
-			return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/vnd.geo+json"))
-					.body(JsonBytes);
-
-		} catch (Exception e) {
-			return ApiUtils.createResponseEntityFromException(e);
-		}
-	}
-
-	@Override
-	public ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId,
-			@PathVariable("spatialUnitId") String spatialUnitId, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
-			@PathVariable("day") BigDecimal day,
-			@RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries) {
-		logger.info(
-				"Received request to get indicators features for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
-				spatialUnitId, indicatorId, year, month, day);
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * retrieve the user for the specified id
-		 */
-
-		try {
-			String geoJsonFeatures = indicatorsManager.getValidIndicatorFeatures(indicatorId, spatialUnitId, year,
-					month, day, simplifyGeometries);
-			String fileName = "IndicatorFeatures_" + spatialUnitId + "_" + indicatorId + "_" + year + "-" + month
-					+ "-" + day + ".json";
-
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("content-disposition", "attachment; filename=" + fileName);
-			headers.add("Content-Type", "application/json; charset=utf-8");
-			byte[] JsonBytes = geoJsonFeatures.getBytes();
-
-			return ResponseEntity.ok().headers(headers)
-					.contentType(MediaType.parseMediaType("application/vnd.geo+json")).body(JsonBytes);
-
-		} catch (Exception e) {
-			return ApiUtils.createResponseEntityFromException(e);
-		}
-	}
-
-	@Override
-	public ResponseEntity<List<IndicatorOverviewType>> getIndicators() {
-		logger.info("Received request to get all indicators metadata");
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * retrieve all available users
-		 * 
-		 * return them to client
-		 */
-		try {
-			
-			if (accept != null && accept.contains("application/json")) {
-
-				List<IndicatorOverviewType> spatialunitsMetadata = indicatorsManager.getAllIndicatorsMetadata();
-
-				return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
-
-			} else {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			
-		} catch (Exception e) {
-			return ApiUtils.createResponseEntityFromException(e);
-		}
-	}
-
-	@Override
-	public ResponseEntity<IndicatorOverviewType> getIndicatorById(@PathVariable("indicatorId") String indicatorId) {
-		logger.info("Received request to get indicator metadata for indicatorId '{}'", indicatorId);
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * retrieve the user for the specified id
-		 */
-		try {
-			if (accept != null && accept.contains("application/json")) {
-
-				
-				IndicatorOverviewType indicatorMetadata = indicatorsManager.getIndicatorById(indicatorId);
-
-				return new ResponseEntity<>(indicatorMetadata, HttpStatus.OK);
-
-			} else {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		} catch (Exception e) {
-			return ApiUtils.createResponseEntityFromException(e);
-		}
-	}
-
-	@Override
-	public ResponseEntity updateIndicatorAsBody(@PathVariable("indicatorId") String indicatorId, @RequestBody IndicatorPUTInputType indicatorData) {
-		logger.info("Received request to update indicator features for indicator '{}'", indicatorId);
-
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * analyse input data and save it within database
-		 */
-
-		try {
-			indicatorId = indicatorsManager.updateFeatures(indicatorData, indicatorId);
-		} catch (Exception e1) {
-			return ApiUtils.createResponseEntityFromException(e1);
-
-		}
-
-		if (indicatorId != null) {
-			HttpHeaders responseHeaders = new HttpHeaders();
-
-			String location = indicatorId;
-			try {
-				responseHeaders.setLocation(new URI(location));
-			} catch (URISyntaxException e) {
-				return ApiUtils.createResponseEntityFromException(e);
-			}
-
-			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-
-	@Override
-	public ResponseEntity updateIndicatorMetadataAsBody(@PathVariable("indicatorId") String indicatorId, @RequestBody IndicatorPATCHInputType metadata) {
-		logger.info("Received request to update indicator metadata for indicatorId '{}'", indicatorId);
-
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * analyse input data and save it within database
-		 */
-
-		try {
-			indicatorId = indicatorsManager.updateMetadata(metadata, indicatorId);
-		} catch (Exception e1) {
-			return ApiUtils.createResponseEntityFromException(e1);
-
-		}
-
-		if (indicatorId != null) {
-			HttpHeaders responseHeaders = new HttpHeaders();
-
-			String location = indicatorId;
-			try {
-				responseHeaders.setLocation(new URI(location));
-			} catch (URISyntaxException e) {
-				return ApiUtils.createResponseEntityFromException(e);
-			}
-
-			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	
-	}
-
-
-
-
-	@Override
-	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
-			@PathVariable("indicatorId") String indicatorId,
-			@PathVariable("spatialUnitId") String spatialUnitId, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
-			@PathVariable("day") BigDecimal day) {
-		logger.info(
-				"Received request to get indicators feature properties without geometries for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
-				spatialUnitId, indicatorId, year, month, day);
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * retrieve the user for the specified id
-		 */
-
-		try {
-			List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = 
-					indicatorsManager.getValidIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, year,
-					month, day);
-
-			return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties, HttpStatus.OK);
-
-		} catch (Exception e) {
-			return ApiUtils.createResponseEntityFromException(e);
-		}
-	}
-
-
-
-
-	@Override
-	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(
-			@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId) {
-		logger.info("Received request to get indicator feature properties for spatialUnitId '{}' and Id '{}' (without geometries)",
-				spatialUnitId, indicatorId);
-		String accept = request.getHeader("Accept");
-
-		try {
-			List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager.getIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId);
-
-			return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties, HttpStatus.OK);
-
-		} catch (Exception e) {
-			return ApiUtils.createResponseEntityFromException(e);
-		}
-	}
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+        try {
+            List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager.getIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, provider);
+            return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties, HttpStatus.OK);
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
 
 }
