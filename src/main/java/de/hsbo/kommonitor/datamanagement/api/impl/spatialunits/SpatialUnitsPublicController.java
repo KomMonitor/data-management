@@ -45,7 +45,7 @@ public class SpatialUnitsPublicController extends BasePathController implements 
 
     @Override
     public ResponseEntity<List<SpatialUnitOverviewType>> getPublicSpatialUnits() {
-        logger.info("Received request to get all spatialUnits metadata");
+        logger.info("Received request to get all public spatialUnits metadata");
         String accept = request.getHeader("Accept");
 
         try {
@@ -59,7 +59,7 @@ public class SpatialUnitsPublicController extends BasePathController implements 
 
     @Override
     public ResponseEntity<SpatialUnitOverviewType> getPublicSpatialUnitsById(@PathVariable("spatialUnitId") String spatialUnitId) {
-        logger.info("Received request to get spatialUnit metadata for datasetId '{}'", spatialUnitId);
+        logger.info("Received request to get public spatialUnit metadata for datasetId '{}'", spatialUnitId);
         String accept = request.getHeader("Accept");
 
         try {
@@ -78,7 +78,7 @@ public class SpatialUnitsPublicController extends BasePathController implements 
     @Override
     public ResponseEntity<byte[]> getAllPublicSpatialUnitFeaturesById(@PathVariable("spatialUnitId") String spatialUnitId,
                                                                       @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
-        logger.info("Received request to get spatialUnit features for datasetId '{}' and simplifyGeometries parameter '{}'", spatialUnitId, simplifyGeometries);
+        logger.info("Received request to get public spatialUnit features for datasetId '{}' and simplifyGeometries parameter '{}'", spatialUnitId, simplifyGeometries);
         String accept = request.getHeader("Accept");
 
         try {
@@ -102,7 +102,7 @@ public class SpatialUnitsPublicController extends BasePathController implements 
     public ResponseEntity<byte[]> getPublicSpatialUnitsByIdAndYearAndMonth(@PathVariable("spatialUnitId") String spatialUnitId, @PathVariable("year") BigDecimal year,
                                                                            @PathVariable("month") BigDecimal month, @PathVariable("day") BigDecimal day,
                                                                            @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
-        logger.info("Received request to get spatialUnit features for datasetId '{}' and simplifyGeometries parameter '{}'", spatialUnitId, simplifyGeometries);
+        logger.info("Received request to get public spatialUnit features for datasetId '{}' and simplifyGeometries parameter '{}'", spatialUnitId, simplifyGeometries);
         String accept = request.getHeader("Accept");
 
         try {
@@ -125,7 +125,7 @@ public class SpatialUnitsPublicController extends BasePathController implements 
     }
 
     public ResponseEntity<String> getPublicSpatialUnitsSchemaById(@PathVariable("spatialUnitId") String spatialUnitId) {
-        logger.info("Received request to get spatialUnit metadata for datasetName '{}'", spatialUnitId);
+        logger.info("Received request to get public spatialUnit metadata for datasetName '{}'", spatialUnitId);
         String accept = request.getHeader("Accept");
 
         if (accept != null && accept.contains("application/json")) {
