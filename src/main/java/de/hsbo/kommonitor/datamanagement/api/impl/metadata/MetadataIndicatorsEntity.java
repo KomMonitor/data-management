@@ -224,11 +224,11 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 		this.topicReference = topicReference;
 	}
 
-    @ManyToMany()
+	@ManyToMany()
     @JoinTable(name = "metadataIndicators_roles",
             joinColumns = @JoinColumn(name = "metadataindicators_id", referencedColumnName = "datasetid"),
             inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "roleid"))
-    private Collection<RolesEntity> roles;
+    private Collection<RolesEntity> roles = new HashSet<RolesEntity>();
 
     public HashSet<RolesEntity> getRoles() {
         return new HashSet<RolesEntity>(roles);

@@ -23,14 +23,20 @@ import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IndicatorsMapper {
 
-	private static IndicatorSpatialUnitsRepository indicatorSpatialUnitsRepo;
+	@Autowired
+	private IndicatorSpatialUnitsRepository indicatorSpatialUnitsRepo;
 
-	private static IndicatorsMetadataRepository indicatorMetadataRepo;
+	@Autowired
+	private IndicatorsMetadataRepository indicatorMetadataRepo;
 
-	private static SpatialUnitsMetadataRepository spatialUnitsRepo;
+	@Autowired
+	private SpatialUnitsMetadataRepository spatialUnitsRepo;
 
 	public IndicatorsMapper(IndicatorSpatialUnitsRepository indicatorSpatialUnitsRepository,
 			IndicatorsMetadataRepository indicatorMetadataRepository,
@@ -40,8 +46,8 @@ public class IndicatorsMapper {
 		spatialUnitsRepo = spatialUnitsRepository;
 	}
 
-	public static List<IndicatorOverviewType> mapToSwaggerIndicators(
-			List<MetadataIndicatorsEntity> indicatorsMetadataEntity) throws Exception {
+	public List<IndicatorOverviewType> mapToSwaggerIndicators(
+			List<MetadataIndicatorsEntity> indicatorsMetadataEntity, List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray) throws Exception {
 		List<IndicatorOverviewType> indicatorOverviews = new ArrayList<IndicatorOverviewType>(
 				indicatorsMetadataEntity.size());
 		for (MetadataIndicatorsEntity metadataIndicatorsEntity : indicatorsMetadataEntity) {
@@ -51,13 +57,13 @@ public class IndicatorsMapper {
 					.getGeoresourcesReferences(metadataIndicatorsEntity.getDatasetId());
 
 			indicatorOverviews
-					.add(mapToSwaggerIndicator(metadataIndicatorsEntity, indicatorReferences, georesourcesReferences));
+					.add(mapToSwaggerIndicator(metadataIndicatorsEntity, indicatorReferences, georesourcesReferences, spatialUnitsMetadataArray));
 		}
 		return indicatorOverviews;
 	}
 
-	public static IndicatorOverviewType mapToSwaggerIndicator(MetadataIndicatorsEntity indicatorsMetadataEntity,
-			List<IndicatorReferenceType> indicatorReferences, List<GeoresourceReferenceType> georesourcesReferences)
+	public IndicatorOverviewType mapToSwaggerIndicator(MetadataIndicatorsEntity indicatorsMetadataEntity,
+			List<IndicatorReferenceType> indicatorReferences, List<GeoresourceReferenceType> georesourcesReferences, List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray)
 			throws Exception {
 		IndicatorOverviewType indicatorOverviewType = new IndicatorOverviewType();
 
@@ -89,7 +95,7 @@ public class IndicatorsMapper {
 			indicatorOverviewType.setApplicableDates(availableTimestamps);
 
 			indicatorOverviewType
-					.setApplicableSpatialUnits(getApplicableSpatialUnitsNames(indicatorSpatialUnitEntities));
+					.setApplicableSpatialUnits(getApplicableSpatialUnitsNames(indicatorSpatialUnitEntities, spatialUnitsMetadataArray));
 		}
 
 		indicatorOverviewType.setTopicReference(indicatorsMetadataEntity.getTopicReference());
@@ -136,14 +142,14 @@ public class IndicatorsMapper {
 		return indicatorOverviewType;
 	}
 
-	private static List<String> getAllowedRoleIds(HashSet<RolesEntity> roles) {
+	private List<String> getAllowedRoleIds(HashSet<RolesEntity> roles) {
 		return roles
 				.stream()
 				.map(r -> r.getRoleId())
 				.collect(Collectors.toList());
 	}
 
-	public static DefaultClassificationMappingType extractDefaultClassificationMappingFromMetadata(
+	public DefaultClassificationMappingType extractDefaultClassificationMappingFromMetadata(
 			MetadataIndicatorsEntity indicatorsMetadataEntity) {
 		DefaultClassificationMappingType defaultClassification = new DefaultClassificationMappingType();
 		defaultClassification.setColorBrewerSchemeName(indicatorsMetadataEntity.getColorBrewerSchemeName());
@@ -159,7 +165,7 @@ public class IndicatorsMapper {
 		return defaultClassification;
 	}
 
-	private static List<OgcServicesType> generateOgcServiceOverview(
+	private List<OgcServicesType> generateOgcServiceOverview(
 			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnitEntities) {
 		List<OgcServicesType> ogcServices = new ArrayList<OgcServicesType>();
 
@@ -176,14 +182,16 @@ public class IndicatorsMapper {
 		return ogcServices;
 	}
 
-	private static List<String> getApplicableSpatialUnitsNames(
-			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits) throws Exception {
+	private List<String> getApplicableSpatialUnitsNames(
+			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits, List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray) throws Exception {
 		List<String> spatialUnitsNames = new ArrayList<String>(indicatorSpatialUnits.size());
 		for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
 			spatialUnitsNames.add(indicatorSpatialUnitJoinEntity.getSpatialUnitName());
+			// This is a QAD to prevent shared collection references for spatial unit roles
+			// within the IndicatorSpatialUnitJoinEntity and the below requested MetadataSpatialUnitsEntities
+//			indicatorSpatialUnitJoinEntity.clearSpatialUnitRoles();
 		}
 
-		List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray = spatialUnitsRepo.findAll();
 		List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitsMetadataArray);
 
 
@@ -200,7 +208,7 @@ public class IndicatorsMapper {
 		return orderedSpatialUnitNames;
 	}
 
-	private static List<String> getTopicNames(Collection<TopicsEntity> indicatorTopics) {
+	private List<String> getTopicNames(Collection<TopicsEntity> indicatorTopics) {
 		List<String> topicNames = new ArrayList<String>(indicatorTopics.size());
 
 		for (TopicsEntity topicEntity : indicatorTopics) {

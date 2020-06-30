@@ -5,10 +5,12 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import org.geotools.data.DataStore;
@@ -75,6 +77,13 @@ public class IndicatorsManager {
     @Autowired
     ScriptManager scriptManager;
 
+    @Autowired
+    SpatialUnitsMetadataRepository spatialUnitsMetadataRepo;
+
+    @Autowired
+    IndicatorsMapper indicatorsMapper;
+
+
     public String updateMetadata(IndicatorPATCHInputType metadata, String indicatorId) throws Exception {
         logger.info("Trying to update indicator metadata for datasetId '{}'", indicatorId);
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
@@ -125,7 +134,7 @@ public class IndicatorsManager {
                     styleName = publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(),
                             datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
                 } else {
-                    DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper
+                    DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper
                             .extractDefaultClassificationMappingFromMetadata(metadataEntity);
                     styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle,
                             indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
@@ -248,7 +257,7 @@ public class IndicatorsManager {
                 if (indicatorData.getDefaultClassificationMapping() != null && indicatorData.getDefaultClassificationMapping().getItems() != null && indicatorData.getDefaultClassificationMapping().getItems().size() > 0) {
                     styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorViewTableName);
                 } else {
-                    DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+                    DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
                     styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
                 }
 
@@ -277,7 +286,7 @@ public class IndicatorsManager {
                     if (indicatorData.getDefaultClassificationMapping() != null && indicatorData.getDefaultClassificationMapping().getItems() != null && indicatorData.getDefaultClassificationMapping().getItems().size() > 0) {
                         styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorViewTableName);
                     } else {
-                        DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+                        DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
                         styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
                     }
                     publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
@@ -389,13 +398,15 @@ public class IndicatorsManager {
 
     public IndicatorOverviewType getIndicatorById(String indicatorId, AuthInfoProvider provider) throws Exception {
         logger.info("Retrieving indicator metadata for datasetId '{}'", indicatorId);
-        MetadataIndicatorsEntity indicatorsMetadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+        MetadataIndicatorsEntity indicatorsMetadataEntity = fetchMetadataIndicatorsEntity(provider, indicatorId);
 
         List<IndicatorReferenceType> indicatorReferences = ReferenceManager.getIndicatorReferences(indicatorsMetadataEntity.getDatasetId());
         List<GeoresourceReferenceType> georesourcesReferences = ReferenceManager.getGeoresourcesReferences(indicatorsMetadataEntity.getDatasetId());
 
-        IndicatorOverviewType swaggerIndicatorMetadata = IndicatorsMapper
-                .mapToSwaggerIndicator(indicatorsMetadataEntity, indicatorReferences, georesourcesReferences);
+        List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray = spatialUnitsMetadataRepo.findAll();
+
+        IndicatorOverviewType swaggerIndicatorMetadata = indicatorsMapper
+                .mapToSwaggerIndicator(indicatorsMetadataEntity, indicatorReferences, georesourcesReferences, spatialUnitsMetadataArray);
 
         return swaggerIndicatorMetadata;
     }
@@ -407,20 +418,30 @@ public class IndicatorsManager {
     public List<IndicatorOverviewType> getAllIndicatorsMetadata(AuthInfoProvider provider) throws Exception {
         logger.info("Retrieving all indicators metadata from db");
 
-        List<MetadataIndicatorsEntity> indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll();
+        List<MetadataIndicatorsEntity> indicatorsMeatadataEntities;
 
-        List<IndicatorOverviewType> swaggerIndicatorsMetadata = IndicatorsMapper
-                .mapToSwaggerIndicators(indicatorsMeatadataEntities);
+        if (provider == null) {
+            indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll().stream()
+                    .filter(i -> i.getRoles().isEmpty()).collect(Collectors.toList());
+        } else {
+            indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll().stream()
+                    .filter(i -> hasAllowedRole(provider, i)).collect(Collectors.toList());
+        }
+
+        List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray = spatialUnitsMetadataRepo.findAll();
+
+        List<IndicatorOverviewType> swaggerIndicatorsMetadata = indicatorsMapper
+                .mapToSwaggerIndicators(indicatorsMeatadataEntities, spatialUnitsMetadataArray);
 
         swaggerIndicatorsMetadata.sort(Comparator.comparing(IndicatorOverviewType::getIndicatorName));
 
         return swaggerIndicatorsMetadata;
     }
 
-	public String getValidIndicatorFeatures(String indicatorId, String spatialUnitId, BigDecimal year,
-											BigDecimal month, BigDecimal day, String simplifyGeometries) throws Exception {
-    	return getValidIndicatorFeatures(indicatorId, spatialUnitId, year, month, day, simplifyGeometries, null);
-	}
+    public String getValidIndicatorFeatures(String indicatorId, String spatialUnitId, BigDecimal year,
+                                            BigDecimal month, BigDecimal day, String simplifyGeometries) throws Exception {
+        return getValidIndicatorFeatures(indicatorId, spatialUnitId, year, month, day, simplifyGeometries, null);
+    }
 
     public String getValidIndicatorFeatures(String indicatorId, String spatialUnitId, BigDecimal year,
                                             BigDecimal month, BigDecimal day, String simplifyGeometries, AuthInfoProvider provider) throws Exception {
@@ -429,7 +450,8 @@ public class IndicatorsManager {
 
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
             if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)) {
-                IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+                IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = fetchIndicatorSpatialUnitJoinEntity(provider, indicatorId, spatialUnitId);
+
                 String indicatorViewTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
 
                 String json = IndicatorDatabaseHandler.getValidFeatures(indicatorViewTableName, year, month, day, simplifyGeometries);
@@ -453,16 +475,17 @@ public class IndicatorsManager {
         }
     }
 
-	public String getIndicatorFeatures(String indicatorId, String spatialUnitId, String simplifyGeometries) throws Exception {
-    	return getIndicatorFeatures(indicatorId, spatialUnitId, simplifyGeometries, null);
-	}
+    public String getIndicatorFeatures(String indicatorId, String spatialUnitId, String simplifyGeometries) throws Exception {
+        return getIndicatorFeatures(indicatorId, spatialUnitId, simplifyGeometries, null);
+    }
 
     public String getIndicatorFeatures(String indicatorId, String spatialUnitId, String simplifyGeometries, AuthInfoProvider provider) throws Exception {
         logger.info("Retrieving all indicator features from Dataset with id '{}'for spatialUnitId '{}' ", indicatorId, spatialUnitId);
 
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
             if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)) {
-                IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+                IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = fetchIndicatorSpatialUnitJoinEntity(provider, indicatorId, spatialUnitId);
+
                 String indicatorViewTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
 
                 String json = IndicatorDatabaseHandler.getIndicatorFeatures(indicatorViewTableName, simplifyGeometries);
@@ -643,7 +666,7 @@ public class IndicatorsManager {
             String styleName;
 
             try {
-                DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+                DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
                 styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
 
                 // handle OGC web service
@@ -997,19 +1020,20 @@ public class IndicatorsManager {
         return entity;
     }
 
-	public List<IndicatorPropertiesWithoutGeomType> getIndicatorFeaturePropertiesWithoutGeometry(String indicatorId,
-																								 String spatialUnitId) throws SQLException, IOException, ResourceNotFoundException {
-    	return getIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, null);
-	}
+    public List<IndicatorPropertiesWithoutGeomType> getIndicatorFeaturePropertiesWithoutGeometry(String indicatorId,
+                                                                                                 String spatialUnitId) throws SQLException, IOException, ResourceNotFoundException {
+        return getIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, null);
+    }
 
     public List<IndicatorPropertiesWithoutGeomType> getIndicatorFeaturePropertiesWithoutGeometry(String indicatorId,
                                                                                                  String spatialUnitId,
-																								 AuthInfoProvider provider) throws SQLException, IOException, ResourceNotFoundException {
+                                                                                                 AuthInfoProvider provider) throws SQLException, IOException, ResourceNotFoundException {
         logger.info("Retrieving all indicator feature properties without geometries from dataset with id '{}'for spatialUnitId '{}' ", indicatorId, spatialUnitId);
 
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
             if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)) {
-                IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+                IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = fetchIndicatorSpatialUnitJoinEntity(provider, indicatorId, spatialUnitId);
+
                 String indicatorViewTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
 
                 List<IndicatorPropertiesWithoutGeomType> indicatorFeaturePropertiesWithoutGeom = IndicatorDatabaseHandler.getIndicatorFeaturePropertiesWithoutGeometries(indicatorViewTableName);
@@ -1033,10 +1057,10 @@ public class IndicatorsManager {
         }
     }
 
-	public List<IndicatorPropertiesWithoutGeomType> getValidIndicatorFeaturePropertiesWithoutGeometry(
-			String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month, BigDecimal day) throws ResourceNotFoundException, IOException, SQLException {
-    	return getValidIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, year, month, day, null);
-	}
+    public List<IndicatorPropertiesWithoutGeomType> getValidIndicatorFeaturePropertiesWithoutGeometry(
+            String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month, BigDecimal day) throws ResourceNotFoundException, IOException, SQLException {
+        return getValidIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, year, month, day, null);
+    }
 
     public List<IndicatorPropertiesWithoutGeomType> getValidIndicatorFeaturePropertiesWithoutGeometry(
             String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month, BigDecimal day, AuthInfoProvider provider) throws ResourceNotFoundException, IOException, SQLException {
@@ -1045,7 +1069,8 @@ public class IndicatorsManager {
 
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
             if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)) {
-                IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+                IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = fetchIndicatorSpatialUnitJoinEntity(provider, indicatorId, spatialUnitId);
+
                 String indicatorViewTableName = indicatorSpatialsUnitsEntity.getIndicatorValueTableName();
 
                 List<IndicatorPropertiesWithoutGeomType> validIndicatorFeaturePropertiesWithoutGeom =
@@ -1072,6 +1097,56 @@ public class IndicatorsManager {
 
     public boolean deleteIndicatorReferencesByGeoresource(String georesourceId) {
         return ReferenceManager.removeReferencesByGeoresourceId(georesourceId);
+    }
+
+    private MetadataIndicatorsEntity fetchMetadataIndicatorsEntity(AuthInfoProvider provider, String indicatorsId) throws ResourceNotFoundException {
+        MetadataIndicatorsEntity metadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorsId);
+        if (provider == null) {
+            if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
+                        "was not found.", indicatorsId));
+            }
+        } else {
+            if (metadataEntity == null || !hasAllowedRole(provider, metadataEntity)) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
+                        "was not found.", indicatorsId));
+            }
+        }
+        return metadataEntity;
+    }
+
+    private IndicatorSpatialUnitJoinEntity fetchIndicatorSpatialUnitJoinEntity(AuthInfoProvider provider, String indicatorId, String spatialUnitId) throws ResourceNotFoundException {
+        IndicatorSpatialUnitJoinEntity entity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+        if (provider == null) {
+            if (entity == null || !entity.getMetadataIndicatorsEntity().getRoles().isEmpty() || !entity.getMetadataSpatialUnitsEntity().getRoles().isEmpty()) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource " +
+                        "for indicator '%s' and spatial unit '%s' was not found.", indicatorId, spatialUnitId));
+            }
+        } else {
+            if (entity == null || !hasAllowedRole(provider, entity)) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource " +
+                        "for indicator '%s' and spatial unit '%s' was not found.", indicatorId, spatialUnitId));
+            }
+        }
+        return entity;
+    }
+
+    private boolean hasAllowedRole(AuthInfoProvider authInfoProvider, IndicatorSpatialUnitJoinEntity entity) {
+        return (entity.getMetadataIndicatorsEntity().getRoles() == null ||
+                entity.getMetadataIndicatorsEntity().getRoles().isEmpty() ||
+                entity.getMetadataIndicatorsEntity().getRoles().stream()
+                        .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()))) &&
+                (entity.getMetadataSpatialUnitsEntity().getRoles() == null ||
+                        entity.getMetadataSpatialUnitsEntity().getRoles().isEmpty() ||
+                        entity.getMetadataSpatialUnitsEntity().getRoles().stream()
+                                .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName())));
+    }
+
+    private boolean hasAllowedRole(AuthInfoProvider authInfoProvider, MetadataIndicatorsEntity entity) {
+        return entity.getRoles() == null ||
+                entity.getRoles().isEmpty() ||
+                entity.getRoles().stream()
+                        .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
     }
 
 
