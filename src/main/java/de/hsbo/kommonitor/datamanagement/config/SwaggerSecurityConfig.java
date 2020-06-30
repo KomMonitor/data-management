@@ -15,6 +15,7 @@ import springfox.documentation.swagger.web.SecurityConfiguration;
 import springfox.documentation.swagger.web.SecurityConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import javax.servlet.ServletContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,12 +63,13 @@ public class SwaggerSecurityConfig {
     }
 
     @Bean
-    public Docket customImplementation() {
+    public Docket customImplementation(ServletContext servletContext, @Value("${kommonitor.datamanagement-api.swagger-ui.base-path:}") String basePath) {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName(GROUP_NAME)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("de.hsbo.kommonitor.datamanagement.api"))
                 .build()
+                .pathProvider(new BasePathAwareRelativePathProvider(servletContext, basePath))
                 .apiInfo(apiInfo())
                 .securitySchemes(buildSecurityScheme())
                 .securityContexts(Arrays.asList(securityContext()));
