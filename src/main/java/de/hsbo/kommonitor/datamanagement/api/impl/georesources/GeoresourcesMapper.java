@@ -1,11 +1,8 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.GeoresourcesPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
@@ -15,6 +12,7 @@ import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 public class GeoresourcesMapper {
 	
@@ -116,6 +114,15 @@ private static GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepo;
 		dataset.setWmsUrl(georesourceMetadataEntity.getWmsUrl());
 		dataset.setWfsUrl(georesourceMetadataEntity.getWfsUrl());
 
+		dataset.setAllowedRoles(getAllowedRoleIds(georesourceMetadataEntity.getRoles()));
+
 		return dataset;
+	}
+
+	private static List<String> getAllowedRoleIds(HashSet<RolesEntity> roles) {
+		return roles
+				.stream()
+				.map(r -> r.getRoleId())
+				.collect(Collectors.toList());
 	}
 }
