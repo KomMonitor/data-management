@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Api(value = "SpatialUnits", description = "the public SpatialUnits API")
-@RequestMapping(value = "/public")
 public interface SpatialUnitsPublicApi {
 
     @ApiOperation(value = "retrieve all feature entries for all applicable periods of validity for the selected spatial unit/level (hence might contain each feature multiple times if they exist for different periods of validity)",

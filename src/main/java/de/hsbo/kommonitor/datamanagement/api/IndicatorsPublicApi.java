@@ -16,7 +16,6 @@ import java.util.List;
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-04-05T10:56:22.201+02:00")
 
 @Api(value = "Indicators", description = "the Indicators API")
-@RequestMapping(value = "/public")
 public interface IndicatorsPublicApi {
 
     @ApiOperation(value = "retrieve information about the selected public indicator",

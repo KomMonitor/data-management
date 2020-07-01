@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.IndicatorsPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.indicators.*;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
-public class IndicatorsPublicController extends BasePathController implements IndicatorsPublicApi {
+public class IndicatorsPublicController extends BasePathPublicController implements IndicatorsPublicApi {
 
     private static Logger logger = LoggerFactory.getLogger(IndicatorsPublicController.class);
 

@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
@@ -16,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +25,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
-public class SpatialUnitsPublicController extends BasePathController implements SpatialUnitsPublicApi {
+public class SpatialUnitsPublicController extends BasePathPublicController implements SpatialUnitsPublicApi {
 
     private static Logger logger = LoggerFactory.getLogger(SpatialUnitsPublicController.class);
 

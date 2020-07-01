@@ -18,7 +18,6 @@ import java.security.Principal;
 import java.util.List;
 
 @Api(value = "Georesources", description = "the public Georesources API")
-@RequestMapping(value = "/public")
 public interface GeoresourcesPublicApi {
 
     @ApiOperation(value = "retrieve all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)",

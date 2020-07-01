@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
@@ -24,7 +25,7 @@ import java.util.List;
 
 
 @Controller
-public class GeorecourcesPublicController extends BasePathController implements GeoresourcesPublicApi {
+public class GeorecourcesPublicController extends BasePathPublicController implements GeoresourcesPublicApi {
 
     private static Logger logger = LoggerFactory.getLogger(GeorecourcesPublicController.class);
 
