@@ -11,10 +11,12 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 @Entity(name = "MetadataIndicators")
 public class MetadataIndicatorsEntity extends AbstractMetadata {
@@ -222,5 +224,18 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 		this.topicReference = topicReference;
 	}
 
+	@ManyToMany()
+    @JoinTable(name = "metadataIndicators_roles",
+            joinColumns = @JoinColumn(name = "metadataindicators_id", referencedColumnName = "datasetid"),
+            inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "roleid"))
+    private Collection<RolesEntity> roles = new HashSet<RolesEntity>();
+
+    public HashSet<RolesEntity> getRoles() {
+        return new HashSet<RolesEntity>(roles);
+    }
+
+    public void setRoles(Collection<RolesEntity> roles) {
+        this.roles = new HashSet<RolesEntity>(roles);
+    }
 
 }

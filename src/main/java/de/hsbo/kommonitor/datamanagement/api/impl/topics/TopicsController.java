@@ -103,48 +103,6 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
-	public ResponseEntity<TopicOverviewType> getTopicById(@PathVariable("topicId") String topicId) {
-		logger.info("Received request to get topic for topicId '{}'", topicId);
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * retrieve the topic for the specified id
-		 */
-
-		if (accept != null && accept.contains("application/json")){
-			
-			TopicOverviewType topic = topicsManager.getTopicById(topicId);
-			
-			return new ResponseEntity<>(topic, HttpStatus.OK);
-			
-		} else{
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-
-	@Override
-	public ResponseEntity<List<TopicOverviewType>> getTopics() {
-		logger.info("Received request to get all topics");
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * retrieve all available topics
-		 * 
-		 * return them to client
-		 */
-
-		if (accept != null && accept.contains("application/json")){
-			
-			List<TopicOverviewType> topics = topicsManager.getTopics();
-			
-			return new ResponseEntity<>(topics, HttpStatus.OK);
-			
-		} else{
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-
-	@Override
 	public ResponseEntity updateTopic(@PathVariable("topicId") String topicId, @RequestBody TopicInputType topicData) {
 		logger.info("Received request to update topic with topicId '{}'", topicId);
 

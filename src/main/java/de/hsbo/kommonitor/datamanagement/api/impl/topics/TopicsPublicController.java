@@ -1,0 +1,62 @@
+package de.hsbo.kommonitor.datamanagement.api.impl.topics;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hsbo.kommonitor.datamanagement.api.TopicsPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
+import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+@Controller
+public class TopicsPublicController extends BasePathPublicController implements TopicsPublicApi {
+
+    private static Logger logger = LoggerFactory.getLogger(TopicsPublicController.class);
+
+    private final ObjectMapper objectMapper;
+
+    private final HttpServletRequest request;
+
+    @Autowired
+    TopicsManager topicsManager;
+
+    @Autowired
+    public TopicsPublicController(ObjectMapper objectMapper, HttpServletRequest request) {
+        this.objectMapper = objectMapper;
+        this.request = request;
+    }
+
+    @Override
+    public ResponseEntity<TopicOverviewType> getTopicById(@PathVariable("topicId") String topicId) {
+        logger.info("Received request to get topic for topicId '{}'", topicId);
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json")) {
+            TopicOverviewType topic = topicsManager.getTopicById(topicId);
+            return new ResponseEntity<>(topic, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<TopicOverviewType>> getTopics() {
+        logger.info("Received request to get all topics");
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json")) {
+            List<TopicOverviewType> topics = topicsManager.getTopics();
+            return new ResponseEntity<>(topics, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+}

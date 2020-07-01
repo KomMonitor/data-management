@@ -6,6 +6,7 @@
 package de.hsbo.kommonitor.datamanagement.api;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -81,7 +82,7 @@ public interface SpatialUnitsApi {
         @RequestMapping(value = "/spatial-units/{spatialUnitId}/allFeatures",
             produces = { "application/json" }, 
             method = RequestMethod.GET)
-        ResponseEntity<byte[]> getAllSpatialUnitFeaturesById(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries);
+        ResponseEntity<byte[]> getAllSpatialUnitFeaturesById(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries, Principal principal);
 
     
     @ApiOperation(value = "retrieve information about available features of different spatial units/levels", nickname = "getSpatialUnits", notes = "retrieve information about available features of different spatial units/levels", response = SpatialUnitOverviewType.class, responseContainer = "array", authorizations = {
@@ -94,7 +95,7 @@ public interface SpatialUnitsApi {
     @RequestMapping(value = "/spatial-units",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<SpatialUnitOverviewType>> getSpatialUnits();
+    ResponseEntity<List<SpatialUnitOverviewType>> getSpatialUnits(Principal principal);
 
 
     @ApiOperation(value = "retrieve information about available features of the selected spatial unit/level", nickname = "getSpatialUnitsById", notes = "retrieve information about available features of the selected spatial unit/level", response = SpatialUnitOverviewType.class, authorizations = {
@@ -107,7 +108,7 @@ public interface SpatialUnitsApi {
     @RequestMapping(value = "/spatial-units/{spatialUnitId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<SpatialUnitOverviewType> getSpatialUnitsById(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId);
+    ResponseEntity<SpatialUnitOverviewType> getSpatialUnitsById(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId, Principal principal);
 
 
     @ApiOperation(value = "retrieve the features according to the selected spatial unit/level and selected year and month as GeoJSON", nickname = "getSpatialUnitsByIdAndYearAndMonth", notes = "retrieve the features according to the selected spatial unit/level and selected year and month as GeoJSON", response = byte[].class, authorizations = {
@@ -120,7 +121,7 @@ public interface SpatialUnitsApi {
     @RequestMapping(value = "/spatial-units/{spatialUnitId}/{year}/{month}/{day}",
         produces = { "application/octed-stream" }, 
         method = RequestMethod.GET)
-    ResponseEntity<byte[]> getSpatialUnitsByIdAndYearAndMonth(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries);
+    ResponseEntity<byte[]> getSpatialUnitsByIdAndYearAndMonth(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries, Principal principal);
 
 
     @ApiOperation(value = "retrieve the JSON schema for the selected spatial unit/level", nickname = "getSpatialUnitsSchemaById", notes = "retrieve the JSON schema for the selected spatial unit/level. The JSON schema indicates the property structure of the dataset.", response = String.class, authorizations = {
@@ -133,7 +134,7 @@ public interface SpatialUnitsApi {
     @RequestMapping(value = "/spatial-units/{spatialUnitId}/schema",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<String> getSpatialUnitsSchemaById(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId);
+    ResponseEntity<String> getSpatialUnitsSchemaById(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId, Principal principal);
 
 
     @ApiOperation(value = "Modify/Update the features of the selected spatial-unit", nickname = "updateSpatialUnitAsBody", notes = "Modify/Update the features of the selected spatial-unit. The interface expects a full upload of all geometries for the spatial unit. Internally, those geometries are compared to the existing ones to mark 'old' geometries that are no longer in use as outdated. Hence, each geometric object is only persisted once and its use is controlled by time validity marks.", authorizations = {
