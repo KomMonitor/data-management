@@ -66,12 +66,17 @@ private static GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepo;
 		        int result =  o1.getStartDate().compareTo(o2.getStartDate());
 		        
 		        if (result == 0) {
-		        	if(o1.getEndDate() != null){						
-						result = o1.getEndDate().compareTo(o2.getEndDate());
+					try {
+						if(o1.getEndDate() != null && o2.getEndDate() != null){						
+							result = o1.getEndDate().compareTo(o2.getEndDate());
+						}
+						else{
+							result = 1;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-					else{
-						result = 1;
-					}
+					
 		        }
 		        
 		        return result;
