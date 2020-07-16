@@ -60,7 +60,12 @@ public class SpatialUnitsMapper {
 		        int result =  o1.getStartDate().compareTo(o2.getStartDate());
 		        
 		        if (result == 0) {
-		        	result = o1.getEndDate().compareTo(o2.getEndDate());
+					if(o1.getEndDate() != null){						
+						result = o1.getEndDate().compareTo(o2.getEndDate());
+					}
+					else{
+						result = 1;
+					}
 		        }
 		        
 		        return result;
