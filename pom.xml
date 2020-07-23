@@ -474,6 +474,11 @@
                 <checksumPolicy>ignore</checksumPolicy>
             </snapshots>
         </repository>
+        <!-- for geoserver manager -->
+        <repository>
+            <id>GeoSolutions</id>
+            <url>http://maven.geo-solutions.it/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
