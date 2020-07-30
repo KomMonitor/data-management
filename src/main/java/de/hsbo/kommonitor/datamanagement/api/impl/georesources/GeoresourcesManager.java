@@ -313,26 +313,61 @@ public class GeoresourcesManager {
 		logger.info("Trying to delete georesource dataset with datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			
-			boolean deletedReferences = indicatorsManager.deleteIndicatorReferencesByGeoresource(georesourceId);
+			boolean success = true;
 			
-			boolean deleteScriptsForGeoresource = scriptManager.deleteScriptsByGeoresourceId(georesourceId);
+			try {
+				boolean deletedReferences = indicatorsManager.deleteIndicatorReferencesByGeoresource(georesourceId);
+			} catch (Exception e) {
+				logger.error("Error while deleting indicator references for georesource with id {}", georesourceId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}
+			
+			try {
+				boolean deleteScriptsForGeoresource = scriptManager.deleteScriptsByGeoresourceId(georesourceId);
+			} catch (Exception e) {
+				logger.error("Error while deleting scripts for georesource with id {}", georesourceId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}				
 			
 			MetadataGeoresourcesEntity georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 			
 			String dbTableName = georesourceEntity.getDbTableName();
-			/*
-			 * delete featureTable
-			 */
-			SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.GEORESOURCE, dbTableName);
-			/*
-			 * delete metadata entry
-			 */
-			georesourcesMetadataRepo.deleteByDatasetId(georesourceId);
 			
-			// handle OGC web service
-			ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.GEORESOURCE);
+			try {
+				/*
+				 * delete featureTable
+				 */
+				SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.GEORESOURCE, dbTableName);
+			} catch (Exception e) {
+				logger.error("Error while deleting feature table for georesource with id {}", georesourceId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}
+			
+			try {
+				/*
+				 * delete metadata entry
+				 */
+				georesourcesMetadataRepo.deleteByDatasetId(georesourceId);
+			} catch (Exception e) {
+				logger.error("Error while deleting metadata entry for georesource with id {}", georesourceId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+				success = false;
+			}
+			
+			try {
+				// handle OGC web service
+				ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.GEORESOURCE);
+			} catch (Exception e) {
+				logger.error("Error while unbublishing OGC service layer for georesource with id {}", georesourceId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}		
 
-			return true;
+			return success;
 		} else {
 			logger.error(
 					"No georesource dataset with datasetName '{}' was found in database. Delete request has no effect.",
