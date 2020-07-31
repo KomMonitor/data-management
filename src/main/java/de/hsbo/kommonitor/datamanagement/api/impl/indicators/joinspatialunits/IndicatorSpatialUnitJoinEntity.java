@@ -129,6 +129,20 @@ public class IndicatorSpatialUnitJoinEntity implements Serializable {
         this.metadataIndicatorsEntity = metadataIndicatorsEntity;
     }
 
+    @ManyToMany()
+    @JoinTable(name = "indicatorSpatialUnits_roles",
+            joinColumns = @JoinColumn(name = "indicatorspatialunit_id", referencedColumnName = "entryid"),
+            inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "roleid"))
+    private Collection<RolesEntity> indicatorSpatialUnitRoles;
+
+    public HashSet<RolesEntity> getIndicatorSpatialUnitRoles() {
+        return new HashSet<RolesEntity>(indicatorSpatialUnitRoles);
+    }
+
+    public void setIndicatorSpatialUnitRoles(Collection<RolesEntity> roles) {
+        this.indicatorSpatialUnitRoles = new HashSet<RolesEntity>(roles);
+    }
+
 //    @ManyToMany()
 //    @JoinTable(name = "metadataIndicators_roles",
 //            joinColumns = @JoinColumn(name = "metadataindicators_id", referencedColumnName = "indicatorMetadataId"),

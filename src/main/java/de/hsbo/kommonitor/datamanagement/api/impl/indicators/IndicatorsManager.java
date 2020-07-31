@@ -144,10 +144,13 @@ public class IndicatorsManager {
                         indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), datasetTitle, styleName,
                         ResourceTypeEnum.INDICATOR);
 
+                List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getIndicatorSpatialUnitRoles().stream()
+                        .map(r -> r.getRoleId()).collect(Collectors.toList());
+
                 persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId,
                         indicatorSpatialUnitJoinEntity.getIndicatorName(),
                         indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
-                        indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), styleName);
+                        indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), styleName, allowedRoles);
             }
 
             return indicatorId;
@@ -266,7 +269,7 @@ public class IndicatorsManager {
                 /*
                  * set wms and wfs urls within metadata
                  */
-                persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName);
+                persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName, indicatorData.getAllowedRoles());
 
             } else {
                 logger.info(
@@ -291,7 +294,7 @@ public class IndicatorsManager {
                     }
                     publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 
-                    persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName);
+                    persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName, indicatorData.getAllowedRoles());
                 } catch (Exception e) {
                     /*
                      * remove partially created resources and thrwo error
@@ -696,7 +699,6 @@ public class IndicatorsManager {
              * and one feature view. Thus add will be called for each combination of indicator and spatial unit)
              */
             String indicatorName = indicatorData.getDatasetName();
-            spatialUnitName = indicatorData.getApplicableSpatialUnit();
             CreationTypeEnum creationType = indicatorData.getCreationType();
             String characteristicValue = indicatorData.getCharacteristicValue();
             IndicatorTypeEnum indicatorType = indicatorData.getIndicatorType();
@@ -732,22 +734,22 @@ public class IndicatorsManager {
              * only if creationType == INSERTION then create table and view
              */
 
-            if (creationType.equals(CreationTypeEnum.INSERTION)) {
-
-                logger.info("As creationType is set to '{}', a featureTable and featureView will be created from indicator values. Also OGC publishing will be done.", creationType.toString());
-                String indicatorValueTableName = createIndicatorValueTable(indicatorData.getIndicatorValues(), metadataId);
-                indicatorViewTableName = createOrReplaceIndicatorView_fromValueTableName(indicatorValueTableName, spatialUnitName, metadataId);
-//				deleteIndicatorValueTable(indicatorTempTableName);				
-
-                // handle OGC web service
-                String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), createTitleForWebService(spatialUnitName, indicatorName), indicatorViewTableName);
-                publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, createTitleForWebService(spatialUnitName, indicatorName), styleName, ResourceTypeEnum.INDICATOR);
-
-                persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorViewTableName, styleName);
-
-            } else {
-                logger.info("As creationType is set to '{}', Only the metadata entry was created. No featureTable and view have been created..", creationType.toString());
-            }
+//            if (creationType.equals(CreationTypeEnum.INSERTION)) {
+//
+//                logger.info("As creationType is set to '{}', a featureTable and featureView will be created from indicator values. Also OGC publishing will be done.", creationType.toString());
+//                String indicatorValueTableName = createIndicatorValueTable(indicatorData.getIndicatorValues(), metadataId);
+//                indicatorViewTableName = createOrReplaceIndicatorView_fromValueTableName(indicatorValueTableName, spatialUnitName, metadataId);
+////				deleteIndicatorValueTable(indicatorTempTableName);
+//
+//                // handle OGC web service
+//                String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), createTitleForWebService(spatialUnitName, indicatorName), indicatorViewTableName);
+//                publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, createTitleForWebService(spatialUnitName, indicatorName), styleName, ResourceTypeEnum.INDICATOR);
+//
+//                persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorViewTableName, styleName, indicatorData.getAllowedRoles());
+//
+//            } else {
+//                logger.info("As creationType is set to '{}', Only the metadata entry was created. No featureTable and view have been created..", creationType.toString());
+//            }
         } catch (Exception e) {
             /*
              * remove partially created resources and thrwo error
@@ -922,7 +924,7 @@ public class IndicatorsManager {
     }
 
     private void persistNamesOfIndicatorTablesAndServicesInJoinTable(String indicatorMetadataId, String indicatorName, String spatialUnitName,
-                                                                     String indicatorViewTableName, String styleName) {
+                                                                     String indicatorViewTableName, String styleName, List<String> allowedRoles) throws ResourceNotFoundException {
         logger.info(
                 "Create or modify entry in indicator spatial units join table for indicatorId '{}', and spatialUnitName '{}'. Set indicatorValueTable with name '{}'.",
                 indicatorMetadataId, spatialUnitName, indicatorViewTableName);
@@ -946,6 +948,7 @@ public class IndicatorsManager {
         entity.setWmsUrl(ogcServiceManager.getWmsUrl(indicatorViewTableName));
         entity.setWfsUrl(ogcServiceManager.getWfsUrl(indicatorViewTableName));
         entity.setDefaultStyleName(styleName);
+        entity.setIndicatorSpatialUnitRoles(retrieveRoles(allowedRoles));
 
         indicatorsSpatialUnitsRepo.saveAndFlush(entity);
 
@@ -1010,7 +1013,7 @@ public class IndicatorsManager {
         /*
          * process availableTimestamps property for indicator metadata entity
          */
-        entity = addNewTimestampsToMetadataEntry(indicatorData.getIndicatorValues(), entity);
+//        entity = addNewTimestampsToMetadataEntry(indicatorData.getIndicatorValues(), entity);
 
         // persist in db
         indicatorsMetadataRepo.saveAndFlush(entity);
@@ -1132,10 +1135,21 @@ public class IndicatorsManager {
     }
 
     private boolean hasAllowedRole(AuthInfoProvider authInfoProvider, IndicatorSpatialUnitJoinEntity entity) {
-        return (entity.getMetadataIndicatorsEntity().getRoles() == null ||
-                entity.getMetadataIndicatorsEntity().getRoles().isEmpty() ||
-                entity.getMetadataIndicatorsEntity().getRoles().stream()
+        return entity.getIndicatorSpatialUnitRoles() == null ||
+                entity.getIndicatorSpatialUnitRoles().isEmpty() ||
+                entity.getIndicatorSpatialUnitRoles().stream()
+                        .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
+    }
+
+    private boolean hasAllowedRoleStrict(AuthInfoProvider authInfoProvider, IndicatorSpatialUnitJoinEntity entity) {
+        return (entity.getIndicatorSpatialUnitRoles() == null ||
+                entity.getIndicatorSpatialUnitRoles().isEmpty() ||
+                entity.getIndicatorSpatialUnitRoles().stream()
                         .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()))) &&
+                (entity.getMetadataIndicatorsEntity().getRoles() == null ||
+                        entity.getMetadataIndicatorsEntity().getRoles().isEmpty() ||
+                        entity.getMetadataIndicatorsEntity().getRoles().stream()
+                                .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()))) &&
                 (entity.getMetadataSpatialUnitsEntity().getRoles() == null ||
                         entity.getMetadataSpatialUnitsEntity().getRoles().isEmpty() ||
                         entity.getMetadataSpatialUnitsEntity().getRoles().stream()

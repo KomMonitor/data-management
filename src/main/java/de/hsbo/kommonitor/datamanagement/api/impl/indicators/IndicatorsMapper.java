@@ -13,12 +13,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMappe
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.OgcServicesType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.*;
 import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
@@ -182,30 +177,38 @@ public class IndicatorsMapper {
 		return ogcServices;
 	}
 
-	private List<String> getApplicableSpatialUnitsNames(
+	private List<IndicatorSpatialUnitJoinItem> getApplicableSpatialUnitsNames(
 			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits, List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray) throws Exception {
-		List<String> spatialUnitsNames = new ArrayList<String>(indicatorSpatialUnits.size());
+		List<IndicatorSpatialUnitJoinItem> indicatorSpatialUnitJoinItems = new ArrayList<IndicatorSpatialUnitJoinItem>(indicatorSpatialUnits.size());
 		for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
-			spatialUnitsNames.add(indicatorSpatialUnitJoinEntity.getSpatialUnitName());
+			IndicatorSpatialUnitJoinItem item = new IndicatorSpatialUnitJoinItem();
+			item.setSpatialUnitId(indicatorSpatialUnitJoinEntity.getSpatialUnitId());
+			item.setSpatialUnitName(indicatorSpatialUnitJoinEntity.getSpatialUnitName());
+
+			List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getIndicatorSpatialUnitRoles().stream()
+					.map(r -> r.getRoleId())
+					.collect(Collectors.toList());
+			item.setAllowedRoles(allowedRoles);
+
+			indicatorSpatialUnitJoinItems.add(item);
 			// This is a QAD to prevent shared collection references for spatial unit roles
 			// within the IndicatorSpatialUnitJoinEntity and the below requested MetadataSpatialUnitsEntities
 //			indicatorSpatialUnitJoinEntity.clearSpatialUnitRoles();
 		}
 
-		List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitsMetadataArray);
+//		List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitsMetadataArray);
+//
+//		swaggerSpatialUnitsMetadata = SpatialUnitsManager.sortSpatialUnitsHierarchically(swaggerSpatialUnitsMetadata);
 
+//		List<String> orderedSpatialUnitNames = new ArrayList<String>();
 
-		swaggerSpatialUnitsMetadata = SpatialUnitsManager.sortSpatialUnitsHierarchically(swaggerSpatialUnitsMetadata);
+//		for (SpatialUnitOverviewType metadataSpatialUnitsEntity : swaggerSpatialUnitsMetadata) {
+//			if (spatialUnitsNames.contains(metadataSpatialUnitsEntity.getSpatialUnitLevel())){
+//				orderedSpatialUnitNames.add(metadataSpatialUnitsEntity.getSpatialUnitLevel());
+//			}
+//		}
 
-		List<String> orderedSpatialUnitNames = new ArrayList<String>();
-
-		for (SpatialUnitOverviewType metadataSpatialUnitsEntity : swaggerSpatialUnitsMetadata) {
-			if (spatialUnitsNames.contains(metadataSpatialUnitsEntity.getSpatialUnitLevel())){
-				orderedSpatialUnitNames.add(metadataSpatialUnitsEntity.getSpatialUnitLevel());
-			}
-		}
-
-		return orderedSpatialUnitNames;
+		return indicatorSpatialUnitJoinItems;
 	}
 
 	private List<String> getTopicNames(Collection<TopicsEntity> indicatorTopics) {

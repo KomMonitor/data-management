@@ -25,6 +25,9 @@ public class IndicatorPUTInputType   {
   
   private List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = new ArrayList<>();
 
+  @JsonProperty("allowedRoles")
+  private List<String> allowedRoles = new ArrayList<>();
+
   public IndicatorPUTInputType defaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
     this.defaultClassificationMapping = defaultClassificationMapping;
     return this;
@@ -84,6 +87,29 @@ public class IndicatorPUTInputType   {
     this.indicatorValues = indicatorValues;
   }
 
+  public IndicatorPUTInputType allowedRoles(List<String> allowedRoles) {
+    this.allowedRoles = allowedRoles;
+    return this;
+  }
+
+  public IndicatorPUTInputType addAllowedRolesItem(String allowedRolesItem) {
+    this.allowedRoles.add(allowedRolesItem);
+    return this;
+  }
+
+  /**
+   * list of role identifiers that have read access rights for this dataset
+   * @return allowedRoles
+   **/
+  @ApiModelProperty(required = true, value = "list of role identifiers that have read access rights for this dataset")
+  public List<String> getAllowedRoles() {
+    return allowedRoles;
+  }
+
+  public void setAllowedRoles(List<String> allowedRoles) {
+    this.allowedRoles = allowedRoles;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -96,7 +122,8 @@ public class IndicatorPUTInputType   {
     IndicatorPUTInputType indicatorPUTInputType = (IndicatorPUTInputType) o;
     return Objects.equals(this.defaultClassificationMapping, indicatorPUTInputType.defaultClassificationMapping) &&
         Objects.equals(this.applicableSpatialUnit, indicatorPUTInputType.applicableSpatialUnit) &&
-        Objects.equals(this.indicatorValues, indicatorPUTInputType.indicatorValues);
+        Objects.equals(this.indicatorValues, indicatorPUTInputType.indicatorValues) &&
+        Objects.equals(this.allowedRoles, indicatorPUTInputType.allowedRoles);
   }
 
   @Override
@@ -112,6 +139,7 @@ public class IndicatorPUTInputType   {
     sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    applicableSpatialUnit: ").append(toIndentedString(applicableSpatialUnit)).append("\n");
     sb.append("    indicatorValues: ").append(toIndentedString(indicatorValues)).append("\n");
+    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("}");
     return sb.toString();
   }
