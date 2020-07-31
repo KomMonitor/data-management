@@ -8,15 +8,11 @@ import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.In
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.*;
-import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -185,7 +181,7 @@ public class IndicatorsMapper {
 			item.setSpatialUnitId(indicatorSpatialUnitJoinEntity.getSpatialUnitId());
 			item.setSpatialUnitName(indicatorSpatialUnitJoinEntity.getSpatialUnitName());
 
-			List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getIndicatorSpatialUnitRoles().stream()
+			List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getRoles().stream()
 					.map(r -> r.getRoleId())
 					.collect(Collectors.toList());
 			item.setAllowedRoles(allowedRoles);

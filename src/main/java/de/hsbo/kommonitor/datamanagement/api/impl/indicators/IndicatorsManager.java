@@ -144,7 +144,7 @@ public class IndicatorsManager {
                         indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), datasetTitle, styleName,
                         ResourceTypeEnum.INDICATOR);
 
-                List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getIndicatorSpatialUnitRoles().stream()
+                List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getRoles().stream()
                         .map(r -> r.getRoleId()).collect(Collectors.toList());
 
                 persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId,
@@ -948,7 +948,7 @@ public class IndicatorsManager {
         entity.setWmsUrl(ogcServiceManager.getWmsUrl(indicatorViewTableName));
         entity.setWfsUrl(ogcServiceManager.getWfsUrl(indicatorViewTableName));
         entity.setDefaultStyleName(styleName);
-        entity.setIndicatorSpatialUnitRoles(retrieveRoles(allowedRoles));
+        entity.setRoles(retrieveRoles(allowedRoles));
 
         indicatorsSpatialUnitsRepo.saveAndFlush(entity);
 
@@ -1121,7 +1121,7 @@ public class IndicatorsManager {
     private IndicatorSpatialUnitJoinEntity fetchIndicatorSpatialUnitJoinEntity(AuthInfoProvider provider, String indicatorId, String spatialUnitId) throws ResourceNotFoundException {
         IndicatorSpatialUnitJoinEntity entity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
         if (provider == null) {
-            if (entity == null || !entity.getMetadataIndicatorsEntity().getRoles().isEmpty() || !entity.getMetadataSpatialUnitsEntity().getRoles().isEmpty()) {
+            if (entity == null || !entity.getRoles().isEmpty()) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource " +
                         "for indicator '%s' and spatial unit '%s' was not found.", indicatorId, spatialUnitId));
             }
@@ -1135,16 +1135,16 @@ public class IndicatorsManager {
     }
 
     private boolean hasAllowedRole(AuthInfoProvider authInfoProvider, IndicatorSpatialUnitJoinEntity entity) {
-        return entity.getIndicatorSpatialUnitRoles() == null ||
-                entity.getIndicatorSpatialUnitRoles().isEmpty() ||
-                entity.getIndicatorSpatialUnitRoles().stream()
+        return entity.getRoles() == null ||
+                entity.getRoles().isEmpty() ||
+                entity.getRoles().stream()
                         .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
     }
 
     private boolean hasAllowedRoleStrict(AuthInfoProvider authInfoProvider, IndicatorSpatialUnitJoinEntity entity) {
-        return (entity.getIndicatorSpatialUnitRoles() == null ||
-                entity.getIndicatorSpatialUnitRoles().isEmpty() ||
-                entity.getIndicatorSpatialUnitRoles().stream()
+        return (entity.getRoles() == null ||
+                entity.getRoles().isEmpty() ||
+                entity.getRoles().stream()
                         .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()))) &&
                 (entity.getMetadataIndicatorsEntity().getRoles() == null ||
                         entity.getMetadataIndicatorsEntity().getRoles().isEmpty() ||

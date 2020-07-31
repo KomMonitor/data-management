@@ -1,7 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
@@ -133,14 +132,14 @@ public class IndicatorSpatialUnitJoinEntity implements Serializable {
     @JoinTable(name = "indicatorSpatialUnits_roles",
             joinColumns = @JoinColumn(name = "indicatorspatialunit_id", referencedColumnName = "entryid"),
             inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "roleid"))
-    private Collection<RolesEntity> indicatorSpatialUnitRoles;
+    private Collection<RolesEntity> roles;
 
-    public HashSet<RolesEntity> getIndicatorSpatialUnitRoles() {
-        return new HashSet<RolesEntity>(indicatorSpatialUnitRoles);
+    public HashSet<RolesEntity> getRoles() {
+        return new HashSet<RolesEntity>(roles);
     }
 
-    public void setIndicatorSpatialUnitRoles(Collection<RolesEntity> roles) {
-        this.indicatorSpatialUnitRoles = new HashSet<RolesEntity>(roles);
+    public void setRoles(Collection<RolesEntity> roles) {
+        this.roles = new HashSet<RolesEntity>(roles);
     }
 
 //    @ManyToMany()
