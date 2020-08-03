@@ -113,31 +113,38 @@ public class IndicatorsManager {
 					.findByIndicatorMetadataId(indicatorId);
 
 			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
-
-				String datasetTitle = createTitleForWebService(indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
-						indicatorSpatialUnitJoinEntity.getIndicatorName());
 				
-				String styleName;
-				if (metadata.getDefaultClassificationMapping() != null
-						&& metadata.getDefaultClassificationMapping().getItems() != null
-						&& metadata.getDefaultClassificationMapping().getItems().size() > 0) {
-					styleName = publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(),
-							datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
-				} else {
-					DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper
-							.extractDefaultClassificationMappingFromMetadata(metadataEntity);
-					styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle,
-							indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
+				try {
+					String datasetTitle = createTitleForWebService(indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
+							indicatorSpatialUnitJoinEntity.getIndicatorName());
+					
+					String styleName;
+					if (metadata.getDefaultClassificationMapping() != null
+							&& metadata.getDefaultClassificationMapping().getItems() != null
+							&& metadata.getDefaultClassificationMapping().getItems().size() > 0) {
+						styleName = publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(),
+								datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
+					} else {
+						DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper
+								.extractDefaultClassificationMappingFromMetadata(metadataEntity);
+						styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle,
+								indicatorSpatialUnitJoinEntity.getIndicatorValueTableName());
+					}
+
+					ogcServiceManager.publishDbLayerAsOgcService(
+							indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), datasetTitle, styleName,
+							ResourceTypeEnum.INDICATOR);
+
+					persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId,
+							indicatorSpatialUnitJoinEntity.getIndicatorName(),
+							indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
+							indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), styleName);
+				} catch (Exception e) {
+					logger.error("An error ocurred while trying to publish data layer for indicator with id {} and spatial unit with id {}.", indicatorId, indicatorSpatialUnitJoinEntity.getSpatialUnitId());
+					logger.error("Error was: {}", e.getMessage());
+					e.printStackTrace();
 				}
-
-				ogcServiceManager.publishDbLayerAsOgcService(
-						indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), datasetTitle, styleName,
-						ResourceTypeEnum.INDICATOR);
-
-				persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId,
-						indicatorSpatialUnitJoinEntity.getIndicatorName(),
-						indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
-						indicatorSpatialUnitJoinEntity.getIndicatorValueTableName(), styleName);
+				
 			}
 
 			return indicatorId;
