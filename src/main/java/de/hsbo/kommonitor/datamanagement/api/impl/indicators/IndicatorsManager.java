@@ -12,7 +12,9 @@ import javax.transaction.Transactional;
 import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.model.indicators.*;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import org.apache.commons.collections.CollectionUtils;
 import org.geotools.data.DataStore;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.text.cql2.CQLException;
@@ -36,18 +38,6 @@ import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorTypeEnum;
 
 @Transactional
 @Repository
@@ -84,7 +74,7 @@ public class IndicatorsManager {
     IndicatorsMapper indicatorsMapper;
 
 
-    public String updateMetadata(IndicatorPATCHInputType metadata, String indicatorId) throws Exception {
+    public String updateMetadata(IndicatorMetadataPATCHInputType metadata, String indicatorId) throws Exception {
         logger.info("Trying to update indicator metadata for datasetId '{}'", indicatorId);
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
             MetadataIndicatorsEntity metadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
@@ -163,6 +153,41 @@ public class IndicatorsManager {
         }
     }
 
+    public String updateIndicatorRoles(IndicatorPATCHInputType indicatorData, String indicatorId, String spatialUnitId) throws Exception {
+        logger.info("Trying to update indicator roles for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
+        if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)) {
+            IndicatorSpatialUnitJoinEntity indicatorEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+
+            if(keyPropertiesHaveChanged(indicatorEntity, indicatorData)) {
+                indicatorEntity.setRoles(retrieveRoles(indicatorData.getAllowedRoles()));
+                indicatorsSpatialUnitsRepo.saveAndFlush(indicatorEntity);
+                logger.info(
+                        "Succesfully updated the roles for indicator dataset with indicatorId '{}' and spatialUnitId '{}'.",
+                        indicatorId, spatialUnitId);
+                return indicatorEntity.getEntryId();
+            }else{
+                logger.info(
+                        "The roles for indicator dataset with indicatorId '{}' and spatialUnitId '{}' have not changed. Update has no effect.",
+                        indicatorId, spatialUnitId);
+                return "";
+            }
+
+
+        } else {
+            logger.error(
+                    "No indicator dataset with indicatorId '{}' and spatialUnitId '{}' was found in database. Update request has no effect.",
+                    indicatorId, spatialUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update indicator metadata, but no dataset existes with datasetId " + indicatorId);
+        }
+    }
+
+    private boolean keyPropertiesHaveChanged(IndicatorSpatialUnitJoinEntity indicatorEntity, IndicatorPATCHInputType indicatorData) {
+        List<String> oldRoleIds = indicatorEntity.getRoles().stream().map(r -> r.getRoleId()).collect(Collectors.toList());
+        HashSet<String> newRoleIds = new HashSet<String>(indicatorData.getAllowedRoles());
+        return !CollectionUtils.isEqualCollection(oldRoleIds, newRoleIds);
+    }
+
     private boolean keyPropertiesHaveChanged(MetadataIndicatorsEntity metadataEntity, String indicatorName,
                                              String characteristicValue, IndicatorTypeEnum indicatorType) {
 
@@ -183,7 +208,7 @@ public class IndicatorsManager {
         return false;
     }
 
-    private void updateMetadata(IndicatorPATCHInputType metadata, MetadataIndicatorsEntity entity) throws Exception {
+    private void updateMetadata(IndicatorMetadataPATCHInputType metadata, MetadataIndicatorsEntity entity) throws Exception {
         entity.setDatasetName(metadata.getDatasetName());
         entity.setCharacteristicValue(metadata.getCharacteristicValue());
         entity.setIndicatorType(metadata.getIndicatorType());
@@ -226,7 +251,6 @@ public class IndicatorsManager {
 
         // persist in db
         indicatorsMetadataRepo.saveAndFlush(entity);
-
     }
 
     public String updateFeatures(IndicatorPUTInputType indicatorData, String indicatorId) throws Exception {
@@ -1162,6 +1186,4 @@ public class IndicatorsManager {
                 entity.getRoles().stream()
                         .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
     }
-
-
 }

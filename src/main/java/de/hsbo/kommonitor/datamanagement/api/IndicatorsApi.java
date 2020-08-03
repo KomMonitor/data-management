@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
+import de.hsbo.kommonitor.datamanagement.model.indicators.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,11 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -170,6 +166,20 @@ public interface IndicatorsApi {
     @RequestMapping(value = "/indicators/{indicatorId}",
         consumes = { "application/json" },
         method = RequestMethod.PATCH)
-    ResponseEntity updateIndicatorMetadataAsBody(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "metadata input" ,required=true )   @RequestBody IndicatorPATCHInputType metadata);
+    ResponseEntity updateIndicatorMetadataAsBody(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "metadata input" ,required=true )   @RequestBody IndicatorMetadataPATCHInputType metadata);
+
+    @ApiOperation(value = "Modify/Update the selected indicator dataset", authorizations = {
+            @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 401, message = "API key is missing or invalid"),
+            @ApiResponse(code = 405, message = "Invalid input") })
+    @RequestMapping(value = "/indicators/{indicatorId}/{spatialUnitId}",
+            produces = { "application/octed-stream" },
+            method = RequestMethod.PATCH)
+    ResponseEntity updateIndicatorRoles(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,
+                                   @ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,
+                                   @ApiParam(value = "Indicator parameters input" ,required=true )   @RequestBody IndicatorPATCHInputType indicatorData);
 
 }
