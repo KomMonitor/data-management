@@ -286,6 +286,7 @@
        </dependency>
        
        <!-- required for Java 9 + -->
+         <!-- required for Java 9 + -->
        <dependency>
 		    <groupId>org.glassfish.jaxb</groupId>
 		    <artifactId>jaxb-runtime</artifactId>
@@ -463,6 +464,11 @@
                 <updatePolicy>always</updatePolicy>
                 <checksumPolicy>ignore</checksumPolicy>
             </snapshots>
+        </repository>
+        <!-- for geoserver manager -->
+        <repository>
+            <id>GeoSolutions</id>
+            <url>http://maven.geo-solutions.it/</url>
         </repository>
     </repositories>
 

@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
 
@@ -43,7 +42,10 @@ public class IndicatorReferenceMapper {
 		List<IndicatorReferenceType> references = new ArrayList<IndicatorReferenceType>(entities.size());
 
 		for (IndicatorReferenceEntity indicatorReferenceEntity : entities) {
-			references.add(mapToSwaggerModel(indicatorReferenceEntity));
+			IndicatorReferenceType swaggerReference = mapToSwaggerModel(indicatorReferenceEntity);
+			if(swaggerReference != null) {
+				references.add(swaggerReference);
+			}	
 		}
 		
 		references.sort(Comparator.comparing(IndicatorReferenceType::getReferencedIndicatorName));
@@ -52,15 +54,19 @@ public class IndicatorReferenceMapper {
 	}
 
 	public static IndicatorReferenceType mapToSwaggerModel(IndicatorReferenceEntity indicatorReferenceEntity) {
-		IndicatorReferenceType reference = new IndicatorReferenceType();
-		reference.setReferencedIndicatorDescription(indicatorReferenceEntity.getReferenceDescription());
-		reference.setReferencedIndicatorId(indicatorReferenceEntity.getReferencedIndicatorId());
-		/*
-		 * set name with the datasetName from associated metadata entry
-		 */
-		reference.setReferencedIndicatorName(indicatorsMetadataRepo
-				.findByDatasetId(indicatorReferenceEntity.getReferencedIndicatorId()).getDatasetName());
-		return reference;
+		if (indicatorsMetadataRepo
+				.existsByDatasetId(indicatorReferenceEntity.getReferencedIndicatorId())) {
+			IndicatorReferenceType reference = new IndicatorReferenceType();
+			reference.setReferencedIndicatorDescription(indicatorReferenceEntity.getReferenceDescription());
+			reference.setReferencedIndicatorId(indicatorReferenceEntity.getReferencedIndicatorId());
+			/*
+			 * set name with the datasetName from associated metadata entry
+			 */
+			reference.setReferencedIndicatorName(indicatorsMetadataRepo
+					.findByDatasetId(indicatorReferenceEntity.getReferencedIndicatorId()).getDatasetName());
+			return reference;
+		}	
+		return null;
 	}
 
 }
