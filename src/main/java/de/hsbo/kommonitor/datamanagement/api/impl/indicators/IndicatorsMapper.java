@@ -1,7 +1,14 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
@@ -11,11 +18,15 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceM
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.*;
+import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorSpatialUnitJoinItem;
+import de.hsbo.kommonitor.datamanagement.model.indicators.OgcServicesType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component
 public class IndicatorsMapper {
@@ -140,7 +151,7 @@ public class IndicatorsMapper {
 				.collect(Collectors.toList());
 	}
 
-	public DefaultClassificationMappingType extractDefaultClassificationMappingFromMetadata(
+	public static DefaultClassificationMappingType extractDefaultClassificationMappingFromMetadata(
 			MetadataIndicatorsEntity indicatorsMetadataEntity) {
 		DefaultClassificationMappingType defaultClassification = new DefaultClassificationMappingType();
 		defaultClassification.setColorBrewerSchemeName(indicatorsMetadataEntity.getColorBrewerSchemeName());

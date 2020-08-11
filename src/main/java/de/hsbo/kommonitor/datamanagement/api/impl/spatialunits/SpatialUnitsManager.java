@@ -353,37 +353,70 @@ public class SpatialUnitsManager {
     }
 
     public boolean deleteSpatialUnitDatasetById(String spatialUnitId) throws Exception {
-        logger.info("Trying to delete spatialUnit dataset with datasetId '{}'", spatialUnitId);
-        if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
-            String dbTableName = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId).getDbTableName();
+		logger.info("Trying to delete spatialUnit dataset with datasetId '{}'", spatialUnitId);
+		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)){
+			boolean success = true;
+			String dbTableName = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId).getDbTableName();
+			
+			try {
+				/*
+				 * delete all associated indicator layers
+				 */
+				deleteAssociatedIndicatorLayers(spatialUnitId);
+			} catch (Exception e) {
+				logger.error("Error while deleting associated indicator layer entries for spatial unit with id {}", spatialUnitId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}
+			
+			try {
+				/*
+				 * delete featureTable
+				 */
+				SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);
+			} catch (Exception e) {
+				logger.error("Error while deleting feature table for spatial unit with id {}", spatialUnitId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}
+			
+			try {
 
-            /*
-             * delete all associated indicator layers
-             */
-            deleteAssociatedIndicatorLayers(spatialUnitId);
-
-            /*
-             * delete featureTable
-             */
-            SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);
-
-            // update spatial unit hierarchy and make it consistent again
-            updateSpatialUnitHierarchy_onDelete(spatialUnitId);
-
-            /*
-             * delete metadata entry
-             */
-            spatialUnitsMetadataRepo.deleteByDatasetId(spatialUnitId);
-
-            // handle OGC web service
-            ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
-
-            return true;
-        } else {
-            logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Delete request has no effect.", spatialUnitId);
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Tried to delete spatialUnit dataset, but no dataset existes with datasetId " + spatialUnitId);
-        }
-    }
+				// update spatial unit hierarchy and make it consistent again
+				updateSpatialUnitHierarchy_onDelete(spatialUnitId);	
+			} catch (Exception e) {
+				logger.error("Error while updating spatial unit hierarchy due to deletion of spatial unit with id {}", spatialUnitId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}	
+			
+			try {
+				/*
+				 * delete metadata entry
+				 */
+				spatialUnitsMetadataRepo.deleteByDatasetId(spatialUnitId);
+			} catch (Exception e) {
+				logger.error("Error while deleting metadata entry for spatial unit with id {}", spatialUnitId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+				success = false;
+			}
+			
+			try {
+				// handle OGC web service
+				ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
+			} catch (Exception e) {
+				logger.error("Error while unpublishing OGC service layer for spatial unit with id {}", spatialUnitId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}			
+			
+			return success;
+		}else{
+			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Delete request has no effect.", spatialUnitId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Tried to delete spatialUnit dataset, but no dataset existes with datasetId " + spatialUnitId);
+		}
+	}
 
     private boolean deleteAssociatedIndicatorLayers(String spatialUnitId) throws Exception {
         logger.info("Must delete and unpublish all indicator data tables and views that are associated to submitted spatial unit with id '{}'", spatialUnitId);

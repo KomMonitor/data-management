@@ -2,14 +2,15 @@ package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +24,11 @@ import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.GeoresourcesPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
+import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
@@ -35,6 +38,7 @@ import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewT
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 @Transactional
 @Repository
@@ -328,44 +332,11 @@ public class GeoresourcesManager {
         }
     }
 
-    public boolean deleteGeoresourceDatasetById(String georesourceId) throws Exception {
-        logger.info("Trying to delete georesource dataset with datasetId '{}'", georesourceId);
-        if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
-
-            boolean deletedReferences = indicatorsManager.deleteIndicatorReferencesByGeoresource(georesourceId);
-
-            boolean deleteScriptsForGeoresource = scriptManager.deleteScriptsByGeoresourceId(georesourceId);
-
-            MetadataGeoresourcesEntity georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
-
-            String dbTableName = georesourceEntity.getDbTableName();
-            /*
-             * delete featureTable
-             */
-            SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.GEORESOURCE, dbTableName);
-            /*
-             * delete metadata entry
-             */
-            georesourcesMetadataRepo.deleteByDatasetId(georesourceId);
-
-            // handle OGC web service
-            ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.GEORESOURCE);
-
-            return true;
-        } else {
-            logger.error(
-                    "No georesource dataset with datasetName '{}' was found in database. Delete request has no effect.",
-                    georesourceId);
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                    "Tried to delete georesource dataset, but no dataset existes with datasetId " + georesourceId);
-        }
-    }
-
-    public boolean deleteGeoresourceFeaturesByIdAndDate(String georesourceId, BigDecimal year, BigDecimal month,
-                                                        BigDecimal day) throws ResourceNotFoundException, IOException {
-        /*
-         * TODO implement
-         */
+	public boolean deleteGeoresourceFeaturesByIdAndDate(String georesourceId, BigDecimal year, BigDecimal month,
+			BigDecimal day) throws ResourceNotFoundException, IOException {
+		/*
+		 * TODO implement
+		 */
 //		logger.info("Deleting georesource features for datasetId '{}' and date '{}-{}-{}'", georesourceId, year, month, day);
 //		
 //		try {
@@ -401,6 +372,74 @@ public class GeoresourcesManager {
 
         return false;
     }
+
+	public boolean deleteGeoresourceDatasetById(String georesourceId) throws Exception {
+		logger.info("Trying to delete georesource dataset with datasetId '{}'", georesourceId);
+		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+			
+			boolean success = true;
+			
+			try {
+				boolean deletedReferences = indicatorsManager.deleteIndicatorReferencesByGeoresource(georesourceId);
+			} catch (Exception e) {
+				logger.error("Error while deleting indicator references for georesource with id {}", georesourceId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}
+			
+			try {
+				boolean deleteScriptsForGeoresource = scriptManager.deleteScriptsByGeoresourceId(georesourceId);
+			} catch (Exception e) {
+				logger.error("Error while deleting scripts for georesource with id {}", georesourceId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}				
+			
+			MetadataGeoresourcesEntity georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+			
+			String dbTableName = georesourceEntity.getDbTableName();
+			
+			try {
+				/*
+				 * delete featureTable
+				 */
+				SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.GEORESOURCE, dbTableName);
+			} catch (Exception e) {
+				logger.error("Error while deleting feature table for georesource with id {}", georesourceId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}
+			
+			try {
+				/*
+				 * delete metadata entry
+				 */
+				georesourcesMetadataRepo.deleteByDatasetId(georesourceId);
+			} catch (Exception e) {
+				logger.error("Error while deleting metadata entry for georesource with id {}", georesourceId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+				success = false;
+			}
+			
+			try {
+				// handle OGC web service
+				ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.GEORESOURCE);
+			} catch (Exception e) {
+				logger.error("Error while unbublishing OGC service layer for georesource with id {}", georesourceId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}		
+
+			return success;
+		} else {
+			logger.error(
+					"No georesource dataset with datasetName '{}' was found in database. Delete request has no effect.",
+					georesourceId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to delete georesource dataset, but no dataset existes with datasetId " + georesourceId);
+		}
+	}
 
     public GeoresourceOverviewType getGeoresourceByDatasetId(String georesourceId) throws Exception {
         return getGeoresourceByDatasetId(georesourceId, null);

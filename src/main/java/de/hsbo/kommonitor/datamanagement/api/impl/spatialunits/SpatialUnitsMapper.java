@@ -56,9 +56,20 @@ public class SpatialUnitsMapper {
 		    @Override
 		    public int compare(PeriodOfValidityEntity_spatialUnits o1, PeriodOfValidityEntity_spatialUnits o2) {
 		        int result =  o1.getStartDate().compareTo(o2.getStartDate());
-		        
+				
+				
 		        if (result == 0) {
-		        	result = o1.getEndDate().compareTo(o2.getEndDate());
+					try {
+						if(o1.getEndDate() != null && o2.getEndDate() != null){						
+							result = o1.getEndDate().compareTo(o2.getEndDate());
+						}
+						else{
+							result = 1;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
 		        }
 		        
 		        return result;
