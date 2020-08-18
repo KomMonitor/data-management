@@ -5,21 +5,23 @@
  */
 package de.hsbo.kommonitor.datamanagement.api;
 
-import io.swagger.annotations.*;
+import java.util.List;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 
 import de.hsbo.kommonitor.datamanagement.model.roles.RoleInputType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
-
-import java.util.List;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2018-05-17T10:54:51.077+02:00")
 
 @Api(value = "Roles", description = "the Roles API")
@@ -33,7 +35,7 @@ public interface RolesApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/roles",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.POST)
     ResponseEntity addRole(@ApiParam(value = "role input data" ,required=true )   @RequestBody RoleInputType roleData);
 
@@ -83,7 +85,7 @@ public interface RolesApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/roles/{roleId}",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.PUT)
     ResponseEntity updateRole(@ApiParam(value = "unique identifier of the role",required=true) @PathVariable("roleId") String roleId,@ApiParam(value = "role input data" ,required=true )   @RequestBody RoleInputType roleData);
 

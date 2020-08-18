@@ -8,6 +8,7 @@ package de.hsbo.kommonitor.datamanagement.api;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,7 +39,7 @@ public interface IndicatorsApi {
         @ApiResponse(code = 201, message = "Created"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/indicators",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.POST)
     ResponseEntity addIndicatorAsBody(@ApiParam(value = "indicator data" ,required=true )   @RequestBody IndicatorPOSTInputType indicatorData);
 
@@ -154,7 +155,7 @@ public interface IndicatorsApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/indicators/{indicatorId}",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.PUT)
     ResponseEntity updateIndicatorAsBody(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "indicator data" ,required=true )   @RequestBody IndicatorPUTInputType indicatorData);
 
@@ -167,7 +168,7 @@ public interface IndicatorsApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/indicators/{indicatorId}",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.PATCH)
     ResponseEntity updateIndicatorMetadataAsBody(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "metadata input" ,required=true )   @RequestBody IndicatorPATCHInputType metadata);
 

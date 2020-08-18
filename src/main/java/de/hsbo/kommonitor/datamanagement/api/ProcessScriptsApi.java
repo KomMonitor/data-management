@@ -7,6 +7,7 @@ package de.hsbo.kommonitor.datamanagement.api;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +36,7 @@ public interface ProcessScriptsApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/process-scripts",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.POST)
     ResponseEntity addProcessScriptAsBody(@ApiParam(value = "details necessary to register the process script" ,required=true )   @RequestBody ProcessScriptPOSTInputType processScriptData);
 
@@ -148,7 +149,7 @@ public interface ProcessScriptsApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/process-scripts/usingIndicatorId/{indicatorId}",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.PUT)
     ResponseEntity updateProcessScriptAsBody(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "details necessary to modify the process script" ,required=true )   @RequestBody ProcessScriptPUTInputType processScriptData);
 
@@ -161,7 +162,7 @@ public interface ProcessScriptsApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/process-scripts/{scriptId}",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.PUT)
     ResponseEntity updateProcessScriptAsBodyByScriptId(@ApiParam(value = "unique identifier of the selected script",required=true) @PathVariable("scriptId") String scriptId,@ApiParam(value = "details necessary to modify the process script" ,required=true )   @RequestBody ProcessScriptPUTInputType processScriptData);
 

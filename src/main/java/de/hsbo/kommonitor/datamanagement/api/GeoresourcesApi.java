@@ -8,6 +8,7 @@ package de.hsbo.kommonitor.datamanagement.api;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,7 +39,7 @@ public interface GeoresourcesApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/georesources",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.POST)
     ResponseEntity addGeoresourceAsBody(@ApiParam(value = "feature data" ,required=true )   @RequestBody GeoresourcePOSTInputType featureData);
 
@@ -141,7 +142,7 @@ public interface GeoresourcesApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/georesources/{georesourceId}",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.PUT)
     ResponseEntity updateGeoresourceAsBody(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "feature data" ,required=true )   @RequestBody GeoresourcePUTInputType featureData);
 
@@ -154,7 +155,7 @@ public interface GeoresourcesApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/georesources/{georesourceId}",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.PATCH)
     ResponseEntity updateGeoresourceMetadataAsBody(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "metadata input" ,required=true )   @RequestBody GeoresourcePATCHInputType metadata);
 

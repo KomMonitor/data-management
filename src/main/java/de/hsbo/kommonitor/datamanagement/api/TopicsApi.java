@@ -7,6 +7,7 @@ package de.hsbo.kommonitor.datamanagement.api;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +35,7 @@ public interface TopicsApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/topics",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.POST)
     ResponseEntity addTopic(@ApiParam(value = "topic input data" ,required=true )   @RequestBody TopicInputType topicData);
 
@@ -84,7 +85,7 @@ public interface TopicsApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/topics/{topicId}",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.PUT)
     ResponseEntity updateTopic(@ApiParam(value = "unique identifier of the topic",required=true) @PathVariable("topicId") String topicId,@ApiParam(value = "topic input data" ,required=true )   @RequestBody TopicInputType topicData);
 

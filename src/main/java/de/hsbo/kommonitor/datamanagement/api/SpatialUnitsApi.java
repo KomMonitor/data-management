@@ -8,6 +8,7 @@ package de.hsbo.kommonitor.datamanagement.api;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,7 +39,7 @@ public interface SpatialUnitsApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/spatial-units",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.POST)
     ResponseEntity addSpatialUnitAsBody(@ApiParam(value = "feature data" ,required=true )   @RequestBody SpatialUnitPOSTInputType featureData);
 
@@ -144,7 +145,7 @@ public interface SpatialUnitsApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/spatial-units/{spatialUnitId}",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.PUT)
     ResponseEntity updateSpatialUnitAsBody(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "feature data" ,required=true )   @RequestBody SpatialUnitPUTInputType featureData);
 
@@ -157,7 +158,7 @@ public interface SpatialUnitsApi {
         @ApiResponse(code = 401, message = "API key is missing or invalid"),
         @ApiResponse(code = 405, message = "Invalid input") })
     @RequestMapping(value = "/spatial-units/{spatialUnitId}",
-        consumes = { "application/json" },
+        consumes = MediaType.ALL_VALUE,
         method = RequestMethod.PATCH)
     ResponseEntity updateSpatialUnitMetadataAsBody(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "metadata input" ,required=true )   @RequestBody SpatialUnitPATCHInputType metadata);
 
