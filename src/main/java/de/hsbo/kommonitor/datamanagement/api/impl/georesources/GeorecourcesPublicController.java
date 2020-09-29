@@ -84,7 +84,7 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
             String geoJsonFeatures = georesourcesManager.getAllGeoresourceFeatures(georesourceId, simplifyGeometries);
             String fileName = "GeoresourceFeatures_" + georesourceId + "_all.json";
 
-            return createGeoresourceFeatureResponse(geoJsonFeatures, fileName);
+            return createGeoresourceFeatureResponse(fileName, geoJsonFeatures);
         } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
         }
@@ -100,7 +100,7 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
             String geoJsonFeatures = georesourcesManager.getValidGeoresourceFeatures(georesourceId, year, month, day, simplifyGeometries);
             String fileName = "GeoresourceFeatures_" + georesourceId + "_" + year + "-" + month + "-" + day + ".json";
 
-            return createGeoresourceFeatureResponse(geoJsonFeatures, fileName);
+            return createGeoresourceFeatureResponse(fileName, geoJsonFeatures);
         } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
         }

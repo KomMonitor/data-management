@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.model.indicators.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,6 @@ import de.hsbo.kommonitor.datamanagement.api.IndicatorsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
 
 @Controller
 public class IndicatorsController extends BasePathController implements IndicatorsApi {
@@ -207,7 +203,7 @@ public class IndicatorsController extends BasePathController implements Indicato
                 spatialUnitId, indicatorId, year, month, day);
         String accept = request.getHeader("Accept");
 
-		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
 
         try {
             String geoJsonFeatures = indicatorsManager.getValidIndicatorFeatures(indicatorId, spatialUnitId, year,
@@ -233,7 +229,7 @@ public class IndicatorsController extends BasePathController implements Indicato
         logger.info("Received request to get all indicators metadata");
         String accept = request.getHeader("Accept");
 
-		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
 
         try {
 
@@ -257,7 +253,7 @@ public class IndicatorsController extends BasePathController implements Indicato
         logger.info("Received request to get indicator metadata for indicatorId '{}'", indicatorId);
         String accept = request.getHeader("Accept");
 
-		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
 
         try {
             if (accept != null && accept.contains("application/json")) {
@@ -305,7 +301,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
-    public ResponseEntity updateIndicatorMetadataAsBody(@PathVariable("indicatorId") String indicatorId, @RequestBody IndicatorPATCHInputType metadata) {
+    public ResponseEntity updateIndicatorMetadataAsBody(@PathVariable("indicatorId") String indicatorId, @RequestBody IndicatorMetadataPATCHInputType metadata) {
         logger.info("Received request to update indicator metadata for indicatorId '{}'", indicatorId);
 
         String accept = request.getHeader("Accept");
@@ -338,21 +334,50 @@ public class IndicatorsController extends BasePathController implements Indicato
 
     }
 
+    @Override
+    public ResponseEntity updateIndicatorRoles(@PathVariable("indicatorId") String indicatorId,
+                                               @PathVariable("spatialUnitId") String spatialUnitId,
+                                               @RequestBody IndicatorPATCHInputType indicatorData) {
+        logger.info("Received request to update indicator roles for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
+
+        String accept = request.getHeader("Accept");
+
+        try {
+            indicatorId = indicatorsManager.updateIndicatorRoles(indicatorData, indicatorId, spatialUnitId);
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+
+        if (indicatorId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = indicatorId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @Override
     public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
             @PathVariable("indicatorId") String indicatorId,
             @PathVariable("spatialUnitId") String spatialUnitId,
-			@PathVariable("year") BigDecimal year,
-			@PathVariable("month") BigDecimal month,
+            @PathVariable("year") BigDecimal year,
+            @PathVariable("month") BigDecimal month,
             @PathVariable("day") BigDecimal day,
-			Principal principal) {
+            Principal principal) {
         logger.info(
                 "Received request to get indicators feature properties without geometries for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
                 spatialUnitId, indicatorId, year, month, day);
         String accept = request.getHeader("Accept");
 
-		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
 
         try {
             List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties =
@@ -368,13 +393,13 @@ public class IndicatorsController extends BasePathController implements Indicato
     @Override
     public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(
             @PathVariable("indicatorId") String indicatorId,
-			@PathVariable("spatialUnitId") String spatialUnitId,
-			Principal principal) {
+            @PathVariable("spatialUnitId") String spatialUnitId,
+            Principal principal) {
         logger.info("Received request to get indicator feature properties for spatialUnitId '{}' and Id '{}' (without geometries)",
                 spatialUnitId, indicatorId);
         String accept = request.getHeader("Accept");
 
-		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
         try {
             List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager.getIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, provider);
             return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties, HttpStatus.OK);

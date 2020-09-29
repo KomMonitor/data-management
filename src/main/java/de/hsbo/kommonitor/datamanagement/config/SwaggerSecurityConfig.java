@@ -1,6 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.config;
 
-import com.sun.org.apache.regexp.internal.RE;
+//import com.sun.org.apache.regexp.internal.RE;
 import org.apache.catalina.security.SecurityConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

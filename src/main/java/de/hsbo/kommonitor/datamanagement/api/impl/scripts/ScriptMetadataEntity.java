@@ -5,15 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -50,6 +42,18 @@ public class ScriptMetadataEntity {
 	@ManyToMany
 	@JoinTable(name = "scripts_requiredgeoresources", joinColumns = @JoinColumn(name = "script_id", referencedColumnName = "scriptid"), inverseJoinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"))
 	private Collection<MetadataGeoresourcesEntity> requiredGeoresources;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "indicatorid", updatable = false, insertable = false)
+	private MetadataIndicatorsEntity metadataIndicatorsEntity;
+
+	public MetadataIndicatorsEntity getMetadataIndicatorsEntity() {
+		return metadataIndicatorsEntity;
+	}
+
+	public void setMetadataIndicatorsEntity(MetadataIndicatorsEntity metadataIndicatorsEntity) {
+		this.metadataIndicatorsEntity = metadataIndicatorsEntity;
+	}
 
 	public String getName() {
 		return name;
