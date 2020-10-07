@@ -19,10 +19,13 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
     @Value("${keycloak.resource}")
     private String clientId;
 
+    @Value("${kommonitor.roles.admin:administrator}")
+    private String adminRole;
 
-    public KeycloakAuthInfoProvider(KeycloakPrincipal principal, String clientId) {
+    public KeycloakAuthInfoProvider(KeycloakPrincipal principal, String clientId, String adminRole) {
         super(principal);
         this.clientId = clientId;
+        this.adminRole = adminRole;
     }
 
     @Override
@@ -41,7 +44,17 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
     }
 
     @Override
+    public boolean hasRealmAdminRole() {
+        return getPrincipal().getKeycloakSecurityContext().getToken().getRealmAccess().isUserInRole(adminRole);
+    }
+
+    @Override
     public boolean hasClientRole(String role) {
         return getPrincipal().getKeycloakSecurityContext().getToken().getResourceAccess(clientId).isUserInRole(role);
+    }
+
+    @Override
+    public boolean hasClientAdminRole() {
+        return getPrincipal().getKeycloakSecurityContext().getToken().getResourceAccess(clientId).isUserInRole(adminRole);
     }
 }

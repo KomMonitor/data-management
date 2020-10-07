@@ -33,7 +33,11 @@ public abstract class AuthInfoProvider<T extends Principal> {
 
     public abstract boolean hasRealmRole(String role);
 
+    public abstract boolean hasRealmAdminRole();
+
     public abstract boolean hasClientRole(String role);
+
+    public abstract boolean hasClientAdminRole();
 
     public boolean supportsPrincipal(Principal principal) {
         return type.isInstance(principal);
