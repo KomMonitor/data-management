@@ -1254,6 +1254,7 @@ public class IndicatorsManager {
     private boolean hasAllowedRole(AuthInfoProvider authInfoProvider, IndicatorSpatialUnitJoinEntity entity) {
         return entity.getRoles() == null ||
                 entity.getRoles().isEmpty() ||
+                authInfoProvider.hasRealmAdminRole() ||
                 entity.getRoles().stream()
                         .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
     }
@@ -1261,6 +1262,7 @@ public class IndicatorsManager {
     private boolean hasAllowedRoleStrict(AuthInfoProvider authInfoProvider, IndicatorSpatialUnitJoinEntity entity) {
         return (entity.getRoles() == null ||
                 entity.getRoles().isEmpty() ||
+                authInfoProvider.hasRealmAdminRole() ||
                 entity.getRoles().stream()
                         .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()))) &&
                 (entity.getMetadataIndicatorsEntity().getRoles() == null ||
@@ -1276,6 +1278,7 @@ public class IndicatorsManager {
     private boolean hasAllowedRole(AuthInfoProvider authInfoProvider, MetadataIndicatorsEntity entity) {
         return entity.getRoles() == null ||
                 entity.getRoles().isEmpty() ||
+                authInfoProvider.hasRealmAdminRole() ||
                 entity.getRoles().stream()
                         .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
     }

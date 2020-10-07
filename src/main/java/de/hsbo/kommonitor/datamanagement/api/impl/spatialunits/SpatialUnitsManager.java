@@ -690,6 +690,7 @@ public class SpatialUnitsManager {
     private boolean hasAllowedRole(AuthInfoProvider authInfoProvider, MetadataSpatialUnitsEntity spatialUnitsMetadataEntity) {
         return spatialUnitsMetadataEntity.getRoles() == null ||
                 spatialUnitsMetadataEntity.getRoles().isEmpty() ||
+                authInfoProvider.hasRealmAdminRole() ||
                 spatialUnitsMetadataEntity.getRoles().stream()
                         .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
     }

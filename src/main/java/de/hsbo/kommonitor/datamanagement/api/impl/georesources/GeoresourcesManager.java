@@ -698,6 +698,7 @@ public class GeoresourcesManager {
     private boolean hasAllowedRole(AuthInfoProvider authInfoProvider, MetadataGeoresourcesEntity georesourceMetadataEntity) {
         return georesourceMetadataEntity.getRoles() == null ||
                 georesourceMetadataEntity.getRoles().isEmpty() ||
+                authInfoProvider.hasRealmAdminRole() ||
                 georesourceMetadataEntity.getRoles().stream()
                         .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
     }
