@@ -484,7 +484,7 @@ public class SpatialFeatureDatabaseHandler {
 		// fetch all features from table where startDate <= date and (endDate >=
 		// date || endDate = null)
 		
-		LocalDate dateWithoutTime = new java.sql.Date(date.getTime()).toLocalDate();
+		LocalDate dateWithoutTime = DateTimeUtil.toLocalDate(date);
 
 		FilterFactory ff = new FilterFactoryImpl();
 		//
