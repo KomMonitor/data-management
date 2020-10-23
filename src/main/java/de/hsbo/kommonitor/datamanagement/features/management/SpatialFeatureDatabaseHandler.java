@@ -276,12 +276,12 @@ public class SpatialFeatureDatabaseHandler {
 		AttributeDescriptor attributeDescriptor_arisenFrom = tb
 				.get(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME);
 		if (attributeDescriptor_startDate == null) {
-			tb.add(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, Date.class);
+			tb.add(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, LocalDate.class);
 		} else {
 
 			AttributeTypeBuilder builder = new AttributeTypeBuilder();
 			builder.setName("DateType");
-			builder.setBinding(Date.class);
+			builder.setBinding(LocalDate.class);
 			builder.setNillable(true);
 			AttributeType buildType = builder.buildType();
 			attributeDescriptor_startDate = new AttributeDescriptorImpl(buildType,
@@ -293,12 +293,12 @@ public class SpatialFeatureDatabaseHandler {
 		}
 
 		if (attributeDescriptor_endDate == null) {
-			tb.add(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, Date.class);
+			tb.add(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, LocalDate.class);
 		} else {
 
 			AttributeTypeBuilder builder = new AttributeTypeBuilder();
 			builder.setName("DateType");
-			builder.setBinding(Date.class);
+			builder.setBinding(LocalDate.class);
 			builder.setNillable(true);
 			AttributeType buildType = builder.buildType();
 			attributeDescriptor_endDate = new AttributeDescriptorImpl(buildType, attributeDescriptor_endDate.getName(),
@@ -414,6 +414,8 @@ public class SpatialFeatureDatabaseHandler {
 
 		SimpleFeatureSource featureSource = dataStore.getFeatureSource(dbTableName);
 		features = featureSource.getFeatures();
+		
+		features = DateTimeUtil.fixDateResonseTypes(features);
 
 		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
 
@@ -456,6 +458,8 @@ public class SpatialFeatureDatabaseHandler {
 
 		SimpleFeatureSource featureSource = dataStore.getFeatureSource(dbTableName);
 		features = fetchFeaturesForDate(featureSource, date);
+		
+		features = DateTimeUtil.fixDateResonseTypes(features);
 
 		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
 
