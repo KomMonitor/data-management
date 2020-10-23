@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -482,6 +483,8 @@ public class SpatialFeatureDatabaseHandler {
 			throws CQLException, IOException {
 		// fetch all features from table where startDate <= date and (endDate >=
 		// date || endDate = null)
+		
+		LocalDate dateWithoutTime = new java.sql.Date(date.getTime()).toLocalDate();
 
 		FilterFactory ff = new FilterFactoryImpl();
 		//
@@ -490,18 +493,19 @@ public class SpatialFeatureDatabaseHandler {
 		// String iso8601utc = DateTimeUtil.toISO8601UTC(date);
 		// System.out.println(iso8601utc);
 
-		Instant temporalInstant = new DefaultInstant(new DefaultPosition(date));
+//		Instant temporalInstant = new DefaultInstant(new DefaultPosition(date));
+		
 
 		// Simple check if property is after provided temporal instant
-		Filter endDateAfter = ff.after(ff.property(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME),
-				ff.literal(temporalInstant));
+		Filter endDateAfterOrEqual = ff.greaterOrEqual(ff.property(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME),
+				ff.literal(dateWithoutTime));
 		Filter endDateNull = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " is null");
-		Filter startDateBefore = ff.before(ff.property(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME),
-				ff.literal(temporalInstant));
+		Filter startDateBeforeOrEqual = ff.lessOrEqual(ff.property(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME),
+				ff.literal(dateWithoutTime));
 
-		Or endDateNullOrAfter = ff.or(endDateNull, endDateAfter);
+		Or endDateNullOrAfter = ff.or(endDateNull, endDateAfterOrEqual);
 
-		And andFilter = ff.and(startDateBefore, endDateNullOrAfter);
+		And andFilter = ff.and(startDateBeforeOrEqual, endDateNullOrAfter);
 
 		SimpleFeatureCollection features = featureSource.getFeatures(andFilter);
 		return features;
