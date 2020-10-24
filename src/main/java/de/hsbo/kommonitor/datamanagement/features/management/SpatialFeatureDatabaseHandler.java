@@ -276,12 +276,12 @@ public class SpatialFeatureDatabaseHandler {
 		AttributeDescriptor attributeDescriptor_arisenFrom = tb
 				.get(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME);
 		if (attributeDescriptor_startDate == null) {
-			tb.add(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, LocalDate.class);
+			tb.add(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, java.sql.Date.class);
 		} else {
 
 			AttributeTypeBuilder builder = new AttributeTypeBuilder();
 			builder.setName("DateType");
-			builder.setBinding(LocalDate.class);
+			builder.setBinding(java.sql.Date.class);
 			builder.setNillable(true);
 			AttributeType buildType = builder.buildType();
 			attributeDescriptor_startDate = new AttributeDescriptorImpl(buildType,
@@ -293,12 +293,12 @@ public class SpatialFeatureDatabaseHandler {
 		}
 
 		if (attributeDescriptor_endDate == null) {
-			tb.add(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, LocalDate.class);
+			tb.add(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, java.sql.Date.class);
 		} else {
 
 			AttributeTypeBuilder builder = new AttributeTypeBuilder();
 			builder.setName("DateType");
-			builder.setBinding(LocalDate.class);
+			builder.setBinding(java.sql.Date.class);
 			builder.setNillable(true);
 			AttributeType buildType = builder.buildType();
 			attributeDescriptor_endDate = new AttributeDescriptorImpl(buildType, attributeDescriptor_endDate.getName(),
