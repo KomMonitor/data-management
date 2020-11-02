@@ -1,5 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.encrypt;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -68,6 +70,19 @@ public class CryptoUtils {
 
 		return result.toString();
 
+	}
+
+	public static SecretKey getAESKeyHashFromPassword(String password, int keyLength) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		// Hashing key.
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.update(password.getBytes("UTF-8"));
+//        byte[] keyBytes = new byte[keyLength];
+//        System.arraycopy(digest.digest(), 0, keyBytes, 0, keyBytes.length);
+//        SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(digest.digest(), "AES");
+        
+        
+        return secretKeySpec;
 	}
 
 }

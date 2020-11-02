@@ -35,9 +35,9 @@ public class JsonDataEncryptConverter extends AbstractHttpMessageConverter<Objec
 	private ObjectMapper objectMapper;
 	
 	@Autowired
-	private EncryptorAesGcm aesEncryptor;
+	private EncryptorAesCBC aesEncryptor;
 	
-	@Value("${encryption.symmetric.aes-gcm.password}")
+	@Value("${encryption.symmetric.aes.password}")
 	private String password;
 
 	public JsonDataEncryptConverter() {
@@ -125,7 +125,7 @@ public class JsonDataEncryptConverter extends AbstractHttpMessageConverter<Objec
 			// reference response: {"data":"thisisencryptedstringresponse"}
 
 			Map<String, String> hashMap = new HashMap<>();
-			hashMap.put("data", encryptedString);
+			hashMap.put("encryptedData", encryptedString);
 			JSONObject jsob = new JSONObject(hashMap);
 			return jsob.toString().getBytes();
 		} else
