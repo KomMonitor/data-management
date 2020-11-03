@@ -52,7 +52,8 @@ public class JsonDataEncryptConverter extends AbstractHttpMessageConverter<Objec
 	@Override
 	protected Object readInternal(Class<? extends Object> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
-		return objectMapper.readValue(decrypt(inputMessage.getBody()), clazz);
+//		return objectMapper.readValue(decrypt(inputMessage.getBody()), clazz);
+		return objectMapper.readValue(inputMessage.getBody(), clazz);
 	}
 
 	@Override
