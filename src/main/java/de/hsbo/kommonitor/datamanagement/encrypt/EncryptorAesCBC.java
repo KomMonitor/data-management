@@ -19,8 +19,7 @@ public class EncryptorAesCBC {
 
 	@Value("${encryption.symmetric.aes.iv.length_byte:16}")
 	private int IV_LENGTH_BYTE;
-	@Value("${encryption.symmetric.aes.key.length_byte:16}")
-	private int KEY_LENGTH_BYTE;
+	private int KEY_LENGTH_BYTE = 16;
 	private final Charset UTF_8 = StandardCharsets.UTF_8;
 
 	// return a base64 encoded AES encrypted text
