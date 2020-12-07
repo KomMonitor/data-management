@@ -694,6 +694,8 @@ public class IndicatorDatabaseHandler {
 		
 		 FeatureCollection features = fetchFeaturesForDate(featureSource, date);
 		 
+		 features = DateTimeUtil.fixDateResonseTypes(features);
+		 
 		 features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
 
 		int indicatorFeaturesSize = features.size();
@@ -869,6 +871,8 @@ public class IndicatorDatabaseHandler {
 		SimpleFeatureSource featureSource = dataStore.getFeatureSource(featureViewTableName);
 
 		FeatureCollection features = featureSource.getFeatures();
+		
+		features = DateTimeUtil.fixDateResonseTypes(features);
 		
 		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
 
