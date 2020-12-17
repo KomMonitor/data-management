@@ -36,7 +36,7 @@
         <docker.image.prefix>kommonitor</docker.image.prefix>
         <springfox.version>2.9.2</springfox.version>
         <geotools.version>19.0</geotools.version>
-        <postgresql.version>42.1.4</postgresql.version>
+        <postgresql.version>42.2.18</postgresql.version>
         <hibernate.version>5.2.12.Final</hibernate.version>
     </properties>
 
