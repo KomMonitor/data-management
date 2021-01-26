@@ -9,6 +9,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 /**
  * IndicatorOverviewType
  */
@@ -38,26 +41,26 @@ public class IndicatorOverviewType   {
   private String processDescription = null;
 
   @JsonProperty("applicableSpatialUnits")
-  
-  private List<String> applicableSpatialUnits = new ArrayList<>();
+  @Valid
+  private List<IndicatorSpatialUnitJoinItem> applicableSpatialUnits = new ArrayList<>();
 
   @JsonProperty("applicableDates")
-  
+
   private List<String> applicableDates = new ArrayList<>();
 
   @JsonProperty("topicReference")
   private String topicReference = null;
 
   @JsonProperty("allowedRoles")
-  
+
   private List<String> allowedRoles = null;
 
   @JsonProperty("referencedIndicators")
-  
+
   private List<IndicatorReferenceType> referencedIndicators = null;
 
   @JsonProperty("referencedGeoresources")
-  
+
   private List<GeoresourceReferenceType> referencedGeoresources = null;
 
   @JsonProperty("creationType")
@@ -70,7 +73,7 @@ public class IndicatorOverviewType   {
   private DefaultClassificationMappingType defaultClassificationMapping = null;
 
   @JsonProperty("ogcServices")
-  
+
   private List<OgcServicesType> ogcServices = new ArrayList<>();
 
   @JsonProperty("abbreviation")
@@ -83,7 +86,7 @@ public class IndicatorOverviewType   {
   private Boolean isHeadlineIndicator = false;
 
   @JsonProperty("tags")
-  
+
   private List<String> tags = new ArrayList<>();
 
   public IndicatorOverviewType indicatorName(String indicatorName) {
@@ -212,26 +215,30 @@ public class IndicatorOverviewType   {
     this.processDescription = processDescription;
   }
 
-  public IndicatorOverviewType applicableSpatialUnits(List<String> applicableSpatialUnits) {
+  public IndicatorOverviewType applicableSpatialUnits(List<IndicatorSpatialUnitJoinItem> applicableSpatialUnits) {
     this.applicableSpatialUnits = applicableSpatialUnits;
     return this;
   }
 
-  public IndicatorOverviewType addApplicableSpatialUnitsItem(String applicableSpatialUnitsItem) {
+  public IndicatorOverviewType addApplicableSpatialUnitsItem(IndicatorSpatialUnitJoinItem applicableSpatialUnitsItem) {
     this.applicableSpatialUnits.add(applicableSpatialUnitsItem);
     return this;
   }
 
-   /**
+  /**
    * array of spatial unit levels for which the dataset is applicable
    * @return applicableSpatialUnits
-  **/
+   **/
   @ApiModelProperty(required = true, value = "array of spatial unit levels for which the dataset is applicable")
-  public List<String> getApplicableSpatialUnits() {
+  @NotNull
+
+  @Valid
+
+  public List<IndicatorSpatialUnitJoinItem> getApplicableSpatialUnits() {
     return applicableSpatialUnits;
   }
 
-  public void setApplicableSpatialUnits(List<String> applicableSpatialUnits) {
+  public void setApplicableSpatialUnits(List<IndicatorSpatialUnitJoinItem> applicableSpatialUnits) {
     this.applicableSpatialUnits = applicableSpatialUnits;
   }
 
@@ -264,7 +271,7 @@ public class IndicatorOverviewType   {
   }
 
    /**
-   * id of the last topic hierarchy entity 
+   * id of the last topic hierarchy entity
    * @return topicReference
   **/
   @ApiModelProperty(required = true, value = "id of the last topic hierarchy entity ")
@@ -550,7 +557,7 @@ public class IndicatorOverviewType   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorOverviewType {\n");
-    
+
     sb.append("    indicatorName: ").append(toIndentedString(indicatorName)).append("\n");
     sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");
     sb.append("    indicatorId: ").append(toIndentedString(indicatorId)).append("\n");

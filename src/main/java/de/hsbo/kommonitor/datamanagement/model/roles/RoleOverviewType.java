@@ -1,7 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.model.roles;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,10 +18,6 @@ public class RoleOverviewType   {
 
   @JsonProperty("roleName")
   private String roleName = null;
-
-  @JsonProperty("privileges")
-  
-  private List<String> privileges = new ArrayList<>();
 
   public RoleOverviewType(String roleId) {
 	  this.roleId = roleId;
@@ -67,30 +61,6 @@ public RoleOverviewType roleId(String roleId) {
     this.roleName = roleName;
   }
 
-  public RoleOverviewType privileges(List<String> privileges) {
-    this.privileges = privileges;
-    return this;
-  }
-
-  public RoleOverviewType addPrivilegesItem(String privilegesItem) {
-    this.privileges.add(privilegesItem);
-    return this;
-  }
-
-   /**
-   * list of privileges that are associated to this role. They indicate, what operations and data can be accessed by users.
-   * @return privileges
-  **/
-  @ApiModelProperty(required = true, value = "list of privileges that are associated to this role. They indicate, what operations and data can be accessed by users.")
-  public List<String> getPrivileges() {
-    return privileges;
-  }
-
-  public void setPrivileges(List<String> privileges) {
-    this.privileges = privileges;
-  }
-
-
   @Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
@@ -101,13 +71,12 @@ public RoleOverviewType roleId(String roleId) {
     }
     RoleOverviewType roleOverviewType = (RoleOverviewType) o;
     return Objects.equals(this.roleId, roleOverviewType.roleId) &&
-        Objects.equals(this.roleName, roleOverviewType.roleName) &&
-        Objects.equals(this.privileges, roleOverviewType.privileges);
+        Objects.equals(this.roleName, roleOverviewType.roleName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(roleId, roleName, privileges);
+    return Objects.hash(roleId, roleName);
   }
 
   @Override
@@ -117,7 +86,6 @@ public RoleOverviewType roleId(String roleId) {
     
     sb.append("    roleId: ").append(toIndentedString(roleId)).append("\n");
     sb.append("    roleName: ").append(toIndentedString(roleName)).append("\n");
-    sb.append("    privileges: ").append(toIndentedString(privileges)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -6,9 +6,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import org.geotools.data.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,23 +34,23 @@ import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPUTInputType
 public class ScriptManager {
 
 	private static Logger logger = LoggerFactory.getLogger(ScriptManager.class);
-	
+
 	@Autowired
 	private ScriptInputParameterRepository inputParameterRepo;
 
 	@Autowired
 	private ScriptMetadataRepository scriptMetadataRepo;
-	
+
 	public String addScript(ProcessScriptPOSTInputType processScriptData) throws Exception{
 		String scriptName = processScriptData.getName();
 		logger.info("Trying to persist script data with '{}'", scriptName);
 		/*
 		 * analyse input type
-		 * 
+		 *
 		 * make instances of ScriptMetadataENtitz and ScriptInputParameterEntity
-		 * 
+		 *
 		 * save instances to db
-		 * 
+		 *
 		 * return id
 		 */
 
@@ -66,33 +68,33 @@ public class ScriptManager {
 		 * we save it as byte[] within Database
 		 */
 		scriptMetadata.setScriptCode(Base64.decode(processScriptData.getScriptCodeBase64()));
-		
+
 		/*
 		 * deal with requiredIndicators and requiredGeoresources
 		 */
 		List<String> requiredIndicatorIds = processScriptData.getRequiredIndicatorIds();
 		for (String requiredIndicatorId : requiredIndicatorIds) {
 			MetadataIndicatorsEntity metadataIndicator = DatabaseHelperUtil.getIndicatorMetadataEntity(requiredIndicatorId);
-			
+
 			if(metadataIndicator == null){
 				logger.error("required indicator with id '{}' does not exist.", requiredIndicatorId);
 				throw new Exception("required indicator with id " + requiredIndicatorId + " does not exist.");
 			}
 			scriptMetadata.addRequiredIndicator(metadataIndicator);
 		}
-		
+
 		List<String> requiredGeoresourceIds = processScriptData.getRequiredGeoresourceIds();
 		for (String requiredGeoresourceId : requiredGeoresourceIds) {
 			MetadataGeoresourcesEntity metadataGeoresource = DatabaseHelperUtil.getGeoresourceMetadataEntity(requiredGeoresourceId);
-			
+
 			if(metadataGeoresource == null){
 				logger.error("required georesource with id '{}' does not exist.", requiredGeoresourceId);
 				throw new Exception("required georesource with id " + requiredGeoresourceId + " does not exist.");
 			}
 			scriptMetadata.addRequiredGeoresources(metadataGeoresource);
 		}
-		
-		
+
+
 		/*
 		 * deal with processInputs
 		 */
@@ -112,10 +114,10 @@ public class ScriptManager {
 	private List<ScriptInputParameterEntity> persistAndGetInputParameters(
 			List<ProcessInputType> processParameters) {
 		List<ScriptInputParameterEntity> scriptInputParameters = new ArrayList<ScriptInputParameterEntity>(processParameters.size());
-	
+
 		for (ProcessInputType processInputParameter : processParameters) {
 			ScriptInputParameterEntity inputParameterEntity = ScriptMapper.mapToScriptInputParameterEntity(processInputParameter);
-			
+
 			inputParameterRepo.saveAndFlush(inputParameterEntity);
 			scriptInputParameters.add(inputParameterEntity);
 		}
@@ -130,15 +132,15 @@ public class ScriptManager {
 			 * also remove all corresponding processInputParameters
 			 */
 			deleteAssociatedScriptInputParameters(scriptMetadata);
-			
+
 			/*
 			 * also remove all corresponding processInputParameters
 			 */
 			deleteAssociatedRequiredResourceParameters(scriptMetadata);
-			
+
 			// now delete script metadata entity
 			scriptMetadataRepo.deleteByIndicatorId(indicatorId);
-			
+
 			return true;
 		} else {
 			logger.error("No script with indicatorId '{}' was found in database. Delete request has no effect.", indicatorId);
@@ -150,81 +152,97 @@ public class ScriptManager {
 	private void deleteAssociatedRequiredResourceParameters(ScriptMetadataEntity scriptMetadata) {
 		deleteAssociatedRequiredGeoresources(scriptMetadata);
 		deleteAssociatedRequiredIndicators(scriptMetadata);
-		
+
 	}
 
 	private void deleteAssociatedRequiredGeoresources(ScriptMetadataEntity scriptMetadata) {
 		Collection<MetadataGeoresourcesEntity> requiredGeoresources = scriptMetadata.getRequiredGeoresources();
-		
+
 		// delete subTopic relation
 		for (Iterator i = requiredGeoresources.iterator(); i.hasNext();) {
 			MetadataGeoresourcesEntity requiredGeoresourceEntity = (MetadataGeoresourcesEntity)i.next();
 		    i.remove();
 		}
-		
+
 		scriptMetadata.setRequiredGeoresources(requiredGeoresources);
-		
+
 		scriptMetadataRepo.saveAndFlush(scriptMetadata);
-		
+
 	}
-	
+
 	private void deleteAssociatedRequiredIndicators(ScriptMetadataEntity scriptMetadata) {
 		Collection<MetadataIndicatorsEntity> requiredIndicators = scriptMetadata.getRequiredIndicators();
-		
+
 		// delete subTopic relation
 		for (Iterator i = requiredIndicators.iterator(); i.hasNext();) {
 			MetadataIndicatorsEntity requiredIndicatorEntity = (MetadataIndicatorsEntity)i.next();
 		    i.remove();
 		}
-		
+
 		scriptMetadata.setRequiredIndicators(requiredIndicators);
-		
+
 		scriptMetadataRepo.saveAndFlush(scriptMetadata);
-		
+
 	}
 
 	private void deleteAssociatedScriptInputParameters(ScriptMetadataEntity scriptMetadata) {
 		Collection<ScriptInputParameterEntity> scriptInputParameters = scriptMetadata.getScriptInputParameters();
 		List<String> scriptInputParameterIds = new ArrayList<String>();
-		
+
 		// delete subTopic relation
 		for (Iterator i = scriptInputParameters.iterator(); i.hasNext();) {
 			ScriptInputParameterEntity scriptInputParameterEntity = (ScriptInputParameterEntity)i.next();
 			scriptInputParameterIds.add(scriptInputParameterEntity.getInputParameterId());
 		    i.remove();
 		}
-		
+
 		scriptMetadata.setScriptInputParameters(scriptInputParameters);
-		
+
 		scriptMetadataRepo.saveAndFlush(scriptMetadata);
-		
-		
+
+
 		for (String scriptInputParameterId : scriptInputParameterIds) {
 			inputParameterRepo.deleteByInputParameterId(scriptInputParameterId);
 		}
 	}
 
 	public List<ProcessScriptOverviewType> getAllScriptsMetadata() {
+		return getAllScriptsMetadata(null);
+	}
+
+	public List<ProcessScriptOverviewType> getAllScriptsMetadata(AuthInfoProvider provider) {
 		logger.info("Retrieving all script metadata from db");
 
-		List<ScriptMetadataEntity> scriptEntities = scriptMetadataRepo.findAll();
+		List<ScriptMetadataEntity> scriptEntities;
+
+		if (provider == null) {
+			scriptEntities = scriptMetadataRepo.findAll().stream()
+					.filter(s -> s.getMetadataIndicatorsEntity().getRoles().isEmpty()).collect(Collectors.toList());
+		} else {
+			scriptEntities = scriptMetadataRepo.findAll().stream()
+					.filter(s -> hasAllowedRole(provider, s)).collect(Collectors.toList());
+		}
+
 		List<ProcessScriptOverviewType> scriptsMetadata = ScriptMapper.mapToSwaggerScripts(scriptEntities);
 
 		scriptsMetadata.sort(Comparator.comparing(ProcessScriptOverviewType::getName));
-		
+
 		return scriptsMetadata;
 	}
-
 	public ProcessScriptOverviewType getScriptMetadataByIndicatorId(String indicatorId) throws ResourceNotFoundException {
+		return getScriptMetadataByIndicatorId(indicatorId, null);
+	}
+
+	public ProcessScriptOverviewType getScriptMetadataByIndicatorId(String indicatorId, AuthInfoProvider provider) throws ResourceNotFoundException {
 		logger.info("Retrieving script metadata from db for indicatorId '{}'", indicatorId);
-		
+
 		if (!scriptMetadataRepo.existsByIndicatorId(indicatorId)){
 			logger.error("No script with indicatorId '{}' was found in database. Get script metadata request has no effect.", indicatorId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to get script metadata, but no script metadata exists with indicatorId " + indicatorId);
 		}
 
-		ScriptMetadataEntity scriptEntity = scriptMetadataRepo.findByIndicatorId(indicatorId);
+		ScriptMetadataEntity scriptEntity = fetchScriptMetadataEntityForIndicatorId(provider, indicatorId);
 		ProcessScriptOverviewType scriptMetadata = ScriptMapper.mapToSwaggerScript(scriptEntity);
 
 		return scriptMetadata;
@@ -235,9 +253,9 @@ public class ScriptManager {
 		logger.info("Trying to update script for associated indicatorId '{}'", indicatorId);
 		if (scriptMetadataRepo.existsByIndicatorId(indicatorId)) {
 			ScriptMetadataEntity scriptMetadataEntity = scriptMetadataRepo.findByIndicatorId(indicatorId);
-			
+
 			updateScriptMetadataEntity(processScriptData, scriptMetadataEntity);
-			
+
 			scriptMetadataRepo.saveAndFlush(scriptMetadataEntity);
 			return indicatorId;
 		} else {
@@ -257,7 +275,7 @@ public class ScriptManager {
 		 * we save it as byte[] within Database
 		 */
 		scriptMetadataEntity.setScriptCode(Base64.decode(processScriptData.getScriptCodeBase64()));
-		
+
 		/*
 		 * deal with required indicators and georesource
 		 * check if they are already there, if not create them
@@ -277,17 +295,17 @@ public class ScriptManager {
 			}
 			if(!georesourceAlreadyContained){
 				MetadataGeoresourcesEntity georesourceMetadataEntity = DatabaseHelperUtil.getGeoresourceMetadataEntity(inputGeoresourceId);
-				
+
 				if(georesourceMetadataEntity == null){
 					logger.error("required georesource with id '{}' does not exist.", inputGeoresourceId);
 					throw new Exception("required georesource with id " + inputGeoresourceId + " does not exist.");
 				}
-				
+
 				requiredGeoresourcesFromEntity.add(georesourceMetadataEntity);
 			}
 		}
 		scriptMetadataEntity.setRequiredGeoresources(requiredGeoresourcesFromEntity);
-		
+
 		List<String> requiredIndicatorIdsFromInput = processScriptData.getRequiredIndicatorIds();
 		Collection<MetadataIndicatorsEntity> requiredIndicatorsFromEntity = scriptMetadataEntity.getRequiredIndicators();
 		boolean indicatorAlreadyContained = false;
@@ -311,7 +329,7 @@ public class ScriptManager {
 			}
 		}
 		scriptMetadataEntity.setRequiredIndicators(requiredIndicatorsFromEntity);
-		
+
 		//also manage inputParameters in their own REPO
 		List<ProcessInputType> parametersFromInput = processScriptData.getVariableProcessParameters();
 		Collection<ScriptInputParameterEntity> parametersFromEntity = scriptMetadataEntity.getScriptInputParameters();
@@ -334,19 +352,23 @@ public class ScriptManager {
 			}
 		}
 		scriptMetadataEntity.setScriptInputParameters(parametersFromEntity);
-		
+
 		scriptMetadataEntity.setLastUpdate(new Date());
 	}
 
 	public byte[] getScriptCodeForIndicatorId(String indicatorId) throws ResourceNotFoundException {
+		return getScriptCodeForIndicatorId(indicatorId, null);
+	}
+
+	public byte[] getScriptCodeForIndicatorId(String indicatorId, AuthInfoProvider provider) throws ResourceNotFoundException {
 		if (!scriptMetadataRepo.existsByIndicatorId(indicatorId)){
 			logger.error("No script with indicatorId '{}' was found in database. Get script code request has no effect.", indicatorId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to get script code, but no script metadata exists with indicatorId " + indicatorId);
 		}
-		
-		ScriptMetadataEntity scriptMetadataEntity = scriptMetadataRepo.findByIndicatorId(indicatorId);
-		
+
+		ScriptMetadataEntity scriptMetadataEntity = fetchScriptMetadataEntityForIndicatorId(provider, indicatorId);
+
 		return scriptMetadataEntity.getScriptCode();
 	}
 
@@ -360,10 +382,10 @@ public class ScriptManager {
 			deleteAssociatedScriptInputParameters(scriptMetadata);
 			deleteAssociatedRequiredGeoresources(scriptMetadata);
 			deleteAssociatedRequiredIndicators(scriptMetadata);
-			
+
 			// now delete script metadata entity
 			scriptMetadataRepo.deleteByScriptId(scriptId);
-			
+
 			return true;
 		} else {
 			logger.error("No script with scriptId '{}' was found in database. Delete request has no effect.", scriptId);
@@ -373,27 +395,35 @@ public class ScriptManager {
 	}
 
 	public byte[] getScriptCodeForScriptId(String scriptId) throws ResourceNotFoundException {
+		return getScriptCodeForScriptId(scriptId, null);
+	}
+
+	public byte[] getScriptCodeForScriptId(String scriptId, AuthInfoProvider provider) throws ResourceNotFoundException {
 		if (!scriptMetadataRepo.existsByScriptId(scriptId)){
 			logger.error("No script with scriptId '{}' was found in database. Get script code request has no effect.", scriptId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to get script code, but no script metadata exists with scriptId " + scriptId);
 		}
-		
-		ScriptMetadataEntity scriptMetadataEntity = scriptMetadataRepo.findByScriptId(scriptId);
-		
+
+		ScriptMetadataEntity scriptMetadataEntity = fetchScriptMetadataEntityForScriptId(provider, scriptId);
+
 		return scriptMetadataEntity.getScriptCode();
 	}
 
 	public ProcessScriptOverviewType getScriptMetadataByScriptId(String scriptId) throws ResourceNotFoundException {
+		return getScriptMetadataByScriptId(scriptId, null);
+	}
+
+	public ProcessScriptOverviewType getScriptMetadataByScriptId(String scriptId, AuthInfoProvider provider) throws ResourceNotFoundException {
 		logger.info("Retrieving script metadata from db for scriptId '{}'", scriptId);
-		
+
 		if (!scriptMetadataRepo.existsByScriptId(scriptId)){
 			logger.error("No script with scriptId '{}' was found in database. Get script metadata request has no effect.", scriptId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to get script metadata, but no script metadata exists with scriptId " + scriptId);
 		}
 
-		ScriptMetadataEntity scriptEntity = scriptMetadataRepo.findByScriptId(scriptId);
+		ScriptMetadataEntity scriptEntity = fetchScriptMetadataEntityForScriptId(provider, scriptId);
 		ProcessScriptOverviewType scriptMetadata = ScriptMapper.mapToSwaggerScript(scriptEntity);
 
 		return scriptMetadata;
@@ -403,7 +433,7 @@ public class ScriptManager {
 		logger.info("Trying to update script for associated scriptId '{}'", scriptId);
 		if (scriptMetadataRepo.existsByScriptId(scriptId)) {
 			ScriptMetadataEntity scriptMetadataEntity = scriptMetadataRepo.findByScriptId(scriptId);
-			
+
 			updateScriptMetadataEntity(processScriptData, scriptMetadataEntity);
 
 			scriptMetadataRepo.saveAndFlush(scriptMetadataEntity);
@@ -419,12 +449,12 @@ public class ScriptManager {
 
 	public boolean deleteScriptsByGeoresourceId(String georesourceId) throws ResourceNotFoundException {
 		List<ScriptMetadataEntity> scriptsEntities = scriptMetadataRepo.findAll();
-		
+
 		List<String> affectedScriptIds = new ArrayList<String>();
-		
+
 		for (ScriptMetadataEntity scriptMetadataEntity : scriptsEntities) {
 			Collection<MetadataGeoresourcesEntity> requiredGeoresources = scriptMetadataEntity.getRequiredGeoresources();
-			
+
 			for (MetadataGeoresourcesEntity metadataGeoresourcesEntity : requiredGeoresources) {
 				if (metadataGeoresourcesEntity.getDatasetId().equals(georesourceId)){
 					logger.info("Delete script with ID {} and NAME {} for georesource with ID {}", scriptMetadataEntity.getScriptId(), scriptMetadataEntity.getName(), georesourceId);
@@ -433,22 +463,22 @@ public class ScriptManager {
 				}
 			}
 		}
-		
+
 		for (String affectedScriptId : affectedScriptIds) {
 			deleteScriptByScriptId(affectedScriptId);
 		}
 		return true;
 	}
 
-	public boolean deleteScriptsByIndicatorsId(String indicatorId) throws ResourceNotFoundException {			
-		
+	public boolean deleteScriptsByIndicatorsId(String indicatorId) throws ResourceNotFoundException {
+
 		List<ScriptMetadataEntity> scriptsEntities = scriptMetadataRepo.findAll();
-		
+
 		List<String> affectedScriptIds = new ArrayList<String>();
-		
+
 		for (ScriptMetadataEntity scriptMetadataEntity : scriptsEntities) {
 			Collection<MetadataIndicatorsEntity> requiredIndicators = scriptMetadataEntity.getRequiredIndicators();
-			
+
 			for (MetadataIndicatorsEntity metadataIndicatorsEntity : requiredIndicators) {
 				if (metadataIndicatorsEntity.getDatasetId().equals(indicatorId)){
 					logger.info("Delete script with ID {} and NAME {} for indicator with ID {}", scriptMetadataEntity.getScriptId(), scriptMetadataEntity.getName(), indicatorId);
@@ -456,22 +486,52 @@ public class ScriptManager {
 				}
 			}
 		}
-		
+
 		for (String affectedScriptId : affectedScriptIds) {
 			deleteScriptByScriptId(affectedScriptId);
 		}
-		
+
 		if(scriptMetadataRepo.existsByIndicatorId(indicatorId)){
 			ScriptMetadataEntity scriptForIndicatorId = scriptMetadataRepo.findByIndicatorId(indicatorId);
-			
+
 			logger.info("Delete script with ID {} and NAME {} for indicator with ID {}", scriptForIndicatorId.getScriptId(), scriptForIndicatorId.getName(), indicatorId);
 			scriptMetadataRepo.deleteByIndicatorId(indicatorId);
 		}
-		
+
 		return true;
 	}
-	
 
-	
+	private ScriptMetadataEntity fetchScriptMetadataEntityForIndicatorId(AuthInfoProvider provider, String indicatorId) throws ResourceNotFoundException {
+		ScriptMetadataEntity entity = scriptMetadataRepo.findByIndicatorId(indicatorId);;
+		return checkScriptMetadataEntity(provider, entity);
+	}
+
+	private ScriptMetadataEntity fetchScriptMetadataEntityForScriptId(AuthInfoProvider provider, String scriptId) throws ResourceNotFoundException {
+		ScriptMetadataEntity entity = scriptMetadataRepo.findByScriptId(scriptId);;
+		return checkScriptMetadataEntity(provider, entity);
+	}
+
+	private ScriptMetadataEntity checkScriptMetadataEntity(AuthInfoProvider provider, ScriptMetadataEntity entity) throws ResourceNotFoundException {
+		if (provider == null) {
+			if (entity == null || !entity.getMetadataIndicatorsEntity().getRoles().isEmpty()) {
+				throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "The requested resource " +
+						"was not found.");
+			}
+		} else {
+			if (entity == null || !hasAllowedRole(provider, entity)) {
+				throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "The requested resource " +
+						"was not found.");
+			}
+		}
+		return entity;
+	}
+
+	private boolean hasAllowedRole(AuthInfoProvider authInfoProvider, ScriptMetadataEntity entity) {
+		return entity.getMetadataIndicatorsEntity().getRoles() == null ||
+				entity.getMetadataIndicatorsEntity().getRoles().isEmpty() ||
+				entity.getMetadataIndicatorsEntity().getRoles().stream()
+						.anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
+	}
+
 
 }

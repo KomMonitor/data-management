@@ -50,33 +50,6 @@ public interface TopicsApi {
         method = RequestMethod.DELETE)
     ResponseEntity deleteTopic(@ApiParam(value = "unique identifier of the topic",required=true) @PathVariable("topicId") String topicId);
 
-
-    @ApiOperation(value = "retrieve information about the selected topic", nickname = "getTopicById", notes = "retrieve information about the selected topic", response = TopicOverviewType.class, authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = TopicOverviewType.class),
-        @ApiResponse(code = 400, message = "Invalid status value"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/topics/{topicId}",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<TopicOverviewType> getTopicById(@ApiParam(value = "unique identifier of the topic",required=true) @PathVariable("topicId") String topicId);
-
-
-    @ApiOperation(value = "retrieve information about available topics", nickname = "getTopics", notes = "retrieve information about available topics", response = TopicOverviewType.class, responseContainer = "array", authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = TopicOverviewType.class, responseContainer = "array"),
-        @ApiResponse(code = 400, message = "Invalid status value"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/topics",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<TopicOverviewType>> getTopics();
-
-
     @ApiOperation(value = "Modify topic information", nickname = "updateTopic", notes = "Modify topic information", authorizations = {
         @Authorization(value = "basicAuth")
     }, tags={  })

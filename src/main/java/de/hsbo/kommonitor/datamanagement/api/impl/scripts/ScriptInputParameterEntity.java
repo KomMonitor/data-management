@@ -1,15 +1,11 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.scripts;
 
-import java.util.Collection;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 
 import org.hibernate.annotations.GenericGenerator;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessInputType.DataTypeEnum;
 
@@ -22,8 +18,10 @@ public class ScriptInputParameterEntity {
 	private String inputParameterId = null;
 	
 	private String name = null;
+	@Column(columnDefinition="text")
 	private String description = null;
 	private DataTypeEnum dataType = null;
+	@Column(columnDefinition="text")
 	private String defaultValue = null;
 	private double maxParameterValueForNumericInputs;
 	private double minParameterValueForNumericInputs;

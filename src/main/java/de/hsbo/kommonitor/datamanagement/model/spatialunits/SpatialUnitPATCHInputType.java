@@ -1,5 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.model.spatialunits;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -22,6 +24,9 @@ public class SpatialUnitPATCHInputType   {
 
   @JsonProperty("nextUpperHierarchyLevel")
   private String nextUpperHierarchyLevel = null;
+
+  @JsonProperty("allowedRoles")
+  private List<String> allowedRoles = new ArrayList<>();
 
   public SpatialUnitPATCHInputType metadata(CommonMetadataType metadata) {
     this.metadata = metadata;
@@ -77,6 +82,29 @@ public class SpatialUnitPATCHInputType   {
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
   }
 
+  public SpatialUnitPATCHInputType allowedRoles(List<String> allowedRoles) {
+    this.allowedRoles = allowedRoles;
+    return this;
+  }
+
+  public SpatialUnitPATCHInputType addAllowedRolesItem(String allowedRolesItem) {
+    this.allowedRoles.add(allowedRolesItem);
+    return this;
+  }
+
+  /**
+   * list of role identifiers that have read access rights for this dataset
+   * @return allowedRoles
+   **/
+  @ApiModelProperty(required = true, value = "list of role identifiers that have read access rights for this dataset")
+  public List<String> getAllowedRoles() {
+    return allowedRoles;
+  }
+
+  public void setAllowedRoles(List<String> allowedRoles) {
+    this.allowedRoles = allowedRoles;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -89,12 +117,13 @@ public class SpatialUnitPATCHInputType   {
     SpatialUnitPATCHInputType spatialUnitPATCHInputType = (SpatialUnitPATCHInputType) o;
     return Objects.equals(this.metadata, spatialUnitPATCHInputType.metadata) &&
         Objects.equals(this.nextLowerHierarchyLevel, spatialUnitPATCHInputType.nextLowerHierarchyLevel) &&
-        Objects.equals(this.nextUpperHierarchyLevel, spatialUnitPATCHInputType.nextUpperHierarchyLevel);
+        Objects.equals(this.nextUpperHierarchyLevel, spatialUnitPATCHInputType.nextUpperHierarchyLevel) &&
+        Objects.equals(this.allowedRoles, spatialUnitPATCHInputType.allowedRoles);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel);
+    return Objects.hash(metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, allowedRoles);
   }
 
   @Override
@@ -105,6 +134,7 @@ public class SpatialUnitPATCHInputType   {
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    nextLowerHierarchyLevel: ").append(toIndentedString(nextLowerHierarchyLevel)).append("\n");
     sb.append("    nextUpperHierarchyLevel: ").append(toIndentedString(nextUpperHierarchyLevel)).append("\n");
+    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("}");
     return sb.toString();
   }

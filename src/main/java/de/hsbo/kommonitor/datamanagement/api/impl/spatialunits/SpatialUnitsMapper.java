@@ -1,11 +1,8 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_spatialUnits;
@@ -14,6 +11,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 
 public class SpatialUnitsMapper {
@@ -108,6 +106,8 @@ public class SpatialUnitsMapper {
 		dataset.setWmsUrl(spatialUnitEntity.getWmsUrl());
 		dataset.setWfsUrl(spatialUnitEntity.getWfsUrl());
 
+		dataset.setAllowedRoles(getRoleIds(spatialUnitEntity.getRoles()));
+
 		return dataset;
 	}
 
@@ -119,5 +119,11 @@ public class SpatialUnitsMapper {
 			metadatasets.add(mapToSwaggerSpatialUnit(metadataEntity));
 		}
 		return metadatasets;
+	}
+
+	private static List<String> getRoleIds(HashSet<RolesEntity> roles) {
+		return roles.stream()
+				.map(r -> r.getRoleId())
+				.collect(Collectors.toList());
 	}
 }

@@ -5,6 +5,7 @@
  */
 package de.hsbo.kommonitor.datamanagement.api;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.MediaType;
@@ -73,7 +74,7 @@ public interface ProcessScriptsApi {
     @RequestMapping(value = "/process-scripts/{scriptId}/scriptCode",
         produces = { "application/javascript" }, 
         method = RequestMethod.GET)
-    ResponseEntity<byte[]> getProcessScriptCode(@ApiParam(value = "unique identifier of the selected script",required=true) @PathVariable("scriptId") String scriptId);
+    ResponseEntity<byte[]> getProcessScriptCode(@ApiParam(value = "unique identifier of the selected script",required=true) @PathVariable("scriptId") String scriptId, Principal principal);
 
 
     @ApiOperation(value = "retrieve the process script code associated to a certain indicator as JavaScript file", nickname = "getProcessScriptCodeForIndicator", notes = "retrieve the process script code associated to a certain indicator as JavaScript file", response = byte[].class, authorizations = {
@@ -86,7 +87,7 @@ public interface ProcessScriptsApi {
     @RequestMapping(value = "/process-scripts/usingIndicatorId/{indicatorId}/scriptCode",
         produces = { "application/javascript" }, 
         method = RequestMethod.GET)
-    ResponseEntity<byte[]> getProcessScriptCodeForIndicator(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
+    ResponseEntity<byte[]> getProcessScriptCodeForIndicator(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId, Principal principal);
 
 
     @ApiOperation(value = "retrieve information about the associated process script for a certain indicator", nickname = "getProcessScriptForIndicator", notes = "retrieve information about the associated process script for a certain indicator", response = ProcessScriptOverviewType.class, authorizations = {
@@ -99,7 +100,7 @@ public interface ProcessScriptsApi {
     @RequestMapping(value = "/process-scripts/usingIndicatorId/{indicatorId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId);
+    ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId, Principal principal);
 
 
     @ApiOperation(value = "retrieve information about the associated process script for a certain scriptId", nickname = "getProcessScriptForScriptId", notes = "retrieve information about the associated process script for a certain scriptId", response = ProcessScriptOverviewType.class, authorizations = {
@@ -112,7 +113,7 @@ public interface ProcessScriptsApi {
     @RequestMapping(value = "/process-scripts/{scriptId}",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<ProcessScriptOverviewType> getProcessScriptForScriptId(@ApiParam(value = "unique identifier of the selected script",required=true) @PathVariable("scriptId") String scriptId);
+    ResponseEntity<ProcessScriptOverviewType> getProcessScriptForScriptId(@ApiParam(value = "unique identifier of the selected script",required=true) @PathVariable("scriptId") String scriptId, Principal principal);
 
 
     @ApiOperation(value = "retrieve an empty script template, that defines how to implement process scripts for KomMonitor as JavaScript file.", nickname = "getProcessScriptTemplate", notes = "retrieve an empty script template, that defines how to implement process scripts for KomMonitor. The script works as a template for a NodeJS module. Hence, it predefines required methods that are called by the executing processing engine (a NodeJS runtimne environment). As a script developer, those predefined methods have to be implemented. The template contains detailed documentation on how to implement those methods.", response = byte[].class, authorizations = {
@@ -138,7 +139,7 @@ public interface ProcessScriptsApi {
     @RequestMapping(value = "/process-scripts",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<ProcessScriptOverviewType>> getProcessScripts();
+    ResponseEntity<List<ProcessScriptOverviewType>> getProcessScripts(Principal principal);
 
 
     @ApiOperation(value = "Modify/Update an existing process script", nickname = "updateProcessScriptAsBody", notes = "Modify/Update an existing process script associated to a certain indicator", authorizations = {

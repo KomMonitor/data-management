@@ -2,10 +2,13 @@ package de.hsbo.kommonitor.datamanagement.api.impl.scripts;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,9 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Autowired
 	ScriptManager scriptManager;
+
+	@Autowired
+	AuthInfoProviderFactory authInfoProviderFactory;
 
 	@org.springframework.beans.factory.annotation.Autowired
 	public ScriptController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -114,19 +120,15 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity<List<ProcessScriptOverviewType>> getProcessScripts() {
+	public ResponseEntity<List<ProcessScriptOverviewType>> getProcessScripts(Principal principal) {
 		logger.info("Received request to get all process script metadata");
 		String accept = request.getHeader("Accept");
 
-		/*
-		 * retrieve all available roles
-		 * 
-		 * return them to client
-		 */
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
 
 		if (accept != null && accept.contains("application/json")){
 			
-			List<ProcessScriptOverviewType> roles = scriptManager.getAllScriptsMetadata();
+			List<ProcessScriptOverviewType> roles = scriptManager.getAllScriptsMetadata(provider);
 			
 			return new ResponseEntity<>(roles, HttpStatus.OK);
 			
@@ -136,22 +138,20 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(@PathVariable("indicatorId") String indicatorId) {
+	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(@PathVariable("indicatorId") String indicatorId, Principal principal) {
 		logger.info("Received request to get process script metadata for indicatorId '{}'", indicatorId);
 		String accept = request.getHeader("Accept");
 
-		/*
-		 * retrieve the role for the specified id
-		 */
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
 
 		if (accept != null && accept.contains("application/json")) {
 
 			ProcessScriptOverviewType script = null;
 
 			try {
-				script = scriptManager.getScriptMetadataByIndicatorId(indicatorId);
+				script = scriptManager.getScriptMetadataByIndicatorId(indicatorId, provider);
 			} catch (ResourceNotFoundException e) {
-				ApiUtils.createResponseEntityFromException(e);
+				return ApiUtils.createResponseEntityFromException(e);
 			}
 
 			return new ResponseEntity<>(script, HttpStatus.OK);
@@ -194,12 +194,13 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity<byte[]> getProcessScriptCodeForIndicator(@PathVariable("indicatorId") String indicatorId) {
+	public ResponseEntity<byte[]> getProcessScriptCodeForIndicator(@PathVariable("indicatorId") String indicatorId, Principal principal) {
 		logger.info("Received request to get scriptCode for associated indicatorId '{}'", indicatorId);
-		String accept = request.getHeader("Accept");
+
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
 
 		try {
-			byte[] scriptCode = scriptManager.getScriptCodeForIndicatorId(indicatorId);
+			byte[] scriptCode = scriptManager.getScriptCodeForIndicatorId(indicatorId, provider);
 			
 			HttpHeaders headers = new HttpHeaders();
 			
@@ -240,12 +241,13 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity<byte[]> getProcessScriptCode(@PathVariable("scriptId") String scriptId) {
+	public ResponseEntity<byte[]> getProcessScriptCode(@PathVariable("scriptId") String scriptId, Principal principal) {
 		logger.info("Received request to get scriptCode for scriptId '{}'", scriptId);
-		String accept = request.getHeader("Accept");
+
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
 
 		try {
-			byte[] scriptCode = scriptManager.getScriptCodeForScriptId(scriptId);
+			byte[] scriptCode = scriptManager.getScriptCodeForScriptId(scriptId, provider);
 			
 			HttpHeaders headers = new HttpHeaders();
 			
@@ -262,22 +264,20 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForScriptId(@PathVariable("scriptId") String scriptId) {
+	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForScriptId(@PathVariable("scriptId") String scriptId, Principal principal) {
 		logger.info("Received request to get process script metadata for scriptId '{}'", scriptId);
 		String accept = request.getHeader("Accept");
 
-		/*
-		 * retrieve the role for the specified id
-		 */
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
 
 		if (accept != null && accept.contains("application/json")) {
 
 			ProcessScriptOverviewType script = null;
 
 			try {
-				script = scriptManager.getScriptMetadataByScriptId(scriptId);
+				script = scriptManager.getScriptMetadataByScriptId(scriptId, provider);
 			} catch (ResourceNotFoundException e) {
-				ApiUtils.createResponseEntityFromException(e);
+				return ApiUtils.createResponseEntityFromException(e);
 			}
 
 			return new ResponseEntity<>(script, HttpStatus.OK);

@@ -2,6 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -14,7 +15,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
  *
  * @author dewall
  */
-@Controller
 public class SwaggerController {
 
     @RequestMapping(method = GET, path = "/api-docs", produces = "application/json")

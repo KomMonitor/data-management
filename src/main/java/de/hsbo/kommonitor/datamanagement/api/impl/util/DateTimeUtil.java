@@ -8,8 +8,21 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import org.geotools.feature.AttributeTypeBuilder;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.feature.type.AttributeDescriptorImpl;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.AttributeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.hsbo.kommonitor.datamanagement.features.management.KomMonitorFeaturePropertyConstants;
 
 public class DateTimeUtil {
 
@@ -139,6 +152,100 @@ public class DateTimeUtil {
 
 	public static LocalDate toLocalDate(Date date) {
 		return new java.sql.Date(date.getTime()).toLocalDate();
+	}
+
+	public static FeatureCollection fixDateResonseTypes(FeatureCollection features) {
+		
+		SimpleFeatureType schema = (SimpleFeatureType) features.getSchema();
+		SimpleFeatureType schema_modified = fixSchema_dates(schema);		
+		
+		FeatureIterator featureIterator = features.features();
+
+		DefaultFeatureCollection collection = new DefaultFeatureCollection();			
+
+		while (featureIterator.hasNext()) {
+			SimpleFeature feature = (SimpleFeature) featureIterator.next();
+
+			SimpleFeature feature_retyped = SimpleFeatureBuilder.retype(feature, schema_modified);
+			feature_retyped = replaceDateProperty(feature_retyped, KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+			feature_retyped = replaceDateProperty(feature_retyped, KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+			collection.add(feature_retyped);		
+		}
+
+		featureIterator.close();
+
+		return collection;
+	}
+
+	private static SimpleFeatureType fixSchema_dates(SimpleFeatureType schema) {
+		SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+		tb.setName(schema.getName());
+		tb.setNamespaceURI(schema.getName().getNamespaceURI());
+		tb.setCRS(schema.getCoordinateReferenceSystem());
+		tb.addAll(schema.getAttributeDescriptors());
+		
+		/*
+		 * if property already exists then insert it as LocalDate!!!!!! so we must
+		 * update the property type to LocalDate
+		 */
+
+		AttributeDescriptor attributeDescriptor_startDate = tb
+				.get(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+		AttributeDescriptor attributeDescriptor_endDate = tb
+				.get(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+		if (attributeDescriptor_startDate == null) {
+			tb.add(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, LocalDate.class);
+		} else {
+
+			AttributeTypeBuilder builder = new AttributeTypeBuilder();
+			builder.setName("DateType");
+			builder.setBinding(LocalDate.class);
+			builder.setNillable(true);
+			AttributeType buildType = builder.buildType();
+			attributeDescriptor_startDate = new AttributeDescriptorImpl(buildType,
+					attributeDescriptor_startDate.getName(), attributeDescriptor_startDate.getMinOccurs(),
+					attributeDescriptor_startDate.getMaxOccurs(), attributeDescriptor_startDate.isNillable(),
+					attributeDescriptor_startDate.getDefaultValue());
+
+			tb.set(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, attributeDescriptor_startDate);
+		}
+
+		if (attributeDescriptor_endDate == null) {
+			tb.add(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, LocalDate.class);
+		} else {
+
+			AttributeTypeBuilder builder = new AttributeTypeBuilder();
+			builder.setName("DateType");
+			builder.setBinding(LocalDate.class);
+			builder.setNillable(true);
+			AttributeType buildType = builder.buildType();
+			attributeDescriptor_endDate = new AttributeDescriptorImpl(buildType, attributeDescriptor_endDate.getName(),
+					attributeDescriptor_endDate.getMinOccurs(), attributeDescriptor_endDate.getMaxOccurs(),
+					attributeDescriptor_endDate.isNillable(), attributeDescriptor_endDate.getDefaultValue());
+
+			tb.set(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, attributeDescriptor_endDate);
+		}
+
+		return tb.buildFeatureType();
+	}
+
+	private static SimpleFeature replaceDateProperty(SimpleFeature feature, String datePropertyName) {
+		Object datePropertyValue = feature.getAttribute(datePropertyName);
+		
+		if(datePropertyValue == null) {
+			
+		}
+		else if (datePropertyValue instanceof Date) {
+			LocalDate dateWithoutTime = toLocalDate((Date) datePropertyValue);
+			feature.setAttribute(datePropertyName, dateWithoutTime);
+		}
+		else if (datePropertyValue instanceof LocalDate) {
+			
+		}
+		else {
+			
+		}
+		return feature;
 	}
 
 }

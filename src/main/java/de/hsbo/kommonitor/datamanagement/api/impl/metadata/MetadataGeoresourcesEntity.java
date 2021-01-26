@@ -10,6 +10,7 @@ import javax.persistence.ManyToMany;
 
 import de.hsbo.kommonitor.datamanagement.model.georesources.PoiMarkerColorEnum;
 import de.hsbo.kommonitor.datamanagement.model.georesources.PoiSymbolColorEnum;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 @Entity(name = "MetadataGeoresources")
 public class MetadataGeoresourcesEntity extends AbstractMetadata {
@@ -108,6 +109,20 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 
 	public void setGeoresourcesPeriodsOfValidity(Collection<PeriodOfValidityEntity_georesources> georesourcesPeriodsOfValidity) {
 		this.georesourcesPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_georesources>(georesourcesPeriodsOfValidity);
+	}
+
+	@ManyToMany()
+	@JoinTable(name = "metadataGeoresources_roles",
+			joinColumns = @JoinColumn(name = "metadatageoresources_id", referencedColumnName = "datasetid"),
+			inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "roleid"))
+	private Collection<RolesEntity> roles;
+
+	public HashSet<RolesEntity> getRoles() {
+		return new HashSet<RolesEntity>(roles);
+	}
+
+	public void setRoles(Collection<RolesEntity> roles) {
+		this.roles = new HashSet<RolesEntity>(roles);
 	}
 
 	public boolean isLOI() {

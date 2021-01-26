@@ -48,3 +48,12 @@ hs_err_pid*
 ####### NetBeans ignore parts
 **/Thumbs.db
 nbactions.xml
+
+
+# IntelliJ IDEA
+.idea
+*.iws
+*.iml
+*.ipr
+
+docker/**
