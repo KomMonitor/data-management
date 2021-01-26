@@ -248,4 +248,12 @@ public class DateTimeUtil {
 		return feature;
 	}
 
+	public static Date getDateMinusOneDay(Date startDate_new) {
+		return new Date(startDate_new.getTime() - (1000 * 60 * 60 * 24));
+	}
+	
+	public static Date getDatePlusOneDay(Date startDate_new) {
+		return new Date(startDate_new.getTime() + (1000 * 60 * 60 * 24));
+	}
+
 }

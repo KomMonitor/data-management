@@ -852,9 +852,9 @@ public class SpatialFeatureDatabaseHandler {
 						 * those we must check if their end date has to be adjusted to the new startDate
 						 */
 						else if (dbFeatureStartDate.before(startDate_new)){
-							if (dbFeatureEndDate == null || dbFeatureEndDate.after(startDate_new)) {
+							if (dbFeatureEndDate == null || dbFeatureEndDate.after(startDate_new)) {																
 								Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeature);
-								sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDate_new,
+								sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, DateTimeUtil.getDateMinusOneDay(startDate_new),
 										filterForDbFeatureId);
 								numberOfEntriesMarkedAsOutdated++;
 							}
@@ -1119,7 +1119,7 @@ public class SpatialFeatureDatabaseHandler {
 				numberOfModifiedEntries++;
 			} else {
 				// modify endDate of dbFeature to new start date
-				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDateInputFeature,
+				sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, DateTimeUtil.getDateMinusOneDay(startDateInputFeature),
 						filterForDbFeatureId);
 				numberOfModifiedEntries++;
 				numberOfEntriesMarkedAsOutdated++;
@@ -1146,7 +1146,7 @@ public class SpatialFeatureDatabaseHandler {
 				// dbFeature then use startDate of dbFeature as new endDate
 				if (endDateInputFeature == null || endDateInputFeature.after(earliestStartDateOfDBFeatures)) {
 					((SimpleFeature) inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME,
-							earliestStartDateOfDBFeatures);
+							DateTimeUtil.getDateMinusOneDay(earliestStartDateOfDBFeatures));
 				}
 				newFeaturesToBeAdded.add((SimpleFeature) inputFeature);
 			}
@@ -1206,7 +1206,7 @@ public class SpatialFeatureDatabaseHandler {
 								.get(indexOfDbFeatureWithEqualStartDate + 1)
 								.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
 						((SimpleFeature) inputFeature).setAttribute(
-								KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDateOfNextDbFeature);
+								KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, DateTimeUtil.getDateMinusOneDay(startDateOfNextDbFeature));
 					}
 					// modify each property
 
@@ -1236,7 +1236,7 @@ public class SpatialFeatureDatabaseHandler {
 				if (endDateInputFeature.after(laterDbFeatureStartDate)) {
 					endDateInputFeature = laterDbFeatureStartDate;
 					((SimpleFeature) inputFeature).setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME,
-							laterDbFeatureStartDate);
+							DateTimeUtil.getDateMinusOneDay(laterDbFeatureStartDate));
 				}
 				// it is a new feature insertion in the middle
 
@@ -1264,7 +1264,7 @@ public class SpatialFeatureDatabaseHandler {
 				if (isSameGeomAndProperties_laterFeature) {
 					// make timeLine fitting for input object
 					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME,
-							endDateInputFeature, filterForLaterDbFeatureId);
+							DateTimeUtil.getDatePlusOneDay(endDateInputFeature), filterForLaterDbFeatureId);
 					numberOfModifiedEntries++;
 				}
 
@@ -1273,10 +1273,10 @@ public class SpatialFeatureDatabaseHandler {
 					// insert as new feature
 					// adjust timeline of the others
 					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME,
-							startDateInputFeature, filterForPreviousDbFeatureId);
+							DateTimeUtil.getDateMinusOneDay(startDateInputFeature), filterForPreviousDbFeatureId);
 					numberOfModifiedEntries++;
 					sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME,
-							endDateInputFeature, filterForLaterDbFeatureId);
+							DateTimeUtil.getDatePlusOneDay(endDateInputFeature), filterForLaterDbFeatureId);
 					numberOfModifiedEntries++;
 
 					newFeaturesToBeAdded.add((SimpleFeature) inputFeature);
