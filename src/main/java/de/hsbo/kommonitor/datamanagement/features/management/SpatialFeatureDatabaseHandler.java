@@ -825,6 +825,8 @@ public class SpatialFeatureDatabaseHandler {
 						boolean dbFeatureIsWithinInputTimePeriod = false;
 						Date dbFeatureStartDate = (Date) dbFeature
 								.getProperty(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME).getValue();
+						Date dbFeatureEndDate = (Date) dbFeature
+								.getProperty(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME).getValue();
 
 						if (dbFeatureStartDate.equals(startDate_new) || dbFeatureStartDate.after(startDate_new)) {
 							// if no endDate was specified
@@ -833,15 +835,29 @@ public class SpatialFeatureDatabaseHandler {
 							} else if (dbFeatureStartDate.before(endDate_new)) {
 								dbFeatureIsWithinInputTimePeriod = true;
 							}
-						}
-
-						if (dbFeatureIsWithinInputTimePeriod) {
-							// delete the feature from db as it is no longer present
-							// in the updated input feature collection for the
-							// target
-							// time period
-							Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeature);
-							sfStore.removeFeatures(filterForDbFeatureId);
+							
+							if (dbFeatureIsWithinInputTimePeriod) {
+								// delete the feature from db as it is no longer present
+								// in the updated input feature collection for the
+								// target
+								// time period
+								Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeature);
+								sfStore.removeFeatures(filterForDbFeatureId);
+							}
+						}						
+						
+						/*
+						 * now check if there is any db feature not included in the input feature set 
+						 * whose startDate is before the inputTimePeriod!
+						 * those we must check if their end date has to be adjusted to the new startDate
+						 */
+						else if (dbFeatureStartDate.before(startDate_new)){
+							if (dbFeatureEndDate == null || dbFeatureEndDate.after(startDate_new)) {
+								Filter filterForDbFeatureId = createFilterForUniqueFeatureId(ff, dbFeature);
+								sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, startDate_new,
+										filterForDbFeatureId);
+								numberOfEntriesMarkedAsOutdated++;
+							}
 						}
 					}
 				}
