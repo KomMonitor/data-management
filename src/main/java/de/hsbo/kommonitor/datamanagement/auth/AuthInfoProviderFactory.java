@@ -22,8 +22,14 @@ public class AuthInfoProviderFactory {
         if (principal instanceof KeycloakPrincipal) {
             return new KeycloakAuthInfoProvider((KeycloakPrincipal) principal, keycloakClientId, adminRole);
         } else {
-            throw new IllegalStateException(String.format("Cannot create an AuthInfoProvider because the " +
-                    "principal type %s is not supported.", principal.getClass()));
+        	try {
+        		 return new KeycloakAuthInfoProvider((KeycloakPrincipal) principal, keycloakClientId, adminRole);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new IllegalStateException(String.format("Cannot create an AuthInfoProvider because the " +
+	                    "principal type %s is not supported.", principal.getClass()));
+			}
+            
         }
     }
 
