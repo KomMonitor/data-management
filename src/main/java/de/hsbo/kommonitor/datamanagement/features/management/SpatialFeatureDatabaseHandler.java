@@ -521,6 +521,7 @@ public class SpatialFeatureDatabaseHandler {
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
 		String geoJsonString = featureData.getGeoJsonString();
 
+		logger.info("Start Georesource update");
 		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString);
 	}
 
@@ -565,18 +566,22 @@ public class SpatialFeatureDatabaseHandler {
 			endDate_new = DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
 
 		FilterFactory ff = new FilterFactoryImpl();
+		
+		logger.info("read input feature collection schema");
 
 		FeatureJSON featureJSON = instantiateFeatureJSON();
 		SimpleFeatureType inputFeatureSchema = featureJSON.readFeatureCollectionSchema(geoJsonString, false);
 		// FeatureCollection inputFeatureCollection =
 		// featureJSON.readFeatureCollection(geoJsonString);
 
+		logger.info("parse feature collection as jackson collection");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 		org.geojson.FeatureCollection inputFeatureCollection_jackson = objectMapper.readValue(geoJsonString,
 				org.geojson.FeatureCollection.class);
 
+		logger.info("to geotools collection");
 		FeatureCollection inputFeatureCollection = toGeoToolsFeatureCollection(inputFeatureCollection_jackson, inputFeatureSchema);
 
 		List<SimpleFeature> newFeaturesToBeAdded = new ArrayList<SimpleFeature>();
@@ -587,6 +592,7 @@ public class SpatialFeatureDatabaseHandler {
 		handleUpdateProcess(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema, inputFeatureCollection,
 				newFeaturesToBeAdded);
 		
+		logger.info("run vacuum analyse");
 		DatabaseHelperUtil.runVacuumAnalyse(dbTableName);
 
 		logger.info(
@@ -611,6 +617,7 @@ public class SpatialFeatureDatabaseHandler {
 		
 		if (featureSource instanceof SimpleFeatureStore) {			
 
+			logger.info("compare schemas");
 			SimpleFeatureType dbSchema = featureSource.getSchema();
 			compareSchemas(inputFeatureSchema, dbSchema, dbTableName);
 			
@@ -631,9 +638,11 @@ public class SpatialFeatureDatabaseHandler {
 			 * endDate in case they are no longer present in the inputFeatures
 			 */
 
+			logger.info("Start compare db features to input features");
 			compareDbFeaturesToInputFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
 					newFeaturesToBeAdded, dbFeatures, sfStore);
 
+			logger.info("Start compare input features to db features");
 			compareInputFeaturesToDbFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema, inputFeatureCollection,
 					newFeaturesToBeAdded, dbFeatures, sfStore);
 		}
@@ -925,6 +934,8 @@ public class SpatialFeatureDatabaseHandler {
 			}
 
 			inputFeaturesIterator.close();
+			
+			logger.info("insert new features");
 
 			/*
 			 * now deal with the completely new features and add them all to db
@@ -964,6 +975,8 @@ public class SpatialFeatureDatabaseHandler {
 		// ONLY ADJUST FILTER TO INLCUDE QUERY WHERE startDATE is null ||
 		// endDATE is null
 
+		logger.info("modify inserted features");
+		
 		Set<Identifier> featureIdSet = new HashSet<Identifier>();
 		featureIdSet.addAll(newFeatureIds);
 		Filter filter_startDateIsNull = CQL

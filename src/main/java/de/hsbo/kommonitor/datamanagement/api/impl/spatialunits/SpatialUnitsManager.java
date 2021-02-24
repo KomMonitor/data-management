@@ -1,25 +1,16 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_spatialUnits;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.SpatialUnitsPeriodsOfValidityRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
-import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +19,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
+import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
 
 @Transactional
 @Repository
@@ -53,9 +52,6 @@ public class SpatialUnitsManager {
 
     @Autowired
     SpatialUnitsMetadataRepository spatialUnitsMetadataRepo;
-
-    @Autowired
-    SpatialUnitsPeriodsOfValidityRepository periodsOfValidityRepo;
 
     @Autowired
     private RolesRepository rolesRepository;
@@ -103,8 +99,6 @@ public class SpatialUnitsManager {
             updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
 
             updateSpatialUnitHierarchy_onAdd(metadataId, featureData);
-
-            updatePeriodsOfValidity(metadataEntity);
         } catch (Exception e) {
             /*
              * remove partially created resources and thrwo error
@@ -141,25 +135,6 @@ public class SpatialUnitsManager {
 
 
         return metadataId;
-    }
-
-    private void updatePeriodsOfValidity(MetadataSpatialUnitsEntity spatialUnitsMetadataEntity) throws Exception {
-        AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(spatialUnitsMetadataEntity.getDbTableName());
-
-        // reset periodsOfValidity
-        spatialUnitsMetadataEntity.setPeriodsOfValidity(new ArrayList<PeriodOfValidityEntity_spatialUnits>());
-
-        for (PeriodOfValidityType periodOfValidityType : availablePeriodsOfValidity) {
-            PeriodOfValidityEntity_spatialUnits periodEntity = new PeriodOfValidityEntity_spatialUnits(periodOfValidityType);
-            if (!periodsOfValidityRepo.existsByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate())) {
-                periodsOfValidityRepo.saveAndFlush(periodEntity);
-            } else {
-                // should there be duplicate entries for same start and end date we simply take the first entry
-                periodEntity = periodsOfValidityRepo.findByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate()).get(0);
-            }
-            spatialUnitsMetadataEntity.addPeriodOfValidityIfNotExists(periodEntity);
-        }
-        spatialUnitsMetadataRepo.saveAndFlush(spatialUnitsMetadataEntity);
     }
 
     private void updateSpatialUnitHierarchy_onAdd(String metadataId, SpatialUnitPOSTInputType featureData) {
@@ -342,8 +317,6 @@ public class SpatialUnitsManager {
              */
             updateMetadataWithOgcServiceUrls(metadataEntity.getDatasetId(), dbTableName);
 
-            updatePeriodsOfValidity(metadataEntity);
-
             return true;
         } else {
             logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Delete request has no effect.", spatialUnitId);
@@ -456,8 +429,6 @@ public class SpatialUnitsManager {
              * set wms and wfs urls within metadata
              */
             updateMetadataWithOgcServiceUrls(metadataEntity.getDatasetId(), dbTableName);
-
-            updatePeriodsOfValidity(metadataEntity);
 
             return spatialUnitId;
         } else {
