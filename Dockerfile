@@ -10,14 +10,14 @@ RUN mvn -f ./kommonitor-management/pom.xml dependency:go-offline --fail-never
 COPY . /app/kommonitor-management/
 
 # Run the Maven build
-RUN mvn -f ./kommonitor-management/pom.xml clean install -DskipTests
+RUN mvn -f ./kommonitor-management/pom.xml clean install -Dapp.finalName=kommonitor-data-management-app -DskipTests
 
 # ---- Run the application ----
 FROM openjdk:alpine
 WORKDIR /app
 
 # Copy from the base build image
-COPY --from=build app/kommonitor-management/target/kommonitor-data-management-api-1.0.0.jar /app/kommonitor-management-app.jar
+COPY --from=build app/kommonitor-management/target/kommonitor-data-management-app.jar /app/kommonitor-data-management-app.jar
 
 # Set the entrypoint for starting the app
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=docker","-jar","/app/kommonitor-management-app.jar"]
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=docker","-jar","/app/kommonitor-data-management-app.jar"]

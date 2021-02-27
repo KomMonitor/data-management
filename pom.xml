@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.hsbo.kommonitor</groupId>
-    <artifactId>kommonitor-data-management-api</artifactId>
+    <artifactId>kommonitor-data-management-app</artifactId>
     <version>0.9.5-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -330,6 +330,7 @@
     </dependencyManagement>
 
     <build>
+    	<finalName>${app.finalName}</finalName>
         <plugins>
         	<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -416,7 +417,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>build-info</goal>
+                            <goal>repackage</goal>
                         </goals>
                     </execution>
                 </executions>
