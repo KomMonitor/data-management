@@ -1,52 +1,47 @@
 # KomMonitor DataManagement REST API
 
-This projects implements a REST API that persists and manages all relevant data within the KomMonitor project.
+This projects implements a REST API that persists and manages all relevant data within the KomMonitor stack.
 
 **Table of Content**
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
 
 - [KomMonitor DataManagement REST API](#kommonitor-datamanagement-rest-api)
-	- [Background Information Concerning KomMonitor Spatial Data Infrastructure](#background-information-concerning-kommonitor-spatial-data-infrastructure)
-		- [Architecture Overview](#architecture-overview)
+	- [Quick Links And Further Information on KomMonitor](#quick-links-and-further-information-on-kommonitor)
 	- [Overview](#overview)
-	- [Installation / Building Information](#installation-building-information)
-		- [Configuration](#configuration)
-			- [application.properties - Configure Database Access and Deployment Details of other Services](#applicationproperties-configure-database-access-and-deployment-details-of-other-services)
-			- [JAR / WAR File](#jar-war-file)
-				- [JAR](#jar)
-				- [WAR](#war)
-		- [Docker](#docker)
-	- [User Guide](#user-guide)
-	- [Contribution - Developer Information](#contribution-developer-information)
-		- [How to Contribute](#how-to-contribute)
+  - [Dependencies to other KomMonitor Components](#dependencies-to-other-kommonitor-components)
+  - [Installation / Building Information](#installation-building-information)
+    - [Configuration](#configuration)
+      - [application.properties - Configure Database Access and Deployment Details of other Services](#applicationproperties-configure-database-access-and-deployment-details-of-other-services)
+      - [JAR / WAR File](#jar-war-file)
+        - [JAR](#jar)
+        - [WAR](#war)
+    - [Docker](#docker)
+  - [User Guide](#user-guide)
+  - [Contribution - Developer Information](#contribution-developer-information)
+    - [How to Contribute](#how-to-contribute)
 		- [Branching](#branching)
 		- [License and Third Party Lib POM Plugins](#license-and-third-party-lib-pom-plugins)
-	- [Contact](#contact)
-	- [Credits and Contributing Organizations](#credits-and-contributing-organizations)
+  - [Contact](#contact)
+  - [Credits and Contributing Organizations](#credits-and-contributing-organizations)
 
 <!-- /TOC -->
 
-## Background Information Concerning KomMonitor Spatial Data Infrastructure
-This software is part of a spatial data infrastructure called [KomMonitor](http://kommonitor.de), which is a shortcut for German "Kommunales Monitoring" (Municipal monitoring). Funded by the <i>German Federal Ministry of Education and Research</i> municipal actors from the cities Essen and Mülheim cooperate with scientists from the Ruhr University Bochum and the Bochum University of Applied Sciences in order to create a monitoring infrastructure to support planning processes within local governments. I.e., by monitoring certain planning aspects from various topics like demography, social, environment, habitation and other, whose spatio-temporal variation and development can be measured in the form of indicators, [KomMonitor](http://kommonitor.de) may act as a <i>Spatial Decision Support System</i>. Amongst others, the following goals and key aspects are focused:
-1. cross-sectional data from several topics
-2. variable spatial layers (i.e. administrative layers of a city)
-3. transparency with regard to indicators and how they are computed
-4. cross-sectional interactive analysis and exploration
-5. a complete spatial data infrastructure consisting of data management, geodata processing and indicator computation as well as data display and exploration in webclient
-
-The project is funded from Feb 2017 - Feb 2020. The resulting software components, are published as Open-Source software to continue maintenance and development beyond the funding period.
-
-### Architecture Overview
-![Conceptual KomMonitor Architecture and Idea](./misc/KomMonitor-Architecture.png "Conceptual KomMonitor Architecture and Idea")
-
-As a spatial decision support system, the main idea behind KomMonitor is to take (geo-)data from local authorities, import them to the <i>Data Management</i> component, process them (i.e. compute indicators based on georesurces and maybe other indicators via the <i>Processing Engine</i>; or compute waypath routing and reachability isochrones via <i>Reachability Service</i>) and finally publish, display and analyze them within a <i>Web-Client</i>.     
+## Quick Links And Further Information on KomMonitor
+   - [DockerHub repositories of KomMonitor Stack](https://hub.docker.com/orgs/kommonitor/repositories)
+   - [Github Repositories of KomMonitor Stack](https://github.com/KomMonitor)
+   - [Github Wiki for KomMonitor Guidance and central Documentation](https://github.com/KomMonitor/KomMonitor-Docs/wiki)
+   - [Technical Guidance](https://github.com/KomMonitor/KomMonitor-Docs/wiki/Technische-Dokumentation) and [Deployment Information](https://github.com/KomMonitor/KomMonitor-Docs/wiki/Setup-Guide) for complete KomMonitor stack on Github Wiki
+   - [KomMonitor Website](https://kommonitor.de/)  
 
 ## Overview  
-The <b>KomMonitor Data Management API</b> is a REST API encapsulating data management CRUD operations for various resources, such as spatial units, other georesources, indicators, topics, users and user groups, roles and custom indicator computation scripts. These resources are managed in a PostGIS database and serve as the basis for other components of the [KomMonitor](http://kommonitor.de) spatial data infrastructure.
+The <b>KomMonitor Data Management API</b> is a REST API encapsulating data management CRUD operations for various resources, such as spatial units, other georesources, indicators, topics, roles and custom indicator computation scripts. These resources are managed in a PostGIS database and serve as the basis for other components of the [KomMonitor](http://kommonitor.de) spatial data infrastructure.
 
-For each resource dedicated REST operations are specified using [Swagger/OpenAPI v2](https://swagger.io). The corresponding ```swagger.json``` containing the REST API specification is located at ```src/main/resources/swagger.json```. To inspect the REST API you may use the online [Swagger Editor](https://editor.swagger.io/) or, having access to a running instance of the <b>KomMonitor Data Management REST API</b> simply navigate to ```<pathToDeyployedInstance>/swagger-ui.html```, e.g. ```localhost:8085/swagger-ui.html```.
+For each resource dedicated REST operations are specified using [Swagger/OpenAPI v2](https://swagger.io). To inspect the REST API you may use swagger-ui interface to a running instance of the <b>KomMonitor Data Management REST API</b>, i.e. navigate to ```<pathToDeyployedInstance>/swagger-ui.html```, e.g. ```localhost:8085/swagger-ui.html```.
 
 The service is implemented as a Java Spring Boot REST service. In addition [Maven](https://maven.apache.org/) is used as dependency and build management tool.
+
+## Dependencies to other KomMonitor Components
+KomMonitor Data Management requires a PostGIS database, where all KomMonitor-relevant data is managed. The database can be a docker container or an external database server reachable via URL.
 
 ## Installation / Building Information
 Being a Maven project, installation and building of the service is as simple as calling ```mvn clean install``` or ```mvn clean package```. Even Docker images can be acquired with ease, as described below. However, depending on your environment configuration aspects have to be adjusted first.
@@ -69,12 +64,12 @@ spring.application.name=kommonitor-data-access-api
 spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL9Dialect
 spring.datasource.driverClassName=org.postgresql.Driver
 # adjust following parameters to your target environment
-spring.datasource.url= jdbc:postgresql://localhost:5432/kommonitor_midterm
+spring.datasource.url= jdbc:postgresql://localhost:5432/kommonitor
 spring.datasource.username=postgres
 spring.datasource.password=postgres
 database.host=localhost
 database.port=5432
-database.name=kommonitor_midterm
+database.name=kommonitor
 ```
 - GeoServer connection (optional - it can be disabled):
 ```java
@@ -93,14 +88,45 @@ datastore_indicators=kommonitor_indicators
 defaultEPSG=EPSG:4326
 ```
 
+- encrypted data transfer
+```
+encryption.enabled=false
+encryption.symmetric.aes.password=password
+encryption.symmetric.aes.iv.length_byte=16
+```
+
+- in a Keycloak-active scenario, data retrieval is protected by a role-based access mechanism using software Keycloak. It can be enabled/disabled and onfigured as follows:
+```
+# Do not use real values in production environment
+kommonitor.swagger-ui.security.client-id=kommonitor-data-management-api
+kommonitor.swagger-ui.security.secret=secret
+#kommonitor.datamanagement-api.swagger-ui.base-path=/data-management-api
+
+kommonitor.roles.admin=administrator
+
+keycloak.enabled=false
+keycloak.realm=kommonitor
+keycloak.auth-server-url=http://localhost:8080/auth
+keycloak.resource=kommonitor-data-management-api
+keycloak.bearer-only=true
+keycloak.autodetect-bearer-only=false
+keycloak.ssl-required=external
+keycloak.public-client=false
+keycloak.cors=true
+keycloak.cors-allowed-methods=*
+keycloak.credentials.secret=secret
+```
+
 After adjusting the configuration to your target environment, you may continue to build the service as described next.
 
 #### JAR / WAR File
 ##### JAR
-As a Spring Boot application the typical build format is a single runnable <b>JAR</b>, which is also set as project default. Simply run the command `mvn clean install` or `mvn clean package` to create the runnable JAR file within the <b>target</b> folder. To run the JAR locally, simply call `start java -Dfile.encoding=utf-8 -jar kommonitor-data-management-api-1.0.0.jar` from the target directory of the project, which will serve the application at `localhost:<PORT>` (i.e. `localhost:8085` per default). In a browser call  ``localhost:<PORT>/swagger-ui.html`` to inspect the REST API.
+As a Spring Boot application the typical build format is a single runnable <b>JAR</b>, which is also set as project default. Simply run the command `mvn clean install` or `mvn clean package` to create the runnable JAR file within the <b>target</b> folder. To run the JAR locally, simply call `start java -Dfile.encoding=utf-8 -jar <jar-file-name>.jar` from the target directory of the project, which will serve the application at `localhost:<PORT>` (i.e. `localhost:8085` per default). In a browser call  ``localhost:<PORT>/swagger-ui.html`` to inspect the REST API.
 
 ##### WAR
 However, you might need to create a WAR archive in some scenarios. To create a WAR archive, following the [Baeldung Guide](https://www.baeldung.com/spring-boot-war-tomcat-deploy), you must adjust the associated settings in `pom.xml` file:
+
+**(there is a branch called [deployment/war](https://github.com/KomMonitor/data-management/tree/deployment/war) that has the follwing steps prepared for WAR deployment - so simply use that and adjust parameters to your local environment)**
 
 1. Look for the `<packaging>JAR</packaging>` setting and change it to `<packaging>WAR</packaging>`
 2. Look for the follwing commented out dependency
@@ -137,25 +163,125 @@ public class Runner extends SpringBootServletInitializer{
     }
 }
 ```
+4. if role-based data retrieval is activated using Keycloak, then more steps are required. The way, how the Keycloak setup is defined when deploying a Spring Boot runnable JAR greatly differs from a WAR deployment. In a WAR deployment, additional files must be specified/configured according to official [Keycloak adapter documentation](https://www.keycloak.org/docs/latest/securing_apps/#overview). The branch `deployment/war` contains a *Tomcat* example according to [Keycloak Doc for Tomcat runtime environment](https://www.keycloak.org/docs/latest/securing_apps/#_tomcat_adapter) 
+   1. `src/main/webapp/WEB-INF/keycloak.json` contains Keycloak connection parameters (i.e. [inspect branch deployment/WAR](https://github.com/KomMonitor/data-management/blob/deployment/war/src/main/webapp/WEB-INF/keycloak.json))
+   2. `src/main/webapp/WEB-INF/web.xml` contains specification of proteced resources (i.e. [inspect branch deployment/WAR](https://github.com/KomMonitor/data-management/blob/deployment/war/src/main/webapp/WEB-INF/web.xml))
+   3. `src/main/webapp/META-INF/context.xml` should contain crucial information about the target runtime container (e.g. tomcat) 
+   4. In addition `pom.xml` requires additional changes, as the Keycloak-libraries must be set to `<scope>provided</scope>` as the runtime server container includes the libraries 
+   5. the deployment server (e.g. tomcat) must have addtional libraries added to its lib folder, i.e. for tomcat check [https://www.keycloak.org/docs/latest/securing_apps/#_tomcat_adapter](https://www.keycloak.org/docs/latest/securing_apps/#_tomcat_adapter) 
+
 
 After these adjustments you can run the command `mvn clean install` or `mvn clean package`, which will create the corresponding <b>WAR</b> file in the folder <b>target</b>. Deploy it somewhere, e.g. in Tomcat, to launch the app. Assuming the WAR file is named `kommonitor-data-management-api-1.0.0.WAR` and Tomcat is started locally on port 8080, you may reach the service via `localhost:8080/kommonitor-data-management-api-1.0.0`. In a browser call  ``localhost:8080/kommonitor-data-management-api-1.0.0/swagger-ui.html`` to inspect the REST API.
 
 ### Docker
-The <b>KomMonitor Data Management REST API</b> can also be build and deployed as Docker image. The project contains the associated `Dockerfile` and an exemplar `docker-compose.yml` on project root level. The `Dockerfile` already expects a pre-built <b>JAR</b> file of the service. So, before building the docker image, you must build the runnable <b>JAR</b> via maven.
+The <b>KomMonitor Data Management REST API</b> can also be build and deployed as Docker image. The project contains the associated `Dockerfile` and an exemplar `docker-compose.yml` on project root level. 
 
-When building the docker image (i.e. `docker build -t data-management-api:latest .`), the profile `docker` is used. In contrast to the default profile, the `docker` profile consumes the associated `src/main/resources/application-docker.properties`, which makes use of environment variables to declare relevant settings (as described in the [Configuration](#configuration) section above). For instance check out the exemplar [docker-compose.yml](./docker-compose.yml) file. It specifies two services, `kommonitor-db` as required PostGIS database container and the actual `kommonitor-data-management-api` container. The latter depends on the database container and contains an `environment` section to define the required settings (connection details to other services etc.).
+When building the docker image (i.e. `docker build -t kommonitor/data-management:latest .`), the profile `docker` is used. In contrast to the default profile, the `docker` profile consumes the associated `src/main/resources/application-docker.properties`, which makes use of environment variables to declare relevant settings (as described in the [Configuration](#configuration) section above). For instance check out the exemplar [docker-compose.yml](./docker-compose.yml) file. It specifies two services, `kommonitor-db` as required PostGIS database container and the actual `kommonitor-data-management` container. The latter depends on the database container and contains an `environment` section to define the required settings (connection details to other services etc.).
 
-A more advanced setup including a Geoserver as docker container is also given at [docker-compose_managementAndGeoserver.yml](./docker-compose_managementAndGeoserver.yml).
+## Exemplar docker-compose File with explanatory comments
+
+Only contains subset of whole KomMonitor stack to focus on the config parameters of this component
+
+```
+
+version: '2.1'
+
+networks:
+  kommonitor:
+    driver: bridge
+services:
+
+    # database container; must use PostGIS database
+    # database is not required to run in docker - will be configured in Data Management component
+    kommonitor-db:
+      image: mdillon/postgis
+      container_name: kommonitor-db
+      #restart: unless-stopped
+      ports:
+        - 5432:5432
+      environment:
+        - POSTGRES_USER=kommonitor      # database user (will be created on startup if not exists) - same settings in data management service
+        - POSTGRES_PASSWORD=kommonitor  # database password (will be created on startup if not exists) - same settings in data management service 
+        - POSTGRES_DB=kommonitor_data   # database name (will be created on startup if not exists) - same settings in data management service
+      volumes:
+        - postgres_data:/var/lib/postgresql/data   # persist database data on disk (crucial for compose down calls to let data survive)
+      networks:
+        - kommonitor
+
+    # Data Management component encapsulating the database access and management as REST service
+    kommonitor-data-management:
+      image: kommonitor/data-management
+      container_name: kommonitor-data-management
+      #restart: unless-stopped
+      depends_on:
+        - kommonitor-db    # only if database runs as docker container as well
+      ports:
+        - "8085:8085"
+      networks:
+        - kommonitor
+      links:
+        - kommonitor-db
+      environment:
+       - SERVER_PORT=8085                                             # Server port; default is 8085
+       - DATABASE_HOST=kommonitor-db      # host of database (i.e. docker name when db runs in docker in same network; else URL to database server)
+       - DATABASE_USER=kommonitor         # database user (username with acess to database, should be owner of the database)
+       - DATABASE_PASSWORD=kommonitor     # database user password
+       - DATABASE_NAME=kommonitor_data    # database name
+       - DATABASE_PORT=5432               # database port
+       - logging.level.de.hsbo.kommonitor=ERROR    # adjust logging level [e.g. "INFO", "WARN", "ERROR"] - ERROR logs only errors 
+       - ENABLE_OGC_PUBLISHMENT=false                               # enable/disable Geoserver-based publishment of spatial data as Web service - currently Geoserver-connection should be disabled
+       - DB_SCHEMA_SPATIALUNITS=public                              # only relevant with GeoServer connection
+       - DB_SCHEMA_GEORESOURCES=public                              # only relevant with GeoServer connection
+       - DB_SCHEMA_INDICATORS=public                                # only relevant with GeoServer connection
+       - GEOSERVER_HOST=https://kommonitor.fbg-hsbo.de/geoserver    # Geoserver host URL - only relevant with GeoServer connection
+       - GEOSERVER_PORT=80                                          # Geoserver port - only relevant with GeoServer connection
+       - GEOSERVER_USER=admin                                       # Geoserver username - only relevant with GeoServer connection
+       - GEOSERVER_PASSWORD=sK4nc$bDSm                              # Geoserver user password - only relevant with GeoServer connection
+       - GEOSERVER_TARGET_WORKSPACE=kommonitor                      # Geoserver workspace name (will be created if not exists) - only relevant with GeoServer connection
+       - GEOSERVER_DATASTORE_SPATIALUNITS=kommonitor_spatialunits   # Geoserver datastore name for spatial units (will be created if not exists) - only relevant with GeoServer connection
+       - GEOSERVER_DATASTORE_GEORESOURCES=kommonitor_georesources   # Geoserver datastore name for georesources (will be created if not exists) - only relevant with GeoServer connection
+       - GEOSERVER_DATASTORE_INDICATORS=kommonitor_indicators       # Geoserver datastore name for indicators (will be created if not exists) - only relevant with GeoServer connection
+       - GEOSERVER_DEFAULT_EPSG=EPSG:4326                           # Geoserver default EPSG code (EPSG:4326 as KomMonitor uses this internally as well) - only relevant with GeoServer connection
+       - encryption.enabled=false                      # enable/disable encrypted data transfer from Data Management service (requested data will be encrypted)
+       - encryption.symmetric.aes.password=password    # shared secret for data encryption - must be set equally within all supporting components
+       - encryption.symmetric.aes.iv.length_byte=16    # length of random initialization vector for encryption algorithm - must be set equally within all supporting components
+       - KOMMONITOR_DATAMANAGEMENTAPI_SWAGGERUI_BASEPATH=      #depending on DNS Routing and Reverse Proxy setup a base path can be set here to access swagger-ui interface (e.g. set '/data-management' if https://kommonitor-url.de/data-management works as entry point for localhost:8085)   
+       - keycloak.enabled=false                                               # enable/disable role-based data access using Keycloak (true requires working Keycloak Setup and enforces that all other components must be configured to enable Keycloak as well)
+       - kommonitor.swagger-ui.security.client-id=kommonitor-data-management  # client/resource id of data management component in Keycloak realm
+       - kommonitor.swagger-ui.security.secret=secret                         # WARNING: DO NOT SET IN PRODUCTION!!! Keycloak secret of this component within Credentials tab of respective Keycloak client; secret for swagger-ui to authorize swagger-ui requests in a Keycloak-active scenario (mostly this should not be set, as users with access to swagger-ui (e.g. 'http://localhost:8085/swagger-ui.html') could then authorize without own user account and perform CRUD requests)
+       - keycloak.realm=kommonitor                                            # Keycloak realm name
+       - keycloak.auth-server-url=https://keycloak.fbg-hsbo.de/auth           # Keycloak URL ending with '/auth/'
+       - keycloak.resource=kommonitor-data-management                         # client/resource id of data management component in Keycloak realm
+       - keycloak.bearer-only=true                                            # sets authentication workflow to use/accept Bearer token sent within Authorization header
+       - keycloak.autodetect-bearer-only=false                                # normally do not change this value        
+       - keycloak.sslquired=external                                          # Keycloak SSL setting; ["external", "none"]; default "external"
+       - keycloak.public-client=false                                         # Keycloak setting that component is not public (its REST endpoints are partially Keycloak-protected and require Authentication)
+       - keycloak.cors=true                                                   # enable CORS
+       - keycloak.cors-allowed-methods=*                                      # enable all HTTP operations for CORS
+       - keycloak.credentials.secret=secret                                   # Keycloak secret of this component within Credentials tab of respective Keycloak client; must be set here  
+       - SERVER_MAXHTTPHEADERSIZE=48000                                       
+       - server.max-http-header-size=48000
+       - kommonitor.roles.admin=administrator                                 # name of the Keycloak role that is used as "administrator" role within KomMonitor granting rights to inspect all data and perform all actions. This name of this role is configurable, but must be set to the equal value within management and importer component as well as within Keycloak 
+
+
+
+# ... other KomMonitor components omitted here
+
+
+
+volumes:
+ postgres_data:
+
+
+```
 
 ## User Guide
-TODO
 
 ### Registration Order of Resources
 
 When integration data and resources into KomMonitor you the follwing order of requests is recommended:
 
-1. Register/Manage relevant **roles** via REST `POST` and `PUT` operations on endpoint `/roles`
-2. Register/Manage relevant **users** via REST `POST` and `PUT` operations on endpoint `/user`
+1. Register/Manage relevant **roles** via REST `POST` and `PUT` operations on endpoint `/roles` (only relevant in Keycloak scenario)
 3. Register/Manage relevant **topics** via REST `POST` and `PUT` operations on endpoint `/topics`
 4. Register/Manage relevant **georesources** via REST `POST`, `PATCH` and `PUT` operations on endpoint `/georesources` - georesources might be used to compute indicators or are simply used for display in web client
 5. Register/Manage relevant **spatial units** via REST `POST`, `PATCH` and `PUT` operations on endpoint `/spatial-units` - this step must be performed before registration of indicators, as a spatial join of indicator time series data to associated spatial unit features must be performed within the database.
@@ -243,10 +369,11 @@ Note that project build may fail if any of the configured prerequisits according
 | :-------------: |:-------------:| :-----:|
 | Christian Danowski-Buhren | Bochum University of Applied Sciences | christian.danowski-buhren@hs-bochum.de |
 | Andreas Wytzisk  | Bochum University of Applied Sciences | Andreas-Wytzisk@hs-bochum.de |
-| Ulrike Klein | Bochum University of Applied Sciences | christian.danowski-buhren@hs-bochum.de | Ulrike.Klein@hs-bochum.de |
 
 ## Credits and Contributing Organizations
 - Department of Geodesy, Bochum University of Applied Sciences
 - Department for Cadastre and Geoinformation, Essen
 - Department for Geodata Management, Surveying, Cadastre and Housing Promotion, Mülheim an der Ruhr
 - Department of Geography, Ruhr University of Bochum
+- 52°North GmbH, Münster
+- Kreis Recklinghausen
