@@ -36,5 +36,5 @@ jobs:
           user: ${{ secrets.DOCKERHUB_DANO_USERNAME }}
           pass: ${{ secrets.DOCKERHUB_DANO_SECRET }}
           slug: kommonitor/data-management
-          readme: ./README.md
+          readme: ./README_DOCKERHUB.md
           description: true
