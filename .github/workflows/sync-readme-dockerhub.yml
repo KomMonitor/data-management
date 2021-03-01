@@ -35,6 +35,6 @@ jobs:
         with:
           user: ${{ secrets.DOCKER_HUB_USERNAME }}
           pass: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          slug: kommonitor/data-management:latest
+          slug: kommonitor/data-management
           readme: ./README.md
           description: true
