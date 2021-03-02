@@ -17,13 +17,16 @@ For each resource dedicated REST operations are specified using [Swagger/OpenAPI
 The service is implemented as a Java Spring Boot REST service. In addition [Maven](https://maven.apache.org/) is used as dependency and build management tool.
 
 ## Dependencies to other KomMonitor Components
-KomMonitor Data Management requires a PostGIS database, where all KomMonitor-relevant data is managed. The database can be a docker container or an external database server reachable via URL.
+KomMonitor Data Management requires 
+   - a **PostGIS database**, where all KomMonitor-relevant data is managed. The database can be a docker container or an external database server reachable via URL.
+   - an optional and configurable connection to a running **Keycloak** server, if role-based data access is activated via configuration of KomMonitor stack
+   - an optional and configurable connection to a running **Geoserver** instance, if spatial data shall be published as interoperable geoservices WMS and WFS (currently not fully implemented and tested)
 
 ## Exemplar docker-compose File with explanatory comments
 
 Only contains subset of whole KomMonitor stack to focus on the config parameters of this component
 
-```
+```yml
 
 version: '2.1'
 
