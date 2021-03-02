@@ -2,19 +2,6 @@
 
 This projects implements a REST API that persists and manages all relevant data within the KomMonitor stack.
 
-**Table of Content**
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
-
-- [KomMonitor DataManagement REST API](#kommonitor-datamanagement-rest-api)
-	- [Quick Links And Further Information on KomMonitor](#quick-links-and-further-information-on-kommonitor)
-	- [Overview](#overview)
-  - [Dependencies to other KomMonitor Components](#dependencies-to-other-kommonitor-components)
-  - [Exemplar docker-compose File with explanatory comments](#exemplar-docker-compose-file-with-explanatory-comments)
-  - [Contact](#contact)
-  - [Credits and Contributing Organizations](#credits-and-contributing-organizations)
-
-<!-- /TOC -->
-
 ## Quick Links And Further Information on KomMonitor
    - [DockerHub repositories of KomMonitor Stack](https://hub.docker.com/orgs/kommonitor/repositories)
    - [Github Repositories of KomMonitor Stack](https://github.com/KomMonitor)
