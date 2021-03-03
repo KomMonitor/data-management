@@ -1,5 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -8,6 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.PoiMarkerColorEnum;
 import de.hsbo.kommonitor.datamanagement.model.georesources.PoiSymbolColorEnum;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
@@ -39,9 +44,9 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 	
 	private String aoiColor = null;
 	
-	@ManyToMany
-	@JoinTable(name = "metadataGeoresources_periodsOfValidity", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), inverseJoinColumns = @JoinColumn(name = "period_of_validity_id", referencedColumnName = "periodofvalidityid"))
-	private Collection<PeriodOfValidityEntity_georesources> georesourcesPeriodsOfValidity;
+//	@ManyToMany
+//	@JoinTable(name = "metadataGeoresources_periodsOfValidity", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), inverseJoinColumns = @JoinColumn(name = "period_of_validity_id", referencedColumnName = "periodofvalidityid"))
+//	private Collection<PeriodOfValidityEntity_georesources> georesourcesPeriodsOfValidity;
 
 	public int getSridEpsg() {
 		return sridEpsg;
@@ -49,26 +54,6 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 
 	public void setSridEpsg(int sridEpsg) {
 		this.sridEpsg = sridEpsg;
-	}
-	
-	public void addPeriodOfValidityIfNotExists(PeriodOfValidityEntity_georesources periodEntity) throws Exception {
-		if (this.georesourcesPeriodsOfValidity == null)
-			this.georesourcesPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_georesources>();
-
-			if (!this.georesourcesPeriodsOfValidity.contains(periodEntity))
-				this.georesourcesPeriodsOfValidity.add(periodEntity);
-	}
-	
-	public void removePeriodOfValidityIfExists(PeriodOfValidityEntity_georesources periodEntity) throws Exception {
-		if (this.georesourcesPeriodsOfValidity == null)
-			this.georesourcesPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_georesources>();
-
-			if (this.georesourcesPeriodsOfValidity.contains(periodEntity))
-				this.georesourcesPeriodsOfValidity.remove(periodEntity);
-	}
-	
-	public void setPeriodsOfValidity(Collection<PeriodOfValidityEntity_georesources> periods){
-		this.georesourcesPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_georesources>(periods);
 	}
 
 	public boolean isPOI() {
@@ -103,12 +88,17 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata {
 		this.poiSymbolColor = poiSymbolColor;
 	}
 
-	public HashSet<PeriodOfValidityEntity_georesources> getGeoresourcesPeriodsOfValidity() {
-		return new HashSet<PeriodOfValidityEntity_georesources>(georesourcesPeriodsOfValidity);
-	}
+	public HashSet<PeriodOfValidityEntity_georesources> getGeoresourcesPeriodsOfValidity() throws IOException, SQLException {
+		AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(this.getDbTableName());
 
-	public void setGeoresourcesPeriodsOfValidity(Collection<PeriodOfValidityEntity_georesources> georesourcesPeriodsOfValidity) {
-		this.georesourcesPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_georesources>(georesourcesPeriodsOfValidity);
+		HashSet<PeriodOfValidityEntity_georesources> hashSet = new HashSet<PeriodOfValidityEntity_georesources>();		
+        
+        for (PeriodOfValidityType periodOfValidityType : availablePeriodsOfValidity) {
+            PeriodOfValidityEntity_georesources periodEntity = new PeriodOfValidityEntity_georesources(periodOfValidityType);
+            hashSet.add(periodEntity);
+        }        
+		
+		return hashSet;
 	}
 
 	@ManyToMany()

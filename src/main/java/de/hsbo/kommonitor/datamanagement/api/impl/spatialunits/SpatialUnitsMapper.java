@@ -1,12 +1,16 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_spatialUnits;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.SpatialUnitsPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
@@ -18,12 +22,8 @@ public class SpatialUnitsMapper {
 	
 	private static SpatialUnitsMetadataRepository spatialUnitsMetadataRepo;
 
-	private static SpatialUnitsPeriodsOfValidityRepository periodsOfValidityRepo;
-
-	public SpatialUnitsMapper(SpatialUnitsMetadataRepository spatialUnitsRepo,
-			SpatialUnitsPeriodsOfValidityRepository spatialUnitsPeriodsOfValidityRepo) {
+	public SpatialUnitsMapper(SpatialUnitsMetadataRepository spatialUnitsRepo) {
 		spatialUnitsMetadataRepo = spatialUnitsRepo;
-		periodsOfValidityRepo = spatialUnitsPeriodsOfValidityRepo;
 	}
 
 	public static SpatialUnitOverviewType mapToSwaggerSpatialUnit(MetadataSpatialUnitsEntity spatialUnitEntity) throws Exception {
