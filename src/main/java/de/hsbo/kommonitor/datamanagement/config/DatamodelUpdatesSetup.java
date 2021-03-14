@@ -37,7 +37,7 @@ public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefresh
 			
 			alterTableStmt.addBatch("ALTER TABLE \"metadataindicators\" ADD COLUMN IF NOT EXISTS \"referencedatenote\" text");
 			
-			alterTableStmt.addBatch("ALTER TABLE \"metadataindicators\" ADD COLUMN IF NOT EXISTS \"displayorder\" integer");
+			alterTableStmt.addBatch("ALTER TABLE \"metadataindicators\" ADD COLUMN IF NOT EXISTS \"displayorder\" integer DEFAULT 0");
 			
 			logger.info("Adding new DATABASE COLUMNS if they do not exist...");
 			alterTableStmt.executeBatch();
