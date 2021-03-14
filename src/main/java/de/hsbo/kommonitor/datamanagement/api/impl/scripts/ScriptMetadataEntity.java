@@ -1,11 +1,19 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.scripts;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -24,6 +32,8 @@ public class ScriptMetadataEntity {
 	@Column(columnDefinition="text")
 	private String description = null;
 	private String indicatorId = null;
+	
+	private String scriptType = null;
 
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -142,6 +152,14 @@ public class ScriptMetadataEntity {
 
 	public String getScriptId() {
 		return scriptId;
+	}
+
+	public String getScriptType() {
+		return scriptType;
+	}
+
+	public void setScriptType(String scriptType) {
+		this.scriptType = scriptType;
 	}
 
 }
