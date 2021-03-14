@@ -4,16 +4,17 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.model.indicators.*;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import org.apache.commons.collections.CollectionUtils;
 import org.geotools.data.DataStore;
 import org.geotools.feature.FeatureCollection;
@@ -31,13 +32,30 @@ import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.In
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorMetadataPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 @Transactional
 @Repository
@@ -220,6 +238,11 @@ public class IndicatorsManager {
         entity.setCharacteristicValue(metadata.getCharacteristicValue());
         entity.setIndicatorType(metadata.getIndicatorType());
         entity.setCreationType(metadata.getCreationType());
+        
+        if(metadata.getDisplayOrder() != null) {
+        	entity.setDisplayOrder(metadata.getDisplayOrder().intValue());
+        }      
+        entity.setReferenceDateNote(metadata.getReferenceDateNote());
 
         CommonMetadataType genericMetadata = metadata.getMetadata();
         entity.setContact(genericMetadata.getContact());
@@ -1097,6 +1120,11 @@ public class IndicatorsManager {
             lastUpdate = java.util.Calendar.getInstance().getTime();
         entity.setLastUpdate(lastUpdate);
         entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
+        
+        if(indicatorData.getDisplayOrder() != null) {
+        	entity.setDisplayOrder(indicatorData.getDisplayOrder().intValue());
+        } 
+        entity.setReferenceDateNote(indicatorData.getReferenceDateNote());
 
         /*
          * add topic to referenced topics, but only if topic is not yet included!
