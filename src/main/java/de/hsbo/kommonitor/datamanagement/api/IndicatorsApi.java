@@ -202,7 +202,7 @@ public interface IndicatorsApi {
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Not Found"),
             @ApiResponse(code = 405, message = "Invalid input") })
-        @RequestMapping(value = "/management/indicators/display-order",
+        @RequestMapping(value = "/indicators/display-order",
             produces = { "*/*" }, 
             consumes = { "application/json" },
             method = RequestMethod.PATCH)
