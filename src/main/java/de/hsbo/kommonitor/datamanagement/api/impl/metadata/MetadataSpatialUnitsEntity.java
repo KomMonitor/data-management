@@ -1,12 +1,19 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
-
-import java.util.ArrayList;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+
+import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 @Entity(name = "MetadataSpatialUnits")
 public class MetadataSpatialUnitsEntity extends AbstractMetadata {
@@ -14,10 +21,6 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata {
 	private int sridEpsg;
 	private String nextLowerHierarchyLevel = null;
 	private String nextUpperHierarchyLevel = null;
-
-	@ManyToMany
-	@JoinTable(name = "metadataSpatialUnits_periodsOfValidity", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), inverseJoinColumns = @JoinColumn(name = "period_of_validity_id", referencedColumnName = "periodofvalidityid"))
-	private Collection<PeriodOfValidityEntity_spatialUnits> spatialUnitsPeriodsOfValidity;
 
 	@ManyToMany()
 	@JoinTable(name = "metadataSpatialUnits_roles",
@@ -51,34 +54,18 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata {
 	public void setNextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
 		this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
 	}
-	public HashSet<PeriodOfValidityEntity_spatialUnits> getSpatialUnitsPeriodsOfValidity() {
-		return new HashSet<PeriodOfValidityEntity_spatialUnits>(spatialUnitsPeriodsOfValidity);
+	public HashSet<PeriodOfValidityEntity_spatialUnits> getSpatialUnitsPeriodsOfValidity() throws IOException, SQLException {
+		AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(this.getDbTableName());
+
+		HashSet<PeriodOfValidityEntity_spatialUnits> hashSet = new HashSet<PeriodOfValidityEntity_spatialUnits>();		
+        
+        for (PeriodOfValidityType periodOfValidityType : availablePeriodsOfValidity) {
+        	PeriodOfValidityEntity_spatialUnits periodEntity = new PeriodOfValidityEntity_spatialUnits(periodOfValidityType);
+            hashSet.add(periodEntity);
+        }        
+		
+		return hashSet;
 	}
-	public void setSpatialUnitsPeriodsOfValidity(
-			Collection<PeriodOfValidityEntity_spatialUnits> spatialUnitsPeriodsOfValidity) {
-		this.spatialUnitsPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_spatialUnits>(spatialUnitsPeriodsOfValidity);
-	}
-
-	public void addPeriodOfValidityIfNotExists(PeriodOfValidityEntity_spatialUnits periodEntity) throws Exception {
-		if (this.spatialUnitsPeriodsOfValidity == null)
-			this.spatialUnitsPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_spatialUnits>();
-
-			if (!this.spatialUnitsPeriodsOfValidity.contains(periodEntity))
-				this.spatialUnitsPeriodsOfValidity.add(periodEntity);
-	}
-
-	public void removePeriodOfValidityIfExists(PeriodOfValidityEntity_spatialUnits periodEntity) throws Exception {
-		if (this.spatialUnitsPeriodsOfValidity == null)
-			this.spatialUnitsPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_spatialUnits>();
-
-			if (this.spatialUnitsPeriodsOfValidity.contains(periodEntity))
-				this.spatialUnitsPeriodsOfValidity.remove(periodEntity);
-	}
-
-	public void setPeriodsOfValidity(ArrayList<PeriodOfValidityEntity_spatialUnits> periods) {
-		this.spatialUnitsPeriodsOfValidity = new HashSet<PeriodOfValidityEntity_spatialUnits>(periods);
-	}
-
 
 
 }

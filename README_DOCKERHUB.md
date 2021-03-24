@@ -1,3 +1,33 @@
+# KomMonitor DataManagement REST API
+
+This projects implements a REST API that persists and manages all relevant data within the KomMonitor stack.
+
+## Quick Links And Further Information on KomMonitor
+   - [DockerHub repositories of KomMonitor Stack](https://hub.docker.com/orgs/kommonitor/repositories)
+   - [Github Repositories of KomMonitor Stack](https://github.com/KomMonitor)
+   - [Github Wiki for KomMonitor Guidance and central Documentation](https://github.com/KomMonitor/KomMonitor-Docs/wiki)
+   - [Technical Guidance](https://github.com/KomMonitor/KomMonitor-Docs/wiki/Technische-Dokumentation) and [Deployment Information](https://github.com/KomMonitor/KomMonitor-Docs/wiki/Setup-Guide) for complete KomMonitor stack on Github Wiki
+   - [KomMonitor Website](https://kommonitor.de/)  
+
+## Overview  
+The <b>KomMonitor Data Management API</b> is a REST API encapsulating data management CRUD operations for various resources, such as spatial units, other georesources, indicators, topics, roles and custom indicator computation scripts. These resources are managed in a PostGIS database and serve as the basis for other components of the [KomMonitor](http://kommonitor.de) spatial data infrastructure.
+
+For each resource dedicated REST operations are specified using [Swagger/OpenAPI v2](https://swagger.io). To inspect the REST API you may use swagger-ui interface to a running instance of the <b>KomMonitor Data Management REST API</b>, i.e. navigate to ```<pathToDeyployedInstance>/swagger-ui.html```, e.g. ```localhost:8085/swagger-ui.html```.
+
+The service is implemented as a Java Spring Boot REST service. In addition [Maven](https://maven.apache.org/) is used as dependency and build management tool.
+
+## Dependencies to other KomMonitor Components
+KomMonitor Data Management requires 
+   - a **PostGIS database**, where all KomMonitor-relevant data is managed. The database can be a docker container or an external database server reachable via URL.
+   - an optional and configurable connection to a running **Keycloak** server, if role-based data access is activated via configuration of KomMonitor stack
+   - an optional and configurable connection to a running **Geoserver** instance, if spatial data shall be published as interoperable geoservices WMS and WFS (currently not fully implemented and tested)
+
+## Exemplar docker-compose File with explanatory comments
+
+Only contains subset of whole KomMonitor stack to focus on the config parameters of this component
+
+```yml
+
 version: '2.1'
 
 networks:
@@ -85,3 +115,20 @@ services:
 
 volumes:
  postgres_data:
+
+
+```
+
+## Contact
+|    Name   |   Organization    |    Mail    |
+| :-------------: |:-------------:| :-----:|
+| Christian Danowski-Buhren | Bochum University of Applied Sciences | christian.danowski-buhren@hs-bochum.de |
+| Andreas Wytzisk  | Bochum University of Applied Sciences | Andreas-Wytzisk@hs-bochum.de |
+
+## Credits and Contributing Organizations
+- Department of Geodesy, Bochum University of Applied Sciences
+- Department for Cadastre and Geoinformation, Essen
+- Department for Geodata Management, Surveying, Cadastre and Housing Promotion, Mülheim an der Ruhr
+- Department of Geography, Ruhr University of Bochum
+- 52°North GmbH, Münster
+- Kreis Recklinghausen

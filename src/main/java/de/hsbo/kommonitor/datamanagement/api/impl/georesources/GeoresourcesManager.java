@@ -21,9 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.GeoresourcesPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
 import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
@@ -31,7 +29,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebSe
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
@@ -55,9 +52,6 @@ public class GeoresourcesManager {
 
     @Autowired
     GeoresourcesMetadataRepository georesourcesMetadataRepo;
-
-    @Autowired
-    GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepo;
 
     @Autowired
     private RolesRepository rolesRepository;
@@ -113,8 +107,6 @@ public class GeoresourcesManager {
              */
             updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
 
-            updatePeriodsOfValidity(georesourceMetadataEntity);
-
             return metadataId;
         } catch (Exception e) {
             /*
@@ -163,25 +155,6 @@ public class GeoresourcesManager {
             }
         }
         return allowedRoles;
-    }
-
-    private void updatePeriodsOfValidity(MetadataGeoresourcesEntity georesourceMetadataEntity) throws Exception {
-        AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(georesourceMetadataEntity.getDbTableName());
-
-        // reset periodsOfValidity
-        georesourceMetadataEntity.setPeriodsOfValidity(new ArrayList<PeriodOfValidityEntity_georesources>());
-
-        for (PeriodOfValidityType periodOfValidityType : availablePeriodsOfValidity) {
-            PeriodOfValidityEntity_georesources periodEntity = new PeriodOfValidityEntity_georesources(periodOfValidityType);
-            if (!periodsOfValidityRepo.existsByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate())) {
-                periodsOfValidityRepo.saveAndFlush(periodEntity);
-            } else {
-                // should there be duplicate entries for same start and end date we simply take the first entry
-                periodEntity = periodsOfValidityRepo.findByStartDateAndEndDate(periodEntity.getStartDate(), periodEntity.getEndDate()).get(0);
-            }
-            georesourceMetadataEntity.addPeriodOfValidityIfNotExists(periodEntity);
-        }
-        georesourcesMetadataRepo.saveAndFlush(georesourceMetadataEntity);
     }
 
     private void updateMetadataWithOgcServiceUrls(String metadataId, String dbTableName) {
@@ -319,8 +292,6 @@ public class GeoresourcesManager {
              * set wms and wfs urls within metadata
              */
             updateMetadataWithOgcServiceUrls(georesourceEntity.getDatasetId(), dbTableName);
-
-            updatePeriodsOfValidity(georesourceEntity);
 
             return true;
         } else {
@@ -587,8 +558,6 @@ public class GeoresourcesManager {
              * set wms and wfs urls within metadata
              */
             updateMetadataWithOgcServiceUrls(metadataEntity.getDatasetId(), dbTableName);
-
-            updatePeriodsOfValidity(metadataEntity);
 
             return georesourceId;
         } else {

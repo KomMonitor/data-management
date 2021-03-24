@@ -17,20 +17,11 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * definition of the period of validity of a certain dataset
  */
-@Entity(name = "PeriodsOfValidity_spatialUnits")
 public class PeriodOfValidityEntity_spatialUnits   {
-
-	@Id
-	@GeneratedValue(generator = "UUID")
-	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-	private String periodOfValidityId = null;
 	
   private LocalDate startDate = null;
 
-  private LocalDate endDate = null;
-  
-  @ManyToMany(mappedBy = "spatialUnitsPeriodsOfValidity")
-  private Collection<MetadataSpatialUnitsEntity> metadataSpatialUnits;  
+  private LocalDate endDate = null; 
 
   public PeriodOfValidityEntity_spatialUnits() {
 

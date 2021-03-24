@@ -1,10 +1,14 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.GeoresourcesPeriodsOfValidityRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
@@ -17,12 +21,9 @@ import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 public class GeoresourcesMapper {
 	
 private static GeoresourcesMetadataRepository georesourceMetadataRepo;
-
-private static GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepo;
 	
-	public GeoresourcesMapper(GeoresourcesMetadataRepository georesourceMetadataRepository, GeoresourcesPeriodsOfValidityRepository periodsOfValidityRepository){
+	public GeoresourcesMapper(GeoresourcesMetadataRepository georesourceMetadataRepository){
 		georesourceMetadataRepo = georesourceMetadataRepository;
-		periodsOfValidityRepo = periodsOfValidityRepository;
 	}
 
 	public static List<GeoresourceOverviewType> mapToSwaggerGeoresources(
