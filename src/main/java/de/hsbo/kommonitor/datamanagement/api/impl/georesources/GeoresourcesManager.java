@@ -368,6 +368,18 @@ public class GeoresourcesManager {
 			
 			MetadataGeoresourcesEntity georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 			
+			// delete any linked roles first
+			try {
+				georesourceEntity = removeAnyLinkedRoles(georesourceEntity);
+			} catch (Exception e) {
+				logger.error("Error while deleting roles for georesource with id {}", georesourceId);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}
+			
+			
+			// now remove feature data and remaining 
+			
 			String dbTableName = georesourceEntity.getDbTableName();
 			
 			try {
@@ -412,7 +424,17 @@ public class GeoresourcesManager {
 		}
 	}
 
-    public GeoresourceOverviewType getGeoresourceByDatasetId(String georesourceId) throws Exception {
+    private MetadataGeoresourcesEntity removeAnyLinkedRoles(MetadataGeoresourcesEntity georesourceEntity) {
+		georesourceEntity.setRoles(new ArrayList<>());
+		
+		georesourcesMetadataRepo.saveAndFlush(georesourceEntity);
+		
+		georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceEntity.getDatasetId());
+		
+		return georesourceEntity;
+	}
+
+	public GeoresourceOverviewType getGeoresourceByDatasetId(String georesourceId) throws Exception {
         return getGeoresourceByDatasetId(georesourceId, null);
     }
 

@@ -592,6 +592,16 @@ public class IndicatorsManager {
 			 */
 			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
 				String indicatorViewTableName = indicatorSpatialUnitJoinEntity.getIndicatorValueTableName();
+				
+				// delete any linked roles first
+				try {
+					indicatorSpatialUnitJoinEntity = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorSpatialUnitJoinEntity);
+				} catch (Exception e) {
+					logger.error("Error while deleting roles for indicator spatial unit");
+					logger.error("Error was: {}", e.getMessage());
+					e.printStackTrace();
+				}
+				
 				try {					
 //					IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
 					
@@ -624,6 +634,15 @@ public class IndicatorsManager {
 				success = false;
 			}
 			
+			// delete any linked roles first
+			try {
+				removeAnyLinkedRoles_indicator(indicatorsMetadataRepo.findByDatasetId(indicatorId));
+			} catch (Exception e) {
+				logger.error("Error while deleting roles for indicator spatial unit");
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}
+			
 			try {
 				/*
 				 * delete metadata entry
@@ -646,12 +665,37 @@ public class IndicatorsManager {
 		}
 	}
 
-    public boolean deleteIndicatorDatasetByIdAndSpatialUnitId(String indicatorId, String spatialUnitId) throws Exception {
+    private void removeAnyLinkedRoles_indicator(MetadataIndicatorsEntity indicatorEntity) {
+    	indicatorEntity.setRoles(new ArrayList<>());
+		
+		indicatorsMetadataRepo.saveAndFlush(indicatorEntity);				
+		
+	}
+
+	private IndicatorSpatialUnitJoinEntity removeAnyLinkedRoles_indicatorSpatialUnit(
+			IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity) {
+    	indicatorSpatialUnitJoinEntity.setRoles(new ArrayList<>());
+		
+		indicatorsSpatialUnitsRepo.saveAndFlush(indicatorSpatialUnitJoinEntity);		
+		
+		return indicatorSpatialUnitJoinEntity;
+	}
+
+	public boolean deleteIndicatorDatasetByIdAndSpatialUnitId(String indicatorId, String spatialUnitId) throws Exception {
 		logger.info("Trying to delete indicator dataset with datasetId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
 		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
 			boolean success = true;
 			IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
 			String indicatorViewTableName = indicatorForSpatialUnit.getIndicatorValueTableName();
+			
+			// delete any linked roles first
+			try {
+				indicatorForSpatialUnit = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorForSpatialUnit);
+			} catch (Exception e) {
+				logger.error("Error while deleting roles for indicator spatial unit");
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}
 			
 			try {
 				/*
@@ -710,6 +754,15 @@ public class IndicatorsManager {
 			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorDatasetsForSpatialUnit) {
 				String indicatorViewTableName = indicatorSpatialUnitJoinEntity.getIndicatorValueTableName();
 //				IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
+				
+				// delete any linked roles first
+				try {
+					indicatorSpatialUnitJoinEntity = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorSpatialUnitJoinEntity);
+				} catch (Exception e) {
+					logger.error("Error while deleting roles for indicator spatial unit");
+					logger.error("Error was: {}", e.getMessage());
+					e.printStackTrace();
+				}
 				
 				try {
 					/*
