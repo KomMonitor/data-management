@@ -63,6 +63,7 @@ public class ScriptMapper {
 		scriptOverviewType.setIndicatorId(scriptMetadataEntity.getIndicatorId());
 		scriptOverviewType.setName(scriptMetadataEntity.getName());
 		scriptOverviewType.setScriptId(scriptMetadataEntity.getScriptId());
+		scriptOverviewType.setScriptType(scriptMetadataEntity.getScriptType());
 
 		List<String> requiredGeoresourceIds = extractRequiredGeoresourceIds(scriptMetadataEntity);
 		scriptOverviewType.setRequiredGeoresourceIds(requiredGeoresourceIds);

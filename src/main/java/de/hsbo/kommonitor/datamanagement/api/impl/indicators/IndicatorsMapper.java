@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -103,6 +104,9 @@ public class IndicatorsMapper {
 		indicatorOverviewType.setTopicReference(indicatorsMetadataEntity.getTopicReference());
 		indicatorOverviewType.setIndicatorId(indicatorsMetadataEntity.getDatasetId());
 		indicatorOverviewType.setIndicatorName(indicatorsMetadataEntity.getDatasetName());
+		
+		indicatorOverviewType.setDisplayOrder(BigDecimal.valueOf(indicatorsMetadataEntity.getDisplayOrder()));
+		indicatorOverviewType.setReferenceDateNote(indicatorsMetadataEntity.getReferenceDateNote());
 
 		CommonMetadataType metadata = new CommonMetadataType();
 		metadata.setContact(indicatorsMetadataEntity.getContact());

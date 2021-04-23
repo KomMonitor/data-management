@@ -9,8 +9,9 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.http.MediaType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorMetadataPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHDisplayOrderInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -182,5 +190,24 @@ public interface IndicatorsApi {
     ResponseEntity updateIndicatorRoles(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,
                                    @ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,
                                    @ApiParam(value = "Indicator parameters input" ,required=true )   @RequestBody IndicatorPATCHInputType indicatorData);
+
+    @ApiOperation(value = "Update displayOrder for submitted indicators", nickname = "updateIndicatorDisplayOrder", notes = "Update displayOrder for submitted indicators", response = ResponseEntity.class, authorizations = {
+            @Authorization(value = "kommonitor-data-access_oauth", scopes = {
+                
+                })
+        }, tags={ "indicators-controller", })
+        @ApiResponses(value = { 
+            @ApiResponse(code = 200, message = "OK", response = ResponseEntity.class),
+            @ApiResponse(code = 201, message = "Created", response = ResponseEntity.class),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 405, message = "Invalid input") })
+        @RequestMapping(value = "/indicators/display-order",
+            produces = { "*/*" }, 
+            consumes = { "application/json" },
+            method = RequestMethod.PATCH)
+        ResponseEntity updateIndicatorDisplayOrder(@ApiParam(value = "array of indicator id and displayOrder items" ,required=true )  @Valid @RequestBody List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray);
+
 
 }

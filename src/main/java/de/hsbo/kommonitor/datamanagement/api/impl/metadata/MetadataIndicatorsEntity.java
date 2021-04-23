@@ -10,8 +10,8 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.*;
 
 import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
@@ -30,6 +30,8 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
 	private String abbreviation = null;
 	private boolean isHeadlineIndicator = false;
 	private String interpretation = null;
+	private String referenceDateNote = null;
+	private int displayOrder = 0;
 	
 	private String characteristicValue = null;
 	
@@ -237,5 +239,21 @@ public class MetadataIndicatorsEntity extends AbstractMetadata {
     public void setRoles(Collection<RolesEntity> roles) {
         this.roles = new HashSet<RolesEntity>(roles);
     }
+
+	public String getReferenceDateNote() {
+		return referenceDateNote;
+	}
+
+	public void setReferenceDateNote(String referenceDateNote) {
+		this.referenceDateNote = referenceDateNote;
+	}
+
+	public int getDisplayOrder() {
+		return displayOrder;
+	}
+
+	public void setDisplayOrder(int displayOrder) {
+		this.displayOrder = displayOrder;
+	}
 
 }

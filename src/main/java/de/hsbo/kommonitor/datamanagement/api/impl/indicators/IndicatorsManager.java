@@ -4,16 +4,18 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.model.indicators.*;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import org.apache.commons.collections.CollectionUtils;
 import org.geotools.data.DataStore;
 import org.geotools.feature.FeatureCollection;
@@ -31,13 +33,31 @@ import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.In
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorMetadataPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHDisplayOrderInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 @Transactional
 @Repository
@@ -220,6 +240,11 @@ public class IndicatorsManager {
         entity.setCharacteristicValue(metadata.getCharacteristicValue());
         entity.setIndicatorType(metadata.getIndicatorType());
         entity.setCreationType(metadata.getCreationType());
+        
+        if(metadata.getDisplayOrder() != null) {
+        	entity.setDisplayOrder(metadata.getDisplayOrder().intValue());
+        }      
+        entity.setReferenceDateNote(metadata.getReferenceDateNote());
 
         CommonMetadataType genericMetadata = metadata.getMetadata();
         entity.setContact(genericMetadata.getContact());
@@ -567,6 +592,16 @@ public class IndicatorsManager {
 			 */
 			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
 				String indicatorViewTableName = indicatorSpatialUnitJoinEntity.getIndicatorValueTableName();
+				
+				// delete any linked roles first
+				try {
+					indicatorSpatialUnitJoinEntity = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorSpatialUnitJoinEntity);
+				} catch (Exception e) {
+					logger.error("Error while deleting roles for indicator spatial unit");
+					logger.error("Error was: {}", e.getMessage());
+					e.printStackTrace();
+				}
+				
 				try {					
 //					IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
 					
@@ -599,6 +634,15 @@ public class IndicatorsManager {
 				success = false;
 			}
 			
+			// delete any linked roles first
+			try {
+				removeAnyLinkedRoles_indicator(indicatorsMetadataRepo.findByDatasetId(indicatorId));
+			} catch (Exception e) {
+				logger.error("Error while deleting roles for indicator spatial unit");
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}
+			
 			try {
 				/*
 				 * delete metadata entry
@@ -621,12 +665,37 @@ public class IndicatorsManager {
 		}
 	}
 
-    public boolean deleteIndicatorDatasetByIdAndSpatialUnitId(String indicatorId, String spatialUnitId) throws Exception {
+    private void removeAnyLinkedRoles_indicator(MetadataIndicatorsEntity indicatorEntity) {
+    	indicatorEntity.setRoles(new ArrayList<>());
+		
+		indicatorsMetadataRepo.saveAndFlush(indicatorEntity);				
+		
+	}
+
+	private IndicatorSpatialUnitJoinEntity removeAnyLinkedRoles_indicatorSpatialUnit(
+			IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity) {
+    	indicatorSpatialUnitJoinEntity.setRoles(new ArrayList<>());
+		
+		indicatorsSpatialUnitsRepo.saveAndFlush(indicatorSpatialUnitJoinEntity);		
+		
+		return indicatorSpatialUnitJoinEntity;
+	}
+
+	public boolean deleteIndicatorDatasetByIdAndSpatialUnitId(String indicatorId, String spatialUnitId) throws Exception {
 		logger.info("Trying to delete indicator dataset with datasetId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
 		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
 			boolean success = true;
 			IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
 			String indicatorViewTableName = indicatorForSpatialUnit.getIndicatorValueTableName();
+			
+			// delete any linked roles first
+			try {
+				indicatorForSpatialUnit = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorForSpatialUnit);
+			} catch (Exception e) {
+				logger.error("Error while deleting roles for indicator spatial unit");
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}
 			
 			try {
 				/*
@@ -685,6 +754,15 @@ public class IndicatorsManager {
 			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorDatasetsForSpatialUnit) {
 				String indicatorViewTableName = indicatorSpatialUnitJoinEntity.getIndicatorValueTableName();
 //				IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
+				
+				// delete any linked roles first
+				try {
+					indicatorSpatialUnitJoinEntity = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorSpatialUnitJoinEntity);
+				} catch (Exception e) {
+					logger.error("Error while deleting roles for indicator spatial unit");
+					logger.error("Error was: {}", e.getMessage());
+					e.printStackTrace();
+				}
 				
 				try {
 					/*
@@ -1097,6 +1175,11 @@ public class IndicatorsManager {
             lastUpdate = java.util.Calendar.getInstance().getTime();
         entity.setLastUpdate(lastUpdate);
         entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
+        
+        if(indicatorData.getDisplayOrder() != null) {
+        	entity.setDisplayOrder(indicatorData.getDisplayOrder().intValue());
+        } 
+        entity.setReferenceDateNote(indicatorData.getReferenceDateNote());
 
         /*
          * add topic to referenced topics, but only if topic is not yet included!
@@ -1282,4 +1365,17 @@ public class IndicatorsManager {
                 entity.getRoles().stream()
                         .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
     }
+
+	public boolean updateIndicatorOrder(@Valid List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray) {
+		for (IndicatorPATCHDisplayOrderInputType indicatorPATCHDisplayOrderInputType : indicatorOrderArray) {
+			if(this.indicatorsMetadataRepo.existsByDatasetId(indicatorPATCHDisplayOrderInputType.getIndicatorId())) {
+				MetadataIndicatorsEntity indicatorMetadataEntity = this.indicatorsMetadataRepo.findByDatasetId(indicatorPATCHDisplayOrderInputType.getIndicatorId());
+				indicatorMetadataEntity.setDisplayOrder(indicatorPATCHDisplayOrderInputType.getDisplayOrder().intValue());
+				
+				this.indicatorsMetadataRepo.save(indicatorMetadataEntity);
+			}
+		}
+		this.indicatorsMetadataRepo.flush();
+		return true;
+	}
 }

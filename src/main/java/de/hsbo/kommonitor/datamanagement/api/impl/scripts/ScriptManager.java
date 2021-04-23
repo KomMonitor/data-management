@@ -63,6 +63,7 @@ public class ScriptManager {
 		scriptMetadata.setDescription(processScriptData.getDescription());
 		scriptMetadata.setIndicatorId(processScriptData.getAssociatedIndicatorId());
 		scriptMetadata.setName(scriptName);
+		scriptMetadata.setScriptType(processScriptData.getScriptType());
 		/*
 		 * script code is delivered as Base64 encoded String
 		 * we save it as byte[] within Database
@@ -270,6 +271,7 @@ public class ScriptManager {
 		//set all components according to input
 		scriptMetadataEntity.setDescription(processScriptData.getDescription());
 		scriptMetadataEntity.setName(processScriptData.getName());
+		scriptMetadataEntity.setScriptType(processScriptData.getScriptType());
 		/*
 		 * script code is delivered as Base64 encoded String
 		 * we save it as byte[] within Database

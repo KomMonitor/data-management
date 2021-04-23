@@ -329,7 +329,8 @@ public class SpatialUnitsManager {
 		logger.info("Trying to delete spatialUnit dataset with datasetId '{}'", spatialUnitId);
 		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)){
 			boolean success = true;
-			String dbTableName = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId).getDbTableName();
+			MetadataSpatialUnitsEntity spatialUnitEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+			String dbTableName = spatialUnitEntity.getDbTableName();
 			
 			try {
 				/*
@@ -337,11 +338,21 @@ public class SpatialUnitsManager {
 				 */
 				deleteAssociatedIndicatorLayers(spatialUnitId);
 			} catch (Exception e) {
-				logger.error("Error while deleting associated indicator layer entries for spatial unit with id {}", spatialUnitId);
+				logger.error("Error while deleting associated indicator layer entries for spatial unit with id {}",
+						spatialUnitId);
 				logger.error("Error was: {}", e.getMessage());
 				e.printStackTrace();
 			}
-			
+
+			// delete any linked roles first
+			try {
+				spatialUnitEntity = removeAnyLinkedRoles(spatialUnitEntity);
+			} catch (Exception e) {
+				logger.error("Error while deleting roles for spatial unit with id {}", spatialUnitEntity);
+				logger.error("Error was: {}", e.getMessage());
+				e.printStackTrace();
+			}
+
 			try {
 				/*
 				 * delete featureTable
@@ -391,7 +402,17 @@ public class SpatialUnitsManager {
 		}
 	}
 
-    private boolean deleteAssociatedIndicatorLayers(String spatialUnitId) throws Exception {
+    private MetadataSpatialUnitsEntity removeAnyLinkedRoles(MetadataSpatialUnitsEntity spatialUnitEntity) {
+    	spatialUnitEntity.setRoles(new ArrayList<>());
+		
+		spatialUnitsMetadataRepo.saveAndFlush(spatialUnitEntity);
+		
+		spatialUnitEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitEntity.getDatasetId());
+		
+		return spatialUnitEntity;
+	}
+
+	private boolean deleteAssociatedIndicatorLayers(String spatialUnitId) throws Exception {
         logger.info("Must delete and unpublish all indicator data tables and views that are associated to submitted spatial unit with id '{}'", spatialUnitId);
         /*
          * identify all indicator layers for the spatialUnitId and delete/unpublish them
