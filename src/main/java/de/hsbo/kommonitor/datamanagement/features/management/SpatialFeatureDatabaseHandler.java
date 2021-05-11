@@ -966,7 +966,7 @@ public class SpatialFeatureDatabaseHandler {
 		SimpleFeatureCollection collection = new ListFeatureCollection(inputFeatureSchema, newFeaturesToBeAdded);
 		
 		List<FeatureId> newFeatureIds = sfStore.addFeatures(collection);
-		numberOfInsertedEntries = newFeatureIds.size();
+		numberOfInsertedEntries = newFeaturesToBeAdded.size();
 
 		// only update those new features whose startDate and/or endDate are not
 		// already set!
