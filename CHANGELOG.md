@@ -1,6 +1,8 @@
 # Change Log
 
-## 1.0.0
+## 1.1.0
+* fix insertion of new spatial resources that do not have an end date [8d6d9f6](8d6d9f65b546731a0c448a6eb6fac94cd5a737d6)
+* improve spatial feature integration process by retyping incoming feature collections first and then perform all other operations. Thus we save time to later update periodOfValidity as additional operation [7857489](785748944cf953914b31b4cb2d3c86bb1d192d7d)
 * changed SCM tag information in POM [6f13250](6f13250abbbca3c90612c45ffe903897460c4610)
 * mark version as SNAPSHOT again [af2012d](af2012dfe4ee42679cffe18dcb60b91c1d6c9f4e)
 * add auto update changelog plugin for maven release plugin [132d929](132d92929a7056710cba2fba6c44e6c6db0841e3)
