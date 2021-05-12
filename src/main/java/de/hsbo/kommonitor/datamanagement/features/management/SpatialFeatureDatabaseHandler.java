@@ -111,7 +111,11 @@ public class SpatialFeatureDatabaseHandler {
 		// ensure that submitted inputFeatureCollection contains KomMonitor relevant properties (periodOfValidity and arisenFrom)
 		// add them here otherwise!
 		Date startDate = DateTimeUtil.fromLocalDate(periodOfValidity.getStartDate());
-		Date endDate = DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
+		Date endDate = null; 
+		
+		if(periodOfValidity.getEndDate() != null) {
+			endDate = DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
+		}
 		featureCollection = retypeFeatureCollectionWithKomMonitorPropertiesIfNecessary(featureSchema, featureCollection, startDate, endDate);
 				
 
