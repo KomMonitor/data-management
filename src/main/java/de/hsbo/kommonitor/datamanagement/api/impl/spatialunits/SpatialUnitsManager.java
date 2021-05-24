@@ -62,9 +62,10 @@ public class SpatialUnitsManager {
     @Autowired
     OGCWebServiceManager ogcServiceManager;
 
-    public String addSpatialUnit(SpatialUnitPOSTInputType featureData) throws Exception {
+    public SpatialUnitOverviewType addSpatialUnit(SpatialUnitPOSTInputType featureData) throws Exception {
         String metadataId = null;
         String dbTableName = null;
+        MetadataSpatialUnitsEntity metadataEntity = null;
         boolean publishedAsService = false;
         try {
             String datasetName = featureData.getSpatialUnitLevel();
@@ -85,7 +86,7 @@ public class SpatialUnitsManager {
                 throw new Exception("SpatialUnit already exists. Aborting add spatialUnit request.");
             }
 
-            MetadataSpatialUnitsEntity metadataEntity = createMetadata(featureData);
+            metadataEntity = createMetadata(featureData);
             metadataId = metadataEntity.getDatasetId();
 
             dbTableName = createFeatureTable(featureData.getGeoJsonString(), featureData.getPeriodOfValidity(), metadataId);
@@ -134,7 +135,7 @@ public class SpatialUnitsManager {
         }
 
 
-        return metadataId;
+        return getSpatialUnitByDatasetId(metadataId);
     }
 
     private void updateSpatialUnitHierarchy_onAdd(String metadataId, SpatialUnitPOSTInputType featureData) {

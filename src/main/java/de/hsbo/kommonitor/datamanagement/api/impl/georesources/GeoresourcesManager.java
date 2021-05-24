@@ -65,7 +65,7 @@ public class GeoresourcesManager {
     @Autowired
     private ScriptManager scriptManager;
 
-    public String addGeoresource(GeoresourcePOSTInputType featureData) throws Exception {
+    public GeoresourceOverviewType addGeoresource(GeoresourcePOSTInputType featureData) throws Exception {
 
         String metadataId = null;
         String dbTableName = null;
@@ -107,7 +107,7 @@ public class GeoresourcesManager {
              */
             updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
 
-            return metadataId;
+            return getGeoresourceByDatasetId(metadataId);
         } catch (Exception e) {
             /*
              * remove partially created resources and thrwo error

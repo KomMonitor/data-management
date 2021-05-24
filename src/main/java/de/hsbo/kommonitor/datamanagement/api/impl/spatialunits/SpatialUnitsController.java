@@ -56,7 +56,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	public ResponseEntity addSpatialUnitAsBody(@RequestBody SpatialUnitPOSTInputType featureData) {
+	public ResponseEntity<SpatialUnitOverviewType> addSpatialUnitAsBody(@RequestBody SpatialUnitPOSTInputType featureData) {
 		logger.info("Received request to insert new spatial unit");
 
 		String accept = request.getHeader("Accept");
@@ -64,25 +64,25 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		/*
 		 * analyse input data and save it within database
 		 */
-		String spatialUnitMetadataId;
+		SpatialUnitOverviewType spatialUnitMetadata;
 		try {
-			spatialUnitMetadataId = spatialUnitsManager.addSpatialUnit(featureData);
+			spatialUnitMetadata = spatialUnitsManager.addSpatialUnit(featureData);
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
 		}
 
-		if (spatialUnitMetadataId != null) {
+		if (spatialUnitMetadata != null) {
 			HttpHeaders responseHeaders = new HttpHeaders();
 
-			String location = spatialUnitMetadataId;
+			String location = spatialUnitMetadata.getSpatialUnitId();
 			try {
 				responseHeaders.setLocation(new URI(location));
 			} catch (URISyntaxException e) {
 				// return ApiResponseUtil.createResponseEntityFromException(e);
 			}
 
-			return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
+			return new ResponseEntity<SpatialUnitOverviewType>(spatialUnitMetadata, responseHeaders, HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

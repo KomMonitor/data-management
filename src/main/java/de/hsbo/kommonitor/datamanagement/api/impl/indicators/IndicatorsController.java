@@ -113,7 +113,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 
     @Override
-    public ResponseEntity addIndicatorAsBody(@RequestBody IndicatorPOSTInputType indicatorData) {
+    public ResponseEntity<IndicatorOverviewType> addIndicatorAsBody(@RequestBody IndicatorPOSTInputType indicatorData) {
         logger.info("Received request to insert new indicator");
 
         String accept = request.getHeader("Accept");
@@ -121,25 +121,25 @@ public class IndicatorsController extends BasePathController implements Indicato
         /*
          * analyse input data and save it within database
          */
-        String indicatorMetadataId;
+        IndicatorOverviewType indicatorMetadata;
         try {
-            indicatorMetadataId = indicatorsManager.addIndicator(indicatorData);
+            indicatorMetadata = indicatorsManager.addIndicator(indicatorData);
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
 
         }
 
-        if (indicatorMetadataId != null) {
+        if (indicatorMetadata != null) {
             HttpHeaders responseHeaders = new HttpHeaders();
 
-            String location = indicatorMetadataId;
+            String location = indicatorMetadata.getIndicatorId();
             try {
                 responseHeaders.setLocation(new URI(location));
             } catch (URISyntaxException e) {
                 // return ApiResponseUtil.createResponseEntityFromException(e);
             }
 
-            return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
+            return new ResponseEntity<IndicatorOverviewType>(indicatorMetadata, responseHeaders, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -41,7 +41,7 @@ public interface SpatialUnitsApi {
     @RequestMapping(value = "/spatial-units",
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity addSpatialUnitAsBody(@ApiParam(value = "feature data" ,required=true )   @RequestBody SpatialUnitPOSTInputType featureData);
+    ResponseEntity<SpatialUnitOverviewType> addSpatialUnitAsBody(@ApiParam(value = "feature data" ,required=true )   @RequestBody SpatialUnitPOSTInputType featureData);
 
 	@ApiOperation(value = "Delete all features/contents of the selected spatial-unit dataset", nickname = "deleteAllSpatialUnitFeaturesById", notes = "Delete all features/contents of the selected spatial-unit dataset", authorizations = {
 			@Authorization(value = "basicAuth") }, tags = {})

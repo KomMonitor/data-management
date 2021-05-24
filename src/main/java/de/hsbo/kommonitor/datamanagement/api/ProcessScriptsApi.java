@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -38,7 +39,7 @@ public interface ProcessScriptsApi {
     @RequestMapping(value = "/process-scripts",
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity addProcessScriptAsBody(@ApiParam(value = "details necessary to register the process script" ,required=true )   @RequestBody ProcessScriptPOSTInputType processScriptData);
+    ResponseEntity<ProcessScriptOverviewType> addProcessScriptAsBody(@ApiParam(value = "details necessary to register the process script" ,required=true )   @RequestBody ProcessScriptPOSTInputType processScriptData);
 
 
     @ApiOperation(value = "Delete the process script", nickname = "deleteProcessScript", notes = "Delete the process script associated to the specified indicator", authorizations = {

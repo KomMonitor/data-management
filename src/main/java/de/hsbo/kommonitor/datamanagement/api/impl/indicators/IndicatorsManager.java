@@ -882,11 +882,12 @@ public class IndicatorsManager {
 		}
 	}
 
-    public String addIndicator(IndicatorPOSTInputType indicatorData) throws Exception {
-        String metadataId = null;
+    public IndicatorOverviewType addIndicator(IndicatorPOSTInputType indicatorData) throws Exception {
         String spatialUnitName = null;
         String indicatorViewTableName = null;
         boolean publishedAsService = false;
+        MetadataIndicatorsEntity indicatorMetadataEntity = null;
+        String metadataId = null;
         try {
             /*
              * addIndicator can be called multiple times, i.e. for each spatialUnitName!
@@ -916,13 +917,10 @@ public class IndicatorsManager {
                 throw new Exception("Indicator for indicatorName, characteristicValue and indicatorType already exists. Aborting add indicator request.");
             }
 
-            MetadataIndicatorsEntity indicatorMetadataEntity = null;
-            metadataId = null;
-
             indicatorMetadataEntity = createMetadata(indicatorData);
-            metadataId = indicatorMetadataEntity.getDatasetId();
 
-            ReferenceManager.createReferences(indicatorData.getRefrencesToGeoresources(),
+            metadataId = indicatorMetadataEntity.getDatasetId();
+			ReferenceManager.createReferences(indicatorData.getRefrencesToGeoresources(),
                     indicatorData.getRefrencesToOtherIndicators(), metadataId);
 
             /*
@@ -987,7 +985,7 @@ public class IndicatorsManager {
             throw e;
         }
 
-        return metadataId;
+        return getIndicatorById(metadataId);
     }
 
     private Collection<RolesEntity> retrieveRoles(List<String> roleIds) throws ResourceNotFoundException {

@@ -44,7 +44,7 @@ public class RolesController extends BasePathController implements RolesApi {
 	}
 
 	@Override
-	public ResponseEntity addRole(@RequestBody RoleInputType roleData) {
+	public ResponseEntity<RoleOverviewType> addRole(@RequestBody RoleInputType roleData) {
 		logger.info("Received request to insert new role");
 
 		String accept = request.getHeader("Accept");
@@ -52,25 +52,25 @@ public class RolesController extends BasePathController implements RolesApi {
 		/*
 		 * analyse input data and save it within database
 		 */
-		String roleId;
+		RoleOverviewType role;
 		try {
-			roleId = rolesManager.addRole(roleData);
+			role = rolesManager.addRole(roleData);
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
 		}
 
-		if (roleId != null) {
+		if (role != null) {
 			HttpHeaders responseHeaders = new HttpHeaders();
 
-			String location = roleId;
+			String location = role.getRoleId();
 			try {
 				responseHeaders.setLocation(new URI(location));
 			} catch (URISyntaxException e) {
 				// return ApiResponseUtil.createResponseEntityFromException(e);
 			}
 
-			return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
+			return new ResponseEntity<RoleOverviewType>(role, responseHeaders, HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

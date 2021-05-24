@@ -41,7 +41,7 @@ public class ScriptManager {
 	@Autowired
 	private ScriptMetadataRepository scriptMetadataRepo;
 
-	public String addScript(ProcessScriptPOSTInputType processScriptData) throws Exception{
+	public ProcessScriptOverviewType addScript(ProcessScriptPOSTInputType processScriptData) throws Exception{
 		String scriptName = processScriptData.getName();
 		logger.info("Trying to persist script data with '{}'", scriptName);
 		/*
@@ -109,7 +109,7 @@ public class ScriptManager {
 
 		scriptMetadataRepo.saveAndFlush(scriptMetadata);
 
-		return scriptMetadata.getScriptId();
+		return getScriptMetadataByScriptId(scriptMetadata.getScriptId());
 	}
 
 	private List<ScriptInputParameterEntity> persistAndGetInputParameters(

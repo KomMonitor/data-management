@@ -52,7 +52,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	public ResponseEntity addProcessScriptAsBody(@RequestBody ProcessScriptPOSTInputType processScriptData) {
+	public ResponseEntity<ProcessScriptOverviewType> addProcessScriptAsBody(@RequestBody ProcessScriptPOSTInputType processScriptData) {
 		logger.info("Received request to insert new process script");
 
 		String accept = request.getHeader("Accept");
@@ -60,25 +60,25 @@ public class ScriptController extends BasePathController implements ProcessScrip
 		/*
 		 * analyse input data and save it within database
 		 */
-		String scriptId;
+		ProcessScriptOverviewType script;
 		try {
-			scriptId = scriptManager.addScript(processScriptData);
+			script = scriptManager.addScript(processScriptData);
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
 		}
 
-		if (scriptId != null) {
+		if (script != null) {
 			HttpHeaders responseHeaders = new HttpHeaders();
 
-			String location = scriptId;
+			String location = script.getScriptId();
 			try {
 				responseHeaders.setLocation(new URI(location));
 			} catch (URISyntaxException e) {
 				return ApiUtils.createResponseEntityFromException(e);
 			}
 
-			return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
+			return new ResponseEntity<ProcessScriptOverviewType>(script, responseHeaders, HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

@@ -35,7 +35,7 @@ public interface RolesApi {
     @RequestMapping(value = "/roles",
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity addRole(@ApiParam(value = "role input data" ,required=true )   @RequestBody RoleInputType roleData);
+    ResponseEntity<RoleOverviewType> addRole(@ApiParam(value = "role input data" ,required=true )   @RequestBody RoleInputType roleData);
 
 
     @ApiOperation(value = "Delete the role", nickname = "deleteRole", notes = "Delete the role", authorizations = {

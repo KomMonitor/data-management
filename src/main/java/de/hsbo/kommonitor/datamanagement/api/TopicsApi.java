@@ -36,7 +36,7 @@ public interface TopicsApi {
     @RequestMapping(value = "/topics",
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity addTopic(@ApiParam(value = "topic input data" ,required=true )   @RequestBody TopicInputType topicData);
+    ResponseEntity<TopicOverviewType> addTopic(@ApiParam(value = "topic input data" ,required=true )   @RequestBody TopicInputType topicData);
 
 
     @ApiOperation(value = "Delete the topic", nickname = "deleteTopic", notes = "Delete the topic", authorizations = {

@@ -44,7 +44,7 @@ public interface GeoresourcesApi {
     @RequestMapping(value = "/georesources",
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity addGeoresourceAsBody(@ApiParam(value = "feature data" ,required=true )   @RequestBody GeoresourcePOSTInputType featureData);
+    ResponseEntity<GeoresourceOverviewType> addGeoresourceAsBody(@ApiParam(value = "feature data" ,required=true )   @RequestBody GeoresourcePOSTInputType featureData);
 
 	@ApiOperation(value = "Delete all features/contents of the selected geo-resource dataset", nickname = "deleteAllGeoresourceFeaturesById", notes = "Delete all features/contents of the selected geo-resource dataset", authorizations = {
 			@Authorization(value = "basicAuth") }, tags = {})

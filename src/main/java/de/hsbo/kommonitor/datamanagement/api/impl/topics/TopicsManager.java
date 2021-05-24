@@ -42,7 +42,7 @@ public class TopicsManager {
 	@Autowired
 	TopicsRepository topicsRepo;
 
-	public String addTopic(TopicInputType topicData) throws Exception {
+	public TopicOverviewType addTopic(TopicInputType topicData) throws Exception {
 		String topicName = topicData.getTopicName();
 		TopicResourceEnum topicResource = topicData.getTopicResource();
 		TopicTypeEnum topicType = topicData.getTopicType();
@@ -57,7 +57,7 @@ public class TopicsManager {
 		
 		topicsRepo.saveAndFlush(topic);
 
-		return topic.getTopicId();
+		return getTopicById(topic.getTopicId());
 	}
 
 	private TopicsEntity handleSubTopics(TopicsEntity topicEntity, List<TopicInputType> subTopics) throws Exception {
