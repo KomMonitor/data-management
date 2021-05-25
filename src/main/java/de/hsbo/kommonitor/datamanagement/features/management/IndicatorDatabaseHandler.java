@@ -833,6 +833,9 @@ public class IndicatorDatabaseHandler {
 				// use dataType real, as only new timeseries will be added for
 				// indicators
 				builder.append("DROP COLUMN \"" + columnName + "\" CASCADE;");
+				
+				// use vacuum full to rewrite table
+				builder.append("VACUUM FULL \"" + indicatorValueTableName + "\";");
 
 				String alterTableCommand = builder.toString();
 				

@@ -1587,6 +1587,9 @@ public class SpatialFeatureDatabaseHandler {
 					}
 				}
 			}
+			
+			// use vacuum full to rewrite table
+			builder.append("VACUUM FULL \"" + dbTableName + "\";");
 
 			String deleteCommand = builder.toString();
 
