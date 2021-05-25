@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -486,8 +487,91 @@ public class DatabaseHelperUtil {
 
 			builder.append("VACUUM ANALYZE \"" + indicatorValueTableName + "\";");
 			
-			String insertIndexCommand = builder.toString();			
-			statement.executeUpdate(insertIndexCommand);		
+			String vacuumCommand = builder.toString();			
+			statement.execute(vacuumCommand);		
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+		
+	}
+	
+	public static void runVacuumFullAnalyse(String tableName) throws Exception {
+		Connection jdbcConnection = null;
+		Statement statement = null;		
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+
+			builder.append("VACUUM FULL VERBOSE ANALYZE \"" + tableName + "\";");
+			
+			String vacuumCommand = builder.toString();			
+			statement.execute(vacuumCommand);	
+			
+			SQLWarning warnings = statement.getWarnings();
+			System.out.println(warnings.getLocalizedMessage());
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+		
+	}
+	
+	public static void rewriteSpatialFeatureTable(String tableName) throws Exception {
+		Connection jdbcConnection = null;
+		Statement statement = null;		
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+
+			builder.append("create table \"new_" + tableName + "\" (like \"" + tableName + "\" including all);");
+			
+			builder.append("alter table \"" + tableName + "\" rename to \"old_" + tableName + "\";");
+			
+			builder.append("alter table \"new_" + tableName + "\" rename to \"" + tableName + "\";");
+			
+			builder.append("alter sequence \"" + tableName + "_fid_seq\" owned by \"" + tableName + "\".\"ID\"; ");
+			
+			builder.append("insert into \"" + tableName + "\" select * from \"old_" + tableName + "\";");
+			
+			builder.append("drop table \"old_" + tableName + "\" CASCADE;");
+			
+			String rewriteCommand = builder.toString();			
+			statement.executeUpdate(rewriteCommand);				
 		} catch (Exception e) {
 			try {
 				statement.close();

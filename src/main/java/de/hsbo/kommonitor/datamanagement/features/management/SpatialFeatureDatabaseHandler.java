@@ -1587,9 +1587,6 @@ public class SpatialFeatureDatabaseHandler {
 					}
 				}
 			}
-			
-			// use vacuum full to rewrite table
-			builder.append("VACUUM FULL \"" + dbTableName + "\";");
 
 			String deleteCommand = builder.toString();
 
@@ -1614,6 +1611,9 @@ public class SpatialFeatureDatabaseHandler {
 
 			}
 		}
+		
+		logger.info("rewrite table to get rid of dropped columns");
+		DatabaseHelperUtil.rewriteSpatialFeatureTable(dbTableName);
 
 		logger.info("Deletion of all features and their properties from feature table {} was successful.", dbTableName);
 
