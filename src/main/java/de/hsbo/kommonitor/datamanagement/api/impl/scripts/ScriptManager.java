@@ -62,6 +62,8 @@ public class ScriptManager {
 		ScriptMetadataEntity scriptMetadata = new ScriptMetadataEntity();
 		scriptMetadata.setDescription(processScriptData.getDescription());
 		scriptMetadata.setIndicatorId(processScriptData.getAssociatedIndicatorId());
+		MetadataIndicatorsEntity targetMetadataIndicator = DatabaseHelperUtil.getIndicatorMetadataEntity(processScriptData.getAssociatedIndicatorId());
+		scriptMetadata.setMetadataIndicatorsEntity(targetMetadataIndicator);
 		scriptMetadata.setName(scriptName);
 		scriptMetadata.setScriptType(processScriptData.getScriptType());
 		/*

@@ -121,6 +121,9 @@ public class ScriptMetadataEntity {
 	}
 
 	public HashSet<MetadataIndicatorsEntity> getRequiredIndicators() {
+		if (this.requiredIndicators == null) {
+			this.requiredIndicators = new HashSet<MetadataIndicatorsEntity>();
+		}
 		return new HashSet<MetadataIndicatorsEntity>(requiredIndicators);
 	}
 
@@ -136,6 +139,9 @@ public class ScriptMetadataEntity {
 	}
 
 	public HashSet<MetadataGeoresourcesEntity> getRequiredGeoresources() {
+		if (this.requiredGeoresources == null) {
+			this.requiredGeoresources = new HashSet<MetadataGeoresourcesEntity>();
+		}
 		return new HashSet<MetadataGeoresourcesEntity>(requiredGeoresources);
 	}
 
