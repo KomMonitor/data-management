@@ -26,7 +26,9 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.data.store.ReTypingFeatureCollection;
 import org.geotools.feature.AttributeTypeBuilder;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -105,12 +107,23 @@ public class SpatialFeatureDatabaseHandler {
 
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 		featureSchema = enrichWithKomMonitorProperties(featureSchema, postGisStore, resourceType);
+		
+		// ensure that submitted inputFeatureCollection contains KomMonitor relevant properties (periodOfValidity and arisenFrom)
+		// add them here otherwise!
+		Date startDate = DateTimeUtil.fromLocalDate(periodOfValidity.getStartDate());
+		Date endDate = null; 
+		
+		if(periodOfValidity.getEndDate() != null) {
+			endDate = DateTimeUtil.fromLocalDate(periodOfValidity.getEndDate());
+		}
+		featureCollection = retypeFeatureCollectionWithKomMonitorPropertiesIfNecessary(featureSchema, featureCollection, startDate, endDate);
+				
 
 		logger.info("create new Table from featureSchema using table name {}", featureSchema.getTypeName());
 		postGisStore.createSchema(featureSchema);
 
 		logger.info("Start to add the actual features to table with name {}", featureSchema.getTypeName());
-		persistSpatialResource(periodOfValidity, featureSchema, featureCollection, postGisStore);
+		persistSpatialResource(featureSchema, featureCollection, postGisStore);
 
 		/*
 		 * after writing to DB set the unique db tableName within the
@@ -179,7 +192,7 @@ public class SpatialFeatureDatabaseHandler {
 
 	}
 
-	private static void persistSpatialResource(PeriodOfValidityType periodOfValidity, SimpleFeatureType featureSchema,
+	private static void persistSpatialResource(SimpleFeatureType featureSchema,
 			FeatureCollection featureCollection, DataStore postGisStore) throws IOException, CQLException {
 		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(featureSchema.getTypeName());
 		if (featureSource instanceof SimpleFeatureStore) {
@@ -192,36 +205,8 @@ public class SpatialFeatureDatabaseHandler {
 			logger.info("Start to modify the features (set periodOfValidity) in table with name {}",
 					featureSchema.getTypeName());
 
-			initializePeriodOfValidityForAllEntries(periodOfValidity, featureSchema, store);
-
 			logger.info("Modification of features finished  for table with name {}", featureSchema.getTypeName());
 		}
-	}
-
-	private static void initializePeriodOfValidityForAllEntries(PeriodOfValidityType periodOfValidity,
-			SimpleFeatureType featureSchema, SimpleFeatureStore store) throws CQLException, IOException {
-		Transaction transaction;
-		Filter filter_startDate = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + " is null");
-		Filter filter_endDate = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " is null");
-
-		transaction = new DefaultTransaction(
-				"Modify (initialize periodOfValidity) features in Table " + featureSchema.getTypeName());
-		store.setTransaction(transaction);
-		try {
-			store.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME,
-					periodOfValidity.getStartDate(), filter_startDate);
-			store.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, periodOfValidity.getEndDate(),
-					filter_endDate);
-			transaction.commit(); // actually writes out the features in one
-									// go
-		} catch (Exception eek) {
-			transaction.rollback();
-
-			eek.printStackTrace();
-			throw eek;
-		}
-
-		transaction.close();
 	}
 
 	private static void addFeatureCollectionToTable(SimpleFeatureType featureSchema,
@@ -245,6 +230,92 @@ public class SpatialFeatureDatabaseHandler {
 			DataStore dataStore, ResourceTypeEnum resourceType) throws IOException {
 		SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
 		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(resourceType, dataStore, ""));
+		tb.setNamespaceURI(featureSchema.getName().getNamespaceURI());
+		tb.setCRS(featureSchema.getCoordinateReferenceSystem());
+		List<AttributeDescriptor> attributeDescriptors = featureSchema.getAttributeDescriptors();
+		List<AttributeDescriptor> usableAttributeDescriptors = new ArrayList<>();
+		for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
+			if (!(attributeDescriptor instanceof GeometryDescriptorImpl)){
+				
+				usableAttributeDescriptors.add(attributeDescriptor);
+			}
+		}
+		tb.addAll(usableAttributeDescriptors);
+//		tb.setDefaultGeometry(featureSchema.getGeometryDescriptor().getLocalName());
+		tb.add(featureSchema.getGeometryDescriptor().getLocalName(), Geometry.class);
+		tb.setDefaultGeometry(featureSchema.getGeometryDescriptor().getLocalName());
+		
+		/*
+		 * add KomMonitor specific properties!
+		 */
+
+		/*
+		 * if property already exists then insert it as DATE!!!!!! so we must
+		 * update the property type to Date
+		 */
+
+		AttributeDescriptor attributeDescriptor_startDate = tb
+				.get(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
+		AttributeDescriptor attributeDescriptor_endDate = tb
+				.get(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
+		AttributeDescriptor attributeDescriptor_arisenFrom = tb
+				.get(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME);
+		if (attributeDescriptor_startDate == null) {
+			tb.add(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, java.sql.Date.class);
+		} else {
+
+			AttributeTypeBuilder builder = new AttributeTypeBuilder();
+			builder.setName("DateType");
+			builder.setBinding(java.sql.Date.class);
+			builder.setNillable(true);
+			AttributeType buildType = builder.buildType();
+			attributeDescriptor_startDate = new AttributeDescriptorImpl(buildType,
+					attributeDescriptor_startDate.getName(), attributeDescriptor_startDate.getMinOccurs(),
+					attributeDescriptor_startDate.getMaxOccurs(), attributeDescriptor_startDate.isNillable(),
+					attributeDescriptor_startDate.getDefaultValue());
+
+			tb.set(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, attributeDescriptor_startDate);
+		}
+
+		if (attributeDescriptor_endDate == null) {
+			tb.add(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, java.sql.Date.class);
+		} else {
+
+			AttributeTypeBuilder builder = new AttributeTypeBuilder();
+			builder.setName("DateType");
+			builder.setBinding(java.sql.Date.class);
+			builder.setNillable(true);
+			AttributeType buildType = builder.buildType();
+			attributeDescriptor_endDate = new AttributeDescriptorImpl(buildType, attributeDescriptor_endDate.getName(),
+					attributeDescriptor_endDate.getMinOccurs(), attributeDescriptor_endDate.getMaxOccurs(),
+					attributeDescriptor_endDate.isNillable(), attributeDescriptor_endDate.getDefaultValue());
+
+			tb.set(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, attributeDescriptor_endDate);
+		}
+
+		if (attributeDescriptor_arisenFrom == null) {
+			tb.add(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME, String.class);
+		} else {
+
+			AttributeTypeBuilder builder = new AttributeTypeBuilder();
+			builder.setName("DateType");
+			builder.setBinding(String.class);
+			builder.setNillable(true);
+			AttributeType buildType = builder.buildType();
+			attributeDescriptor_arisenFrom = new AttributeDescriptorImpl(buildType,
+					attributeDescriptor_arisenFrom.getName(), attributeDescriptor_arisenFrom.getMinOccurs(),
+					attributeDescriptor_arisenFrom.getMaxOccurs(), attributeDescriptor_arisenFrom.isNillable(),
+					attributeDescriptor_arisenFrom.getDefaultValue());
+
+			tb.set(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME, attributeDescriptor_arisenFrom);
+		}
+
+		return tb.buildFeatureType();
+	}
+	
+	private static SimpleFeatureType retypeFeatureTypeWithKomMonitorProperties(SimpleFeatureType featureSchema) throws IOException {
+		SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+		tb.setName(featureSchema.getName());
 		tb.setNamespaceURI(featureSchema.getName().getNamespaceURI());
 		tb.setCRS(featureSchema.getCoordinateReferenceSystem());
 		List<AttributeDescriptor> attributeDescriptors = featureSchema.getAttributeDescriptors();
@@ -615,6 +686,11 @@ public class SpatialFeatureDatabaseHandler {
 		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
 		SimpleFeatureSource featureSource = store.getFeatureSource(dbTableName);
 		
+		// ensure that submitted inputFeatureCollection contains KomMonitor relevant properties (periodOfValidity and arisenFrom)
+		// add them here otherwise!
+		inputFeatureSchema = retypeFeatureTypeWithKomMonitorProperties(inputFeatureSchema);
+		inputFeatureCollection = retypeFeatureCollectionWithKomMonitorPropertiesIfNecessary(inputFeatureSchema, inputFeatureCollection, startDate_new, endDate_new);
+		
 		if (featureSource instanceof SimpleFeatureStore) {			
 
 			logger.info("compare schemas");
@@ -647,6 +723,37 @@ public class SpatialFeatureDatabaseHandler {
 					newFeaturesToBeAdded, dbFeatures, sfStore);
 		}
 		store.dispose();
+	}
+
+	private static FeatureCollection retypeFeatureCollectionWithKomMonitorPropertiesIfNecessary(
+			SimpleFeatureType targetSchema, FeatureCollection inputFeatureCollection, Date startDate_new,
+			Date endDate_new) {
+		
+		SimpleFeatureCollection simpleFeatureCollection = (SimpleFeatureCollection) inputFeatureCollection;
+		SimpleFeatureIterator featureIterator = simpleFeatureCollection.features();
+		
+		ArrayList<SimpleFeature> retypedFeaturesList = new ArrayList<SimpleFeature>();
+		
+		while (featureIterator.hasNext()) {
+			SimpleFeature feature = featureIterator.next();
+			
+			feature = reTypeFeature(feature, targetSchema);
+			
+			if(feature.getAttribute(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME) == null) {
+				feature.setAttribute(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new);
+			}
+			if(feature.getAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME) == null) {
+				feature.setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new);
+			}
+			
+			retypedFeaturesList.add(feature);
+		}
+		
+		featureIterator.close();
+		
+		ListFeatureCollection retypedFeatures = new ListFeatureCollection(targetSchema, retypedFeaturesList);
+		
+		return retypedFeatures;
 	}
 
 	private static void compareSchemas(SimpleFeatureType inputFeatureSchema, SimpleFeatureType dbSchema,
@@ -963,32 +1070,10 @@ public class SpatialFeatureDatabaseHandler {
 			SimpleFeatureType inputFeatureSchema, List<SimpleFeature> newFeaturesToBeAdded, SimpleFeatureStore sfStore)
 			throws IOException, CQLException {
 		
-		SimpleFeatureCollection collection = new ListFeatureCollection(inputFeatureSchema, newFeaturesToBeAdded);
+		SimpleFeatureCollection collection = new ListFeatureCollection(inputFeatureSchema, newFeaturesToBeAdded);		
 		
 		List<FeatureId> newFeatureIds = sfStore.addFeatures(collection);
-		numberOfInsertedEntries = newFeatureIds.size();
-
-		// only update those new features whose startDate and/or endDate are not
-		// already set!
-		// each feature might have an individual setting here in contrast to
-		// global setting
-		// ONLY ADJUST FILTER TO INLCUDE QUERY WHERE startDATE is null ||
-		// endDATE is null
-
-		logger.info("modify inserted features");
-		
-		Set<Identifier> featureIdSet = new HashSet<Identifier>();
-		featureIdSet.addAll(newFeatureIds);
-		Filter filter_startDateIsNull = CQL
-				.toFilter("\"" + KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME + "\" IS NULL");
-		Filter filter_endDateIsNull = CQL
-				.toFilter("\"" + KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + "\" IS NULL");
-		Filter filterForNewFeatures_startDate = ff.and(ff.id(featureIdSet), filter_startDateIsNull);
-		Filter filterForNewFeatures_endDate = ff.and(ff.id(featureIdSet), filter_endDateIsNull);
-		sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, startDate_new,
-				filterForNewFeatures_startDate);
-		sfStore.modifyFeatures(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new,
-				filterForNewFeatures_endDate);
+		numberOfInsertedEntries = newFeaturesToBeAdded.size();
 	}
 
 	private static void compareInputFeatureToDbFeatures(Date startDate_new, Date endDate_new, FilterFactory ff,
@@ -1329,6 +1414,12 @@ public class SpatialFeatureDatabaseHandler {
 		inputFeature = DataUtilities.reType(newFeatureType, (SimpleFeature) inputFeature);
 		return inputFeature;
 	}
+	
+	private static SimpleFeature reTypeFeature(Feature inputFeature, SimpleFeatureType targetSchema) {
+		SimpleFeature simpleFeature = (SimpleFeature) inputFeature;
+		simpleFeature = DataUtilities.reType(targetSchema, simpleFeature);
+		return simpleFeature;
+	}
 
 	private static boolean hasSameProperties(Feature inputFeature, Feature dbFeature) {
 		// check properties and propety values
@@ -1520,6 +1611,9 @@ public class SpatialFeatureDatabaseHandler {
 
 			}
 		}
+		
+		logger.info("rewrite table to get rid of dropped columns");
+		DatabaseHelperUtil.rewriteSpatialFeatureTable(dbTableName);
 
 		logger.info("Deletion of all features and their properties from feature table {} was successful.", dbTableName);
 

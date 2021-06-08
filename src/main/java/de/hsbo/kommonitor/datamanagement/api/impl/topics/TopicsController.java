@@ -44,7 +44,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
-	public ResponseEntity addTopic(@RequestBody TopicInputType topicData) {
+	public ResponseEntity<TopicOverviewType> addTopic(@RequestBody TopicInputType topicData) {
 		
 		logger.info("Received request to insert new topic");
 		
@@ -53,25 +53,25 @@ public class TopicsController extends BasePathController implements TopicsApi {
 		/*
 		 * analyse input data and save it within database
 		 */
-		String topicId;
+		TopicOverviewType topic;
 		try {
-			topicId = topicsManager.addTopic(topicData);
+			topic = topicsManager.addTopic(topicData);
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 			
 		}
 
-		if (topicId != null) {
+		if (topic != null) {
 			HttpHeaders responseHeaders = new HttpHeaders();
 
-			String location = topicId;
+			String location = topic.getTopicId();
 			try {
 				responseHeaders.setLocation(new URI(location));
 			} catch (URISyntaxException e) {
 //				return ApiResponseUtil.createResponseEntityFromException(e);
 			}
 
-			return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
+			return new ResponseEntity<TopicOverviewType>(topic, responseHeaders, HttpStatus.CREATED);
 		}else{
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

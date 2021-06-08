@@ -46,7 +46,7 @@ public interface IndicatorsApi {
     @RequestMapping(value = "/indicators",
         consumes = MediaType.ALL_VALUE,
         method = RequestMethod.POST)
-    ResponseEntity addIndicatorAsBody(@ApiParam(value = "indicator data" ,required=true )   @RequestBody IndicatorPOSTInputType indicatorData);
+    ResponseEntity<IndicatorOverviewType> addIndicatorAsBody(@ApiParam(value = "indicator data" ,required=true )   @RequestBody IndicatorPOSTInputType indicatorData);
 
 
     @ApiOperation(value = "Delete the features/contents of the selected indicator dataset", nickname = "deleteIndicatorById", notes = "Delete the features/contents of the selected indicator dataset", authorizations = {

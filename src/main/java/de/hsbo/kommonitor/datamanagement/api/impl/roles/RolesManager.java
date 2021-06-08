@@ -32,7 +32,7 @@ public class RolesManager {
 	@Autowired
 	RolesRepository rolesRepo;
 
-	public String addRole(RoleInputType roleData) throws Exception {
+	public RoleOverviewType addRole(RoleInputType roleData) throws Exception {
 		String roleName = roleData.getRoleName();
 		logger.info("Trying to persist role with roleName '{}'", roleName);
 		/*
@@ -59,7 +59,7 @@ public class RolesManager {
 
 		rolesRepo.saveAndFlush(role);
 
-		return role.getRoleId();
+		return getRoleById(role.getRoleId());
 
 	}
 

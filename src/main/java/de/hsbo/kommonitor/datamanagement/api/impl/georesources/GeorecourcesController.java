@@ -62,7 +62,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 
 
     @Override
-    public ResponseEntity addGeoresourceAsBody(@RequestBody GeoresourcePOSTInputType featureData) {
+    public ResponseEntity<GeoresourceOverviewType> addGeoresourceAsBody(@RequestBody GeoresourcePOSTInputType featureData) {
         logger.info("Received request to insert new georesource");
 
         String accept = request.getHeader("Accept");
@@ -70,25 +70,25 @@ public class GeorecourcesController extends BasePathController implements Geores
         /*
          * analyse input data and save it within database
          */
-        String georesourceMetadataId;
+        GeoresourceOverviewType georesourceMetadata;
         try {
-            georesourceMetadataId = georesourcesManager.addGeoresource(featureData);
+            georesourceMetadata = georesourcesManager.addGeoresource(featureData);
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
 
         }
 
-        if (georesourceMetadataId != null) {
+        if (georesourceMetadata != null) {
             HttpHeaders responseHeaders = new HttpHeaders();
 
-            String location = georesourceMetadataId;
+            String location = georesourceMetadata.getGeoresourceId();
             try {
                 responseHeaders.setLocation(new URI(location));
             } catch (URISyntaxException e) {
                 // return ApiResponseUtil.createResponseEntityFromException(e);
             }
 
-            return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
+            return new ResponseEntity<GeoresourceOverviewType>(georesourceMetadata, responseHeaders, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

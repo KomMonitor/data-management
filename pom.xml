@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.hsbo.kommonitor</groupId>
     <artifactId>kommonitor-data-management-app</artifactId>
-    <version>0.9.5-SNAPSHOT</version>
+    <version>1.1.1-SNAPSHOT</version>
     <packaging>war</packaging>
-
 
     <name>KomMonitor Data Management</name>
     <description>REST API to manage all data within KomMonitor</description>
     
     <scm>
-	    <url>https://github.com/KomMonitor/data-management/</url>
-        <connection>scm:git:git://github.com/KomMonitor/data-management.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/KomMonitor/data-management.git</developerConnection>
-	  </scm>
+	    <url>https://github.com/KomMonitor/data-management</url>
+        <connection>scm:git:https://github.com/KomMonitor/data-management.git</connection>
+        <developerConnection>scm:git:https://github.com/KomMonitor/data-management.git</developerConnection>
+	    <tag>HEAD</tag>
+  </scm>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.0.1.RELEASE</version>
-        <relativePath/>
+        <relativePath />
         <!-- lookup parent from repository -->
     </parent>
 
@@ -47,6 +46,7 @@
         <postgresql.version>42.2.18</postgresql.version>
         <hibernate.version>5.2.12.Final</hibernate.version>
         <release-plugin.version>3.0.0-M1</release-plugin.version>
+        <changelog-plugin.version>0.5.1</changelog-plugin.version>
     </properties>
 
 
@@ -337,12 +337,18 @@
     	<finalName>${app.finalName}</finalName>
         <plugins>
         	<plugin>
+			    <groupId>info.plichta.maven.plugins</groupId>
+			    <artifactId>git-changelog-maven-plugin</artifactId>
+			    <version>${changelog-plugin.version}</version>
+			</plugin>
+        	<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>${release-plugin.version}</version>
                 <configuration>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                     <pushChanges>false</pushChanges>
+                    <preparationGoals>clean git-changelog:git-changelog scm:checkin -DpushChanges=false -Dincludes=CHANGELOG.md -Dmessage="[maven-release-plugin] Update CHANGELOG.md" verify</preparationGoals>
                 </configuration>
             </plugin>
             <plugin>
