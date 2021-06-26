@@ -1376,4 +1376,25 @@ public class IndicatorsManager {
 		this.indicatorsMetadataRepo.flush();
 		return true;
 	}
+
+	public void recreateAllViewsForSpatialUnitById(String spatialUnitId) {
+		
+		List<IndicatorSpatialUnitJoinEntity> affectedIndicatorEntries = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
+		
+		for (IndicatorSpatialUnitJoinEntity affectedIndicatorEntry : affectedIndicatorEntries) {
+			String indicatorViewTableName = affectedIndicatorEntry.getIndicatorValueTableName();
+
+	        try {
+				indicatorViewTableName = createOrReplaceIndicatorView_fromViewName(indicatorViewTableName, affectedIndicatorEntry.getSpatialUnitName(), affectedIndicatorEntry.getIndicatorMetadataId());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}		        
+		
+	}
 }

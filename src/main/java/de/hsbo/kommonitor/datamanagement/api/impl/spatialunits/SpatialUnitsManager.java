@@ -312,6 +312,10 @@ public class SpatialUnitsManager {
 
             // handle OGC web service - null parameter is defaultStyle
             ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
+            
+            // as a new spatial unit feature table was generated, we must regenerate all views for all indicators that have 
+            // the modified spatial unit
+            indicatorsManager.recreateAllViewsForSpatialUnitById(spatialUnitId);
 
             /*
              * set wms and wfs urls within metadata
@@ -446,6 +450,9 @@ public class SpatialUnitsManager {
 
             // handle OGC web service - null parameter is defaultStyle
             ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
+            
+            
+            indicatorsManager.recreateAllViewsForSpatialUnitById(spatialUnitId);
 
             /*
              * set wms and wfs urls within metadata
