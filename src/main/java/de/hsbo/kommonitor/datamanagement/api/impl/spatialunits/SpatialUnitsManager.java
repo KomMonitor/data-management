@@ -434,6 +434,7 @@ public class SpatialUnitsManager {
 
     public String updateFeatures(SpatialUnitPUTInputType featureData, String spatialUnitId) throws Exception {
         logger.info("Trying to update spatialUnit features for datasetId '{}'", spatialUnitId);
+        logger.info("isPartialUpdate is set to " + featureData.isIsPartialUpdate());
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
             String datasetName = metadataEntity.getDatasetName();

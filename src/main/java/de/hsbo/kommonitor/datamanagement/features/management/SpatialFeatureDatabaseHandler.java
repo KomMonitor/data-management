@@ -26,9 +26,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.data.store.ReTypingFeatureCollection;
 import org.geotools.feature.AttributeTypeBuilder;
-import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -39,8 +37,6 @@ import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
-import org.geotools.temporal.object.DefaultInstant;
-import org.geotools.temporal.object.DefaultPosition;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -54,7 +50,6 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Or;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
-import org.opengis.temporal.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.codec.DecodingException;
@@ -591,9 +586,10 @@ public class SpatialFeatureDatabaseHandler {
 
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
 		String geoJsonString = featureData.getGeoJsonString();
+		Boolean isPartialUpdate = featureData.isIsPartialUpdate();
 
 		logger.info("Start Georesource update");
-		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString);
+		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString, isPartialUpdate);
 	}
 
 	public static void updateSpatialUnitFeatures(SpatialUnitPUTInputType featureData, String dbTableName)
@@ -601,12 +597,13 @@ public class SpatialFeatureDatabaseHandler {
 
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
 		String geoJsonString = featureData.getGeoJsonString();
+		Boolean isPartialUpdate = featureData.isIsPartialUpdate();
 
-		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString);
+		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString, isPartialUpdate);
 	}
 
 	private static void updateSpatialFeatureTable(String dbTableName, PeriodOfValidityType periodOfValidity,
-			String geoJsonString) throws IOException, Exception {
+			String geoJsonString, Boolean isPartialUpdate) throws IOException, Exception {
 		/*
 		 * idea: check all features from input:
 		 * 
@@ -661,7 +658,7 @@ public class SpatialFeatureDatabaseHandler {
 			inputFeaturesHaveArisonFromAttribute = true;
 
 		handleUpdateProcess(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema, inputFeatureCollection,
-				newFeaturesToBeAdded);
+				newFeaturesToBeAdded, isPartialUpdate);
 		
 		logger.info("run vacuum analyse");
 		DatabaseHelperUtil.runVacuumAnalyse(dbTableName);
@@ -680,7 +677,7 @@ public class SpatialFeatureDatabaseHandler {
 
 	private static void handleUpdateProcess(String dbTableName, Date startDate_new, Date endDate_new, FilterFactory ff,
 			SimpleFeatureType inputFeatureSchema, FeatureCollection inputFeatureCollection,
-			List<SimpleFeature> newFeaturesToBeAdded)
+			List<SimpleFeature> newFeaturesToBeAdded, Boolean isPartialUpdate)
 			throws IOException, Exception {
 		
 		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
@@ -714,9 +711,12 @@ public class SpatialFeatureDatabaseHandler {
 			 * endDate in case they are no longer present in the inputFeatures
 			 */
 
-			logger.info("Start compare db features to input features");
-			compareDbFeaturesToInputFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
-					newFeaturesToBeAdded, dbFeatures, sfStore);
+			if(! isPartialUpdate) {
+				logger.info("Start compare db features to input features");
+				compareDbFeaturesToInputFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
+						newFeaturesToBeAdded, dbFeatures, sfStore);
+			}
+			
 
 			logger.info("Start compare input features to db features");
 			compareInputFeaturesToDbFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema, inputFeatureCollection,
@@ -923,6 +923,8 @@ public class SpatialFeatureDatabaseHandler {
 			 * then we must remove it from db!
 			 * 
 			 * --> always expect full datasets!!!!
+			 * 
+			 * --> except: isPartialUpdate is set to true --> then leave critival values in DB
 			 */
 
 			FeatureIterator dbFeaturesIterator = dbFeatures.features();
