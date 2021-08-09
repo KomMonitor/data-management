@@ -6,14 +6,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +27,8 @@ import de.hsbo.kommonitor.datamanagement.api.GeoresourcesApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePOSTInputType;
@@ -271,7 +268,7 @@ public class GeorecourcesController extends BasePathController implements Geores
             String jsonSchema = null;
             try {
                 jsonSchema = georesourcesManager.getJsonSchemaForDatasetName(georesourceId, provider);
-            } catch (ResourceNotFoundException e) {
+            } catch (Exception e) {
                 return ApiUtils.createResponseEntityFromException(e);
             }
 

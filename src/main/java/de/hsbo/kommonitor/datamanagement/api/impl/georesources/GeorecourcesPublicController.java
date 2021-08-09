@@ -1,13 +1,10 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +16,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
 
 
 @Controller
@@ -115,7 +115,7 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
             String jsonSchema;
             try {
                 jsonSchema = georesourcesManager.getJsonSchemaForDatasetName(georesourceId);
-            } catch (ResourceNotFoundException e) {
+            } catch (Exception e) {
                 return ApiUtils.createResponseEntityFromException(e);
             }
             return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
