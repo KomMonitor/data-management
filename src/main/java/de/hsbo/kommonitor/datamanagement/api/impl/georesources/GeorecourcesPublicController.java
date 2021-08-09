@@ -22,6 +22,7 @@ import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
+import io.swagger.annotations.ApiParam;
 
 
 @Controller
@@ -121,6 +122,32 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
             return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    public ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesByIdWithoutGeometry(@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId) {
+    	logger.info("Received request to get all public georesource features for datasetId '{}' without geometry", georesourceId);
+
+        try {
+            String geoJsonFeatures = georesourcesManager.getAllGeoresourceFeatures_withoutGeometry(georesourceId);
+            String fileName = "GeoresourceFeatures_" + georesourceId + "_all_withoutGeometry.json";
+
+            return createGeoresourceFeatureResponse(fileName, geoJsonFeatures);
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+    
+    public ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonthWithoutGeometry(@ApiParam(value = "day",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "month",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "year",required=true) @PathVariable("year") BigDecimal year) {
+    	logger.info("Received request to get public georesource features for datasetId '{}' without geometry", georesourceId);
+
+        try {
+            String geoJsonFeatures = georesourcesManager.getValidGeoresourceFeatures_withoutGeometry(georesourceId, year, month, day);
+            String fileName = "GeoresourceFeatures_" + georesourceId + "_" + year + "-" + month + "-" + day + "_withoutGeometry.json";
+
+            return createGeoresourceFeatureResponse(fileName, geoJsonFeatures);
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
         }
     }
 

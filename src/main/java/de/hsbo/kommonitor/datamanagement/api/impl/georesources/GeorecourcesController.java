@@ -33,6 +33,7 @@ import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewT
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
+import io.swagger.annotations.ApiParam;
 
 
 @Controller
@@ -276,6 +277,52 @@ public class GeorecourcesController extends BasePathController implements Geores
 
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    public ResponseEntity<byte[]> getAllGeoresourceFeaturesByIdWithoutGeometry(@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId, Principal principal) {
+    	logger.info("Received request to get all georesource features for datasetId '{}' without geometry", georesourceId);
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+            String geoJsonFeatures = georesourcesManager.getAllGeoresourceFeatures_withoutGeometry(georesourceId, provider);
+            String fileName = "GeoresourceFeatures_" + georesourceId + "_all_withoutGeometry.json";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("content-disposition", "attachment; filename=" + fileName);
+            headers.add("Content-Type", "application/json; charset=utf-8");
+            byte[] JsonBytes = geoJsonFeatures.getBytes();
+
+            return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/json"))
+                    .body(JsonBytes);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+    
+    public ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonthWithoutGeometry(@ApiParam(value = "day",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "month",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "year",required=true) @PathVariable("year") BigDecimal year, Principal principal) {
+    	logger.info("Received request to get georesource features for datasetId '{}' without geometry", georesourceId);
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+            String geoJsonFeatures = georesourcesManager.getValidGeoresourceFeatures_withoutGeometry(georesourceId, year, month, day, provider);
+            String fileName = "GeoresourceFeatures_" + georesourceId + "_" + year + "-" + month + "-" + day + "_withoutGeometry.json";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("content-disposition", "attachment; filename=" + fileName);
+            headers.add("Content-Type", "application/json; charset=utf-8");
+            byte[] JsonBytes = geoJsonFeatures.getBytes();
+
+            return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/vnd.geo+json"))
+                    .body(JsonBytes);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
         }
     }
 

@@ -504,6 +504,39 @@ public class GeoresourcesManager {
                     "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
         }
     }
+    
+    public String getAllGeoresourceFeatures_withoutGeometry(String georesourceId) throws Exception {
+		return getAllGeoresourceFeatures_withoutGeometry(georesourceId, null);
+	}
+    
+    public String getAllGeoresourceFeatures_withoutGeometry(String georesourceId, AuthInfoProvider authInfoProvider) throws Exception {
+
+        if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+            MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+
+            if (authInfoProvider == null) {
+                if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+                    throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+                }
+            } else {
+                if (metadataEntity == null || !hasAllowedRole(authInfoProvider, metadataEntity)) {
+                    throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+                }
+            }
+
+            String dbTableName = metadataEntity.getDbTableName();
+
+            String json = SpatialFeatureDatabaseHandler.getAllFeatures_withoutGeometry(dbTableName);
+            return json;
+
+        } else {
+            logger.error(
+                    "No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
+                    georesourceId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
+        }
+    }
 
     public String getValidGeoresourceFeatures(String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day, String simplifyGeometries)
             throws Exception {
@@ -544,6 +577,46 @@ public class GeoresourcesManager {
                     "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
         }
     }
+    
+    public String getValidGeoresourceFeatures_withoutGeometry(String georesourceId, BigDecimal year, BigDecimal month,
+			BigDecimal day, AuthInfoProvider provider) throws Exception {
+    	Calendar calender = Calendar.getInstance();
+        calender.set(year.intValue(), month.intValueExact() - 1, day.intValue());
+        java.util.Date date = calender.getTime();
+        logger.info("Retrieving valid georesource features from Dataset with id '{}' for date '{}'", georesourceId,
+                date);
+
+        if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+            MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+
+            if (provider == null) {
+                if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+                    throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+                }
+            } else {
+                if (metadataEntity == null || !hasAllowedRole(provider, metadataEntity)) {
+                    throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+                }
+            }
+
+            String dbTableName = metadataEntity.getDbTableName();
+
+            String json = SpatialFeatureDatabaseHandler.getValidFeatures_withoutGeometry(date, dbTableName);
+            return json;
+
+        } else {
+            logger.error(
+                    "No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
+                    georesourceId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
+        }
+	}
+	
+	public String getValidGeoresourceFeatures_withoutGeometry(String georesourceId, BigDecimal year, BigDecimal month,
+			BigDecimal day) throws Exception {
+		return getValidGeoresourceFeatures_withoutGeometry(georesourceId, year, month, day, null);
+	}
 
     public String getJsonSchemaForDatasetName(String georesourceId) throws Exception {
         logger.info("Retrieving georesource jsonSchema for datasetId '{}'", georesourceId);

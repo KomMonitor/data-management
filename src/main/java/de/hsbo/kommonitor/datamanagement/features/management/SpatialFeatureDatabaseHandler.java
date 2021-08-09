@@ -68,6 +68,7 @@ import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.GeometrySimplifierUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
@@ -509,6 +510,45 @@ public class SpatialFeatureDatabaseHandler {
 
 		return geoJson;
 	}
+	
+	public static String getAllFeatures_withoutGeometry(String dbTableName) throws Exception {
+        
+        String allGeoresourceFeatures = getAllFeatures(dbTableName, SimplifyGeometriesEnum.ORIGINAL.toString());
+		
+        String featureProperties = getFeaturePropertiesArray(allGeoresourceFeatures);
+
+		return featureProperties;
+	}
+
+	private static String getFeaturePropertiesArray(String geoJsonFeatures) throws JsonParseException, JsonMappingException, IOException {
+		
+		FeatureJSON featureJson = SpatialFeatureDatabaseHandler.instantiateFeatureJSON();
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+		org.geojson.FeatureCollection featureCollection_jackson = objectMapper.readValue(geoJsonFeatures,
+				org.geojson.FeatureCollection.class);
+		
+		List<org.geojson.Feature> features = featureCollection_jackson.getFeatures();
+		
+		List<Map<String, Object>> featureProperties = new ArrayList<Map<String, Object>>();
+		
+		for (org.geojson.Feature feature : features) {
+			featureProperties.add(feature.getProperties());
+		}		
+
+        try {
+            String json = objectMapper.writeValueAsString(featureProperties);
+            System.out.println(json);
+            
+            return json;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw e;
+        }
+		
+	}
 
 	private static FeatureCollection fetchAllFeatures(SimpleFeatureSource featureSource) {
 		// TODO Auto-generated method stub
@@ -552,6 +592,14 @@ public class SpatialFeatureDatabaseHandler {
 		dataStore.dispose();
 
 		return geoJson;
+	}
+	
+	public static String getValidFeatures_withoutGeometry(Date date, String dbTableName) throws Exception {
+		String validGeoresourceFeatures = getValidFeatures(date, dbTableName, SimplifyGeometriesEnum.ORIGINAL.toString());
+		
+        String featureProperties = getFeaturePropertiesArray(validGeoresourceFeatures);
+
+		return featureProperties;
 	}
 
 	private static FeatureCollection fetchFeaturesForDate(SimpleFeatureSource featureSource, Date date)

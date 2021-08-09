@@ -76,6 +76,39 @@ public interface GeoresourcesPublicApi {
                                                                    @ApiParam(value = "day for which datasets shall be queried", required = true) @PathVariable("day") BigDecimal day,
                                                                    @ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries);
 
+    @ApiOperation(value = "retrieve only the properties without geometry of all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)", nickname = "getAllPublicGeoresourceFeaturesByIdWithoutGeometry", notes = "retrieve only the properties without geometry of all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)", response = String.class, authorizations = {
+            @Authorization(value = "kommonitor-data-access_oauth", scopes = {
+                
+                })
+        }, tags={ "georecources-public-controller", })
+        @ApiResponses(value = { 
+            @ApiResponse(code = 200, message = "OK", response = String.class),
+            @ApiResponse(code = 400, message = "Invalid status value"),
+            @ApiResponse(code = 401, message = "API key is missing or invalid"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Not Found") })
+        @RequestMapping(value = "/management/public/georesources/{georesourceId}/allFeatures/without-geometry",
+            produces = { "application/json" }, 
+            method = RequestMethod.GET)
+        ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesByIdWithoutGeometry(@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId);
+
+    @ApiOperation(value = "retrieve only the properties without geometry of the features according to the selected public geo-resource dataset and selected year and month as GeoJSON", nickname = "getPublicGeoresourceByIdAndYearAndMonthWithoutGeometry", notes = "retrieve only the properties without geometry of the features according to the selected public geo-resource dataset and selected year and month as GeoJSON", response = byte[].class, authorizations = {
+            @Authorization(value = "kommonitor-data-access_oauth", scopes = {
+                
+                })
+        }, tags={ "georecources-public-controller", })
+        @ApiResponses(value = { 
+            @ApiResponse(code = 200, message = "OK", response = byte[].class),
+            @ApiResponse(code = 400, message = "Invalid status value"),
+            @ApiResponse(code = 401, message = "API key is missing or invalid"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Not Found") })
+        @RequestMapping(value = "/management/public/georesources/{georesourceId}/{year}/{month}/{day}/without-geometry",
+            produces = { "application/octed-stream" }, 
+            method = RequestMethod.GET)
+        ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonthWithoutGeometry(@ApiParam(value = "day",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "month",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "year",required=true) @PathVariable("year") BigDecimal year);
+
+    
     @ApiOperation(value = "retrieve the JSON schema for the selected public geo-resource dataset",
             nickname = "getPublicGeoresourceSchemaByLevel",
             notes = "retrieve the JSON schema for the selected public geo-resource dataset. The JSON schema indicates the property structure of the dataset.",
