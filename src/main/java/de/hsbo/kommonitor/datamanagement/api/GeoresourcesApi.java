@@ -130,7 +130,7 @@ public interface GeoresourcesApi {
             @ApiResponse(code = 401, message = "API key is missing or invalid"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Not Found") })
-        @RequestMapping(value = "/management/georesources/{georesourceId}/allFeatures/without-geometry",
+        @RequestMapping(value = "/georesources/{georesourceId}/allFeatures/without-geometry",
             produces = { "application/json" }, 
             method = RequestMethod.GET)
         ResponseEntity<byte[]> getAllGeoresourceFeaturesByIdWithoutGeometry(@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId, Principal principal);
@@ -146,7 +146,7 @@ public interface GeoresourcesApi {
             @ApiResponse(code = 401, message = "API key is missing or invalid"),
             @ApiResponse(code = 403, message = "Forbidden"),
             @ApiResponse(code = 404, message = "Not Found") })
-        @RequestMapping(value = "/management/georesources/{georesourceId}/{year}/{month}/{day}/without-geometry",
+        @RequestMapping(value = "/georesources/{georesourceId}/{year}/{month}/{day}/without-geometry",
             produces = { "application/octed-stream" }, 
             method = RequestMethod.GET)
         ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonthWithoutGeometry(@ApiParam(value = "day",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "month",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "year",required=true) @PathVariable("year") BigDecimal year, Principal principal);
