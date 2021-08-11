@@ -1742,8 +1742,19 @@ public class SpatialFeatureDatabaseHandler {
 						// for different property values we have discovered different 
 						// data type candidates
 						// hence set String as dataType
-						properties.put(key, "String");
-						numberOfProperties_nonStringCandidates --;
+						
+						// except for numeric values!
+						if(dataType.equalsIgnoreCase("Double") && dataType_new.equalsIgnoreCase("Integer")) {
+							properties.put(key, "Double");
+						}
+						else if(dataType.equalsIgnoreCase("Integer") && dataType_new.equalsIgnoreCase("Double")) {
+							properties.put(key, "Double");
+						}
+						else {
+							properties.put(key, "String");
+							numberOfProperties_nonStringCandidates --;
+						}
+						
 					}
 				}
 			}
