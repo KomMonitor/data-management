@@ -1830,6 +1830,17 @@ public class SpatialFeatureDatabaseHandler {
 		}
 		
 		/*
+		 * INTEGER
+		 */
+		try {
+			int parsed = Integer.parseInt(value_string);
+			
+			return "Integer";
+		} catch (Exception e) {
+			
+		}
+		
+		/*
 		 * DOUBLE
 		 */
 		try {
@@ -1840,16 +1851,6 @@ public class SpatialFeatureDatabaseHandler {
 			
 		}
 		
-		/*
-		 * INTEGER
-		 */
-		try {
-			int parsed = Integer.parseInt(value_string);
-			
-			return "Integer";
-		} catch (Exception e) {
-			
-		}
 		
 		/*
 		 * Boolean
