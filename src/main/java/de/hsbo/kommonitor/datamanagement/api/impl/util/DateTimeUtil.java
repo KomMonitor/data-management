@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -153,6 +155,11 @@ public class DateTimeUtil {
 	public static LocalDate toLocalDate(Date date) {
 		return new java.sql.Date(date.getTime()).toLocalDate();
 	}
+	
+	public static OffsetDateTime toOffsetDateTime(Date date) {
+		return date.toInstant()
+				  .atOffset(ZoneOffset.UTC);
+	}
 
 	public static FeatureCollection fixDateResonseTypes(FeatureCollection features) {
 		
@@ -255,5 +262,7 @@ public class DateTimeUtil {
 	public static Date getDatePlusOneDay(Date startDate_new) {
 		return new Date(startDate_new.getTime() + (1000 * 60 * 60 * 24));
 	}
+
+	
 
 }

@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.hsbo.kommonitor.datamanagement.api.GeoresourcesApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
@@ -45,6 +46,9 @@ public class GeorecourcesController extends BasePathController implements Geores
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
+    
+    @Autowired
+    private LastModificationManager lastModManager;
 
     @Autowired
     GeoresourcesManager georesourcesManager;
@@ -71,6 +75,7 @@ public class GeorecourcesController extends BasePathController implements Geores
         GeoresourceOverviewType georesourceMetadata;
         try {
             georesourceMetadata = georesourcesManager.addGeoresource(featureData);
+            lastModManager.updateLastDatabaseModification_georesources();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
 
@@ -105,6 +110,7 @@ public class GeorecourcesController extends BasePathController implements Geores
         boolean isDeleted;
         try {
             isDeleted = georesourcesManager.deleteAllGeoresourceFeaturesById(georesourceId);
+            lastModManager.updateLastDatabaseModification_georesources();
 
             if (isDeleted)
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -129,6 +135,7 @@ public class GeorecourcesController extends BasePathController implements Geores
         boolean isDeleted;
         try {
             isDeleted = georesourcesManager.deleteGeoresourceDatasetById(georesourceId);
+            lastModManager.updateLastDatabaseModification_georesources();
 
             if (isDeleted)
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -154,11 +161,12 @@ public class GeorecourcesController extends BasePathController implements Geores
         boolean isDeleted;
         try {
             isDeleted = georesourcesManager.deleteGeoresourceFeaturesByIdAndDate(georesourceId, year, month, day);
+            lastModManager.updateLastDatabaseModification_georesources();
 
             if (isDeleted)
                 return new ResponseEntity<>(HttpStatus.OK);
 
-        } catch (ResourceNotFoundException | IOException e) {
+        } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
         }
 
@@ -338,6 +346,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 
         try {
             georesourceId = georesourcesManager.updateFeatures(featureData, georesourceId);
+            lastModManager.updateLastDatabaseModification_georesources();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
 
@@ -371,6 +380,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 
         try {
             georesourceId = georesourcesManager.updateMetadata(metadata, georesourceId);
+            lastModManager.updateLastDatabaseModification_georesources();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
 

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.hsbo.kommonitor.datamanagement.api.ProcessScriptsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptOverviewType;
@@ -44,6 +45,9 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Autowired
 	AuthInfoProviderFactory authInfoProviderFactory;
+	
+	@Autowired
+    private LastModificationManager lastModManager;
 
 	@org.springframework.beans.factory.annotation.Autowired
 	public ScriptController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -63,6 +67,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 		ProcessScriptOverviewType script;
 		try {
 			script = scriptManager.addScript(processScriptData);
+			lastModManager.updateLastDatabaseModification_processScripts();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
@@ -98,11 +103,12 @@ public class ScriptController extends BasePathController implements ProcessScrip
 			boolean isDeleted;
 			try {
 				isDeleted = scriptManager.deleteScriptByIndicatorId(indicatorId);
+				lastModManager.updateLastDatabaseModification_processScripts();
 			
 			if(isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
 			
-			} catch (ResourceNotFoundException e) {
+			} catch (Exception e) {
 				return ApiUtils.createResponseEntityFromException(e);
 			}
 		
@@ -172,6 +178,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 		 */
 		try {
 			indicatorId = scriptManager.updateScriptForIndicatorId(processScriptData, indicatorId);
+			lastModManager.updateLastDatabaseModification_processScripts();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
@@ -229,11 +236,12 @@ public class ScriptController extends BasePathController implements ProcessScrip
 			boolean isDeleted;
 			try {
 				isDeleted = scriptManager.deleteScriptByScriptId(scriptId);
+				lastModManager.updateLastDatabaseModification_processScripts();
 			
 			if(isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
 			
-			} catch (ResourceNotFoundException e) {
+			} catch (Exception e) {
 				return ApiUtils.createResponseEntityFromException(e);
 			}
 		
@@ -299,6 +307,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 		 */
 		try {
 			scriptId = scriptManager.updateScriptForScriptId(processScriptData, scriptId);
+			lastModManager.updateLastDatabaseModification_processScripts();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
