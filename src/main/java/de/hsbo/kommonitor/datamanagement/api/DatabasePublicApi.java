@@ -30,7 +30,7 @@ public interface DatabasePublicApi {
 	        @ApiResponse(code = 401, message = "API key is missing or invalid"),
 	        @ApiResponse(code = 403, message = "Forbidden"),
 	        @ApiResponse(code = 404, message = "Not Found") })
-	    @RequestMapping(value = "/management/public/database/last-modification",
+	    @RequestMapping(value = "/public/database/last-modification",
 	        produces = { "application/json" }, 
 	        method = RequestMethod.GET)
 	    ResponseEntity<LastModificationOverviewType> getLastModification();
