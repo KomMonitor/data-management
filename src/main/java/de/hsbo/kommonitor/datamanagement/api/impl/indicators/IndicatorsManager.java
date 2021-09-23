@@ -985,7 +985,14 @@ public class IndicatorsManager {
             throw e;
         }
 
-        return getIndicatorById(metadataId);
+        List<IndicatorReferenceType> indicatorReferences = ReferenceManager.getIndicatorReferences(metadataId);
+        List<GeoresourceReferenceType> georesourcesReferences = ReferenceManager.getGeoresourcesReferences(metadataId);
+
+        List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray = spatialUnitsMetadataRepo.findAll();
+
+        return indicatorsMapper
+                .mapToSwaggerIndicator(indicatorsMetadataRepo.findByDatasetId(metadataId), indicatorReferences, georesourcesReferences, spatialUnitsMetadataArray);
+
     }
 
     private Collection<RolesEntity> retrieveRoles(List<String> roleIds) throws ResourceNotFoundException {

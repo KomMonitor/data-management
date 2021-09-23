@@ -135,7 +135,7 @@ public class SpatialUnitsManager {
         }
 
 
-        return getSpatialUnitByDatasetId(metadataId);
+        return SpatialUnitsMapper.mapToSwaggerSpatialUnit(spatialUnitsMetadataRepo.findByDatasetId(metadataId));
     }
 
     private void updateSpatialUnitHierarchy_onAdd(String metadataId, SpatialUnitPOSTInputType featureData) {

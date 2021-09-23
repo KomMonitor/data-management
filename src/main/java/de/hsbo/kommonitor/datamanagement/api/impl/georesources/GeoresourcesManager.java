@@ -121,7 +121,7 @@ public class GeoresourcesManager {
              */
             updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
 
-            return getGeoresourceByDatasetId(metadataId);
+            return GeoresourcesMapper.mapToSwaggerGeoresource(georesourcesMetadataRepo.findByDatasetId(metadataId));            		
         } catch (Exception e) {
             /*
              * remove partially created resources and thrwo error
