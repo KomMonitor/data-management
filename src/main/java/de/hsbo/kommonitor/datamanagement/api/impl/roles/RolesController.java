@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.hsbo.kommonitor.datamanagement.api.RolesApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.roles.RoleInputType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
@@ -36,6 +36,9 @@ public class RolesController extends BasePathController implements RolesApi {
 
 	@Autowired
 	RolesManager rolesManager;
+	
+	@Autowired
+    private LastModificationManager lastModManager;
 
 	@org.springframework.beans.factory.annotation.Autowired
 	public RolesController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -55,6 +58,7 @@ public class RolesController extends BasePathController implements RolesApi {
 		RoleOverviewType role;
 		try {
 			role = rolesManager.addRole(roleData);
+			lastModManager.updateLastDatabaseModification_roles();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
@@ -90,11 +94,12 @@ logger.info("Received request to delete role for roleId '{}'", roleId);
 			boolean isDeleted;
 			try {
 				isDeleted = rolesManager.deleteRoleById(roleId);
+				lastModManager.updateLastDatabaseModification_roles();
 			
 			if(isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
 			
-			} catch (ResourceNotFoundException e) {
+			} catch (Exception e) {
 				return ApiUtils.createResponseEntityFromException(e);
 			}
 		
@@ -158,6 +163,7 @@ logger.info("Received request to delete role for roleId '{}'", roleId);
 		
 		try {
 			roleId = rolesManager.updateRole(roleData, roleId);
+			lastModManager.updateLastDatabaseModification_roles();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 

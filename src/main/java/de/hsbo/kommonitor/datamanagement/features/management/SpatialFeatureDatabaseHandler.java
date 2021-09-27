@@ -15,7 +15,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.DataUtilities;
@@ -26,9 +29,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.data.store.ReTypingFeatureCollection;
 import org.geotools.feature.AttributeTypeBuilder;
-import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -39,8 +40,6 @@ import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
-import org.geotools.temporal.object.DefaultInstant;
-import org.geotools.temporal.object.DefaultPosition;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -54,13 +53,14 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Or;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
-import org.opengis.temporal.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.codec.DecodingException;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.PrecisionModel;
@@ -68,6 +68,7 @@ import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.GeometrySimplifierUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
@@ -509,6 +510,45 @@ public class SpatialFeatureDatabaseHandler {
 
 		return geoJson;
 	}
+	
+	public static String getAllFeatures_withoutGeometry(String dbTableName) throws Exception {
+        
+        String allGeoresourceFeatures = getAllFeatures(dbTableName, SimplifyGeometriesEnum.ORIGINAL.toString());
+		
+        String featureProperties = getFeaturePropertiesArray(allGeoresourceFeatures);
+
+		return featureProperties;
+	}
+
+	private static String getFeaturePropertiesArray(String geoJsonFeatures) throws JsonParseException, JsonMappingException, IOException {
+		
+		FeatureJSON featureJson = SpatialFeatureDatabaseHandler.instantiateFeatureJSON();
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+		org.geojson.FeatureCollection featureCollection_jackson = objectMapper.readValue(geoJsonFeatures,
+				org.geojson.FeatureCollection.class);
+		
+		List<org.geojson.Feature> features = featureCollection_jackson.getFeatures();
+		
+		List<Map<String, Object>> featureProperties = new ArrayList<Map<String, Object>>();
+		
+		for (org.geojson.Feature feature : features) {
+			featureProperties.add(feature.getProperties());
+		}		
+
+        try {
+            String json = objectMapper.writeValueAsString(featureProperties);
+            System.out.println(json);
+            
+            return json;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw e;
+        }
+		
+	}
 
 	private static FeatureCollection fetchAllFeatures(SimpleFeatureSource featureSource) {
 		// TODO Auto-generated method stub
@@ -553,6 +593,14 @@ public class SpatialFeatureDatabaseHandler {
 
 		return geoJson;
 	}
+	
+	public static String getValidFeatures_withoutGeometry(Date date, String dbTableName) throws Exception {
+		String validGeoresourceFeatures = getValidFeatures(date, dbTableName, SimplifyGeometriesEnum.ORIGINAL.toString());
+		
+        String featureProperties = getFeaturePropertiesArray(validGeoresourceFeatures);
+
+		return featureProperties;
+	}
 
 	private static FeatureCollection fetchFeaturesForDate(SimpleFeatureSource featureSource, Date date)
 			throws CQLException, IOException {
@@ -591,9 +639,10 @@ public class SpatialFeatureDatabaseHandler {
 
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
 		String geoJsonString = featureData.getGeoJsonString();
+		Boolean isPartialUpdate = featureData.isIsPartialUpdate();
 
 		logger.info("Start Georesource update");
-		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString);
+		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString, isPartialUpdate);
 	}
 
 	public static void updateSpatialUnitFeatures(SpatialUnitPUTInputType featureData, String dbTableName)
@@ -601,12 +650,13 @@ public class SpatialFeatureDatabaseHandler {
 
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
 		String geoJsonString = featureData.getGeoJsonString();
+		Boolean isPartialUpdate = featureData.isIsPartialUpdate();
 
-		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString);
+		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString, isPartialUpdate);
 	}
 
 	private static void updateSpatialFeatureTable(String dbTableName, PeriodOfValidityType periodOfValidity,
-			String geoJsonString) throws IOException, Exception {
+			String geoJsonString, Boolean isPartialUpdate) throws IOException, Exception {
 		/*
 		 * idea: check all features from input:
 		 * 
@@ -661,7 +711,7 @@ public class SpatialFeatureDatabaseHandler {
 			inputFeaturesHaveArisonFromAttribute = true;
 
 		handleUpdateProcess(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema, inputFeatureCollection,
-				newFeaturesToBeAdded);
+				newFeaturesToBeAdded, isPartialUpdate);
 		
 		logger.info("run vacuum analyse");
 		DatabaseHelperUtil.runVacuumAnalyse(dbTableName);
@@ -671,7 +721,7 @@ public class SpatialFeatureDatabaseHandler {
 				dbTableName, numberOfModifiedEntries, numberOfInsertedEntries, numberOfEntriesMarkedAsOutdated);
 	}
 
-	private static FeatureJSON instantiateFeatureJSON() {
+	public static FeatureJSON instantiateFeatureJSON() {
 		GeometryJSON geometryJSON = new GeometryJSON(
 				KomMonitorFeaturePropertyConstants.NUMBER_OF_DECIMALS_FOR_GEOJSON_OUTPUT);
 
@@ -680,7 +730,7 @@ public class SpatialFeatureDatabaseHandler {
 
 	private static void handleUpdateProcess(String dbTableName, Date startDate_new, Date endDate_new, FilterFactory ff,
 			SimpleFeatureType inputFeatureSchema, FeatureCollection inputFeatureCollection,
-			List<SimpleFeature> newFeaturesToBeAdded)
+			List<SimpleFeature> newFeaturesToBeAdded, Boolean isPartialUpdate)
 			throws IOException, Exception {
 		
 		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
@@ -714,9 +764,12 @@ public class SpatialFeatureDatabaseHandler {
 			 * endDate in case they are no longer present in the inputFeatures
 			 */
 
-			logger.info("Start compare db features to input features");
-			compareDbFeaturesToInputFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
-					newFeaturesToBeAdded, dbFeatures, sfStore);
+			if(! isPartialUpdate) {
+				logger.info("Start compare db features to input features");
+				compareDbFeaturesToInputFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
+						newFeaturesToBeAdded, dbFeatures, sfStore);
+			}
+			
 
 			logger.info("Start compare input features to db features");
 			compareInputFeaturesToDbFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema, inputFeatureCollection,
@@ -923,6 +976,8 @@ public class SpatialFeatureDatabaseHandler {
 			 * then we must remove it from db!
 			 * 
 			 * --> always expect full datasets!!!!
+			 * 
+			 * --> except: isPartialUpdate is set to true --> then leave critival values in DB
 			 */
 
 			FeatureIterator dbFeaturesIterator = dbFeatures.features();
@@ -1618,4 +1673,213 @@ public class SpatialFeatureDatabaseHandler {
 		logger.info("Deletion of all features and their properties from feature table {} was successful.", dbTableName);
 
 	}
+
+	public static SortedMap<String, String> guessSchemaFromFeatureValues(String allGeoresourceFeatures) throws JsonParseException, JsonMappingException, IOException {
+		
+		SortedMap<String, String> properties = new TreeMap();
+		
+		FeatureJSON featureJson = SpatialFeatureDatabaseHandler.instantiateFeatureJSON();
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+		org.geojson.FeatureCollection featureCollection_jackson = objectMapper.readValue(allGeoresourceFeatures,
+				org.geojson.FeatureCollection.class);
+		
+		List<org.geojson.Feature> features = featureCollection_jackson.getFeatures();
+		
+		// set from first feature
+		properties = setInitialSchemaPropertiesFromFeature(properties, features.get(0));
+		
+		int numberOfProperties_notSetYet = 0;
+		int numberOfProperties_nonStringCandidates = 0;
+		
+		for (String key : properties.keySet()) {
+			if(properties.get(key) == null) {
+				numberOfProperties_notSetYet ++;
+			}
+			if(properties.get(key) != "String") {
+				numberOfProperties_nonStringCandidates ++;
+			}
+		}
+		
+		
+		
+		if(features.size() > 1) {
+			for (int i = 1; i < features.size() && (numberOfProperties_notSetYet > 0 || numberOfProperties_nonStringCandidates > 0); i++) {
+//				SortedMap<String, String> missingProperties = Collections.f
+				properties = modifySchemaPropertiesFromFeature(properties, features.get(i), numberOfProperties_notSetYet, numberOfProperties_nonStringCandidates);
+			}
+		}
+		
+		return properties;		
+	}
+
+
+	static SortedMap<String, String> modifySchemaPropertiesFromFeature(SortedMap<String, String> properties,
+			org.geojson.Feature feature, int numberOfProperties_notSetYet, int numberOfProperties_nonStringCandidates) {
+		for (String key : properties.keySet()) {
+			String dataType = properties.get(key);
+			
+			if (dataType == null) {
+				dataType = guessDataTypeFromValue(feature.getProperty(key));
+				if(dataType != null) {
+					properties.put(key, dataType);
+					numberOfProperties_notSetYet --;
+					if(! dataType.equalsIgnoreCase("String")) {
+						numberOfProperties_nonStringCandidates ++;
+					}
+				}
+			}
+			else if(! dataType.equalsIgnoreCase("String")) {
+				String dataType_new = guessDataTypeFromValue(feature.getProperty(key));
+				if(dataType_new != null) {
+					if(dataType.equalsIgnoreCase(dataType_new)) {
+						// here this serves as a validation, that all property values
+						// can be parsed as the same data type
+					}
+					else {
+						// for different property values we have discovered different 
+						// data type candidates
+						// hence set String as dataType
+						
+						// except for numeric values!
+						if(dataType.equalsIgnoreCase("Double") && dataType_new.equalsIgnoreCase("Integer")) {
+							properties.put(key, "Double");
+						}
+						else if(dataType.equalsIgnoreCase("Integer") && dataType_new.equalsIgnoreCase("Double")) {
+							properties.put(key, "Double");
+						}
+						else {
+							properties.put(key, "String");
+							numberOfProperties_nonStringCandidates --;
+						}
+						
+					}
+				}
+			}
+		}
+		
+		return properties;
+	}
+
+	static SortedMap<String, String> setInitialSchemaPropertiesFromFeature(SortedMap<String, String> properties,
+			org.geojson.Feature feature) {
+		Map<String, Object> properties_feature = feature.getProperties();
+		
+		for (String key : properties_feature.keySet()) {
+			Object value = properties_feature.get(key);
+			if (value != null) {
+				String dataType = guessDataTypeFromValue(value);
+				if(dataType != null) {
+					properties.put(key, dataType);
+				}
+			}
+		}
+		
+		/*
+		 * for KomMonitor specific properties ID, NAME, lifecylce dates set appropriate dataTypes
+		 */
+		if(properties.containsKey(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME)) {
+			properties.put(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME, "String");
+		}
+		if(properties.containsKey(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME)) {
+			properties.put(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME, "String");
+		}
+		if(properties.containsKey(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME)) {
+			properties.put(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME, "String");
+		}
+		if(properties.containsKey(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME)) {
+			properties.put(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, "Date");
+		}
+		if(properties.containsKey(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME)) {
+			properties.put(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, "Date");
+		}
+		
+		
+		return properties;
+	}
+
+	static String guessDataTypeFromValue(Object value) {
+		/*
+		 * could be
+		 * DATE
+		 * DOUBLE
+		 * INTEGER
+		 * BOOLEAN
+		 * STRING
+		 */
+		String dataType = null;
+		
+		if(value == null) {
+			return null;
+		}
+		
+		String value_string = value.toString();
+		
+		/*
+		 * DATE
+		 */
+		
+		try {
+			LocalDate date = LocalDate.parse(value_string);
+			
+			return "Date";
+		} catch (Exception e) {
+			
+		}
+		
+		/*
+		 * INTEGER
+		 */
+		try {
+			int parsed = Integer.parseInt(value_string);
+			
+			return "Integer";
+		} catch (Exception e) {
+			
+		}
+		
+		/*
+		 * DOUBLE
+		 */
+		try {
+			double parsed = Double.parseDouble(value_string);
+			
+			return "Double";
+		} catch (Exception e) {
+			
+		}
+		
+		
+		/*
+		 * Boolean
+		 */
+		try {
+			boolean parsed = Boolean.parseBoolean(value_string);
+			
+			if(parsed || value_string.equalsIgnoreCase("true") || value_string.equalsIgnoreCase("false") ) {
+				return "Boolean";
+			}
+			
+		} catch (Exception e) {
+			
+		}
+		
+		/*
+		 * String
+		 */
+		try {
+			if(value_string.length() > 0) {
+				return "String";
+			}
+			
+		} catch (Exception e) {
+			
+		}
+		
+		// no datatype determined
+		return null;
+	}
+
 }

@@ -10,9 +10,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @ComponentScan("de.hsbo.kommonitor")
 @EntityScan( basePackages = {"de.hsbo.kommonitor"} )
-public class Runner extends SpringBootServletInitializer{
+public class KomMonitorManagementRunner extends SpringBootServletInitializer{
 
     public static void main(String[] args) {
-        SpringApplication.run(Runner.class, args);
+        SpringApplication.run(KomMonitorManagementRunner.class, args);
     }
 }

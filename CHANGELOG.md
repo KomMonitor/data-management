@@ -1,6 +1,19 @@
 # Change Log
 
-## 1.1.0
+## 1.2.0
+* adjust maven repositories for dependencies [f287dc6](f287dc678bb1cecd4bbe008a2d1e52145c2bed91)
+* change data type parsing order in schema request. check for integer before double [ff2f0d8](ff2f0d8b6cd3f62cd885706c6e4378c92d8c14d7)
+* improve handling of numeric georesource schema properties. [2543f0d](2543f0d3ba8fdcc44dc1344f3df1b28dc55d21e5)
+* change endpoint paths [e2250b4](e2250b43984046039228380eabe21b275826257c)
+* implement new endpoints to retrieve georesource features without geometry - hence only property array [4a8714e](4a8714eb2ccf5440691f88e82b947ce9b97d2d60)
+* implement schema endpoint to retrieve schema information about georesource guessed from actual data [bb90b58](bb90b5804101ac7392285d4300b5bedb597a6dd1)
+* allow spatial units and georesources to be updated partially [8aa53cd](8aa53cd667b59949ef303b8389c677a39c0eb230)
+* rename management app file [78e0f86](78e0f864388243a33e858e249ab9a02a7455cb95)
+* fix problem when deleting all features from spatial unit table. recreate affected indicator views to ensure that linked indicator data can still be retrieved [8900100](89001000bd66597ee8bc5e941200fdc828f22a30)
+* fixed bug when adding new process script. set target indicator metadata entity [e5153d4](e5153d479358913e7f9dafc4682fa36719b1aa2b)
+* fix 1600 column dilemma when deleting features from feature table by rewriting the whole table after feature and column deletion [e3648d1](e3648d100c908b1f9091e747bb52abacbcc88ffa)
+* when deleting features and/or dropping columns run SQL &quot;VACUUM FULL&quot; on database table to reclaim disk space and really remove the columns instead of just hiding them [bda429c](bda429c9ebd86ac128952abec18cfc3b20213b24)
+* changed return type of POST ADD methods; they now return the created metadata object on success [5221e0d](5221e0dd00babbbafd764d079d0525d9b04c34af)
 * fix insertion of new spatial resources that do not have an end date [8d6d9f6](8d6d9f65b546731a0c448a6eb6fac94cd5a737d6)
 * improve spatial feature integration process by retyping incoming feature collections first and then perform all other operations. Thus we save time to later update periodOfValidity as additional operation [7857489](785748944cf953914b31b4cb2d3c86bb1d192d7d)
 * changed SCM tag information in POM [6f13250](6f13250abbbca3c90612c45ffe903897460c4610)

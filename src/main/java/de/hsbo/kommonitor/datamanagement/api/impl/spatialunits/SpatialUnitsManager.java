@@ -135,7 +135,7 @@ public class SpatialUnitsManager {
         }
 
 
-        return getSpatialUnitByDatasetId(metadataId);
+        return SpatialUnitsMapper.mapToSwaggerSpatialUnit(spatialUnitsMetadataRepo.findByDatasetId(metadataId));
     }
 
     private void updateSpatialUnitHierarchy_onAdd(String metadataId, SpatialUnitPOSTInputType featureData) {
@@ -312,6 +312,10 @@ public class SpatialUnitsManager {
 
             // handle OGC web service - null parameter is defaultStyle
             ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
+            
+            // as a new spatial unit feature table was generated, we must regenerate all views for all indicators that have 
+            // the modified spatial unit
+            indicatorsManager.recreateAllViewsForSpatialUnitById(spatialUnitId);
 
             /*
              * set wms and wfs urls within metadata
@@ -430,6 +434,7 @@ public class SpatialUnitsManager {
 
     public String updateFeatures(SpatialUnitPUTInputType featureData, String spatialUnitId) throws Exception {
         logger.info("Trying to update spatialUnit features for datasetId '{}'", spatialUnitId);
+        logger.info("isPartialUpdate is set to " + featureData.isIsPartialUpdate());
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
             String datasetName = metadataEntity.getDatasetName();
@@ -446,6 +451,9 @@ public class SpatialUnitsManager {
 
             // handle OGC web service - null parameter is defaultStyle
             ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
+            
+            
+            indicatorsManager.recreateAllViewsForSpatialUnitById(spatialUnitId);
 
             /*
              * set wms and wfs urls within metadata

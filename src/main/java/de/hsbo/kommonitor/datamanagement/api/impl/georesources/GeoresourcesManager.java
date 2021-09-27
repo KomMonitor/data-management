@@ -2,16 +2,22 @@ package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.geojson.Feature;
 import org.geotools.filter.text.cql2.CQLException;
+import org.geotools.geojson.feature.FeatureJSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +25,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.features.management.KomMonitorFeaturePropertyConstants;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
@@ -107,7 +121,7 @@ public class GeoresourcesManager {
              */
             updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
 
-            return getGeoresourceByDatasetId(metadataId);
+            return GeoresourcesMapper.mapToSwaggerGeoresource(georesourcesMetadataRepo.findByDatasetId(metadataId));            		
         } catch (Exception e) {
             /*
              * remove partially created resources and thrwo error
@@ -490,6 +504,39 @@ public class GeoresourcesManager {
                     "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
         }
     }
+    
+    public String getAllGeoresourceFeatures_withoutGeometry(String georesourceId) throws Exception {
+		return getAllGeoresourceFeatures_withoutGeometry(georesourceId, null);
+	}
+    
+    public String getAllGeoresourceFeatures_withoutGeometry(String georesourceId, AuthInfoProvider authInfoProvider) throws Exception {
+
+        if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+            MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+
+            if (authInfoProvider == null) {
+                if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+                    throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+                }
+            } else {
+                if (metadataEntity == null || !hasAllowedRole(authInfoProvider, metadataEntity)) {
+                    throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+                }
+            }
+
+            String dbTableName = metadataEntity.getDbTableName();
+
+            String json = SpatialFeatureDatabaseHandler.getAllFeatures_withoutGeometry(dbTableName);
+            return json;
+
+        } else {
+            logger.error(
+                    "No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
+                    georesourceId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
+        }
+    }
 
     public String getValidGeoresourceFeatures(String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day, String simplifyGeometries)
             throws Exception {
@@ -530,8 +577,48 @@ public class GeoresourcesManager {
                     "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
         }
     }
+    
+    public String getValidGeoresourceFeatures_withoutGeometry(String georesourceId, BigDecimal year, BigDecimal month,
+			BigDecimal day, AuthInfoProvider provider) throws Exception {
+    	Calendar calender = Calendar.getInstance();
+        calender.set(year.intValue(), month.intValueExact() - 1, day.intValue());
+        java.util.Date date = calender.getTime();
+        logger.info("Retrieving valid georesource features from Dataset with id '{}' for date '{}'", georesourceId,
+                date);
 
-    public String getJsonSchemaForDatasetName(String georesourceId) throws ResourceNotFoundException {
+        if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+            MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+
+            if (provider == null) {
+                if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+                    throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+                }
+            } else {
+                if (metadataEntity == null || !hasAllowedRole(provider, metadataEntity)) {
+                    throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+                }
+            }
+
+            String dbTableName = metadataEntity.getDbTableName();
+
+            String json = SpatialFeatureDatabaseHandler.getValidFeatures_withoutGeometry(date, dbTableName);
+            return json;
+
+        } else {
+            logger.error(
+                    "No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
+                    georesourceId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
+        }
+	}
+	
+	public String getValidGeoresourceFeatures_withoutGeometry(String georesourceId, BigDecimal year, BigDecimal month,
+			BigDecimal day) throws Exception {
+		return getValidGeoresourceFeatures_withoutGeometry(georesourceId, year, month, day, null);
+	}
+
+    public String getJsonSchemaForDatasetName(String georesourceId) throws Exception {
         logger.info("Retrieving georesource jsonSchema for datasetId '{}'", georesourceId);
 
         MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
@@ -541,10 +628,10 @@ public class GeoresourcesManager {
         }
 
 
-        return metadataEntity.getJsonSchema();
+        return retrieveJsonSchema_georesource(georesourceId, metadataEntity);
     }
 
-    public String getJsonSchemaForDatasetName(String georesourceId, AuthInfoProvider authInfoProvider) throws ResourceNotFoundException {
+    public String getJsonSchemaForDatasetName(String georesourceId, AuthInfoProvider authInfoProvider) throws Exception {
         logger.info("Retrieving georesource jsonSchema for datasetId '{}'", georesourceId);
 
         MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
@@ -552,11 +639,54 @@ public class GeoresourcesManager {
         if (metadataEntity == null || !hasAllowedRole(authInfoProvider, metadataEntity)) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
         }
-
-        return metadataEntity.getJsonSchema();
+        
+        return retrieveJsonSchema_georesource(georesourceId, metadataEntity);
     }
 
-    public String updateFeatures(GeoresourcePUTInputType featureData, String georesourceId)
+	private String retrieveJsonSchema_georesource(String georesourceId, MetadataGeoresourcesEntity metadataEntity)
+			throws Exception {
+		String jsonSchema = metadataEntity.getJsonSchema();
+//		if(jsonSchema == null) {
+//        	jsonSchema = parseSchemaFromGeoresource(georesourceId);
+//        	metadataEntity.setJsonSchema(jsonSchema);
+//        	georesourcesMetadataRepo.saveAndFlush(metadataEntity);
+//        }
+		
+		jsonSchema = parseSchemaFromGeoresource(georesourceId);
+    	metadataEntity.setJsonSchema(jsonSchema);
+    	georesourcesMetadataRepo.saveAndFlush(metadataEntity);
+
+        return jsonSchema;
+	}
+	
+	private String parseSchemaFromGeoresource(String georesourceId) throws Exception {
+		
+		MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+
+        if (metadataEntity == null ) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+        }
+        
+        SortedMap<String, String> elements = new TreeMap();
+        
+        String allGeoresourceFeatures = getAllGeoresourceFeatures(georesourceId, SimplifyGeometriesEnum.ORIGINAL.toString());
+		
+        SortedMap<String, String> properties = SpatialFeatureDatabaseHandler.guessSchemaFromFeatureValues(allGeoresourceFeatures);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            String json = objectMapper.writeValueAsString(properties);
+            System.out.println(json);
+            
+            return json;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw e;
+        }
+	}
+
+	public String updateFeatures(GeoresourcePUTInputType featureData, String georesourceId)
             throws Exception {
         logger.info("Trying to update georesource features for datasetId '{}'", georesourceId);
         if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {

@@ -1,13 +1,10 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +16,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
+import io.swagger.annotations.ApiParam;
 
 
 @Controller
@@ -115,12 +116,38 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
             String jsonSchema;
             try {
                 jsonSchema = georesourcesManager.getJsonSchemaForDatasetName(georesourceId);
-            } catch (ResourceNotFoundException e) {
+            } catch (Exception e) {
                 return ApiUtils.createResponseEntityFromException(e);
             }
             return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    public ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesByIdWithoutGeometry(@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId) {
+    	logger.info("Received request to get all public georesource features for datasetId '{}' without geometry", georesourceId);
+
+        try {
+            String geoJsonFeatures = georesourcesManager.getAllGeoresourceFeatures_withoutGeometry(georesourceId);
+            String fileName = "GeoresourceFeatures_" + georesourceId + "_all_withoutGeometry.json";
+
+            return createGeoresourceFeatureResponse(fileName, geoJsonFeatures);
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+    
+    public ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonthWithoutGeometry(@ApiParam(value = "day",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "month",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "year",required=true) @PathVariable("year") BigDecimal year) {
+    	logger.info("Received request to get public georesource features for datasetId '{}' without geometry", georesourceId);
+
+        try {
+            String geoJsonFeatures = georesourcesManager.getValidGeoresourceFeatures_withoutGeometry(georesourceId, year, month, day);
+            String fileName = "GeoresourceFeatures_" + georesourceId + "_" + year + "-" + month + "-" + day + "_withoutGeometry.json";
+
+            return createGeoresourceFeatureResponse(fileName, geoJsonFeatures);
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
         }
     }
 

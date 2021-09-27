@@ -111,7 +111,7 @@ public class ScriptManager {
 
 		scriptMetadataRepo.saveAndFlush(scriptMetadata);
 
-		return getScriptMetadataByScriptId(scriptMetadata.getScriptId());
+		return ScriptMapper.mapToSwaggerScript(scriptMetadata);
 	}
 
 	private List<ScriptInputParameterEntity> persistAndGetInputParameters(

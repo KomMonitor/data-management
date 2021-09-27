@@ -985,7 +985,14 @@ public class IndicatorsManager {
             throw e;
         }
 
-        return getIndicatorById(metadataId);
+        List<IndicatorReferenceType> indicatorReferences = ReferenceManager.getIndicatorReferences(metadataId);
+        List<GeoresourceReferenceType> georesourcesReferences = ReferenceManager.getGeoresourcesReferences(metadataId);
+
+        List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray = spatialUnitsMetadataRepo.findAll();
+
+        return indicatorsMapper
+                .mapToSwaggerIndicator(indicatorsMetadataRepo.findByDatasetId(metadataId), indicatorReferences, georesourcesReferences, spatialUnitsMetadataArray);
+
     }
 
     private Collection<RolesEntity> retrieveRoles(List<String> roleIds) throws ResourceNotFoundException {
@@ -1375,5 +1382,26 @@ public class IndicatorsManager {
 		}
 		this.indicatorsMetadataRepo.flush();
 		return true;
+	}
+
+	public void recreateAllViewsForSpatialUnitById(String spatialUnitId) {
+		
+		List<IndicatorSpatialUnitJoinEntity> affectedIndicatorEntries = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
+		
+		for (IndicatorSpatialUnitJoinEntity affectedIndicatorEntry : affectedIndicatorEntries) {
+			String indicatorViewTableName = affectedIndicatorEntry.getIndicatorValueTableName();
+
+	        try {
+				indicatorViewTableName = createOrReplaceIndicatorView_fromViewName(indicatorViewTableName, affectedIndicatorEntry.getSpatialUnitName(), affectedIndicatorEntry.getIndicatorMetadataId());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}		        
+		
 	}
 }

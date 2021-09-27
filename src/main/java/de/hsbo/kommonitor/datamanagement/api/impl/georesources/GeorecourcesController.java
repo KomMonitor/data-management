@@ -6,14 +6,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +25,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.hsbo.kommonitor.datamanagement.api.GeoresourcesApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
+import io.swagger.annotations.ApiParam;
 
 
 @Controller
@@ -47,6 +46,9 @@ public class GeorecourcesController extends BasePathController implements Geores
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
+    
+    @Autowired
+    private LastModificationManager lastModManager;
 
     @Autowired
     GeoresourcesManager georesourcesManager;
@@ -73,6 +75,7 @@ public class GeorecourcesController extends BasePathController implements Geores
         GeoresourceOverviewType georesourceMetadata;
         try {
             georesourceMetadata = georesourcesManager.addGeoresource(featureData);
+            lastModManager.updateLastDatabaseModification_georesources();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
 
@@ -107,6 +110,7 @@ public class GeorecourcesController extends BasePathController implements Geores
         boolean isDeleted;
         try {
             isDeleted = georesourcesManager.deleteAllGeoresourceFeaturesById(georesourceId);
+            lastModManager.updateLastDatabaseModification_georesources();
 
             if (isDeleted)
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -131,6 +135,7 @@ public class GeorecourcesController extends BasePathController implements Geores
         boolean isDeleted;
         try {
             isDeleted = georesourcesManager.deleteGeoresourceDatasetById(georesourceId);
+            lastModManager.updateLastDatabaseModification_georesources();
 
             if (isDeleted)
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -156,11 +161,12 @@ public class GeorecourcesController extends BasePathController implements Geores
         boolean isDeleted;
         try {
             isDeleted = georesourcesManager.deleteGeoresourceFeaturesByIdAndDate(georesourceId, year, month, day);
+            lastModManager.updateLastDatabaseModification_georesources();
 
             if (isDeleted)
                 return new ResponseEntity<>(HttpStatus.OK);
 
-        } catch (ResourceNotFoundException | IOException e) {
+        } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
         }
 
@@ -271,7 +277,7 @@ public class GeorecourcesController extends BasePathController implements Geores
             String jsonSchema = null;
             try {
                 jsonSchema = georesourcesManager.getJsonSchemaForDatasetName(georesourceId, provider);
-            } catch (ResourceNotFoundException e) {
+            } catch (Exception e) {
                 return ApiUtils.createResponseEntityFromException(e);
             }
 
@@ -279,6 +285,52 @@ public class GeorecourcesController extends BasePathController implements Geores
 
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    public ResponseEntity<byte[]> getAllGeoresourceFeaturesByIdWithoutGeometry(@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId, Principal principal) {
+    	logger.info("Received request to get all georesource features for datasetId '{}' without geometry", georesourceId);
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+            String geoJsonFeatures = georesourcesManager.getAllGeoresourceFeatures_withoutGeometry(georesourceId, provider);
+            String fileName = "GeoresourceFeatures_" + georesourceId + "_all_withoutGeometry.json";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("content-disposition", "attachment; filename=" + fileName);
+            headers.add("Content-Type", "application/json; charset=utf-8");
+            byte[] JsonBytes = geoJsonFeatures.getBytes();
+
+            return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/json"))
+                    .body(JsonBytes);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+    
+    public ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonthWithoutGeometry(@ApiParam(value = "day",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "month",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "year",required=true) @PathVariable("year") BigDecimal year, Principal principal) {
+    	logger.info("Received request to get georesource features for datasetId '{}' without geometry", georesourceId);
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+            String geoJsonFeatures = georesourcesManager.getValidGeoresourceFeatures_withoutGeometry(georesourceId, year, month, day, provider);
+            String fileName = "GeoresourceFeatures_" + georesourceId + "_" + year + "-" + month + "-" + day + "_withoutGeometry.json";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("content-disposition", "attachment; filename=" + fileName);
+            headers.add("Content-Type", "application/json; charset=utf-8");
+            byte[] JsonBytes = geoJsonFeatures.getBytes();
+
+            return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/vnd.geo+json"))
+                    .body(JsonBytes);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
         }
     }
 
@@ -294,6 +346,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 
         try {
             georesourceId = georesourcesManager.updateFeatures(featureData, georesourceId);
+            lastModManager.updateLastDatabaseModification_georesources();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
 
@@ -327,6 +380,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 
         try {
             georesourceId = georesourcesManager.updateMetadata(metadata, georesourceId);
+            lastModManager.updateLastDatabaseModification_georesources();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
 

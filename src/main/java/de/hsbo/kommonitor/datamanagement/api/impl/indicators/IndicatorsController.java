@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.hsbo.kommonitor.datamanagement.api.IndicatorsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
@@ -50,6 +51,9 @@ public class IndicatorsController extends BasePathController implements Indicato
 
     @Autowired
     IndicatorsManager indicatorsManager;
+    
+    @Autowired
+    private LastModificationManager lastModManager;
 
     @Autowired
     private AuthInfoProviderFactory authInfoProviderFactory;
@@ -73,6 +77,7 @@ public class IndicatorsController extends BasePathController implements Indicato
         boolean isDeleted;
         try {
             isDeleted = indicatorsManager.deleteIndicatorDatasetByIdAndSpatialUnitId(indicatorId, spatialUnitId);
+            lastModManager.updateLastDatabaseModification_indicators();
 
             if (isDeleted)
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -100,6 +105,7 @@ public class IndicatorsController extends BasePathController implements Indicato
         boolean isDeleted;
         try {
             isDeleted = indicatorsManager.deleteIndicatorDatasetByIdAndDate(indicatorId, spatialUnitId, year, month, day);
+            lastModManager.updateLastDatabaseModification_indicators();
 
             if (isDeleted)
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -124,6 +130,7 @@ public class IndicatorsController extends BasePathController implements Indicato
         IndicatorOverviewType indicatorMetadata;
         try {
             indicatorMetadata = indicatorsManager.addIndicator(indicatorData);
+            lastModManager.updateLastDatabaseModification_indicators();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
 
@@ -158,6 +165,7 @@ public class IndicatorsController extends BasePathController implements Indicato
         boolean isDeleted;
         try {
             isDeleted = indicatorsManager.deleteIndicatorDatasetById(indicatorId);
+            lastModManager.updateLastDatabaseModification_indicators();
 
             if (isDeleted)
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -287,6 +295,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
         try {
             indicatorId = indicatorsManager.updateFeatures(indicatorData, indicatorId);
+            lastModManager.updateLastDatabaseModification_indicators();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
 
@@ -320,6 +329,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
         try {
             indicatorId = indicatorsManager.updateMetadata(metadata, indicatorId);
+            lastModManager.updateLastDatabaseModification_indicators();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
 
@@ -355,6 +365,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
         try {
             update = indicatorsManager.updateIndicatorOrder(indicatorOrderArray);
+            lastModManager.updateLastDatabaseModification_indicators();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
 
@@ -379,6 +390,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
         try {
             indicatorId = indicatorsManager.updateIndicatorRoles(indicatorData, indicatorId, spatialUnitId);
+            lastModManager.updateLastDatabaseModification_indicators();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
         }

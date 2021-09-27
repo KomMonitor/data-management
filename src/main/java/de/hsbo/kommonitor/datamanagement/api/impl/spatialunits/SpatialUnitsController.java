@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
@@ -48,6 +49,9 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 	@Autowired
 	AuthInfoProviderFactory authInfoProviderFactory;
+	
+	@Autowired
+    private LastModificationManager lastModManager;
 
 	@org.springframework.beans.factory.annotation.Autowired
 	public SpatialUnitsController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -67,6 +71,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		SpatialUnitOverviewType spatialUnitMetadata;
 		try {
 			spatialUnitMetadata = spatialUnitsManager.addSpatialUnit(featureData);
+			lastModManager.updateLastDatabaseModification_spatialUnits();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
@@ -101,6 +106,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		boolean isDeleted;
 		try {
 			isDeleted = spatialUnitsManager.deleteAllSpatialUnitFeaturesByDatasetById(spatialUnitId);
+			lastModManager.updateLastDatabaseModification_spatialUnits();
 
 			if (isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -125,6 +131,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		boolean isDeleted;
 		try {
 			isDeleted = spatialUnitsManager.deleteSpatialUnitDatasetById(spatialUnitId);
+			lastModManager.updateLastDatabaseModification_spatialUnits();
 
 			if (isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -150,11 +157,12 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		boolean isDeleted;
 		try {
 			isDeleted = spatialUnitsManager.deleteSpatialUnitDatasetByIdAndDate(spatialUnitId, year, month, day);
+			lastModManager.updateLastDatabaseModification_spatialUnits();
 
 			if (isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
 
-		} catch (ResourceNotFoundException | IOException e) {
+		} catch (Exception  e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
 
@@ -316,6 +324,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 		try {
 			spatialUnitId = spatialUnitsManager.updateFeatures(featureData, spatialUnitId);
+			lastModManager.updateLastDatabaseModification_spatialUnits();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
@@ -349,6 +358,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 		try {
 			spatialUnitId = spatialUnitsManager.updateMetadata(metadata, spatialUnitId);
+			lastModManager.updateLastDatabaseModification_spatialUnits();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 

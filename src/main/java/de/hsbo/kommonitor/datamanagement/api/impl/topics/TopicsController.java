@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.hsbo.kommonitor.datamanagement.api.TopicsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicInputType;
@@ -36,6 +37,9 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 	@Autowired
 	TopicsManager topicsManager;
+	
+	@Autowired
+    private LastModificationManager lastModManager;
 
 	@org.springframework.beans.factory.annotation.Autowired
 	public TopicsController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -56,6 +60,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 		TopicOverviewType topic;
 		try {
 			topic = topicsManager.addTopic(topicData);
+			lastModManager.updateLastDatabaseModification_topics();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 			
@@ -91,11 +96,12 @@ public class TopicsController extends BasePathController implements TopicsApi {
 			boolean isDeleted;
 			try {
 				isDeleted = topicsManager.deleteTopicById(topicId);
+				lastModManager.updateLastDatabaseModification_topics();
 			
 			if(isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
 			
-			} catch (ResourceNotFoundException e) {
+			} catch (Exception e) {
 				return ApiUtils.createResponseEntityFromException(e);
 			}
 		
@@ -114,6 +120,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 		
 		try {
 			topicId = topicsManager.updateTopic(topicData, topicId);
+			lastModManager.updateLastDatabaseModification_topics();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
