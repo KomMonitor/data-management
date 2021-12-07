@@ -28,7 +28,6 @@ public class GeoresourcePOSTInputType   {
   private CommonMetadataType metadata = null;
 
   @JsonProperty("allowedRoles")
-  
   private List<String> allowedRoles = null;
 
   @JsonProperty("topicReference")

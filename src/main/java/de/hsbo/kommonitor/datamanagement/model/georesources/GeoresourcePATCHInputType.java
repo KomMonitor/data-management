@@ -24,7 +24,6 @@ public class GeoresourcePATCHInputType   {
   private String datasetName = null;
 
   @JsonProperty("allowedRoles")
-  
   private List<String> allowedRoles = null;
 
   @JsonProperty("topicReference")

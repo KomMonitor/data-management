@@ -34,7 +34,6 @@ public class GeoresourceOverviewType   {
   private String topicReference = null;
 
   @JsonProperty("allowedRoles")
-  
   private List<String> allowedRoles = null;
 
   @JsonProperty("isPOI")
