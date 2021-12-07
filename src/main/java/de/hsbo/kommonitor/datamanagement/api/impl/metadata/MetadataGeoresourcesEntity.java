@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
@@ -18,7 +19,7 @@ import de.hsbo.kommonitor.datamanagement.model.georesources.PoiSymbolColorEnum;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 @Entity(name = "MetadataGeoresources")
-public class MetadataGeoresourcesEntity extends AbstractMetadata {
+public class MetadataGeoresourcesEntity extends AbstractMetadata implements RestrictedByRole {
 
 	private int sridEpsg;
 	

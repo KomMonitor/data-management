@@ -2,6 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits;
 
 import javax.persistence.*;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
@@ -12,7 +13,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 @Entity(name = "IndicatorSpatialUnits")
-public class IndicatorSpatialUnitJoinEntity implements Serializable {
+public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedByRole {
 
     private static final long serialVersionUID = 1L;
 

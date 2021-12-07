@@ -13,13 +13,14 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 @Entity(name = "MetadataIndicators")
-public class MetadataIndicatorsEntity extends AbstractMetadata {
+public class MetadataIndicatorsEntity extends AbstractMetadata implements RestrictedByRole {
 
 	@Column(columnDefinition="text")
 	private String processDescription = null;

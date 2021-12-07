@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.config;
 
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,48 +16,50 @@ import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 @Component
 public class InitialAdminRoleSetup implements ApplicationListener<ContextRefreshedEvent> {
 
-	Logger logger = LoggerFactory.getLogger(InitialAdminRoleSetup.class);
+    Logger logger = LoggerFactory.getLogger(InitialAdminRoleSetup.class);
 
-	boolean alreadySetup = false;
+    boolean alreadySetup = false;
 
-	@Autowired
-	private RolesRepository roleRepository;
+    @Autowired
+    private RolesRepository roleRepository;
 
-	@Value("${keycloak.enabled:false}")
-	private boolean isKeycloakEnabled;
+    @Value("${keycloak.enabled:false}")
+    private boolean isKeycloakEnabled;
 
-	@Value("${kommonitor.roles.admin:administrator}")
-	private String adminRoleName;
+    @Value("${kommonitor.roles.admin:administrator}")
+    private String adminRoleName;
 
-	@Override
-	@Transactional
-	public void onApplicationEvent(ContextRefreshedEvent event) {
+    @Override
+    @Transactional
+    public void onApplicationEvent(ContextRefreshedEvent event) {
 
-		logger.info("Begin initial setup of configured administrator role if keyloak is enabled.");
+        logger.info("Begin initial setup of configured administrator role if keyloak is enabled.");
 
-		if (!isKeycloakEnabled) {
-			logger.info("Keyloak connection is disabled. Hence, no default admin user is registered.");
-		} else {
-			logger.info(
-					"Keyloak connection is enabled. A default admin user with name {} will be registered if not already setup.",
-					adminRoleName);
+        if (!isKeycloakEnabled) {
+            logger.info("Keyloak connection is disabled. Hence, no default admin user is registered.");
+        } else {
+            logger.info(
+                "Keyloak connection is enabled." +
+                    " A default admin user with name {} will be registered if not already setup.",
+                adminRoleName);
 
-			createRolesEntityIfNotFound(adminRoleName);
-		}
+            createRolesEntityIfNotFound(adminRoleName);
+        }
 
-		logger.info("Initial setup of default admin role finished.");
-	}
+        logger.info("Initial setup of default admin role finished.");
+    }
 
-	@Transactional
-	private RolesEntity createRolesEntityIfNotFound(String name) {
+    @Transactional
+    private RolesEntity createRolesEntityIfNotFound(String name) {
 
-		RolesEntity role = roleRepository.findByRoleName(name);
-		if (role == null) {
-			role = new RolesEntity();
-			role.setRoleName(name);
-			roleRepository.save(role);
-		}
-		return role;
-	}
+        RolesEntity role = roleRepository.findByOrganizationalUnitAndPermissionLevel(name, PermissionLevelType.CRUD);
+        if (role == null) {
+            role = new RolesEntity();
+            role.setOrganizationalUnit(name);
+            role.setPermissionLevel(PermissionLevelType.CRUD);
+            roleRepository.save(role);
+        }
+        return role;
+    }
 
 }

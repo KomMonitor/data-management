@@ -4,6 +4,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
@@ -15,12 +17,13 @@ public class RolesEntity {
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
 	private String roleId = null;
 
-	@Column(
-			unique = true,
-			nullable = false
-	)
-	private String roleName = null;
+	@Column(unique = true, nullable = false)
+	private String organizationalUnit = null;
 
+    // We default to no permissions just in case
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
+    private PermissionLevelType permissionLevel = PermissionLevelType.NONE;
 
 	/*
 	 * default constructor is required by hibernate / jpa
@@ -29,16 +32,24 @@ public class RolesEntity {
 
 	}
 
-	public String getRoleName() {
-		return roleName;
+	public String getOrganizationalUnit() {
+		return organizationalUnit;
 	}
 
 	public String getRoleId() {
 		return roleId;
 	}
 
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
+	public void setOrganizationalUnit(String roleName) {
+		this.organizationalUnit = roleName;
 	}
+
+    public PermissionLevelType getPermissionLevel() {
+        return permissionLevel;
+    }
+
+    public void setPermissionLevel(PermissionLevelType permissionLevel) {
+        this.permissionLevel = permissionLevel;
+    }
 
 }

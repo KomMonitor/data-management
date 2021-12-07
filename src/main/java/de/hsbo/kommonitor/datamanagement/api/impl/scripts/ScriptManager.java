@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.geotools.data.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -223,7 +224,8 @@ public class ScriptManager {
 					.filter(s -> s.getMetadataIndicatorsEntity().getRoles().isEmpty()).collect(Collectors.toList());
 		} else {
 			scriptEntities = scriptMetadataRepo.findAll().stream()
-					.filter(s -> hasAllowedRole(provider, s)).collect(Collectors.toList());
+					.filter(s -> provider.checkPermissions(s.getMetadataIndicatorsEntity(), PermissionLevelType.R))
+                    .collect(Collectors.toList());
 		}
 
 		List<ProcessScriptOverviewType> scriptsMetadata = ScriptMapper.mapToSwaggerScripts(scriptEntities);
@@ -522,20 +524,13 @@ public class ScriptManager {
 						"was not found.");
 			}
 		} else {
-			if (entity == null || !hasAllowedRole(provider, entity)) {
+			if (entity == null
+                || !provider.checkPermissions(entity.getMetadataIndicatorsEntity(), PermissionLevelType.R)) {
 				throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "The requested resource " +
 						"was not found.");
 			}
 		}
 		return entity;
 	}
-
-	private boolean hasAllowedRole(AuthInfoProvider authInfoProvider, ScriptMetadataEntity entity) {
-		return entity.getMetadataIndicatorsEntity().getRoles() == null ||
-				entity.getMetadataIndicatorsEntity().getRoles().isEmpty() ||
-				entity.getMetadataIndicatorsEntity().getRoles().stream()
-						.anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
-	}
-
 
 }

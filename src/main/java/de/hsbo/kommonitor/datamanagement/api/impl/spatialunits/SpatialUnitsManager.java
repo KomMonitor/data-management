@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -527,7 +528,7 @@ public class SpatialUnitsManager {
                     .filter(s -> s.getRoles().isEmpty()).collect(Collectors.toList());
         } else {
             spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll().stream()
-                    .filter(s -> hasAllowedRole(provider, s)).collect(Collectors.toList());
+                    .filter(s -> provider.checkPermissions(s, PermissionLevelType.R)).collect(Collectors.toList());
         }
 
         logger.info("Retrieved a total number of {} entries for spatialUnits metadata from db. Convert them to JSON Output structure and return.", spatialUnitMeatadataEntities.size());
@@ -680,20 +681,11 @@ public class SpatialUnitsManager {
                         "was not found.", spatialUnitId));
             }
         } else {
-            if (metadataEntity == null || !hasAllowedRole(provider, metadataEntity)) {
+            if (metadataEntity == null || !provider.checkPermissions(metadataEntity, PermissionLevelType.R)) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
                         "was not found.", spatialUnitId));
             }
         }
         return metadataEntity;
     }
-
-    private boolean hasAllowedRole(AuthInfoProvider authInfoProvider, MetadataSpatialUnitsEntity spatialUnitsMetadataEntity) {
-        return spatialUnitsMetadataEntity.getRoles() == null ||
-                spatialUnitsMetadataEntity.getRoles().isEmpty() ||
-                authInfoProvider.hasRealmAdminRole() ||
-                spatialUnitsMetadataEntity.getRoles().stream()
-                        .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
-    }
-
 }

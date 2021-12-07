@@ -10,13 +10,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 @Entity(name = "MetadataSpatialUnits")
-public class MetadataSpatialUnitsEntity extends AbstractMetadata {
+public class MetadataSpatialUnitsEntity extends AbstractMetadata implements RestrictedByRole {
 
 	private int sridEpsg;
 	private String nextLowerHierarchyLevel = null;

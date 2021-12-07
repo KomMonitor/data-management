@@ -10,13 +10,14 @@ import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 public class RolesMapper {
 
 	public static RoleOverviewType mapToSwaggerRole(RolesEntity roleEntity) {
-RoleOverviewType role = new RoleOverviewType(roleEntity.getRoleId());
-		role.setRoleName(roleEntity.getRoleName());
+		RoleOverviewType role = new RoleOverviewType(roleEntity.getRoleId());
+		role.setOrganizationalUnit(roleEntity.getOrganizationalUnit());
+		role.setPermissionLevel(roleEntity.getPermissionLevel());
 		return role;
 	}
 
 	public static List<RoleOverviewType> mapToSwaggerRoles(List<RolesEntity> roleEntities) {
-List<RoleOverviewType> roles = new ArrayList<RoleOverviewType>(roleEntities.size());
+		List<RoleOverviewType> roles = new ArrayList<RoleOverviewType>(roleEntities.size());
 		
 		for (RolesEntity roleEntity : roleEntities) {
 			roles.add(mapToSwaggerRole(roleEntity));
