@@ -57,7 +57,7 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
         Set<String> ownedRoles = getPrincipal()
             .getKeycloakSecurityContext()
             .getToken()
-            .getResourceAccess(clientId)
+            .getRealmAccess()
             .getRoles();
 
         Set<Pair<?, ?>> allowedRoles = allowedRoleEntites.stream()
