@@ -1,5 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.config;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
+import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +12,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 @Component
@@ -22,6 +24,9 @@ public class InitialAdminRoleSetup implements ApplicationListener<ContextRefresh
 
     @Autowired
     private RolesRepository roleRepository;
+
+    @Autowired
+    private OrganizationalUnitRepository organizationalUnitRepository;
 
     @Value("${keycloak.enabled:false}")
     private boolean isKeycloakEnabled;
@@ -50,16 +55,23 @@ public class InitialAdminRoleSetup implements ApplicationListener<ContextRefresh
     }
 
     @Transactional
-    private RolesEntity createRolesEntityIfNotFound(String name) {
+    protected void createRolesEntityIfNotFound(String name) {
 
-        RolesEntity role = roleRepository.findByOrganizationalUnitAndPermissionLevel(name, PermissionLevelType.CRUD);
-        if (role == null) {
-            role = new RolesEntity();
-            role.setOrganizationalUnit(name);
-            role.setPermissionLevel(PermissionLevelType.CRUD);
-            roleRepository.save(role);
+        organizationalUnitRepository.deleteAll();
+        roleRepository.deleteAll();
+
+        if (!organizationalUnitRepository.existsByName(name)) {
+            OrganizationalUnitEntity admin_organization = new OrganizationalUnitEntity();
+            admin_organization.setName(name);
+            admin_organization.setContact(name);
+            admin_organization.setDescription("global administration group");
+            organizationalUnitRepository.saveAndFlush(admin_organization);
+
+            RolesEntity role = new RolesEntity();
+            role.setOrganizationalUnit(admin_organization);
+            role.setPermissionLevel(PermissionLevelType.NONE);
+            roleRepository.saveAndFlush(role);
         }
-        return role;
     }
 
 }

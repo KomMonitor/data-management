@@ -1,11 +1,11 @@
-package de.hsbo.kommonitor.datamanagement.api.impl.roles;
+package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
 import java.util.List;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
+import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
+import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitInputType;
 import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.model.roles.RoleInputType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
@@ -29,14 +28,14 @@ public class RolesManager {
     @Autowired
     RolesRepository rolesRepo;
 
-    public RoleOverviewType addRole(RoleInputType roleData) throws Exception {
-        String organizationalUnit = roleData.getOrganizationalUnit();
-        PermissionLevelType permissionLevel = roleData.getPermissionLevel();
+    public RoleOverviewType addRole(OrganizationalUnitEntity organizationalUnit,
+                                    PermissionLevelType permissionLevel) throws Exception {
         logger.info("Trying to persist role with roleName '{}' and permissionLevel '{}'",
                     organizationalUnit,
                     permissionLevel);
 
-        if (rolesRepo.existsByOrganizationalUnitAndPermissionLevel(organizationalUnit, permissionLevel)) {
+        if (rolesRepo.existsByOrganizationalUnitAndPermissionLevel(
+            organizationalUnit, permissionLevel)) {
             logger.error("The role with organizationalUnit '{}' and permissionLevel '{}'already exists. " +
                              "Thus aborting add role request.",
                          organizationalUnit,
@@ -49,11 +48,9 @@ public class RolesManager {
          */
         RolesEntity role = new RolesEntity();
         role.setOrganizationalUnit(organizationalUnit);
-        role.setPermissionLevel(roleData.getPermissionLevel());
+        role.setPermissionLevel(permissionLevel);
         rolesRepo.saveAndFlush(role);
-
         return getRoleById(role.getRoleId());
-
     }
 
     public boolean deleteRoleById(String roleId) throws ResourceNotFoundException {
@@ -72,7 +69,7 @@ public class RolesManager {
         logger.info("Retrieving role for roleId '{}'", roleId);
 
         RolesEntity roleEntity = rolesRepo.findByRoleId(roleId);
-        RoleOverviewType role = RolesMapper.mapToSwaggerRole(roleEntity);
+        RoleOverviewType role = AccessControlMapper.mapToSwaggerRole(roleEntity);
 
         return role;
     }
@@ -81,24 +78,9 @@ public class RolesManager {
         logger.info("Retrieving all roles from db");
 
         List<RolesEntity> roleEntities = rolesRepo.findAll();
-        List<RoleOverviewType> roles = RolesMapper.mapToSwaggerRoles(roleEntities);
+        List<RoleOverviewType> roles = AccessControlMapper.mapToSwaggerRoles(roleEntities);
 
         return roles;
-    }
-
-    public String updateRole(RoleInputType roleData, String roleId) throws ResourceNotFoundException {
-        logger.info("Trying to update role with roleId '{}'", roleId);
-        if (rolesRepo.existsByRoleId(roleId)) {
-            RolesEntity roleEntity = rolesRepo.findByRoleId(roleId);
-            roleEntity.setOrganizationalUnit(roleData.getOrganizationalUnit());
-            roleEntity.setPermissionLevel(roleData.getPermissionLevel());
-            rolesRepo.saveAndFlush(roleEntity);
-            return roleId;
-        } else {
-            logger.error("No role with id '{}' was found in database. Update request has no effect.", roleId);
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                                                "Tried to update role, but no role existes with id " + roleId);
-        }
     }
 
 }

@@ -13,15 +13,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  */
 public enum PermissionLevelType {
 
-    CRUD("crud"),
+    CREATOR("creator"),
 
-    CRU("cru"),
+    PUBLISHER("publisher"),
 
-    RU("ru"),
+    EDITOR("editor"),
 
-    R("r"),
+    VIEWER("viewer"),
 
-    NONE("");
+    NONE("none");
 
     private String value;
 

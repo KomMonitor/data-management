@@ -1,5 +1,6 @@
-package de.hsbo.kommonitor.datamanagement.api.impl.roles;
+package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
+import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,10 +12,7 @@ public interface RolesRepository extends JpaRepository<RolesEntity, Long> {
 
     boolean existsByRoleId(String roleId);
 
-    RolesEntity findByOrganizationalUnitAndPermissionLevel(String ou, PermissionLevelType level);
-
-    boolean existsByOrganizationalUnitAndPermissionLevel(String ou, PermissionLevelType level);
+    boolean existsByOrganizationalUnitAndPermissionLevel(OrganizationalUnitEntity ou, PermissionLevelType level);
 
     void deleteByRoleId(String roleId);
-
 }

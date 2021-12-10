@@ -23,7 +23,7 @@ import org.springframework.stereotype.Repository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
@@ -528,7 +528,7 @@ public class SpatialUnitsManager {
                     .filter(s -> s.getRoles().isEmpty()).collect(Collectors.toList());
         } else {
             spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll().stream()
-                    .filter(s -> provider.checkPermissions(s, PermissionLevelType.R)).collect(Collectors.toList());
+                    .filter(s -> provider.checkPermissions(s, PermissionLevelType.VIEWER)).collect(Collectors.toList());
         }
 
         logger.info("Retrieved a total number of {} entries for spatialUnits metadata from db. Convert them to JSON Output structure and return.", spatialUnitMeatadataEntities.size());
@@ -681,7 +681,7 @@ public class SpatialUnitsManager {
                         "was not found.", spatialUnitId));
             }
         } else {
-            if (metadataEntity == null || !provider.checkPermissions(metadataEntity, PermissionLevelType.R)) {
+            if (metadataEntity == null || !provider.checkPermissions(metadataEntity, PermissionLevelType.VIEWER)) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
                         "was not found.", spatialUnitId));
             }

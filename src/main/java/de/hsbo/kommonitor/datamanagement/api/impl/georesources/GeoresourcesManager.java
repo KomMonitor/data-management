@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
@@ -455,7 +455,7 @@ public class GeoresourcesManager {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
             }
         } else {
-            if (georesourceMetadataEntity == null || !authInfoProvider.checkPermissions(georesourceMetadataEntity, PermissionLevelType.R)) {
+            if (georesourceMetadataEntity == null || !authInfoProvider.checkPermissions(georesourceMetadataEntity, PermissionLevelType.VIEWER)) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
             }
         }
@@ -479,7 +479,7 @@ public class GeoresourcesManager {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
-                if (metadataEntity == null || !authInfoProvider.checkPermissions(metadataEntity, PermissionLevelType.R)) {
+                if (metadataEntity == null || !authInfoProvider.checkPermissions(metadataEntity, PermissionLevelType.VIEWER)) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             }
@@ -512,7 +512,7 @@ public class GeoresourcesManager {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
-                if (metadataEntity == null || !authInfoProvider.checkPermissions(metadataEntity, PermissionLevelType.R)) {
+                if (metadataEntity == null || !authInfoProvider.checkPermissions(metadataEntity, PermissionLevelType.VIEWER)) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             }
@@ -552,7 +552,7 @@ public class GeoresourcesManager {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
-                if (metadataEntity == null || !provider.checkPermissions(metadataEntity, PermissionLevelType.R)) {
+                if (metadataEntity == null || !provider.checkPermissions(metadataEntity, PermissionLevelType.VIEWER)) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             }
@@ -587,7 +587,7 @@ public class GeoresourcesManager {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
-                if (metadataEntity == null || !provider.checkPermissions(metadataEntity, PermissionLevelType.R)) {
+                if (metadataEntity == null || !provider.checkPermissions(metadataEntity, PermissionLevelType.VIEWER)) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             }
@@ -629,7 +629,7 @@ public class GeoresourcesManager {
 
         MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
-        if (metadataEntity == null || !authInfoProvider.checkPermissions(metadataEntity, PermissionLevelType.R)) {
+        if (metadataEntity == null || !authInfoProvider.checkPermissions(metadataEntity, PermissionLevelType.VIEWER)) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
         }
         
@@ -794,7 +794,7 @@ public class GeoresourcesManager {
         logger.info("Retrieving secured georesources metadata from db");
 
         List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll().stream()
-                .filter(g -> provider.checkPermissions(g, PermissionLevelType.R)).collect(Collectors.toList());
+                .filter(g -> provider.checkPermissions(g, PermissionLevelType.VIEWER)).collect(Collectors.toList());
 
         return generateSwaggerGeoresourcesMetadata(georesourcesMeatadataEntities);
     }

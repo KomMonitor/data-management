@@ -34,7 +34,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.In
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.roles.RolesRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
@@ -485,7 +485,7 @@ public class IndicatorsManager {
                     .filter(i -> i.getRoles().isEmpty()).collect(Collectors.toList());
         } else {
             indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll().stream()
-                .filter(entity -> provider.checkPermissions(entity, PermissionLevelType.R))
+                .filter(entity -> provider.checkPermissions(entity, PermissionLevelType.VIEWER))
                 .collect(Collectors.toList());
         }
 
@@ -1317,7 +1317,7 @@ public class IndicatorsManager {
                         "was not found.", indicatorsId));
             }
         } else {
-            if (metadataEntity == null || !provider.checkPermissions(metadataEntity, PermissionLevelType.R)) {
+            if (metadataEntity == null || !provider.checkPermissions(metadataEntity, PermissionLevelType.VIEWER)) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
                         "was not found.", indicatorsId));
             }
@@ -1333,7 +1333,7 @@ public class IndicatorsManager {
                         "for indicator '%s' and spatial unit '%s' was not found.", indicatorId, spatialUnitId));
             }
         } else {
-            if (entity == null || !provider.checkPermissions(entity, PermissionLevelType.R)) {
+            if (entity == null || !provider.checkPermissions(entity, PermissionLevelType.VIEWER)) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource " +
                         "for indicator '%s' and spatial unit '%s' was not found.", indicatorId, spatialUnitId));
             }

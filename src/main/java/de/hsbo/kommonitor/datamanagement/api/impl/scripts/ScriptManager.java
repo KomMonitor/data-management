@@ -224,7 +224,7 @@ public class ScriptManager {
 					.filter(s -> s.getMetadataIndicatorsEntity().getRoles().isEmpty()).collect(Collectors.toList());
 		} else {
 			scriptEntities = scriptMetadataRepo.findAll().stream()
-					.filter(s -> provider.checkPermissions(s.getMetadataIndicatorsEntity(), PermissionLevelType.R))
+					.filter(s -> provider.checkPermissions(s.getMetadataIndicatorsEntity(), PermissionLevelType.VIEWER))
                     .collect(Collectors.toList());
 		}
 
@@ -525,7 +525,7 @@ public class ScriptManager {
 			}
 		} else {
 			if (entity == null
-                || !provider.checkPermissions(entity.getMetadataIndicatorsEntity(), PermissionLevelType.R)) {
+                || !provider.checkPermissions(entity.getMetadataIndicatorsEntity(), PermissionLevelType.VIEWER)) {
 				throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "The requested resource " +
 						"was not found.");
 			}
