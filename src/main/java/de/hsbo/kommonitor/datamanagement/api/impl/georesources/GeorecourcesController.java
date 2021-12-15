@@ -93,6 +93,7 @@ public class GeorecourcesController extends BasePathController implements Geores
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'creator')")
     public ResponseEntity deleteAllGeoresourceFeaturesById(@PathVariable("georesourceId") String georesourceId) {
         logger.info("Received request to delete all georesource features for datasetId '{}'", georesourceId);
 
@@ -118,6 +119,7 @@ public class GeorecourcesController extends BasePathController implements Geores
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'creator')")
     public ResponseEntity deleteGeoresourceById(@PathVariable("georesourceId") String georesourceId) {
         logger.info("Received request to delete georesource for datasetId '{}'", georesourceId);
 
@@ -143,6 +145,7 @@ public class GeorecourcesController extends BasePathController implements Geores
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'creator')")
     public ResponseEntity deleteGeoresourceByIdAndYearAndMonth(@PathVariable("georesourceId") String georesourceId, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
                                                                @PathVariable("day") BigDecimal day) {
         logger.info("Received request to delete georesource for datasetId '{}' and Date '{}-{}-{}'", georesourceId, year, month, day);
@@ -213,6 +216,7 @@ public class GeorecourcesController extends BasePathController implements Geores
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
     public ResponseEntity<byte[]> getAllGeoresourceFeaturesById(@PathVariable("georesourceId") String georesourceId, @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries, Principal principal) {
         logger.info("Received request to get all georesource features for datasetId '{}' and simplifyGeometries parameter '{}'", georesourceId, simplifyGeometries);
         String accept = request.getHeader("Accept");
@@ -235,7 +239,9 @@ public class GeorecourcesController extends BasePathController implements Geores
             return ApiUtils.createResponseEntityFromException(e);
         }
     }
+    
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
     public ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonth(@PathVariable("georesourceId") String georesourceId, @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
                                                                     @PathVariable("day") BigDecimal day,
                                                                     @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries, Principal principal) {
@@ -262,6 +268,7 @@ public class GeorecourcesController extends BasePathController implements Geores
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
     public ResponseEntity<String> getGeoresourceSchemaByLevel(@PathVariable("georesourceId") String georesourceId, Principal principal) {
         logger.info("Received request to get georesource metadata for datasetId '{}'", georesourceId);
         String accept = request.getHeader("Accept");
@@ -284,6 +291,8 @@ public class GeorecourcesController extends BasePathController implements Geores
         }
     }
     
+    @Override
+    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
     public ResponseEntity<byte[]> getAllGeoresourceFeaturesByIdWithoutGeometry(@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId, Principal principal) {
     	logger.info("Received request to get all georesource features for datasetId '{}' without geometry", georesourceId);
         String accept = request.getHeader("Accept");
@@ -307,6 +316,9 @@ public class GeorecourcesController extends BasePathController implements Geores
         }
     }
     
+    
+    @Override
+    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
     public ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonthWithoutGeometry(@ApiParam(value = "day",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "month",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "year",required=true) @PathVariable("year") BigDecimal year, Principal principal) {
     	logger.info("Received request to get georesource features for datasetId '{}' without geometry", georesourceId);
         String accept = request.getHeader("Accept");
@@ -331,6 +343,7 @@ public class GeorecourcesController extends BasePathController implements Geores
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
     public ResponseEntity updateGeoresourceAsBody(@PathVariable("georesourceId") String georesourceId, @RequestBody GeoresourcePUTInputType featureData) {
         logger.info("Received request to update georesource features for datasetId '{}'", georesourceId);
 
@@ -365,6 +378,7 @@ public class GeorecourcesController extends BasePathController implements Geores
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
     public ResponseEntity updateGeoresourceMetadataAsBody(@PathVariable("georesourceId") String georesourceId, @RequestBody GeoresourcePATCHInputType metadata) {
         logger.info("Received request to update georesource metadata for datasetId '{}'", georesourceId);
 
