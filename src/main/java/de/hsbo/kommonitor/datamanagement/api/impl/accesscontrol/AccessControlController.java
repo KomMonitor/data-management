@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,7 +59,8 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
-    @Override public ResponseEntity<RoleOverviewType> getRoleById(String roleId) {
+    @Override public ResponseEntity<RoleOverviewType> getRoleById(
+        @PathVariable("roleId") String roleId) {
         logger.debug("Received request to get role with id '{}", roleId);
         String accept = request.getHeader("Accept");
 
@@ -83,7 +85,8 @@ public class AccessControlController extends BasePathController implements Acces
     }
 
     @Override
-    public ResponseEntity<OrganizationalUnitOverviewType> getOrganizationalUnitById(String organizationalUnitId) {
+    public ResponseEntity<OrganizationalUnitOverviewType> getOrganizationalUnitById(
+        @PathVariable("organizationalUnitId") String organizationalUnitId) {
         logger.debug("Received request to get organizationalUnit with id '{}'", organizationalUnitId);
         String accept = request.getHeader("Accept");
 
@@ -126,8 +129,9 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
-    @Override public ResponseEntity updateOrganizationalUnit(OrganizationalUnitInputType inputData,
-                                                             String organizationalUnitId) {
+    @Override public ResponseEntity updateOrganizationalUnit(@RequestBody OrganizationalUnitInputType inputData,
+                                                             @PathVariable("organizationalUnitId")
+                                                                 String organizationalUnitId) {
         logger.info("Received request to update new organizationalUnit with associated Roles");
         String accept = request.getHeader("Accept");
 
@@ -152,7 +156,8 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
-    @Override public ResponseEntity deleteOrganizationalUnit(String organizationalUnitId) {
+    @Override public ResponseEntity deleteOrganizationalUnit(
+        @PathVariable("organizationalUnitId") String organizationalUnitId) {
         logger.info("Received request to delete organizationalUnit and associated roles for id '{}'",
                     organizationalUnitId);
 
