@@ -44,7 +44,7 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
         Set<RolesEntity> allowedRoleEntites = entity.getRoles();
 
         // User is global administrator
-        if (hasClientAdminRole()) {
+        if (hasRealmAdminRole()) {
             return true;
         }
 
@@ -82,4 +82,12 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
             .getResourceAccess(clientId)
             .isUserInRole(adminRole);
     }
+
+    private boolean hasRealmAdminRole() {
+        return getPrincipal().getKeycloakSecurityContext()
+                .getToken()
+                .getRealmAccess()
+                .isUserInRole(adminRole);
+    }
+
 }
