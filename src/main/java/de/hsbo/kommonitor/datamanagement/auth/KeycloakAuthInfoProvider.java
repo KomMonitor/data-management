@@ -35,7 +35,8 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
     }
 
     /**
-     * checks whether the current principal allows access to an entity with restricted access
+     * checks whether the current principal allows access to an entity with
+     * restricted access
      *
      * @param entity entity that has access rights defined by a role
      * @return
@@ -55,32 +56,55 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
         }
 
         Set<String> ownedRoles = getPrincipal()
-            .getKeycloakSecurityContext()
-            .getToken()
-            .getRealmAccess()
-            .getRoles();
+                .getKeycloakSecurityContext()
+                .getToken()
+                .getRealmAccess()
+                .getRoles();
 
         Set<Pair<?, ?>> allowedRoles = allowedRoleEntites.stream()
-            .map(e -> Pair.of(e.getOrganizationalUnit(), e.getPermissionLevel()))
-            .collect(Collectors.toSet());
+                .map(e -> Pair.of(e.getOrganizationalUnit(), e.getPermissionLevel()))
+                .collect(Collectors.toSet());
 
         return ownedRoles.stream()
-            // Split into OrganizationalUnit and PermissionLevel
-            .map(kcRole -> {
-                String[] split = kcRole.split("-(?=[crud]{0,4}$)", 2);
-                return Pair.of(split[0], PermissionLevelType.fromValue(split[1]));
-            })
-            // we do not look at roles that do not give the required level
-            .filter(r -> r.getSecond().compareTo(neededLevel) <= 0)
-            // check the leftover roles for a match
-            .anyMatch(allowedRoles::contains);
+                // Split into OrganizationalUnit and PermissionLevel
+                .map(kcRole -> {
+                    String[] split = kcRole.split("-(?=[crud]{0,4}$)", 2);
+                    return Pair.of(split[0], PermissionLevelType.fromValue(split[1]));
+                })
+                // we do not look at roles that do not give the required level
+                .filter(r -> r.getSecond().compareTo(neededLevel) <= 0)
+                // check the leftover roles for a match
+                .anyMatch(allowedRoles::contains);
+    }
+
+    @Override
+    public boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel) {
+        // User is global administrator
+        if (hasRealmAdminRole()) {
+            return true;
+        }
+
+        Set<String> ownedRoles = getPrincipal()
+                .getKeycloakSecurityContext()
+                .getToken()
+                .getRealmAccess()
+                .getRoles();
+
+        return ownedRoles.stream()
+                // Split into OrganizationalUnit and PermissionLevel
+                .map(kcRole -> {
+                    String[] split = kcRole.split("-(?=[crud]{0,4}$)", 2);
+                    return Pair.of(split[0], PermissionLevelType.fromValue(split[1]));
+                })
+                // check if role with min. permission level is present for user
+                .filter(r -> r.getSecond().compareTo(neededLevel) <= 0).findAny().isPresent();
     }
 
     private boolean hasClientAdminRole() {
         return getPrincipal().getKeycloakSecurityContext()
-            .getToken()
-            .getResourceAccess(clientId)
-            .isUserInRole(adminRole);
+                .getToken()
+                .getResourceAccess(clientId)
+                .isUserInRole(adminRole);
     }
 
     private boolean hasRealmAdminRole() {
@@ -89,5 +113,4 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
                 .getRealmAccess()
                 .isUserInRole(adminRole);
     }
-
 }

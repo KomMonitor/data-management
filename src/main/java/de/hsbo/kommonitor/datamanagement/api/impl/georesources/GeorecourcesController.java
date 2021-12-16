@@ -59,6 +59,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 
 
     @Override
+    @PreAuthorize("hasRequiredPermissionLevel('creator')")
     public ResponseEntity<GeoresourceOverviewType> addGeoresourceAsBody(@RequestBody GeoresourcePOSTInputType featureData) {
         logger.info("Received request to insert new georesource");
 

@@ -41,5 +41,7 @@ public abstract class AuthInfoProvider<T extends Principal> {
     }
 
     public abstract boolean checkPermissions(RestrictedByRole entity, PermissionLevelType neededLevel);
+    
+    public abstract boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel);
 
 }

@@ -7,6 +7,7 @@ package de.hsbo.kommonitor.datamanagement.auth;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public final class AuthHelperService {
     
     @Autowired
     private SpatialUnitsMetadataRepository spatialunitRepository;
+    
+    @Autowired
+    private IndicatorSpatialUnitsRepository indicatorspatialUnitsRepository;
     
     @Autowired
     private AuthInfoProviderFactory authInfoProviderFactory;
@@ -54,6 +58,10 @@ public final class AuthHelperService {
     
     public SpatialUnitsMetadataRepository getSpatialunitsRepository(){
         return this.spatialunitRepository;
+    }
+    
+    public IndicatorSpatialUnitsRepository getIndicatorSpatialunitsRepository(){
+        return this.indicatorspatialUnitsRepository;
     }
     
     /**
