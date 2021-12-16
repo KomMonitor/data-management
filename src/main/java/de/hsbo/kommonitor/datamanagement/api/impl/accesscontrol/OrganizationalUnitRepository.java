@@ -7,6 +7,8 @@ public interface OrganizationalUnitRepository extends JpaRepository<Organization
 
     OrganizationalUnitEntity findByOrganizationalUnitId(String id);
 
+    OrganizationalUnitEntity findByName(String name);
+
     boolean existsByOrganizationalUnitId(String id);
 
     boolean existsByName(String name);
