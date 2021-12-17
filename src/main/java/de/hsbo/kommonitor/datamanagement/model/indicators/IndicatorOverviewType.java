@@ -5,11 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
@@ -18,7 +13,6 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * IndicatorOverviewType
  */
-@Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2021-03-14T19:45:51.405Z")
 
 
@@ -27,15 +21,15 @@ public class IndicatorOverviewType   {
   private String abbreviation = null;
 
   @JsonProperty("allowedRoles")
-  @Valid
+  
   private List<String> allowedRoles = null;
 
   @JsonProperty("applicableDates")
-  @Valid
+  
   private List<String> applicableDates = new ArrayList<String>();
 
   @JsonProperty("applicableSpatialUnits")
-  @Valid
+  
   private List<IndicatorSpatialUnitJoinItem> applicableSpatialUnits = new ArrayList<IndicatorSpatialUnitJoinItem>();
 
   @JsonProperty("characteristicValue")
@@ -70,7 +64,7 @@ public class IndicatorOverviewType   {
   private CommonMetadataType metadata = null;
 
   @JsonProperty("ogcServices")
-  @Valid
+  
   private List<OgcServicesType> ogcServices = new ArrayList<OgcServicesType>();
 
   @JsonProperty("processDescription")
@@ -83,15 +77,15 @@ public class IndicatorOverviewType   {
   private BigDecimal displayOrder = null;
 
   @JsonProperty("referencedGeoresources")
-  @Valid
+  
   private List<GeoresourceReferenceType> referencedGeoresources = null;
 
   @JsonProperty("referencedIndicators")
-  @Valid
+  
   private List<IndicatorReferenceType> referencedIndicators = null;
 
   @JsonProperty("tags")
-  @Valid
+  
   private List<String> tags = new ArrayList<String>();
 
   @JsonProperty("topicReference")
@@ -110,7 +104,7 @@ public class IndicatorOverviewType   {
    * @return abbreviation
   **/
   @ApiModelProperty(required = true, value = "abbreviated mark of the indicator")
-  @NotNull
+  
 
 
   public String getAbbreviation() {
@@ -164,7 +158,7 @@ public class IndicatorOverviewType   {
    * @return applicableDates
   **/
   @ApiModelProperty(required = true, value = "array of applicable dates (year and month and day as YEAR-MONTH-DAY) according to ISO 8601 (e.g. 2018-01-30)")
-  @NotNull
+  
 
 
   public List<String> getApplicableDates() {
@@ -190,9 +184,9 @@ public class IndicatorOverviewType   {
    * @return applicableSpatialUnits
   **/
   @ApiModelProperty(required = true, value = "array of spatial unit levels for which the dataset is applicable")
-  @NotNull
+  
 
-  @Valid
+  
 
   public List<IndicatorSpatialUnitJoinItem> getApplicableSpatialUnits() {
     return applicableSpatialUnits;
@@ -212,7 +206,7 @@ public class IndicatorOverviewType   {
    * @return characteristicValue
   **/
   @ApiModelProperty(required = true, value = "the distuingishing characteristic value of the indicator")
-  @NotNull
+  
 
 
   public String getCharacteristicValue() {
@@ -233,7 +227,7 @@ public class IndicatorOverviewType   {
    * @return creationType
   **/
   @ApiModelProperty(required = true, value = "indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)")
-  @NotNull
+  
 
 
   public CreationTypeEnum getCreationType() {
@@ -255,7 +249,7 @@ public class IndicatorOverviewType   {
   **/
   @ApiModelProperty(value = "")
 
-  @Valid
+  
 
   public DefaultClassificationMappingType getDefaultClassificationMapping() {
     return defaultClassificationMapping;
@@ -275,7 +269,7 @@ public class IndicatorOverviewType   {
    * @return indicatorId
   **/
   @ApiModelProperty(required = true, value = "unique identifier of this resource")
-  @NotNull
+  
 
 
   public String getIndicatorId() {
@@ -296,7 +290,7 @@ public class IndicatorOverviewType   {
    * @return indicatorName
   **/
   @ApiModelProperty(required = true, value = "name of the indicator")
-  @NotNull
+  
 
 
   public String getIndicatorName() {
@@ -337,7 +331,7 @@ public class IndicatorOverviewType   {
    * @return interpretation
   **/
   @ApiModelProperty(required = true, value = "interpretation of the indicator values")
-  @NotNull
+  
 
 
   public String getInterpretation() {
@@ -358,7 +352,7 @@ public class IndicatorOverviewType   {
    * @return isHeadlineIndicator
   **/
   @ApiModelProperty(required = true, value = "boolean value indicating if the indicator is a headline indicator")
-  @NotNull
+  
 
 
   public Boolean isIsHeadlineIndicator() {
@@ -399,9 +393,9 @@ public class IndicatorOverviewType   {
    * @return metadata
   **/
   @ApiModelProperty(required = true, value = "")
-  @NotNull
+  
 
-  @Valid
+  
 
   public CommonMetadataType getMetadata() {
     return metadata;
@@ -426,9 +420,9 @@ public class IndicatorOverviewType   {
    * @return ogcServices
   **/
   @ApiModelProperty(required = true, value = "list of available OGC services for that indicator for different spatial units")
-  @NotNull
+  
 
-  @Valid
+  
 
   public List<OgcServicesType> getOgcServices() {
     return ogcServices;
@@ -448,7 +442,7 @@ public class IndicatorOverviewType   {
    * @return processDescription
   **/
   @ApiModelProperty(required = true, value = "description about how the indicator was computed")
-  @NotNull
+  
 
 
   public String getProcessDescription() {
@@ -490,7 +484,7 @@ public class IndicatorOverviewType   {
   **/
   @ApiModelProperty(value = "an order number to control display order in clients")
 
-  @Valid
+  
 
   public BigDecimal getDisplayOrder() {
     return displayOrder;
@@ -519,7 +513,7 @@ public class IndicatorOverviewType   {
   **/
   @ApiModelProperty(value = "list of references to georesources")
 
-  @Valid
+  
 
   public List<GeoresourceReferenceType> getReferencedGeoresources() {
     return referencedGeoresources;
@@ -548,7 +542,7 @@ public class IndicatorOverviewType   {
   **/
   @ApiModelProperty(value = "list of references to other indicators")
 
-  @Valid
+  
 
   public List<IndicatorReferenceType> getReferencedIndicators() {
     return referencedIndicators;
@@ -573,7 +567,7 @@ public class IndicatorOverviewType   {
    * @return tags
   **/
   @ApiModelProperty(required = true, value = "list of tag labels for the indicator")
-  @NotNull
+  
 
 
   public List<String> getTags() {
@@ -594,7 +588,7 @@ public class IndicatorOverviewType   {
    * @return topicReference
   **/
   @ApiModelProperty(required = true, value = "id of the last topic hierarchy entity ")
-  @NotNull
+  
 
 
   public String getTopicReference() {
@@ -615,7 +609,7 @@ public class IndicatorOverviewType   {
    * @return unit
   **/
   @ApiModelProperty(required = true, value = "unit of the indicator values")
-  @NotNull
+  
 
 
   public String getUnit() {

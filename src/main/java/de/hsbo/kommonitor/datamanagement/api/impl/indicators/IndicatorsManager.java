@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.geotools.data.DataStore;
@@ -1371,7 +1370,7 @@ public class IndicatorsManager {
                         .anyMatch(r -> authInfoProvider.hasRealmRole(r.getRoleName()));
     }
 
-	public boolean updateIndicatorOrder(@Valid List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray) {
+	public boolean updateIndicatorOrder( List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray) {
 		for (IndicatorPATCHDisplayOrderInputType indicatorPATCHDisplayOrderInputType : indicatorOrderArray) {
 			if(this.indicatorsMetadataRepo.existsByDatasetId(indicatorPATCHDisplayOrderInputType.getIndicatorId())) {
 				MetadataIndicatorsEntity indicatorMetadataEntity = this.indicatorsMetadataRepo.findByDatasetId(indicatorPATCHDisplayOrderInputType.getIndicatorId());

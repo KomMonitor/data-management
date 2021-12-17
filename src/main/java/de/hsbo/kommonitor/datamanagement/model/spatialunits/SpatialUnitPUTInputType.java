@@ -2,11 +2,6 @@ package de.hsbo.kommonitor.datamanagement.model.spatialunits;
 
 import java.util.Objects;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
@@ -15,7 +10,6 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * SpatialUnitPUTInputType
  */
-@Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2021-07-31T18:56:11.978Z")
 
 
@@ -39,7 +33,7 @@ public class SpatialUnitPUTInputType   {
    * @return geoJsonString
   **/
   @ApiModelProperty(required = true, value = "a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'")
-  @NotNull
+  
 
 
   public String getGeoJsonString() {
@@ -60,9 +54,7 @@ public class SpatialUnitPUTInputType   {
    * @return periodOfValidity
   **/
   @ApiModelProperty(required = true, value = "")
-  @NotNull
-
-  @Valid
+  
 
   public PeriodOfValidityType getPeriodOfValidity() {
     return periodOfValidity;
