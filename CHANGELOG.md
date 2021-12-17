@@ -1,6 +1,13 @@
 # Change Log
 
-## 1.2.0
+## 1.2.1
+* bump spring-boot-starter-parent and hibernate versions [406c5e4](406c5e4aae54ca9bc5b4071ef2103c55700794b4)
+* bump spring version to 2.3.5.RELEASE [e749e28](e749e28a21f9845b11839fe6cbf2ba356e1bbb52)
+* increase log4j version to 2.16 [a24988e](a24988ef30ab1a0739983e02739b795c062ffbaf)
+* override log4j version to fix critical security issue (although log4j is actually not used) [c473b3a](c473b3a6250ec582a0234e4e48eb25fbc9ee8df9)
+* fix problem when creating new protected resources. problem was that any set roles would prevent the return of created metadata due to query permission [4f3e331](4f3e3314d83c71da68ee0d26df65ca41dab45d4d)
+* fix API path [416e1a5](416e1a58da649fa8e9c4bd601e8b3e2d2ee31d36)
+* add new datatabse last modification timestamp management for each resource type [bb50fbe](bb50fbe128654edd6c4d402e2a54145f63cd7780)
 * adjust maven repositories for dependencies [f287dc6](f287dc678bb1cecd4bbe008a2d1e52145c2bed91)
 * change data type parsing order in schema request. check for integer before double [ff2f0d8](ff2f0d8b6cd3f62cd885706c6e4378c92d8c14d7)
 * improve handling of numeric georesource schema properties. [2543f0d](2543f0d3ba8fdcc44dc1344f3df1b28dc55d21e5)
