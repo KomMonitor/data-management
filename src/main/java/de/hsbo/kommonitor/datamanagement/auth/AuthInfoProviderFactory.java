@@ -16,8 +16,8 @@ public class AuthInfoProviderFactory {
     @Value("${keycloak.resource}")
     private String keycloakClientId;
 
-    @Value("${kommonitor.roles.admin:administrator}")
-    private String adminRole;
+    @Value("${kommonitor.access-control.authenticated-users.organizationalUnit:kommonitor}")
+    private String adminRolePrefix;
 
     public AuthInfoProvider createAuthInfoProvider(Principal principal) {
         if (principal instanceof KeycloakAuthenticationToken && Principal.class.isAssignableFrom(((KeycloakAuthenticationToken) principal).getPrincipal().getClass())) { //get real principal instance
@@ -26,7 +26,7 @@ public class AuthInfoProviderFactory {
         }
 
         if (principal instanceof KeycloakPrincipal) {
-            return new KeycloakAuthInfoProvider((KeycloakPrincipal) principal, keycloakClientId, adminRole);
+            return new KeycloakAuthInfoProvider((KeycloakPrincipal) principal, keycloakClientId, adminRolePrefix);
         } else {
             throw new IllegalStateException(String.format("Cannot create an AuthInfoProvider because the "
                     + "principal type %s is not supported.", principal.getClass()));

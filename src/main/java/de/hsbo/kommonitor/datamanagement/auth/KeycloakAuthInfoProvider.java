@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -25,13 +26,15 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
     @Value("${keycloak.resource}")
     private String clientId;
 
-    @Value("${kommonitor.roles.admin:administrator}")
-    private String adminRole;
+    @Value("${kommonitor.access-control.authenticated-users.organizationalUnit:kommonitor}")
+    private String adminRolePrefix;
 
-    public KeycloakAuthInfoProvider(KeycloakPrincipal principal, String clientId, String adminRole) {
+    private static final Pattern roleExtractorRegex = Pattern.compile("-(?=(creator)|(publisher)|(editor)|(viewer)$)");
+
+    public KeycloakAuthInfoProvider(KeycloakPrincipal principal, String clientId, String adminRolePrefix) {
         super(principal);
         this.clientId = clientId;
-        this.adminRole = adminRole;
+        this.adminRolePrefix = adminRolePrefix;
     }
 
     /**
@@ -68,7 +71,7 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
         return ownedRoles.stream()
                 // Split into OrganizationalUnit and PermissionLevel
                 .map(kcRole -> {
-                    String[] split = kcRole.split("-(?=[crud]{0,4}$)", 2);
+                    String[] split = roleExtractorRegex.split(kcRole, 2);
                     return Pair.of(split[0], PermissionLevelType.fromValue(split[1]));
                 })
                 // we do not look at roles that do not give the required level
@@ -93,24 +96,17 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
         return ownedRoles.stream()
                 // Split into OrganizationalUnit and PermissionLevel
                 .map(kcRole -> {
-                    String[] split = kcRole.split("-(?=[crud]{0,4}$)", 2);
+                    String[] split = roleExtractorRegex.split(kcRole, 2);
                     return Pair.of(split[0], PermissionLevelType.fromValue(split[1]));
                 })
                 // check if role with min. permission level is present for user
-                .filter(r -> r.getSecond().compareTo(neededLevel) <= 0).findAny().isPresent();
-    }
-
-    private boolean hasClientAdminRole() {
-        return getPrincipal().getKeycloakSecurityContext()
-                .getToken()
-                .getResourceAccess(clientId)
-                .isUserInRole(adminRole);
+                .anyMatch(r -> r.getSecond().compareTo(neededLevel) <= 0);
     }
 
     private boolean hasRealmAdminRole() {
         return getPrincipal().getKeycloakSecurityContext()
                 .getToken()
                 .getRealmAccess()
-                .isUserInRole(adminRole);
+                .isUserInRole(adminRolePrefix + "-creator");
     }
 }
