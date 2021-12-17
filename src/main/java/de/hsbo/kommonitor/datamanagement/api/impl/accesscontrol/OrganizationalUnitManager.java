@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitInputType;
@@ -8,6 +9,7 @@ import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -27,6 +29,12 @@ public class OrganizationalUnitManager {
 
     @Autowired
     RolesManager rolesManager;
+
+    @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
+    private String defaultAnonymousOUname;
+
+    @Value("${kommonitor.access-control.authenticated-users.organizationalUnit:kommonitor}")
+    private String defaultAuthenticatedOUname;
 
     public OrganizationalUnitOverviewType addOrganizationalUnit(
         OrganizationalUnitInputType inputOrganizationalUnit
@@ -60,9 +68,16 @@ public class OrganizationalUnitManager {
         return AccessControlMapper.mapToSwaggerOrganizationalUnit(saved);
     }
 
-    public boolean deleteOrganizationalUnitAndRolesById(String organizationalUnitId) throws ResourceNotFoundException {
-        logger.info("Trying to delete OrganizationalUnit with organizationalUnitId '{}'", organizationalUnitId);
-        if (organizationalUnitRepository.existsByOrganizationalUnitId(organizationalUnitId)) {
+    public boolean deleteOrganizationalUnitAndRolesById(String organizationalUnitId) throws ApiException {
+        OrganizationalUnitEntity unit = organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
+        if (unit != null) {
+            // Prevent deletion of default units.
+            if (unit.getName().equals(defaultAnonymousOUname) || unit.getName().equals(defaultAuthenticatedOUname)) {
+                logger.error("Trying to delete default OrganizationalUnits.");
+                throw new ApiException(HttpStatus.FORBIDDEN.value(),
+                                       "Tried to delete default OrganizationalUnits");
+            }
+
             // This should automatically propagate to associated roles via @CascadeType.REMOVE
             organizationalUnitRepository.deleteByOrganizationalUnitId(organizationalUnitId);
             return true;
