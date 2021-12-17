@@ -53,18 +53,6 @@ public class RolesManager {
         return getRoleById(role.getRoleId());
     }
 
-    public boolean deleteRoleById(String roleId) throws ResourceNotFoundException {
-        logger.info("Trying to delete role with roleId '{}'", roleId);
-        if (rolesRepo.existsByRoleId(roleId)) {
-            rolesRepo.deleteByRoleId(roleId);
-            return true;
-        } else {
-            logger.error("No role with id '{}' was found in database. Delete request has no effect.", roleId);
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                                                "Tried to delete role, but no role existes with id " + roleId);
-        }
-    }
-
     public RoleOverviewType getRoleById(String roleId) {
         logger.info("Retrieving role for roleId '{}'", roleId);
 

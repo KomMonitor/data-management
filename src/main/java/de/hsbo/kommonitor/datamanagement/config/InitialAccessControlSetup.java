@@ -80,7 +80,7 @@ public class InitialAccessControlSetup implements ApplicationListener<ContextRef
             role.setPermissionLevel(level);
             roleRepository.saveAndFlush(role);
         } else {
-            logger.info("Skipping creating role {} - Role already exists", ou.getName() + level.toString());
+            logger.info("Skipping creating role '{}' - Role already exists", ou.getName() + level.toString());
         }
     }
 

@@ -160,7 +160,6 @@ public class AccessControlController extends BasePathController implements Acces
         @PathVariable("organizationalUnitId") String organizationalUnitId) {
         logger.info("Received request to delete organizationalUnit and associated roles for id '{}'",
                     organizationalUnitId);
-
         try {
             boolean isDeleted = organizationalUnitManager.deleteOrganizationalUnitAndRolesById(organizationalUnitId);
             lastModManager.updateLastDatabaseModification_roles();
