@@ -3,10 +3,6 @@ package de.hsbo.kommonitor.datamanagement.model.database;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
-import javax.validation.Valid;
-
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -14,7 +10,6 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * LastModificationOverviewType
  */
-@Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2021-09-19T19:11:37.856Z")
 
 
@@ -48,7 +43,7 @@ public class LastModificationOverviewType   {
   **/
   @ApiModelProperty(value = "")
 
-  @Valid
+  
 
   public OffsetDateTime getTopics() {
     return topics;
@@ -69,7 +64,7 @@ public class LastModificationOverviewType   {
   **/
   @ApiModelProperty(value = "")
 
-  @Valid
+  
 
   public OffsetDateTime getSpatialUnits() {
     return spatialUnits;
@@ -90,7 +85,7 @@ public class LastModificationOverviewType   {
   **/
   @ApiModelProperty(value = "")
 
-  @Valid
+  
 
   public OffsetDateTime getIndicators() {
     return indicators;
@@ -111,7 +106,7 @@ public class LastModificationOverviewType   {
   **/
   @ApiModelProperty(value = "")
 
-  @Valid
+  
 
   public OffsetDateTime getGeoresources() {
     return georesources;
@@ -132,7 +127,7 @@ public class LastModificationOverviewType   {
   **/
   @ApiModelProperty(value = "")
 
-  @Valid
+  
 
   public OffsetDateTime getProcessScripts() {
     return processScripts;
@@ -153,7 +148,7 @@ public class LastModificationOverviewType   {
   **/
   @ApiModelProperty(value = "")
 
-  @Valid
+  
 
   public OffsetDateTime getRoles() {
     return roles;

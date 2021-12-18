@@ -9,8 +9,6 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -207,7 +205,7 @@ public interface IndicatorsApi {
             produces = { "*/*" }, 
             consumes = { "application/json" },
             method = RequestMethod.PATCH)
-        ResponseEntity updateIndicatorDisplayOrder(@ApiParam(value = "array of indicator id and displayOrder items" ,required=true )  @Valid @RequestBody List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray);
+        ResponseEntity updateIndicatorDisplayOrder(@ApiParam(value = "array of indicator id and displayOrder items" ,required=true )  @RequestBody List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray);
 
 
 }

@@ -87,11 +87,10 @@ public class JsonDataEncryptConverter extends AbstractHttpMessageConverter<Objec
 			
 			Map<String, String> hashMap = new HashMap<>();
 			hashMap.put("data", requestParamString.toString().replace("\n", ""));
-			JSONObject jsob = new JSONObject(hashMap);
+			JSONObject requestJsonObject = new JSONObject();
+			requestJsonObject.putAll(hashMap);
 
-			JSONObject requestJsonObject = new JSONObject(jsob);
-
-			String decryptRequestString = aesEncryptor.decrypt((String)requestJsonObject.get("data"), password);
+			String decryptRequestString = aesEncryptor.decrypt(requestParamString.toString().replace("\n", ""), password);
 			System.out.println("decryptRequestString: " + decryptRequestString);
 
 			if (decryptRequestString != null) {
@@ -127,7 +126,8 @@ public class JsonDataEncryptConverter extends AbstractHttpMessageConverter<Objec
 
 			Map<String, String> hashMap = new HashMap<>();
 			hashMap.put("encryptedData", encryptedString);
-			JSONObject jsob = new JSONObject(hashMap);
+			JSONObject jsob = new JSONObject();
+			jsob.putAll(hashMap);
 			return jsob.toString().getBytes();
 		} else
 			return bytesToEncrypt;

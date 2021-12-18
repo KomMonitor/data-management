@@ -21,7 +21,6 @@ import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicResourceEnum;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
-import javassist.NotFoundException;
 
 @Transactional
 @Repository
@@ -275,7 +274,7 @@ public class TopicsManager {
 		}
 		else{
 			logger.error("No topic with topicId '{}' was found. Thus aborting update topic request.", topicId);
-			throw new NotFoundException("No topic was found for specified topicId. Aborting update topic request.");
+			throw new ResourceNotFoundException(404, "No topic was found for specified topicId. Aborting update topic request.");
 		}		
 	}
 

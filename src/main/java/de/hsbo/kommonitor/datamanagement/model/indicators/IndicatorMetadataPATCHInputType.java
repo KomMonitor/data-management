@@ -5,11 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
@@ -18,7 +13,6 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * IndicatorMetadataPATCHInputType
  */
-@Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2021-03-14T19:45:51.405Z")
 
 
@@ -27,7 +21,7 @@ public class IndicatorMetadataPATCHInputType   {
   private String abbreviation = null;
 
   @JsonProperty("allowedRoles")
-  @Valid
+  
   private List<String> allowedRoles = new ArrayList<String>();
 
   @JsonProperty("characteristicValue")
@@ -67,15 +61,15 @@ public class IndicatorMetadataPATCHInputType   {
   private BigDecimal displayOrder = null;
 
   @JsonProperty("refrencesToGeoresources")
-  @Valid
+  
   private List<IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources = null;
 
   @JsonProperty("refrencesToOtherIndicators")
-  @Valid
+  
   private List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators = null;
 
   @JsonProperty("tags")
-  @Valid
+  
   private List<String> tags = new ArrayList<String>();
 
   @JsonProperty("topicReference")
@@ -94,7 +88,7 @@ public class IndicatorMetadataPATCHInputType   {
    * @return abbreviation
   **/
   @ApiModelProperty(required = true, value = "abbreviated mark of the indicator")
-  @NotNull
+  
 
 
   public String getAbbreviation() {
@@ -120,7 +114,7 @@ public class IndicatorMetadataPATCHInputType   {
    * @return allowedRoles
   **/
   @ApiModelProperty(required = true, value = "list of role identifiers that have read access rights for this dataset")
-  @NotNull
+  
 
 
   public List<String> getAllowedRoles() {
@@ -202,7 +196,7 @@ public class IndicatorMetadataPATCHInputType   {
   **/
   @ApiModelProperty(value = "")
 
-  @Valid
+  
 
   public DefaultClassificationMappingType getDefaultClassificationMapping() {
     return defaultClassificationMapping;
@@ -242,7 +236,7 @@ public class IndicatorMetadataPATCHInputType   {
    * @return interpretation
   **/
   @ApiModelProperty(required = true, value = "interpretation of the indicator values")
-  @NotNull
+  
 
 
   public String getInterpretation() {
@@ -263,7 +257,7 @@ public class IndicatorMetadataPATCHInputType   {
    * @return isHeadlineIndicator
   **/
   @ApiModelProperty(required = true, value = "boolean value indicating if the indicator is a headline indicator")
-  @NotNull
+  
 
 
   public Boolean isIsHeadlineIndicator() {
@@ -304,9 +298,9 @@ public class IndicatorMetadataPATCHInputType   {
    * @return metadata
   **/
   @ApiModelProperty(required = true, value = "")
-  @NotNull
+  
 
-  @Valid
+  
 
   public CommonMetadataType getMetadata() {
     return metadata;
@@ -326,7 +320,7 @@ public class IndicatorMetadataPATCHInputType   {
    * @return processDescription
   **/
   @ApiModelProperty(required = true, value = "description about how the indicator was computed")
-  @NotNull
+  
 
 
   public String getProcessDescription() {
@@ -368,7 +362,7 @@ public class IndicatorMetadataPATCHInputType   {
   **/
   @ApiModelProperty(value = "an order number to control display order in clients")
 
-  @Valid
+  
 
   public BigDecimal getDisplayOrder() {
     return displayOrder;
@@ -397,7 +391,7 @@ public class IndicatorMetadataPATCHInputType   {
   **/
   @ApiModelProperty(value = "array of references to other georesource datasets. E.g., if an indicator is defined by performing geometric-topological operations, then the identifiers of those required georesources can be referenced here")
 
-  @Valid
+  
 
   public List<IndicatorPOSTInputTypeRefrencesToGeoresources> getRefrencesToGeoresources() {
     return refrencesToGeoresources;
@@ -426,7 +420,7 @@ public class IndicatorMetadataPATCHInputType   {
   **/
   @ApiModelProperty(value = "array of references to other indicators. E.g., if an indicator is defined by combining four other indicators, then the identifiers of those four indicators can be referenced here")
 
-  @Valid
+  
 
   public List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> getRefrencesToOtherIndicators() {
     return refrencesToOtherIndicators;
@@ -451,7 +445,7 @@ public class IndicatorMetadataPATCHInputType   {
    * @return tags
   **/
   @ApiModelProperty(required = true, value = "list of tag labels for the indicator")
-  @NotNull
+  
 
 
   public List<String> getTags() {
@@ -472,7 +466,7 @@ public class IndicatorMetadataPATCHInputType   {
    * @return topicReference
   **/
   @ApiModelProperty(required = true, value = "id of the last topic hierarchy entity ")
-  @NotNull
+  
 
 
   public String getTopicReference() {
@@ -493,7 +487,7 @@ public class IndicatorMetadataPATCHInputType   {
    * @return unit
   **/
   @ApiModelProperty(required = true, value = "unit of the indicator values")
-  @NotNull
+  
 
 
   public String getUnit() {

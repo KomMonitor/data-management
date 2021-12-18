@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -16,7 +11,6 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * ProcessScriptOverviewType
  */
-@Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2021-03-14T19:45:51.405Z")
 
 
@@ -31,11 +25,11 @@ public class ProcessScriptOverviewType   {
   private String name = null;
 
   @JsonProperty("requiredGeoresourceIds")
-  @Valid
+  
   private List<String> requiredGeoresourceIds = new ArrayList<String>();
 
   @JsonProperty("requiredIndicatorIds")
-  @Valid
+  
   private List<String> requiredIndicatorIds = new ArrayList<String>();
 
   @JsonProperty("scriptId")
@@ -45,7 +39,7 @@ public class ProcessScriptOverviewType   {
   private String scriptType = null;
 
   @JsonProperty("variableProcessParameters")
-  @Valid
+  
   private List<ProcessInputType> variableProcessParameters = new ArrayList<ProcessInputType>();
 
   public ProcessScriptOverviewType description(String description) {
@@ -58,7 +52,7 @@ public class ProcessScriptOverviewType   {
    * @return description
   **/
   @ApiModelProperty(required = true, value = "short description of the scripts content (what does it do)")
-  @NotNull
+  
 
 
   public String getDescription() {
@@ -79,7 +73,7 @@ public class ProcessScriptOverviewType   {
    * @return indicatorId
   **/
   @ApiModelProperty(required = true, value = "unique identifier of the associated indicator (e.g. the indicator that is computed by a script or for which the values shall be aggregated to another spatial unit)")
-  @NotNull
+  
 
 
   public String getIndicatorId() {
@@ -100,7 +94,7 @@ public class ProcessScriptOverviewType   {
    * @return name
   **/
   @ApiModelProperty(required = true, value = "name of the process script")
-  @NotNull
+  
 
 
   public String getName() {
@@ -126,7 +120,7 @@ public class ProcessScriptOverviewType   {
    * @return requiredGeoresourceIds
   **/
   @ApiModelProperty(required = true, value = "identifiers of georesources that are used within the script.")
-  @NotNull
+  
 
 
   public List<String> getRequiredGeoresourceIds() {
@@ -152,7 +146,7 @@ public class ProcessScriptOverviewType   {
    * @return requiredIndicatorIds
   **/
   @ApiModelProperty(required = true, value = "identifiers of indicators that are used within the script.")
-  @NotNull
+  
 
 
   public List<String> getRequiredIndicatorIds() {
@@ -173,7 +167,7 @@ public class ProcessScriptOverviewType   {
    * @return scriptId
   **/
   @ApiModelProperty(required = true, value = "unique identifier of the process script")
-  @NotNull
+  
 
 
   public String getScriptId() {
@@ -219,9 +213,9 @@ public class ProcessScriptOverviewType   {
    * @return variableProcessParameters
   **/
   @ApiModelProperty(required = true, value = "list of process parameters that can be set by an expert user. They are used within the script to parameterize the indicator computation")
-  @NotNull
+  
 
-  @Valid
+  
 
   public List<ProcessInputType> getVariableProcessParameters() {
     return variableProcessParameters;

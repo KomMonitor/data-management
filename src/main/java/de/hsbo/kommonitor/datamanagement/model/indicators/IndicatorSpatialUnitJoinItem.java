@@ -1,20 +1,17 @@
 package de.hsbo.kommonitor.datamanagement.model.indicators;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * IndicatorSpatialUnitJoinItem
  */
-@Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2020-07-31T11:36:14.910+02:00")
 
 public class IndicatorSpatialUnitJoinItem implements Serializable {
@@ -27,7 +24,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
   private String spatialUnitName = null;
 
   @JsonProperty("allowedRoles")
-  @Valid
+  
   private List<String> allowedRoles = null;
 
   public IndicatorSpatialUnitJoinItem spatialUnitId(String spatialUnitId) {
@@ -40,7 +37,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
    * @return spatialUnitId
   **/
   @ApiModelProperty(required = true, value = "ID of the applicable spatial unit")
-  @NotNull
+  
 
 
   public String getSpatialUnitId() {
@@ -61,7 +58,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
    * @return spatialUnitName
   **/
   @ApiModelProperty(required = true, value = "name of the applicable spatial unit")
-  @NotNull
+  
 
 
   public String getSpatialUnitName() {
