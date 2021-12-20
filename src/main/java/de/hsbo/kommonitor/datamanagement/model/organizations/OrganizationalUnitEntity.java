@@ -19,7 +19,7 @@ public class OrganizationalUnitEntity {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String organizationalUnitId = null;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     public String name;
 
     @Column(nullable = false)
