@@ -1,6 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.auth;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
+import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import org.keycloak.KeycloakPrincipal;
@@ -64,12 +65,13 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
                 .getRealmAccess()
                 .getRoles();
 
-        Set<Pair<?, ?>> allowedRoles = allowedRoleEntites.stream()
+        Set<Pair<OrganizationalUnitEntity, PermissionLevelType>> allowedRoles = allowedRoleEntites.stream()
                 .map(e -> Pair.of(e.getOrganizationalUnit(), e.getPermissionLevel()))
                 .collect(Collectors.toSet());
 
         return ownedRoles.stream()
                 // Split into OrganizationalUnit and PermissionLevel
+                .filter(kcRole -> roleExtractorRegex.split(kcRole, 2).length == 2)
                 .map(kcRole -> {
                     String[] split = roleExtractorRegex.split(kcRole, 2);
                     return Pair.of(split[0], PermissionLevelType.fromValue(split[1]));
@@ -77,7 +79,10 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
                 // we do not look at roles that do not give the required level
                 .filter(r -> r.getSecond().compareTo(neededLevel) <= 0)
                 // check the leftover roles for a match
-                .anyMatch(allowedRoles::contains);
+                .anyMatch(r -> allowedRoles
+                        .stream()
+                        .anyMatch(ar -> ar.getFirst().getName().equals(r.getFirst())
+                                && ar.getSecond().equals(r.getSecond())));
     }
 
     @Override
@@ -95,6 +100,7 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
 
         return ownedRoles.stream()
                 // Split into OrganizationalUnit and PermissionLevel
+                .filter(kcRole -> roleExtractorRegex.split(kcRole, 2).length == 2)
                 .map(kcRole -> {
                     String[] split = roleExtractorRegex.split(kcRole, 2);
                     return Pair.of(split[0], PermissionLevelType.fromValue(split[1]));
