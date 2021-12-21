@@ -30,12 +30,16 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
     @Value("${kommonitor.access-control.authenticated-users.organizationalUnit:kommonitor}")
     private String adminRolePrefix;
 
+    @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
+    private String publicRole;
+
     private static final Pattern roleExtractorRegex = Pattern.compile("-(?=(creator)|(publisher)|(editor)|(viewer)$)");
 
-    public KeycloakAuthInfoProvider(KeycloakPrincipal principal, String clientId, String adminRolePrefix) {
+    public KeycloakAuthInfoProvider(KeycloakPrincipal principal, String clientId, String adminRolePrefix, String publicRole) {
         super(principal);
         this.clientId = clientId;
         this.adminRolePrefix = adminRolePrefix;
+        this.publicRole = publicRole;
     }
 
     /**
@@ -46,7 +50,7 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
      * @return
      */
     public boolean checkPermissions(final RestrictedByRole entity, final PermissionLevelType neededLevel) {
-        Set<RolesEntity> allowedRoleEntites = entity.getRoles();
+        Set<RolesEntity> allowedRoleEntities = entity.getRoles();
 
         // User is global administrator
         if (hasRealmAdminRole()) {
@@ -55,7 +59,7 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
 
         // disallow access by default
         // TODO: should this be allow all by default?
-        if (allowedRoleEntites == null || allowedRoleEntites.isEmpty()) {
+        if (allowedRoleEntities == null || allowedRoleEntities.isEmpty()) {
             return false;
         }
 
@@ -65,7 +69,7 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
                 .getRealmAccess()
                 .getRoles();
 
-        Set<Pair<OrganizationalUnitEntity, PermissionLevelType>> allowedRoles = allowedRoleEntites.stream()
+        Set<Pair<OrganizationalUnitEntity, PermissionLevelType>> allowedRoles = allowedRoleEntities.stream()
                 .map(e -> Pair.of(e.getOrganizationalUnit(), e.getPermissionLevel()))
                 .collect(Collectors.toSet());
 
@@ -83,7 +87,7 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
                         .stream()
                         .anyMatch(ar -> (ar.getFirst().getName().equals(r.getFirst())
                                 && ar.getSecond().compareTo(neededLevel) <= 0)
-                                || (ar.getFirst().getName().equals("public")
+                                || (ar.getFirst().getName().equals(publicRole)
                                         && ar.getSecond().compareTo(neededLevel) <= 0)));
     }
 
