@@ -81,8 +81,10 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
                 // check the leftover roles for a match
                 .anyMatch(r -> allowedRoles
                         .stream()
-                        .anyMatch(ar -> ar.getFirst().getName().equals(r.getFirst())
-                                && ar.getSecond().equals(r.getSecond())));
+                        .anyMatch(ar -> (ar.getFirst().getName().equals(r.getFirst())
+                                && ar.getSecond().compareTo(neededLevel) <= 0)
+                                || (ar.getFirst().getName().equals("public")
+                                        && ar.getSecond().compareTo(neededLevel) <= 0)));
     }
 
     @Override
