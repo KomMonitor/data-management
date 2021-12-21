@@ -16,6 +16,7 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -62,6 +63,9 @@ public class SpatialUnitsManager {
 
     @Autowired
     OGCWebServiceManager ogcServiceManager;
+
+    @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
+    private String publicRole;
 
     public SpatialUnitOverviewType addSpatialUnit(SpatialUnitPOSTInputType featureData) throws Exception {
         String metadataId = null;
@@ -525,7 +529,9 @@ public class SpatialUnitsManager {
 
         if (provider == null) {
             spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll().stream()
-                    .filter(s -> s.getRoles().isEmpty()).collect(Collectors.toList());
+                    .filter(s -> s.getRoles().stream()
+                            .anyMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole)))
+                    .collect(Collectors.toList());
         } else {
             spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll().stream()
                     .filter(s -> provider.checkPermissions(s, PermissionLevelType.VIEWER)).collect(Collectors.toList());
@@ -676,7 +682,8 @@ public class SpatialUnitsManager {
     private MetadataSpatialUnitsEntity fetchEntity(AuthInfoProvider provider, String spatialUnitId) throws ResourceNotFoundException {
         MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
         if (provider == null) {
-            if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+            if (metadataEntity == null || metadataEntity.getRoles().stream()
+                    .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
                         "was not found.", spatialUnitId));
             }

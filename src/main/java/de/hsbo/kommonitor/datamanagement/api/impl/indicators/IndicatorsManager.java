@@ -24,6 +24,7 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -94,6 +95,8 @@ public class IndicatorsManager {
     @Autowired
     IndicatorsMapper indicatorsMapper;
 
+    @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
+    private String publicRole;
 
     public String updateMetadata(IndicatorMetadataPATCHInputType metadata, String indicatorId) throws Exception {
         logger.info("Trying to update indicator metadata for datasetId '{}'", indicatorId);
@@ -482,7 +485,9 @@ public class IndicatorsManager {
 
         if (provider == null) {
             indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll().stream()
-                    .filter(i -> i.getRoles().isEmpty()).collect(Collectors.toList());
+                    .filter(i -> i.getRoles().stream()
+                            .anyMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole)))
+                    .collect(Collectors.toList());
         } else {
             indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll().stream()
                 .filter(entity -> provider.checkPermissions(entity, PermissionLevelType.VIEWER))
@@ -1312,7 +1317,8 @@ public class IndicatorsManager {
     private MetadataIndicatorsEntity fetchMetadataIndicatorsEntity(AuthInfoProvider provider, String indicatorsId) throws ResourceNotFoundException {
         MetadataIndicatorsEntity metadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorsId);
         if (provider == null) {
-            if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+            if (metadataEntity == null || metadataEntity.getRoles().stream()
+                    .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
                         "was not found.", indicatorsId));
             }
@@ -1328,7 +1334,8 @@ public class IndicatorsManager {
     private IndicatorSpatialUnitJoinEntity fetchIndicatorSpatialUnitJoinEntity(AuthInfoProvider provider, String indicatorId, String spatialUnitId) throws ResourceNotFoundException {
         IndicatorSpatialUnitJoinEntity entity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
         if (provider == null) {
-            if (entity == null || !entity.getRoles().isEmpty()) {
+            if (entity == null || entity.getRoles().stream()
+                    .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource " +
                         "for indicator '%s' and spatial unit '%s' was not found.", indicatorId, spatialUnitId));
             }
