@@ -18,6 +18,7 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -72,6 +73,9 @@ public class GeoresourcesManager {
     @Autowired
     private ScriptManager scriptManager;
 
+    @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
+    private String publicRole;
+
     public GeoresourceOverviewType addGeoresource(GeoresourcePOSTInputType featureData) throws Exception {
 
         String metadataId = null;
@@ -114,7 +118,7 @@ public class GeoresourcesManager {
              */
             updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
 
-            return GeoresourcesMapper.mapToSwaggerGeoresource(georesourcesMetadataRepo.findByDatasetId(metadataId));            		
+            return GeoresourcesMapper.mapToSwaggerGeoresource(georesourcesMetadataRepo.findByDatasetId(metadataId));
         } catch (Exception e) {
             /*
              * remove partially created resources and thrwo error
@@ -354,9 +358,9 @@ public class GeoresourcesManager {
 	public boolean deleteGeoresourceDatasetById(String georesourceId) throws Exception {
 		logger.info("Trying to delete georesource dataset with datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
-			
+
 			boolean success = true;
-			
+
 			try {
 				boolean deletedReferences = indicatorsManager.deleteIndicatorReferencesByGeoresource(georesourceId);
 			} catch (Exception e) {
@@ -364,17 +368,17 @@ public class GeoresourcesManager {
 				logger.error("Error was: {}", e.getMessage());
 				e.printStackTrace();
 			}
-			
+
 			try {
 				boolean deleteScriptsForGeoresource = scriptManager.deleteScriptsByGeoresourceId(georesourceId);
 			} catch (Exception e) {
 				logger.error("Error while deleting scripts for georesource with id {}", georesourceId);
 				logger.error("Error was: {}", e.getMessage());
 				e.printStackTrace();
-			}				
-			
+			}
+
 			MetadataGeoresourcesEntity georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
-			
+
 			// delete any linked roles first
 			try {
 				georesourceEntity = removeAnyLinkedRoles(georesourceEntity);
@@ -383,12 +387,12 @@ public class GeoresourcesManager {
 				logger.error("Error was: {}", e.getMessage());
 				e.printStackTrace();
 			}
-			
-			
-			// now remove feature data and remaining 
-			
+
+
+			// now remove feature data and remaining
+
 			String dbTableName = georesourceEntity.getDbTableName();
-			
+
 			try {
 				/*
 				 * delete featureTable
@@ -399,7 +403,7 @@ public class GeoresourcesManager {
 				logger.error("Error was: {}", e.getMessage());
 				e.printStackTrace();
 			}
-			
+
 			try {
 				/*
 				 * delete metadata entry
@@ -411,7 +415,7 @@ public class GeoresourcesManager {
 				e.printStackTrace();
 				success = false;
 			}
-			
+
 			try {
 				// handle OGC web service
 				ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.GEORESOURCE);
@@ -419,7 +423,7 @@ public class GeoresourcesManager {
 				logger.error("Error while unbublishing OGC service layer for georesource with id {}", georesourceId);
 				logger.error("Error was: {}", e.getMessage());
 				e.printStackTrace();
-			}		
+			}
 
 			return success;
 		} else {
@@ -433,11 +437,11 @@ public class GeoresourcesManager {
 
     private MetadataGeoresourcesEntity removeAnyLinkedRoles(MetadataGeoresourcesEntity georesourceEntity) {
 		georesourceEntity.setRoles(new ArrayList<>());
-		
+
 		georesourcesMetadataRepo.saveAndFlush(georesourceEntity);
-		
+
 		georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceEntity.getDatasetId());
-		
+
 		return georesourceEntity;
 	}
 
@@ -451,7 +455,9 @@ public class GeoresourcesManager {
         MetadataGeoresourcesEntity georesourceMetadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
         if (authInfoProvider == null) {
-            if (georesourceMetadataEntity == null || !georesourceMetadataEntity.getRoles().isEmpty()) {
+            if (georesourceMetadataEntity == null ||
+                    georesourceMetadataEntity.getRoles().stream()
+                            .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
             }
         } else {
@@ -475,7 +481,8 @@ public class GeoresourcesManager {
             MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
             if (authInfoProvider == null) {
-                if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+                if (metadataEntity == null || metadataEntity.getRoles().stream()
+                        .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
@@ -497,18 +504,19 @@ public class GeoresourcesManager {
                     "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
         }
     }
-    
+
     public String getAllGeoresourceFeatures_withoutGeometry(String georesourceId) throws Exception {
 		return getAllGeoresourceFeatures_withoutGeometry(georesourceId, null);
 	}
-    
+
     public String getAllGeoresourceFeatures_withoutGeometry(String georesourceId, AuthInfoProvider authInfoProvider) throws Exception {
 
         if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
             MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
             if (authInfoProvider == null) {
-                if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+                if (metadataEntity == null || metadataEntity.getRoles().stream()
+                        .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
@@ -548,7 +556,8 @@ public class GeoresourcesManager {
             MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
             if (provider == null) {
-                if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+                if (metadataEntity == null || metadataEntity.getRoles().stream()
+                        .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
@@ -570,7 +579,7 @@ public class GeoresourcesManager {
                     "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
         }
     }
-    
+
     public String getValidGeoresourceFeatures_withoutGeometry(String georesourceId, BigDecimal year, BigDecimal month,
 			BigDecimal day, AuthInfoProvider provider) throws Exception {
     	Calendar calender = Calendar.getInstance();
@@ -583,7 +592,8 @@ public class GeoresourcesManager {
             MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
             if (provider == null) {
-                if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+                if (metadataEntity == null || metadataEntity.getRoles().stream()
+                        .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
@@ -605,7 +615,7 @@ public class GeoresourcesManager {
                     "Tried to get georesource features, but no dataset existes with datasetId " + georesourceId);
         }
 	}
-	
+
 	public String getValidGeoresourceFeatures_withoutGeometry(String georesourceId, BigDecimal year, BigDecimal month,
 			BigDecimal day) throws Exception {
 		return getValidGeoresourceFeatures_withoutGeometry(georesourceId, year, month, day, null);
@@ -616,7 +626,8 @@ public class GeoresourcesManager {
 
         MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
-        if (metadataEntity == null || !metadataEntity.getRoles().isEmpty()) {
+        if (metadataEntity == null || metadataEntity.getRoles().stream()
+                .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
         }
 
@@ -632,7 +643,7 @@ public class GeoresourcesManager {
         if (metadataEntity == null || !authInfoProvider.checkPermissions(metadataEntity, PermissionLevelType.VIEWER)) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
         }
-        
+
         return retrieveJsonSchema_georesource(georesourceId, metadataEntity);
     }
 
@@ -644,26 +655,26 @@ public class GeoresourcesManager {
 //        	metadataEntity.setJsonSchema(jsonSchema);
 //        	georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 //        }
-		
+
 		jsonSchema = parseSchemaFromGeoresource(georesourceId);
     	metadataEntity.setJsonSchema(jsonSchema);
     	georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 
         return jsonSchema;
 	}
-	
+
 	private String parseSchemaFromGeoresource(String georesourceId) throws Exception {
-		
+
 		MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
         if (metadataEntity == null ) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
         }
-        
+
         SortedMap<String, String> elements = new TreeMap();
-        
+
         String allGeoresourceFeatures = getAllGeoresourceFeatures(georesourceId, SimplifyGeometriesEnum.ORIGINAL.toString());
-		
+
         SortedMap<String, String> properties = SpatialFeatureDatabaseHandler.guessSchemaFromFeatureValues(allGeoresourceFeatures);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -671,7 +682,7 @@ public class GeoresourcesManager {
         try {
             String json = objectMapper.writeValueAsString(properties);
             System.out.println(json);
-            
+
             return json;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -784,7 +795,7 @@ public class GeoresourcesManager {
         logger.info("Retrieving all public georesources metadata from db");
 
         List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll().stream()
-                .filter(g -> g.getRoles().isEmpty())
+                .filter(g -> g.getRoles().stream().anyMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole)))
                 .collect(Collectors.toList());
 
         return generateSwaggerGeoresourcesMetadata(georesourcesMeatadataEntities);
