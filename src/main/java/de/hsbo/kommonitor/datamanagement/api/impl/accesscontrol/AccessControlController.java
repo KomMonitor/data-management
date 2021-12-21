@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,7 +48,9 @@ public class AccessControlController extends BasePathController implements Acces
         this.request = request;
     }
 
-    @Override public ResponseEntity<List<RoleOverviewType>> getRoles() {
+    @Override
+    @PreAuthorize("hasRequiredPermissionLevel('viewer')")
+    public ResponseEntity<List<RoleOverviewType>> getRoles() {
         logger.debug("Received request to get all roles");
         String accept = request.getHeader("Accept");
 
@@ -59,7 +62,9 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
-    @Override public ResponseEntity<RoleOverviewType> getRoleById(
+    @Override
+    @PreAuthorize("hasRequiredPermissionLevel('viewer')")
+    public ResponseEntity<RoleOverviewType> getRoleById(
         @PathVariable("roleId") String roleId) {
         logger.debug("Received request to get role with id '{}", roleId);
         String accept = request.getHeader("Accept");
@@ -72,7 +77,9 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
-    @Override public ResponseEntity<List<OrganizationalUnitOverviewType>> getOrganizationalUnits() {
+    @Override
+    @PreAuthorize("hasRequiredPermissionLevel('viewer')")
+    public ResponseEntity<List<OrganizationalUnitOverviewType>> getOrganizationalUnits() {
         logger.debug("Received request to get all organizationalUnits");
         String accept = request.getHeader("Accept");
 
@@ -85,6 +92,7 @@ public class AccessControlController extends BasePathController implements Acces
     }
 
     @Override
+    @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<OrganizationalUnitOverviewType> getOrganizationalUnitById(
         @PathVariable("organizationalUnitId") String organizationalUnitId) {
         logger.debug("Received request to get organizationalUnit with id '{}'", organizationalUnitId);
@@ -100,6 +108,7 @@ public class AccessControlController extends BasePathController implements Acces
     }
 
     @Override
+    @PreAuthorize("hasRequiredPermissionLevel('creator')")
     public ResponseEntity<OrganizationalUnitOverviewType> addOrganizationalUnit(
         @RequestBody OrganizationalUnitInputType organizationalUnitData) {
         logger.info("Received request to insert new organizationalUnit with associated Roles");
@@ -123,12 +132,13 @@ public class AccessControlController extends BasePathController implements Acces
             } catch (URISyntaxException e) {
                 // return ApiResponseUtil.createResponseEntityFromException(e);
             }
-            return new ResponseEntity<>(persisted, responseHeaders, HttpStatus.CREATED);
+            return new ResponseEntity<OrganizationalUnitOverviewType>(persisted, responseHeaders, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    @PreAuthorize("hasRequiredPermissionLevel('creator')")
     @Override public ResponseEntity updateOrganizationalUnit(@RequestBody OrganizationalUnitInputType inputData,
                                                              @PathVariable("organizationalUnitId")
                                                                  String organizationalUnitId) {
@@ -156,6 +166,7 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
+    @PreAuthorize("hasRequiredPermissionLevel('creator')")
     @Override public ResponseEntity deleteOrganizationalUnit(
         @PathVariable("organizationalUnitId") String organizationalUnitId) {
         logger.info("Received request to delete organizationalUnit and associated roles for id '{}'",

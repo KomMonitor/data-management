@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,6 +49,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('publisher')")
 	public ResponseEntity<TopicOverviewType> addTopic(@RequestBody TopicInputType topicData) {
 		
 		logger.info("Received request to insert new topic");
@@ -84,6 +86,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('creator')")
 	public ResponseEntity deleteTopic(@PathVariable("topicId") String topicId) {
 		logger.info("Received request to delete topic for topicId '{}'", topicId);
 		
@@ -109,6 +112,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('publisher')")
 	public ResponseEntity updateTopic(@PathVariable("topicId") String topicId, @RequestBody TopicInputType topicData) {
 		logger.info("Received request to update topic with topicId '{}'", topicId);
 

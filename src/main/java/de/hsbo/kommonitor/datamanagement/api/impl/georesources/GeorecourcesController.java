@@ -59,7 +59,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 
 
     @Override
-    @PreAuthorize("hasRequiredPermissionLevel('creator')")
+    @PreAuthorize("hasRequiredPermissionLevel('publisher')")
     public ResponseEntity<GeoresourceOverviewType> addGeoresourceAsBody(@RequestBody GeoresourcePOSTInputType featureData) {
         logger.info("Received request to insert new georesource");
 
@@ -173,6 +173,7 @@ public class GeorecourcesController extends BasePathController implements Geores
     }
 
     @Override
+    @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<List<GeoresourceOverviewType>> getGeoresources(Principal principal) {
         logger.info("Received request to get all georesources metadata");
 
@@ -344,7 +345,7 @@ public class GeorecourcesController extends BasePathController implements Geores
     }
 
     @Override
-    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
+    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'publisher')")
     public ResponseEntity updateGeoresourceAsBody(@PathVariable("georesourceId") String georesourceId, @RequestBody GeoresourcePUTInputType featureData) {
         logger.info("Received request to update georesource features for datasetId '{}'", georesourceId);
 

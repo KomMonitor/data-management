@@ -132,7 +132,7 @@ public interface AccessControlAPI {
         @ApiResponse(code = 405, message = "Invalid input")
     })
     @RequestMapping(value = "/organizationalUnits",
-                    produces = {"*/*"},
+                    produces = {"application/json"},
                     consumes = {"application/json"},
                     method = RequestMethod.POST)
     ResponseEntity<OrganizationalUnitOverviewType> addOrganizationalUnit(
@@ -158,7 +158,7 @@ public interface AccessControlAPI {
         @ApiResponse(code = 405, message = "Invalid input")
     })
     @RequestMapping(value = "/organizationalUnits/{organizationalUnitId}",
-                    produces = {"*/*"},
+                    produces = {"application/json"},
                     consumes = {"application/json"},
                     method = RequestMethod.PUT)
     ResponseEntity updateOrganizationalUnit(
@@ -183,7 +183,7 @@ public interface AccessControlAPI {
         @ApiResponse(code = 403, message = "Forbidden")
     })
     @RequestMapping(value = "/organizationalUnits/{organizationalUnitId}",
-                    produces = {"*/*"},
+                    produces = {"application/json"},
                     method = RequestMethod.DELETE)
     ResponseEntity deleteOrganizationalUnit(
         @ApiParam(value = "organizationalUnitId", required = true) @PathVariable("organizationalUnitId")

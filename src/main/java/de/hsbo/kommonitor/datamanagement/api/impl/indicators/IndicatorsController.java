@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,6 +66,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'creator')")
     public ResponseEntity deleteIndicatorByIdAndSpatialUnitId(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId) throws Exception {
         logger.info("Received request to delete indicator for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
 
@@ -91,6 +93,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 
     @Override
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'creator')")
     public ResponseEntity deleteIndicatorByIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId,
                                                              @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
                                                              @PathVariable("day") BigDecimal day) throws Exception {
@@ -119,6 +122,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 
     @Override
+    @PreAuthorize("hasRequiredPermissionLevel('publisher')")
     public ResponseEntity<IndicatorOverviewType> addIndicatorAsBody(@RequestBody IndicatorPOSTInputType indicatorData) {
         logger.info("Received request to insert new indicator");
 
@@ -153,6 +157,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'creator')")
     public ResponseEntity deleteIndicatorById(@PathVariable("indicatorId") String indicatorId) {
         logger.info("Received request to delete indicator for indicatorId '{}'", indicatorId);
 
@@ -179,6 +184,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 
     @Override
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
     public ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndId(@PathVariable("indicatorId") String indicatorId,
                                                                    @PathVariable("spatialUnitId") String spatialUnitId,
                                                                    @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
@@ -207,6 +213,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
     public ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId,
                                                                                   @PathVariable("spatialUnitId") String spatialUnitId,
                                                                                   @PathVariable("year") BigDecimal year,
@@ -241,6 +248,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
+    @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<List<IndicatorOverviewType>> getIndicators(Principal principal) {
         logger.info("Received request to get all indicators metadata");
         String accept = request.getHeader("Accept");
@@ -265,6 +273,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'viewer')")
     public ResponseEntity<IndicatorOverviewType> getIndicatorById(@PathVariable("indicatorId") String indicatorId, Principal principal) {
         logger.info("Received request to get indicator metadata for indicatorId '{}'", indicatorId);
         String accept = request.getHeader("Accept");
@@ -284,6 +293,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'publisher')")
     public ResponseEntity updateIndicatorAsBody(@PathVariable("indicatorId") String indicatorId, @RequestBody IndicatorPUTInputType indicatorData) {
         logger.info("Received request to update indicator features for indicator '{}'", indicatorId);
 
@@ -318,6 +328,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
     public ResponseEntity updateIndicatorMetadataAsBody(@PathVariable("indicatorId") String indicatorId, @RequestBody IndicatorMetadataPATCHInputType metadata) {
         logger.info("Received request to update indicator metadata for indicatorId '{}'", indicatorId);
 
@@ -351,7 +362,8 @@ public class IndicatorsController extends BasePathController implements Indicato
         }
 
     }
-    
+
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
     public ResponseEntity<ResponseEntity> updateIndicatorDisplayOrder(@ApiParam(value = "array of indicator id and displayOrder items" ,required=true )  @Valid @RequestBody List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray) {
     	logger.info("Received request to update indicator display order ");
 
@@ -381,6 +393,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'creator')")
     public ResponseEntity updateIndicatorRoles(@PathVariable("indicatorId") String indicatorId,
                                                @PathVariable("spatialUnitId") String spatialUnitId,
                                                @RequestBody IndicatorPATCHInputType indicatorData) {
@@ -412,6 +425,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 
     @Override
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
     public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
             @PathVariable("indicatorId") String indicatorId,
             @PathVariable("spatialUnitId") String spatialUnitId,
@@ -438,6 +452,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 
     @Override
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
     public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(
             @PathVariable("indicatorId") String indicatorId,
             @PathVariable("spatialUnitId") String spatialUnitId,
