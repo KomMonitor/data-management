@@ -3,10 +3,12 @@ package de.hsbo.kommonitor.datamanagement.model.organizations;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
@@ -14,7 +16,8 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "organizational unit (group)")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2021-12-10T00:30:46.583Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2022-01-04T19:28:20.077Z")
+
 public class OrganizationalUnitInputType {
 
     @JsonProperty("name")

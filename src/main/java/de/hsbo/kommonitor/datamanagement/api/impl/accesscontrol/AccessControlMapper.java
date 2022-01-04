@@ -13,7 +13,6 @@ public class AccessControlMapper {
     public static RoleOverviewType mapToSwaggerRole(RolesEntity roleEntity) {
         RoleOverviewType role = new RoleOverviewType();
         role.setRoleId(roleEntity.getRoleId());
-        role.setOrganizationalUnit(mapToSwaggerOrganizationalUnit(roleEntity.getOrganizationalUnit()));
         role.setPermissionLevel(roleEntity.getPermissionLevel());
         return role;
     }
@@ -24,6 +23,7 @@ public class AccessControlMapper {
         ou.setName(ouEntity.getName());
         ou.setContact(ouEntity.getContact());
         ou.setDescription(ouEntity.getDescription());
+        ou.setRoles(mapToSwaggerRoles(ouEntity.getRoles()));
         return ou;
     }
 

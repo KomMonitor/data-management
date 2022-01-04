@@ -19,53 +19,8 @@ import javax.validation.Valid;
 import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2021-12-10T00:30:46.583Z")
-@Api(value = "Roles", description = "the AccessControl API")
+@Api(value = "accesscontrol", description = "the AccessControl API")
 public interface AccessControlAPI {
-
-    @ApiOperation(value = "Retrieve information about available roles",
-                  nickname = "getRoles",
-                  notes = "retrieve information about available roles",
-                  response = RoleOverviewType.class,
-                  authorizations = {
-                      @Authorization(value = "kommonitor-data-access_oauth", scopes = {
-
-                      })
-                  },
-                  tags = {"access-control-controller",})
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = RoleOverviewType.class),
-        @ApiResponse(code = 400, message = "Invalid status value"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Not Found")
-    })
-    @RequestMapping(value = "/roles",
-                    produces = {"application/json"},
-                    method = RequestMethod.GET)
-    ResponseEntity<List<RoleOverviewType>> getRoles();
-
-    @ApiOperation(value = "Retrieve information about the selected role",
-                  nickname = "getRoleById",
-                  notes = "retrieve information about the selected role",
-                  response = RoleOverviewType.class,
-//                  authorizations = {
-//                      @Authorization(value = "kommonitor-data-access_oauth", scopes = {
-//
-//                      })
-//                  },
-                  tags = {"access-control-controller",})
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = RoleOverviewType.class),
-        @ApiResponse(code = 400, message = "Invalid status value"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Not Found")
-    })
-    @RequestMapping(value = "/roles/{roleId}",
-                    produces = {"application/json"},
-                    method = RequestMethod.GET)
-    ResponseEntity<RoleOverviewType> getRoleById(
-        @ApiParam(value = "roleId", required = true) @PathVariable("roleId") String roleId);
 
     @ApiOperation(value = "Retrieve information about available organizationalUnits",
                   nickname = "getOrganizationalUnits",

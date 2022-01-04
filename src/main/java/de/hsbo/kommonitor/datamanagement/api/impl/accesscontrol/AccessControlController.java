@@ -50,35 +50,6 @@ public class AccessControlController extends BasePathController implements Acces
 
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('viewer')")
-    public ResponseEntity<List<RoleOverviewType>> getRoles() {
-        logger.debug("Received request to get all roles");
-        String accept = request.getHeader("Accept");
-
-        if (accept != null && accept.contains("application/json")) {
-            List<RoleOverviewType> roles = rolesManager.getRoles();
-            return new ResponseEntity<>(roles, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    @PreAuthorize("hasRequiredPermissionLevel('viewer')")
-    public ResponseEntity<RoleOverviewType> getRoleById(
-        @PathVariable("roleId") String roleId) {
-        logger.debug("Received request to get role with id '{}", roleId);
-        String accept = request.getHeader("Accept");
-
-        if (accept != null && accept.contains("application/json")) {
-            RoleOverviewType role = rolesManager.getRoleById(roleId);
-            return new ResponseEntity<>(role, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<List<OrganizationalUnitOverviewType>> getOrganizationalUnits() {
         logger.debug("Received request to get all organizationalUnits");
         String accept = request.getHeader("Accept");

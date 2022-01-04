@@ -3,10 +3,16 @@ package de.hsbo.kommonitor.datamanagement.model.organizations;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
@@ -14,8 +20,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "organizational unit (group)")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2021-12-10T00:30:46.583Z")
-
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2022-01-04T19:28:20.077Z")
 public class OrganizationalUnitOverviewType {
 
     @JsonProperty("organizationalUnitId")
@@ -29,6 +34,10 @@ public class OrganizationalUnitOverviewType {
 
     @JsonProperty("description")
     private String description = null;
+
+    @JsonProperty("roles")
+    @Valid
+    private List<RoleOverviewType> roles = new ArrayList<RoleOverviewType>();
 
     public OrganizationalUnitOverviewType organizationalUnitId(String organizationalUnitId) {
         this.organizationalUnitId = organizationalUnitId;
@@ -113,6 +122,34 @@ public class OrganizationalUnitOverviewType {
         this.description = description;
     }
 
+    public OrganizationalUnitOverviewType roles(List<RoleOverviewType> roles) {
+        this.roles = roles;
+        return this;
+    }
+
+    public OrganizationalUnitOverviewType addRolesItem(RoleOverviewType rolesItem) {
+        this.roles.add(rolesItem);
+        return this;
+    }
+
+    /**
+     * Get roles
+     *
+     * @return roles
+     **/
+    @ApiModelProperty(required = true, value = "")
+    @NotNull
+
+    @Valid
+
+    public List<RoleOverviewType> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<RoleOverviewType> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -125,12 +162,13 @@ public class OrganizationalUnitOverviewType {
         return Objects.equals(this.organizationalUnitId, organizationalUnitOverviewType.organizationalUnitId) &&
             Objects.equals(this.name, organizationalUnitOverviewType.name) &&
             Objects.equals(this.contact, organizationalUnitOverviewType.contact) &&
-            Objects.equals(this.description, organizationalUnitOverviewType.description);
+            Objects.equals(this.description, organizationalUnitOverviewType.description) &&
+            Objects.equals(this.roles, organizationalUnitOverviewType.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(organizationalUnitId, name, contact, description);
+        return Objects.hash(organizationalUnitId, name, contact, description, roles);
     }
 
     @Override
@@ -142,6 +180,7 @@ public class OrganizationalUnitOverviewType {
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    contact: ").append(toIndentedString(contact)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
+        sb.append("    roles: ").append(toIndentedString(roles)).append("\n");
         sb.append("}");
         return sb.toString();
     }
