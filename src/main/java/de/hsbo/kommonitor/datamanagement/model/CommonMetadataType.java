@@ -112,7 +112,9 @@ public class CommonMetadataType   {
    * the coordinate reference system of the dataset as EPSG code
    * @return sridEPSG
   **/
-  @ApiModelProperty(required = true, value = "the coordinate reference system of the dataset as EPSG code")
+  @ApiModelProperty(required = true,
+                    value = "the coordinate reference system of the dataset as EPSG code",
+                    example = "0")
   public BigDecimal getSridEPSG() {
     return sridEPSG;
   }

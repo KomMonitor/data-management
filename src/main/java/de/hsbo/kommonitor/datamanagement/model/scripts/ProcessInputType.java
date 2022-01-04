@@ -149,7 +149,7 @@ public class ProcessInputType   {
    * the maximum value that is allowed for the process parameter
    * @return maxParameterValueForNumericInputs
   **/
-  @ApiModelProperty(value = "the maximum value that is allowed for the process parameter")
+  @ApiModelProperty(value = "the maximum value that is allowed for the process parameter", example = "0")
   public BigDecimal getMaxParameterValueForNumericInputs() {
     return maxParameterValueForNumericInputs;
   }
@@ -167,7 +167,7 @@ public class ProcessInputType   {
    * the minimum value that is allowed for the process parameter
    * @return minParameterValueForNumericInputs
   **/
-  @ApiModelProperty(value = "the minimum value that is allowed for the process parameter")
+  @ApiModelProperty(value = "the minimum value that is allowed for the process parameter", example = "0")
   public BigDecimal getMinParameterValueForNumericInputs() {
     return minParameterValueForNumericInputs;
   }

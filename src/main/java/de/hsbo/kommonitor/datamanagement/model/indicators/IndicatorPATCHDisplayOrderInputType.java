@@ -56,7 +56,7 @@ public class IndicatorPATCHDisplayOrderInputType   {
    * the new displayOrder value
    * @return displayOrder
   **/
-  @ApiModelProperty(required = true, value = "the new displayOrder value")
+  @ApiModelProperty(required = true, value = "the new displayOrder value", example = "0")
   @NotNull
 
   @Valid

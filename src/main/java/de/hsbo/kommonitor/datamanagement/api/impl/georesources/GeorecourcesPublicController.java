@@ -125,7 +125,8 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
         }
     }
     
-    public ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesByIdWithoutGeometry(@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId) {
+    public ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesByIdWithoutGeometry(
+        @ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId) {
     	logger.info("Received request to get all public georesource features for datasetId '{}' without geometry", georesourceId);
 
         try {
@@ -138,7 +139,12 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
         }
     }
     
-    public ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonthWithoutGeometry(@ApiParam(value = "day",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "month",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "year",required=true) @PathVariable("year") BigDecimal year) {
+    public ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonthWithoutGeometry(
+        @ApiParam(value = "day", required=true, example = "0") @PathVariable("day") BigDecimal day,
+        @ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId,
+        @ApiParam(value = "month", required=true, example = "0") @PathVariable("month") BigDecimal month,
+        @ApiParam(value = "year", required=true, example = "0") @PathVariable("year") BigDecimal year)
+    {
     	logger.info("Received request to get public georesource features for datasetId '{}' without geometry", georesourceId);
 
         try {

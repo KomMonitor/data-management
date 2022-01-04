@@ -47,7 +47,7 @@ public class IndicatorPOSTInputTypeValueMapping   {
    * the numeric extent of the indicator for the timestamp
    * @return indicatorValue
   **/
-  @ApiModelProperty(value = "the numeric extent of the indicator for the timestamp")
+  @ApiModelProperty(value = "the numeric extent of the indicator for the timestamp", example = "0")
   public Float getIndicatorValue() {
     return indicatorValue;
   }

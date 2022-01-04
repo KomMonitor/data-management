@@ -488,10 +488,8 @@ public class IndicatorOverviewType   {
    * an order number to control display order in clients
    * @return displayOrder
   **/
-  @ApiModelProperty(value = "an order number to control display order in clients")
-
+  @ApiModelProperty(value = "an order number to control display order in clients", example = "0")
   @Valid
-
   public BigDecimal getDisplayOrder() {
     return displayOrder;
   }

@@ -222,7 +222,7 @@ public class GeoresourcePATCHInputType   {
    * display width for lines of interest (number of pixels in leaflet)
    * @return loiWidth
   **/
-  @ApiModelProperty(value = "display width for lines of interest (number of pixels in leaflet)")
+  @ApiModelProperty(value = "display width for lines of interest (number of pixels in leaflet)", example = "0")
   public BigDecimal getLoiWidth() {
     return loiWidth;
   }
