@@ -5,7 +5,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
-import org.geolatte.geom.M;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,13 +73,13 @@ public class InitialAccessControlSetup implements ApplicationListener<ContextRef
     @Transactional
     protected void createAndFlushRole(OrganizationalUnitEntity ou, PermissionLevelType level) {
         if (!roleRepository.existsByOrganizationalUnitAndPermissionLevel(ou, level)) {
-            logger.info("Creating role '{}'", ou.getName() + "-" + level.toString());
+            logger.info("Creating role '{}-{}'", ou.getName(), level.toString());
             RolesEntity role = new RolesEntity();
             role.setOrganizationalUnit(ou);
             role.setPermissionLevel(level);
             roleRepository.saveAndFlush(role);
         } else {
-            logger.info("Skipping creating role '{}' - Role already exists", ou.getName() + level.toString());
+            logger.info("Skipping creating role '{}-{}' - Role already exists", ou.getName(), level.toString());
         }
     }
 
@@ -93,6 +92,5 @@ public class InitialAccessControlSetup implements ApplicationListener<ContextRef
         orga.setDescription(description);
         return organizationalUnitRepository.saveAndFlush(orga);
     }
-
 
 }

@@ -5,8 +5,6 @@ import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 
 import java.lang.reflect.ParameterizedType;
 import java.security.Principal;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Interface that provides authentication and authorization information

@@ -23,7 +23,7 @@ public interface DatabasePublicApi {
 	        @Authorization(value = "kommonitor-data-access_oauth", scopes = {
 	            
 	            })
-	    }, tags={ "database-controller", })
+	    }, tags={ "database-public-controller", })
 	    @ApiResponses(value = { 
 	        @ApiResponse(code = 200, message = "OK", response = LastModificationOverviewType.class),
 	        @ApiResponse(code = 400, message = "Invalid status value"),
