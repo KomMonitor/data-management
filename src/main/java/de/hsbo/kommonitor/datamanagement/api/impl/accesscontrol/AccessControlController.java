@@ -7,7 +7,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManag
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitInputType;
 import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +88,7 @@ public class AccessControlController extends BasePathController implements Acces
         OrganizationalUnitOverviewType persisted;
         try {
             persisted = organizationalUnitManager.addOrganizationalUnit(organizationalUnitData);
-            lastModManager.updateLastDatabaseModification_roles();
+            lastModManager.updateLastDatabaseModification_accessControl();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
         }
@@ -119,7 +118,7 @@ public class AccessControlController extends BasePathController implements Acces
         String persistedId;
         try {
             persistedId = organizationalUnitManager.updateOrganizationalUnit(inputData, organizationalUnitId);
-            lastModManager.updateLastDatabaseModification_roles();
+            lastModManager.updateLastDatabaseModification_accessControl();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
         }
@@ -144,7 +143,7 @@ public class AccessControlController extends BasePathController implements Acces
                     organizationalUnitId);
         try {
             boolean isDeleted = organizationalUnitManager.deleteOrganizationalUnitAndRolesById(organizationalUnitId);
-            lastModManager.updateLastDatabaseModification_roles();
+            lastModManager.updateLastDatabaseModification_accessControl();
 
             if (isDeleted) {
                 return new ResponseEntity<>(HttpStatus.OK);

@@ -13,7 +13,7 @@ public class LastModificationMapper {
 		lastMod.setIndicators(DateTimeUtil.toOffsetDateTime(lastModifcationInfo.getIndicators()));
 		lastMod.setTopics(DateTimeUtil.toOffsetDateTime(lastModifcationInfo.getTopics()));
 		lastMod.setProcessScripts(DateTimeUtil.toOffsetDateTime(lastModifcationInfo.getProcessScripts()));
-		lastMod.setRoles(DateTimeUtil.toOffsetDateTime(lastModifcationInfo.getRoles()));
+		lastMod.setAccessControl(DateTimeUtil.toOffsetDateTime(lastModifcationInfo.getAccessControl()));
 		
 		return lastMod;
 	}

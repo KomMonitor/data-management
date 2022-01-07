@@ -72,18 +72,18 @@ public class LastModificationManager {
 
 	}
 
-	public void updateLastDatabaseModification_roles() throws Exception {
+	public void updateLastDatabaseModification_accessControl() throws Exception {
 		List<LastModificationEntity> all = lastModificationRepo.findAll();
 
 		if (all.size() > 0) {
 			LastModificationEntity lastModificationEntity = all.get(0);
 
-			lastModificationEntity.setRoles(new Date());
+			lastModificationEntity.setAccessControl(new Date());
 			lastModificationRepo.saveAndFlush(lastModificationEntity);
 		} else {
 			LastModificationEntity lastModificationEntity = new LastModificationEntity();
 
-			lastModificationEntity.setRoles(new Date());
+			lastModificationEntity.setAccessControl(new Date());
 			lastModificationRepo.saveAndFlush(lastModificationEntity);
 		}
 
@@ -157,8 +157,8 @@ public class LastModificationManager {
 			if (lastModificationEntity.getTopics() == null) {
 				lastModificationEntity.setTopics(now);
 			}
-			if (lastModificationEntity.getRoles() == null) {
-				lastModificationEntity.setRoles(now);
+			if (lastModificationEntity.getAccessControl() == null) {
+				lastModificationEntity.setAccessControl(now);
 			}
 			if (lastModificationEntity.getProcessScripts() == null) {
 				lastModificationEntity.setProcessScripts(now);

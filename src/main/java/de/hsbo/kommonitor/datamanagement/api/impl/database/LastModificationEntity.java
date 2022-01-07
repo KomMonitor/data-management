@@ -41,7 +41,7 @@ public class LastModificationEntity {
 
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date roles = null;
+	private Date accessControl = null;
 
 	public String getId() {
 		return id;
@@ -87,12 +87,12 @@ public class LastModificationEntity {
 		this.processScripts = processScripts;
 	}
 
-	public Date getRoles() {
-		return roles;
+	public Date getAccessControl() {
+		return accessControl;
 	}
 
-	public void setRoles(Date roles) {
-		this.roles = roles;
+	public void setAccessControl(Date roles) {
+		this.accessControl = roles;
 	}
 
 	/*
@@ -107,7 +107,7 @@ public class LastModificationEntity {
 		this.georesources = now;
 		this.indicators = now;
 		this.processScripts = now;
-		this.roles = now;
+		this.accessControl = now;
 		this.spatialUnits = now;
 		this.topics = now;
 	}

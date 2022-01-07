@@ -34,8 +34,8 @@ public class LastModificationOverviewType   {
   @JsonProperty("process-scripts")
   private OffsetDateTime processScripts = null;
 
-  @JsonProperty("roles")
-  private OffsetDateTime roles = null;
+  @JsonProperty("access-control")
+  private OffsetDateTime accessControl = null;
 
   public LastModificationOverviewType topics(OffsetDateTime topics) {
     this.topics = topics;
@@ -142,25 +142,18 @@ public class LastModificationOverviewType   {
     this.processScripts = processScripts;
   }
 
-  public LastModificationOverviewType roles(OffsetDateTime roles) {
-    this.roles = roles;
-    return this;
-  }
-
   /**
    * Get roles
    * @return roles
   **/
   @ApiModelProperty(value = "")
-
   @Valid
-
-  public OffsetDateTime getRoles() {
-    return roles;
+  public OffsetDateTime getAccessControl() {
+    return accessControl;
   }
 
-  public void setRoles(OffsetDateTime roles) {
-    this.roles = roles;
+  public void setAccessControl(OffsetDateTime accessControl) {
+    this.accessControl = accessControl;
   }
 
 
@@ -178,12 +171,12 @@ public class LastModificationOverviewType   {
         Objects.equals(this.indicators, lastModificationOverviewType.indicators) &&
         Objects.equals(this.georesources, lastModificationOverviewType.georesources) &&
         Objects.equals(this.processScripts, lastModificationOverviewType.processScripts) &&
-        Objects.equals(this.roles, lastModificationOverviewType.roles);
+        Objects.equals(this.accessControl, lastModificationOverviewType.accessControl);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(topics, spatialUnits, indicators, georesources, processScripts, roles);
+    return Objects.hash(topics, spatialUnits, indicators, georesources, processScripts, accessControl);
   }
 
   @Override
@@ -196,7 +189,7 @@ public class LastModificationOverviewType   {
     sb.append("    indicators: ").append(toIndentedString(indicators)).append("\n");
     sb.append("    georesources: ").append(toIndentedString(georesources)).append("\n");
     sb.append("    processScripts: ").append(toIndentedString(processScripts)).append("\n");
-    sb.append("    roles: ").append(toIndentedString(roles)).append("\n");
+    sb.append("    roles: ").append(toIndentedString(accessControl)).append("\n");
     sb.append("}");
     return sb.toString();
   }
