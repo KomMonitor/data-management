@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -28,7 +29,7 @@ public class OrganizationalUnitEntity {
     @Column(nullable = true)
     public String description;
 
-    @OneToMany(mappedBy = "organizationalUnit", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "organizationalUnit", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     public List<RolesEntity> roles;
 
     public String getName() {

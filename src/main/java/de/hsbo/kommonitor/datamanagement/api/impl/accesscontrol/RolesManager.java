@@ -25,10 +25,10 @@ public class RolesManager {
     @Autowired
     RolesRepository rolesRepo;
 
-    public RoleOverviewType addRole(OrganizationalUnitEntity organizationalUnit,
+    public RolesEntity addRole(OrganizationalUnitEntity organizationalUnit,
                                     PermissionLevelType permissionLevel) throws Exception {
         logger.info("Trying to persist role with roleName '{}' and permissionLevel '{}'",
-                    organizationalUnit,
+                    organizationalUnit.getName(),
                     permissionLevel);
 
         if (rolesRepo.existsByOrganizationalUnitAndPermissionLevel(
@@ -46,8 +46,7 @@ public class RolesManager {
         RolesEntity role = new RolesEntity();
         role.setOrganizationalUnit(organizationalUnit);
         role.setPermissionLevel(permissionLevel);
-        rolesRepo.saveAndFlush(role);
-        return getRoleById(role.getRoleId());
+        return rolesRepo.saveAndFlush(role);
     }
 
     public RoleOverviewType getRoleById(String roleId) {

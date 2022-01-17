@@ -21,7 +21,7 @@ public class RolesEntity {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String roleId = null;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "organizationalUnit")
     private OrganizationalUnitEntity organizationalUnit;
 

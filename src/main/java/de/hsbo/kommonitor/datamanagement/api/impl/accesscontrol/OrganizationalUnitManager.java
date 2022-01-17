@@ -6,6 +6,7 @@ import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitE
 import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitInputType;
 import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -56,15 +58,15 @@ public class OrganizationalUnitManager {
         jpaUnit.setName(name);
         jpaUnit.setContact(inputOrganizationalUnit.getContact());
         jpaUnit.setDescription(inputOrganizationalUnit.getDescription());
-        organizationalUnitRepository.saveAndFlush(jpaUnit);
-
-        OrganizationalUnitEntity saved =
-            organizationalUnitRepository.findByOrganizationalUnitId(jpaUnit.getOrganizationalUnitId());
+        OrganizationalUnitEntity saved = organizationalUnitRepository.saveAndFlush(jpaUnit);
 
         // Generate appropriate roles
+        List<RolesEntity> roles = new ArrayList<>();
         for (PermissionLevelType level : PermissionLevelType.values()) {
-            rolesManager.addRole(saved, level);
+            roles.add(rolesManager.addRole(saved, level));
         }
+        saved.setRoles(roles);
+
         return AccessControlMapper.mapToSwaggerOrganizationalUnit(saved);
     }
 
