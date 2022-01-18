@@ -102,7 +102,7 @@ public class AccessControlController extends BasePathController implements Acces
             } catch (URISyntaxException e) {
                 // return ApiResponseUtil.createResponseEntityFromException(e);
             }
-            return new ResponseEntity<OrganizationalUnitOverviewType>(persisted, responseHeaders, HttpStatus.CREATED);
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -130,7 +130,7 @@ public class AccessControlController extends BasePathController implements Acces
             } catch (URISyntaxException e) {
                 // return ApiResponseUtil.createResponseEntityFromException(e);
             }
-            return new ResponseEntity<>(persistedId, responseHeaders, HttpStatus.CREATED);
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
