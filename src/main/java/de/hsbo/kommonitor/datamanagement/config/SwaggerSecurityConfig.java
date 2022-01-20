@@ -29,7 +29,7 @@ import java.util.List;
 @EnableSwagger2
 public class SwaggerSecurityConfig {
 
-    @Value("${keycloak.auth-server-url}")
+    @Value("${swagger.keycloak.auth-server-url}")
     private String AUTH_SERVER;
 
     @Value("${keycloak.realm}")
