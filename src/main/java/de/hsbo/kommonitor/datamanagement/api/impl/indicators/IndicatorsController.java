@@ -10,6 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -284,6 +285,52 @@ public class IndicatorsController extends BasePathController implements Indicato
             if (accept != null && accept.contains("application/json")) {
                 IndicatorOverviewType indicatorMetadata = indicatorsManager.getIndicatorById(indicatorId, provider);
                 return new ResponseEntity<>(indicatorMetadata, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<PermissionLevelType>> getIndicatorPermissionsById(
+            @PathVariable("indicatorId") String indicatorId, Principal principal) {
+        logger.info("Received request to list permissions for indicator with datasetId '{}'", indicatorId);
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                List<PermissionLevelType> permissions =
+                        indicatorsManager.getIndicatortPermissionsByDatasetId(indicatorId, provider);
+
+                return new ResponseEntity<>(permissions, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<PermissionLevelType>> getIndicatorPermissionsBySpatialUnitIdAndId(
+            @PathVariable("indicatorId") String indicatorId,
+            @PathVariable("spatialUnitId") String spatialUnitId, Principal principal) {
+        logger.info("Received request to list permissions for spatialUnit Id {} and indicator with datasetId '{}'",
+                spatialUnitId, indicatorId);
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                List<PermissionLevelType> permissions =
+                        indicatorsManager.getIndicatortPermissionsBySpatialUnitIdAndId(indicatorId, spatialUnitId, provider);
+
+                return new ResponseEntity<>(permissions, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }

@@ -1348,6 +1348,32 @@ public class IndicatorsManager {
         return entity;
     }
 
+    public List<PermissionLevelType> getIndicatortPermissionsByDatasetId(String indicatorId, AuthInfoProvider provider) throws Exception {
+        logger.info("Retrieving indicator permissions for datasetId '{}'", indicatorId);
+
+        MetadataIndicatorsEntity indicatorMetadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+
+        if (indicatorMetadataEntity == null || !provider.checkPermissions(indicatorMetadataEntity, PermissionLevelType.VIEWER)) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", indicatorId));
+        }
+
+        List<PermissionLevelType> permissions = provider.getPermissions(indicatorMetadataEntity);
+        return permissions;
+    }
+
+    public List<PermissionLevelType> getIndicatortPermissionsBySpatialUnitIdAndId(String indicatorId, String spatialUnitId, AuthInfoProvider provider) throws Exception {
+        logger.info("Retrieving indicator permissions for datasetId '{}'", indicatorId);
+
+        IndicatorSpatialUnitJoinEntity entity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+
+        if (entity == null || !provider.checkPermissions(entity, PermissionLevelType.VIEWER)) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", indicatorId));
+        }
+
+        List<PermissionLevelType> permissions = provider.getPermissions(entity);
+        return permissions;
+    }
+
     //TODO: should strict be the default mode?
     /*
     private boolean hasAllowedRoleStrict(AuthInfoProvider authInfoProvider, IndicatorSpatialUnitJoinEntity entity) {

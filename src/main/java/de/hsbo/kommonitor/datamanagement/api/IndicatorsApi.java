@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -90,6 +91,30 @@ public interface IndicatorsApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<IndicatorOverviewType> getIndicatorById(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId, Principal principal);
+
+    @ApiOperation(value = "retrieve information about the permissions for the selected indicator dataset", nickname = "getIndicatorPermissionsById", notes = "retrieve information about the permissions for the selected indicator dataset", response = PermissionLevelType.class, responseContainer = "array", authorizations = {
+            @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", response = PermissionLevelType.class, responseContainer = "array"),
+            @ApiResponse(code = 400, message = "Invalid status value"),
+            @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/indicators/{indicatorId}/permissions",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<List<PermissionLevelType>> getIndicatorPermissionsById(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId, Principal principal);
+
+    @ApiOperation(value = "retrieve information about the permissions for the selected indicator and spatial unit dataset", nickname = "getIndicatorPermissionsBySpatialUnitIdAndId", notes = "retrieve information about the permissions for the selected indicator and spatial unit dataset", response = PermissionLevelType.class, responseContainer = "array", authorizations = {
+            @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", response = PermissionLevelType.class, responseContainer = "array"),
+            @ApiResponse(code = 400, message = "Invalid status value"),
+            @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/indicators/{indicatorId}/{spatialUnitId}/permissions",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<List<PermissionLevelType>> getIndicatorPermissionsBySpatialUnitIdAndId(@ApiParam(value = "unique identifier of the selected indicator dataset",required=true) @PathVariable("indicatorId") String indicatorId,@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId, Principal principal);
 
 
     @ApiOperation(value = "retrieve the indicator for the selected spatial unit as GeoJSON", nickname = "getIndicatorBySpatialUnitIdAndId", notes = "retrieve the indicator for the selected spatial unit as GeoJSON", response = byte[].class, authorizations = {
