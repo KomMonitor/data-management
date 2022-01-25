@@ -5,6 +5,7 @@ import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 
 import java.lang.reflect.ParameterizedType;
 import java.security.Principal;
+import java.util.List;
 
 /**
  * Interface that provides authentication and authorization information
@@ -39,7 +40,9 @@ public abstract class AuthInfoProvider<T extends Principal> {
     }
 
     public abstract boolean checkPermissions(RestrictedByRole entity, PermissionLevelType neededLevel);
-    
+
+    public abstract List<PermissionLevelType> getPermissions(RestrictedByRole entity);
+
     public abstract boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel);
 
 }

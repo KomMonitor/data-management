@@ -10,7 +10,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -35,11 +35,18 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
 
     private static final Pattern roleExtractorRegex = Pattern.compile("-(?=(creator)|(publisher)|(editor)|(viewer)$)");
 
+    private SortedSet permissionSet;
+
     public KeycloakAuthInfoProvider(KeycloakPrincipal principal, String clientId, String adminRolePrefix, String publicRole) {
         super(principal);
         this.clientId = clientId;
         this.adminRolePrefix = adminRolePrefix;
         this.publicRole = publicRole;
+        permissionSet = new TreeSet();
+        permissionSet.add(PermissionLevelType.CREATOR);
+        permissionSet.add(PermissionLevelType.PUBLISHER);
+        permissionSet.add(PermissionLevelType.EDITOR);
+        permissionSet.add(PermissionLevelType.VIEWER);
     }
 
     /**
@@ -89,6 +96,53 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
                                 && ar.getSecond().compareTo(neededLevel) <= 0)
                                 || (ar.getFirst().getName().equals(publicRole)
                                         && ar.getSecond().compareTo(neededLevel) <= 0)));
+    }
+
+    @Override
+    public List<PermissionLevelType> getPermissions(RestrictedByRole entity) {
+        // User is global administrator
+        if (hasRealmAdminRole()) {
+            return Arrays.asList(
+                    PermissionLevelType.CREATOR,
+                    PermissionLevelType.PUBLISHER,
+                    PermissionLevelType.EDITOR,
+                    PermissionLevelType.VIEWER);
+        }
+
+        Set<RolesEntity> allowedRoleEntities = entity.getRoles();
+
+        if (allowedRoleEntities == null || allowedRoleEntities.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        Set<String> ownedRoles = getPrincipal()
+                .getKeycloakSecurityContext()
+                .getToken()
+                .getRealmAccess()
+                .getRoles();
+
+        Set<Pair<OrganizationalUnitEntity, PermissionLevelType>> allowedRoles = allowedRoleEntities.stream()
+                .map(e -> Pair.of(e.getOrganizationalUnit(), e.getPermissionLevel()))
+                .collect(Collectors.toSet());
+
+        PermissionLevelType max_permission = ownedRoles.stream()
+                // Split into OrganizationalUnit and PermissionLevel
+                .filter(kcRole -> roleExtractorRegex.split(kcRole, 2).length == 2)
+                .map(kcRole -> {
+                    String[] split = roleExtractorRegex.split(kcRole, 2);
+                    return Pair.of(split[0], PermissionLevelType.fromValue(split[1]));
+                })
+                // check the leftover roles for a match
+                .filter(r -> allowedRoles
+                        .stream()
+                        .anyMatch(ar -> (ar.getFirst().getName().equals(r.getFirst())
+                                && ar.getSecond().equals(r.getSecond()))
+                                || ar.getFirst().getName().equals(publicRole)))
+                .map(Pair::getSecond)
+                //Permission enum ist sorted descending: highest permission -> 0, lowest permission -> 4
+                .min(Comparator.comparing(PermissionLevelType::ordinal))
+                .orElseThrow(NoSuchElementException::new);
+        return new ArrayList(permissionSet.tailSet(max_permission));
     }
 
     @Override
