@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
@@ -820,4 +821,16 @@ public class GeoresourcesManager {
 
     }
 
+    public List<PermissionLevelType> getGeoresourcePermissionsByDatasetId(String georesourceId, AuthInfoProvider provider) throws Exception {
+        logger.info("Retrieving georesources permissions for datasetId '{}'", georesourceId);
+
+        MetadataGeoresourcesEntity georesourceMetadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+
+        if (georesourceMetadataEntity == null || !provider.checkPermissions(georesourceMetadataEntity, PermissionLevelType.VIEWER)) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
+        }
+
+        List<PermissionLevelType> permissions = provider.getPermissions(georesourceMetadataEntity);
+        return permissions;
+    }
 }

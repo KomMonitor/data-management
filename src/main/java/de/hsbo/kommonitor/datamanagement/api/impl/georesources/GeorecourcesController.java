@@ -7,6 +7,7 @@ import java.security.Principal;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -221,6 +222,28 @@ public class GeorecourcesController extends BasePathController implements Geores
 
                 return new ResponseEntity<>(georesourceMetadata, HttpStatus.OK);
 
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<PermissionLevelType>> getGeoresourcePermissionsById(
+            @PathVariable("georesourceId") String georesourceId, Principal principal) {
+        logger.info("Received request to list access rights for georesource with datasetId '{}'", georesourceId);
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                List<PermissionLevelType> permissions =
+                        georesourcesManager.getGeoresourcePermissionsByDatasetId(georesourceId, provider);
+
+                return new ResponseEntity<>(permissions, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
