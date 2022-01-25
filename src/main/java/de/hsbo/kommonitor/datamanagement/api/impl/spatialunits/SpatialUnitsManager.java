@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
@@ -694,5 +695,18 @@ public class SpatialUnitsManager {
             }
         }
         return metadataEntity;
+    }
+
+    public List<PermissionLevelType> getSpatialUnitsPermissionsByDatasetId(String spatialUnitId, AuthInfoProvider provider) throws Exception {
+        logger.info("Retrieving spatial unit permissions for datasetId '{}'", spatialUnitId);
+
+        MetadataSpatialUnitsEntity spatialUnitsMetadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+
+        if (spatialUnitsMetadataEntity == null || !provider.checkPermissions(spatialUnitsMetadataEntity, PermissionLevelType.VIEWER)) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", spatialUnitId));
+        }
+
+        List<PermissionLevelType> permissions = provider.getPermissions(spatialUnitsMetadataEntity);
+        return permissions;
     }
 }

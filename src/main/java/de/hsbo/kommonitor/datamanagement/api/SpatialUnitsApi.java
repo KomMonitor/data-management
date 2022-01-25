@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -109,6 +110,18 @@ public interface SpatialUnitsApi {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     ResponseEntity<SpatialUnitOverviewType> getSpatialUnitsById(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId, Principal principal);
+
+    @ApiOperation(value = "retrieve information about the permissions for the selected spatial unit dataset", nickname = "getSpatialUnitsPermissionsById", notes = "retrieve information about the permissions for the selected spatial unit dataset", response = PermissionLevelType.class, responseContainer = "array", authorizations = {
+            @Authorization(value = "basicAuth")
+    }, tags={  })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", response = PermissionLevelType.class, responseContainer = "array"),
+            @ApiResponse(code = 400, message = "Invalid status value"),
+            @ApiResponse(code = 401, message = "API key is missing or invalid") })
+    @RequestMapping(value = "/spatial-units/{spatialUnitId}/permissions",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<List<PermissionLevelType>> getSpatialUnitsPermissionsById(@ApiParam(value = "identifier of the spatial unit dataset",required=true) @PathVariable("spatialUnitId") String spatialUnitId, Principal principal);
 
 
     @ApiOperation(value = "retrieve the features according to the selected spatial unit/level and selected year and month as GeoJSON", nickname = "getSpatialUnitsByIdAndYearAndMonth", notes = "retrieve the features according to the selected spatial unit/level and selected year and month as GeoJSON", response = byte[].class, authorizations = {

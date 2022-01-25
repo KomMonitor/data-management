@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -230,7 +231,29 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 		
 	}
-	
+
+	@Override
+	public ResponseEntity<List<PermissionLevelType>> getSpatialUnitsPermissionsById(
+			@PathVariable("spatialUnitId") String spatialUnitId, Principal principal) {
+		logger.info("Received request to list access rights for spatial unit with datasetId '{}'", spatialUnitId);
+		String accept = request.getHeader("Accept");
+
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+		try {
+			if (accept != null && accept.contains("application/json")) {
+				List<PermissionLevelType> permissions =
+						spatialUnitsManager.getSpatialUnitsPermissionsByDatasetId(spatialUnitId, provider);
+
+				return new ResponseEntity<>(permissions, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'viewer')")
 	public ResponseEntity<byte[]> getAllSpatialUnitFeaturesById(@PathVariable("spatialUnitId") String spatialUnitId, 
