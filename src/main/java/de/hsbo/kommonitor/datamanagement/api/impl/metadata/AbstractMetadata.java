@@ -1,16 +1,11 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
 import java.util.Date;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.hibernate.annotations.GenericGenerator;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType.UpdateIntervalEnum;
@@ -47,6 +42,9 @@ public abstract class AbstractMetadata {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate = null;
+
+	@Transient
+	private List<PermissionLevelType> userPermissions;
 	
 	public Date getLastUpdate() {
 		return lastUpdate;
@@ -129,8 +127,10 @@ public abstract class AbstractMetadata {
 	public void setLiterature(String literature) {
 		this.literature = literature;
 	}
-	
-	
-	
-	
+	public List<PermissionLevelType> getUserPermissions() {
+		return userPermissions;
+	}
+	public void setUserPermissions(List<PermissionLevelType> userPermissions) {
+		this.userPermissions = userPermissions;
+	}
 }

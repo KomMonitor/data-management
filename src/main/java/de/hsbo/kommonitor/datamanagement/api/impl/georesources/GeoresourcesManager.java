@@ -465,6 +465,7 @@ public class GeoresourcesManager {
             if (georesourceMetadataEntity == null || !authInfoProvider.checkPermissions(georesourceMetadataEntity, PermissionLevelType.VIEWER)) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
             }
+            georesourceMetadataEntity.setUserPermissions(authInfoProvider.getPermissions(georesourceMetadataEntity));
         }
         GeoresourceOverviewType swaggerGeoresourceMetadata = GeoresourcesMapper
                 .mapToSwaggerGeoresource(georesourceMetadataEntity);
@@ -806,7 +807,9 @@ public class GeoresourcesManager {
         logger.info("Retrieving secured georesources metadata from db");
 
         List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll().stream()
-                .filter(g -> provider.checkPermissions(g, PermissionLevelType.VIEWER)).collect(Collectors.toList());
+                .filter(g -> provider.checkPermissions(g, PermissionLevelType.VIEWER))
+                .collect(Collectors.toList());
+        georesourcesMeatadataEntities.forEach(g -> g.setUserPermissions(provider.getPermissions(g)));
 
         return generateSwaggerGeoresourcesMetadata(georesourcesMeatadataEntities);
     }

@@ -107,6 +107,7 @@ public class SpatialUnitsMapper {
 		dataset.setWfsUrl(spatialUnitEntity.getWfsUrl());
 
 		dataset.setAllowedRoles(getRoleIds(spatialUnitEntity.getRoles()));
+		dataset.setUserPermissions(spatialUnitEntity.getUserPermissions());
 
 		return dataset;
 	}

@@ -492,6 +492,7 @@ public class IndicatorsManager {
             indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll().stream()
                 .filter(entity -> provider.checkPermissions(entity, PermissionLevelType.VIEWER))
                 .collect(Collectors.toList());
+            indicatorsMeatadataEntities.forEach(i -> i.setUserPermissions(provider.getPermissions(i)));
         }
 
         List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray = spatialUnitsMetadataRepo.findAll();
@@ -1327,6 +1328,7 @@ public class IndicatorsManager {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
                         "was not found.", indicatorsId));
             }
+            metadataEntity.setUserPermissions(provider.getPermissions(metadataEntity));
         }
         return metadataEntity;
     }
@@ -1344,6 +1346,7 @@ public class IndicatorsManager {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource " +
                         "for indicator '%s' and spatial unit '%s' was not found.", indicatorId, spatialUnitId));
             }
+            entity.setUserPermissions(provider.getPermissions(entity));
         }
         return entity;
     }

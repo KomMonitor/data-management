@@ -535,7 +535,10 @@ public class SpatialUnitsManager {
                     .collect(Collectors.toList());
         } else {
             spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll().stream()
-                    .filter(s -> provider.checkPermissions(s, PermissionLevelType.VIEWER)).collect(Collectors.toList());
+                    .filter(s -> provider.checkPermissions(s, PermissionLevelType.VIEWER))
+                    .collect(Collectors.toList());
+            spatialUnitMeatadataEntities.forEach(s -> s.setUserPermissions(provider.getPermissions(s)));
+
         }
 
         logger.info("Retrieved a total number of {} entries for spatialUnits metadata from db. Convert them to JSON Output structure and return.", spatialUnitMeatadataEntities.size());
@@ -693,6 +696,7 @@ public class SpatialUnitsManager {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
                         "was not found.", spatialUnitId));
             }
+            metadataEntity.setUserPermissions(provider.getPermissions(metadataEntity));
         }
         return metadataEntity;
     }

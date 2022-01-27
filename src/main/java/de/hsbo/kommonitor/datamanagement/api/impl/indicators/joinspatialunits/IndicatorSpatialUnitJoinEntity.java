@@ -5,12 +5,14 @@ import javax.persistence.*;
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 @Entity(name = "IndicatorSpatialUnits")
 public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedByRole {
@@ -31,6 +33,8 @@ public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedB
     private String wmsUrl = null;
     private String wfsUrl = null;
     private String defaultStyleName = null;
+    @Transient
+    private List<PermissionLevelType> userPermissions;
 
     public IndicatorSpatialUnitJoinEntity() {
     }
@@ -103,6 +107,14 @@ public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedB
 
     public void setDefaultStyleName(String defaultStyleName) {
         this.defaultStyleName = defaultStyleName;
+    }
+
+    public List<PermissionLevelType> getUserPermissions() {
+        return userPermissions;
+    }
+
+    public void setUserPermissions(List<PermissionLevelType> userPermissions) {
+        this.userPermissions = userPermissions;
     }
 
     @ManyToOne(optional = false)

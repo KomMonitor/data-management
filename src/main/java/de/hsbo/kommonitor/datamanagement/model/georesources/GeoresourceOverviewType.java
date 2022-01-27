@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -35,6 +36,9 @@ public class GeoresourceOverviewType   {
 
   @JsonProperty("allowedRoles")
   private List<String> allowedRoles = null;
+
+  @JsonProperty("userPermissions")
+  private List<PermissionLevelType> userPermissions = null;
 
   @JsonProperty("isPOI")
   private Boolean isPOI = null;
@@ -192,6 +196,20 @@ public class GeoresourceOverviewType   {
     this.isPOI = isPOI;
     return this;
   }
+
+  /**
+   * list of permissions that are effective on this dataset for the current user
+   * @return userPermissions
+   **/
+  @ApiModelProperty(value = "list of permissions that are effective on this dataset for the current user ")
+  public List<PermissionLevelType> getUserPermissions() {
+    return userPermissions;
+  }
+
+  public void setUserPermissions(List<PermissionLevelType> userPermissions) {
+    this.userPermissions = userPermissions;
+  }
+
 
    /**
    * boolean value indicating if the dataset contains points of interest
@@ -420,6 +438,7 @@ public class GeoresourceOverviewType   {
         Objects.equals(this.availablePeriodsOfValidity, georesourceOverviewType.availablePeriodsOfValidity) &&
         Objects.equals(this.topicReference, georesourceOverviewType.topicReference) &&
         Objects.equals(this.allowedRoles, georesourceOverviewType.allowedRoles) &&
+        Objects.equals(this.userPermissions, georesourceOverviewType.userPermissions) &&
         Objects.equals(this.isPOI, georesourceOverviewType.isPOI) &&
         Objects.equals(this.isLOI, georesourceOverviewType.isLOI) &&
         Objects.equals(this.isAOI, georesourceOverviewType.isAOI) &&
@@ -436,7 +455,7 @@ public class GeoresourceOverviewType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodsOfValidity, topicReference, allowedRoles, isPOI, isLOI, isAOI, loiColor, loiWidth, loiDashArrayString, aoiColor, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor, wmsUrl, wfsUrl);
+    return Objects.hash(datasetName, georesourceId, metadata, availablePeriodsOfValidity, topicReference, allowedRoles, userPermissions, isPOI, isLOI, isAOI, loiColor, loiWidth, loiDashArrayString, aoiColor, poiSymbolBootstrap3Name, poiMarkerColor, poiSymbolColor, wmsUrl, wfsUrl);
   }
 
   @Override
@@ -450,6 +469,7 @@ public class GeoresourceOverviewType   {
     sb.append("    availablePeriodsOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
     sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    userPermissions: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    isPOI: ").append(toIndentedString(isPOI)).append("\n");
     sb.append("    isLOI: ").append(toIndentedString(isLOI)).append("\n");
     sb.append("    isAOI: ").append(toIndentedString(isAOI)).append("\n");

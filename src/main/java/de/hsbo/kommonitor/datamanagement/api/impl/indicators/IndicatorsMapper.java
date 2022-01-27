@@ -144,6 +144,7 @@ public class IndicatorsMapper {
 		indicatorOverviewType.setInterpretation(indicatorsMetadataEntity.getInterpretation());
 		indicatorOverviewType.setTags(new ArrayList<String>(indicatorsMetadataEntity.getTags()));
 		indicatorOverviewType.setAllowedRoles(getAllowedRoleIds(indicatorsMetadataEntity.getRoles()));
+		indicatorOverviewType.setUserPermissions(indicatorsMetadataEntity.getUserPermissions());
 
 		return indicatorOverviewType;
 	}
@@ -200,6 +201,7 @@ public class IndicatorsMapper {
 					.map(r -> r.getRoleId())
 					.collect(Collectors.toList());
 			item.setAllowedRoles(allowedRoles);
+			item.setUserPermissions(indicatorSpatialUnitJoinEntity.getUserPermissions());
 
 			indicatorSpatialUnitJoinItems.add(item);
 			// This is a QAD to prevent shared collection references for spatial unit roles

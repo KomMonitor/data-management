@@ -1,6 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.model.indicators;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
 
@@ -29,6 +30,10 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
   @JsonProperty("allowedRoles")
   @Valid
   private List<String> allowedRoles = null;
+
+  @JsonProperty("userPermissions")
+  @Valid
+  private List<PermissionLevelType> userPermissions = null;
 
   public IndicatorSpatialUnitJoinItem spatialUnitId(String spatialUnitId) {
     this.spatialUnitId = spatialUnitId;
@@ -100,6 +105,19 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     this.allowedRoles = allowedRoles;
   }
 
+  /**
+   * list of permissions that are effective on this dataset for the current user
+   * @return allowedRoles
+   **/
+  @ApiModelProperty(value = "list of permissions that are effective on this dataset for the current user")
+  public List<PermissionLevelType> getUserPermissions() {
+    return userPermissions;
+  }
+
+  public void setUserPermissions(List<PermissionLevelType> userPermissions) {
+    this.userPermissions = userPermissions;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -112,12 +130,13 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     IndicatorSpatialUnitJoinItem indicatorSpatialUnitJoinItem = (IndicatorSpatialUnitJoinItem) o;
     return Objects.equals(this.spatialUnitId, indicatorSpatialUnitJoinItem.spatialUnitId) &&
         Objects.equals(this.spatialUnitName, indicatorSpatialUnitJoinItem.spatialUnitName) &&
-        Objects.equals(this.allowedRoles, indicatorSpatialUnitJoinItem.allowedRoles);
+        Objects.equals(this.allowedRoles, indicatorSpatialUnitJoinItem.allowedRoles) &&
+        Objects.equals(this.userPermissions, indicatorSpatialUnitJoinItem.userPermissions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(spatialUnitId, spatialUnitName, allowedRoles);
+    return Objects.hash(spatialUnitId, spatialUnitName, allowedRoles, userPermissions);
   }
 
   @Override
@@ -128,6 +147,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     sb.append("    spatialUnitId: ").append(toIndentedString(spatialUnitId)).append("\n");
     sb.append("    spatialUnitName: ").append(toIndentedString(spatialUnitName)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");
     sb.append("}");
     return sb.toString();
   }

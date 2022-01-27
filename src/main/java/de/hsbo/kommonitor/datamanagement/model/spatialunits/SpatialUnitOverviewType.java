@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -43,6 +44,9 @@ public class SpatialUnitOverviewType   {
 
   @JsonProperty("allowedRoles")
   private List<String> allowedRoles = new ArrayList<>();
+
+  @JsonProperty("userPermissions")
+  private List<PermissionLevelType> userPermissions = new ArrayList<>();
 
   public SpatialUnitOverviewType spatialUnitId(String spatialUnitId) {
     this.spatialUnitId = spatialUnitId;
@@ -211,6 +215,19 @@ public class SpatialUnitOverviewType   {
     this.allowedRoles = allowedRoles;
   }
 
+  /**
+   * list of permissions that are effective on this dataset for the current user
+   * @return allowedRoles
+   **/
+  @ApiModelProperty(required = true, value = "list of permissions that are effective on this dataset for the current user")
+  public List<PermissionLevelType> getUserPermissions() {
+    return userPermissions;
+  }
+
+  public void setUserPermissions(List<PermissionLevelType> userPermissions) {
+    this.userPermissions = userPermissions;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -229,13 +246,14 @@ public class SpatialUnitOverviewType   {
         Objects.equals(this.availablePeriodsOfValidity, spatialUnitOverviewType.availablePeriodsOfValidity) &&
         Objects.equals(this.wmsUrl, spatialUnitOverviewType.wmsUrl) &&
         Objects.equals(this.wfsUrl, spatialUnitOverviewType.wfsUrl) &&
-        Objects.equals(this.allowedRoles, spatialUnitOverviewType.allowedRoles);
+        Objects.equals(this.allowedRoles, spatialUnitOverviewType.allowedRoles) &&
+        Objects.equals(this.userPermissions, spatialUnitOverviewType.userPermissions);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(spatialUnitId, spatialUnitLevel, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel,
-            availablePeriodsOfValidity, wmsUrl, wfsUrl, allowedRoles);
+            availablePeriodsOfValidity, wmsUrl, wfsUrl, allowedRoles, userPermissions);
   }
 
   @Override
@@ -252,6 +270,7 @@ public class SpatialUnitOverviewType   {
     sb.append("    wmsUrl: ").append(toIndentedString(wmsUrl)).append("\n");
     sb.append("    wfsUrl: ").append(toIndentedString(wfsUrl)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");
     sb.append("}");
     return sb.toString();
   }

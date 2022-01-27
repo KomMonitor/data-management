@@ -8,6 +8,7 @@ import java.util.Objects;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,6 +30,10 @@ public class IndicatorOverviewType   {
   @JsonProperty("allowedRoles")
   @Valid
   private List<String> allowedRoles = null;
+
+  @JsonProperty("userPermissions")
+  @Valid
+  private List<PermissionLevelType> userPermissions = null;
 
   @JsonProperty("applicableDates")
   @Valid
@@ -147,6 +152,19 @@ public class IndicatorOverviewType   {
 
   public void setAllowedRoles(List<String> allowedRoles) {
     this.allowedRoles = allowedRoles;
+  }
+
+  /**
+   * list of permissions that are effective on this dataset for the current user
+   * @return userPermissions
+   **/
+  @ApiModelProperty(value = "list of permissions that are effective on this dataset for the current user")
+  public List<PermissionLevelType> getUserPermissions() {
+    return userPermissions;
+  }
+
+  public void setUserPermissions(List<PermissionLevelType> userPermissions) {
+    this.userPermissions = userPermissions;
   }
 
   public IndicatorOverviewType applicableDates(List<String> applicableDates) {
@@ -636,6 +654,7 @@ public class IndicatorOverviewType   {
     IndicatorOverviewType indicatorOverviewType = (IndicatorOverviewType) o;
     return Objects.equals(this.abbreviation, indicatorOverviewType.abbreviation) &&
         Objects.equals(this.allowedRoles, indicatorOverviewType.allowedRoles) &&
+        Objects.equals(this.userPermissions, indicatorOverviewType.userPermissions) &&
         Objects.equals(this.applicableDates, indicatorOverviewType.applicableDates) &&
         Objects.equals(this.applicableSpatialUnits, indicatorOverviewType.applicableSpatialUnits) &&
         Objects.equals(this.characteristicValue, indicatorOverviewType.characteristicValue) &&
@@ -661,7 +680,7 @@ public class IndicatorOverviewType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, allowedRoles, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, processDescription, referenceDateNote, displayOrder, referencedGeoresources, referencedIndicators, tags, topicReference, unit);
+    return Objects.hash(abbreviation, allowedRoles, userPermissions, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, processDescription, referenceDateNote, displayOrder, referencedGeoresources, referencedIndicators, tags, topicReference, unit);
   }
 
   @Override
@@ -671,6 +690,7 @@ public class IndicatorOverviewType   {
     
     sb.append("    abbreviation: ").append(toIndentedString(abbreviation)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");
     sb.append("    applicableDates: ").append(toIndentedString(applicableDates)).append("\n");
     sb.append("    applicableSpatialUnits: ").append(toIndentedString(applicableSpatialUnits)).append("\n");
     sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");
