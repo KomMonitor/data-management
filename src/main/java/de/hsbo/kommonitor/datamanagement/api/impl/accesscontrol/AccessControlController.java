@@ -48,7 +48,7 @@ public class AccessControlController extends BasePathController implements Acces
     }
 
     @Override
-    @PreAuthorize("hasRequiredPermissionLevel('creator')")
+    @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<List<OrganizationalUnitOverviewType>> getOrganizationalUnits() {
         logger.debug("Received request to get all organizationalUnits");
         String accept = request.getHeader("Accept");
@@ -62,7 +62,7 @@ public class AccessControlController extends BasePathController implements Acces
     }
 
     @Override
-    @PreAuthorize("hasRequiredPermissionLevel('creator')")
+    @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<OrganizationalUnitOverviewType> getOrganizationalUnitById(
         @PathVariable("organizationalUnitId") String organizationalUnitId) {
         logger.debug("Received request to get organizationalUnit with id '{}'", organizationalUnitId);
