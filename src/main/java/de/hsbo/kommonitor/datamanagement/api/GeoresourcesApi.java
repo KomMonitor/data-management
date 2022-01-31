@@ -27,24 +27,19 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 
-import javax.servlet.ServletRequest;
-
 @javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-04-05T10:56:22.201+02:00")
 
 @Api(value = "Georesources", description = "the Georesources API")
 public interface GeoresourcesApi {
 
-    @ApiOperation(value = "Add a new geo-resource", nickname = "addGeoresourceAsBody", notes = "Add/Register a geo-resource dataset for a certain period of time", authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 201, message = "Created"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid"),
-        @ApiResponse(code = 405, message = "Invalid input") })
-    @RequestMapping(value = "/georesources",
-        consumes = { "application/json" },
-        method = RequestMethod.POST)
-    ResponseEntity<GeoresourceOverviewType> addGeoresourceAsBody(@ApiParam(value = "feature data" ,required=true )   @RequestBody GeoresourcePOSTInputType featureData);
+	@ApiOperation(value = "Add a new geo-resource", nickname = "addGeoresourceAsBody", notes = "Add/Register a geo-resource dataset for a certain period of time", authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 201, message = "Created"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/georesources", consumes = { "application/json" }, method = RequestMethod.POST)
+	ResponseEntity<GeoresourceOverviewType> addGeoresourceAsBody(
+			@ApiParam(value = "feature data", required = true) @RequestBody GeoresourcePOSTInputType featureData);
 
 	@ApiOperation(value = "Delete all features/contents of the selected geo-resource dataset", nickname = "deleteAllGeoresourceFeaturesById", notes = "Delete all features/contents of the selected geo-resource dataset", authorizations = {
 			@Authorization(value = "basicAuth") }, tags = {})
@@ -54,140 +49,214 @@ public interface GeoresourcesApi {
 	ResponseEntity deleteAllGeoresourceFeaturesById(
 			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId);
 
-    @ApiOperation(value = "Delete the features/contents of the selected geo-resource dataset", nickname = "deleteGeoresourceById", notes = "Delete the features/contents of the selected geo-resource dataset", authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/georesources/{georesourceId}",
-        method = RequestMethod.DELETE)
-    ResponseEntity deleteGeoresourceById(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId);
+	@ApiOperation(value = "Delete the features/contents of the selected geo-resource dataset", nickname = "deleteGeoresourceById", notes = "Delete the features/contents of the selected geo-resource dataset", authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/georesources/{georesourceId}", method = RequestMethod.DELETE)
+	ResponseEntity deleteGeoresourceById(
+			@ApiParam(value = "identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId);
 
-    @ApiOperation(value = "Delete the features/contents of the selected geo-resource dataset, selected by year and month", nickname = "deleteGeoresourceByIdAndYearAndMonth", notes = "Delete the features/contents of the selected geo-resource dataset, selected by year and month", authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/georesources/{georesourceId}/{year}/{month}/{day}",
-        method = RequestMethod.DELETE)
-    ResponseEntity deleteGeoresourceByIdAndYearAndMonth(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day);
+	@ApiOperation(value = "Delete the features/contents of the selected geo-resource dataset, selected by year and month", nickname = "deleteGeoresourceByIdAndYearAndMonth", notes = "Delete the features/contents of the selected geo-resource dataset, selected by year and month", authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/georesources/{georesourceId}/{year}/{month}/{day}", method = RequestMethod.DELETE)
+	ResponseEntity deleteGeoresourceByIdAndYearAndMonth(
+			@ApiParam(value = "identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
+			@ApiParam(value = "year for which datasets shall be queried", required = true) @PathVariable("year") BigDecimal year,
+			@ApiParam(value = "month for which datasets shall be queried", required = true) @PathVariable("month") BigDecimal month,
+			@ApiParam(value = "day for which datasets shall be queried", required = true) @PathVariable("day") BigDecimal day);
 
-    @ApiOperation(value = "retrieve all feature entries for all applicable periods of validity for the selected geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)", nickname = "getAllGeoresourceFeaturesById", notes = "retrieve all feature entries for all applicable periods of validity for the selected geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)", response = String.class, authorizations = {
-            @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK", response = String.class),
-            @ApiResponse(code = 400, message = "Invalid status value"),
-            @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/georesources/{georesourceId}/allFeatures",
-            produces = { "application/json" },
-            method = RequestMethod.GET)
-    ResponseEntity<byte[]> getAllGeoresourceFeaturesById(@ApiParam(value = "the identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries, Principal principal);
+	@ApiOperation(value = "Delete all database records for the specified feature of the selected geo-resource dataset", nickname = "deleteSingleGeoresourceFeatureById", notes = "Delete all database records for the specified feature of the selected geo-resource dataset", response = ResponseEntity.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
 
-    @ApiOperation(value = "retrieve information about available features of different geo-resource datasets", nickname = "getGeoresources", notes = "retrieve information about available features of different geo-resource datasets", response = GeoresourceOverviewType.class, responseContainer = "array", authorizations = {
-            @Authorization(value = "basicAuth") }, tags = {})
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK", response = GeoresourceOverviewType.class, responseContainer = "array"),
-            @ApiResponse(code = 400, message = "Invalid status value"),
-            @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/georesources", produces = { "application/json" }, method = RequestMethod.GET)
-    ResponseEntity<List<GeoresourceOverviewType>> getGeoresources(Principal principal);
+			}) }, tags = { "georecources-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ResponseEntity.class),
+			@ApiResponse(code = 204, message = "No Content"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden") })
+	@RequestMapping(value = "/georesources/{georesourceId}/singleFeature/{featureId}", produces = {
+			"*/*" }, method = RequestMethod.DELETE)
+	ResponseEntity<ResponseEntity> deleteSingleGeoresourceFeatureById(
+			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
+			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
+			Principal principal);
 
-    @ApiOperation(value = "retrieve information about available features of the selected geo-resource dataset", nickname = "getGeoresourceById", notes = "retrieve information about available features of the selected geo-resource dataset", response = GeoresourceOverviewType.class, authorizations = {
-            @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK", response = GeoresourceOverviewType.class),
-            @ApiResponse(code = 400, message = "Invalid status value"),
-            @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/georesources/{georesourceId}",
-            produces = { "application/json" },
-            method = RequestMethod.GET)
-    ResponseEntity<GeoresourceOverviewType> getGeoresourceById(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId, Principal principal);
+	@ApiOperation(value = "Delete single feature database record specified by its unique database primary key id for the specified feature of the selected geo-resource dataset", nickname = "deleteSingleGeoresourceFeatureRecordById", notes = "Delete single feature database record specified by its unique database primary key id for the specified feature of the selected geo-resource dataset", response = ResponseEntity.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
 
-    @ApiOperation(value = "retrieve the features according to the selected geo-resource dataset and selected year and month as GeoJSON", nickname = "getGeoresourceByIdAndYearAndMonth", notes = "retrieve the features according to the selected geo-resource dataset and selected year and month as GeoJSON", response = byte[].class, authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = byte[].class),
-        @ApiResponse(code = 400, message = "Invalid status value"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/georesources/{georesourceId}/{year}/{month}/{day}",
-        produces = { "application/octed-stream" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonth(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries, Principal principal);
+			}) }, tags = { "georecources-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ResponseEntity.class),
+			@ApiResponse(code = 204, message = "No Content"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden") })
+	@RequestMapping(value = "/georesources/{georesourceId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId}", produces = {
+			"*/*" }, method = RequestMethod.DELETE)
+	ResponseEntity<ResponseEntity> deleteSingleGeoresourceFeatureRecordById(
+			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
+			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the geo-resource dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
+			Principal principal);
 
-    @ApiOperation(value = "retrieve only the properties without geometry of all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)", nickname = "getAllGeoresourceFeaturesByIdWithoutGeometry", notes = "retrieve only the properties without geometry of all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)", response = String.class, authorizations = {
-            @Authorization(value = "kommonitor-data-access_oauth", scopes = {
-                
-                })
-        }, tags={ "georecources-controller", })
-        @ApiResponses(value = { 
-            @ApiResponse(code = 200, message = "OK", response = String.class),
-            @ApiResponse(code = 400, message = "Invalid status value"),
-            @ApiResponse(code = 401, message = "API key is missing or invalid"),
-            @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 404, message = "Not Found") })
-        @RequestMapping(value = "/georesources/{georesourceId}/allFeatures/without-geometry",
-            produces = { "application/json" }, 
-            method = RequestMethod.GET)
-        ResponseEntity<byte[]> getAllGeoresourceFeaturesByIdWithoutGeometry(@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId, Principal principal);
+	@ApiOperation(value = "retrieve all feature entries for all applicable periods of validity for the selected geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)", nickname = "getAllGeoresourceFeaturesById", notes = "retrieve all feature entries for all applicable periods of validity for the selected geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)", response = String.class, authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/georesources/{georesourceId}/allFeatures", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<byte[]> getAllGeoresourceFeaturesById(
+			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
+			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
+			Principal principal);
 
-    @ApiOperation(value = "retrieve only the properties without geometry of the features according to the selected public geo-resource dataset and selected year and month as GeoJSON", nickname = "getGeoresourceByIdAndYearAndMonthWithoutGeometry", notes = "retrieve only the properties without geometry of the features according to the selected public geo-resource dataset and selected year and month as GeoJSON", response = byte[].class, authorizations = {
-            @Authorization(value = "kommonitor-data-access_oauth", scopes = {
-                
-                })
-        }, tags={ "georecources-controller", })
-        @ApiResponses(value = { 
-            @ApiResponse(code = 200, message = "OK", response = byte[].class),
-            @ApiResponse(code = 400, message = "Invalid status value"),
-            @ApiResponse(code = 401, message = "API key is missing or invalid"),
-            @ApiResponse(code = 403, message = "Forbidden"),
-            @ApiResponse(code = 404, message = "Not Found") })
-        @RequestMapping(value = "/georesources/{georesourceId}/{year}/{month}/{day}/without-geometry",
-            produces = { "application/octed-stream" }, 
-            method = RequestMethod.GET)
-        ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonthWithoutGeometry(@ApiParam(value = "day",required=true) @PathVariable("day") BigDecimal day,@ApiParam(value = "georesourceId",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "month",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "year",required=true) @PathVariable("year") BigDecimal year, Principal principal);
+	@ApiOperation(value = "retrieve information about available features of different geo-resource datasets", nickname = "getGeoresources", notes = "retrieve information about available features of different geo-resource datasets", response = GeoresourceOverviewType.class, responseContainer = "array", authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "OK", response = GeoresourceOverviewType.class, responseContainer = "array"),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/georesources", produces = { "application/json" }, method = RequestMethod.GET)
+	ResponseEntity<List<GeoresourceOverviewType>> getGeoresources(Principal principal);
 
-    
-    @ApiOperation(value = "retrieve the JSON schema for the selected geo-resource dataset", nickname = "getGeoresourceSchemaByLevel", notes = "retrieve the JSON schema for the selected geo-resource dataset. The JSON schema indicates the property structure of the dataset.", response = String.class, authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = String.class),
-        @ApiResponse(code = 400, message = "Invalid status value"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid") })
-    @RequestMapping(value = "/georesources/{georesourceId}/schema",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<String> getGeoresourceSchemaByLevel(@ApiParam(value = "the identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId, Principal principal);
+	@ApiOperation(value = "retrieve information about available features of the selected geo-resource dataset", nickname = "getGeoresourceById", notes = "retrieve information about available features of the selected geo-resource dataset", response = GeoresourceOverviewType.class, authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = GeoresourceOverviewType.class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/georesources/{georesourceId}", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<GeoresourceOverviewType> getGeoresourceById(
+			@ApiParam(value = "identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
+			Principal principal);
 
+	@ApiOperation(value = "retrieve the features according to the selected geo-resource dataset and selected year and month as GeoJSON", nickname = "getGeoresourceByIdAndYearAndMonth", notes = "retrieve the features according to the selected geo-resource dataset and selected year and month as GeoJSON", response = byte[].class, authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = byte[].class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/georesources/{georesourceId}/{year}/{month}/{day}", produces = {
+			"application/octed-stream" }, method = RequestMethod.GET)
+	ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonth(
+			@ApiParam(value = "identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
+			@ApiParam(value = "year for which datasets shall be queried", required = true) @PathVariable("year") BigDecimal year,
+			@ApiParam(value = "month for which datasets shall be queried", required = true) @PathVariable("month") BigDecimal month,
+			@ApiParam(value = "day for which datasets shall be queried", required = true) @PathVariable("day") BigDecimal day,
+			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
+			Principal principal);
 
-    @ApiOperation(value = "Modify/Update the features of the selected geo-resource dataset", nickname = "updateGeoresourceAsBody", notes = "Modify/Update the features of the selected geo-resource dataset.  The interface expects a full upload of all geometries for the spatial unit. Internally, those geometries are compared to the existing ones to mark 'old' geometries that are no longer in use as outdated. Hence, each geometric object is only persisted once and its use is controlled by time validity marks.", authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid"),
-        @ApiResponse(code = 405, message = "Invalid input") })
-    @RequestMapping(value = "/georesources/{georesourceId}",
-        consumes = { "application/json" },
-        method = RequestMethod.PUT)
-    ResponseEntity updateGeoresourceAsBody(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "feature data" ,required=true )   @RequestBody GeoresourcePUTInputType featureData);
+	@ApiOperation(value = "retrieve only the properties without geometry of all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)", nickname = "getAllGeoresourceFeaturesByIdWithoutGeometry", notes = "retrieve only the properties without geometry of all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)", response = String.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
 
+			}) }, tags = { "georecources-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/georesources/{georesourceId}/allFeatures/without-geometry", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<byte[]> getAllGeoresourceFeaturesByIdWithoutGeometry(
+			@ApiParam(value = "georesourceId", required = true) @PathVariable("georesourceId") String georesourceId,
+			Principal principal);
 
-    @ApiOperation(value = "Modify/Update the metadata of the selected geo-resource dataset", nickname = "updateGeoresourceMetadataAsBody", notes = "Modify/Update the metadata of the selected geo-resource dataset. This replaces the formerly stored metadata.", authorizations = {
-        @Authorization(value = "basicAuth")
-    }, tags={  })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 401, message = "API key is missing or invalid"),
-        @ApiResponse(code = 405, message = "Invalid input") })
-    @RequestMapping(value = "/georesources/{georesourceId}",
-        consumes = { "application/json" },
-        method = RequestMethod.PATCH)
-    ResponseEntity updateGeoresourceMetadataAsBody(@ApiParam(value = "identifier of the geo-resource dataset",required=true) @PathVariable("georesourceId") String georesourceId,@ApiParam(value = "metadata input" ,required=true )   @RequestBody GeoresourcePATCHInputType metadata);
+	@ApiOperation(value = "retrieve only the properties without geometry of the features according to the selected public geo-resource dataset and selected year and month as GeoJSON", nickname = "getGeoresourceByIdAndYearAndMonthWithoutGeometry", notes = "retrieve only the properties without geometry of the features according to the selected public geo-resource dataset and selected year and month as GeoJSON", response = byte[].class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "georecources-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = byte[].class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/georesources/{georesourceId}/{year}/{month}/{day}/without-geometry", produces = {
+			"application/octed-stream" }, method = RequestMethod.GET)
+	ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonthWithoutGeometry(
+			@ApiParam(value = "day", required = true) @PathVariable("day") BigDecimal day,
+			@ApiParam(value = "georesourceId", required = true) @PathVariable("georesourceId") String georesourceId,
+			@ApiParam(value = "month", required = true) @PathVariable("month") BigDecimal month,
+			@ApiParam(value = "year", required = true) @PathVariable("year") BigDecimal year, Principal principal);
+
+	@ApiOperation(value = "retrieve the JSON schema for the selected geo-resource dataset", nickname = "getGeoresourceSchemaByLevel", notes = "retrieve the JSON schema for the selected geo-resource dataset. The JSON schema indicates the property structure of the dataset.", response = String.class, authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid") })
+	@RequestMapping(value = "/georesources/{georesourceId}/schema", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<String> getGeoresourceSchemaByLevel(
+			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
+			Principal principal);
+
+	@ApiOperation(value = "retrieve single feature database records for all applicable periods of validity for the selected geo-resource dataset (hence might contain the target feature multiple times if it exists for different periods of validity)", nickname = "getSingleGeoresourceFeatureById", notes = "retrieve single feature database records for all applicable periods of validity for the selected geo-resource dataset (hence might contain the target feature multiple times if it exists for different periods of validity)", response = String.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "georecources-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/georesources/{georesourceId}/singleFeature/{featureId}", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<byte[]> getSingleGeoresourceFeatureById(
+			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
+			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries, 
+			Principal principal);
+
+	@ApiOperation(value = "retrieve single feature database record specified by its unique database primary key id", nickname = "getSingleGeoresourceFeatureRecordById", notes = "retrieve single feature database record specified by its unique database primary key id", response = String.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "georecources-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/georesources/{georesourceId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId}", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<byte[]> getSingleGeoresourceFeatureRecordById(
+			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
+			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the geo-resource dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
+			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original")  @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries, 
+			Principal principal);
+
+	@ApiOperation(value = "Modify/Update the features of the selected geo-resource dataset", nickname = "updateGeoresourceAsBody", notes = "Modify/Update the features of the selected geo-resource dataset.  The interface expects a full upload of all geometries for the spatial unit. Internally, those geometries are compared to the existing ones to mark 'old' geometries that are no longer in use as outdated. Hence, each geometric object is only persisted once and its use is controlled by time validity marks.", authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/georesources/{georesourceId}", consumes = {
+			"application/json" }, method = RequestMethod.PUT)
+	ResponseEntity updateGeoresourceAsBody(
+			@ApiParam(value = "identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
+			@ApiParam(value = "feature data", required = true) @RequestBody GeoresourcePUTInputType featureData);
+
+	@ApiOperation(value = "Modify/Update the metadata of the selected geo-resource dataset", nickname = "updateGeoresourceMetadataAsBody", notes = "Modify/Update the metadata of the selected geo-resource dataset. This replaces the formerly stored metadata.", authorizations = {
+			@Authorization(value = "basicAuth") }, tags = {})
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/georesources/{georesourceId}", consumes = {
+			"application/json" }, method = RequestMethod.PATCH)
+	ResponseEntity updateGeoresourceMetadataAsBody(
+			@ApiParam(value = "identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
+			@ApiParam(value = "metadata input", required = true) @RequestBody GeoresourcePATCHInputType metadata);
+
+	@ApiOperation(value = "Modify/Update the feature record of the selected georesource dataset feature", nickname = "updateGeoresourceFeatureRecordAsBody", notes = "Modify/Update the feature record of the selected georesource dataset feature", response = ResponseEntity.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "georecources-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK - Updated", response = ResponseEntity.class),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/georesources/{georesourceId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId}", produces = {
+			"*/*" }, consumes = { "application/json" }, method = RequestMethod.PUT)
+	ResponseEntity<ResponseEntity> updateGeoresourceFeatureRecordAsBody(
+			@ApiParam(value = "georesource feature record data", required = true)  @RequestBody String georesourceFeatureRecordData,
+			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
+			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the geo-resource dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId, 
+			Principal principal);
 
 }
