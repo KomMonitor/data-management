@@ -1,6 +1,12 @@
 # Change Log
 
-## 1.2.1
+## 1.2.2
+* bump log4j to 2.17.1 [3d1070d](3d1070d066f703a81824c7dd152653dc50962df5)
+* add missing consideration of config parameter for initial indicator view recreation [e10be07](e10be0751353ab4efb303e1fd9f2b2dd9f56250a)
+* refine indicator view definition in order to include all extra spatial unit properties as well, also implement a service that forces recreation of all views on startup [fb42fd4](fb42fd4fc84d3d953da94cab661dece65fe91f89)
+* Merge pull request #2 from KomMonitor/temp__maven_3.8.1_http_fix [1abec0b](1abec0bb1fe652efbf240f65697a05ce26ed14ae)
+    * Change url for geoSolutions repository to https://... [55fff08](55fff08410a594672801f4ff49c712e4e56e268b)
+* bump log4j version to 2.17.0 [abb3736](abb3736bb7774f9a0bab4df7b3aea2bb0cd60fe0)
 * bump spring-boot-starter-parent and hibernate versions [406c5e4](406c5e4aae54ca9bc5b4071ef2103c55700794b4)
 * bump spring version to 2.3.5.RELEASE [e749e28](e749e28a21f9845b11839fe6cbf2ba356e1bbb52)
 * increase log4j version to 2.16 [a24988e](a24988ef30ab1a0739983e02739b795c062ffbaf)
