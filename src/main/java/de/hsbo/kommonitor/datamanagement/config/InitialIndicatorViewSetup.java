@@ -30,16 +30,21 @@ public class InitialIndicatorViewSetup implements ApplicationListener<ContextRef
 	@Transactional
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 
-		logger.info("Begin initial recreation of indicator views to ensure that modified view definition is applied.");
+		if(isRecreateAllViewsOnStartup) {
+			logger.info("Begin initial recreation of indicator views to ensure that modified view definition is applied.");
 
-		try {
-			indicatorsManager.recreateAllViews();
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.info("Recreation of indicator views failed. Error message: " + e.getMessage());
+			try {
+				indicatorsManager.recreateAllViews();
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.info("Recreation of indicator views failed. Error message: " + e.getMessage());
+			}
+
+			logger.info("Initial recreation of indicator views finished.");
 		}
-
-		logger.info("Initial recreation of indicator views finished.");
+		else {
+			logger.info("Initial recreation of indicator views is skipped according to config parameter 'kommonitor.recreateAllViewsOnStartup'.");
+		}
 	}
 
 }
