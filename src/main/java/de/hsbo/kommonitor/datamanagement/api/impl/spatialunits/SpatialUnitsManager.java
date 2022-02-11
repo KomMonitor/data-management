@@ -3,10 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -537,7 +534,21 @@ public class SpatialUnitsManager {
             spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll().stream()
                     .filter(s -> provider.checkPermissions(s, PermissionLevelType.VIEWER))
                     .collect(Collectors.toList());
-            spatialUnitMeatadataEntities.forEach(s -> s.setUserPermissions(provider.getPermissions(s)));
+
+            // Iterate over the spatial units and add the current user permissions. Iterator is used here in order to
+            // safely remove an entity form the collection if no permissions have been found. Actually, this should
+            // never happen, however, it is meant as an additional security check.
+            Iterator<MetadataSpatialUnitsEntity> iter = spatialUnitMeatadataEntities.iterator();
+            while(iter.hasNext()) {
+                MetadataSpatialUnitsEntity s = iter.next();
+                try {
+                    s.setUserPermissions(provider.getPermissions(s));
+                } catch(NoSuchElementException ex) {
+                    logger.error("No permissions found for spatial unit '{}'. Entity will be removed" +
+                            " from resulting list.", s.getDatasetId());
+                    iter.remove();
+                }
+            }
 
         }
 
@@ -696,7 +707,12 @@ public class SpatialUnitsManager {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
                         "was not found.", spatialUnitId));
             }
-            metadataEntity.setUserPermissions(provider.getPermissions(metadataEntity));
+            try {
+                metadataEntity.setUserPermissions(provider.getPermissions(metadataEntity));
+            } catch(NoSuchElementException ex) {
+                logger.error("No permissions found for spatial unit '{}'", metadataEntity.getDatasetId());
+            }
+
         }
         return metadataEntity;
     }

@@ -135,8 +135,8 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
                 // check the leftover roles for a match
                 .filter(r -> allowedRoles
                         .stream()
-                        .anyMatch(ar -> (ar.getFirst().getName().equals(r.getFirst())
-                                && ar.getSecond().equals(r.getSecond()))
+                        .anyMatch(ar -> ((ar.getFirst().getName().equals(r.getFirst()))
+                                && ar.getSecond().compareTo(r.getSecond()) <= 0)
                                 || ar.getFirst().getName().equals(publicRole)))
                 .map(Pair::getSecond)
                 //Permission enum ist sorted descending: highest permission -> 0, lowest permission -> 4

@@ -2,13 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -465,7 +459,12 @@ public class GeoresourcesManager {
             if (georesourceMetadataEntity == null || !authInfoProvider.checkPermissions(georesourceMetadataEntity, PermissionLevelType.VIEWER)) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
             }
-            georesourceMetadataEntity.setUserPermissions(authInfoProvider.getPermissions(georesourceMetadataEntity));
+            try {
+                georesourceMetadataEntity.setUserPermissions(authInfoProvider.getPermissions(georesourceMetadataEntity));
+            } catch (NoSuchElementException ex) {
+                logger.error("No permissions found for georesource '{}'", georesourceMetadataEntity.getDatasetId());
+            }
+
         }
         GeoresourceOverviewType swaggerGeoresourceMetadata = GeoresourcesMapper
                 .mapToSwaggerGeoresource(georesourceMetadataEntity);
@@ -809,7 +808,21 @@ public class GeoresourcesManager {
         List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll().stream()
                 .filter(g -> provider.checkPermissions(g, PermissionLevelType.VIEWER))
                 .collect(Collectors.toList());
-        georesourcesMeatadataEntities.forEach(g -> g.setUserPermissions(provider.getPermissions(g)));
+
+        // Iterate over the georesources and add the current user permissions. Iterator is used here in order to safely
+        // remove an entity form the collection if no permissions have been found. Actually, this should never happen,
+        // however, it is meant as an additional security check.
+        Iterator<MetadataGeoresourcesEntity> iter = georesourcesMeatadataEntities.iterator();
+        while(iter.hasNext()) {
+            MetadataGeoresourcesEntity g = iter.next();
+            try {
+                g.setUserPermissions(provider.getPermissions(g));
+            } catch(NoSuchElementException ex) {
+                logger.error("No permissions found for georesource '{}'. Entity will be removed from resulting list.",
+                        g.getDatasetId());
+                iter.remove();
+            }
+        }
 
         return generateSwaggerGeoresourcesMetadata(georesourcesMeatadataEntities);
     }

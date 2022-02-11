@@ -4,13 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -492,7 +486,21 @@ public class IndicatorsManager {
             indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll().stream()
                 .filter(entity -> provider.checkPermissions(entity, PermissionLevelType.VIEWER))
                 .collect(Collectors.toList());
-            indicatorsMeatadataEntities.forEach(i -> i.setUserPermissions(provider.getPermissions(i)));
+
+            // Iterate over the indicators and add the current user permissions. Iterator is used here in order to
+            // safely remove an entity form the collection if no permissions have been found. Actually, this should
+            // never happen, however, it is meant as an additional security check.
+            Iterator<MetadataIndicatorsEntity> iter = indicatorsMeatadataEntities.iterator();
+            while(iter.hasNext()) {
+                MetadataIndicatorsEntity i = iter.next();
+                try {
+                    i.setUserPermissions(provider.getPermissions(i));
+                } catch(NoSuchElementException ex) {
+                    logger.error("No permissions found for indicator '{}'. Entity will be removed" +
+                            " from resulting list.", i.getDatasetId());
+                    iter.remove();
+                }
+            }
         }
 
         List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray = spatialUnitsMetadataRepo.findAll();
@@ -1328,7 +1336,11 @@ public class IndicatorsManager {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
                         "was not found.", indicatorsId));
             }
-            metadataEntity.setUserPermissions(provider.getPermissions(metadataEntity));
+            try {
+                metadataEntity.setUserPermissions(provider.getPermissions(metadataEntity));
+            } catch (NoSuchElementException ex) {
+                logger.error("No permissions found for indicator '{}'", metadataEntity.getDatasetId());
+            }
         }
         return metadataEntity;
     }
@@ -1346,7 +1358,12 @@ public class IndicatorsManager {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource " +
                         "for indicator '%s' and spatial unit '%s' was not found.", indicatorId, spatialUnitId));
             }
-            entity.setUserPermissions(provider.getPermissions(entity));
+            try {
+                entity.setUserPermissions(provider.getPermissions(entity));
+            } catch (NoSuchElementException ex) {
+                logger.error("No permissions found for indicator '{}' and spatial unit '{}'",
+                        entity.getIndicatorMetadataId(), entity.getSpatialUnitId());
+            }
         }
         return entity;
     }
