@@ -201,7 +201,7 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
 		try {
 			String geoJsonFeatures = georesourcesManager.getSingleGeoresourceFeatureRecord(georesourceId, featureId,
 					featureRecordId, simplifyGeometries);
-			String fileName = "Georesource_" + georesourceId + "_featureDatabaseRecords_" + featureId + ".json";
+			String fileName = "Georesource_" + georesourceId + "_featureDatabaseRecord_" + featureRecordId + ".json";
 
 			return createGeoresourceFeatureResponse(fileName, geoJsonFeatures);
 		} catch (Exception e) {

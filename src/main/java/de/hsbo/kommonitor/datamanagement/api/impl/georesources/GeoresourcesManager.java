@@ -987,7 +987,7 @@ public class GeoresourcesManager {
 			/*
 			 * call DB tool to update features
 			 */
-			SpatialFeatureDatabaseHandler.updateGeoresourceFeatureRecordByRecordId(georesourceFeatureRecordData, dbTableName, featureId, featureRecordId);
+			SpatialFeatureDatabaseHandler.updateSpatialResourceFeatureRecordByRecordId(georesourceFeatureRecordData, dbTableName, featureId, featureRecordId);
 
 			// set lastUpdate in metadata in case of successful update
 			metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());

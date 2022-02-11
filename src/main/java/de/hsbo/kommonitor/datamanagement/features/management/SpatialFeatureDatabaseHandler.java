@@ -2040,7 +2040,7 @@ public class SpatialFeatureDatabaseHandler {
 		
 	}
 
-	public static void updateGeoresourceFeatureRecordByRecordId(String georesourceFeatureRecordData, String dbTableName,
+	public static void updateSpatialResourceFeatureRecordByRecordId(String georesourceFeatureRecordData, String dbTableName,
 			String featureId, String featureRecordId) throws IOException, Exception {
 //		Boolean isPartialUpdate = true;
 		
