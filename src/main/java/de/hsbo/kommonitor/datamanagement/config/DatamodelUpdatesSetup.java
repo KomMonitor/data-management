@@ -39,6 +39,12 @@ public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefresh
 			
 			alterTableStmt.addBatch("ALTER TABLE \"metadataindicators\" ADD COLUMN IF NOT EXISTS \"displayorder\" integer DEFAULT 0");
 			
+			alterTableStmt.addBatch("ALTER TABLE \"roles\" ADD COLUMN IF NOT EXISTS \"permissionlevel\" integer DEFAULT 4");
+			
+			alterTableStmt.addBatch("ALTER TABLE \"roles\" ADD COLUMN IF NOT EXISTS \"organizationalunit\" varchar(255)");
+			
+			alterTableStmt.addBatch("ALTER TABLE \"lastmodification\" ADD COLUMN IF NOT EXISTS \"accesscontrol\" timestamp with time zone");
+			
 			logger.info("Adding new DATABASE COLUMNS if they do not exist...");
 			alterTableStmt.executeBatch();
 
