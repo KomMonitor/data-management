@@ -56,7 +56,7 @@ public class IndicatorSpatialUnitJoinEntity implements Serializable {
         return entryId;
     }
 
-    public String getIndicatorValueTableName() {
+    public String getIndicatorViewTableName() {
         return indicatorValueTableName;
     }
 

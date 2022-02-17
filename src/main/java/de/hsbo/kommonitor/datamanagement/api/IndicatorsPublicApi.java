@@ -124,5 +124,37 @@ public interface IndicatorsPublicApi {
             @ApiResponse(code = 401, message = "API key is missing or invalid")})
     @RequestMapping(value = "/indicators", produces = {"application/json"}, method = RequestMethod.GET)
     ResponseEntity<List<IndicatorOverviewType>> getPublicIndicators();
+    
+	@ApiOperation(value = "retrieve single feature database records for all applicable periods of validity for the selected indicator dataset (hence might contain the target feature multiple times if it exists for different periods of validity)", nickname = "getPublicSingleIndicatorFeatureById", notes = "retrieve single feature database records for all applicable periods of validity for the selected indicator dataset (hence might contain the target feature multiple times if it exists for different periods of validity)", response = String.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "indicators-public-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = IndicatorPropertiesWithoutGeomType.class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/indicators/{indicatorId}/{spatialUnitId}/singleFeature/{featureId}", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicSingleIndicatorFeatureById(
+			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
+			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the indicator dataset spatial feature", required = true) @PathVariable("featureId") String featureId);
+
+	@ApiOperation(value = "retrieve single feature database record specified by its unique database primary key id", nickname = "getPublicSingleIndicatorFeatureRecordById", notes = "retrieve single feature database record specified by its unique database primary key id", response = IndicatorPropertiesWithoutGeomType.class,
+            responseContainer = "array", authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "indicators-public-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = IndicatorPropertiesWithoutGeomType.class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/indicators/{indicatorId}/{spatialUnitId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId}", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicSingleIndicatorFeatureRecordById(
+			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
+			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the indicator dataset spatial feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId);
 
 }
