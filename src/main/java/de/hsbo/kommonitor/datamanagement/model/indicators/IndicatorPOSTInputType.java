@@ -5,11 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
@@ -18,7 +13,6 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * IndicatorPOSTInputType
  */
-@Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2021-03-14T19:45:51.405Z")
 
 
@@ -27,7 +21,7 @@ public class IndicatorPOSTInputType   {
   private String abbreviation = null;
 
   @JsonProperty("allowedRoles")
-  @Valid
+  
   private List<String> allowedRoles = new ArrayList<String>();
 
   @JsonProperty("characteristicValue")
@@ -68,15 +62,15 @@ public class IndicatorPOSTInputType   {
   private BigDecimal displayOrder = null;
 
   @JsonProperty("refrencesToGeoresources")
-  @Valid
+  
   private List<IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources = null;
 
   @JsonProperty("refrencesToOtherIndicators")
-  @Valid
+  
   private List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators = null;
 
   @JsonProperty("tags")
-  @Valid
+  
   private List<String> tags = new ArrayList<String>();
 
   @JsonProperty("topicReference")
@@ -95,7 +89,7 @@ public class IndicatorPOSTInputType   {
    * @return abbreviation
   **/
   @ApiModelProperty(required = true, value = "abbreviated mark of the indicator")
-  @NotNull
+  
 
 
   public String getAbbreviation() {
@@ -121,7 +115,7 @@ public class IndicatorPOSTInputType   {
    * @return allowedRoles
   **/
   @ApiModelProperty(required = true, value = "list of role identifiers that have read access rights for this dataset")
-  @NotNull
+  
 
 
   public List<String> getAllowedRoles() {
@@ -142,7 +136,7 @@ public class IndicatorPOSTInputType   {
    * @return characteristicValue
   **/
   @ApiModelProperty(required = true, value = "the distuingishing characteristic value of the indicator")
-  @NotNull
+  
 
 
   public String getCharacteristicValue() {
@@ -163,7 +157,7 @@ public class IndicatorPOSTInputType   {
    * @return creationType
   **/
   @ApiModelProperty(required = true, value = "indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)")
-  @NotNull
+  
 
 
   public CreationTypeEnum getCreationType() {
@@ -184,7 +178,7 @@ public class IndicatorPOSTInputType   {
    * @return datasetName
   **/
   @ApiModelProperty(required = true, value = "the meaningful name of the indicator")
-  @NotNull
+  
 
 
   public String getDatasetName() {
@@ -205,9 +199,9 @@ public class IndicatorPOSTInputType   {
    * @return defaultClassificationMapping
   **/
   @ApiModelProperty(required = true, value = "")
-  @NotNull
+  
 
-  @Valid
+  
 
   public DefaultClassificationMappingType getDefaultClassificationMapping() {
     return defaultClassificationMapping;
@@ -247,7 +241,7 @@ public class IndicatorPOSTInputType   {
    * @return interpretation
   **/
   @ApiModelProperty(required = true, value = "interpretation of the indicator values")
-  @NotNull
+  
 
 
   public String getInterpretation() {
@@ -268,7 +262,7 @@ public class IndicatorPOSTInputType   {
    * @return isHeadlineIndicator
   **/
   @ApiModelProperty(required = true, value = "boolean value indicating if the indicator is a headline indicator")
-  @NotNull
+  
 
 
   public Boolean isIsHeadlineIndicator() {
@@ -309,9 +303,9 @@ public class IndicatorPOSTInputType   {
    * @return metadata
   **/
   @ApiModelProperty(required = true, value = "")
-  @NotNull
+  
 
-  @Valid
+  
 
   public CommonMetadataType getMetadata() {
     return metadata;
@@ -331,7 +325,7 @@ public class IndicatorPOSTInputType   {
    * @return processDescription
   **/
   @ApiModelProperty(required = true, value = "description about how the indicator was computed")
-  @NotNull
+  
 
 
   public String getProcessDescription() {
@@ -372,7 +366,6 @@ public class IndicatorPOSTInputType   {
    * @return displayOrder
   **/
   @ApiModelProperty(value = "an order number to control display order in clients", example = "0")
-  @Valid
   public BigDecimal getDisplayOrder() {
     return displayOrder;
   }
@@ -400,7 +393,7 @@ public class IndicatorPOSTInputType   {
   **/
   @ApiModelProperty(value = "array of references to other georesource datasets. E.g., if an indicator is defined by performing geometric-topological operations, then the identifiers of those required georesources can be referenced here")
 
-  @Valid
+  
 
   public List<IndicatorPOSTInputTypeRefrencesToGeoresources> getRefrencesToGeoresources() {
     return refrencesToGeoresources;
@@ -429,7 +422,7 @@ public class IndicatorPOSTInputType   {
   **/
   @ApiModelProperty(value = "array of references to other indicators. E.g., if an indicator is defined by combining four other indicators, then the identifiers of those other indicators can be referenced here")
 
-  @Valid
+  
 
   public List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> getRefrencesToOtherIndicators() {
     return refrencesToOtherIndicators;
@@ -454,7 +447,7 @@ public class IndicatorPOSTInputType   {
    * @return tags
   **/
   @ApiModelProperty(required = true, value = "list of tag labels for the indicator")
-  @NotNull
+  
 
 
   public List<String> getTags() {
@@ -475,7 +468,7 @@ public class IndicatorPOSTInputType   {
    * @return topicReference
   **/
   @ApiModelProperty(required = true, value = "id of the last topic hierarchy entity ")
-  @NotNull
+  
 
 
   public String getTopicReference() {
@@ -496,7 +489,7 @@ public class IndicatorPOSTInputType   {
    * @return unit
   **/
   @ApiModelProperty(required = true, value = "unit of the indicator values")
-  @NotNull
+  
 
 
   public String getUnit() {

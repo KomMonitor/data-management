@@ -9,10 +9,6 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 
-import javax.validation.Valid;
-
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +23,7 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputTyp
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -232,7 +229,7 @@ public interface IndicatorsApi {
             produces = { "*/*" }, 
             consumes = { "application/json" },
             method = RequestMethod.PATCH)
-        ResponseEntity updateIndicatorDisplayOrder(@ApiParam(value = "array of indicator id and displayOrder items" ,required=true )  @Valid @RequestBody List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray);
+        ResponseEntity updateIndicatorDisplayOrder(@ApiParam(value = "array of indicator id and displayOrder items" ,required=true )  @RequestBody List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray);
 
 
 }

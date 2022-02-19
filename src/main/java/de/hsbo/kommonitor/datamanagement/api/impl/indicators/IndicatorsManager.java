@@ -8,7 +8,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 
 import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.apache.commons.collections.CollectionUtils;
@@ -1413,7 +1412,7 @@ public class IndicatorsManager {
     }
     */
 
-	public boolean updateIndicatorOrder(@Valid List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray) {
+	public boolean updateIndicatorOrder( List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray) {
 		for (IndicatorPATCHDisplayOrderInputType indicatorPATCHDisplayOrderInputType : indicatorOrderArray) {
 			if(this.indicatorsMetadataRepo.existsByDatasetId(indicatorPATCHDisplayOrderInputType.getIndicatorId())) {
 				MetadataIndicatorsEntity indicatorMetadataEntity = this.indicatorsMetadataRepo.findByDatasetId(indicatorPATCHDisplayOrderInputType.getIndicatorId());
@@ -1445,5 +1444,26 @@ public class IndicatorsManager {
 
 		}
 
+	}
+	
+	public void recreateAllViews() {
+		
+		List<IndicatorSpatialUnitJoinEntity> affectedIndicatorEntries = indicatorsSpatialUnitsRepo.findAll();
+		
+		for (IndicatorSpatialUnitJoinEntity affectedIndicatorEntry : affectedIndicatorEntries) {
+			String indicatorViewTableName = affectedIndicatorEntry.getIndicatorValueTableName();
+
+	        try {
+				indicatorViewTableName = createOrReplaceIndicatorView_fromViewName(indicatorViewTableName, affectedIndicatorEntry.getSpatialUnitName(), affectedIndicatorEntry.getIndicatorMetadataId());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}		        
+		
 	}
 }

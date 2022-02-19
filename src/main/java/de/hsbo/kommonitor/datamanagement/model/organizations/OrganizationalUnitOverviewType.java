@@ -1,19 +1,16 @@
 package de.hsbo.kommonitor.datamanagement.model.organizations;
 
-import java.util.Objects;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * organizational unit (group)
@@ -36,7 +33,6 @@ public class OrganizationalUnitOverviewType {
     private String description = null;
 
     @JsonProperty("roles")
-    @Valid
     private List<RoleOverviewType> roles = new ArrayList<RoleOverviewType>();
 
     public OrganizationalUnitOverviewType organizationalUnitId(String organizationalUnitId) {
@@ -50,7 +46,6 @@ public class OrganizationalUnitOverviewType {
      * @return organizationalUnitId
      **/
     @ApiModelProperty(required = true, value = "unique id of this organizational Unit")
-    @NotNull
 
     public String getOrganizationalUnitId() {
         return organizationalUnitId;
@@ -71,7 +66,6 @@ public class OrganizationalUnitOverviewType {
      * @return name
      **/
     @ApiModelProperty(required = true, value = "name of this organizational Unit")
-    @NotNull
 
     public String getName() {
         return name;
@@ -92,7 +86,6 @@ public class OrganizationalUnitOverviewType {
      * @return contact
      **/
     @ApiModelProperty(required = true, value = "contact information of the person responsible for this group")
-    @NotNull
 
     public String getContact() {
         return contact;
@@ -138,9 +131,6 @@ public class OrganizationalUnitOverviewType {
      * @return roles
      **/
     @ApiModelProperty(required = true, value = "")
-    @NotNull
-
-    @Valid
 
     public List<RoleOverviewType> getRoles() {
         return roles;

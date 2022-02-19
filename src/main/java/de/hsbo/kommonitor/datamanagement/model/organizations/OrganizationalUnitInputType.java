@@ -2,14 +2,12 @@ package de.hsbo.kommonitor.datamanagement.model.organizations;
 
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * organizational unit (group)
@@ -40,7 +38,6 @@ public class OrganizationalUnitInputType {
      * @return name
      **/
     @ApiModelProperty(required = true, value = "name of this organizational Unit")
-    @NotNull
 
     public String getName() {
         return name;
@@ -61,7 +58,6 @@ public class OrganizationalUnitInputType {
      * @return contact
      **/
     @ApiModelProperty(required = true, value = "contact information of the person responsible for this group")
-    @NotNull
 
     public String getContact() {
         return contact;

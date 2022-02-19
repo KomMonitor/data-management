@@ -2,9 +2,6 @@ package de.hsbo.kommonitor.datamanagement.model.georesources;
 
 import java.util.Objects;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -39,7 +36,6 @@ public class GeoresourcePUTInputType   {
    * @return geoJsonString
   **/
   @ApiModelProperty(required = true, value = "a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset")
-  @NotNull
 
 
   public String getGeoJsonString() {
@@ -60,9 +56,6 @@ public class GeoresourcePUTInputType   {
    * @return periodOfValidity
   **/
   @ApiModelProperty(required = true, value = "")
-  @NotNull
-
-  @Valid
 
   public PeriodOfValidityType getPeriodOfValidity() {
     return periodOfValidity;

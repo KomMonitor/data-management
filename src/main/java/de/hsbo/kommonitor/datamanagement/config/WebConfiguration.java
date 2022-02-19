@@ -19,8 +19,8 @@ public class WebConfiguration {
                 registry.addMapping("/**")
                         .allowedOrigins("*")
                         .allowedHeaders("*")
-                        .allowedMethods("*")
-                        .allowCredentials(true);
+                        .allowedMethods("*");
+//                        .allowCredentials(true);
             }
         };
     }

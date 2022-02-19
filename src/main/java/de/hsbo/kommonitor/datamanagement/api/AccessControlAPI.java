@@ -1,22 +1,20 @@
 package de.hsbo.kommonitor.datamanagement.api;
 
-import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitInputType;
-import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.validation.Valid;
-import java.util.List;
+import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitInputType;
+import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitOverviewType;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2021-12-10T00:30:46.583Z")
 @Api(value = "accesscontrol", description = "the AccessControl API")
@@ -91,7 +89,7 @@ public interface AccessControlAPI {
                     consumes = {"application/json"},
                     method = RequestMethod.POST)
     ResponseEntity<OrganizationalUnitOverviewType> addOrganizationalUnit(
-        @ApiParam(value = "data", required = true) @Valid @RequestBody
+        @ApiParam(value = "data", required = true) @RequestBody
             OrganizationalUnitInputType organizationalUnitData);
 
     @ApiOperation(value = "Modify organizationalUnit information",
@@ -117,7 +115,7 @@ public interface AccessControlAPI {
                     consumes = {"application/json"},
                     method = RequestMethod.PUT)
     ResponseEntity updateOrganizationalUnit(
-        @ApiParam(value = "roleData", required = true) @Valid @RequestBody OrganizationalUnitInputType roleData,
+        @ApiParam(value = "roleData", required = true) @RequestBody OrganizationalUnitInputType roleData,
         @ApiParam(value = "organizationalUnitId", required = true) @PathVariable("organizationalUnitId")
             String organizationalUnitId);
 
