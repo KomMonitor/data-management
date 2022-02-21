@@ -107,4 +107,35 @@ public interface SpatialUnitsPublicApi {
             method = RequestMethod.GET)
     ResponseEntity<String> getPublicSpatialUnitsSchemaById(@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId);
 
+	@ApiOperation(value = "retrieve single feature database records for all applicable periods of validity for the selected spatial-unit dataset (hence might contain the target feature multiple times if it exists for different periods of validity)", nickname = "getPublicSingleSpatialUnitFeatureById", notes = "retrieve single feature database records for all applicable periods of validity for the selected spatial-unit dataset (hence might contain the target feature multiple times if it exists for different periods of validity)", response = String.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "spatial-units-public-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/spatial-units/{spatialUnitId}/singleFeature/{featureId}", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<byte[]> getPublicSingleSpatialUnitFeatureById(
+			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries);
+
+	@ApiOperation(value = "retrieve single feature database record specified by its unique database primary key id", nickname = "getPublicSingleSpatialUnitFeatureRecordById", notes = "retrieve single feature database record specified by its unique database primary key id", response = String.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "spatial-units-public-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/spatial-units/{spatialUnitId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId}", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<byte[]> getPublicSingleSpatialUnitFeatureRecordById(
+			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
+			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries);
+    
 }

@@ -1,11 +1,10 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.hsbo.kommonitor.datamanagement.api.IndicatorsPublicApi;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.indicators.*;
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +16,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import de.hsbo.kommonitor.datamanagement.api.IndicatorsPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
+import io.swagger.annotations.ApiParam;
 
 @Controller
 public class IndicatorsPublicController extends BasePathPublicController implements IndicatorsPublicApi {
@@ -166,5 +170,46 @@ public class IndicatorsPublicController extends BasePathPublicController impleme
             return ApiUtils.createResponseEntityFromException(e);
         }
     }
+    
+	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicSingleIndicatorFeatureById(
+			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
+			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the indicator dataset spatial feature", required = true) @PathVariable("featureId") String featureId) {
+
+		logger.info(
+				"Received request to get public single indicator feature records for datasetId '{}' and spatialUnitId '{}' and featureId '{}'",
+				indicatorId, spatialUnitId, featureId);
+		String accept = request.getHeader("Accept");
+
+		try {
+			List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager
+					.getSingleIndicatorFeatureRecords(indicatorId, spatialUnitId, featureId);
+			return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties,
+					HttpStatus.OK);
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicSingleIndicatorFeatureRecordById(
+			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
+			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the indicator dataset spatial feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId) {
+
+		logger.info(
+				"Received request to get public single indicator feature records for datasetId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'",
+				indicatorId, spatialUnitId, featureId, featureRecordId);
+		String accept = request.getHeader("Accept");
+
+		try {
+			List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager
+					.getSingleIndicatorFeatureRecord(indicatorId, spatialUnitId, featureId, featureRecordId);
+			return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties,
+					HttpStatus.OK);
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
 
 }

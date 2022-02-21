@@ -119,6 +119,63 @@ public class IndicatorsController extends BasePathController implements Indicato
 
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'creator')")
+	public ResponseEntity<ResponseEntity> deleteSingleIndicatorFeatureById(
+			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
+			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the indicator dataset spatial feature", required = true) @PathVariable("featureId") String featureId) {
+		logger.info("Received request to delete single indicator feature databse records for indicatorId '{}' and spatialUnitId '{}' and featureId '{}'", indicatorId, spatialUnitId, featureId);
+
+        String accept = request.getHeader("Accept");
+
+        /*
+         * delete topic with the specified id
+         */
+
+        boolean isDeleted;
+        try {
+            isDeleted = indicatorsManager.deleteSingleIndicatorFeatureRecordsByFeatureId(indicatorId, spatialUnitId, featureId);
+            lastModManager.updateLastDatabaseModification_indicators();
+
+            if (isDeleted)
+                return new ResponseEntity<>(HttpStatus.OK);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'creator')")
+	public ResponseEntity<ResponseEntity> deleteSingleIndicatorFeatureRecordById(
+			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
+			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the indicator dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId) {
+		logger.info("Received request to delete single indicator feature databse record for indicatorId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId, featureId, featureRecordId);
+
+        String accept = request.getHeader("Accept");
+
+        /*
+         * delete topic with the specified id
+         */
+
+        boolean isDeleted;
+        try {
+            isDeleted = indicatorsManager.deleteSingleIndicatorFeatureRecordByFeatureId(indicatorId, spatialUnitId, featureId, featureRecordId);
+            lastModManager.updateLastDatabaseModification_indicators();
+
+            if (isDeleted)
+                return new ResponseEntity<>(HttpStatus.OK);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 
     @Override
@@ -468,6 +525,45 @@ public class IndicatorsController extends BasePathController implements Indicato
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'creator')")
+	public ResponseEntity<ResponseEntity> updateIndicatorFeatureRecordAsBody(
+			@ApiParam(value = "indicator feature record data", required = true) @RequestBody IndicatorPropertiesWithoutGeomType indicatorFeatureRecordData,
+			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
+			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the indicator dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId) {
+		logger.info("Received request to update single indicator feature database record for indicatorId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId, featureId, featureRecordId);
+
+        String accept = request.getHeader("Accept");
+
+        /*
+         * analyse input data and save it within database
+         */
+
+        try {
+            indicatorId = indicatorsManager.updateFeatureRecordByRecordId(indicatorFeatureRecordData, indicatorId, spatialUnitId, featureId, featureRecordId);
+            lastModManager.updateLastDatabaseModification_indicators();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+
+        }
+
+        if (indicatorId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = indicatorId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+	}
 
 
     @Override
@@ -515,5 +611,53 @@ public class IndicatorsController extends BasePathController implements Indicato
             return ApiUtils.createResponseEntityFromException(e);
         }
     }
+    
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
+	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getSingleIndicatorFeatureById(
+			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
+			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the indicator dataset spatial feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
+			Principal principal) {
+
+		logger.info("Received request to get single indicator feature database records for indicatorId '{}' and spatialUnitId '{}' and featureId '{}'",
+                indicatorId, spatialUnitId, featureId);
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+        try {
+        	List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager
+					.getSingleIndicatorFeatureRecords(indicatorId, spatialUnitId, featureId, provider);
+			return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties,
+					HttpStatus.OK);
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+	}
+
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
+	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getSingleIndicatorFeatureRecordById(
+			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
+			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the indicator dataset spatial feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
+			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
+			Principal principal) {
+
+		logger.info(
+				"Received request to get public single indicator feature records for datasetId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'",
+				indicatorId, spatialUnitId, featureId, featureRecordId);
+		String accept = request.getHeader("Accept");
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+		try {
+			List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager
+					.getSingleIndicatorFeatureRecord(indicatorId, spatialUnitId, featureId, featureRecordId, provider);
+			return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties,
+					HttpStatus.OK);
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
 
 }

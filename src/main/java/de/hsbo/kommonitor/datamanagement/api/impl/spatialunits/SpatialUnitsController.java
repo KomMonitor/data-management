@@ -32,10 +32,13 @@ import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
+import io.swagger.annotations.ApiParam;
 
 @Controller
 public class SpatialUnitsController extends BasePathController implements SpatialUnitsApi {
@@ -174,6 +177,61 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	
+	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'creator')")
+	public ResponseEntity<ResponseEntity> deleteSingleSpatialUnitFeatureById(
+			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId) {
+		logger.info("Received request to delete single spatial unit feature databse records for datasetId '{}' and featureId '{}'", spatialUnitId, featureId);
+
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * delete topic with the specified id
+		 */
+
+		boolean isDeleted;
+		try {
+			isDeleted = spatialUnitsManager.deleteSingleSpatialUnitFeatureRecordsByFeatureId(spatialUnitId, featureId);
+			lastModManager.updateLastDatabaseModification_spatialUnits();
+
+			if (isDeleted)
+				return new ResponseEntity<>(HttpStatus.OK);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'creator')")
+	public ResponseEntity<ResponseEntity> deleteSingleSpatialUnitFeatureRecordById(
+			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId) {
+		logger.info("Received request to delete single spatial unit feature databse record for datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
+
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * delete topic with the specified id
+		 */
+
+		boolean isDeleted;
+		try {
+			isDeleted = spatialUnitsManager.deleteSingleSpatialUnitFeatureRecordByRecordId(spatialUnitId, featureId, featureRecordId);
+			lastModManager.updateLastDatabaseModification_spatialUnits();
+
+			if (isDeleted)
+				return new ResponseEntity<>(HttpStatus.OK);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+
+		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
@@ -279,6 +337,66 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/vnd.geo+json"))
 					.body(JsonBytes);
 
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+	
+	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'viewer')")
+	public ResponseEntity<byte[]> getSingleSpatialUnitFeatureById(
+			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
+			Principal principal) {
+		logger.info("Received request to get single spatial unit feature records for datasetId '{}' and featureId '{}'",
+				spatialUnitId, featureId);
+		String accept = request.getHeader("Accept");
+
+		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+		try {
+			String geoJsonFeatures = spatialUnitsManager.getSingleSpatialUnitFeatureRecords(spatialUnitId, featureId,
+					simplifyGeometries, authInfoProvider);
+			String fileName = "SpatialUnit_" + spatialUnitId + "_featureDatabaseRecords_" + featureId + ".json";
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("content-disposition", "attachment; filename=" + fileName);
+			headers.add("Content-Type", "application/json; charset=utf-8");
+			byte[] JsonBytes = geoJsonFeatures.getBytes();
+
+			return ResponseEntity.ok().headers(headers)
+					.contentType(MediaType.parseMediaType("application/vnd.geo+json")).body(JsonBytes);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'viewer')")
+	public ResponseEntity<byte[]> getSingleSpatialUnitFeatureRecordById(
+			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
+			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
+			Principal principal) {
+		logger.info(
+				"Received request to get single georesource feature record for datasetId '{}' and featureId '{}' and recordId '{}'",
+				spatialUnitId, featureId, featureRecordId);
+		
+		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider(principal);
+
+		try {
+			String geoJsonFeatures = spatialUnitsManager.getSingleSpatialUnitFeatureRecord(spatialUnitId, featureId,
+					featureRecordId, simplifyGeometries, authInfoProvider);
+			String fileName = "SpatialUnit_" + spatialUnitId + "_featureDatabaseRecord_" + featureRecordId + ".json";
+
+			HttpHeaders headers = new HttpHeaders();
+            headers.add("content-disposition", "attachment; filename=" + fileName);
+            headers.add("Content-Type", "application/json; charset=utf-8");
+            byte[] JsonBytes = geoJsonFeatures.getBytes();
+
+            return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/vnd.geo+json"))
+                    .body(JsonBytes);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
@@ -393,6 +511,44 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 		try {
 			spatialUnitId = spatialUnitsManager.updateMetadata(metadata, spatialUnitId);
+			lastModManager.updateLastDatabaseModification_spatialUnits();
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+
+		}
+
+		if (spatialUnitId != null) {
+			HttpHeaders responseHeaders = new HttpHeaders();
+
+			String location = spatialUnitId;
+			try {
+				responseHeaders.setLocation(new URI(location));
+			} catch (URISyntaxException e) {
+				return ApiUtils.createResponseEntityFromException(e);
+			}
+
+			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
+	public ResponseEntity<ResponseEntity> updateSpatialUnitFeatureRecordAsBody(
+			@ApiParam(value = "spatial-unit feature record data", required = true) @RequestBody String spatialUnitFeatureRecordData,
+			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId) {
+		logger.info("Received request to update single spatial unit feature database record for datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
+
+		String accept = request.getHeader("Accept");
+
+		/*
+		 * analyse input data and save it within database
+		 */
+
+		try {
+			spatialUnitId = spatialUnitsManager.updateFeatureRecordByRecordId(spatialUnitFeatureRecordData, spatialUnitId, featureId, featureRecordId);
 			lastModManager.updateLastDatabaseModification_spatialUnits();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);

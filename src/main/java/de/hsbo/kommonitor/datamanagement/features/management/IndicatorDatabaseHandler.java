@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.geotools.data.DataAccess;
 import org.geotools.data.DataStore;
@@ -43,6 +45,8 @@ import org.opengis.filter.Or;
 import org.opengis.temporal.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
@@ -1122,10 +1126,11 @@ public class IndicatorDatabaseHandler {
 			
 			IndicatorPropertiesWithoutGeomType featureProps = new IndicatorPropertiesWithoutGeomType();
 			
-			featureProps.setId(result.getString(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME));
-			featureProps.setName(result.getString(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME));
-			featureProps.setValidStartDate(result.getString(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME));
-			featureProps.setValidEndDate(result.getString(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME));
+//			if(result.)
+//			featureProps.setId(result.getString(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME));
+//			featureProps.setName(result.getString(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME));
+//			featureProps.setValidStartDate(result.getString(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME));
+//			featureProps.setValidEndDate(result.getString(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME));
 			
 			//result set index start with 1!
 			for(int i=1; i<=columnCount; i++){
@@ -1141,6 +1146,236 @@ public class IndicatorDatabaseHandler {
 			
 			indicatorFeaturePropertiesWithoutGeom.add(featureProps);
 		}
+	}
+
+	public static List<IndicatorPropertiesWithoutGeomType> getSingleIndicatorFeatureRecords(
+			String indicatorViewTableName, String featureId) throws Exception {
+		List<IndicatorPropertiesWithoutGeomType> indicatorFeaturePropertiesWithoutGeom = new ArrayList<IndicatorPropertiesWithoutGeomType>();
+		String indicatorValueTableName = getValueTableNameFromViewTableName(indicatorViewTableName);
+		
+		Connection jdbcConnection = null;
+		Statement statement = null;
+		
+		try {
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+
+			statement = jdbcConnection.createStatement();
+
+			
+			String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorValueTableName + "\" WHERE \"" + KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME + "\" = '" + featureId + "';";
+			
+			logger.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
+			
+			ResultSet result = statement.executeQuery(getFeaturePropertiesCommand);
+			
+			addPropertiesWithoutGeometry(indicatorFeaturePropertiesWithoutGeom, result);
+			
+			result.close();
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+
+		return indicatorFeaturePropertiesWithoutGeom;
+	}
+
+	public static List<IndicatorPropertiesWithoutGeomType> getSingleIndicatorFeatureRecord(
+			String indicatorViewTableName, String featureId, String featureRecordId) throws Exception {
+		List<IndicatorPropertiesWithoutGeomType> indicatorFeaturePropertiesWithoutGeom = new ArrayList<IndicatorPropertiesWithoutGeomType>();
+		String indicatorValueTableName = getValueTableNameFromViewTableName(indicatorViewTableName);
+		
+		Connection jdbcConnection = null;
+		Statement statement = null;
+		
+		try {
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+
+			statement = jdbcConnection.createStatement();
+
+			
+			String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorValueTableName + "\" WHERE \"" + KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME + "\" = '" + featureId + " AND \"" + KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME + "\" = '" + featureRecordId + "';";
+			
+			logger.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
+			
+			ResultSet result = statement.executeQuery(getFeaturePropertiesCommand);
+			
+			addPropertiesWithoutGeometry(indicatorFeaturePropertiesWithoutGeom, result);
+			
+			result.close();
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+
+		return indicatorFeaturePropertiesWithoutGeom;
+	}
+
+	public static void deleteSingleFeatureRecordsForFeatureId(String indicatorViewTableName, String featureId) throws Exception {
+		String indicatorValueTableName = getValueTableNameFromViewTableName(indicatorViewTableName);
+		
+		Connection jdbcConnection = null;
+		Statement statement = null;
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("DELETE FROM \"" + indicatorValueTableName + "\" WHERE \"" + KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME + "\" = '" + featureId + "';");
+
+			String deleteFromTableCommand = builder.toString();
+			
+			logger.info("Send following DELETE command to database: " + deleteFromTableCommand);
+			
+			// TODO check if works
+			statement.executeUpdate(deleteFromTableCommand);
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+		
+	}
+
+	public static void deleteSingleFeatureRecordForFeatureId(String indicatorViewTableName, String featureId,
+			String featureRecordId) throws Exception {
+		String indicatorValueTableName = getValueTableNameFromViewTableName(indicatorViewTableName);
+		
+		Connection jdbcConnection = null;
+		Statement statement = null;
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("DELETE FROM \"" + indicatorValueTableName + "\" WHERE \"" + KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME + "\" = '" + featureId + "' AND \"" + KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME + "\" = '" + featureRecordId + "';");
+
+			String deleteFromTableCommand = builder.toString();
+			
+			logger.info("Send following DELETE command to database: " + deleteFromTableCommand);
+			
+			// TODO check if works
+			statement.executeUpdate(deleteFromTableCommand);
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+		
+	}
+
+	public static void updateSpatialResourceFeatureRecordByRecordId(
+			IndicatorPropertiesWithoutGeomType indicatorFeatureRecordData, String indicatorViewTableName,
+			String featureId, String featureRecordId) throws Exception {
+		String indicatorValueTableName = getValueTableNameFromViewTableName(indicatorViewTableName);
+		
+		Connection jdbcConnection = null;
+		Statement statement = null;
+		
+		try {
+			// establish JDBC connection
+			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
+			
+			statement = jdbcConnection.createStatement();
+			
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("UPDATE \"" + indicatorValueTableName + "\"  SET ");
+			
+			Set<Entry<String, String>> indicatorProperties = indicatorFeatureRecordData.entrySet();
+			ArrayList<Entry<String, String>> indicatorPropertiesList = Lists.newArrayList(indicatorProperties);		
+			for (int i = 0; i < indicatorPropertiesList.size(); i++) {
+				Entry<String, String> entry = indicatorPropertiesList.get(i);
+				builder.append(" \"" + entry.getKey() + "\" = '" + entry.getValue() + "' ");
+				
+				if(i < indicatorPropertiesList.size() -1) {
+					builder.append(", ");
+				}			
+			}
+			
+			builder.append(" WHERE \"" + KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME + "\" = '" + featureId + "' AND \"" + KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME + "\" = '" + featureRecordId + "';");
+
+			String updateTableCommand = builder.toString();
+			
+			logger.info("Send following UPDATE TABLE command to database: " + updateTableCommand);
+			
+			// TODO check if works
+			statement.executeUpdate(updateTableCommand);
+		} catch (Exception e) {
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+			
+			throw e;
+		} finally{
+			try {
+				statement.close();
+				jdbcConnection.close();
+			} catch (Exception e2) {
+				
+			}
+		}
+		
 	}
 
 }

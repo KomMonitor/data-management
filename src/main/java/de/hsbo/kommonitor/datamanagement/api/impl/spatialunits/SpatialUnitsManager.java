@@ -3,13 +3,16 @@ package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +22,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
@@ -30,6 +33,7 @@ import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
@@ -729,4 +733,168 @@ public class SpatialUnitsManager {
         List<PermissionLevelType> permissions = provider.getPermissions(spatialUnitsMetadataEntity);
         return permissions;
     }
+    
+	public String getSingleSpatialUnitFeatureRecords(String spatialUnitId, String featureId,
+			String simplifyGeometries) throws Exception {
+		return getSingleSpatialUnitFeatureRecords(spatialUnitId, featureId, simplifyGeometries, null);
+	}
+
+	public String getSingleSpatialUnitFeatureRecords(String spatialUnitId, String featureId, String simplifyGeometries,
+			AuthInfoProvider authInfoProvider) throws Exception {
+		logger.info("Retrieving single spatialUnit Feature records for Dataset '{}' and featureId '{}'", spatialUnitId, featureId);
+
+        if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+            MetadataSpatialUnitsEntity metadataEntity = fetchEntity(authInfoProvider, spatialUnitId);
+
+            String dbTableName = metadataEntity.getDbTableName();
+
+            String geoJson = SpatialFeatureDatabaseHandler.getSingleFeatureRecordsByFeatureId(dbTableName, featureId,
+					simplifyGeometries);
+            return geoJson;
+
+        } else {
+            logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Get request has no effect.", spatialUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to get spatialUnit features, but no dataset existes with datasetId " + spatialUnitId);
+        }
+	}
+
+	public String getSingleSpatialUnitFeatureRecord(String spatialUnitId, String featureId, String featureRecordId,
+			String simplifyGeometries) throws Exception {
+		return getSingleSpatialUnitFeatureRecord(spatialUnitId, featureId, featureRecordId, simplifyGeometries, null);
+	}
+
+	public String getSingleSpatialUnitFeatureRecord(String spatialUnitId, String featureId, String featureRecordId,
+			String simplifyGeometries, AuthInfoProvider authInfoProvider) throws Exception {
+		logger.info(
+				"Retrieving single spatialUnit Feature record for Dataset '{}' and featureId '{}' and recordId '{}'",
+				spatialUnitId, featureId, featureRecordId);
+
+		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+			MetadataSpatialUnitsEntity metadataEntity = fetchEntity(authInfoProvider, spatialUnitId);
+
+			String dbTableName = metadataEntity.getDbTableName();
+
+			String geoJson = SpatialFeatureDatabaseHandler.getSingleFeatureRecordByRecordId(dbTableName, featureId,
+					featureRecordId, simplifyGeometries);
+			return geoJson;
+
+		} else {
+			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Get request has no effect.",
+					spatialUnitId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to get spatialUnit features, but no dataset existes with datasetId " + spatialUnitId);
+		}
+	}
+
+	public boolean deleteSingleSpatialUnitFeatureRecordsByFeatureId(String spatialUnitId, String featureId) throws Exception {
+		logger.info("Trying to delete single spatialUnit feature database records for dataset with datasetId '{}' and featureId '{}'", spatialUnitId, featureId);
+        if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+            MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+            String datasetName = metadataEntity.getDatasetName();
+            String dbTableName = metadataEntity.getDbTableName();
+            /*
+             * call DB tool to delete features
+             */
+            SpatialFeatureDatabaseHandler.deleteSingleFeatureRecordsForFeatureId(ResourceTypeEnum.SPATIAL_UNIT, dbTableName, featureId);
+
+            // set lastUpdate in metadata in case of successful update
+            metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
+
+            spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
+
+            // handle OGC web service - null parameter is defaultStyle
+            ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
+            
+            // as a new spatial unit feature table was generated, we must regenerate all views for all indicators that have 
+            // the modified spatial unit
+            indicatorsManager.recreateAllViewsForSpatialUnitById(spatialUnitId);
+
+            /*
+             * set wms and wfs urls within metadata
+             */
+            updateMetadataWithOgcServiceUrls(metadataEntity.getDatasetId(), dbTableName);
+
+            return true;
+        } else {
+            logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Delete request has no effect.", spatialUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to delete all spatialUnit features for dataset, but no dataset existes with datasetId " + spatialUnitId);
+        }
+	}
+
+	public boolean deleteSingleSpatialUnitFeatureRecordByRecordId(String spatialUnitId, String featureId,
+			String featureRecordId) throws Exception {
+		logger.info("Trying to delete single spatialUnit feature database record for dataset with datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
+        if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+            MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+            String datasetName = metadataEntity.getDatasetName();
+            String dbTableName = metadataEntity.getDbTableName();
+            /*
+             * call DB tool to delete features
+             */
+            SpatialFeatureDatabaseHandler.deleteSingleFeatureRecordForRecordId(ResourceTypeEnum.SPATIAL_UNIT, dbTableName, featureId, featureRecordId);;
+
+            // set lastUpdate in metadata in case of successful update
+            metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
+
+            spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
+
+            // handle OGC web service - null parameter is defaultStyle
+            ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
+            
+            // as a new spatial unit feature table was generated, we must regenerate all views for all indicators that have 
+            // the modified spatial unit
+            indicatorsManager.recreateAllViewsForSpatialUnitById(spatialUnitId);
+
+            /*
+             * set wms and wfs urls within metadata
+             */
+            updateMetadataWithOgcServiceUrls(metadataEntity.getDatasetId(), dbTableName);
+
+            return true;
+        } else {
+            logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Delete request has no effect.", spatialUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to delete all spatialUnit features for dataset, but no dataset existes with datasetId " + spatialUnitId);
+        }
+	}
+
+	public String updateFeatureRecordByRecordId(String spatialUnitFeatureRecordData, String spatialUnitId,
+			String featureId, String featureRecordId) throws IOException, Exception {
+		logger.info("Trying to update single spatialUnit feature database record for dataset with datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
+        if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+            MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+            String datasetName = metadataEntity.getDatasetName();
+            String dbTableName = metadataEntity.getDbTableName();
+            /*
+             * call DB tool to delete features
+             */
+            SpatialFeatureDatabaseHandler.updateSpatialResourceFeatureRecordByRecordId(spatialUnitFeatureRecordData, dbTableName, featureId, featureRecordId);
+
+            // set lastUpdate in metadata in case of successful update
+            metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
+
+            spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
+
+            // handle OGC web service - null parameter is defaultStyle
+            ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
+            
+            // as a new spatial unit feature table was generated, we must regenerate all views for all indicators that have 
+            // the modified spatial unit
+            indicatorsManager.recreateAllViewsForSpatialUnitById(spatialUnitId);
+
+            /*
+             * set wms and wfs urls within metadata
+             */
+            updateMetadataWithOgcServiceUrls(metadataEntity.getDatasetId(), dbTableName);
+
+            return spatialUnitId;
+        } else {
+            logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Delete request has no effect.", spatialUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to delete all spatialUnit features for dataset, but no dataset existes with datasetId " + spatialUnitId);
+        }
+	}
+
 }

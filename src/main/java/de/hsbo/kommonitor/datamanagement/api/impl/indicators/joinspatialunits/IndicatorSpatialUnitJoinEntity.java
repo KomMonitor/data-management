@@ -61,7 +61,7 @@ public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedB
         return entryId;
     }
 
-    public String getIndicatorValueTableName() {
+    public String getIndicatorViewTableName() {
         return indicatorValueTableName;
     }
 

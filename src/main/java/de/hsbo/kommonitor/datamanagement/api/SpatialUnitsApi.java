@@ -73,6 +73,35 @@ public interface SpatialUnitsApi {
         method = RequestMethod.DELETE)
     ResponseEntity deleteSpatialUnitByIdAndYearAndMonth(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "year for which datasets shall be queried",required=true) @PathVariable("year") BigDecimal year,@ApiParam(value = "month for which datasets shall be queried",required=true) @PathVariable("month") BigDecimal month,@ApiParam(value = "day for which datasets shall be queried",required=true) @PathVariable("day") BigDecimal day);
 
+	@ApiOperation(value = "Delete all database records for the specified feature of the selected spatial-unit dataset", nickname = "deleteSingleSpatialUnitFeatureById", notes = "Delete all database records for the specified feature of the selected spatial-unit dataset", response = ResponseEntity.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "spatial-units-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ResponseEntity.class),
+			@ApiResponse(code = 204, message = "No Content"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden") })
+	@RequestMapping(value = "/spatial-units/{spatialUnitId}/singleFeature/{featureId}", produces = {
+			"*/*" }, method = RequestMethod.DELETE)
+	ResponseEntity<ResponseEntity> deleteSingleSpatialUnitFeatureById(
+			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId);
+
+	@ApiOperation(value = "Delete single feature database record specified by its unique database primary key id for the specified feature of the selected spatial-unit dataset", nickname = "deleteSingleSpatialUnitFeatureRecordById", notes = "Delete single feature database record specified by its unique database primary key id for the specified feature of the selected spatial-unit dataset", response = ResponseEntity.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "spatial-units-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ResponseEntity.class),
+			@ApiResponse(code = 204, message = "No Content"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden") })
+	@RequestMapping(value = "/spatial-units/{spatialUnitId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId}", produces = {
+			"*/*" }, method = RequestMethod.DELETE)
+	ResponseEntity<ResponseEntity> deleteSingleSpatialUnitFeatureRecordById(
+			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId);
+    
     @ApiOperation(value = "retrieve all feature entries for all applicable periods of validity for the selected spatial unit/level (hence might contain each feature multiple times if they exist for different periods of validity)", nickname = "getAllSpatialUnitFeaturesById", notes = "retrieve all feature entries for all applicable periods of validity for the selected spatial unit/level (hence might contain each feature multiple times if they exist for different periods of validity)", response = String.class, authorizations = {
             @Authorization(value = "basicAuth")
         }, tags={  })
@@ -149,6 +178,38 @@ public interface SpatialUnitsApi {
         method = RequestMethod.GET)
     ResponseEntity<String> getSpatialUnitsSchemaById(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId, Principal principal);
 
+	@ApiOperation(value = "retrieve single feature database records for all applicable periods of validity for the selected spatial-unit dataset (hence might contain the target feature multiple times if it exists for different periods of validity)", nickname = "getSingleSpatialUnitFeatureById", notes = "retrieve single feature database records for all applicable periods of validity for the selected spatial-unit dataset (hence might contain the target feature multiple times if it exists for different periods of validity)", response = String.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "spatial-units-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/spatial-units/{spatialUnitId}/singleFeature/{featureId}", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<byte[]> getSingleSpatialUnitFeatureById(
+			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
+			Principal principal);
+
+	@ApiOperation(value = "retrieve single feature database record specified by its unique database primary key id", nickname = "getSingleSpatialUnitFeatureRecordById", notes = "retrieve single feature database record specified by its unique database primary key id", response = String.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "spatial-units-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class),
+			@ApiResponse(code = 400, message = "Invalid status value"),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/spatial-units/{spatialUnitId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId}", produces = {
+			"application/json" }, method = RequestMethod.GET)
+	ResponseEntity<byte[]> getSingleSpatialUnitFeatureRecordById(
+			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
+			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
+			Principal principal);
 
     @ApiOperation(value = "Modify/Update the features of the selected spatial-unit", nickname = "updateSpatialUnitAsBody", notes = "Modify/Update the features of the selected spatial-unit. The interface expects a full upload of all geometries for the spatial unit. Internally, those geometries are compared to the existing ones to mark 'old' geometries that are no longer in use as outdated. Hence, each geometric object is only persisted once and its use is controlled by time validity marks.", authorizations = {
         @Authorization(value = "basicAuth")
@@ -175,4 +236,20 @@ public interface SpatialUnitsApi {
         method = RequestMethod.PATCH)
     ResponseEntity updateSpatialUnitMetadataAsBody(@ApiParam(value = "the unique identifier of the spatial level",required=true) @PathVariable("spatialUnitId") String spatialUnitId,@ApiParam(value = "metadata input" ,required=true )   @RequestBody SpatialUnitPATCHInputType metadata);
 
+	@ApiOperation(value = "Modify/Update the feature record of the selected spatial-unit dataset feature", nickname = "updateSpatialUnitFeatureRecordAsBody", notes = "Modify/Update the feature record of the selected spatial-unit dataset feature", response = ResponseEntity.class, authorizations = {
+			@Authorization(value = "kommonitor-data-access_oauth", scopes = {
+
+			}) }, tags = { "spatial-units-controller", })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK - Updated", response = ResponseEntity.class),
+			@ApiResponse(code = 401, message = "API key is missing or invalid"),
+			@ApiResponse(code = 403, message = "Forbidden"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 405, message = "Invalid input") })
+	@RequestMapping(value = "/spatial-units/{spatialUnitId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId}", produces = {
+			"*/*" }, consumes = { "application/json" }, method = RequestMethod.PUT)
+	ResponseEntity<ResponseEntity> updateSpatialUnitFeatureRecordAsBody(
+			@ApiParam(value = "spatial-unit feature record data", required = true) @RequestBody String spatialUnitFeatureRecordData,
+			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
+			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@ApiParam(value = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId);
+    
 }
