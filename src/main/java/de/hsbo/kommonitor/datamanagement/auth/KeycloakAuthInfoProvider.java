@@ -137,7 +137,8 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
                         .stream()
                         .anyMatch(ar -> ((ar.getFirst().getName().equals(r.getFirst()))
                                 && ar.getSecond().compareTo(r.getSecond()) <= 0)
-                                || ar.getFirst().getName().equals(publicRole)))
+                                || (ar.getFirst().getName().equals(publicRole)
+                                && ar.getSecond().compareTo(r.getSecond()) <= 0)))
                 .map(Pair::getSecond)
                 //Permission enum ist sorted descending: highest permission -> 0, lowest permission -> 4
                 .min(Comparator.comparing(PermissionLevelType::ordinal))
