@@ -120,7 +120,7 @@ public class IndicatorsController extends BasePathController implements Indicato
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
-    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'creator')")
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
 	public ResponseEntity<ResponseEntity> deleteSingleIndicatorFeatureById(
 			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
 			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
@@ -148,7 +148,7 @@ public class IndicatorsController extends BasePathController implements Indicato
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'creator')")
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
 	public ResponseEntity<ResponseEntity> deleteSingleIndicatorFeatureRecordById(
 			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
 			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,

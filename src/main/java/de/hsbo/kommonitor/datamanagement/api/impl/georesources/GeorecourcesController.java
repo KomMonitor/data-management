@@ -123,7 +123,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'creator')")
+	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
 	public ResponseEntity<ResponseEntity> deleteSingleGeoresourceFeatureById(
 			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
 			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
@@ -153,7 +153,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'creator')")
+	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
 	public ResponseEntity<ResponseEntity> deleteSingleGeoresourceFeatureRecordById(
 			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
 			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
