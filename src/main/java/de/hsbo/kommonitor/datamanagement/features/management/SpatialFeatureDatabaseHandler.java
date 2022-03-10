@@ -1777,12 +1777,14 @@ public class SpatialFeatureDatabaseHandler {
 		}
 
 		/*
-		 * for KomMonitor specific properties ID, NAME, lifecylce dates set appropriate
+		 * for KomMonitor specific properties NAME, lifecylce dates set appropriate
 		 * dataTypes
 		 */
-		if (properties.containsKey(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME)) {
-			properties.put(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME, "String");
-		}
+		
+		// comment out ID as it might actually be numeric or string
+//		if (properties.containsKey(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME)) {
+//			properties.put(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME, "String");
+//		}
 		if (properties.containsKey(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME)) {
 			properties.put(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME, "String");
 		}
