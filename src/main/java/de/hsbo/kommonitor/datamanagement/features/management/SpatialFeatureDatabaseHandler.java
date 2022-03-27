@@ -260,12 +260,51 @@ public class SpatialFeatureDatabaseHandler {
 		 * property type to Date
 		 */
 
+		AttributeDescriptor attributeDescriptor_name = tb
+				.get(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME);
+		AttributeDescriptor attributeDescriptor_id = tb
+				.get(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME);
 		AttributeDescriptor attributeDescriptor_startDate = tb
 				.get(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME);
 		AttributeDescriptor attributeDescriptor_endDate = tb
 				.get(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME);
 		AttributeDescriptor attributeDescriptor_arisenFrom = tb
 				.get(KomMonitorFeaturePropertyConstants.ARISEN_FROM_NAME);
+		
+		if (attributeDescriptor_id == null) {
+			tb.add(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME, String.class);
+		} else {
+
+			AttributeTypeBuilder builder = new AttributeTypeBuilder();
+			builder.setName("StringType");
+			builder.setBinding(String.class);
+			builder.setNillable(false);
+			AttributeType buildType = builder.buildType();
+			attributeDescriptor_id = new AttributeDescriptorImpl(buildType,
+					attributeDescriptor_id.getName(), attributeDescriptor_id.getMinOccurs(),
+					attributeDescriptor_id.getMaxOccurs(), attributeDescriptor_id.isNillable(),
+					attributeDescriptor_id.getDefaultValue());
+
+			tb.set(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME, attributeDescriptor_id);
+		}
+		
+		if (attributeDescriptor_name == null) {
+			tb.add(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME, String.class);
+		} else {
+
+			AttributeTypeBuilder builder = new AttributeTypeBuilder();
+			builder.setName("StringType");
+			builder.setBinding(String.class);
+			builder.setNillable(false);
+			AttributeType buildType = builder.buildType();
+			attributeDescriptor_name = new AttributeDescriptorImpl(buildType,
+					attributeDescriptor_name.getName(), attributeDescriptor_name.getMinOccurs(),
+					attributeDescriptor_name.getMaxOccurs(), attributeDescriptor_name.isNillable(),
+					attributeDescriptor_name.getDefaultValue());
+
+			tb.set(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_NAME_NAME, attributeDescriptor_name);
+		}
+		
 		if (attributeDescriptor_startDate == null) {
 			tb.add(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME, java.sql.Date.class);
 		} else {
