@@ -681,9 +681,10 @@ public class GeoresourcesManager {
         }
 
         SortedMap<String, String> elements = new TreeMap();
+        
+        String dbTableName = metadataEntity.getDbTableName();
 
-        String allGeoresourceFeatures = getAllGeoresourceFeatures(georesourceId,
-				SimplifyGeometriesEnum.ORIGINAL.toString());
+		String allGeoresourceFeatures = SpatialFeatureDatabaseHandler.getAllFeatures(dbTableName, SimplifyGeometriesEnum.ORIGINAL.toString());
 
 		SortedMap<String, String> properties = SpatialFeatureDatabaseHandler
 				.guessSchemaFromFeatureValues(allGeoresourceFeatures);
