@@ -66,7 +66,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
-    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'creator')")
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'editor')")
     public ResponseEntity deleteIndicatorByIdAndSpatialUnitId(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId) throws Exception {
         logger.info("Received request to delete indicator for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
 
@@ -93,7 +93,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 
     @Override
-    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'creator')")
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'editor')")
     public ResponseEntity deleteIndicatorByIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId,
                                                              @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
                                                              @PathVariable("day") BigDecimal day) throws Exception {
@@ -396,7 +396,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
-    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'publisher')")
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
     public ResponseEntity updateIndicatorAsBody(@PathVariable("indicatorId") String indicatorId, @RequestBody IndicatorPUTInputType indicatorData) {
         logger.info("Received request to update indicator features for indicator '{}'", indicatorId);
 
@@ -496,7 +496,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
-    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'creator')")
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
     public ResponseEntity updateIndicatorRoles(@PathVariable("indicatorId") String indicatorId,
                                                @PathVariable("spatialUnitId") String spatialUnitId,
                                                @RequestBody IndicatorPATCHInputType indicatorData) {
@@ -526,7 +526,7 @@ public class IndicatorsController extends BasePathController implements Indicato
         }
     }
     
-    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'creator')")
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
 	public ResponseEntity<ResponseEntity> updateIndicatorFeatureRecordAsBody(
 			@ApiParam(value = "indicator feature record data", required = true) @RequestBody IndicatorPropertiesWithoutGeomType indicatorFeatureRecordData,
 			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,

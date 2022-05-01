@@ -97,7 +97,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 	}
 
 	@Override
-	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'creator')")
+	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
 	public ResponseEntity deleteAllGeoresourceFeaturesById(@PathVariable("georesourceId") String georesourceId) {
 		logger.info("Received request to delete all georesource features for datasetId '{}'", georesourceId);
 
@@ -213,7 +213,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 	}
 
 	@Override
-	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'creator')")
+	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
 	public ResponseEntity deleteGeoresourceByIdAndYearAndMonth(@PathVariable("georesourceId") String georesourceId,
 			@PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
 			@PathVariable("day") BigDecimal day) {
@@ -524,7 +524,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 	}
 
 	@Override
-	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'publisher')")
+	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
 	public ResponseEntity updateGeoresourceAsBody(@PathVariable("georesourceId") String georesourceId,
 			@RequestBody GeoresourcePUTInputType featureData) {
 		logger.info("Received request to update georesource features for datasetId '{}'", georesourceId);

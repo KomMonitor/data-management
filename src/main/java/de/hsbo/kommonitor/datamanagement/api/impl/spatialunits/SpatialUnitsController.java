@@ -100,7 +100,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'creator')")
+	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
 	public ResponseEntity deleteAllSpatialUnitFeaturesById(@PathVariable("spatialUnitId") String spatialUnitId) {
 		logger.info("Received request to delete all spatialUnit features for datasetName '{}'", spatialUnitId);
 
@@ -152,7 +152,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'creator')")
+	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
 	public ResponseEntity deleteSpatialUnitByIdAndYearAndMonth(@PathVariable("spatialUnitId") String spatialUnitId, @PathVariable("year") BigDecimal year,
 			@PathVariable("month") BigDecimal month, @PathVariable("day") BigDecimal day) {
 		logger.info("Received request to delete spatialUnit for datasetId '{}' and Date '{}-{}-{}'", spatialUnitId, year, month, day);
@@ -464,7 +464,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'publisher')")
+	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
 	public ResponseEntity updateSpatialUnitAsBody(@PathVariable("spatialUnitId") String spatialUnitId, @RequestBody SpatialUnitPUTInputType featureData) {
 		logger.info("Received request to update spatial unit features for datasetName '{}'", spatialUnitId);
 

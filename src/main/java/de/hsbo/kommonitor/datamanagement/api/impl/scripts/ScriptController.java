@@ -173,7 +173,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('publisher')")
+	@PreAuthorize("hasRequiredPermissionLevel('editor')")
 	public ResponseEntity updateProcessScriptAsBody(@PathVariable("indicatorId") String indicatorId, @RequestBody ProcessScriptPUTInputType processScriptData) {
 		logger.info("Received request to update process script with indicatorId '{}'", indicatorId);
 
@@ -306,7 +306,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('publisher')")
+	@PreAuthorize("hasRequiredPermissionLevel('editor')")
 	public ResponseEntity updateProcessScriptAsBodyByScriptId(@PathVariable("scriptId") String scriptId,
 			@RequestBody ProcessScriptPUTInputType processScriptData) {
 		logger.info("Received request to update process script with scriptId '{}'", scriptId);
