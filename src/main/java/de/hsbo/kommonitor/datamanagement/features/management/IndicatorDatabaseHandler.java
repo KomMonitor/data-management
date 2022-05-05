@@ -751,10 +751,14 @@ public class IndicatorDatabaseHandler {
 		Filter endDateNull = CQL.toFilter(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME + " is null");
 		Filter startDateBefore = ff.before(ff.property(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME),
 				ff.literal(temporalInstant));
+		Filter startDateEqual = ff.equals(ff.property(KomMonitorFeaturePropertyConstants.VALID_START_DATE_NAME),
+				ff.literal(temporalInstant));
 
 		Or endDateNullOrAfter = ff.or(endDateNull, endDateAfter);
+		
+		Or startDateEqualOrBefore = ff.or(startDateBefore, startDateEqual);
 
-		And andFilter = ff.and(startDateBefore, endDateNullOrAfter);
+		And andFilter = ff.and(startDateEqualOrBefore, endDateNullOrAfter);
 
 		SimpleFeatureCollection features = featureSource.getFeatures(andFilter);
 		return features;
