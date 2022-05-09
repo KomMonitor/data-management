@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  * "cru" = create, read, update
  * "ru" = read, update
  * "r" = read
- * "" = none (default value)
  */
 public enum PermissionLevelType {
 
@@ -19,9 +18,7 @@ public enum PermissionLevelType {
 
     EDITOR("editor"),
 
-    VIEWER("viewer"),
-
-    NONE("none");
+    VIEWER("viewer");
 
     private String value;
 

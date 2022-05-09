@@ -27,8 +27,9 @@ public class RolesEntity {
 
     // We default to no permissions just in case
     @Enumerated(EnumType.ORDINAL)
-    @Column(nullable = false)
-    private PermissionLevelType permissionLevel = PermissionLevelType.NONE;
+    @Column(nullable = true)
+//    private PermissionLevelType permissionLevel = PermissionLevelType.NONE();
+    private PermissionLevelType permissionLevel = null;
 
     /*
      * default constructor is required by hibernate / jpa
