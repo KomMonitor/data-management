@@ -11,11 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class InitialAccessControlSetup implements ApplicationListener<ContextRefreshedEvent> {
+public class InitialAccessControlSetup implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 
     Logger logger = LoggerFactory.getLogger(InitialAccessControlSetup.class);
 
@@ -37,16 +38,82 @@ public class InitialAccessControlSetup implements ApplicationListener<ContextRef
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
+    	
+    	boolean firstTimeCreation = checkFirstTimeCreation();
 
         if (!isKeycloakEnabled) {
             logger.info("Keyloak connection is disabled. Hence, no default roles will be registered.");
         } else {
-            logger.info("Keyloak connection is enabled. Registering default roles.");
-            createDefaultRoles();
+            logger.info("Keyloak connection is enabled. Registering default roles and upgrade old data model if necessary.");            
+            
+            if (firstTimeCreation) {
+            	createDefaultRoles();
+            	
+            	logger.info("Trying to upgrade existing role mapping to new data model");
+            	upgradeExistingRoleMapping();
+            }
         }
     }
 
-    @Transactional
+    private void upgradeExistingRoleMapping() {
+		/*
+		 * Upgrade data model 
+		 * 
+		 * - gather list of other existing roles of old data model
+		 * - create organization and roles/rights for each of those old roles by overtaking the respective name as organization name
+		 * - iterate over all resources (spatial units, georesources, indicator metadata and spatial unit mapping) and set at least viewer rights 
+		 *  for the respective new organisation + remove old role
+		 * - remove old roles from repo completely
+		 * 
+		 * - sync changes with Keycloak?
+		 */
+		
+	}
+
+	private boolean checkFirstTimeCreation() {
+    	OrganizationalUnitEntity anonymousUnit;
+    	OrganizationalUnitEntity authenticatedUnit;
+		
+		if (!organizationalUnitRepository.existsByName(anonymousOUname)) {
+            return true;
+        } else {
+            anonymousUnit = organizationalUnitRepository.findByName(anonymousOUname);
+        }
+		if (!organizationalUnitRepository.existsByName(authenticatedOUname)) {
+            return true;
+        } else {
+        	authenticatedUnit = organizationalUnitRepository.findByName(authenticatedOUname);
+        }
+		
+		// check public viewer of existing organisation
+		if(!roleExists(anonymousUnit, PermissionLevelType.VIEWER)) {
+			return true;
+		}
+		// check kommonitor roles of existing organisation
+		if(!roleExists(authenticatedUnit, PermissionLevelType.VIEWER)) {
+			return true;
+		}
+		if(!roleExists(authenticatedUnit, PermissionLevelType.EDITOR)) {
+			return true;
+		}
+		if(!roleExists(authenticatedUnit, PermissionLevelType.PUBLISHER)) {
+			return true;
+		}
+		if(!roleExists(authenticatedUnit, PermissionLevelType.CREATOR)) {
+			return true;
+		}
+		
+		return false;
+	}
+
+	private boolean roleExists(OrganizationalUnitEntity unit, PermissionLevelType level) {
+		if (roleRepository.existsByOrganizationalUnitAndPermissionLevel(unit, level)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Transactional
     protected void createDefaultRoles() {
         OrganizationalUnitEntity anonymousUnit;
         if (!organizationalUnitRepository.existsByName(anonymousOUname)) {
@@ -92,5 +159,11 @@ public class InitialAccessControlSetup implements ApplicationListener<ContextRef
         orga.setDescription(description);
         return organizationalUnitRepository.saveAndFlush(orga);
     }
+
+	@Override
+	public int getOrder() {
+		// TODO Auto-generated method stub
+		return 2;
+	}
 
 }

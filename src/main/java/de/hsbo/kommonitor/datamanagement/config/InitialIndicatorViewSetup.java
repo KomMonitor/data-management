@@ -6,13 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
 
 @Component
-public class InitialIndicatorViewSetup implements ApplicationListener<ContextRefreshedEvent> {
+public class InitialIndicatorViewSetup implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 
 	Logger logger = LoggerFactory.getLogger(InitialIndicatorViewSetup.class);
 
@@ -43,6 +44,12 @@ public class InitialIndicatorViewSetup implements ApplicationListener<ContextRef
 		else {
 			logger.info("Initial recreation of indicator views is skipped according to config parameter 'kommonitor.recreateAllViewsOnStartup'.");
 		}
+	}
+
+	@Override
+	public int getOrder() {
+		// TODO Auto-generated method stub
+		return 3;
 	}
 
 }

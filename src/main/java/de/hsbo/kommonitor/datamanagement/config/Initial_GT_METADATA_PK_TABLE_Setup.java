@@ -7,13 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 
 @Component
-public class Initial_GT_METADATA_PK_TABLE_Setup implements ApplicationListener<ContextRefreshedEvent> {
+public class Initial_GT_METADATA_PK_TABLE_Setup implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 
 	Logger logger = LoggerFactory.getLogger(Initial_GT_METADATA_PK_TABLE_Setup.class);
 
@@ -58,5 +59,11 @@ public class Initial_GT_METADATA_PK_TABLE_Setup implements ApplicationListener<C
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}	
+	}
+
+	@Override
+	public int getOrder() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

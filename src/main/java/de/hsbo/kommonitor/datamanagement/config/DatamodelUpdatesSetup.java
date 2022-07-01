@@ -7,13 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 
 @Component
-public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefreshedEvent> {
+public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 
 	Logger logger = LoggerFactory.getLogger(DatamodelUpdatesSetup.class);
 
@@ -39,9 +40,11 @@ public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefresh
 			
 			alterTableStmt.addBatch("ALTER TABLE \"metadataindicators\" ADD COLUMN IF NOT EXISTS \"displayorder\" integer DEFAULT 0");
 			
-			alterTableStmt.addBatch("ALTER TABLE \"roles\" ADD COLUMN IF NOT EXISTS \"permissionlevel\" integer DEFAULT 4");
+			alterTableStmt.addBatch("ALTER TABLE \"roles\" ADD COLUMN IF NOT EXISTS \"permissionlevel\" integer DEFAULT 3");
 			
 			alterTableStmt.addBatch("ALTER TABLE \"roles\" ADD COLUMN IF NOT EXISTS \"organizationalunit\" varchar(255)");
+			
+			alterTableStmt.addBatch("ALTER TABLE \"roles\" DROP COLUMN IF EXISTS \"rolename\"");
 			
 			alterTableStmt.addBatch("ALTER TABLE \"lastmodification\" ADD COLUMN IF NOT EXISTS \"accesscontrol\" timestamp with time zone");
 			
@@ -67,5 +70,11 @@ public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefresh
 
 		logger.info("Initial setup of potentially missing database table properties due to data model updates within KomMonitor finished.");
 
+	}
+
+	@Override
+	public int getOrder() {
+		// TODO Auto-generated method stub
+		return 1;
 	}
 }
