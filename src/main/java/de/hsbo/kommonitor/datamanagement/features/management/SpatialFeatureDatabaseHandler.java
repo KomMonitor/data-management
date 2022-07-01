@@ -1675,7 +1675,7 @@ public class SpatialFeatureDatabaseHandler {
 					AttributeDescriptor property = iterator.next();
 
 					// use dataType varchar, to import new columns as string
-					builder.append("DROP COLUMN \"" + property.getName() + "\" ");
+					builder.append("DROP COLUMN \"" + property.getName() + "\" CASCADE ");
 
 					if (iterator.hasNext()) {
 						builder.append(", ");
