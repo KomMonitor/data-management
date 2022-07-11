@@ -1,17 +1,18 @@
 package de.hsbo.kommonitor.datamanagement.model.roles;
 
-import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.lang.Nullable;
+
+import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
 
 @Entity(name = "Roles")
 public class RolesEntity {
@@ -20,6 +21,9 @@ public class RolesEntity {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String roleId = null;
+    
+    @Nullable
+    private String roleName = null;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "organizationalUnit")
@@ -57,5 +61,13 @@ public class RolesEntity {
     public void setPermissionLevel(PermissionLevelType permissionLevel) {
         this.permissionLevel = permissionLevel;
     }
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
 
 }

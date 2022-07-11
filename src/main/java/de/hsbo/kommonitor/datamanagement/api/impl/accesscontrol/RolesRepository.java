@@ -8,7 +8,11 @@ import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 public interface RolesRepository extends JpaRepository<RolesEntity, Long> {
 
-    RolesEntity findByRoleId(String roleId);
+    RolesEntity findByRoleId(String roleId);    
+    
+    RolesEntity findByRoleName(String roleName);
+    
+    RolesEntity findByOrganizationalUnitAndPermissionLevel(OrganizationalUnitEntity ou, PermissionLevelType level);
 
     boolean existsByRoleId(String roleId);
 
