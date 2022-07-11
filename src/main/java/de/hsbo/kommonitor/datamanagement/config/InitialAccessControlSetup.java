@@ -151,25 +151,11 @@ public class InitialAccessControlSetup implements ApplicationListener<ContextRef
 
 	private void removeOldRoles(List<RolesEntity> existingRoles_oldDataModel) {
 		
-		/*
-		 * due to a not-null constraint on orgnizationalUnit property of rolesEntity
-		 * we must first set an organizational unit and then delete the old role...
-		 */
-		
-		for (RolesEntity rolesEntity : existingRoles_oldDataModel) {
-			rolesEntity.setOrganizationalUnit(anonymousUnit);
-			rolesEntity.setPermissionLevel(PermissionLevelType.VIEWER);
-			roleRepository.saveAndFlush(rolesEntity);
-		}
-		
 		// remove list of old roles
 		roleRepository.deleteAll(existingRoles_oldDataModel);
 		
 		// remove old administrator role explicitly
 		RolesEntity oldAdminRole = roleRepository.findByRoleName(oldAdministratorRoleName);
-		oldAdminRole.setOrganizationalUnit(anonymousUnit);
-		oldAdminRole.setPermissionLevel(PermissionLevelType.VIEWER);
-		roleRepository.saveAndFlush(oldAdminRole);
 		roleRepository.delete(oldAdminRole);
 		
 	}
@@ -258,10 +244,6 @@ public class InitialAccessControlSetup implements ApplicationListener<ContextRef
 			HashSet<RolesEntity> oldRoles = metadataGeoresourcesEntity.getRoles();
 			HashSet<RolesEntity> newRoles = new HashSet<RolesEntity>();
 			
-			if(metadataGeoresourcesEntity.getDatasetId().equalsIgnoreCase("9413610f-9e85-41a9-9525-299634cda676") || metadataGeoresourcesEntity.getDatasetId().equalsIgnoreCase("1d0b50bc-4719-4da7-83fe-02f8c5de3f23")) {
-				System.out.println();
-			}
-			
 			if(oldRoles.size() == 0) {
 				// only add new explicit anonymous role
 				newRoles.add(anonymousViewerRole);
@@ -302,6 +284,9 @@ public class InitialAccessControlSetup implements ApplicationListener<ContextRef
 	}
 
 	private List<RolesEntity> gatherOldRoles() {
+		
+		adjustOldRolesToNewDataModel();
+		
 		List<RolesEntity> allRoles = roleRepository.findAll();
 		
 		List<RolesEntity> oldRoles = new ArrayList<RolesEntity>();
@@ -311,13 +296,30 @@ public class InitialAccessControlSetup implements ApplicationListener<ContextRef
 		adminAndPublicOrgIds.add(authenticatedUnit.getOrganizationalUnitId());
 		
 		for (RolesEntity rolesEntity : allRoles) {	
-			if ((rolesEntity.getOrganizationalUnit() == null && ( rolesEntity.getRoleName() != null && !rolesEntity.getRoleName().equalsIgnoreCase(oldAdministratorRoleName))) 
-					|| (rolesEntity.getOrganizationalUnit() != null && !adminAndPublicOrgIds.contains(rolesEntity.getOrganizationalUnit().getOrganizationalUnitId()))) {
+			if (( rolesEntity.getRoleName() != null && !rolesEntity.getRoleName().equalsIgnoreCase(oldAdministratorRoleName))) {				
 				oldRoles.add(rolesEntity);
 			}
 		}
 		
 		return oldRoles;
+	}
+
+	private void adjustOldRolesToNewDataModel() {
+		
+		/*
+		 * due to a not-null constraint on orgnizationalUnit property of rolesEntity
+		 * we must first set an organizational unit and then delete the old role...
+		 */
+		List<RolesEntity> allRoles = roleRepository.findAll();
+		
+		for (RolesEntity rolesEntity : allRoles) {
+			if(rolesEntity.getOrganizationalUnit() == null) {
+				rolesEntity.setOrganizationalUnit(anonymousUnit);
+				rolesEntity.setPermissionLevel(PermissionLevelType.VIEWER);
+				roleRepository.saveAndFlush(rolesEntity);
+			}			
+		}
+		
 	}
 
 	private boolean checkFirstTimeCreation() {    	
