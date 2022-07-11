@@ -44,9 +44,17 @@ public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefresh
 			
 			alterTableStmt.addBatch("ALTER TABLE \"roles\" ADD COLUMN IF NOT EXISTS \"organizationalunit\" varchar(255)");
 			
-			alterTableStmt.addBatch("ALTER TABLE \"roles\" DROP COLUMN IF EXISTS \"rolename\"");
+//			in order to automatically upgrade old datamodel roles to new accesscontrol model we let rolename survive for now
+			// can be deleted when all old KomMonitor instances are upgraded
+//			alterTableStmt.addBatch("ALTER TABLE \"roles\" DROP COLUMN IF EXISTS \"rolename\"");
 			
 			alterTableStmt.addBatch("ALTER TABLE \"lastmodification\" ADD COLUMN IF NOT EXISTS \"accesscontrol\" timestamp with time zone");
+			
+			// remove relic tables as they were never used
+			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"users_roles\" CASCADE");
+			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"roles_privileges\" CASCADE");
+			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"users\" CASCADE");			
+			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"privileges\" CASCADE");
 			
 			logger.info("Adding new DATABASE COLUMNS if they do not exist...");
 			alterTableStmt.executeBatch();
