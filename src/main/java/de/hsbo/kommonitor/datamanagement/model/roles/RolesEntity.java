@@ -22,7 +22,7 @@ public class RolesEntity {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String roleId = null;
     
-    @Nullable
+    @Column(nullable = true)
     private String roleName = null;
 
     @ManyToOne(optional = false)
