@@ -156,7 +156,9 @@ public class InitialAccessControlSetup implements ApplicationListener<ContextRef
 		
 		// remove old administrator role explicitly
 		RolesEntity oldAdminRole = roleRepository.findByRoleName(oldAdministratorRoleName);
-		roleRepository.delete(oldAdminRole);
+		if(oldAdminRole != null) {
+			roleRepository.delete(oldAdminRole);
+		}
 		
 	}
 
