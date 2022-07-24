@@ -1,6 +1,8 @@
 # Change Log
 
-## 2.0.0-beta
+## 2.0.0
+* fix a bug, that crashed startup on new databases where old v1 admin name does not exist [b421410](b421410db138e0e651fb84e6aa0806d345fec0e0)
+* fix a bug where on new databases roles entity was created with notNull constraint on rolename (currently important for auto-upgrade of v1 database) [f701304](f7013045471552629c0759449121c786ce77bb95)
 * fix automatic role upgrade. first set organization and permission on old roles first in order to successfully retrieve them from database and then replace them by new roles [4acef86](4acef860029cb1039fa64711eb79d5f462c5ad32)
 * implement an automatic role upgrade to new access control data model based on old role name [6cf84d4](6cf84d4b748d4e789213e293df581735ef6ed0fe)
 * reintroduce roleName as optional property to automatically upgrade old datamodel roles to new datamodel organizations and roles. see next commits [62fb6a3](62fb6a393cd477976338bffb017096046fe5551a)
