@@ -60,7 +60,7 @@ services:
        - encryption.symmetric.aes.password=password    # shared secret for data encryption - must be set equally within all supporting components
        - encryption.symmetric.aes.iv.length_byte=16    # length of random initialization vector for encryption algorithm - must be set equally within all supporting components
        - KOMMONITOR_DATAMANAGEMENTAPI_SWAGGERUI_BASEPATH=      #depending on DNS Routing and Reverse Proxy setup a base path can be set here to access swagger-ui interface (e.g. set '/data-management' if https://kommonitor-url.de/data-management works as entry point for localhost:8085)   
-       - keycloak.enabled=false                                               # enable/disable role-based data access using Keycloak (true requires working Keycloak Setup and enforces that all other components must be configured to enable Keycloak as well)
+       - keycloak.enabled=true                                               # enable/disable role-based data access using Keycloak (true requires working Keycloak Setup and enforces that all other components must be configured to enable Keycloak as well)
        - kommonitor.swagger-ui.security.client-id=kommonitor-data-management  # client/resource id of data management component in Keycloak realm
        - kommonitor.swagger-ui.security.secret=secret                         # WARNING: DO NOT SET IN PRODUCTION!!! Keycloak secret of this component within Credentials tab of respective Keycloak client; secret for swagger-ui to authorize swagger-ui requests in a Keycloak-active scenario (mostly this should not be set, as users with access to swagger-ui (e.g. 'http://localhost:8085/swagger-ui.html') could then authorize without own user account and perform CRUD requests)
        - keycloak.realm=kommonitor                                            # Keycloak realm name
@@ -75,8 +75,8 @@ services:
        - keycloak.credentials.secret=secret                                   # Keycloak secret of this component within Credentials tab of respective Keycloak client; must be set here  
        - SERVER_MAXHTTPHEADERSIZE=48000                                       
        - server.max-http-header-size=48000
-       - kommonitor.roles.admin=administrator                                 # name of the Keycloak role that is used as "administrator" role within KomMonitor granting rights to inspect all data and perform all actions. This name of this role is configurable, but must be set to the equal value within management and importer component as well as within Keycloak 
-
+       - kommonitor.roles.admin=kommonitor-creator                                 # name of the Keycloak role that is used as "administrator" role within KomMonitor granting rights to inspect all data and perform all actions. This name of this role is configurable, but must be set to the equal value within management and importer component as well as within Keycloak 
+       - kommonitor.recreateAllViewsOnStartup=false         # if true, will run a recreation of all database indicator views on startup (default false)
 
 
 # ... other KomMonitor components omitted here
