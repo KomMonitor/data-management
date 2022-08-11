@@ -1,6 +1,8 @@
 # Change Log
 
-## 2.0.0
+## 2.1.0
+* fix exemplar docker-compose env variables [90f1908](90f190825a73583008e2cab40d3ee08fdb929524)
+* improve performance for fetching all indicator metadata [872a580](872a5804543333c2e430106cd23e14f4cfb5e941)
 * fix a bug, that crashed startup on new databases where old v1 admin name does not exist [b421410](b421410db138e0e651fb84e6aa0806d345fec0e0)
 * fix a bug where on new databases roles entity was created with notNull constraint on rolename (currently important for auto-upgrade of v1 database) [f701304](f7013045471552629c0759449121c786ce77bb95)
 * fix automatic role upgrade. first set organization and permission on old roles first in order to successfully retrieve them from database and then replace them by new roles [4acef86](4acef860029cb1039fa64711eb79d5f462c5ad32)
