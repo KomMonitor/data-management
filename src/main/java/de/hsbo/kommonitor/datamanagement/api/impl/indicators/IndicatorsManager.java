@@ -4,12 +4,19 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.apache.commons.collections.CollectionUtils;
 import org.geotools.data.DataStore;
 import org.geotools.feature.FeatureCollection;
@@ -22,13 +29,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
@@ -52,6 +59,7 @@ import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 @Transactional
@@ -458,11 +466,11 @@ public class IndicatorsManager {
 
         List<IndicatorReferenceType> indicatorReferences = ReferenceManager.getIndicatorReferences(indicatorsMetadataEntity.getDatasetId());
         List<GeoresourceReferenceType> georesourcesReferences = ReferenceManager.getGeoresourcesReferences(indicatorsMetadataEntity.getDatasetId());
-
-        List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray = spatialUnitsMetadataRepo.findAll();
+        
+        List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo.findByIndicatorMetadataId(indicatorId);
 
         IndicatorOverviewType swaggerIndicatorMetadata = indicatorsMapper
-                .mapToSwaggerIndicator(indicatorsMetadataEntity, indicatorReferences, georesourcesReferences, spatialUnitsMetadataArray);
+                .mapToSwaggerIndicator(indicatorsMetadataEntity, indicatorReferences, georesourcesReferences, indicatorSpatialUnits);
 
         return swaggerIndicatorMetadata;
     }
@@ -1005,10 +1013,10 @@ public class IndicatorsManager {
         List<IndicatorReferenceType> indicatorReferences = ReferenceManager.getIndicatorReferences(metadataId);
         List<GeoresourceReferenceType> georesourcesReferences = ReferenceManager.getGeoresourcesReferences(metadataId);
 
-        List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray = spatialUnitsMetadataRepo.findAll();
+        List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo.findByIndicatorMetadataId(metadataId);
 
         return indicatorsMapper
-                .mapToSwaggerIndicator(indicatorsMetadataRepo.findByDatasetId(metadataId), indicatorReferences, georesourcesReferences, spatialUnitsMetadataArray);
+                .mapToSwaggerIndicator(indicatorsMetadataRepo.findByDatasetId(metadataId), indicatorReferences, georesourcesReferences, indicatorSpatialUnits);
 
     }
 

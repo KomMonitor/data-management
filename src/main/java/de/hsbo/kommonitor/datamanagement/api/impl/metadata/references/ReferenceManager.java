@@ -139,4 +139,16 @@ public class ReferenceManager {
 		
 		return true;
 	}
+
+	public static List<IndicatorReferenceEntity> getAllIndicatorReferences() {
+		List<IndicatorReferenceEntity> entities = indicatorRefRepo.findAll();		
+
+		return entities;
+	}
+	
+	public static List<GeoresourceReferenceEntity> getAllGeoresourceReferences() {
+		List<GeoresourceReferenceEntity> entities = georesourceRefRepo.findAll();
+
+		return entities;
+	}
 }

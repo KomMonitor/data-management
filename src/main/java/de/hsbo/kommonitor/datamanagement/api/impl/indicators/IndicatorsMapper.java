@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,10 @@ import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.In
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceMapper;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
@@ -53,20 +59,95 @@ public class IndicatorsMapper {
 			List<MetadataIndicatorsEntity> indicatorsMetadataEntity, List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray) throws Exception {
 		List<IndicatorOverviewType> indicatorOverviews = new ArrayList<IndicatorOverviewType>(
 				indicatorsMetadataEntity.size());
+		
+		
+		/*
+		 * TODO: improve fetching of references for each indicator metadata object as this is time consuming 
+		 * due to the fact that for each metadata entry and each reference fetching process a new database query and connection is established
+		 * 
+		 * --> fetch ALL references one time and then put them into a map to have O(1) access to the required references
+		 */
+		
+		Map<String, List<IndicatorReferenceType>> indicatorReferenceMap = getIndicatorReferencesMap();
+		Map<String, List<GeoresourceReferenceType>> georesourceReferenceMap = getGeoresourceReferencesMap();
+		Map<String, List<IndicatorSpatialUnitJoinEntity>> indicatorSpatialUnitEntitiesMap = getIndicatorSpatialUnitsMap();
+		
 		for (MetadataIndicatorsEntity metadataIndicatorsEntity : indicatorsMetadataEntity) {
-			List<IndicatorReferenceType> indicatorReferences = ReferenceManager
-					.getIndicatorReferences(metadataIndicatorsEntity.getDatasetId());
-			List<GeoresourceReferenceType> georesourcesReferences = ReferenceManager
-					.getGeoresourcesReferences(metadataIndicatorsEntity.getDatasetId());
 
 			indicatorOverviews
-					.add(mapToSwaggerIndicator(metadataIndicatorsEntity, indicatorReferences, georesourcesReferences, spatialUnitsMetadataArray));
+					.add(mapToSwaggerIndicator(metadataIndicatorsEntity, indicatorReferenceMap.get(metadataIndicatorsEntity.getDatasetId()), georesourceReferenceMap.get(metadataIndicatorsEntity.getDatasetId()), indicatorSpatialUnitEntitiesMap.get(metadataIndicatorsEntity.getDatasetId())));
 		}
 		return indicatorOverviews;
 	}
 
+	private Map<String, List<IndicatorSpatialUnitJoinEntity>> getIndicatorSpatialUnitsMap() {
+		Map<String, List<IndicatorSpatialUnitJoinEntity>> indicatorSpatialUnitsMap = new HashMap<String, List<IndicatorSpatialUnitJoinEntity>>();
+		
+		List<IndicatorSpatialUnitJoinEntity> allEntities = indicatorSpatialUnitsRepo.findAll();
+		
+		for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitEntity : allEntities) {
+			if(indicatorSpatialUnitEntity == null) {
+				continue;
+			}
+			if (indicatorSpatialUnitsMap.containsKey(indicatorSpatialUnitEntity.getIndicatorMetadataId())) {
+				List<IndicatorSpatialUnitJoinEntity> modifiedEntry = indicatorSpatialUnitsMap.get(indicatorSpatialUnitEntity.getIndicatorMetadataId());
+				modifiedEntry.add(indicatorSpatialUnitEntity);
+				indicatorSpatialUnitsMap.put(indicatorSpatialUnitEntity.getIndicatorMetadataId(), modifiedEntry);
+			}
+			else {
+				List<IndicatorSpatialUnitJoinEntity> newEntry = new ArrayList<IndicatorSpatialUnitJoinEntity>();
+				newEntry.add(indicatorSpatialUnitEntity);
+				indicatorSpatialUnitsMap.put(indicatorSpatialUnitEntity.getIndicatorMetadataId(), newEntry);
+			}	
+		}
+		
+		return indicatorSpatialUnitsMap;
+	}
+
+	private Map<String, List<GeoresourceReferenceType>> getGeoresourceReferencesMap() {
+		Map<String, List<GeoresourceReferenceType>> georesourceReferencesMap = new HashMap<String, List<GeoresourceReferenceType>>();
+		
+		List<GeoresourceReferenceEntity> allReferences = ReferenceManager.getAllGeoresourceReferences();
+		
+		for (GeoresourceReferenceEntity georesourceReferenceEntity : allReferences) {
+			if (georesourceReferencesMap.containsKey(georesourceReferenceEntity.getMainIndicatorId())) {
+				List<GeoresourceReferenceType> modifiedEntry = georesourceReferencesMap.get(georesourceReferenceEntity.getMainIndicatorId());
+				modifiedEntry.add(GeoresourceReferenceMapper.mapToSwaggerModel(georesourceReferenceEntity));
+				georesourceReferencesMap.put(georesourceReferenceEntity.getMainIndicatorId(), modifiedEntry);
+			}
+			else {
+				List<GeoresourceReferenceType> newEntry = new ArrayList<GeoresourceReferenceType>();
+				newEntry.add(GeoresourceReferenceMapper.mapToSwaggerModel(georesourceReferenceEntity));
+				georesourceReferencesMap.put(georesourceReferenceEntity.getMainIndicatorId(), newEntry);
+			}	
+		}
+		
+		return georesourceReferencesMap;
+	}
+
+	private Map<String, List<IndicatorReferenceType>> getIndicatorReferencesMap() {
+		Map<String, List<IndicatorReferenceType>> indicatorReferencesMap = new HashMap<String, List<IndicatorReferenceType>>();
+		
+		List<IndicatorReferenceEntity> allReferences = ReferenceManager.getAllIndicatorReferences();
+		
+		for (IndicatorReferenceEntity indicatorReferenceEntity : allReferences) {
+			if (indicatorReferencesMap.containsKey(indicatorReferenceEntity.getIndicatorId())) {
+				List<IndicatorReferenceType> modifiedEntry = indicatorReferencesMap.get(indicatorReferenceEntity.getIndicatorId());
+				modifiedEntry.add(IndicatorReferenceMapper.mapToSwaggerModel(indicatorReferenceEntity));
+				indicatorReferencesMap.put(indicatorReferenceEntity.getIndicatorId(), modifiedEntry);
+			}
+			else {
+				List<IndicatorReferenceType> newEntry = new ArrayList<IndicatorReferenceType>();
+				newEntry.add(IndicatorReferenceMapper.mapToSwaggerModel(indicatorReferenceEntity));
+				indicatorReferencesMap.put(indicatorReferenceEntity.getIndicatorId(), newEntry);
+			}	
+		}
+		
+		return indicatorReferencesMap;
+	}
+
 	public IndicatorOverviewType mapToSwaggerIndicator(MetadataIndicatorsEntity indicatorsMetadataEntity,
-			List<IndicatorReferenceType> indicatorReferences, List<GeoresourceReferenceType> georesourcesReferences, List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray)
+			List<IndicatorReferenceType> indicatorReferences, List<GeoresourceReferenceType> georesourcesReferences, List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnitEntities)
 			throws Exception {
 		IndicatorOverviewType indicatorOverviewType = new IndicatorOverviewType();
 
@@ -74,8 +155,15 @@ public class IndicatorsMapper {
 		 * FIXME here we simply assume that the indicator has the same
 		 * timestamps for each spatial unit
 		 */
-		List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnitEntities = indicatorSpatialUnitsRepo
-				.findByIndicatorMetadataId(indicatorsMetadataEntity.getDatasetId());
+		
+		/*
+		 * TODO: improve fetching of associated spatial units for each indicator metadata object as this is time consuming 
+		 * due to the fact that for each metadata entry and each spatial unit fetching process a new database query and connection is established
+		 * 
+		 * --> fetch ALL associated spatial units entries one time and then put them into a map to have O(1) access to the required references
+		 */
+		
+		
 		if (indicatorSpatialUnitEntities != null && indicatorSpatialUnitEntities.size() > 0) {
 			/*
 			 * TODO FIXME quick and dirty database modification of indicator
@@ -98,7 +186,7 @@ public class IndicatorsMapper {
 			indicatorOverviewType.setApplicableDates(availableTimestamps);
 
 			indicatorOverviewType
-					.setApplicableSpatialUnits(getApplicableSpatialUnitsNames(indicatorSpatialUnitEntities, spatialUnitsMetadataArray));
+					.setApplicableSpatialUnits(getApplicableSpatialUnitsNames(indicatorSpatialUnitEntities));
 		}
 
 		indicatorOverviewType.setTopicReference(indicatorsMetadataEntity.getTopicReference());
@@ -176,6 +264,10 @@ public class IndicatorsMapper {
 			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnitEntities) {
 		List<OgcServicesType> ogcServices = new ArrayList<OgcServicesType>();
 
+		if  (indicatorSpatialUnitEntities == null) {
+			return ogcServices;
+		}
+		
 		for (IndicatorSpatialUnitJoinEntity entity : indicatorSpatialUnitEntities) {
 			OgcServicesType ogcServicesInstance = new OgcServicesType();
 			ogcServicesInstance.setSpatialUnit(entity.getSpatialUnitName());
@@ -190,7 +282,7 @@ public class IndicatorsMapper {
 	}
 
 	private List<IndicatorSpatialUnitJoinItem> getApplicableSpatialUnitsNames(
-			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits, List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray) throws Exception {
+			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits) throws Exception {
 		List<IndicatorSpatialUnitJoinItem> indicatorSpatialUnitJoinItems = new ArrayList<IndicatorSpatialUnitJoinItem>(indicatorSpatialUnits.size());
 		for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
 			IndicatorSpatialUnitJoinItem item = new IndicatorSpatialUnitJoinItem();
