@@ -535,6 +535,9 @@ public class IndicatorOverviewType   {
 
   public void setReferencedGeoresources(List<GeoresourceReferenceType> referencedGeoresources) {
     this.referencedGeoresources = referencedGeoresources;
+    if (this.referencedGeoresources == null) {
+    	this.referencedGeoresources = new ArrayList<GeoresourceReferenceType>();
+    }
   }
 
   public IndicatorOverviewType referencedIndicators(List<IndicatorReferenceType> referencedIndicators) {
@@ -564,6 +567,9 @@ public class IndicatorOverviewType   {
 
   public void setReferencedIndicators(List<IndicatorReferenceType> referencedIndicators) {
     this.referencedIndicators = referencedIndicators;
+    if (this.referencedIndicators == null) {
+    	this.referencedIndicators = new ArrayList<IndicatorReferenceType>();
+    }
   }
 
   public IndicatorOverviewType tags(List<String> tags) {
