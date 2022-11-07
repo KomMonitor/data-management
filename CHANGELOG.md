@@ -1,6 +1,11 @@
 # Change Log
 
-## 2.1.0
+## 2.1.1-SNAPSHOT
+* Adopt default auth server url to changed keycloak requirements [1a7220b](1a7220b86d994aea69821e4ca0abbab4ebfa3178)
+* Merge branch &#39;develop&#39; [73a65c7](73a65c7eb5a6f29265aa58c2c6e1d4112103bc12)
+    * bump postgres dependency [f084856](f084856632d73b10431655f4b7f007097ffe4589)
+* Bump keycloak-adapter version [2651379](265137914b3f58b0a1c7dba00e24d6d556450fcc)
+* fix false null/empty values for indicator and georesource references within indicatorMapper [be84993](be84993734849a720b1403126b1595157304a202)
 * fix exemplar docker-compose env variables [90f1908](90f190825a73583008e2cab40d3ee08fdb929524)
 * improve performance for fetching all indicator metadata [872a580](872a5804543333c2e430106cd23e14f4cfb5e941)
 * fix a bug, that crashed startup on new databases where old v1 admin name does not exist [b421410](b421410db138e0e651fb84e6aa0806d345fec0e0)
