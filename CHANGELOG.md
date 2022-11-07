@@ -1,6 +1,7 @@
 # Change Log
 
-## 2.1.1
+## 2.1.2
+* Bum keycloak-adapter version [aa32d57](aa32d57d3630949167f75324efb011e460268e9f)
 * Adopt default auth server url to changed keycloak requirements [1a7220b](1a7220b86d994aea69821e4ca0abbab4ebfa3178)
 * Merge branch &#39;develop&#39; [73a65c7](73a65c7eb5a6f29265aa58c2c6e1d4112103bc12)
     * bump postgres dependency [f084856](f084856632d73b10431655f4b7f007097ffe4589)
