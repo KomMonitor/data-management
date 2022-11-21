@@ -169,6 +169,32 @@ public class SpatialUnitsManager {
         }
 
     }
+    
+    private void updateSpatialUnitHierarchy_onUpdate(String metadataId, String oldName, String newName) {
+		
+    	/*
+         * automatically update metadata entries with respect to hierarchy
+         *
+         *
+         */
+
+        List<MetadataSpatialUnitsEntity> matchingEntriesForNextLowerHierarchy = spatialUnitsMetadataRepo.findByNextLowerHierarchyLevel(oldName);
+
+        for (MetadataSpatialUnitsEntity metadataSpatialUnitsEntity : matchingEntriesForNextLowerHierarchy) {
+            if (!metadataSpatialUnitsEntity.getDatasetId().equalsIgnoreCase(metadataId)) {
+                metadataSpatialUnitsEntity.setNextLowerHierarchyLevel(newName);
+            }
+        }
+
+        List<MetadataSpatialUnitsEntity> matchingEntriesForNextUpperHierarchy = spatialUnitsMetadataRepo.findByNextUpperHierarchyLevel(oldName);
+
+        for (MetadataSpatialUnitsEntity metadataSpatialUnitsEntity : matchingEntriesForNextUpperHierarchy) {
+            if (!metadataSpatialUnitsEntity.getDatasetId().equalsIgnoreCase(metadataId)) {
+                metadataSpatialUnitsEntity.setNextUpperHierarchyLevel(newName);
+            }
+        }
+		
+	}
 
     private void updateSpatialUnitHierarchy_onDelete(String metadataId) {
         /*
@@ -513,6 +539,17 @@ public class SpatialUnitsManager {
         entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
         entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
         entity.setRoles(retrieveRoles(metadata.getAllowedRoles()));
+        
+        /*
+         * UPDATE DATASETNAME and adjust hierarchy order if needed
+         */
+        String oldName = entity.getDatasetName();
+        String newName = metadata.getDatasetName();
+		if(! newName.equals(oldName) && newName != null && newName != "") {
+        	// update datasetName
+        	entity.setDatasetName(newName);
+        	updateSpatialUnitHierarchy_onUpdate(entity.getDatasetId(), oldName, newName);
+        }
 
         /*
          * dbTable name and OGC service urls may not be set here!
@@ -520,7 +557,7 @@ public class SpatialUnitsManager {
          */
     }
 
-    public List<SpatialUnitOverviewType> getAllSpatialUnitsMetadata() throws Exception {
+	public List<SpatialUnitOverviewType> getAllSpatialUnitsMetadata() throws Exception {
         return getAllSpatialUnitsMetadata(null);
     }
 

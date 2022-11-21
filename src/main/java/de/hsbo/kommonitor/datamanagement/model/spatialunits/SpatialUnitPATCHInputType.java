@@ -3,10 +3,10 @@ package de.hsbo.kommonitor.datamanagement.model.spatialunits;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -19,6 +19,9 @@ public class SpatialUnitPATCHInputType   {
   @JsonProperty("metadata")
   private CommonMetadataType metadata = null;
 
+  @JsonProperty("datasetName")
+  private String datasetName = null;
+  
   @JsonProperty("nextLowerHierarchyLevel")
   private String nextLowerHierarchyLevel = null;
 
@@ -46,7 +49,15 @@ public class SpatialUnitPATCHInputType   {
     this.metadata = metadata;
   }
 
-  public SpatialUnitPATCHInputType nextLowerHierarchyLevel(String nextLowerHierarchyLevel) {
+  public String getDatasetName() {
+	return datasetName;
+}
+
+public void setDatasetName(String datasetName) {
+	this.datasetName = datasetName;
+}
+
+public SpatialUnitPATCHInputType nextLowerHierarchyLevel(String nextLowerHierarchyLevel) {
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
     return this;
   }
