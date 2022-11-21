@@ -501,7 +501,7 @@ public class SpatialUnitsManager {
         }
     }
 
-    public String updateMetadata(SpatialUnitPATCHInputType metadata, String spatialUnitId) throws ResourceNotFoundException {
+    public String updateMetadata(SpatialUnitPATCHInputType metadata, String spatialUnitId) throws Exception {
         logger.info("Trying to update spatialUnit metadata for datasetId '{}'", spatialUnitId);
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
@@ -520,7 +520,7 @@ public class SpatialUnitsManager {
         }
     }
 
-    private void updateMetadata(SpatialUnitPATCHInputType metadata, MetadataSpatialUnitsEntity entity) throws ResourceNotFoundException {
+    private void updateMetadata(SpatialUnitPATCHInputType metadata, MetadataSpatialUnitsEntity entity) throws Exception {
 
         CommonMetadataType genericMetadata = metadata.getMetadata();
         entity.setContact(genericMetadata.getContact());
@@ -542,6 +542,7 @@ public class SpatialUnitsManager {
         
         /*
          * UPDATE DATASETNAME and adjust hierarchy order if needed
+         * also adjust spatialUnitName in all affected indicatorSpatialUnitJoinEntities
          */
         String oldName = entity.getDatasetName();
         String newName = metadata.getDatasetName();
@@ -549,6 +550,7 @@ public class SpatialUnitsManager {
         	// update datasetName
         	entity.setDatasetName(newName);
         	updateSpatialUnitHierarchy_onUpdate(entity.getDatasetId(), oldName, newName);
+        	indicatorsManager.updateJoinedSpatialUnitName(entity.getDatasetId(), oldName, newName);
         }
 
         /*

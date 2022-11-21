@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
@@ -95,6 +96,9 @@ public class IndicatorsManager {
 
     @Autowired
     IndicatorsMapper indicatorsMapper;
+    
+    @Autowired
+    private LastModificationManager lastModManager;
 
     @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
     private String publicRole;
@@ -289,6 +293,24 @@ public class IndicatorsManager {
         // persist in db
         indicatorsMetadataRepo.saveAndFlush(entity);
     }
+    
+    public void updateJoinedSpatialUnitName(String spatialUnitId, String oldName, String newName) throws Exception {
+    	List<IndicatorSpatialUnitJoinEntity> affectedIndicatorEntries = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
+
+		for (IndicatorSpatialUnitJoinEntity affectedIndicatorEntry : affectedIndicatorEntries) {
+			affectedIndicatorEntry.setSpatialUnitName(newName);
+
+		}
+		
+		// flush all changes to database
+		indicatorsSpatialUnitsRepo.saveAllAndFlush(affectedIndicatorEntries);
+		
+		// recreate all views due to changes for spatialUnit
+		recreateAllViewsForSpatialUnitById(spatialUnitId);
+		
+		lastModManager.updateLastDatabaseModification_indicators();
+		
+	}
 
     public String updateFeatures(IndicatorPUTInputType indicatorData, String indicatorId) throws Exception {
         logger.info("Trying to update indicator features for datasetId '{}'", indicatorId);
