@@ -1,6 +1,7 @@
 # Change Log
 
-## 2.1.2
+## 2.1.3
+* add functionality to rename spatial units and keep their hierarchy consistent [e72bb41](e72bb417fc0c3032a5e601b670972d7f2787b744)
 * Bum keycloak-adapter version [aa32d57](aa32d57d3630949167f75324efb011e460268e9f)
 * Adopt default auth server url to changed keycloak requirements [1a7220b](1a7220b86d994aea69821e4ca0abbab4ebfa3178)
 * Merge branch &#39;develop&#39; [73a65c7](73a65c7eb5a6f29265aa58c2c6e1d4112103bc12)
