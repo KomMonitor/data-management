@@ -1347,7 +1347,15 @@ public class IndicatorDatabaseHandler {
 			ArrayList<Entry<String, String>> indicatorPropertiesList = Lists.newArrayList(indicatorProperties);		
 			for (int i = 0; i < indicatorPropertiesList.size(); i++) {
 				Entry<String, String> entry = indicatorPropertiesList.get(i);
-				builder.append(" \"" + entry.getKey() + "\" = '" + entry.getValue() + "' ");
+				builder.append(" \"" + entry.getKey() + "\" = ");
+				
+				if(entry.getValue() != null) {
+					builder.append(" '" + entry.getValue() + "'");
+				}
+				else {
+					builder.append(" null ");
+				}
+				
 				
 				if(i < indicatorPropertiesList.size() -1) {
 					builder.append(", ");
