@@ -1,6 +1,7 @@
 # Change Log
 
-## 2.1.4
+## 2.1.5
+* allow indicator null value transmission in single feature indicator update [6527c3b](6527c3b7cb2c23c67efc3a77070a5aa17cb0a1e2)
 * fix renaming of spatial units by also renaming the joined spatial unit metadata of affected indicators and recreating all database views [8253b74](8253b74976f027348c31d4fbf0aecd9984605d60)
 * add functionality to rename spatial units and keep their hierarchy consistent [e72bb41](e72bb417fc0c3032a5e601b670972d7f2787b744)
 * Bum keycloak-adapter version [aa32d57](aa32d57d3630949167f75324efb011e460268e9f)
