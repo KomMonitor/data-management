@@ -73,8 +73,11 @@ public class SwaggerSecurityConfig {
     }
 
     @Bean
-    public Docket customImplementation(ServletContext servletContext, @Value("${kommonitor.datamanagement-api.swagger-ui.base-path:}") String basePath) {
+    public Docket customImplementation(ServletContext servletContext,
+                                       @Value("${kommonitor.swagger-ui.host:}") String host,
+                                       @Value("${kommonitor.swagger-ui.base-path:}") String basePath) {
         return new Docket(DocumentationType.SWAGGER_2)
+                .host(host)
                 .groupName(GROUP_NAME)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("de.hsbo.kommonitor.datamanagement.api"))
