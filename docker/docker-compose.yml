@@ -1,0 +1,55 @@
+version: '3.8'
+
+networks:
+  kommonitor:
+    name: kommonitor
+    driver: bridge
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:20.0.5
+    container_name: keycloak
+    restart: unless-stopped
+    volumes:
+      - ./realms/realm-export.json:/opt/keycloak/data/import/realm.json
+    command:
+      - start-dev
+      - --import-realm
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    networks:
+      - kommonitor
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=dev-file
+  kommonitor-db:
+    image: postgis/postgis:latest
+    container_name: kommonitor-db
+    restart: unless-stopped
+    networks:
+      - kommonitor
+    ports:
+      - 5432:5432
+    volumes:
+      - ./database-test/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=kommonitor
+  kommonitor-proxy:
+    image: nginx:latest
+    container_name: kommonitor-proxy
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./templates:/etc/nginx/templates
+    environment:
+      - NGINX_PORT=80
+      - DATA_MANAGEMENT=host.docker.internal:8085
+    networks:
+      - kommonitor
+
