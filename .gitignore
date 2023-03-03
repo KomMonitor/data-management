@@ -56,4 +56,4 @@ nbactions.xml
 *.iml
 *.ipr
 
-docker/**
+docker/database/**
