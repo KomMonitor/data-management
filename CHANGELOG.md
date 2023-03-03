@@ -1,6 +1,6 @@
 # Change Log
 
-## 2.1.6-SNAPSHOT
+## 2.1.6
 * Adjust gitignore [ca73a80](ca73a80612e4fc294872a42cb3eb7ba94ceb1d57)
 * Add Docker Compose setup for Keycloak and DB [3d2d30b](3d2d30b068015b1d54ea98956889fa95d145ff39)
 * Add support for host configuration for Swagger-UI [6747ec6](6747ec688adf36b34358dec11511cf9068d725b3)
