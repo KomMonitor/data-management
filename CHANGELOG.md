@@ -1,6 +1,10 @@
 # Change Log
 
-## 2.1.5
+## 2.1.6-SNAPSHOT
+* Adjust gitignore [ca73a80](ca73a80612e4fc294872a42cb3eb7ba94ceb1d57)
+* Add Docker Compose setup for Keycloak and DB [3d2d30b](3d2d30b068015b1d54ea98956889fa95d145ff39)
+* Add support for host configuration for Swagger-UI [6747ec6](6747ec688adf36b34358dec11511cf9068d725b3)
+* Upgrade swagger deps to prevent default type parsing warnings [c52b469](c52b469818ca8eda727537c48a87e56c47d3cbe6)
 * allow indicator null value transmission in single feature indicator update [6527c3b](6527c3b7cb2c23c67efc3a77070a5aa17cb0a1e2)
 * fix renaming of spatial units by also renaming the joined spatial unit metadata of affected indicators and recreating all database views [8253b74](8253b74976f027348c31d4fbf0aecd9984605d60)
 * add functionality to rename spatial units and keep their hierarchy consistent [e72bb41](e72bb417fc0c3032a5e601b670972d7f2787b744)
