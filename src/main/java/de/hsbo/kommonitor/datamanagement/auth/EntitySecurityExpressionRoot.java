@@ -11,8 +11,11 @@ import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetad
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHDisplayOrderInputType;
 import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import java.security.Principal;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
@@ -84,6 +87,30 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
             logger.error("unable to evaluate permissions for entity with id " + entityID + " of type " + entityType + "; return not authorized", ex);
             return false;
         }
+    }
+    
+    /**
+     * custom security method to check if a user has permissions to access a list of IndicatorPATCHDisplayOrderInputType entities,
+     * to be used with @PreAuthorize and @PostAuthorize annotations
+     * @param indicatorOrderArray
+     * @param entityType
+     * @param permissionLevel
+     * @return 
+     */
+    public boolean isAuthorizedForEntity(List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray, String entityType, String permissionLevel) {
+        logger.debug("called isAuthorizedForEntity with a list of IndicatorPATCHDisplayOrderInputType entities.");
+        
+        boolean allAuthorized = true;
+        
+        for (IndicatorPATCHDisplayOrderInputType indicatorPATCHDisplayOrderInputType : indicatorOrderArray) {
+			String indicatorId = indicatorPATCHDisplayOrderInputType.getIndicatorId();
+			if(! isAuthorizedForEntity(indicatorId, entityType, permissionLevel)) {
+				allAuthorized = false;
+				break;
+			}			
+		}
+        
+        return allAuthorized;
     }
     
         /**

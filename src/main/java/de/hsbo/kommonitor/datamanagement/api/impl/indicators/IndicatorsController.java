@@ -466,7 +466,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
     }
 
-    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
+    @PreAuthorize("isAuthorizedForEntity(#indicatorOrderArray, 'indicator', 'editor')")
     public ResponseEntity<ResponseEntity> updateIndicatorDisplayOrder(@ApiParam(value = "array of indicator id and displayOrder items" ,required=true )  @RequestBody List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray) {
     	logger.info("Received request to update indicator display order ");
 
