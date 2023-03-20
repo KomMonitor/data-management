@@ -1,6 +1,7 @@
 # Change Log
 
-## 2.1.7
+## 2.1.8
+* allow process-scripts endpoints to all authenticated users from any organization with publisher rights; fixes #8 [05dee68](05dee68066a655994156a079969f1287a1f411b6)
 * fix failing access permission check for updateIndicatorDisplayOrder method as it requires a different solution to check permissions. fixes #7 [ad8dd7d](ad8dd7d88aeda24354bacdc664a3f32e2e167ae8)
 * Prepare for next development iteration [2f220b1](2f220b1805c1d8ffb02727d2f360566f4c7685db)
 * Adjust gitignore [ca73a80](ca73a80612e4fc294872a42cb3eb7ba94ceb1d57)
