@@ -239,7 +239,7 @@ services:
        - GEOSERVER_HOST=https://kommonitor.fbg-hsbo.de/geoserver    # Geoserver host URL - only relevant with GeoServer connection
        - GEOSERVER_PORT=80                                          # Geoserver port - only relevant with GeoServer connection
        - GEOSERVER_USER=admin                                       # Geoserver username - only relevant with GeoServer connection
-       - GEOSERVER_PASSWORD=sK4nc$bDSm                              # Geoserver user password - only relevant with GeoServer connection
+       - GEOSERVER_PASSWORD=password                              # Geoserver user password - only relevant with GeoServer connection
        - GEOSERVER_TARGET_WORKSPACE=kommonitor                      # Geoserver workspace name (will be created if not exists) - only relevant with GeoServer connection
        - GEOSERVER_DATASTORE_SPATIALUNITS=kommonitor_spatialunits   # Geoserver datastore name for spatial units (will be created if not exists) - only relevant with GeoServer connection
        - GEOSERVER_DATASTORE_GEORESOURCES=kommonitor_georesources   # Geoserver datastore name for georesources (will be created if not exists) - only relevant with GeoServer connection
