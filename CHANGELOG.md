@@ -1,6 +1,12 @@
 # Change Log
 
-## 2.1.8
+## 3.0.0
+* Set next major release dev version [ecc40e8](ecc40e8d963943e44c5992a77af42b2f582677b2)
+* Remove dev action trigger [5e53964](5e539640becc4fcf104b720f3c7ac82bb730c22e)
+* Use Eclipse Temurin base Docker image [b82f349](b82f349fc00ee3ac81a0d32becc578060a3786f2)
+* Raise dependencies [da83f84](da83f84dc1cc681bc6aa40a2d0cab5efd17a65d2)
+* Fix trivy scan action [9d391d1](9d391d12591bafda3fbae51a23bfe46459d54f9b)
+* Add CVE scan to build action [ea73bab](ea73bab0f7bf67085edcda3325b7eaf9a05ea8de)
 * allow process-scripts endpoints to all authenticated users from any organization with publisher rights; fixes #8 [05dee68](05dee68066a655994156a079969f1287a1f411b6)
 * fix failing access permission check for updateIndicatorDisplayOrder method as it requires a different solution to check permissions. fixes #7 [ad8dd7d](ad8dd7d88aeda24354bacdc664a3f32e2e167ae8)
 * Prepare for next development iteration [2f220b1](2f220b1805c1d8ffb02727d2f360566f4c7685db)

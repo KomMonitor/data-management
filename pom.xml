@@ -4,7 +4,7 @@
 
     <groupId>de.hsbo.kommonitor</groupId>
     <artifactId>kommonitor-data-management-app</artifactId>
-    <version>2.1.9-SNAPSHOT</version>
+    <version>3.0.0</version>
     <packaging>jar</packaging>
 
     <name>KomMonitor Data Management</name>
@@ -14,7 +14,7 @@
 	    <url>https://github.com/KomMonitor/data-management</url>
         <connection>scm:git:https://github.com/KomMonitor/data-management.git</connection>
         <developerConnection>scm:git:https://github.com/KomMonitor/data-management.git</developerConnection>
-	    <tag>HEAD</tag>
+	    <tag>v3.0.0</tag>
   </scm>
 
     <parent>
@@ -37,17 +37,17 @@
     	<app.finalName>${project.artifactId}-${project.version}</app.finalName>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-        <spring-cloud.version>Finchley.M9</spring-cloud.version>
+        <java.version>17</java.version>
+        <spring-boot.version>2.7.15</spring-boot.version>
         <logstash.logback.version>5.0</logstash.logback.version>
         <docker.image.prefix>kommonitor</docker.image.prefix>
         <springfox.version>2.9.2</springfox.version>
         <geotools.version>19.0</geotools.version>
-        <postgresql.version>42.5.0</postgresql.version>
-        <hibernate.version>5.6.3.Final</hibernate.version>
+        <postgresql.version>42.6.0</postgresql.version>
+        <hibernate.version>5.6.15.Final</hibernate.version>
         <release-plugin.version>3.0.0-M1</release-plugin.version>
         <changelog-plugin.version>0.5.1</changelog-plugin.version>
-        <log4j2.version>2.17.1</log4j2.version>
+        <log4j2.version>2.20.0</log4j2.version>
     </properties>
 
 
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>23.0</version>
+            <version>32.1.2-jre</version>
         </dependency>
 
         <dependency>
@@ -149,9 +149,9 @@
 
         <!-- Java Topology Suite -->
         <dependency>
-            <groupId>com.vividsolutions</groupId>
-            <artifactId>jts</artifactId>
-            <version>1.13</version>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
+            <version>1.19.0</version>
         </dependency>
         <dependency>
             <groupId>com.bedatadriven</groupId>
@@ -361,16 +361,16 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.keycloak.bom</groupId>
                 <artifactId>keycloak-adapter-bom</artifactId>
-                <version>20.0.0</version>
+                <version>20.0.5</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
