@@ -4,7 +4,7 @@
 
     <groupId>de.hsbo.kommonitor</groupId>
     <artifactId>kommonitor-data-management-app</artifactId>
-    <version>2.1.9-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>KomMonitor Data Management</name>
