@@ -19,23 +19,27 @@ import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
 
 public class SpatialUnitsMapper {
-	
+
 	private static SpatialUnitsMetadataRepository spatialUnitsMetadataRepo;
 
 	public SpatialUnitsMapper(SpatialUnitsMetadataRepository spatialUnitsRepo) {
 		spatialUnitsMetadataRepo = spatialUnitsRepo;
 	}
 
-	public static SpatialUnitOverviewType mapToSwaggerSpatialUnit(MetadataSpatialUnitsEntity spatialUnitEntity) throws Exception {
+	public static SpatialUnitOverviewType mapToSwaggerSpatialUnit(MetadataSpatialUnitsEntity spatialUnitEntity)
+			throws Exception {
 		SpatialUnitOverviewType dataset = new SpatialUnitOverviewType();
-		
+
 		dataset.setSpatialUnitId(spatialUnitEntity.getDatasetId());
-		
+
 		/*
-		 * TODO FIXME quick and dirty database modification of spatialUnits periodsOfValidity
+		 * TODO FIXME quick and dirty database modification of spatialUnits
+		 * periodsOfValidity
 		 * 
-		 * here a quick and dirty way is commented out that can reset spatialUnits periodsOfValidity by accessing spatialUnits layer and inspecting the available timestamps
-		 * it can be reenabled to quickly overwrite/reset the associated metadata within spatialUnits metadata entity
+		 * here a quick and dirty way is commented out that can reset spatialUnits
+		 * periodsOfValidity by accessing spatialUnits layer and inspecting the
+		 * available timestamps it can be reenabled to quickly overwrite/reset the
+		 * associated metadata within spatialUnits metadata entity
 		 */
 //		AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(spatialUnitEntity.getDbTableName());		
 ////		periodsOfValidityRepo.deleteAll();
@@ -45,48 +49,45 @@ public class SpatialUnitsMapper {
 //			spatialUnitEntity.addPeriodOfValidityIfNotExists(periodEntity);
 //		}
 //		spatialUnitsMetadataRepo.saveAndFlush(spatialUnitEntity);	
-		
-		Collection<PeriodOfValidityEntity_spatialUnits> spatialUnitsPeriodsOfValidityEntities = spatialUnitEntity.getSpatialUnitsPeriodsOfValidity();		
-		
-		
-		
+
+		Collection<PeriodOfValidityEntity_spatialUnits> spatialUnitsPeriodsOfValidityEntities = spatialUnitEntity
+				.getSpatialUnitsPeriodsOfValidity();
+
 		// sort periods from prior dates to later dates
-		
+
 		Comparator<PeriodOfValidityEntity_spatialUnits> compareByTimePeriod = new Comparator<PeriodOfValidityEntity_spatialUnits>() {
-		    @Override
-		    public int compare(PeriodOfValidityEntity_spatialUnits o1, PeriodOfValidityEntity_spatialUnits o2) {
-		        int result =  o1.getStartDate().compareTo(o2.getStartDate());
-				
-				
-		        if (result == 0) {
+			@Override
+			public int compare(PeriodOfValidityEntity_spatialUnits o1, PeriodOfValidityEntity_spatialUnits o2) {
+				int result = o1.getStartDate().compareTo(o2.getStartDate());
+
+				if (result == 0) {
 					try {
-						if(o1.getEndDate() != null && o2.getEndDate() != null){						
+						if (o1.getEndDate() != null && o2.getEndDate() != null) {
 							result = o1.getEndDate().compareTo(o2.getEndDate());
-						}
-						else{
+						} else {
 							result = 1;
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					
-		        }
-		        
-		        return result;
-		    }
-		};
-		
-				List<PeriodOfValidityEntity_spatialUnits> spatialUnitsPeriodsOfValidityEntities_asOrderedList = new ArrayList<>(spatialUnitsPeriodsOfValidityEntities);
-				Collections.sort(spatialUnitsPeriodsOfValidityEntities_asOrderedList, compareByTimePeriod);		
-				
-				AvailablePeriodsOfValidityType availablePeriodsOfValidityType = new AvailablePeriodsOfValidityType();
-				for (PeriodOfValidityEntity_spatialUnits periodOfValidityEntity_spatialUnits : spatialUnitsPeriodsOfValidityEntities_asOrderedList) {
-					availablePeriodsOfValidityType.add(new PeriodOfValidityType(periodOfValidityEntity_spatialUnits));
+
 				}
-		
-		dataset.setAvailablePeriodsOfValidity(
-				availablePeriodsOfValidityType);
-		
+
+				return result;
+			}
+		};
+
+		List<PeriodOfValidityEntity_spatialUnits> spatialUnitsPeriodsOfValidityEntities_asOrderedList = new ArrayList<>(
+				spatialUnitsPeriodsOfValidityEntities);
+		Collections.sort(spatialUnitsPeriodsOfValidityEntities_asOrderedList, compareByTimePeriod);
+
+		AvailablePeriodsOfValidityType availablePeriodsOfValidityType = new AvailablePeriodsOfValidityType();
+		for (PeriodOfValidityEntity_spatialUnits periodOfValidityEntity_spatialUnits : spatialUnitsPeriodsOfValidityEntities_asOrderedList) {
+			availablePeriodsOfValidityType.add(new PeriodOfValidityType(periodOfValidityEntity_spatialUnits));
+		}
+
+		dataset.setAvailablePeriodsOfValidity(availablePeriodsOfValidityType);
+
 		CommonMetadataType commonMetadata = new CommonMetadataType();
 		commonMetadata.setContact(spatialUnitEntity.getContact());
 		commonMetadata.setDatasource(spatialUnitEntity.getDataSource());
@@ -98,23 +99,28 @@ public class SpatialUnitsMapper {
 		commonMetadata.setNote(spatialUnitEntity.getNote());
 		commonMetadata.setLiterature(spatialUnitEntity.getLiterature());
 		dataset.setMetadata(commonMetadata);
-		
+
 		dataset.setNextLowerHierarchyLevel(spatialUnitEntity.getNextLowerHierarchyLevel());
 		dataset.setNextUpperHierarchyLevel(spatialUnitEntity.getNextUpperHierarchyLevel());
 		dataset.setSpatialUnitLevel(spatialUnitEntity.getDatasetName());
-		
+
 		dataset.setWmsUrl(spatialUnitEntity.getWmsUrl());
 		dataset.setWfsUrl(spatialUnitEntity.getWfsUrl());
 
 		dataset.setAllowedRoles(getRoleIds(spatialUnitEntity.getRoles()));
 		dataset.setUserPermissions(spatialUnitEntity.getUserPermissions());
+		dataset.setIsOutlineLayer(spatialUnitEntity.isOutlineLayer());
+		dataset.setOutlineColor(spatialUnitEntity.getOutlineColor());
+		dataset.setOutlineWidth(BigDecimal.valueOf(spatialUnitEntity.getOutlineWidth().intValue()));
+		dataset.setOutlineDashArrayString(spatialUnitEntity.getOutlineDashArrayString());
 
 		return dataset;
 	}
 
 	public static List<SpatialUnitOverviewType> mapToSwaggerSpatialUnits(
 			List<MetadataSpatialUnitsEntity> spatialUnitMeatadataEntities) throws Exception {
-		List<SpatialUnitOverviewType> metadatasets = new ArrayList<SpatialUnitOverviewType>(spatialUnitMeatadataEntities.size());
+		List<SpatialUnitOverviewType> metadatasets = new ArrayList<SpatialUnitOverviewType>(
+				spatialUnitMeatadataEntities.size());
 
 		for (MetadataSpatialUnitsEntity metadataEntity : spatialUnitMeatadataEntities) {
 			metadatasets.add(mapToSwaggerSpatialUnit(metadataEntity));
@@ -123,8 +129,6 @@ public class SpatialUnitsMapper {
 	}
 
 	private static List<String> getRoleIds(HashSet<RolesEntity> roles) {
-		return roles.stream()
-				.map(r -> r.getRoleId())
-				.collect(Collectors.toList());
+		return roles.stream().map(r -> r.getRoleId()).collect(Collectors.toList());
 	}
 }
