@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.model.users.UserInputType;
-import de.hsbo.kommonitor.datamanagement.model.users.UserOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.users.UsersEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.users.UserInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.users.UserOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.users.UsersEntity;
 
 @Transactional
 @Repository

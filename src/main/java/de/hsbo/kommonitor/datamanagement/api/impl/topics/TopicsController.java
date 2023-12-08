@@ -2,7 +2,6 @@ package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,13 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.TopicsApi;
+import de.hsbo.kommonitor.datamanagement.api.legacy.TopicsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicInputType;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicOverviewType;
 
 @Controller
 public class TopicsController extends BasePathController implements TopicsApi {

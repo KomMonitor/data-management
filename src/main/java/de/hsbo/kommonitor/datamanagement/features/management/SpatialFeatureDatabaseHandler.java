@@ -72,10 +72,10 @@ import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.GeometrySimplifierUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.AvailablePeriodsOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourcePUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitPUTInputType;
 
 public class SpatialFeatureDatabaseHandler {
 

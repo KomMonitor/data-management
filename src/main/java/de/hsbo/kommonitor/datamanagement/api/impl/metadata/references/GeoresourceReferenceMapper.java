@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
-import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToGeoresources;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.GeoresourceReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPOSTInputTypeRefrencesToGeoresources;
 
 public class GeoresourceReferenceMapper {
 

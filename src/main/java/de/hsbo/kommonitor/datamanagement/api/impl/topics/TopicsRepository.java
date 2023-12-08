@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicResourceEnum;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicResourceEnum;
+import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicsEntity;
 
 public interface TopicsRepository extends JpaRepository<TopicsEntity, Long> {
 	TopicsEntity findByTopicId(String topicId);

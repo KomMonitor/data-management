@@ -23,14 +23,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.ProcessScriptsApi;
+import de.hsbo.kommonitor.datamanagement.api.legacy.ProcessScriptsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.scripts.ProcessScriptOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.scripts.ProcessScriptPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.scripts.ProcessScriptPUTInputType;
 
 @Controller
 public class ScriptController extends BasePathController implements ProcessScriptsApi {

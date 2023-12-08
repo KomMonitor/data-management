@@ -4,16 +4,13 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.roles.RoleOverviewType;
 
 @Transactional
 @Repository

@@ -12,12 +12,11 @@ import java.util.stream.Collectors;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.AvailablePeriodsOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourceOverviewType;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 public class GeoresourcesMapper {
 	

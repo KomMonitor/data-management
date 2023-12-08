@@ -1,6 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +26,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsApi;
+import de.hsbo.kommonitor.datamanagement.api.legacy.SpatialUnitsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitPUTInputType;
 import io.swagger.annotations.ApiParam;
 
 @Controller

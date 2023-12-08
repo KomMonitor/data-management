@@ -24,21 +24,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.IndicatorsApi;
+import de.hsbo.kommonitor.datamanagement.api.legacy.IndicatorsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorMetadataPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHDisplayOrderInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorMetadataPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPATCHDisplayOrderInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPropertiesWithoutGeomType;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
 import io.swagger.annotations.ApiParam;
 
 @Controller

@@ -5,8 +5,8 @@ import javax.persistence.*;
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;

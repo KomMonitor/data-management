@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.AccessControlMapper;
-import de.hsbo.kommonitor.datamanagement.model.roles.RoleOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
-import de.hsbo.kommonitor.datamanagement.model.users.UserOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.users.UsersEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.roles.RoleOverviewType;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.users.UserOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.users.UsersEntity;
 
 public class UsersMapper {
 

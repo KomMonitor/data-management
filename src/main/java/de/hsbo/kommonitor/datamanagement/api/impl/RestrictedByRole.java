@@ -1,6 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl;
 
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 import java.util.Set;
 

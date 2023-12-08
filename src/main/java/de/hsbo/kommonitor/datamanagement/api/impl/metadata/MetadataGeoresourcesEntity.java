@@ -12,11 +12,11 @@ import javax.persistence.ManyToMany;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.georesources.PoiMarkerColorEnum;
-import de.hsbo.kommonitor.datamanagement.model.georesources.PoiSymbolColorEnum;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.AvailablePeriodsOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.PoiMarkerColorEnum;
+import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.PoiSymbolColorEnum;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 @Entity(name = "MetadataGeoresources")
 public class MetadataGeoresourcesEntity extends AbstractMetadata implements RestrictedByRole {

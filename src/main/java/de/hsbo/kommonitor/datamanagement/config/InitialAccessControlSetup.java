@@ -26,9 +26,9 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesE
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
-import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 @Component
 public class InitialAccessControlSetup implements ApplicationListener<ContextRefreshedEvent>, Ordered {

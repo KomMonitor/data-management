@@ -2,7 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.users;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import de.hsbo.kommonitor.datamanagement.model.users.UsersEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.users.UsersEntity;
 
 public interface UsersRepository extends JpaRepository<UsersEntity, Long> {
 	UsersEntity findByUserId(String userId);

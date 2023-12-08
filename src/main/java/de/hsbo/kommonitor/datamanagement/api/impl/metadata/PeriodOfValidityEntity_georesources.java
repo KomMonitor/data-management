@@ -1,17 +1,9 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Objects;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-
-import org.hibernate.annotations.GenericGenerator;
-
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.PeriodOfValidityType;
 import io.swagger.annotations.ApiModelProperty;
 
 /**

@@ -2,11 +2,8 @@ package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitInputType;
-import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,9 +11,9 @@ import org.springframework.stereotype.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.DatabasePublicApi;
+import de.hsbo.kommonitor.datamanagement.api.legacy.DatabasePublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
-import de.hsbo.kommonitor.datamanagement.model.database.LastModificationOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.database.LastModificationOverviewType;
 
 @Controller
 public class DatabasePublicController extends BasePathController implements DatabasePublicApi {

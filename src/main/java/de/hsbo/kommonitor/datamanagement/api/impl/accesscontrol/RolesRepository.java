@@ -1,10 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
-import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
 
 public interface RolesRepository extends JpaRepository<RolesEntity, Long> {
 

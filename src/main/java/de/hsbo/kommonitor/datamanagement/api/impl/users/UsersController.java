@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.UsersApi;
+import de.hsbo.kommonitor.datamanagement.api.legacy.UsersApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.users.UserInputType;
-import de.hsbo.kommonitor.datamanagement.model.users.UserOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.users.UserInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.users.UserOverviewType;
 
 @Controller
 public class UsersController extends BasePathController implements UsersApi {

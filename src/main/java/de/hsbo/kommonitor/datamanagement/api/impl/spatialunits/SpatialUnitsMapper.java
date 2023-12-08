@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_spatialUnits;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.AvailablePeriodsOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitOverviewType;
 
 public class SpatialUnitsMapper {
 	

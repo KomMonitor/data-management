@@ -24,16 +24,16 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorR
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorSpatialUnitJoinItem;
-import de.hsbo.kommonitor.datamanagement.model.indicators.OgcServicesType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.DefaultClassificationMappingItemType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.DefaultClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.GeoresourceReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorSpatialUnitJoinItem;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.OgcServicesType;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicsEntity;
 
 @Component
 public class IndicatorsMapper {

@@ -1,7 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.webservice.management;
 
 import java.net.MalformedURLException;
-import java.util.List;
 
 import javax.xml.transform.TransformerException;
 
@@ -11,7 +10,7 @@ import org.geotools.filter.IllegalFilterException;
 import org.springframework.stereotype.Component;
 
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.DefaultClassificationMappingType;
 
 /**
  * Handles the publishment of spatial datasets as OGC web services such as WMS,

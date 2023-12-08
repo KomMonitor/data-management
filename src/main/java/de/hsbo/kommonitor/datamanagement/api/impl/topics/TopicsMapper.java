@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicsEntity;
 
 public class TopicsMapper {
 

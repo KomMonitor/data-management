@@ -1,9 +1,9 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.hsbo.kommonitor.datamanagement.api.TopicsPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.legacy.TopicsPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicOverviewType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

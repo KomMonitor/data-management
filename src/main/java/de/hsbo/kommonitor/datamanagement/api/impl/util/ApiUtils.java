@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
 
-import de.hsbo.kommonitor.datamanagement.model.ErrorType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.ErrorType;
 
 public class ApiUtils {
 	

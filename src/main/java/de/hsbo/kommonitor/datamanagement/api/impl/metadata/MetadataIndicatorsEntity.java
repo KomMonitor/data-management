@@ -14,10 +14,10 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
-import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.CreationTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.DefaultClassificationMappingItemType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorTypeEnum;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 @Entity(name = "MetadataIndicators")
 public class MetadataIndicatorsEntity extends AbstractMetadata implements RestrictedByRole {

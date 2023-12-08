@@ -5,10 +5,10 @@ import java.util.List;
 
 import javax.persistence.*;
 
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
 import org.hibernate.annotations.GenericGenerator;
 
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType.UpdateIntervalEnum;
+import de.hsbo.kommonitor.datamanagement.model.legacy.CommonMetadataType.UpdateIntervalEnum;
 
 @MappedSuperclass
 public abstract class AbstractMetadata {

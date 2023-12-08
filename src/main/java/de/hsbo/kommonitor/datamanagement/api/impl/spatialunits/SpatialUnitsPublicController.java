@@ -1,6 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -19,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.legacy.SpatialUnitsPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitOverviewType;
 import io.swagger.annotations.ApiParam;
 
 @Controller

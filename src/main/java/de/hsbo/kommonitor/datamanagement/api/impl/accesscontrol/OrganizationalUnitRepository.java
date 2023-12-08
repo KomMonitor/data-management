@@ -1,6 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
-import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrganizationalUnitRepository extends JpaRepository<OrganizationalUnitEntity, Long> {
