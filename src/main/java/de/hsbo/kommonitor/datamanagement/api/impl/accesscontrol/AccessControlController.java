@@ -1,12 +1,13 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.hsbo.kommonitor.datamanagement.api.AccessControlAPI;
+import de.hsbo.kommonitor.datamanagement.api.AccessControlApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitInputType;
-import de.hsbo.kommonitor.datamanagement.model.organizations.OrganizationalUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
 @Controller
-public class AccessControlController extends BasePathController implements AccessControlAPI {
+public class AccessControlController extends BasePathController implements AccessControlApi {
 
     private static Logger logger = LoggerFactory.getLogger(AccessControlController.class);
 
@@ -79,7 +79,7 @@ public class AccessControlController extends BasePathController implements Acces
 
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('creator')")
-    public ResponseEntity<OrganizationalUnitOverviewType> addOrganizationalUnit(
+    public ResponseEntity<Void> addOrganizationalUnit(
         @RequestBody OrganizationalUnitInputType organizationalUnitData) {
         logger.info("Received request to insert new organizationalUnit with associated Roles");
 
@@ -109,9 +109,9 @@ public class AccessControlController extends BasePathController implements Acces
     }
 
     @PreAuthorize("hasRequiredPermissionLevel('creator')")
-    @Override public ResponseEntity updateOrganizationalUnit(@RequestBody OrganizationalUnitInputType inputData,
-                                                             @PathVariable("organizationalUnitId")
-                                                                 String organizationalUnitId) {
+    @Override public ResponseEntity<Void> updateOrganizationalUnit(
+            @PathVariable("organizationalUnitId") String organizationalUnitId,
+            @RequestBody OrganizationalUnitInputType inputData) {
         logger.info("Received request to update new organizationalUnit with associated Roles");
         String accept = request.getHeader("Accept");
 
