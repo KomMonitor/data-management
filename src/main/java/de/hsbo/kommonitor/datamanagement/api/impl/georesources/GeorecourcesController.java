@@ -1,13 +1,18 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
-import java.math.BigDecimal;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.Principal;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.api.legacy.GeoresourcesApi;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourceOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourcePATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourcePOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourcePUTInputType;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +26,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import de.hsbo.kommonitor.datamanagement.api.GeoresourcesApi;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
-import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
-import io.swagger.annotations.ApiParam;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class GeorecourcesController extends BasePathController implements GeoresourcesApi {
@@ -125,8 +121,8 @@ public class GeorecourcesController extends BasePathController implements Geores
 
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
 	public ResponseEntity<ResponseEntity> deleteSingleGeoresourceFeatureById(
-			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
-			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
+			@PathVariable("georesourceId") String georesourceId,
+			@PathVariable("featureId") String featureId,
 			Principal principal) {
 		logger.info(
 				"Received request to delete single georesource feature databse records for datasetId '{}' and featureId '{}'",
@@ -155,9 +151,9 @@ public class GeorecourcesController extends BasePathController implements Geores
 
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
 	public ResponseEntity<ResponseEntity> deleteSingleGeoresourceFeatureRecordById(
-			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
-			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "the unique database record identifier of the geo-resource dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
+			@PathVariable("georesourceId") String georesourceId,
+			@PathVariable("featureId") String featureId,
+			@PathVariable("featureRecordId") String featureRecordId,
 			Principal principal) {
 		logger.info(
 				"Received request to delete single georesource feature databse record for datasetId '{}' and featureId '{}' and recordId '{}'",
@@ -401,7 +397,7 @@ public class GeorecourcesController extends BasePathController implements Geores
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
 	public ResponseEntity<byte[]> getAllGeoresourceFeaturesByIdWithoutGeometry(
-			@ApiParam(value = "georesourceId", required = true) @PathVariable("georesourceId") String georesourceId,
+			@PathVariable("georesourceId") String georesourceId,
 			Principal principal) {
 		logger.info("Received request to get all georesource features for datasetId '{}' without geometry",
 				georesourceId);
@@ -429,9 +425,9 @@ public class GeorecourcesController extends BasePathController implements Geores
 
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
 	public ResponseEntity<byte[]> getSingleGeoresourceFeatureById(
-			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
-			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
+			@PathVariable("georesourceId") String georesourceId,
+			@PathVariable("featureId") String featureId,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
 			Principal principal) {
 		logger.info(
 				"Received request to get public single georesource feature records for datasetId '{}' and featureId '{}'",
@@ -460,10 +456,10 @@ public class GeorecourcesController extends BasePathController implements Geores
 
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
 	public ResponseEntity<byte[]> getSingleGeoresourceFeatureRecordById(
-			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
-			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "the unique database record identifier of the geo-resource dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
-			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
+			@PathVariable("georesourceId") String georesourceId,
+			@PathVariable("featureId") String featureId,
+			@PathVariable("featureRecordId") String featureRecordId,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
 			Principal principal) {
 		logger.info(
 				"Received request to get public single georesource feature record for datasetId '{}' and featureId '{}' and recordId '{}'",
@@ -494,10 +490,10 @@ public class GeorecourcesController extends BasePathController implements Geores
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
 	public ResponseEntity<byte[]> getGeoresourceByIdAndYearAndMonthWithoutGeometry(
-			@ApiParam(value = "day", required = true, example = "0") @PathVariable("day") BigDecimal day,
-			@ApiParam(value = "georesourceId", required = true) @PathVariable("georesourceId") String georesourceId,
-			@ApiParam(value = "month", required = true, example = "0") @PathVariable("month") BigDecimal month,
-			@ApiParam(value = "year", required = true, example = "0") @PathVariable("year") BigDecimal year,
+			@PathVariable("day") BigDecimal day,
+			@PathVariable("georesourceId") String georesourceId,
+			@PathVariable("month") BigDecimal month,
+			@PathVariable("year") BigDecimal year,
 			Principal principal) {
 		logger.info("Received request to get georesource features for datasetId '{}' without geometry", georesourceId);
 		String accept = request.getHeader("Accept");
@@ -597,10 +593,10 @@ public class GeorecourcesController extends BasePathController implements Geores
 
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
 	public ResponseEntity<ResponseEntity> updateGeoresourceFeatureRecordAsBody(
-			@ApiParam(value = "georesource feature record data", required = true) @RequestBody String georesourceFeatureRecordData,
-			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
-			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "the unique database record identifier of the geo-resource dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
+			@RequestBody String georesourceFeatureRecordData,
+			@PathVariable("georesourceId") String georesourceId,
+			@PathVariable("featureId") String featureId,
+			@PathVariable("featureRecordId") String featureRecordId,
 			Principal principal) {
 		logger.info(
 				"Received request to update single georesource feature database record for datasetId '{}' and featureId '{}' and recordId '{}'",

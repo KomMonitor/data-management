@@ -3,8 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.legacy.GeoresourcesPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourceOverviewType;
-import io.swagger.annotations.ApiParam;
+import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourceOverviewType;
 
 @Controller
 public class GeorecourcesPublicController extends BasePathPublicController implements GeoresourcesPublicApi {
@@ -137,7 +135,7 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
 	}
 
 	public ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesByIdWithoutGeometry(
-			@ApiParam(value = "georesourceId", required = true) @PathVariable("georesourceId") String georesourceId) {
+			@PathVariable("georesourceId") String georesourceId) {
 		logger.info("Received request to get all public georesource features for datasetId '{}' without geometry",
 				georesourceId);
 
@@ -152,10 +150,10 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
 	}
 
 	public ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonthWithoutGeometry(
-			@ApiParam(value = "day", required = true) @PathVariable("day") BigDecimal day,
-			@ApiParam(value = "georesourceId", required = true) @PathVariable("georesourceId") String georesourceId,
-			@ApiParam(value = "month", required = true) @PathVariable("month") BigDecimal month,
-			@ApiParam(value = "year", required = true) @PathVariable("year") BigDecimal year) {
+			@PathVariable("day") BigDecimal day,
+			@PathVariable("georesourceId") String georesourceId,
+			@PathVariable("month") BigDecimal month,
+			@PathVariable("year") BigDecimal year) {
 		logger.info("Received request to get public georesource features for datasetId '{}' without geometry",
 				georesourceId);
 
@@ -172,9 +170,9 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
 	}
 
 	public ResponseEntity<byte[]> getPublicSingleGeoresourceFeatureById(
-			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
-			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
+			@PathVariable("georesourceId") String georesourceId,
+			@PathVariable("featureId") String featureId,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
 		logger.info(
 				"Received request to get public single georesource feature records for datasetId '{}' and featureId '{}'",
 				georesourceId, featureId);
@@ -191,10 +189,10 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
 	}
 
 	public ResponseEntity<byte[]> getPublicSingleGeoresourceFeatureRecordById(
-			@ApiParam(value = "the identifier of the geo-resource dataset", required = true) @PathVariable("georesourceId") String georesourceId,
-			@ApiParam(value = "the identifier of the geo-resource dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "the unique database record identifier of the geo-resource dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
-			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
+			@PathVariable("georesourceId") String georesourceId,
+			@PathVariable("featureId") String featureId,
+			@PathVariable("featureRecordId") String featureRecordId,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
 		logger.info(
 				"Received request to get public single georesource feature record for datasetId '{}' and featureId '{}' and recordId '{}'",
 				georesourceId, featureId, featureRecordId);
