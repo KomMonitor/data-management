@@ -8,7 +8,6 @@ package de.hsbo.kommonitor.datamanagement.api;
 import de.hsbo.kommonitor.datamanagement.model.ProcessScriptOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.ProcessScriptPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.ProcessScriptPUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.ResponseEntity;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-08T08:21:13.039713800+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-11T11:55:07.239425100+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "process-scripts", description = "the ProcessScripts API")
 public interface ProcessScriptsApi {
@@ -101,9 +100,7 @@ public interface ProcessScriptsApi {
         description = "Delete the process script associated to the specified indicator",
         tags = { "process-scripts" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
@@ -114,11 +111,10 @@ public interface ProcessScriptsApi {
     )
     @RequestMapping(
         method = RequestMethod.DELETE,
-        value = "/process-scripts/usingIndicatorId/{indicatorId}",
-        produces = { "*/*" }
+        value = "/process-scripts/usingIndicatorId/{indicatorId}"
     )
     
-    ResponseEntity<ResponseEntity> deleteProcessScript(
+    ResponseEntity<Void> deleteProcessScript(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId
     );
 
@@ -139,9 +135,7 @@ public interface ProcessScriptsApi {
         description = "Delete the process script associated to the specified scriptId",
         tags = { "process-scripts" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
@@ -152,11 +146,10 @@ public interface ProcessScriptsApi {
     )
     @RequestMapping(
         method = RequestMethod.DELETE,
-        value = "/process-scripts/{scriptId}",
-        produces = { "*/*" }
+        value = "/process-scripts/{scriptId}"
     )
     
-    ResponseEntity<ResponseEntity> deleteProcessScriptByScriptId(
+    ResponseEntity<Void> deleteProcessScriptByScriptId(
         @Parameter(name = "scriptId", description = "unique identifier of the selected script", required = true, in = ParameterIn.PATH) @PathVariable("scriptId") String scriptId
     );
 
@@ -166,7 +159,6 @@ public interface ProcessScriptsApi {
      * retrieve the process script code associated to a certain indicator as JavaScript file
      *
      * @param scriptId unique identifier of the selected script (required)
-     * @param name  (optional)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -198,8 +190,7 @@ public interface ProcessScriptsApi {
     )
     
     ResponseEntity<byte[]> getProcessScriptCode(
-        @Parameter(name = "scriptId", description = "unique identifier of the selected script", required = true, in = ParameterIn.PATH) @PathVariable("scriptId") String scriptId,
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name
+        @Parameter(name = "scriptId", description = "unique identifier of the selected script", required = true, in = ParameterIn.PATH) @PathVariable("scriptId") String scriptId
     );
 
 
@@ -208,7 +199,6 @@ public interface ProcessScriptsApi {
      * retrieve the process script code associated to a certain indicator as JavaScript file
      *
      * @param indicatorId unique identifier of the selected indicator dataset (required)
-     * @param name  (optional)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -240,8 +230,7 @@ public interface ProcessScriptsApi {
     )
     
     ResponseEntity<byte[]> getProcessScriptCodeForIndicator(
-        @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name
+        @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId
     );
 
 
@@ -250,7 +239,6 @@ public interface ProcessScriptsApi {
      * retrieve information about the associated process script for a certain indicator
      *
      * @param indicatorId unique identifier of the selected indicator dataset (required)
-     * @param name  (optional)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -282,8 +270,7 @@ public interface ProcessScriptsApi {
     )
     
     ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(
-        @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name
+        @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId
     );
 
 
@@ -292,7 +279,6 @@ public interface ProcessScriptsApi {
      * retrieve information about the associated process script for a certain scriptId
      *
      * @param scriptId unique identifier of the selected script (required)
-     * @param name  (optional)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -324,8 +310,7 @@ public interface ProcessScriptsApi {
     )
     
     ResponseEntity<ProcessScriptOverviewType> getProcessScriptForScriptId(
-        @Parameter(name = "scriptId", description = "unique identifier of the selected script", required = true, in = ParameterIn.PATH) @PathVariable("scriptId") String scriptId,
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name
+        @Parameter(name = "scriptId", description = "unique identifier of the selected script", required = true, in = ParameterIn.PATH) @PathVariable("scriptId") String scriptId
     );
 
 
@@ -372,7 +357,6 @@ public interface ProcessScriptsApi {
      * GET /process-scripts : retrieve information about available process scripts
      * retrieve information about available process scripts
      *
-     * @param name  (optional)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -386,7 +370,7 @@ public interface ProcessScriptsApi {
         tags = { "process-scripts" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ProcessScriptOverviewType.class))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ProcessScriptOverviewType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -403,8 +387,8 @@ public interface ProcessScriptsApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<ProcessScriptOverviewType> getProcessScripts(
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name
+    ResponseEntity<List<ProcessScriptOverviewType>> getProcessScripts(
+        
     );
 
 
@@ -427,9 +411,7 @@ public interface ProcessScriptsApi {
         description = "Modify/Update an existing process script associated to a certain indicator",
         tags = { "process-scripts" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "201", description = "Created"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -443,11 +425,10 @@ public interface ProcessScriptsApi {
     @RequestMapping(
         method = RequestMethod.PUT,
         value = "/process-scripts/usingIndicatorId/{indicatorId}",
-        produces = { "*/*" },
         consumes = { "application/json" }
     )
     
-    ResponseEntity<ResponseEntity> updateProcessScriptAsBody(
+    ResponseEntity<Void> updateProcessScriptAsBody(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "processScriptData", description = "details necessary to modify the process script", required = true) @Valid @RequestBody ProcessScriptPUTInputType processScriptData
     );
@@ -472,9 +453,7 @@ public interface ProcessScriptsApi {
         description = "Modify/Update an existing process script associated to a certain scriptId",
         tags = { "process-scripts" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "201", description = "Created"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -488,11 +467,10 @@ public interface ProcessScriptsApi {
     @RequestMapping(
         method = RequestMethod.PUT,
         value = "/process-scripts/{scriptId}",
-        produces = { "*/*" },
         consumes = { "application/json" }
     )
     
-    ResponseEntity<ResponseEntity> updateProcessScriptAsBodyByScriptId(
+    ResponseEntity<Void> updateProcessScriptAsBodyByScriptId(
         @Parameter(name = "scriptId", description = "unique identifier of the selected script", required = true, in = ParameterIn.PATH) @PathVariable("scriptId") String scriptId,
         @Parameter(name = "processScriptData", description = "details necessary to modify the process script", required = true) @Valid @RequestBody ProcessScriptPUTInputType processScriptData
     );

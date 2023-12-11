@@ -32,50 +32,10 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-08T08:21:13.039713800+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-11T11:55:07.239425100+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "process-scripts-public", description = "the ProcessScripts API")
 public interface ProcessScriptsPublicApi {
-
-    /**
-     * GET /public/process-scripts/{scriptId}/scriptCode : retrieve the process script code associated to a certain public indicator as JavaScript file
-     * retrieve the process script code associated to a certain public indicator as JavaScript file
-     *
-     * @param scriptId unique identifier of the selected script (required)
-     * @return OK (status code 200)
-     *         or Invalid status value (status code 400)
-     *         or API key is missing or invalid (status code 401)
-     *         or Forbidden (status code 403)
-     *         or Not Found (status code 404)
-     */
-    @Operation(
-        operationId = "getProcessScriptCode1",
-        summary = "retrieve the process script code associated to a certain public indicator as JavaScript file",
-        description = "retrieve the process script code associated to a certain public indicator as JavaScript file",
-        tags = { "process-scripts-public" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/javascript", schema = @Schema(implementation = byte[].class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Invalid status value"),
-            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "Not Found")
-        },
-        security = {
-            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/public/process-scripts/{scriptId}/scriptCode",
-        produces = { "application/javascript" }
-    )
-    
-    ResponseEntity<byte[]> getProcessScriptCode1(
-        @Parameter(name = "scriptId", description = "unique identifier of the selected script", required = true, in = ParameterIn.PATH) @PathVariable("scriptId") String scriptId
-    );
-
 
     /**
      * GET /public/process-scripts/usingIndicatorId/{indicatorId}/scriptCode : retrieve the process script code associated to a certain public indicator as JavaScript file
@@ -89,7 +49,7 @@ public interface ProcessScriptsPublicApi {
      *         or Not Found (status code 404)
      */
     @Operation(
-        operationId = "getProcessScriptCodeForIndicator1",
+        operationId = "getProcessScriptCodeForPublicIndicator",
         summary = "retrieve the process script code associated to a certain public indicator as JavaScript file",
         description = "retrieve the process script code associated to a certain public indicator as JavaScript file",
         tags = { "process-scripts-public" },
@@ -112,7 +72,7 @@ public interface ProcessScriptsPublicApi {
         produces = { "application/javascript" }
     )
     
-    ResponseEntity<byte[]> getProcessScriptCodeForIndicator1(
+    ResponseEntity<byte[]> getProcessScriptCodeForPublicIndicator(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId
     );
 
@@ -129,7 +89,7 @@ public interface ProcessScriptsPublicApi {
      *         or Not Found (status code 404)
      */
     @Operation(
-        operationId = "getProcessScriptForIndicator1",
+        operationId = "getProcessScriptForPublicIndicator",
         summary = "retrieve information about the associated process script for a certain public indicator",
         description = "retrieve information about the associated process script for a certain indicator",
         tags = { "process-scripts-public" },
@@ -152,8 +112,48 @@ public interface ProcessScriptsPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator1(
+    ResponseEntity<ProcessScriptOverviewType> getProcessScriptForPublicIndicator(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected public indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId
+    );
+
+
+    /**
+     * GET /public/process-scripts/{scriptId}/scriptCode : retrieve the process script code associated to a certain public indicator as JavaScript file
+     * retrieve the process script code associated to a certain public indicator as JavaScript file
+     *
+     * @param scriptId unique identifier of the selected script (required)
+     * @return OK (status code 200)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "getPublicProcessScriptCode",
+        summary = "retrieve the process script code associated to a certain public indicator as JavaScript file",
+        description = "retrieve the process script code associated to a certain public indicator as JavaScript file",
+        tags = { "process-scripts-public" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/javascript", schema = @Schema(implementation = byte[].class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/public/process-scripts/{scriptId}/scriptCode",
+        produces = { "application/javascript" }
+    )
+    
+    ResponseEntity<byte[]> getPublicProcessScriptCode(
+        @Parameter(name = "scriptId", description = "unique identifier of the selected script", required = true, in = ParameterIn.PATH) @PathVariable("scriptId") String scriptId
     );
 
 
@@ -169,7 +169,7 @@ public interface ProcessScriptsPublicApi {
      *         or Not Found (status code 404)
      */
     @Operation(
-        operationId = "getProcessScriptForScriptId1",
+        operationId = "getPublicProcessScriptForScriptId",
         summary = "retrieve information about the associated process script for a certain scriptId associated to a public indicator",
         description = "retrieve information about the associated process script for a certain scriptId associated to a public indicator",
         tags = { "process-scripts-public" },
@@ -192,7 +192,7 @@ public interface ProcessScriptsPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<ProcessScriptOverviewType> getProcessScriptForScriptId1(
+    ResponseEntity<ProcessScriptOverviewType> getPublicProcessScriptForScriptId(
         @Parameter(name = "scriptId", description = "unique identifier of the selected script", required = true, in = ParameterIn.PATH) @PathVariable("scriptId") String scriptId
     );
 
@@ -208,13 +208,13 @@ public interface ProcessScriptsPublicApi {
      *         or Not Found (status code 404)
      */
     @Operation(
-        operationId = "getProcessScripts1",
+        operationId = "getPublicProcessScripts",
         summary = "retrieve information about available process scripts associated to public indicators",
         description = "retrieve information about available process scripts associated to public indicators",
         tags = { "process-scripts-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ProcessScriptOverviewType.class))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ProcessScriptOverviewType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -231,7 +231,7 @@ public interface ProcessScriptsPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<ProcessScriptOverviewType> getProcessScripts1(
+    ResponseEntity<List<ProcessScriptOverviewType>> getPublicProcessScripts(
         
     );
 

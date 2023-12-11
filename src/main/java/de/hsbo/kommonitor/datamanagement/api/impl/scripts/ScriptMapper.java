@@ -7,8 +7,8 @@ import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
-import de.hsbo.kommonitor.datamanagement.model.legacy.scripts.ProcessInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.scripts.ProcessScriptOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.ProcessInputType;
+import de.hsbo.kommonitor.datamanagement.model.ProcessScriptOverviewType;
 
 public class ScriptMapper {
 

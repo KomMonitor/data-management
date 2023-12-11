@@ -5,10 +5,9 @@ import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +22,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.legacy.ProcessScriptsApi;
+import de.hsbo.kommonitor.datamanagement.api.ProcessScriptsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.legacy.scripts.ProcessScriptOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.scripts.ProcessScriptPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.scripts.ProcessScriptPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.ProcessScriptOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.ProcessScriptPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.ProcessScriptPUTInputType;
 
 @Controller
 public class ScriptController extends BasePathController implements ProcessScriptsApi {
@@ -130,11 +129,11 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
-	public ResponseEntity<List<ProcessScriptOverviewType>> getProcessScripts(Principal principal) {
+	public ResponseEntity<List<ProcessScriptOverviewType>> getProcessScripts() {
 		logger.info("Received request to get all process script metadata");
 		String accept = request.getHeader("Accept");
 
-		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
 		if (accept != null && accept.contains("application/json")){
 			
@@ -149,11 +148,11 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
-	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(@PathVariable("indicatorId") String indicatorId, Principal principal) {
+	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(@PathVariable("indicatorId") String indicatorId) {
 		logger.info("Received request to get process script metadata for indicatorId '{}'", indicatorId);
 		String accept = request.getHeader("Accept");
 
-		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
 		if (accept != null && accept.contains("application/json")) {
 
@@ -208,10 +207,10 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
-	public ResponseEntity<byte[]> getProcessScriptCodeForIndicator(@PathVariable("indicatorId") String indicatorId, Principal principal) {
+	public ResponseEntity<byte[]> getProcessScriptCodeForIndicator(@PathVariable("indicatorId") String indicatorId) {
 		logger.info("Received request to get scriptCode for associated indicatorId '{}'", indicatorId);
 
-		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
 		try {
 			byte[] scriptCode = scriptManager.getScriptCodeForIndicatorId(indicatorId, provider);
@@ -258,10 +257,10 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
-	public ResponseEntity<byte[]> getProcessScriptCode(@PathVariable("scriptId") String scriptId, Principal principal) {
+	public ResponseEntity<byte[]> getProcessScriptCode(@PathVariable("scriptId") String scriptId) {
 		logger.info("Received request to get scriptCode for scriptId '{}'", scriptId);
 
-		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
 		try {
 			byte[] scriptCode = scriptManager.getScriptCodeForScriptId(scriptId, provider);
@@ -282,11 +281,11 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
-	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForScriptId(@PathVariable("scriptId") String scriptId, Principal principal) {
+	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForScriptId(@PathVariable("scriptId") String scriptId) {
 		logger.info("Received request to get process script metadata for scriptId '{}'", scriptId);
 		String accept = request.getHeader("Accept");
 
-		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
 		if (accept != null && accept.contains("application/json")) {
 

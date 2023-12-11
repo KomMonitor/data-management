@@ -7,7 +7,7 @@ import javax.persistence.Id;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import de.hsbo.kommonitor.datamanagement.model.legacy.scripts.ProcessInputType.DataTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.ProcessInputType.DataTypeEnum;
 
 @Entity(name = "ScriptInputParameters")
 public class ScriptInputParameterEntity {
