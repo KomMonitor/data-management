@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import de.hsbo.kommonitor.datamanagement.model.ColorType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import jakarta.annotation.Generated;
  * GeoresourcePATCHInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-06T15:24:58.815569400+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-11T11:40:25.959811900+01:00[Europe/Berlin]")
 public class GeoresourcePATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -51,113 +52,11 @@ public class GeoresourcePATCHInputType implements Serializable {
 
   private CommonMetadataType metadata;
 
-  /**
-   * If georesource is a POI then custom POI marker color can be set by specifying one of the following color names
-   */
-  public enum PoiMarkerColorEnum {
-    WHITE("white"),
-    
-    RED("red"),
-    
-    ORANGE("orange"),
-    
-    BEIGE("beige"),
-    
-    GREEN("green"),
-    
-    BLUE("blue"),
-    
-    PURPLE("purple"),
-    
-    PINK("pink"),
-    
-    GRAY("gray"),
-    
-    BLACK("black");
-
-    private String value;
-
-    PoiMarkerColorEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static PoiMarkerColorEnum fromValue(String value) {
-      for (PoiMarkerColorEnum b : PoiMarkerColorEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
-  private PoiMarkerColorEnum poiMarkerColor;
+  private ColorType poiMarkerColor;
 
   private String poiSymbolBootstrap3Name;
 
-  /**
-   * If georesource is a POI then custom POI symbol color can be set by specifying one of the following color names
-   */
-  public enum PoiSymbolColorEnum {
-    WHITE("white"),
-    
-    RED("red"),
-    
-    ORANGE("orange"),
-    
-    BEIGE("beige"),
-    
-    GREEN("green"),
-    
-    BLUE("blue"),
-    
-    PURPLE("purple"),
-    
-    PINK("pink"),
-    
-    GRAY("gray"),
-    
-    BLACK("black");
-
-    private String value;
-
-    PoiSymbolColorEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static PoiSymbolColorEnum fromValue(String value) {
-      for (PoiSymbolColorEnum b : PoiSymbolColorEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
-  private PoiSymbolColorEnum poiSymbolColor;
+  private ColorType poiSymbolColor;
 
   private String topicReference;
 
@@ -380,23 +279,23 @@ public class GeoresourcePATCHInputType implements Serializable {
     this.metadata = metadata;
   }
 
-  public GeoresourcePATCHInputType poiMarkerColor(PoiMarkerColorEnum poiMarkerColor) {
+  public GeoresourcePATCHInputType poiMarkerColor(ColorType poiMarkerColor) {
     this.poiMarkerColor = poiMarkerColor;
     return this;
   }
 
   /**
-   * If georesource is a POI then custom POI marker color can be set by specifying one of the following color names
+   * Get poiMarkerColor
    * @return poiMarkerColor
   */
-  
-  @Schema(name = "poiMarkerColor", description = "If georesource is a POI then custom POI marker color can be set by specifying one of the following color names", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Valid 
+  @Schema(name = "poiMarkerColor", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiMarkerColor")
-  public PoiMarkerColorEnum getPoiMarkerColor() {
+  public ColorType getPoiMarkerColor() {
     return poiMarkerColor;
   }
 
-  public void setPoiMarkerColor(PoiMarkerColorEnum poiMarkerColor) {
+  public void setPoiMarkerColor(ColorType poiMarkerColor) {
     this.poiMarkerColor = poiMarkerColor;
   }
 
@@ -420,23 +319,23 @@ public class GeoresourcePATCHInputType implements Serializable {
     this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
   }
 
-  public GeoresourcePATCHInputType poiSymbolColor(PoiSymbolColorEnum poiSymbolColor) {
+  public GeoresourcePATCHInputType poiSymbolColor(ColorType poiSymbolColor) {
     this.poiSymbolColor = poiSymbolColor;
     return this;
   }
 
   /**
-   * If georesource is a POI then custom POI symbol color can be set by specifying one of the following color names
+   * Get poiSymbolColor
    * @return poiSymbolColor
   */
-  
-  @Schema(name = "poiSymbolColor", description = "If georesource is a POI then custom POI symbol color can be set by specifying one of the following color names", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Valid 
+  @Schema(name = "poiSymbolColor", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiSymbolColor")
-  public PoiSymbolColorEnum getPoiSymbolColor() {
+  public ColorType getPoiSymbolColor() {
     return poiSymbolColor;
   }
 
-  public void setPoiSymbolColor(PoiSymbolColorEnum poiSymbolColor) {
+  public void setPoiSymbolColor(ColorType poiSymbolColor) {
     this.poiSymbolColor = poiSymbolColor;
   }
 

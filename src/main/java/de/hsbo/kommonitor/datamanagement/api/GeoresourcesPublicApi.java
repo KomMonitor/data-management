@@ -33,10 +33,10 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-08T08:21:13.039713800+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-11T11:55:07.239425100+01:00[Europe/Berlin]")
 @Validated
-@Tag(name = "georecources-public", description = "the public Georesources API")
-public interface GeorecourcesPublicApi {
+@Tag(name = "georesources-public", description = "the public Georesources API")
+public interface GeoresourcesPublicApi {
 
     /**
      * GET /public/georesources/{georesourceId}/allFeatures : retrieve all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)
@@ -54,10 +54,10 @@ public interface GeorecourcesPublicApi {
         operationId = "getAllPublicGeoresourceFeaturesById",
         summary = "retrieve all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)",
         description = "retrieve all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)",
-        tags = { "georecources-public" },
+        tags = { "georesources-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = byte[].class))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -74,7 +74,7 @@ public interface GeorecourcesPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<String> getAllPublicGeoresourceFeaturesById(
+    ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesById(
         @Parameter(name = "georesourceId", description = "the identifier of the public geo-resource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
         @Parameter(name = "simplifyGeometries", description = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.\"", in = ParameterIn.QUERY) @Valid @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries
     );
@@ -95,10 +95,10 @@ public interface GeorecourcesPublicApi {
         operationId = "getAllPublicGeoresourceFeaturesByIdWithoutGeometry",
         summary = "retrieve only the properties without geometry of all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)",
         description = "retrieve only the properties without geometry of all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)",
-        tags = { "georecources-public" },
+        tags = { "georesources-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = byte[].class))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -115,7 +115,7 @@ public interface GeorecourcesPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<String> getAllPublicGeoresourceFeaturesByIdWithoutGeometry(
+    ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesByIdWithoutGeometry(
         @Parameter(name = "georesourceId", description = "georesourceId", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId
     );
 
@@ -135,7 +135,7 @@ public interface GeorecourcesPublicApi {
         operationId = "getPublicGeoresourceById",
         summary = "retrieve information about available features of the selected public geo-resource dataset",
         description = "retrieve information about available features of the selected public geo-resource dataset",
-        tags = { "georecources-public" },
+        tags = { "georesources-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = GeoresourceOverviewType.class))
@@ -164,10 +164,10 @@ public interface GeorecourcesPublicApi {
      * GET /public/georesources/{georesourceId}/{year}/{month}/{day} : retrieve the features according to the selected public geo-resource dataset and selected year and month as GeoJSON
      * retrieve the features according to the selected public geo-resource dataset and selected year and month as GeoJSON
      *
-     * @param day day for which datasets shall be queried (required)
      * @param georesourceId identifier of the public geo-resource dataset (required)
-     * @param month month for which datasets shall be queried (required)
      * @param year year for which datasets shall be queried (required)
+     * @param month month for which datasets shall be queried (required)
+     * @param day day for which datasets shall be queried (required)
      * @param simplifyGeometries Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from &#39;weak&#39; to &#39;strong&#39;, while &#39;original&#39; will return original feature geometries without any simplification. (optional, default to original)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
@@ -179,7 +179,7 @@ public interface GeorecourcesPublicApi {
         operationId = "getPublicGeoresourceByIdAndYearAndMonth",
         summary = "retrieve the features according to the selected public geo-resource dataset and selected year and month as GeoJSON",
         description = "retrieve the features according to the selected public geo-resource dataset and selected year and month as GeoJSON",
-        tags = { "georecources-public" },
+        tags = { "georesources-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
                 @Content(mediaType = "application/octed-stream", schema = @Schema(implementation = byte[].class))
@@ -200,10 +200,10 @@ public interface GeorecourcesPublicApi {
     )
     
     ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonth(
-        @Parameter(name = "day", description = "day for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day,
         @Parameter(name = "georesourceId", description = "identifier of the public geo-resource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
-        @Parameter(name = "month", description = "month for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
         @Parameter(name = "year", description = "year for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year,
+        @Parameter(name = "month", description = "month for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
+        @Parameter(name = "day", description = "day for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day,
         @Parameter(name = "simplifyGeometries", description = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries
     );
 
@@ -212,10 +212,10 @@ public interface GeorecourcesPublicApi {
      * GET /public/georesources/{georesourceId}/{year}/{month}/{day}/without-geometry : retrieve only the properties without geometry of the features according to the selected public geo-resource dataset and selected year and month as GeoJSON
      * retrieve only the properties without geometry of the features according to the selected public geo-resource dataset and selected year and month as GeoJSON
      *
-     * @param day day (required)
      * @param georesourceId georesourceId (required)
-     * @param month month (required)
      * @param year year (required)
+     * @param month month (required)
+     * @param day day (required)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -226,7 +226,7 @@ public interface GeorecourcesPublicApi {
         operationId = "getPublicGeoresourceByIdAndYearAndMonthWithoutGeometry",
         summary = "retrieve only the properties without geometry of the features according to the selected public geo-resource dataset and selected year and month as GeoJSON",
         description = "retrieve only the properties without geometry of the features according to the selected public geo-resource dataset and selected year and month as GeoJSON",
-        tags = { "georecources-public" },
+        tags = { "georesources-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
                 @Content(mediaType = "application/octed-stream", schema = @Schema(implementation = byte[].class))
@@ -247,10 +247,10 @@ public interface GeorecourcesPublicApi {
     )
     
     ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonthWithoutGeometry(
-        @Parameter(name = "day", description = "day", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day,
         @Parameter(name = "georesourceId", description = "georesourceId", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
+        @Parameter(name = "year", description = "year", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year,
         @Parameter(name = "month", description = "month", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
-        @Parameter(name = "year", description = "year", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year
+        @Parameter(name = "day", description = "day", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day
     );
 
 
@@ -269,7 +269,7 @@ public interface GeorecourcesPublicApi {
         operationId = "getPublicGeoresourceSchemaByLevel",
         summary = "retrieve the JSON schema for the selected public geo-resource dataset",
         description = "retrieve the JSON schema for the selected public geo-resource dataset. The JSON schema indicates the property structure of the dataset.",
-        tags = { "georecources-public" },
+        tags = { "georesources-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
@@ -308,10 +308,10 @@ public interface GeorecourcesPublicApi {
         operationId = "getPublicGeoresources",
         summary = "retrieve information about available features of different public geo-resource datasets",
         description = "retrieve information about available features of different public geo-resource datasets",
-        tags = { "georecources-public" },
+        tags = { "georesources-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = GeoresourceOverviewType.class))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = GeoresourceOverviewType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -328,7 +328,7 @@ public interface GeorecourcesPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<GeoresourceOverviewType> getPublicGeoresources(
+    ResponseEntity<List<GeoresourceOverviewType>> getPublicGeoresources(
         
     );
 
@@ -337,8 +337,8 @@ public interface GeorecourcesPublicApi {
      * GET /public/georesources/{georesourceId}/singleFeature/{featureId} : retrieve single feature database records for all applicable periods of validity for the selected geo-resource dataset (hence might contain the target feature multiple times if it exists for different periods of validity)
      * retrieve single feature database records for all applicable periods of validity for the selected geo-resource dataset (hence might contain the target feature multiple times if it exists for different periods of validity)
      *
-     * @param featureId the identifier of the geo-resource dataset feature (required)
      * @param georesourceId the identifier of the geo-resource dataset (required)
+     * @param featureId the identifier of the geo-resource dataset feature (required)
      * @param simplifyGeometries Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from &#39;weak&#39; to &#39;strong&#39;, while &#39;original&#39; will return original feature geometries without any simplification. (optional, default to original)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
@@ -350,10 +350,10 @@ public interface GeorecourcesPublicApi {
         operationId = "getPublicSingleGeoresourceFeatureById",
         summary = "retrieve single feature database records for all applicable periods of validity for the selected geo-resource dataset (hence might contain the target feature multiple times if it exists for different periods of validity)",
         description = "retrieve single feature database records for all applicable periods of validity for the selected geo-resource dataset (hence might contain the target feature multiple times if it exists for different periods of validity)",
-        tags = { "georecources-public" },
+        tags = { "georesources-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = byte[].class))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -370,9 +370,9 @@ public interface GeorecourcesPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<String> getPublicSingleGeoresourceFeatureById(
-        @Parameter(name = "featureId", description = "the identifier of the geo-resource dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
+    ResponseEntity<byte[]> getPublicSingleGeoresourceFeatureById(
         @Parameter(name = "georesourceId", description = "the identifier of the geo-resource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
+        @Parameter(name = "featureId", description = "the identifier of the geo-resource dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
         @Parameter(name = "simplifyGeometries", description = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries
     );
 
@@ -381,9 +381,9 @@ public interface GeorecourcesPublicApi {
      * GET /public/georesources/{georesourceId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId} : retrieve single feature database record specified by its unique database primary key id
      * retrieve single feature database record specified by its unique database primary key id
      *
+     * @param georesourceId the identifier of the geo-resource dataset (required)
      * @param featureId the identifier of the geo-resource dataset feature (required)
      * @param featureRecordId the unique database record identifier of the geo-resource dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity (required)
-     * @param georesourceId the identifier of the geo-resource dataset (required)
      * @param simplifyGeometries Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from &#39;weak&#39; to &#39;strong&#39;, while &#39;original&#39; will return original feature geometries without any simplification. (optional, default to original)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
@@ -395,10 +395,10 @@ public interface GeorecourcesPublicApi {
         operationId = "getPublicSingleGeoresourceFeatureRecordById",
         summary = "retrieve single feature database record specified by its unique database primary key id",
         description = "retrieve single feature database record specified by its unique database primary key id",
-        tags = { "georecources-public" },
+        tags = { "georesources-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = byte[].class))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -415,10 +415,10 @@ public interface GeorecourcesPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<String> getPublicSingleGeoresourceFeatureRecordById(
+    ResponseEntity<byte[]> getPublicSingleGeoresourceFeatureRecordById(
+        @Parameter(name = "georesourceId", description = "the identifier of the geo-resource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
         @Parameter(name = "featureId", description = "the identifier of the geo-resource dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
         @Parameter(name = "featureRecordId", description = "the unique database record identifier of the geo-resource dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true, in = ParameterIn.PATH) @PathVariable("featureRecordId") String featureRecordId,
-        @Parameter(name = "georesourceId", description = "the identifier of the geo-resource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
         @Parameter(name = "simplifyGeometries", description = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries
     );
 

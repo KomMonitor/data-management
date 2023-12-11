@@ -12,10 +12,7 @@ import javax.persistence.ManyToMany;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
-import de.hsbo.kommonitor.datamanagement.model.legacy.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.PoiMarkerColorEnum;
-import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.PoiSymbolColorEnum;
+import de.hsbo.kommonitor.datamanagement.model.*;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 @Entity(name = "MetadataGeoresources")
@@ -31,9 +28,9 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata implements Rest
 	
 	private String topicReference;
 	
-	private PoiMarkerColorEnum poiMarkerColor;
+	private ColorType poiMarkerColor;
 	
-	private PoiSymbolColorEnum poiSymbolColor;
+	private ColorType poiSymbolColor;
 	
 	private String poiSymbolBootstrap3Name;
 	
@@ -65,11 +62,11 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata implements Rest
 		this.isPOI = isPOI;
 	}
 
-	public PoiMarkerColorEnum getPoiMarkerColor() {
+	public ColorType getPoiMarkerColor() {
 		return poiMarkerColor;
 	}
 
-	public void setPoiMarkerColor(PoiMarkerColorEnum poiMarkerColor) {
+	public void setPoiMarkerColor(ColorType poiMarkerColor) {
 		this.poiMarkerColor = poiMarkerColor;
 	}
 
@@ -81,11 +78,11 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata implements Rest
 		this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
 	}
 
-	public PoiSymbolColorEnum getPoiSymbolColor() {
+	public ColorType getPoiSymbolColor() {
 		return poiSymbolColor;
 	}
 
-	public void setPoiSymbolColor(PoiSymbolColorEnum poiSymbolColor) {
+	public void setPoiSymbolColor(ColorType poiSymbolColor) {
 		this.poiSymbolColor = poiSymbolColor;
 	}
 

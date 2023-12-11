@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.legacy.GeoresourcesPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourceOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
 
 @Controller
 public class GeorecourcesPublicController extends BasePathPublicController implements GeoresourcesPublicApi {
@@ -134,6 +134,7 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
 		}
 	}
 
+	@Override
 	public ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesByIdWithoutGeometry(
 			@PathVariable("georesourceId") String georesourceId) {
 		logger.info("Received request to get all public georesource features for datasetId '{}' without geometry",
@@ -149,11 +150,13 @@ public class GeorecourcesPublicController extends BasePathPublicController imple
 		}
 	}
 
+	@Override
 	public ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonthWithoutGeometry(
-			@PathVariable("day") BigDecimal day,
 			@PathVariable("georesourceId") String georesourceId,
+			@PathVariable("year") BigDecimal year,
 			@PathVariable("month") BigDecimal month,
-			@PathVariable("year") BigDecimal year) {
+			@PathVariable("day") BigDecimal day
+			) {
 		logger.info("Received request to get public georesource features for datasetId '{}' without geometry",
 				georesourceId);
 

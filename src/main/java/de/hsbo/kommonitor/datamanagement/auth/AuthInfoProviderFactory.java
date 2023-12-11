@@ -2,6 +2,7 @@ package de.hsbo.kommonitor.datamanagement.auth;
 
 import org.keycloak.KeycloakPrincipal;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
@@ -22,6 +23,11 @@ public class AuthInfoProviderFactory {
     @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
     private String publicRole;
 
+
+    public AuthInfoProvider createAuthInfoProvider() {
+        Principal principal = (Principal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return createAuthInfoProvider(principal);
+    }
 
     public AuthInfoProvider createAuthInfoProvider(Principal principal) {
         if (principal instanceof KeycloakAuthenticationToken && Principal.class.isAssignableFrom(((KeycloakAuthenticationToken) principal).getPrincipal().getClass())) { //get real principal instance

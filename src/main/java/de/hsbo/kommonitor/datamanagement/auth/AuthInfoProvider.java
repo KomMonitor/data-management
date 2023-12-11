@@ -1,7 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.auth;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 
 import java.lang.reflect.ParameterizedType;
 import java.security.Principal;

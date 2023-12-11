@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import de.hsbo.kommonitor.datamanagement.model.*;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,13 +39,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebSe
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
-import de.hsbo.kommonitor.datamanagement.model.legacy.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourceOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourcePATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourcePOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourcePUTInputType;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 @Transactional
@@ -248,9 +242,9 @@ public class GeoresourcesManager {
 		entity.setLastUpdate(lastUpdate);
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
-		entity.setPOI(featureData.isIsPOI());
-		entity.setLOI(featureData.isIsLOI());
-		entity.setAOI(featureData.isIsAOI());
+		entity.setPOI(featureData.getIsPOI());
+		entity.setLOI(featureData.getIsLOI());
+		entity.setAOI(featureData.getIsAOI());
 		entity.setPoiSymbolBootstrap3Name(featureData.getPoiSymbolBootstrap3Name());
 		entity.setPoiMarkerColor(featureData.getPoiMarkerColor());
 		entity.setPoiSymbolColor(featureData.getPoiSymbolColor());
@@ -775,9 +769,9 @@ public class GeoresourcesManager {
 		entity.setLastUpdate(lastUpdate);
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
-		entity.setPOI(metadata.isIsPOI());
-		entity.setLOI(metadata.isIsLOI());
-		entity.setAOI(metadata.isIsAOI());
+		entity.setPOI(metadata.getIsPOI());
+		entity.setLOI(metadata.getIsLOI());
+		entity.setAOI(metadata.getIsAOI());
 		entity.setPoiSymbolBootstrap3Name(metadata.getPoiSymbolBootstrap3Name());
 		entity.setPoiMarkerColor(metadata.getPoiMarkerColor());
 		entity.setPoiSymbolColor(metadata.getPoiSymbolColor());

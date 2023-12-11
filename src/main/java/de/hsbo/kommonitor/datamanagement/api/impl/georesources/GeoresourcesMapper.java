@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.model.legacy.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourceOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 public class GeoresourcesMapper {
@@ -88,7 +88,11 @@ private static GeoresourcesMetadataRepository georesourceMetadataRepo;
 		
 		AvailablePeriodsOfValidityType availablePeriodsOfValidityType = new AvailablePeriodsOfValidityType();
 		for (PeriodOfValidityEntity_georesources periodOfValidityEntity_georesources : georesourcesPeriodsOfValidityEntities_asOrderedList) {
-			availablePeriodsOfValidityType.add(new PeriodOfValidityType(periodOfValidityEntity_georesources));
+			availablePeriodsOfValidityType.add(
+					new PeriodOfValidityType()
+							.startDate(periodOfValidityEntity_georesources.getStartDate())
+							.endDate(periodOfValidityEntity_georesources.getEndDate())
+			);
 		}
 		
 		

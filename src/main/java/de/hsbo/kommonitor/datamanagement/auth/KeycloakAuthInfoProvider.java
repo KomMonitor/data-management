@@ -2,7 +2,6 @@ package de.hsbo.kommonitor.datamanagement.auth;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 import org.keycloak.KeycloakPrincipal;
 import org.springframework.beans.factory.annotation.Value;
