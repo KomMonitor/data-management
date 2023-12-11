@@ -4,9 +4,9 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +25,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-06T15:24:58.815569400+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-11T11:40:25.959811900+01:00[Europe/Berlin]")
 public class SpatialUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -46,47 +46,8 @@ public class SpatialUnitOverviewType implements Serializable {
 
   private String spatialUnitLevel;
 
-  /**
-   * Gets or Sets userPermissions
-   */
-  public enum UserPermissionsEnum {
-    CREATOR("creator"),
-    
-    PUBLISHER("publisher"),
-    
-    EDITOR("editor"),
-    
-    VIEWER("viewer");
-
-    private String value;
-
-    UserPermissionsEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static UserPermissionsEnum fromValue(String value) {
-      for (UserPermissionsEnum b : UserPermissionsEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
   @Valid
-  private List<UserPermissionsEnum> userPermissions = new ArrayList<>();
+  private List<PermissionLevelType> userPermissions = new ArrayList<>();
 
   private String wfsUrl;
 
@@ -99,7 +60,7 @@ public class SpatialUnitOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public SpatialUnitOverviewType(List<String> allowedRoles, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel, String spatialUnitId, String spatialUnitLevel, List<UserPermissionsEnum> userPermissions, String wfsUrl, String wmsUrl) {
+  public SpatialUnitOverviewType(List<String> allowedRoles, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel, String spatialUnitId, String spatialUnitLevel, List<PermissionLevelType> userPermissions, String wfsUrl, String wmsUrl) {
     this.allowedRoles = allowedRoles;
     this.metadata = metadata;
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
@@ -267,12 +228,12 @@ public class SpatialUnitOverviewType implements Serializable {
     this.spatialUnitLevel = spatialUnitLevel;
   }
 
-  public SpatialUnitOverviewType userPermissions(List<UserPermissionsEnum> userPermissions) {
+  public SpatialUnitOverviewType userPermissions(List<PermissionLevelType> userPermissions) {
     this.userPermissions = userPermissions;
     return this;
   }
 
-  public SpatialUnitOverviewType addUserPermissionsItem(UserPermissionsEnum userPermissionsItem) {
+  public SpatialUnitOverviewType addUserPermissionsItem(PermissionLevelType userPermissionsItem) {
     if (this.userPermissions == null) {
       this.userPermissions = new ArrayList<>();
     }
@@ -284,14 +245,14 @@ public class SpatialUnitOverviewType implements Serializable {
    * list of permissions that are effective on this dataset for the current user
    * @return userPermissions
   */
-  @NotNull 
+  @NotNull @Valid 
   @Schema(name = "userPermissions", description = "list of permissions that are effective on this dataset for the current user", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("userPermissions")
-  public List<UserPermissionsEnum> getUserPermissions() {
+  public List<PermissionLevelType> getUserPermissions() {
     return userPermissions;
   }
 
-  public void setUserPermissions(List<UserPermissionsEnum> userPermissions) {
+  public void setUserPermissions(List<PermissionLevelType> userPermissions) {
     this.userPermissions = userPermissions;
   }
 

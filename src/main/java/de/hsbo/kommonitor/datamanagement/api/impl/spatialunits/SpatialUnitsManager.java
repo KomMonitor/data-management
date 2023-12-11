@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +32,13 @@ import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebSe
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
-import de.hsbo.kommonitor.datamanagement.model.legacy.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
-import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPUTInputType;
 
 @Transactional
 @Repository
@@ -467,7 +467,7 @@ public class SpatialUnitsManager {
 
     public String updateFeatures(SpatialUnitPUTInputType featureData, String spatialUnitId) throws Exception {
         logger.info("Trying to update spatialUnit features for datasetId '{}'", spatialUnitId);
-        logger.info("isPartialUpdate is set to " + featureData.isIsPartialUpdate());
+        logger.info("isPartialUpdate is set to " + featureData.getIsPartialUpdate());
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
             String datasetName = metadataEntity.getDatasetName();

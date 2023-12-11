@@ -3,8 +3,8 @@ package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.legacy.SpatialUnitsPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitOverviewType;
-import io.swagger.annotations.ApiParam;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
 
 @Controller
 public class SpatialUnitsPublicController extends BasePathPublicController implements SpatialUnitsPublicApi {
@@ -149,9 +148,9 @@ public class SpatialUnitsPublicController extends BasePathPublicController imple
     }
     
 	public ResponseEntity<byte[]> getPublicSingleSpatialUnitFeatureById(
-			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
+            @PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
 		logger.info(
 				"Received request to get public single spatial unit feature records for datasetId '{}' and featureId '{}'",
 				spatialUnitId, featureId);
@@ -175,10 +174,10 @@ public class SpatialUnitsPublicController extends BasePathPublicController imple
 	}
 
 	public ResponseEntity<byte[]> getPublicSingleSpatialUnitFeatureRecordById(
-			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
-			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId,
+			@PathVariable("featureRecordId") String featureRecordId,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
 		logger.info(
 				"Received request to get public single georesource feature record for datasetId '{}' and featureId '{}' and recordId '{}'",
 				spatialUnitId, featureId, featureRecordId);

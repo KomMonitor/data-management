@@ -6,7 +6,7 @@
 package de.hsbo.kommonitor.datamanagement.api;
 
 import java.math.BigDecimal;
-import de.hsbo.kommonitor.datamanagement.model.ResponseEntity;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPOSTInputType;
@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-08T08:21:13.039713800+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-11T12:38:28.511541+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "spatial-units", description = "the SpatialUnits API")
 public interface SpatialUnitsApi {
@@ -103,9 +103,7 @@ public interface SpatialUnitsApi {
         description = "Delete all features/contents of the selected spatial-unit dataset",
         tags = { "spatial-units" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
@@ -116,11 +114,10 @@ public interface SpatialUnitsApi {
     )
     @RequestMapping(
         method = RequestMethod.DELETE,
-        value = "/spatial-units/{spatialUnitId}/allFeatures",
-        produces = { "*/*" }
+        value = "/spatial-units/{spatialUnitId}/allFeatures"
     )
     
-    ResponseEntity<ResponseEntity> deleteAllSpatialUnitFeaturesById(
+    ResponseEntity<Void> deleteAllSpatialUnitFeaturesById(
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId
     );
 
@@ -129,8 +126,8 @@ public interface SpatialUnitsApi {
      * DELETE /spatial-units/{spatialUnitId}/singleFeature/{featureId} : Delete all database records for the specified feature of the selected spatial-unit dataset
      * Delete all database records for the specified feature of the selected spatial-unit dataset
      *
-     * @param featureId the identifier of the spatial-unit dataset feature (required)
      * @param spatialUnitId the identifier of the spatial-unit dataset (required)
+     * @param featureId the identifier of the spatial-unit dataset feature (required)
      * @return OK (status code 200)
      *         or No Content (status code 204)
      *         or API key is missing or invalid (status code 401)
@@ -142,12 +139,8 @@ public interface SpatialUnitsApi {
         description = "Delete all database records for the specified feature of the selected spatial-unit dataset",
         tags = { "spatial-units" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
-            @ApiResponse(responseCode = "204", description = "No Content", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
         },
@@ -157,13 +150,12 @@ public interface SpatialUnitsApi {
     )
     @RequestMapping(
         method = RequestMethod.DELETE,
-        value = "/spatial-units/{spatialUnitId}/singleFeature/{featureId}",
-        produces = { "*/*" }
+        value = "/spatial-units/{spatialUnitId}/singleFeature/{featureId}"
     )
     
-    ResponseEntity<ResponseEntity> deleteSingleSpatialUnitFeatureById(
-        @Parameter(name = "featureId", description = "the identifier of the spatial-unit dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
-        @Parameter(name = "spatialUnitId", description = "the identifier of the spatial-unit dataset", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId
+    ResponseEntity<Void> deleteSingleSpatialUnitFeatureById(
+        @Parameter(name = "spatialUnitId", description = "the identifier of the spatial-unit dataset", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
+        @Parameter(name = "featureId", description = "the identifier of the spatial-unit dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId
     );
 
 
@@ -171,9 +163,9 @@ public interface SpatialUnitsApi {
      * DELETE /spatial-units/{spatialUnitId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId} : Delete single feature database record specified by its unique database primary key id for the specified feature of the selected spatial-unit dataset
      * Delete single feature database record specified by its unique database primary key id for the specified feature of the selected spatial-unit dataset
      *
+     * @param spatialUnitId the identifier of the spatial-unit dataset (required)
      * @param featureId the identifier of the spatial-unit dataset feature (required)
      * @param featureRecordId the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity (required)
-     * @param spatialUnitId the identifier of the spatial-unit dataset (required)
      * @return OK (status code 200)
      *         or No Content (status code 204)
      *         or API key is missing or invalid (status code 401)
@@ -185,12 +177,8 @@ public interface SpatialUnitsApi {
         description = "Delete single feature database record specified by its unique database primary key id for the specified feature of the selected spatial-unit dataset",
         tags = { "spatial-units" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
-            @ApiResponse(responseCode = "204", description = "No Content", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
         },
@@ -200,14 +188,13 @@ public interface SpatialUnitsApi {
     )
     @RequestMapping(
         method = RequestMethod.DELETE,
-        value = "/spatial-units/{spatialUnitId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId}",
-        produces = { "*/*" }
+        value = "/spatial-units/{spatialUnitId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId}"
     )
     
-    ResponseEntity<ResponseEntity> deleteSingleSpatialUnitFeatureRecordById(
+    ResponseEntity<Void> deleteSingleSpatialUnitFeatureRecordById(
+        @Parameter(name = "spatialUnitId", description = "the identifier of the spatial-unit dataset", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "featureId", description = "the identifier of the spatial-unit dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
-        @Parameter(name = "featureRecordId", description = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true, in = ParameterIn.PATH) @PathVariable("featureRecordId") String featureRecordId,
-        @Parameter(name = "spatialUnitId", description = "the identifier of the spatial-unit dataset", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId
+        @Parameter(name = "featureRecordId", description = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true, in = ParameterIn.PATH) @PathVariable("featureRecordId") String featureRecordId
     );
 
 
@@ -227,9 +214,7 @@ public interface SpatialUnitsApi {
         description = "Delete the features/contents of the selected spatial-unit",
         tags = { "spatial-units" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
@@ -240,11 +225,10 @@ public interface SpatialUnitsApi {
     )
     @RequestMapping(
         method = RequestMethod.DELETE,
-        value = "/spatial-units/{spatialUnitId}",
-        produces = { "*/*" }
+        value = "/spatial-units/{spatialUnitId}"
     )
     
-    ResponseEntity<ResponseEntity> deleteSpatialUnitById(
+    ResponseEntity<Void> deleteSpatialUnitById(
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId
     );
 
@@ -253,10 +237,10 @@ public interface SpatialUnitsApi {
      * DELETE /spatial-units/{spatialUnitId}/{year}/{month}/{day} : Delete the features/contents of the selected spatial-unit, year and month
      * Delete the features/contents of the selected spatial-unit, year and month
      *
-     * @param day day for which datasets shall be queried (required)
-     * @param month month for which datasets shall be queried (required)
      * @param spatialUnitId the unique identifier of the spatial level (required)
      * @param year year for which datasets shall be queried (required)
+     * @param month month for which datasets shall be queried (required)
+     * @param day day for which datasets shall be queried (required)
      * @return OK (status code 200)
      *         or No Content (status code 204)
      *         or API key is missing or invalid (status code 401)
@@ -286,10 +270,10 @@ public interface SpatialUnitsApi {
     )
     
     ResponseEntity<ResponseEntity> deleteSpatialUnitByIdAndYearAndMonth(
-        @Parameter(name = "day", description = "day for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day,
-        @Parameter(name = "month", description = "month for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
-        @Parameter(name = "year", description = "year for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year
+        @Parameter(name = "year", description = "year for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year,
+        @Parameter(name = "month", description = "month for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
+        @Parameter(name = "day", description = "day for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day
     );
 
 
@@ -298,7 +282,6 @@ public interface SpatialUnitsApi {
      * retrieve all feature entries for all applicable periods of validity for the selected spatial unit/level (hence might contain each feature multiple times if they exist for different periods of validity)
      *
      * @param spatialUnitId the unique identifier of the spatial level (required)
-     * @param name  (optional)
      * @param simplifyGeometries ontrols simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from &#39;weak&#39; to &#39;strong&#39;, while &#39;original&#39; will return original feature geometries without any simplification. (optional, default to original)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
@@ -313,7 +296,7 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = byte[].class))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -330,9 +313,8 @@ public interface SpatialUnitsApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<String> getAllSpatialUnitFeaturesById(
+    ResponseEntity<byte[]> getAllSpatialUnitFeaturesById(
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name,
         @Parameter(name = "simplifyGeometries", description = "ontrols simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries
     );
 
@@ -341,9 +323,8 @@ public interface SpatialUnitsApi {
      * GET /spatial-units/{spatialUnitId}/singleFeature/{featureId} : retrieve single feature database records for all applicable periods of validity for the selected spatial-unit dataset (hence might contain the target feature multiple times if it exists for different periods of validity)
      * retrieve single feature database records for all applicable periods of validity for the selected spatial-unit dataset (hence might contain the target feature multiple times if it exists for different periods of validity)
      *
-     * @param featureId the identifier of the spatial-unit dataset feature (required)
      * @param spatialUnitId the identifier of the spatial-unit dataset (required)
-     * @param name  (optional)
+     * @param featureId the identifier of the spatial-unit dataset feature (required)
      * @param simplifyGeometries Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from &#39;weak&#39; to &#39;strong&#39;, while &#39;original&#39; will return original feature geometries without any simplification. (optional, default to original)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
@@ -358,7 +339,7 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = byte[].class))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -375,10 +356,9 @@ public interface SpatialUnitsApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<String> getSingleSpatialUnitFeatureById(
-        @Parameter(name = "featureId", description = "the identifier of the spatial-unit dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
+    ResponseEntity<byte[]> getSingleSpatialUnitFeatureById(
         @Parameter(name = "spatialUnitId", description = "the identifier of the spatial-unit dataset", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name,
+        @Parameter(name = "featureId", description = "the identifier of the spatial-unit dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
         @Parameter(name = "simplifyGeometries", description = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries
     );
 
@@ -387,10 +367,9 @@ public interface SpatialUnitsApi {
      * GET /spatial-units/{spatialUnitId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId} : retrieve single feature database record specified by its unique database primary key id
      * retrieve single feature database record specified by its unique database primary key id
      *
+     * @param spatialUnitId the identifier of the spatial-unit dataset (required)
      * @param featureId the identifier of the spatial-unit dataset feature (required)
      * @param featureRecordId the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity (required)
-     * @param spatialUnitId the identifier of the spatial-unit dataset (required)
-     * @param name  (optional)
      * @param simplifyGeometries Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from &#39;weak&#39; to &#39;strong&#39;, while &#39;original&#39; will return original feature geometries without any simplification. (optional, default to original)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
@@ -405,7 +384,7 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = byte[].class))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -422,11 +401,10 @@ public interface SpatialUnitsApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<String> getSingleSpatialUnitFeatureRecordById(
+    ResponseEntity<byte[]> getSingleSpatialUnitFeatureRecordById(
+        @Parameter(name = "spatialUnitId", description = "the identifier of the spatial-unit dataset", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "featureId", description = "the identifier of the spatial-unit dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
         @Parameter(name = "featureRecordId", description = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true, in = ParameterIn.PATH) @PathVariable("featureRecordId") String featureRecordId,
-        @Parameter(name = "spatialUnitId", description = "the identifier of the spatial-unit dataset", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name,
         @Parameter(name = "simplifyGeometries", description = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries
     );
 
@@ -435,7 +413,6 @@ public interface SpatialUnitsApi {
      * GET /spatial-units : retrieve information about available features of different spatial units/levels
      * retrieve information about available features of different spatial units/levels
      *
-     * @param name  (optional)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -449,7 +426,7 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitOverviewType.class))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SpatialUnitOverviewType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -466,8 +443,8 @@ public interface SpatialUnitsApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<SpatialUnitOverviewType> getSpatialUnits(
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name
+    ResponseEntity<List<SpatialUnitOverviewType>> getSpatialUnits(
+        
     );
 
 
@@ -476,7 +453,6 @@ public interface SpatialUnitsApi {
      * retrieve information about available features of the selected spatial unit/level
      *
      * @param spatialUnitId the unique identifier of the spatial level (required)
-     * @param name  (optional)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -508,8 +484,7 @@ public interface SpatialUnitsApi {
     )
     
     ResponseEntity<SpatialUnitOverviewType> getSpatialUnitsById(
-        @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name
+        @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId
     );
 
 
@@ -517,11 +492,10 @@ public interface SpatialUnitsApi {
      * GET /spatial-units/{spatialUnitId}/{year}/{month}/{day} : retrieve the features according to the selected spatial unit/level and selected year and month as GeoJSON
      * retrieve the features according to the selected spatial unit/level and selected year and month as GeoJSON
      *
-     * @param day day for which datasets shall be queried (required)
-     * @param month month for which datasets shall be queried (required)
      * @param spatialUnitId the unique identifier of the spatial level (required)
      * @param year year for which datasets shall be queried (required)
-     * @param name  (optional)
+     * @param month month for which datasets shall be queried (required)
+     * @param day day for which datasets shall be queried (required)
      * @param simplifyGeometries Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from &#39;weak&#39; to &#39;strong&#39;, while &#39;original&#39; will return original feature geometries without any simplification. (optional, default to original)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
@@ -554,11 +528,10 @@ public interface SpatialUnitsApi {
     )
     
     ResponseEntity<byte[]> getSpatialUnitsByIdAndYearAndMonth(
-        @Parameter(name = "day", description = "day for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day,
-        @Parameter(name = "month", description = "month for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "year", description = "year for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year,
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name,
+        @Parameter(name = "month", description = "month for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
+        @Parameter(name = "day", description = "day for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day,
         @Parameter(name = "simplifyGeometries", description = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries
     );
 
@@ -568,7 +541,6 @@ public interface SpatialUnitsApi {
      * retrieve information about the permissions for the selected spatial unit dataset
      *
      * @param spatialUnitId identifier of the spatial unit dataset (required)
-     * @param name  (optional)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -582,7 +554,7 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PermissionLevelType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -599,9 +571,8 @@ public interface SpatialUnitsApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<String> getSpatialUnitsPermissionsById(
-        @Parameter(name = "spatialUnitId", description = "identifier of the spatial unit dataset", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name
+    ResponseEntity<List<PermissionLevelType>> getSpatialUnitsPermissionsById(
+        @Parameter(name = "spatialUnitId", description = "identifier of the spatial unit dataset", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId
     );
 
 
@@ -610,7 +581,6 @@ public interface SpatialUnitsApi {
      * retrieve the JSON schema for the selected spatial unit/level. The JSON schema indicates the property structure of the dataset.
      *
      * @param spatialUnitId the unique identifier of the spatial level (required)
-     * @param name  (optional)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -642,8 +612,7 @@ public interface SpatialUnitsApi {
     )
     
     ResponseEntity<String> getSpatialUnitsSchemaById(
-        @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
-        @Parameter(name = "name", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "name", required = false) String name
+        @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId
     );
 
 
@@ -666,9 +635,7 @@ public interface SpatialUnitsApi {
         description = "Modify/Update the features of the selected spatial-unit. The interface expects a full upload of all geometries for the spatial unit. Internally, those geometries are compared to the existing ones to mark 'old' geometries that are no longer in use as outdated. Hence, each geometric object is only persisted once and its use is controlled by time validity marks.",
         tags = { "spatial-units" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "201", description = "Created"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -682,11 +649,10 @@ public interface SpatialUnitsApi {
     @RequestMapping(
         method = RequestMethod.PUT,
         value = "/spatial-units/{spatialUnitId}",
-        produces = { "*/*" },
         consumes = { "application/json" }
     )
     
-    ResponseEntity<ResponseEntity> updateSpatialUnitAsBody(
+    ResponseEntity<Void> updateSpatialUnitAsBody(
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "featureData", description = "feature data", required = true) @Valid @RequestBody SpatialUnitPUTInputType featureData
     );
@@ -696,9 +662,9 @@ public interface SpatialUnitsApi {
      * PUT /spatial-units/{spatialUnitId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId} : Modify/Update the feature record of the selected spatial-unit dataset feature
      * Modify/Update the feature record of the selected spatial-unit dataset feature
      *
+     * @param spatialUnitId the identifier of the spatial-unit dataset (required)
      * @param featureId the identifier of the spatial-unit dataset feature (required)
      * @param featureRecordId the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity (required)
-     * @param spatialUnitId the identifier of the spatial-unit dataset (required)
      * @param spatialUnitFeatureRecordData spatial-unit feature record data (required)
      * @return OK - Updated (status code 200)
      *         or Created (status code 201)
@@ -713,9 +679,7 @@ public interface SpatialUnitsApi {
         description = "Modify/Update the feature record of the selected spatial-unit dataset feature",
         tags = { "spatial-units" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK - Updated", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK - Updated"),
             @ApiResponse(responseCode = "201", description = "Created"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -729,14 +693,13 @@ public interface SpatialUnitsApi {
     @RequestMapping(
         method = RequestMethod.PUT,
         value = "/spatial-units/{spatialUnitId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId}",
-        produces = { "*/*" },
         consumes = { "application/json" }
     )
     
-    ResponseEntity<ResponseEntity> updateSpatialUnitFeatureRecordAsBody(
+    ResponseEntity<Void> updateSpatialUnitFeatureRecordAsBody(
+        @Parameter(name = "spatialUnitId", description = "the identifier of the spatial-unit dataset", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "featureId", description = "the identifier of the spatial-unit dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
         @Parameter(name = "featureRecordId", description = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true, in = ParameterIn.PATH) @PathVariable("featureRecordId") String featureRecordId,
-        @Parameter(name = "spatialUnitId", description = "the identifier of the spatial-unit dataset", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "spatialUnitFeatureRecordData", description = "spatial-unit feature record data", required = true) @Valid @RequestBody String spatialUnitFeatureRecordData
     );
 
@@ -759,9 +722,7 @@ public interface SpatialUnitsApi {
         description = "Modify/Update the metadata of the selected spatial-unit. This replaces the formerly stored metadata.",
         tags = { "spatial-units" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -774,11 +735,10 @@ public interface SpatialUnitsApi {
     @RequestMapping(
         method = RequestMethod.PATCH,
         value = "/spatial-units/{spatialUnitId}",
-        produces = { "*/*" },
         consumes = { "application/json" }
     )
     
-    ResponseEntity<ResponseEntity> updateSpatialUnitMetadataAsBody(
+    ResponseEntity<Void> updateSpatialUnitMetadataAsBody(
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "metadata", description = "metadata input", required = true) @Valid @RequestBody SpatialUnitPATCHInputType metadata
     );

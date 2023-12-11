@@ -6,11 +6,10 @@ import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +25,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.legacy.SpatialUnitsApi;
+import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitPUTInputType;
-import io.swagger.annotations.ApiParam;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPUTInputType;
 
 @Controller
 public class SpatialUnitsController extends BasePathController implements SpatialUnitsApi {
@@ -175,10 +173,11 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
+	@Override
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
-	public ResponseEntity<ResponseEntity> deleteSingleSpatialUnitFeatureById(
-			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId) {
+	public ResponseEntity<Void> deleteSingleSpatialUnitFeatureById(
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId) {
 		logger.info("Received request to delete single spatial unit feature databse records for datasetId '{}' and featureId '{}'", spatialUnitId, featureId);
 
 		String accept = request.getHeader("Accept");
@@ -202,11 +201,12 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	@Override
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
-	public ResponseEntity<ResponseEntity> deleteSingleSpatialUnitFeatureRecordById(
-			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId) {
+	public ResponseEntity<Void> deleteSingleSpatialUnitFeatureRecordById(
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId,
+			@PathVariable("featureRecordId") String featureRecordId) {
 		logger.info("Received request to delete single spatial unit feature databse record for datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
 
 		String accept = request.getHeader("Accept");
@@ -232,11 +232,11 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
-	public ResponseEntity<List<SpatialUnitOverviewType>> getSpatialUnits(Principal principal) {
+	public ResponseEntity<List<SpatialUnitOverviewType>> getSpatialUnits() {
 		logger.info("Received request to get all spatialUnits metadata");
 		String accept = request.getHeader("Accept");
 
-		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
 		/*
 		 * retrieve all available users
 		 * 
@@ -261,10 +261,10 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'viewer')")
-	public ResponseEntity<SpatialUnitOverviewType> getSpatialUnitsById(@PathVariable("spatialUnitId") String spatialUnitId, Principal principal) {
+	public ResponseEntity<SpatialUnitOverviewType> getSpatialUnitsById(@PathVariable("spatialUnitId") String spatialUnitId) {
 		logger.info("Received request to get spatialUnit metadata for datasetId '{}'", spatialUnitId);
 		String accept = request.getHeader("Accept");
-		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
 
 		/*
 		 * retrieve the user for the specified id
@@ -289,11 +289,11 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 	@Override
 	public ResponseEntity<List<PermissionLevelType>> getSpatialUnitsPermissionsById(
-			@PathVariable("spatialUnitId") String spatialUnitId, Principal principal) {
+			@PathVariable("spatialUnitId") String spatialUnitId) {
 		logger.info("Received request to list access rights for spatial unit with datasetId '{}'", spatialUnitId);
 		String accept = request.getHeader("Accept");
 
-		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
 		try {
 			if (accept != null && accept.contains("application/json")) {
@@ -312,11 +312,11 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'viewer')")
 	public ResponseEntity<byte[]> getAllSpatialUnitFeaturesById(@PathVariable("spatialUnitId") String spatialUnitId, 
-			@RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries, Principal principal) {
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries) {
 		logger.info("Received request to get spatialUnit features for datasetId '{}' and simplifyGeometries parameter '{}'", spatialUnitId, simplifyGeometries);
 		String accept = request.getHeader("Accept");
 
-		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
 
 		/*
 		 * retrieve the user for the specified id
@@ -339,17 +339,17 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		}
 	}
 	
+	@Override
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'viewer')")
 	public ResponseEntity<byte[]> getSingleSpatialUnitFeatureById(
-			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
-			Principal principal) {
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
 		logger.info("Received request to get single spatial unit feature records for datasetId '{}' and featureId '{}'",
 				spatialUnitId, featureId);
 		String accept = request.getHeader("Accept");
 
-		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
 
 		try {
 			String geoJsonFeatures = spatialUnitsManager.getSingleSpatialUnitFeatureRecords(spatialUnitId, featureId,
@@ -369,18 +369,18 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		}
 	}
 
+	@Override
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'viewer')")
 	public ResponseEntity<byte[]> getSingleSpatialUnitFeatureRecordById(
-			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
-			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
-			Principal principal) {
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId,
+			@PathVariable("featureRecordId") String featureRecordId,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
 		logger.info(
 				"Received request to get single georesource feature record for datasetId '{}' and featureId '{}' and recordId '{}'",
 				spatialUnitId, featureId, featureRecordId);
 		
-		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
 
 		try {
 			String geoJsonFeatures = spatialUnitsManager.getSingleSpatialUnitFeatureRecord(spatialUnitId, featureId,
@@ -403,11 +403,11 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'viewer')")
 	public ResponseEntity<byte[]> getSpatialUnitsByIdAndYearAndMonth(@PathVariable("spatialUnitId") String spatialUnitId, @PathVariable("year") BigDecimal year,
 			@PathVariable("month") BigDecimal month, @PathVariable("day") BigDecimal day,
-			@RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries, Principal principal) {
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue="original") String simplifyGeometries) {
 		logger.info("Received request to get spatialUnit features for datasetId '{}' and simplifyGeometries parameter '{}'", spatialUnitId, simplifyGeometries);
 		String accept = request.getHeader("Accept");
 
-		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
 
 		/*
 		 * retrieve the user for the specified id
@@ -434,11 +434,11 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'viewer')")
-	public ResponseEntity<String> getSpatialUnitsSchemaById(@PathVariable("spatialUnitId") String spatialUnitId, Principal principal) {
+	public ResponseEntity<String> getSpatialUnitsSchemaById(@PathVariable("spatialUnitId") String spatialUnitId) {
 		logger.info("Received request to get spatialUnit metadata for datasetName '{}'", spatialUnitId);
 		String accept = request.getHeader("Accept");
 
-		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
 
 		/*
 		 * retrieve the user for the specified id
@@ -530,12 +530,13 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		}
 	}
 	
+	@Override
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
-	public ResponseEntity<ResponseEntity> updateSpatialUnitFeatureRecordAsBody(
-			@ApiParam(value = "spatial-unit feature record data", required = true) @RequestBody String spatialUnitFeatureRecordData,
-			@ApiParam(value = "the identifier of the spatial-unit dataset", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the spatial-unit dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "the unique database record identifier of the spatial-unit dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId) {
+	public ResponseEntity<Void> updateSpatialUnitFeatureRecordAsBody(
+			@RequestBody String spatialUnitFeatureRecordData,
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId,
+			@PathVariable("featureRecordId") String featureRecordId) {
 		logger.info("Received request to update single spatial unit feature database record for datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
 
 		String accept = request.getHeader("Accept");
