@@ -6,14 +6,11 @@
 package de.hsbo.kommonitor.datamanagement.api;
 
 import java.math.BigDecimal;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorMetadataPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHDisplayOrderInputType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPUTInputType;
+
+import de.hsbo.kommonitor.datamanagement.model.*;
+
 import java.util.Map;
-import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -40,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T08:47:12.320115200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:36:13.690775700+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "indicators", description = "the Indicators API")
 public interface IndicatorsApi {
@@ -458,7 +455,7 @@ public interface IndicatorsApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<List<Map<String, String>>> getIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
+    ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "year", description = "year for which the indicator shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year,
@@ -503,7 +500,7 @@ public interface IndicatorsApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<List<Map<String, String>>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(
+    ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId
     );
@@ -668,7 +665,7 @@ public interface IndicatorsApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<List<Map<String, String>>> getSingleIndicatorFeatureById(
+    ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getSingleIndicatorFeatureById(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "featureId", description = "the identifier of the indicator dataset spatial feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
@@ -715,7 +712,7 @@ public interface IndicatorsApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<List<Map<String, String>>> getSingleIndicatorFeatureRecordById(
+    ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getSingleIndicatorFeatureRecordById(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "featureId", description = "the identifier of the indicator dataset spatial feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
         @Parameter(name = "featureRecordId", description = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true, in = ParameterIn.PATH) @PathVariable("featureRecordId") String featureRecordId,
@@ -852,7 +849,7 @@ public interface IndicatorsApi {
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "featureId", description = "the identifier of the indicator dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
         @Parameter(name = "featureRecordId", description = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true, in = ParameterIn.PATH) @PathVariable("featureRecordId") String featureRecordId,
-        @Parameter(name = "indicatorFeatureRecordData", description = "indicator feature record data", required = true) @Valid @RequestBody List<Map<String, String>> indicatorFeatureRecordData
+        @Parameter(name = "indicatorFeatureRecordData", description = "indicator feature record data", required = true) @Valid @RequestBody IndicatorPropertiesWithoutGeomType indicatorFeatureRecordData
     );
 
 

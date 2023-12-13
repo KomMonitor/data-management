@@ -29,8 +29,8 @@ import org.springframework.stereotype.Component;
 
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.DefaultClassificationMappingItemType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.DefaultClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
 import it.geosolutions.geoserver.rest.GeoServerRESTManager;
 import it.geosolutions.geoserver.rest.GeoServerRESTPublisher;
 import it.geosolutions.geoserver.rest.GeoServerRESTReader;

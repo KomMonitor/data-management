@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.util;
 
+import de.hsbo.kommonitor.datamanagement.model.ErrorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -7,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
 
-import de.hsbo.kommonitor.datamanagement.model.legacy.ErrorType;
 
 public class ApiUtils {
 	

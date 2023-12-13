@@ -5,7 +5,6 @@
  */
 package de.hsbo.kommonitor.datamanagement.api;
 
-import de.hsbo.kommonitor.datamanagement.model.ResponseEntity;
 import de.hsbo.kommonitor.datamanagement.model.TopicInputType;
 import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
@@ -34,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-08T08:21:13.039713800+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:36:13.690775700+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "topics", description = "the Topics API")
 public interface TopicsApi {
@@ -100,9 +99,7 @@ public interface TopicsApi {
         description = "Delete the topic",
         tags = { "topics" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
@@ -113,11 +110,10 @@ public interface TopicsApi {
     )
     @RequestMapping(
         method = RequestMethod.DELETE,
-        value = "/topics/{topicId}",
-        produces = { "*/*" }
+        value = "/topics/{topicId}"
     )
     
-    ResponseEntity<ResponseEntity> deleteTopic(
+    ResponseEntity<Void> deleteTopic(
         @Parameter(name = "topicId", description = "unique identifier of the topic", required = true, in = ParameterIn.PATH) @PathVariable("topicId") String topicId
     );
 
@@ -141,9 +137,7 @@ public interface TopicsApi {
         description = "Modify topic information",
         tags = { "topics" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "201", description = "Created"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -157,11 +151,10 @@ public interface TopicsApi {
     @RequestMapping(
         method = RequestMethod.PUT,
         value = "/topics/{topicId}",
-        produces = { "*/*" },
         consumes = { "application/json" }
     )
     
-    ResponseEntity<ResponseEntity> updateTopic(
+    ResponseEntity<Void> updateTopic(
         @Parameter(name = "topicId", description = "unique identifier of the topic", required = true, in = ParameterIn.PATH) @PathVariable("topicId") String topicId,
         @Parameter(name = "topicData", description = "topic input data", required = true) @Valid @RequestBody TopicInputType topicData
     );

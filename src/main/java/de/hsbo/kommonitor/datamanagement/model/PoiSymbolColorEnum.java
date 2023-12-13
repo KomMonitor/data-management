@@ -1,4 +1,4 @@
-package de.hsbo.kommonitor.datamanagement.model.legacy.georesources;
+package de.hsbo.kommonitor.datamanagement.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

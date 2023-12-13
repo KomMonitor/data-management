@@ -72,10 +72,10 @@ import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.GeometrySimplifierUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
-import de.hsbo.kommonitor.datamanagement.model.legacy.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.georesources.GeoresourcePUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.spatialunits.SpatialUnitPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourcePUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPUTInputType;
 
 public class SpatialFeatureDatabaseHandler {
 
@@ -685,7 +685,7 @@ public class SpatialFeatureDatabaseHandler {
 
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
 		String geoJsonString = featureData.getGeoJsonString();
-		Boolean isPartialUpdate = featureData.isIsPartialUpdate();
+		Boolean isPartialUpdate = featureData.getIsPartialUpdate();
 
 		logger.info("Start Georesource update");
 		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString, isPartialUpdate);
@@ -696,7 +696,7 @@ public class SpatialFeatureDatabaseHandler {
 
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
 		String geoJsonString = featureData.getGeoJsonString();
-		Boolean isPartialUpdate = featureData.isIsPartialUpdate();
+		Boolean isPartialUpdate = featureData.getIsPartialUpdate();
 
 		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString, isPartialUpdate);
 	}

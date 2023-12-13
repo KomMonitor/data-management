@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  * CommonMetadataType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-06T15:24:58.815569400+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
 public class CommonMetadataType implements Serializable {
 
   private static final long serialVersionUID = 1L;

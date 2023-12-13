@@ -1,7 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.database;
 
-import javax.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +10,9 @@ import org.springframework.stereotype.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.legacy.DatabasePublicApi;
+import de.hsbo.kommonitor.datamanagement.api.DatabasePublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
-import de.hsbo.kommonitor.datamanagement.model.legacy.database.LastModificationOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.LastModificationOverviewType;
 
 @Controller
 public class DatabasePublicController extends BasePathController implements DatabasePublicApi {

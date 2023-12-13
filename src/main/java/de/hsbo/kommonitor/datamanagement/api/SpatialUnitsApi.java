@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-11T12:38:28.511541+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:36:13.690775700+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "spatial-units", description = "the SpatialUnits API")
 public interface SpatialUnitsApi {
@@ -252,9 +252,7 @@ public interface SpatialUnitsApi {
         description = "Delete the features/contents of the selected spatial-unit, year and month",
         tags = { "spatial-units" },
         responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ResponseEntity.class))
-            }),
+            @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
@@ -265,11 +263,10 @@ public interface SpatialUnitsApi {
     )
     @RequestMapping(
         method = RequestMethod.DELETE,
-        value = "/spatial-units/{spatialUnitId}/{year}/{month}/{day}",
-        produces = { "*/*" }
+        value = "/spatial-units/{spatialUnitId}/{year}/{month}/{day}"
     )
     
-    ResponseEntity<ResponseEntity> deleteSpatialUnitByIdAndYearAndMonth(
+    ResponseEntity<Void> deleteSpatialUnitByIdAndYearAndMonth(
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "year", description = "year for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year,
         @Parameter(name = "month", description = "month for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,

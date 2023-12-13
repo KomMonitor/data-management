@@ -3,8 +3,8 @@ package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hsbo.kommonitor.datamanagement.model.legacy.organizations.OrganizationalUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.roles.RoleOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.RoleOverviewType;
 
 public class AccessControlMapper {
 

@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-08T08:21:13.039713800+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:36:13.690775700+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "topics-public", description = "the public Topics API")
 public interface TopicsPublicApi {
@@ -94,7 +94,7 @@ public interface TopicsPublicApi {
         tags = { "topics-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = TopicOverviewType.class))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TopicOverviewType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -111,7 +111,7 @@ public interface TopicsPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<TopicOverviewType> getTopics(
+    ResponseEntity<List<TopicOverviewType>> getTopics(
         
     );
 

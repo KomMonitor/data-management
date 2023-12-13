@@ -25,7 +25,7 @@ import jakarta.annotation.Generated;
  * TopicOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T08:57:24.976987600+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
 public class TopicOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;

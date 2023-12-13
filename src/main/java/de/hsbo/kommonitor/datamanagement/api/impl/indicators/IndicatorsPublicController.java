@@ -2,7 +2,6 @@ package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -133,7 +132,7 @@ public class IndicatorsPublicController extends BasePathPublicController impleme
     }
 
     @Override
-    public ResponseEntity<List<Map<String, String>>> getPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
+    public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
             @PathVariable("indicatorId") String indicatorId,
             @PathVariable("spatialUnitId") String spatialUnitId,
             @PathVariable("year") BigDecimal year,
@@ -155,7 +154,7 @@ public class IndicatorsPublicController extends BasePathPublicController impleme
     }
 
     @Override
-    public ResponseEntity<List<Map<String, String>>> getPublicIndicatorBySpatialUnitIdAndIdWithoutGeometry(
+    public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicIndicatorBySpatialUnitIdAndIdWithoutGeometry(
             @PathVariable("indicatorId") String indicatorId,
             @PathVariable("spatialUnitId") String spatialUnitId) {
         logger.info("Received request to get public indicator feature properties for spatialUnitId '{}' and Id '{}' (without geometries)",
@@ -171,7 +170,7 @@ public class IndicatorsPublicController extends BasePathPublicController impleme
     }
     
 	@Override
-    public ResponseEntity<List<Map<String, String>>> getPublicSingleIndicatorFeatureById(
+    public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicSingleIndicatorFeatureById(
 			@PathVariable("indicatorId") String indicatorId,
 			@PathVariable("spatialUnitId") String spatialUnitId,
 			@PathVariable("featureId") String featureId) {
@@ -191,7 +190,7 @@ public class IndicatorsPublicController extends BasePathPublicController impleme
 		}
 	}
 
-	public ResponseEntity<List<Map<String, String>>> getPublicSingleIndicatorFeatureRecordById(
+	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicSingleIndicatorFeatureRecordById(
 			@PathVariable("indicatorId") String indicatorId,
 			@PathVariable("spatialUnitId") String spatialUnitId,
 			@PathVariable("featureId") String featureId,

@@ -10,7 +10,7 @@ import org.geotools.filter.IllegalFilterException;
 import org.springframework.stereotype.Component;
 
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.DefaultClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
 
 /**
  * Handles the publishment of spatial datasets as OGC web services such as WMS,

@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  * ResponseEntity
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-06T15:24:58.815569400+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T08:57:24.976987600+01:00[Europe/Berlin]")
 public class ResponseEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;

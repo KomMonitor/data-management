@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -21,51 +22,12 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "RoleOverviewType", description = "Combination of organizationalUnit and permissionLevel to control access to a resource")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-06T15:24:58.815569400+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
 public class RoleOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  /**
-   * Gets or Sets permissionLevel
-   */
-  public enum PermissionLevelEnum {
-    CREATOR("creator"),
-    
-    PUBLISHER("publisher"),
-    
-    EDITOR("editor"),
-    
-    VIEWER("viewer");
-
-    private String value;
-
-    PermissionLevelEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static PermissionLevelEnum fromValue(String value) {
-      for (PermissionLevelEnum b : PermissionLevelEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
-  private PermissionLevelEnum permissionLevel;
+  private PermissionLevelType permissionLevel;
 
   private String roleId;
 
@@ -76,12 +38,12 @@ public class RoleOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public RoleOverviewType(PermissionLevelEnum permissionLevel, String roleId) {
+  public RoleOverviewType(PermissionLevelType permissionLevel, String roleId) {
     this.permissionLevel = permissionLevel;
     this.roleId = roleId;
   }
 
-  public RoleOverviewType permissionLevel(PermissionLevelEnum permissionLevel) {
+  public RoleOverviewType permissionLevel(PermissionLevelType permissionLevel) {
     this.permissionLevel = permissionLevel;
     return this;
   }
@@ -90,14 +52,14 @@ public class RoleOverviewType implements Serializable {
    * Get permissionLevel
    * @return permissionLevel
   */
-  @NotNull 
+  @NotNull @Valid 
   @Schema(name = "permissionLevel", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissionLevel")
-  public PermissionLevelEnum getPermissionLevel() {
+  public PermissionLevelType getPermissionLevel() {
     return permissionLevel;
   }
 
-  public void setPermissionLevel(PermissionLevelEnum permissionLevel) {
+  public void setPermissionLevel(PermissionLevelType permissionLevel) {
     this.permissionLevel = permissionLevel;
   }
 
