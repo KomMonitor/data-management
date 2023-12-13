@@ -4,6 +4,12 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import org.hibernate.annotations.GenericGenerator;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -20,9 +26,15 @@ import jakarta.annotation.Generated;
  */
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Entity(name = "DefaultClassificationMappingItems")
 public class DefaultClassificationMappingItemType implements Serializable {
 
   private static final long serialVersionUID = 1L;
+
+  @Id
+  @GeneratedValue(generator = "UUID")
+  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+  private String mappingId = null;
 
   private String defaultColorAsHex;
 
@@ -44,6 +56,9 @@ public class DefaultClassificationMappingItemType implements Serializable {
     this.defaultColorAsHex = defaultColorAsHex;
     return this;
   }
+
+  @ManyToOne()
+  private MetadataIndicatorsEntity associatedIndicatorMetadata;
 
   /**
    * the default color for the specified value interval as hex string inclusive leading '#', i.e. '#ffffff'
