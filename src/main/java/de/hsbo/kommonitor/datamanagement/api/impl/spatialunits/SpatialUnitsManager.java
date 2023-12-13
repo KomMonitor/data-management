@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import org.geotools.filter.text.cql2.CQLException;

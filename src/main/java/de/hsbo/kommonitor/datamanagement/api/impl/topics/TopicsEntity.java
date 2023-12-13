@@ -1,18 +1,11 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
-import java.util.Collection;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-
 import de.hsbo.kommonitor.datamanagement.model.TopicResourceEnum;
 import de.hsbo.kommonitor.datamanagement.model.TopicTypeEnum;
 import org.hibernate.annotations.GenericGenerator;
+
+import jakarta.persistence.*;
+import java.util.Collection;
 
 @Entity(name = "Topics")
 public class TopicsEntity {

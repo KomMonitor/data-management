@@ -3,12 +3,12 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import org.hibernate.annotations.GenericGenerator;
 
-import de.hsbo.kommonitor.datamanagement.model.legacy.CommonMetadataType.UpdateIntervalEnum;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType.UpdateIntervalEnum;
 
 @MappedSuperclass
 public abstract class AbstractMetadata {

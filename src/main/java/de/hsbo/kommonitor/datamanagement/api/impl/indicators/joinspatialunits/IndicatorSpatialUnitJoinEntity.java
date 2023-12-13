@@ -1,12 +1,12 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serializable;

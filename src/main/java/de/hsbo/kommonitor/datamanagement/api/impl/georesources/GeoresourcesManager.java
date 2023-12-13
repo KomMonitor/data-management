@@ -13,7 +13,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.geotools.filter.text.cql2.CQLException;

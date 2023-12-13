@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.apache.commons.collections.CollectionUtils;
