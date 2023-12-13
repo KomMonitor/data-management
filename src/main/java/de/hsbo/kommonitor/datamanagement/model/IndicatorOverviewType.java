@@ -6,11 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourceReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorSpatialUnitJoinItem;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.OgcServicesType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +33,7 @@ import jakarta.annotation.Generated;
  * IndicatorOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-06T15:24:58.815569400+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-12T16:17:28.684343400+01:00[Europe/Berlin]")
 public class IndicatorOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -48,43 +51,6 @@ public class IndicatorOverviewType implements Serializable {
 
   private String characteristicValue;
 
-  /**
-   * indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)\"
-   */
-  public enum CreationTypeEnum {
-    INSERTION("INSERTION"),
-    
-    COMPUTATION("COMPUTATION"),
-    
-    AGGREGATION("AGGREGATION");
-
-    private String value;
-
-    CreationTypeEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static CreationTypeEnum fromValue(String value) {
-      for (CreationTypeEnum b : CreationTypeEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
   private CreationTypeEnum creationType;
 
   private DefaultClassificationMappingType defaultClassificationMapping;
@@ -94,49 +60,6 @@ public class IndicatorOverviewType implements Serializable {
   private String indicatorId;
 
   private String indicatorName;
-
-  /**
-   * indicates whether the indicator is a status indicator (values represent the extent of the watched phenomenon for a certain point in time) or a dynamic indicator (values represent the change of extent of the watched phenomenon within a certain period of time)
-   */
-  public enum IndicatorTypeEnum {
-    STATUS_ABSOLUTE("STATUS_ABSOLUTE"),
-    
-    DYNAMIC_ABSOLUTE("DYNAMIC_ABSOLUTE"),
-    
-    STATUS_RELATIVE("STATUS_RELATIVE"),
-    
-    DYNAMIC_RELATIVE("DYNAMIC_RELATIVE"),
-    
-    STATUS_STANDARDIZED("STATUS_STANDARDIZED"),
-    
-    DYNAMIC_STANDARDIZED("DYNAMIC_STANDARDIZED");
-
-    private String value;
-
-    IndicatorTypeEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static IndicatorTypeEnum fromValue(String value) {
-      for (IndicatorTypeEnum b : IndicatorTypeEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
 
   private IndicatorTypeEnum indicatorType;
 
@@ -168,47 +91,8 @@ public class IndicatorOverviewType implements Serializable {
 
   private String unit;
 
-  /**
-   * Gets or Sets userPermissions
-   */
-  public enum UserPermissionsEnum {
-    CREATOR("creator"),
-    
-    PUBLISHER("publisher"),
-    
-    EDITOR("editor"),
-    
-    VIEWER("viewer");
-
-    private String value;
-
-    UserPermissionsEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static UserPermissionsEnum fromValue(String value) {
-      for (UserPermissionsEnum b : UserPermissionsEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
   @Valid
-  private List<UserPermissionsEnum> userPermissions;
+  private List<PermissionLevelType> userPermissions;
 
   public IndicatorOverviewType() {
     super();
@@ -365,11 +249,11 @@ public class IndicatorOverviewType implements Serializable {
   }
 
   /**
-   * indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)\"
+   * Get creationType
    * @return creationType
   */
-  @NotNull 
-  @Schema(name = "creationType", description = "indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)\"", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "creationType", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("creationType")
   public CreationTypeEnum getCreationType() {
     return creationType;
@@ -465,11 +349,11 @@ public class IndicatorOverviewType implements Serializable {
   }
 
   /**
-   * indicates whether the indicator is a status indicator (values represent the extent of the watched phenomenon for a certain point in time) or a dynamic indicator (values represent the change of extent of the watched phenomenon within a certain period of time)
+   * Get indicatorType
    * @return indicatorType
   */
-  
-  @Schema(name = "indicatorType", description = "indicates whether the indicator is a status indicator (values represent the extent of the watched phenomenon for a certain point in time) or a dynamic indicator (values represent the change of extent of the watched phenomenon within a certain period of time)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Valid 
+  @Schema(name = "indicatorType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicatorType")
   public IndicatorTypeEnum getIndicatorType() {
     return indicatorType;
@@ -751,12 +635,12 @@ public class IndicatorOverviewType implements Serializable {
     this.unit = unit;
   }
 
-  public IndicatorOverviewType userPermissions(List<UserPermissionsEnum> userPermissions) {
+  public IndicatorOverviewType userPermissions(List<PermissionLevelType> userPermissions) {
     this.userPermissions = userPermissions;
     return this;
   }
 
-  public IndicatorOverviewType addUserPermissionsItem(UserPermissionsEnum userPermissionsItem) {
+  public IndicatorOverviewType addUserPermissionsItem(PermissionLevelType userPermissionsItem) {
     if (this.userPermissions == null) {
       this.userPermissions = new ArrayList<>();
     }
@@ -768,14 +652,14 @@ public class IndicatorOverviewType implements Serializable {
    * list of permissions that are effective on this dataset for the current user
    * @return userPermissions
   */
-  
+  @Valid 
   @Schema(name = "userPermissions", description = "list of permissions that are effective on this dataset for the current user", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("userPermissions")
-  public List<UserPermissionsEnum> getUserPermissions() {
+  public List<PermissionLevelType> getUserPermissions() {
     return userPermissions;
   }
 
-  public void setUserPermissions(List<UserPermissionsEnum> userPermissions) {
+  public void setUserPermissions(List<PermissionLevelType> userPermissions) {
     this.userPermissions = userPermissions;
   }
 

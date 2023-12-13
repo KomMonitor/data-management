@@ -1,14 +1,16 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.Principal;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.api.IndicatorsApi;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.model.*;
+import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPropertiesWithoutGeomType;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,24 +24,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import de.hsbo.kommonitor.datamanagement.api.legacy.IndicatorsApi;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
-import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorMetadataPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPATCHDisplayOrderInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPropertiesWithoutGeomType;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
-import io.swagger.annotations.ApiParam;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.Principal;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class IndicatorsController extends BasePathController implements IndicatorsApi {
@@ -67,7 +58,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
     @Override
     @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'editor')")
-    public ResponseEntity deleteIndicatorByIdAndSpatialUnitId(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId) throws Exception {
+    public ResponseEntity deleteIndicatorByIdAndSpatialUnitId(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId) {
         logger.info("Received request to delete indicator for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
 
         String accept = request.getHeader("Accept");
@@ -84,7 +75,7 @@ public class IndicatorsController extends BasePathController implements Indicato
             if (isDeleted)
                 return new ResponseEntity<>(HttpStatus.OK);
 
-        } catch (ResourceNotFoundException | IOException e) {
+        } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
         }
 
@@ -96,7 +87,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'editor')")
     public ResponseEntity deleteIndicatorByIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId, @PathVariable("spatialUnitId") String spatialUnitId,
                                                              @PathVariable("year") BigDecimal year, @PathVariable("month") BigDecimal month,
-                                                             @PathVariable("day") BigDecimal day) throws Exception {
+                                                             @PathVariable("day") BigDecimal day) {
         logger.info("Received request to delete indicator for indicatorId '{}' and Date '{}-{}-{}'", indicatorId, year, month, day);
 
         String accept = request.getHeader("Accept");
@@ -113,7 +104,7 @@ public class IndicatorsController extends BasePathController implements Indicato
             if (isDeleted)
                 return new ResponseEntity<>(HttpStatus.OK);
 
-        } catch (ResourceNotFoundException | IOException e) {
+        } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
         }
 
@@ -121,10 +112,10 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
     
     @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
-	public ResponseEntity<ResponseEntity> deleteSingleIndicatorFeatureById(
-			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
-			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the indicator dataset spatial feature", required = true) @PathVariable("featureId") String featureId) {
+	public ResponseEntity<Void> deleteSingleIndicatorFeatureById(
+			@PathVariable("indicatorId") String indicatorId,
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId) {
 		logger.info("Received request to delete single indicator feature databse records for indicatorId '{}' and spatialUnitId '{}' and featureId '{}'", indicatorId, spatialUnitId, featureId);
 
         String accept = request.getHeader("Accept");
@@ -149,11 +140,11 @@ public class IndicatorsController extends BasePathController implements Indicato
 	}
 
     @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
-	public ResponseEntity<ResponseEntity> deleteSingleIndicatorFeatureRecordById(
-			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
-			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the indicator dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId) {
+	public ResponseEntity<Void> deleteSingleIndicatorFeatureRecordById(
+			@PathVariable("indicatorId") String indicatorId,
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId,
+			@PathVariable("featureRecordId") String featureRecordId) {
 		logger.info("Received request to delete single indicator feature databse record for indicatorId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId, featureId, featureRecordId);
 
         String accept = request.getHeader("Accept");
@@ -526,13 +517,14 @@ public class IndicatorsController extends BasePathController implements Indicato
         }
     }
     
+    @Override
     @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
 	public ResponseEntity<ResponseEntity> updateIndicatorFeatureRecordAsBody(
-			@ApiParam(value = "indicator feature record data", required = true) @RequestBody IndicatorPropertiesWithoutGeomType indicatorFeatureRecordData,
-			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
-			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the indicator dataset feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId) {
+			@RequestBody IndicatorPropertiesWithoutGeomType indicatorFeatureRecordData,
+			@PathVariable("indicatorId") String indicatorId,
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId,
+			@PathVariable("featureRecordId") String featureRecordId) {
 		logger.info("Received request to update single indicator feature database record for indicatorId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId, featureId, featureRecordId);
 
         String accept = request.getHeader("Accept");
@@ -568,19 +560,18 @@ public class IndicatorsController extends BasePathController implements Indicato
 
     @Override
     @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
-    public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
+    public ResponseEntity<List<Map<String, String>>> getIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
             @PathVariable("indicatorId") String indicatorId,
             @PathVariable("spatialUnitId") String spatialUnitId,
             @PathVariable("year") BigDecimal year,
             @PathVariable("month") BigDecimal month,
-            @PathVariable("day") BigDecimal day,
-            Principal principal) {
+            @PathVariable("day") BigDecimal day) {
         logger.info(
                 "Received request to get indicators feature properties without geometries for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
                 spatialUnitId, indicatorId, year, month, day);
         String accept = request.getHeader("Accept");
 
-        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
         try {
             List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties =
@@ -595,15 +586,14 @@ public class IndicatorsController extends BasePathController implements Indicato
 
     @Override
     @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
-    public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(
+    public ResponseEntity<List<Map<String, String>>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(
             @PathVariable("indicatorId") String indicatorId,
-            @PathVariable("spatialUnitId") String spatialUnitId,
-            Principal principal) {
+            @PathVariable("spatialUnitId") String spatialUnitId) {
         logger.info("Received request to get indicator feature properties for spatialUnitId '{}' and Id '{}' (without geometries)",
                 spatialUnitId, indicatorId);
         String accept = request.getHeader("Accept");
 
-        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
         try {
             List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager.getIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, provider);
             return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties, HttpStatus.OK);
@@ -612,19 +602,19 @@ public class IndicatorsController extends BasePathController implements Indicato
         }
     }
     
+    @Override
     @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
-	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getSingleIndicatorFeatureById(
-			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
-			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the indicator dataset spatial feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
-			Principal principal) {
+	public ResponseEntity<List<Map<String, String>>> getSingleIndicatorFeatureById(
+			@PathVariable("indicatorId") String indicatorId,
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
 
 		logger.info("Received request to get single indicator feature database records for indicatorId '{}' and spatialUnitId '{}' and featureId '{}'",
                 indicatorId, spatialUnitId, featureId);
         String accept = request.getHeader("Accept");
 
-        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
         try {
         	List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager
 					.getSingleIndicatorFeatureRecords(indicatorId, spatialUnitId, featureId, provider);
@@ -635,20 +625,20 @@ public class IndicatorsController extends BasePathController implements Indicato
         }
 	}
 
+    @Override
     @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
-	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getSingleIndicatorFeatureRecordById(
-			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
-			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the indicator dataset spatial feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId,
-			@ApiParam(value = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", allowableValues = "original, weak, medium, strong", defaultValue = "original") @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries,
-			Principal principal) {
+	public ResponseEntity<List<Map<String, String>>> getSingleIndicatorFeatureRecordById(
+			@PathVariable("indicatorId") String indicatorId,
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId,
+			@PathVariable("featureRecordId") String featureRecordId,
+			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
 
 		logger.info(
 				"Received request to get public single indicator feature records for datasetId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'",
 				indicatorId, spatialUnitId, featureId, featureRecordId);
 		String accept = request.getHeader("Accept");
-		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider(principal);
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
 		try {
 			List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager

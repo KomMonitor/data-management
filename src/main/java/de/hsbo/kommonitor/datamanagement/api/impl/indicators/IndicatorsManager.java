@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import de.hsbo.kommonitor.datamanagement.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.geotools.data.DataStore;
 import org.geotools.feature.FeatureCollection;
@@ -45,22 +46,6 @@ import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.legacy.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.CreationTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.DefaultClassificationMappingType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.GeoresourceReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorMetadataPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPATCHDisplayOrderInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPOSTInputTypeIndicatorValues;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPOSTInputTypeValueMapping;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPropertiesWithoutGeomType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorTypeEnum;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 @Transactional
@@ -286,7 +271,7 @@ public class IndicatorsManager {
         entity.setTopicReference(metadata.getTopicReference());
 
         entity.setAbbreviation(metadata.getAbbreviation());
-        entity.setHeadlineIndicator(metadata.isIsHeadlineIndicator());
+        entity.setHeadlineIndicator(metadata.getIsHeadlineIndicator());
         entity.setInterpretation(metadata.getInterpretation());
         entity.setTags(new HashSet<String>(metadata.getTags()));
 
@@ -1248,7 +1233,7 @@ public class IndicatorsManager {
         entity.setColorBrewerSchemeName(indicatorData.getDefaultClassificationMapping().getColorBrewerSchemeName());
 
         entity.setAbbreviation(indicatorData.getAbbreviation());
-        entity.setHeadlineIndicator(indicatorData.isIsHeadlineIndicator());
+        entity.setHeadlineIndicator(indicatorData.getIsHeadlineIndicator());
         entity.setInterpretation(indicatorData.getInterpretation());
         entity.setTags(new HashSet<String>(indicatorData.getTags()));
 

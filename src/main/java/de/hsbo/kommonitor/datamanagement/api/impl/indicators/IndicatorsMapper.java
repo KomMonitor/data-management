@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,16 +25,15 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorR
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.model.legacy.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.DefaultClassificationMappingItemType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.DefaultClassificationMappingType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.GeoresourceReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorSpatialUnitJoinItem;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.OgcServicesType;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourceReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorSpatialUnitJoinItem;
+import de.hsbo.kommonitor.datamanagement.model.OgcServicesType;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
-import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicsEntity;
 
 @Component
 public class IndicatorsMapper {

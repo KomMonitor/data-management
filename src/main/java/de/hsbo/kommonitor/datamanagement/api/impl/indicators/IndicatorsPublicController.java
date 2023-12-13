@@ -2,9 +2,9 @@ package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.legacy.IndicatorsPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.IndicatorsPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPropertiesWithoutGeomType;
-import io.swagger.annotations.ApiParam;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
 
 @Controller
 public class IndicatorsPublicController extends BasePathPublicController implements IndicatorsPublicApi {
@@ -134,7 +133,7 @@ public class IndicatorsPublicController extends BasePathPublicController impleme
     }
 
     @Override
-    public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
+    public ResponseEntity<List<Map<String, String>>> getPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
             @PathVariable("indicatorId") String indicatorId,
             @PathVariable("spatialUnitId") String spatialUnitId,
             @PathVariable("year") BigDecimal year,
@@ -156,7 +155,7 @@ public class IndicatorsPublicController extends BasePathPublicController impleme
     }
 
     @Override
-    public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicIndicatorBySpatialUnitIdAndIdWithoutGeometry(
+    public ResponseEntity<List<Map<String, String>>> getPublicIndicatorBySpatialUnitIdAndIdWithoutGeometry(
             @PathVariable("indicatorId") String indicatorId,
             @PathVariable("spatialUnitId") String spatialUnitId) {
         logger.info("Received request to get public indicator feature properties for spatialUnitId '{}' and Id '{}' (without geometries)",
@@ -171,10 +170,11 @@ public class IndicatorsPublicController extends BasePathPublicController impleme
         }
     }
     
-	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicSingleIndicatorFeatureById(
-			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
-			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the indicator dataset spatial feature", required = true) @PathVariable("featureId") String featureId) {
+	@Override
+    public ResponseEntity<List<Map<String, String>>> getPublicSingleIndicatorFeatureById(
+			@PathVariable("indicatorId") String indicatorId,
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId) {
 
 		logger.info(
 				"Received request to get public single indicator feature records for datasetId '{}' and spatialUnitId '{}' and featureId '{}'",
@@ -191,11 +191,11 @@ public class IndicatorsPublicController extends BasePathPublicController impleme
 		}
 	}
 
-	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicSingleIndicatorFeatureRecordById(
-			@ApiParam(value = "unique identifier of the selected indicator dataset", required = true) @PathVariable("indicatorId") String indicatorId,
-			@ApiParam(value = "the unique identifier of the spatial level", required = true) @PathVariable("spatialUnitId") String spatialUnitId,
-			@ApiParam(value = "the identifier of the indicator dataset spatial feature", required = true) @PathVariable("featureId") String featureId,
-			@ApiParam(value = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true) @PathVariable("featureRecordId") String featureRecordId) {
+	public ResponseEntity<List<Map<String, String>>> getPublicSingleIndicatorFeatureRecordById(
+			@PathVariable("indicatorId") String indicatorId,
+			@PathVariable("spatialUnitId") String spatialUnitId,
+			@PathVariable("featureId") String featureId,
+			@PathVariable("featureRecordId") String featureRecordId) {
 
 		logger.info(
 				"Received request to get public single indicator feature records for datasetId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'",

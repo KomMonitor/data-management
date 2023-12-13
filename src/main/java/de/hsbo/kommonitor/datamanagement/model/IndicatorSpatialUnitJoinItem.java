@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  * IndicatorSpatialUnitJoinItem
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-06T15:24:58.815569400+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-12T16:17:28.684343400+01:00[Europe/Berlin]")
 public class IndicatorSpatialUnitJoinItem implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -35,47 +35,8 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
 
   private String spatialUnitName;
 
-  /**
-   * Gets or Sets userPermissions
-   */
-  public enum UserPermissionsEnum {
-    CREATOR("creator"),
-    
-    PUBLISHER("publisher"),
-    
-    EDITOR("editor"),
-    
-    VIEWER("viewer");
-
-    private String value;
-
-    UserPermissionsEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static UserPermissionsEnum fromValue(String value) {
-      for (UserPermissionsEnum b : UserPermissionsEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
   @Valid
-  private List<UserPermissionsEnum> userPermissions;
+  private List<PermissionLevelType> userPermissions;
 
   public IndicatorSpatialUnitJoinItem() {
     super();
@@ -157,12 +118,12 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     this.spatialUnitName = spatialUnitName;
   }
 
-  public IndicatorSpatialUnitJoinItem userPermissions(List<UserPermissionsEnum> userPermissions) {
+  public IndicatorSpatialUnitJoinItem userPermissions(List<PermissionLevelType> userPermissions) {
     this.userPermissions = userPermissions;
     return this;
   }
 
-  public IndicatorSpatialUnitJoinItem addUserPermissionsItem(UserPermissionsEnum userPermissionsItem) {
+  public IndicatorSpatialUnitJoinItem addUserPermissionsItem(PermissionLevelType userPermissionsItem) {
     if (this.userPermissions == null) {
       this.userPermissions = new ArrayList<>();
     }
@@ -174,14 +135,14 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
    * list of permissions that are effective on this dataset for the current user
    * @return userPermissions
   */
-  
+  @Valid 
   @Schema(name = "userPermissions", description = "list of permissions that are effective on this dataset for the current user", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("userPermissions")
-  public List<UserPermissionsEnum> getUserPermissions() {
+  public List<PermissionLevelType> getUserPermissions() {
     return userPermissions;
   }
 
-  public void setUserPermissions(List<UserPermissionsEnum> userPermissions) {
+  public void setUserPermissions(List<PermissionLevelType> userPermissions) {
     this.userPermissions = userPermissions;
   }
 

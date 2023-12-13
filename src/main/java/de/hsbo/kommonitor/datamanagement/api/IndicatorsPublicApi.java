@@ -34,49 +34,10 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-08T08:21:13.039713800+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T08:47:12.320115200+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "indicators-public", description = "the Indicators API")
 public interface IndicatorsPublicApi {
-
-    /**
-     * GET /public/indicators : retrieve information about available public indicators
-     * retrieve information about available public indicators
-     *
-     * @return OK (status code 200)
-     *         or Invalid status value (status code 400)
-     *         or API key is missing or invalid (status code 401)
-     *         or Forbidden (status code 403)
-     *         or Not Found (status code 404)
-     */
-    @Operation(
-        operationId = "getIndicators1",
-        summary = "retrieve information about available public indicators",
-        description = "retrieve information about available public indicators",
-        tags = { "indicators-public" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = IndicatorOverviewType.class))
-            }),
-            @ApiResponse(responseCode = "400", description = "Invalid status value"),
-            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "Not Found")
-        },
-        security = {
-            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/public/indicators",
-        produces = { "application/json" }
-    )
-    
-    ResponseEntity<IndicatorOverviewType> getIndicators1(
-        
-    );
-
 
     /**
      * GET /public/indicators/{indicatorId} : retrieve information about the selected public indicator
@@ -166,11 +127,11 @@ public interface IndicatorsPublicApi {
      * GET /public/indicators/{indicatorId}/{spatialUnitId}/{year}/{month}/{day} : retrieve the public indicator for the selected public spatial unit, year and month as GeoJSON
      * retrieve the public indicator for the selected spatial unit, year and month as GeoJSON
      *
-     * @param day day for which datasets shall be queried (required)
      * @param indicatorId unique identifier of the selected public indicator dataset (required)
-     * @param month month for which the indicator shall be queried (required)
      * @param spatialUnitId the unique identifier of the public spatial level (required)
      * @param year year for which the indicator shall be queried (required)
+     * @param month month for which the indicator shall be queried (required)
+     * @param day day for which datasets shall be queried (required)
      * @param simplifyGeometries Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from &#39;weak&#39; to &#39;strong&#39;, while &#39;original&#39; will return original feature geometries without any simplification. (optional, default to original)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
@@ -203,11 +164,11 @@ public interface IndicatorsPublicApi {
     )
     
     ResponseEntity<byte[]> getPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonth(
-        @Parameter(name = "day", description = "day for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day,
         @Parameter(name = "indicatorId", description = "unique identifier of the selected public indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
-        @Parameter(name = "month", description = "month for which the indicator shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the public spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "year", description = "year for which the indicator shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year,
+        @Parameter(name = "month", description = "month for which the indicator shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
+        @Parameter(name = "day", description = "day for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day,
         @Parameter(name = "simplifyGeometries", description = "Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from 'weak' to 'strong', while 'original' will return original feature geometries without any simplification.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries
     );
 
@@ -216,11 +177,11 @@ public interface IndicatorsPublicApi {
      * GET /public/indicators/{indicatorId}/{spatialUnitId}/{year}/{month}/{day}/without-geometry : retrieve the public indicator values and other properties for the selected public spatial unit, year and month. It does not include the spatial geometries!
      * retrieve the public indicator values and other properties for the selected public spatial unit, year and month. It does not include the spatial geometries!
      *
-     * @param day day for which datasets shall be queried (required)
      * @param indicatorId unique identifier of the selected indicator dataset (required)
-     * @param month month for which the indicator shall be queried (required)
      * @param spatialUnitId the unique identifier of the spatial level (required)
      * @param year year for which the indicator shall be queried (required)
+     * @param month month for which the indicator shall be queried (required)
+     * @param day day for which datasets shall be queried (required)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -234,7 +195,7 @@ public interface IndicatorsPublicApi {
         tags = { "indicators-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -251,12 +212,12 @@ public interface IndicatorsPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<Map<String, String>> getPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
-        @Parameter(name = "day", description = "day for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day,
+    ResponseEntity<List<Map<String, String>>> getPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
-        @Parameter(name = "month", description = "month for which the indicator shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
-        @Parameter(name = "year", description = "year for which the indicator shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year
+        @Parameter(name = "year", description = "year for which the indicator shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year,
+        @Parameter(name = "month", description = "month for which the indicator shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
+        @Parameter(name = "day", description = "day for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day
     );
 
 
@@ -279,7 +240,7 @@ public interface IndicatorsPublicApi {
         tags = { "indicators-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -296,9 +257,48 @@ public interface IndicatorsPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<Map<String, String>> getPublicIndicatorBySpatialUnitIdAndIdWithoutGeometry(
+    ResponseEntity<List<Map<String, String>>> getPublicIndicatorBySpatialUnitIdAndIdWithoutGeometry(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected public indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the public spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId
+    );
+
+
+    /**
+     * GET /public/indicators : retrieve information about available public indicators
+     * retrieve information about available public indicators
+     *
+     * @return OK (status code 200)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "getPublicIndicators",
+        summary = "retrieve information about available public indicators",
+        description = "retrieve information about available public indicators",
+        tags = { "indicators-public" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IndicatorOverviewType.class)))
+            }),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/public/indicators",
+        produces = { "application/json" }
+    )
+    
+    ResponseEntity<List<IndicatorOverviewType>> getPublicIndicators(
+        
     );
 
 
@@ -306,9 +306,9 @@ public interface IndicatorsPublicApi {
      * GET /public/indicators/{indicatorId}/{spatialUnitId}/singleFeature/{featureId} : retrieve single feature database records for all applicable periods of validity for the selected indicator dataset (hence might contain the target feature multiple times if it exists for different periods of validity)
      * retrieve single feature database records for all applicable periods of validity for the selected indicator dataset (hence might contain the target feature multiple times if it exists for different periods of validity)
      *
-     * @param featureId the identifier of the indicator dataset spatial feature (required)
      * @param indicatorId unique identifier of the selected indicator dataset (required)
      * @param spatialUnitId the unique identifier of the spatial level (required)
+     * @param featureId the identifier of the indicator dataset spatial feature (required)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -322,7 +322,7 @@ public interface IndicatorsPublicApi {
         tags = { "indicators-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -339,10 +339,10 @@ public interface IndicatorsPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<Map<String, String>> getPublicSingleIndicatorFeatureById(
-        @Parameter(name = "featureId", description = "the identifier of the indicator dataset spatial feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
+    ResponseEntity<List<Map<String, String>>> getPublicSingleIndicatorFeatureById(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
-        @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId
+        @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
+        @Parameter(name = "featureId", description = "the identifier of the indicator dataset spatial feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId
     );
 
 
@@ -350,10 +350,10 @@ public interface IndicatorsPublicApi {
      * GET /public/indicators/{indicatorId}/{spatialUnitId}/singleFeature/{featureId}/singleFeatureRecord/{featureRecordId} : retrieve single feature database record specified by its unique database primary key id
      * retrieve single feature database record specified by its unique database primary key id
      *
-     * @param featureId the identifier of the indicator dataset spatial feature (required)
-     * @param featureRecordId the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity (required)
      * @param indicatorId unique identifier of the selected indicator dataset (required)
      * @param spatialUnitId the unique identifier of the spatial level (required)
+     * @param featureId the identifier of the indicator dataset spatial feature (required)
+     * @param featureRecordId the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity (required)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -367,7 +367,7 @@ public interface IndicatorsPublicApi {
         tags = { "indicators-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -384,11 +384,11 @@ public interface IndicatorsPublicApi {
         produces = { "application/json" }
     )
     
-    ResponseEntity<Map<String, String>> getPublicSingleIndicatorFeatureRecordById(
-        @Parameter(name = "featureId", description = "the identifier of the indicator dataset spatial feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
-        @Parameter(name = "featureRecordId", description = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true, in = ParameterIn.PATH) @PathVariable("featureRecordId") String featureRecordId,
+    ResponseEntity<List<Map<String, String>>> getPublicSingleIndicatorFeatureRecordById(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
-        @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId
+        @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
+        @Parameter(name = "featureId", description = "the identifier of the indicator dataset spatial feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
+        @Parameter(name = "featureRecordId", description = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true, in = ParameterIn.PATH) @PathVariable("featureRecordId") String featureRecordId
     );
 
 }

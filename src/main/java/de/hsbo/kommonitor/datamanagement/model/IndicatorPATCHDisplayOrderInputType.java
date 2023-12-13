@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  * IndicatorPATCHDisplayOrderInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-06T15:24:58.815569400+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-12T16:17:28.684343400+01:00[Europe/Berlin]")
 public class IndicatorPATCHDisplayOrderInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;

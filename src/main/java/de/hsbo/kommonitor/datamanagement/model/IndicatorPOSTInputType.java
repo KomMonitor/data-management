@@ -6,9 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeRefrencesToGeoresources;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +30,7 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-06T15:24:58.815569400+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-12T16:17:28.684343400+01:00[Europe/Berlin]")
 public class IndicatorPOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -40,43 +42,6 @@ public class IndicatorPOSTInputType implements Serializable {
 
   private String characteristicValue;
 
-  /**
-   * indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)
-   */
-  public enum CreationTypeEnum {
-    INSERTION("INSERTION"),
-    
-    COMPUTATION("COMPUTATION"),
-    
-    AGGREGATION("AGGREGATION");
-
-    private String value;
-
-    CreationTypeEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static CreationTypeEnum fromValue(String value) {
-      for (CreationTypeEnum b : CreationTypeEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
   private CreationTypeEnum creationType;
 
   private String datasetName;
@@ -84,49 +49,6 @@ public class IndicatorPOSTInputType implements Serializable {
   private DefaultClassificationMappingType defaultClassificationMapping;
 
   private BigDecimal displayOrder;
-
-  /**
-   * indicates whether the indicator is a status indicator (values represent the extent of the watched phenomenon for a certain point in time) or a dynamic indicator (values represent the change of extent of the watched phenomenon within a certain period of time)
-   */
-  public enum IndicatorTypeEnum {
-    STATUS_ABSOLUTE("STATUS_ABSOLUTE"),
-    
-    DYNAMIC_ABSOLUTE("DYNAMIC_ABSOLUTE"),
-    
-    STATUS_RELATIVE("STATUS_RELATIVE"),
-    
-    DYNAMIC_RELATIVE("DYNAMIC_RELATIVE"),
-    
-    STATUS_STANDARDIZED("STATUS_STANDARDIZED"),
-    
-    DYNAMIC_STANDARDIZED("DYNAMIC_STANDARDIZED");
-
-    private String value;
-
-    IndicatorTypeEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static IndicatorTypeEnum fromValue(String value) {
-      for (IndicatorTypeEnum b : IndicatorTypeEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
 
   private IndicatorTypeEnum indicatorType;
 
@@ -252,11 +174,11 @@ public class IndicatorPOSTInputType implements Serializable {
   }
 
   /**
-   * indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)
+   * Get creationType
    * @return creationType
   */
-  @NotNull 
-  @Schema(name = "creationType", description = "indicates if the data is simply inserted (INSERTION), computed by an automated script (COMPUTATION) or automatically aggregated by a script (AGGREGATION)", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "creationType", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("creationType")
   public CreationTypeEnum getCreationType() {
     return creationType;
@@ -332,11 +254,11 @@ public class IndicatorPOSTInputType implements Serializable {
   }
 
   /**
-   * indicates whether the indicator is a status indicator (values represent the extent of the watched phenomenon for a certain point in time) or a dynamic indicator (values represent the change of extent of the watched phenomenon within a certain period of time)
+   * Get indicatorType
    * @return indicatorType
   */
-  
-  @Schema(name = "indicatorType", description = "indicates whether the indicator is a status indicator (values represent the extent of the watched phenomenon for a certain point in time) or a dynamic indicator (values represent the change of extent of the watched phenomenon within a certain period of time)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Valid 
+  @Schema(name = "indicatorType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicatorType")
   public IndicatorTypeEnum getIndicatorType() {
     return indicatorType;
