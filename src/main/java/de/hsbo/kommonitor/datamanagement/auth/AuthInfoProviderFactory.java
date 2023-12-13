@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.auth;
 import org.keycloak.KeycloakPrincipal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
@@ -25,8 +26,7 @@ public class AuthInfoProviderFactory {
 
 
     public AuthInfoProvider createAuthInfoProvider() {
-        Principal principal = (Principal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return createAuthInfoProvider(principal);
+        return createAuthInfoProvider(SecurityContextHolder.getContext().getAuthentication());
     }
 
     public AuthInfoProvider createAuthInfoProvider(Principal principal) {
@@ -37,6 +37,8 @@ public class AuthInfoProviderFactory {
 
         if (principal instanceof KeycloakPrincipal) {
             return new KeycloakAuthInfoProvider((KeycloakPrincipal) principal, keycloakClientId, adminRolePrefix, publicRole);
+        } else if (principal instanceof JwtAuthenticationToken) {
+            return new JwtTokenAuthInfoProvider((JwtAuthenticationToken) principal, keycloakClientId, adminRolePrefix, publicRole);
         } else {
             throw new IllegalStateException(String.format("Cannot create an AuthInfoProvider because the "
                     + "principal type %s is not supported.", principal.getClass()));

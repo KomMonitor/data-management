@@ -46,7 +46,6 @@
         <springfox.version>2.9.2</springfox.version>
         <geotools.version>19.0</geotools.version>
         <postgresql.version>42.6.0</postgresql.version>
-        <hibernate.version>5.6.15.Final</hibernate.version>
         <release-plugin.version>3.0.0-M1</release-plugin.version>
         <changelog-plugin.version>0.5.1</changelog-plugin.version>
         <log4j2.version>2.20.0</log4j2.version>
@@ -103,6 +102,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
         
         <!-- define as runtime scope -->
@@ -292,22 +303,10 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Hibernate -->
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>${hibernate.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${hibernate.version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-spatial</artifactId>
-            <version>${hibernate.version}</version>
+            <version>6.2.13.Final</version>
         </dependency>
 
         <dependency>

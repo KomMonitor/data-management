@@ -11,11 +11,12 @@ import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetad
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
-import de.hsbo.kommonitor.datamanagement.model.legacy.indicators.IndicatorPATCHDisplayOrderInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHDisplayOrderInputType;
 
 import java.security.Principal;
 import java.util.List;
 
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
@@ -53,10 +54,11 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         this.indicatorspatialunitsRepository = this.authHelperService.getIndicatorSpatialunitsRepository();
         this.authInfoProviderFactory = this.authHelperService.getAuthInfoProviderFactory();
 
-        if (Principal.class.isAssignableFrom(this.authentication.getPrincipal().getClass())) {
-            this.authInfoProvider = (this.authInfoProviderFactory.createAuthInfoProvider(((Principal) this.authentication.getPrincipal())));
-        } else {
-            throw new IllegalArgumentException("cannot cast princicpal of type " + this.authentication.getPrincipal().getClass().getSimpleName() + " to type " + Principal.class.getSimpleName());
+        if (Principal.class.isAssignableFrom(this.getAuthentication().getPrincipal().getClass())) {
+            this.authInfoProvider = (this.authInfoProviderFactory.createAuthInfoProvider(((Principal) this.getAuthentication().getPrincipal())));
+        }
+        else {
+            this.authInfoProvider = (this.authInfoProviderFactory.createAuthInfoProvider(this.getAuthentication()));
         }
     }
 
@@ -81,7 +83,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
                 throw new ResourceNotFoundException(NOTFOUNDCODE, "could not find entity " + entityID + " of type " + entityType);
             }
             boolean isAuthorized = this.authInfoProvider.checkPermissions(entity, PermissionLevelType.fromValue(permissionLevel.toLowerCase()));
-            logger.info("access for " + this.authentication.getName() + " to entity " + entityID + " of type " + entityType + " authorized? " + isAuthorized);
+            logger.info("access for " + this.getAuthentication().getName() + " to entity " + entityID + " of type " + entityType + " authorized? " + isAuthorized);
             return isAuthorized;
         } catch (Exception ex) {
             logger.error("unable to evaluate permissions for entity with id " + entityID + " of type " + entityType + "; return not authorized", ex);
@@ -131,7 +133,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
                 throw new ResourceNotFoundException(NOTFOUNDCODE, "could not find entity for id " + entityID1 + " and " + entityID2 + " of type " + joinedEntityType);
             }
             boolean isAuthorized = this.authInfoProvider.checkPermissions(entity, PermissionLevelType.fromValue(permissionLevel.toLowerCase()));
-            logger.info("access for " + this.authentication.getName() + " to joined  entity " + entityID1 + " and " + entityID2 + " of type " + joinedEntityType + " authorized? " + isAuthorized);
+            logger.info("access for " + this.getAuthentication().getName() + " to joined  entity " + entityID1 + " and " + entityID2 + " of type " + joinedEntityType + " authorized? " + isAuthorized);
             return isAuthorized;
         } catch (Exception ex) {
             logger.error("unable to evaluate permissions for joined entity with ids " + entityID1 + " and " + entityID2 + " of type " + joinedEntityType + "; return not authorized", ex);
