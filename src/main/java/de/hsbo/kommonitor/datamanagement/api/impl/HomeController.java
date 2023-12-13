@@ -29,7 +29,7 @@ public class HomeController {
             return target;
         }
 
-        return "redirect:swagger-ui.html";
+        return "redirect:/swagger-ui/index.html";
     }
 
 }
