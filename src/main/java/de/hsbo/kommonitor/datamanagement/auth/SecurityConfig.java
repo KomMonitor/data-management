@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/v3/api-docs")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/swagger-config")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/specs/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/management/public/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/**")).authenticated()
                         .anyRequest().denyAll()
                 )
