@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicsEntity;
+import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
 
 public class TopicsMapper {
 
@@ -19,8 +18,8 @@ public class TopicsMapper {
 	}
 
 	public static TopicOverviewType mapToSwaggerTopic(TopicsEntity topicEntity) {
-		TopicOverviewType topic = new TopicOverviewType(topicEntity.getTopicId());
-		
+		TopicOverviewType topic = new TopicOverviewType();
+		topic.setTopicId(topicEntity.getTopicId());
 		topic.setTopicName(topicEntity.getTopicName());
 		topic.setTopicDescription(topicEntity.getTopicDescription());
 		topic.setTopicType(topicEntity.getTopicType());
@@ -34,7 +33,8 @@ public class TopicsMapper {
 		ArrayList<TopicOverviewType> swaggerSubTopics = new ArrayList<TopicOverviewType>();
 		
 		for (TopicsEntity topicEntityType : subTopics) {
-			TopicOverviewType swaggerSubTopic = new TopicOverviewType(topicEntityType.getTopicId());
+			TopicOverviewType swaggerSubTopic = new TopicOverviewType();
+			swaggerSubTopic.setTopicId(topicEntityType.getTopicId());
 			swaggerSubTopic.setTopicName(topicEntityType.getTopicName());
 			swaggerSubTopic.setTopicDescription(topicEntityType.getTopicDescription());
 			swaggerSubTopic.setTopicType(topicEntityType.getTopicType());

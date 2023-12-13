@@ -1,7 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
-import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicsEntity;
-
 public class TopicsHelper {
 	
 	private static TopicsRepository topicsRepo;

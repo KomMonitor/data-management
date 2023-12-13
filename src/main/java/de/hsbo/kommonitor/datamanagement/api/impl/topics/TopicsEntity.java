@@ -1,4 +1,4 @@
-package de.hsbo.kommonitor.datamanagement.model.legacy.topics;
+package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
 import java.util.Collection;
 
@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 
+import de.hsbo.kommonitor.datamanagement.model.TopicResourceEnum;
+import de.hsbo.kommonitor.datamanagement.model.TopicTypeEnum;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity(name = "Topics")

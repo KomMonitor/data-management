@@ -3,8 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.hsbo.kommonitor.datamanagement.api.legacy.TopicsApi;
+import de.hsbo.kommonitor.datamanagement.api.TopicsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicInputType;
-import de.hsbo.kommonitor.datamanagement.model.legacy.topics.TopicOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.TopicInputType;
+import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
 
 @Controller
 public class TopicsController extends BasePathController implements TopicsApi {
@@ -111,7 +110,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('editor')")
-	public ResponseEntity updateTopic(@PathVariable("topicId") String topicId, @RequestBody TopicInputType topicData) {
+	public ResponseEntity<Void> updateTopic(@PathVariable("topicId") String topicId, @RequestBody TopicInputType topicData) {
 		logger.info("Received request to update topic with topicId '{}'", topicId);
 
 		String accept = request.getHeader("Accept");
