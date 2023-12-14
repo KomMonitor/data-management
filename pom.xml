@@ -17,14 +17,6 @@
 	    <tag>HEAD</tag>
   </scm>
 
-<!--    <parent>-->
-<!--        <groupId>org.springframework.boot</groupId>-->
-<!--        <artifactId>spring-boot-starter-parent</artifactId>-->
-<!--        <version>2.5.7</version>-->
-<!--        <relativePath />-->
-<!--        &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
-<!--    </parent>-->
-
     <licenses>
         <license>
             <name>GPL-v3.0</name>
@@ -54,37 +46,25 @@
 
 
     <dependencies>
-
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>32.1.2-jre</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-starter</artifactId>
-        </dependency>
-    
-        <!-- <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-tomcat</artifactId>
-                <scope>provided</scope>
-        </dependency> -->
-
-
-        <!-- Spring -->
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        
         <!-- define as runtime scope -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -123,17 +103,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Consul dependencies -->
-        <!-- <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-consul-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-consul-discovery</artifactId>
-        </dependency> -->
-
-
         <!-- Date Time support -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -158,9 +127,6 @@
 		    <!-- <version>2.13.0</version> -->
 		</dependency>
 
-
-
-
         <!-- Java Topology Suite -->
         <dependency>
             <groupId>org.locationtech.jts</groupId>
@@ -181,9 +147,7 @@
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-core-jakarta</artifactId>
-            <version>2.2.19</version>
         </dependency>
-
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
@@ -249,16 +213,6 @@
             <version>${geotools.version}</version>
             <type>jar</type>
         </dependency>
-        <!-- <dependency>
-                <groupId>org.geotools</groupId>
-                <artifactId>gt-metadata</artifactId>
-                <version>${geotools.version}</version>
-        </dependency> -->
-        <!-- <dependency>
-                <groupId>org.geotools</groupId>
-                <artifactId>gt-data</artifactId>
-                <version>${geotools.version}</version>
-        </dependency> -->
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-shapefile</artifactId>
@@ -334,7 +288,6 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.3.1</version>
         </dependency>
-
 
         <!-- Geoserver Manager -->
         <dependency>
