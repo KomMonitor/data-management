@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:36:13.690775700+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-14T08:36:20.041405+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "process-scripts", description = "the ProcessScripts API")
 public interface ProcessScriptsApi {
@@ -58,10 +58,10 @@ public interface ProcessScriptsApi {
         tags = { "process-scripts" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ProcessScriptOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProcessScriptOverviewType.class))
             }),
             @ApiResponse(responseCode = "201", description = "Created", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = ProcessScriptOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ProcessScriptOverviewType.class))
             }),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -75,7 +75,7 @@ public interface ProcessScriptsApi {
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/process-scripts",
-        produces = { "*/*" },
+        produces = { "application/json" },
         consumes = { "application/json" }
     )
     

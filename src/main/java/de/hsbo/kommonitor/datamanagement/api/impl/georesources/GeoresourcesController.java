@@ -78,7 +78,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 			try {
 				responseHeaders.setLocation(new URI(location));
 			} catch (URISyntaxException e) {
-				// return ApiResponseUtil.createResponseEntityFromException(e);
+				return ApiUtils.createResponseEntityFromException(e);
 			}
 
 			return new ResponseEntity<GeoresourceOverviewType>(georesourceMetadata, responseHeaders,

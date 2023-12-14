@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:36:13.690775700+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-14T08:36:20.041405+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "indicators", description = "the Indicators API")
 public interface IndicatorsApi {
@@ -61,10 +61,10 @@ public interface IndicatorsApi {
         tags = { "indicators" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = IndicatorOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = IndicatorOverviewType.class))
             }),
             @ApiResponse(responseCode = "201", description = "Created", content = {
-                @Content(mediaType = "*/*", schema = @Schema(implementation = IndicatorOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = IndicatorOverviewType.class))
             }),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -78,7 +78,7 @@ public interface IndicatorsApi {
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/indicators",
-        produces = { "*/*" },
+        produces = { "application/json" },
         consumes = { "application/json" }
     )
     
