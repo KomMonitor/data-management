@@ -588,10 +588,10 @@ public class GeoresourcesController extends BasePathController implements Geores
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
 	public ResponseEntity<Void> updateGeoresourceFeatureRecordAsBody(
-			@RequestBody String georesourceFeatureRecordData,
 			@PathVariable("georesourceId") String georesourceId,
 			@PathVariable("featureId") String featureId,
-			@PathVariable("featureRecordId") String featureRecordId) {
+			@PathVariable("featureRecordId") String featureRecordId,
+			@RequestBody String georesourceFeatureRecordData) {
 		logger.info(
 				"Received request to update single georesource feature database record for datasetId '{}' and featureId '{}' and recordId '{}'",
 				georesourceId, featureId, featureRecordId);

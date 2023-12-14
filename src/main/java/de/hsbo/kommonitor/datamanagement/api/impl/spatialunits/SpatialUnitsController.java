@@ -533,10 +533,10 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
 	public ResponseEntity<Void> updateSpatialUnitFeatureRecordAsBody(
-			@RequestBody String spatialUnitFeatureRecordData,
 			@PathVariable("spatialUnitId") String spatialUnitId,
 			@PathVariable("featureId") String featureId,
-			@PathVariable("featureRecordId") String featureRecordId) {
+			@PathVariable("featureRecordId") String featureRecordId,
+			@RequestBody String spatialUnitFeatureRecordData) {
 		logger.info("Received request to update single spatial unit feature database record for datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
 
 		String accept = request.getHeader("Accept");

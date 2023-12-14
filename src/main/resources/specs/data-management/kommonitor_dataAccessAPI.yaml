@@ -1528,6 +1528,12 @@ paths:
           required: true
           schema:
             type: string
+        - name: spatialUnitId
+          in: path
+          description: the unique identifier of the spatial level
+          required: true
+          schema:
+            type: string
         - name: featureId
           in: path
           description: the identifier of the indicator dataset spatial feature
@@ -1557,12 +1563,6 @@ paths:
               - weak
               - medium
               - strong
-        - name: spatialUnitId
-          in: path
-          description: the unique identifier of the spatial level
-          required: true
-          schema:
-            type: string
       responses:
         "200":
           description: OK
