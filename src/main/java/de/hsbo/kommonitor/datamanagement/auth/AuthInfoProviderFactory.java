@@ -15,9 +15,6 @@ import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 @Component
 public class AuthInfoProviderFactory {
 
-    @Value("${keycloak.resource}")
-    private String keycloakClientId;
-
     @Value("${kommonitor.access-control.authenticated-users.organizationalUnit:kommonitor}")
     private String adminRolePrefix;
 
@@ -36,9 +33,9 @@ public class AuthInfoProviderFactory {
         }
 
         if (principal instanceof KeycloakPrincipal) {
-            return new KeycloakAuthInfoProvider((KeycloakPrincipal) principal, keycloakClientId, adminRolePrefix, publicRole);
+            return new KeycloakAuthInfoProvider((KeycloakPrincipal) principal, adminRolePrefix, publicRole);
         } else if (principal instanceof JwtAuthenticationToken) {
-            return new JwtTokenAuthInfoProvider((JwtAuthenticationToken) principal, keycloakClientId, adminRolePrefix, publicRole);
+            return new JwtTokenAuthInfoProvider((JwtAuthenticationToken) principal, adminRolePrefix, publicRole);
         } else {
             throw new IllegalStateException(String.format("Cannot create an AuthInfoProvider because the "
                     + "principal type %s is not supported.", principal.getClass()));

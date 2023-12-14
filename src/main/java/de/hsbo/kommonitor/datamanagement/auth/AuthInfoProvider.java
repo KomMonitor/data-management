@@ -27,9 +27,6 @@ public abstract class AuthInfoProvider<T extends Principal> {
 
     private T principal;
 
-    @Value("${keycloak.resource}")
-    private String clientId;
-
     @Value("${kommonitor.access-control.authenticated-users.organizationalUnit:kommonitor}")
     private String adminRolePrefix;
 
@@ -43,9 +40,8 @@ public abstract class AuthInfoProvider<T extends Principal> {
     public AuthInfoProvider() {
     }
 
-    public AuthInfoProvider(T principal, String clientId, String adminRolePrefix, String publicRole) {
+    public AuthInfoProvider(T principal, String adminRolePrefix, String publicRole) {
         this.principal = principal;
-        this.clientId = clientId;
         this.adminRolePrefix = adminRolePrefix;
         this.publicRole = publicRole;
         permissionSet = new TreeSet();

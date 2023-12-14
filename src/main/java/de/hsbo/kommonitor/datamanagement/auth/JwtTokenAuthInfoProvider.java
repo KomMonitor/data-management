@@ -9,8 +9,8 @@ import java.util.Set;
 
 public class JwtTokenAuthInfoProvider extends AuthInfoProvider<JwtAuthenticationToken> {
 
-    public JwtTokenAuthInfoProvider(JwtAuthenticationToken principal, String clientId, String adminRolePrefix, String publicRole) {
-        super(principal, clientId, adminRolePrefix, publicRole);
+    public JwtTokenAuthInfoProvider(JwtAuthenticationToken principal,String adminRolePrefix, String publicRole) {
+        super(principal, adminRolePrefix, publicRole);
     }
 
     @Override

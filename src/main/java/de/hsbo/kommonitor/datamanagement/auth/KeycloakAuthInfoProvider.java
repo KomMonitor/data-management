@@ -16,8 +16,8 @@ import java.util.Set;
 @RequestScope
 public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal> {
 
-    public KeycloakAuthInfoProvider(KeycloakPrincipal principal, String clientId, String adminRolePrefix, String publicRole) {
-        super(principal, clientId, adminRolePrefix, publicRole);
+    public KeycloakAuthInfoProvider(KeycloakPrincipal principal, String adminRolePrefix, String publicRole) {
+        super(principal, adminRolePrefix, publicRole);
     }
 
     @Override
