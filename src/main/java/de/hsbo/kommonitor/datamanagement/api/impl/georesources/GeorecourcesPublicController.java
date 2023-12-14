@@ -1,8 +1,10 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
-import java.math.BigDecimal;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,15 +17,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
-public class GeorecourcesPublicController extends BasePathPublicController implements GeoresourcesPublicApi {
+public class GeorecourcesPublicController extends BasePathController implements GeoresourcesPublicApi {
 
 	private static Logger logger = LoggerFactory.getLogger(GeorecourcesPublicController.class);
 

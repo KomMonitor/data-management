@@ -2,7 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.scripts;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.ProcessScriptsPublicApi;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @Controller
-public class ScriptPublicController extends BasePathPublicController implements ProcessScriptsPublicApi {
+public class ScriptPublicController extends BasePathController implements ProcessScriptsPublicApi {
 
     private static Logger logger = LoggerFactory.getLogger(ScriptPublicController.class);
 

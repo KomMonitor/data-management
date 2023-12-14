@@ -1,9 +1,12 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,17 +19,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsPublicApi;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
-public class SpatialUnitsPublicController extends BasePathPublicController implements SpatialUnitsPublicApi {
+public class SpatialUnitsPublicController extends BasePathController implements SpatialUnitsPublicApi {
 
     private static Logger logger = LoggerFactory.getLogger(SpatialUnitsPublicController.class);
 

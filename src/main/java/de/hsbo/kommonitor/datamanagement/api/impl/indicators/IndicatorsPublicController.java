@@ -1,8 +1,11 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
-import java.math.BigDecimal;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hsbo.kommonitor.datamanagement.api.IndicatorsPublicApi;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,16 +18,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import de.hsbo.kommonitor.datamanagement.api.IndicatorsPublicApi;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
-public class IndicatorsPublicController extends BasePathPublicController implements IndicatorsPublicApi {
+public class IndicatorsPublicController extends BasePathController implements IndicatorsPublicApi {
 
     private static Logger logger = LoggerFactory.getLogger(IndicatorsPublicController.class);
 

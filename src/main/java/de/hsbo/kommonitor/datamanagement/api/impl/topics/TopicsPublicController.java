@@ -2,7 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.TopicsPublicApi;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 @Controller
-public class TopicsPublicController extends BasePathPublicController implements TopicsPublicApi {
+public class TopicsPublicController extends BasePathController implements TopicsPublicApi {
 
     private static Logger logger = LoggerFactory.getLogger(TopicsPublicController.class);
 
