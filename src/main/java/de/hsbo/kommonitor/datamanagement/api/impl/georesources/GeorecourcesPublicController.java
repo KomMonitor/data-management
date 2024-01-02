@@ -14,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -57,7 +55,7 @@ public class GeorecourcesPublicController extends BasePathController implements 
 
 	@Override
 	public ResponseEntity<GeoresourceOverviewType> getPublicGeoresourceById(
-			@PathVariable("georesourceId") String georesourceId) {
+			String georesourceId) {
 		logger.info("Received request to get public georesource metadata for datasetId '{}'", georesourceId);
 
 		String accept = request.getHeader("Accept");
@@ -76,8 +74,8 @@ public class GeorecourcesPublicController extends BasePathController implements 
 
 	@Override
 	public ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesById(
-			@PathVariable("georesourceId") String georesourceId,
-			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
+			String georesourceId,
+			String simplifyGeometries) {
 		logger.info(
 				"Received request to get all public georesource features for datasetId '{}' and simplifyGeometries parameter '{}'",
 				georesourceId, simplifyGeometries);
@@ -94,9 +92,11 @@ public class GeorecourcesPublicController extends BasePathController implements 
 
 	@Override
 	public ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonth(
-			@PathVariable("georesourceId") String georesourceId, @PathVariable("year") BigDecimal year,
-			@PathVariable("month") BigDecimal month, @PathVariable("day") BigDecimal day,
-			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
+			String georesourceId,
+			BigDecimal year,
+			BigDecimal month,
+			BigDecimal day,
+			String simplifyGeometries) {
 		logger.info(
 				"Received request to get public georesource features for datasetId '{}' and simplifyGeometries parameter '{}'",
 				georesourceId, simplifyGeometries);
@@ -114,7 +114,7 @@ public class GeorecourcesPublicController extends BasePathController implements 
 
 	@Override
 	public ResponseEntity<String> getPublicGeoresourceSchemaByLevel(
-			@PathVariable("georesourceId") String georesourceId) {
+			String georesourceId) {
 		logger.info("Received request to get public georesource metadata for datasetId '{}'", georesourceId);
 
 
@@ -134,7 +134,7 @@ public class GeorecourcesPublicController extends BasePathController implements 
 
 	@Override
 	public ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesByIdWithoutGeometry(
-			@PathVariable("georesourceId") String georesourceId) {
+			String georesourceId) {
 		logger.info("Received request to get all public georesource features for datasetId '{}' without geometry",
 				georesourceId);
 
@@ -150,10 +150,10 @@ public class GeorecourcesPublicController extends BasePathController implements 
 
 	@Override
 	public ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonthWithoutGeometry(
-			@PathVariable("georesourceId") String georesourceId,
-			@PathVariable("year") BigDecimal year,
-			@PathVariable("month") BigDecimal month,
-			@PathVariable("day") BigDecimal day
+			String georesourceId,
+			BigDecimal year,
+			BigDecimal month,
+			BigDecimal day
 			) {
 		logger.info("Received request to get public georesource features for datasetId '{}' without geometry",
 				georesourceId);
@@ -171,9 +171,9 @@ public class GeorecourcesPublicController extends BasePathController implements 
 	}
 
 	public ResponseEntity<byte[]> getPublicSingleGeoresourceFeatureById(
-			@PathVariable("georesourceId") String georesourceId,
-			@PathVariable("featureId") String featureId,
-			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
+			String georesourceId,
+			String featureId,
+			String simplifyGeometries) {
 		logger.info(
 				"Received request to get public single georesource feature records for datasetId '{}' and featureId '{}'",
 				georesourceId, featureId);
@@ -190,10 +190,10 @@ public class GeorecourcesPublicController extends BasePathController implements 
 	}
 
 	public ResponseEntity<byte[]> getPublicSingleGeoresourceFeatureRecordById(
-			@PathVariable("georesourceId") String georesourceId,
-			@PathVariable("featureId") String featureId,
-			@PathVariable("featureRecordId") String featureRecordId,
-			@RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
+			String georesourceId,
+			String featureId,
+			String featureRecordId,
+			String simplifyGeometries) {
 		logger.info(
 				"Received request to get public single georesource feature record for datasetId '{}' and featureId '{}' and recordId '{}'",
 				georesourceId, featureId, featureRecordId);

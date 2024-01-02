@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -58,7 +57,7 @@ public class ScriptPublicController extends BasePathController implements Proces
     }
 
     @Override
-    public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForPublicIndicator(@PathVariable("indicatorId") String indicatorId) {
+    public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForPublicIndicator(String indicatorId) {
         logger.info("Received request to get process script metadata for indicatorId '{}'", indicatorId);
         String accept = request.getHeader("Accept");
 
@@ -80,7 +79,7 @@ public class ScriptPublicController extends BasePathController implements Proces
     }
 
     @Override
-    public ResponseEntity<byte[]> getProcessScriptCodeForPublicIndicator(@PathVariable("indicatorId") String indicatorId) {
+    public ResponseEntity<byte[]> getProcessScriptCodeForPublicIndicator(String indicatorId) {
         logger.info("Received request to get scriptCode for associated indicatorId '{}'", indicatorId);
 
         try {
@@ -101,7 +100,7 @@ public class ScriptPublicController extends BasePathController implements Proces
     }
 
     @Override
-    public ResponseEntity<byte[]> getPublicProcessScriptCode(@PathVariable("scriptId") String scriptId) {
+    public ResponseEntity<byte[]> getPublicProcessScriptCode(String scriptId) {
         logger.info("Received request to get scriptCode for scriptId '{}'", scriptId);
 
         try {
@@ -122,7 +121,7 @@ public class ScriptPublicController extends BasePathController implements Proces
     }
 
     @Override
-    public ResponseEntity<ProcessScriptOverviewType> getPublicProcessScriptForScriptId(@PathVariable("scriptId") String scriptId) {
+    public ResponseEntity<ProcessScriptOverviewType> getPublicProcessScriptForScriptId(String scriptId) {
         logger.info("Received request to get process script metadata for scriptId '{}'", scriptId);
         String accept = request.getHeader("Accept");
 

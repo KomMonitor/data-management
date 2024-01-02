@@ -15,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,7 +22,7 @@ import java.util.List;
 @Controller
 public class IndicatorsPublicController extends BasePathController implements IndicatorsPublicApi {
 
-    private static Logger logger = LoggerFactory.getLogger(IndicatorsPublicController.class);
+    private static final Logger logger = LoggerFactory.getLogger(IndicatorsPublicController.class);
 
     private final ObjectMapper objectMapper;
 
@@ -40,9 +38,10 @@ public class IndicatorsPublicController extends BasePathController implements In
     }
 
     @Override
-    public ResponseEntity<byte[]> getPublicIndicatorBySpatialUnitIdAndId(@PathVariable("indicatorId") String indicatorId,
-                                                                         @PathVariable("spatialUnitId") String spatialUnitId,
-                                                                         @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
+    public ResponseEntity<byte[]> getPublicIndicatorBySpatialUnitIdAndId(
+            String indicatorId,
+            String spatialUnitId,
+            String simplifyGeometries) {
         logger.info("Received request to get public indicators features for spatialUnitId '{}' and Id '{}' ",
                 spatialUnitId, indicatorId);
         String accept = request.getHeader("Accept");
@@ -65,12 +64,13 @@ public class IndicatorsPublicController extends BasePathController implements In
     }
 
     @Override
-    public ResponseEntity<byte[]> getPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonth(@PathVariable("indicatorId") String indicatorId,
-                                                                                        @PathVariable("spatialUnitId") String spatialUnitId,
-                                                                                        @PathVariable("year") BigDecimal year,
-                                                                                        @PathVariable("month") BigDecimal month,
-                                                                                        @PathVariable("day") BigDecimal day,
-                                                                                        @RequestParam(value = "simplifyGeometries", required = false, defaultValue = "original") String simplifyGeometries) {
+    public ResponseEntity<byte[]> getPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonth(
+            String indicatorId,
+            String spatialUnitId,
+            BigDecimal year,
+            BigDecimal month,
+            BigDecimal day,
+            String simplifyGeometries) {
         logger.info(
                 "Received request to get public indicators features for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
                 spatialUnitId, indicatorId, year, month, day);
@@ -113,7 +113,7 @@ public class IndicatorsPublicController extends BasePathController implements In
     }
 
     @Override
-    public ResponseEntity<IndicatorOverviewType> getPublicIndicatorById(@PathVariable("indicatorId") String indicatorId) {
+    public ResponseEntity<IndicatorOverviewType> getPublicIndicatorById(String indicatorId) {
         logger.info("Received request to get public indicator metadata for indicatorId '{}'", indicatorId);
         String accept = request.getHeader("Accept");
 
@@ -131,11 +131,11 @@ public class IndicatorsPublicController extends BasePathController implements In
 
     @Override
     public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonthWithoutGeometry(
-            @PathVariable("indicatorId") String indicatorId,
-            @PathVariable("spatialUnitId") String spatialUnitId,
-            @PathVariable("year") BigDecimal year,
-            @PathVariable("month") BigDecimal month,
-            @PathVariable("day") BigDecimal day) {
+            String indicatorId,
+            String spatialUnitId,
+            BigDecimal year,
+            BigDecimal month,
+            BigDecimal day) {
         logger.info(
                 "Received request to get public indicators feature properties without geometries for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
                 spatialUnitId, indicatorId, year, month, day);
@@ -153,8 +153,8 @@ public class IndicatorsPublicController extends BasePathController implements In
 
     @Override
     public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicIndicatorBySpatialUnitIdAndIdWithoutGeometry(
-            @PathVariable("indicatorId") String indicatorId,
-            @PathVariable("spatialUnitId") String spatialUnitId) {
+            String indicatorId,
+            String spatialUnitId) {
         logger.info("Received request to get public indicator feature properties for spatialUnitId '{}' and Id '{}' (without geometries)",
                 spatialUnitId, indicatorId);
         String accept = request.getHeader("Accept");
@@ -169,9 +169,9 @@ public class IndicatorsPublicController extends BasePathController implements In
     
 	@Override
     public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicSingleIndicatorFeatureById(
-			@PathVariable("indicatorId") String indicatorId,
-			@PathVariable("spatialUnitId") String spatialUnitId,
-			@PathVariable("featureId") String featureId) {
+			String indicatorId,
+			String spatialUnitId,
+			String featureId) {
 
 		logger.info(
 				"Received request to get public single indicator feature records for datasetId '{}' and spatialUnitId '{}' and featureId '{}'",
@@ -189,10 +189,10 @@ public class IndicatorsPublicController extends BasePathController implements In
 	}
 
 	public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicSingleIndicatorFeatureRecordById(
-			@PathVariable("indicatorId") String indicatorId,
-			@PathVariable("spatialUnitId") String spatialUnitId,
-			@PathVariable("featureId") String featureId,
-			@PathVariable("featureRecordId") String featureRecordId) {
+			String indicatorId,
+			String spatialUnitId,
+			String featureId,
+			String featureRecordId) {
 
 		logger.info(
 				"Received request to get public single indicator feature records for datasetId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'",

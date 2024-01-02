@@ -16,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -63,8 +61,7 @@ public class AccessControlController extends BasePathController implements Acces
 
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('viewer')")
-    public ResponseEntity<OrganizationalUnitOverviewType> getOrganizationalUnitById(
-        @PathVariable("organizationalUnitId") String organizationalUnitId) {
+    public ResponseEntity<OrganizationalUnitOverviewType> getOrganizationalUnitById(String organizationalUnitId) {
         logger.debug("Received request to get organizationalUnit with id '{}'", organizationalUnitId);
         String accept = request.getHeader("Accept");
 
@@ -79,8 +76,7 @@ public class AccessControlController extends BasePathController implements Acces
 
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('creator')")
-    public ResponseEntity<Void> addOrganizationalUnit(
-        @RequestBody OrganizationalUnitInputType organizationalUnitData) {
+    public ResponseEntity<Void> addOrganizationalUnit(OrganizationalUnitInputType organizationalUnitData) {
         logger.info("Received request to insert new organizationalUnit with associated Roles");
 
         String accept = request.getHeader("Accept");
@@ -110,8 +106,8 @@ public class AccessControlController extends BasePathController implements Acces
 
     @PreAuthorize("hasRequiredPermissionLevel('creator')")
     @Override public ResponseEntity<Void> updateOrganizationalUnit(
-            @PathVariable("organizationalUnitId") String organizationalUnitId,
-            @RequestBody OrganizationalUnitInputType inputData) {
+            String organizationalUnitId,
+            OrganizationalUnitInputType inputData) {
         logger.info("Received request to update new organizationalUnit with associated Roles");
         String accept = request.getHeader("Accept");
 
@@ -137,8 +133,7 @@ public class AccessControlController extends BasePathController implements Acces
     }
 
     @PreAuthorize("hasRequiredPermissionLevel('creator')")
-    @Override public ResponseEntity deleteOrganizationalUnit(
-        @PathVariable("organizationalUnitId") String organizationalUnitId) {
+    @Override public ResponseEntity deleteOrganizationalUnit(String organizationalUnitId) {
         logger.info("Received request to delete organizationalUnit and associated roles for id '{}'",
                     organizationalUnitId);
         try {

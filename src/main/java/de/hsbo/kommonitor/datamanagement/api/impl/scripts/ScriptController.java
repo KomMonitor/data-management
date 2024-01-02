@@ -57,7 +57,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('publisher')")
-	public ResponseEntity<ProcessScriptOverviewType> addProcessScriptAsBody(@RequestBody ProcessScriptPOSTInputType processScriptData) {
+	public ResponseEntity<ProcessScriptOverviewType> addProcessScriptAsBody(ProcessScriptPOSTInputType processScriptData) {
 		logger.info("Received request to insert new process script");
 
 		String accept = request.getHeader("Accept");
@@ -93,7 +93,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('creator')")
-	public ResponseEntity deleteProcessScript(@PathVariable("indicatorId") String indicatorId) {
+	public ResponseEntity deleteProcessScript(String indicatorId) {
 		logger.info("Received request to delete process scripts for indicatorId '{}'", indicatorId);
 		
 		String accept = request.getHeader("Accept");
@@ -148,7 +148,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
-	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(@PathVariable("indicatorId") String indicatorId) {
+	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForIndicator(String indicatorId) {
 		logger.info("Received request to get process script metadata for indicatorId '{}'", indicatorId);
 		String accept = request.getHeader("Accept");
 
@@ -173,7 +173,9 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('editor')")
-	public ResponseEntity updateProcessScriptAsBody(@PathVariable("indicatorId") String indicatorId, @RequestBody ProcessScriptPUTInputType processScriptData) {
+	public ResponseEntity updateProcessScriptAsBody(
+			String indicatorId,
+			ProcessScriptPUTInputType processScriptData) {
 		logger.info("Received request to update process script with indicatorId '{}'", indicatorId);
 
 		String accept = request.getHeader("Accept");
@@ -207,7 +209,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
-	public ResponseEntity<byte[]> getProcessScriptCodeForIndicator(@PathVariable("indicatorId") String indicatorId) {
+	public ResponseEntity<byte[]> getProcessScriptCodeForIndicator(String indicatorId) {
 		logger.info("Received request to get scriptCode for associated indicatorId '{}'", indicatorId);
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
@@ -231,7 +233,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('creator')")
-	public ResponseEntity deleteProcessScriptByScriptId(@PathVariable("scriptId") String scriptId) {
+	public ResponseEntity deleteProcessScriptByScriptId(String scriptId) {
 		logger.info("Received request to delete process scripts for scriptId '{}'", scriptId);
 		
 		String accept = request.getHeader("Accept");
@@ -257,7 +259,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
-	public ResponseEntity<byte[]> getProcessScriptCode(@PathVariable("scriptId") String scriptId) {
+	public ResponseEntity<byte[]> getProcessScriptCode(String scriptId) {
 		logger.info("Received request to get scriptCode for scriptId '{}'", scriptId);
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
@@ -281,7 +283,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
-	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForScriptId(@PathVariable("scriptId") String scriptId) {
+	public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForScriptId(String scriptId) {
 		logger.info("Received request to get process script metadata for scriptId '{}'", scriptId);
 		String accept = request.getHeader("Accept");
 
@@ -306,7 +308,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('editor')")
-	public ResponseEntity updateProcessScriptAsBodyByScriptId(@PathVariable("scriptId") String scriptId,
+	public ResponseEntity updateProcessScriptAsBodyByScriptId(String scriptId,
 			@RequestBody ProcessScriptPUTInputType processScriptData) {
 		logger.info("Received request to update process script with scriptId '{}'", scriptId);
 
