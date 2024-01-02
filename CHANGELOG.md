@@ -1,6 +1,9 @@
 # Change Log
 
-## 3.1.0-beta.1
+## 3.1.0-beta.2
+* Switch to using AnnotationParameterNameDiscoverer for Spring Security method parameters [d74a65f](d74a65fe2d22f5ca9642f3500578e888122f8895)
+* Fix Hibernate dialect config and enable controller sorting [7cecc22](7cecc22f82611ba2023205d057b79cd8a4be0d69)
+* Use latest Spring Boot version and clean deps management [670a8c7](670a8c74a469ee10c56981e09264c4b9838c722c)
 * Add ignore file for OpenAPI generator [04eefd3](04eefd362db486a0c1c0cb32153edabe160334ad)
 * Clean up properties files [d10b6ce](d10b6ce1ecf32c041f97ef4379770a60185f9013)
 * Fix ordering of API controller parameters [0ee047c](0ee047c12586b6724d57c8cef165f213b307ee48)
