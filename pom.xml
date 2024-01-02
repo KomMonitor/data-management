@@ -32,12 +32,13 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>3.1.5</spring-boot.version>
+        <spring-boot.version>3.2.1</spring-boot.version>
         <logstash.logback.version>5.0</logstash.logback.version>
         <docker.image.prefix>kommonitor</docker.image.prefix>
         <springfox.version>2.9.2</springfox.version>
         <geotools.version>19.0</geotools.version>
         <postgresql.version>42.6.0</postgresql.version>
+        <hibernate-spatial.version>6.3.1.Final</hibernate-spatial.version>
         <release-plugin.version>3.0.0-M1</release-plugin.version>
         <changelog-plugin.version>0.5.1</changelog-plugin.version>
         <log4j2.version>2.20.0</log4j2.version>
@@ -139,18 +140,48 @@
             <version>2.4</version>
         </dependency>
 
+        <!-- Springdoc OpenAPI-->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>swagger-annotations</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>${openapi-codegen.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>swagger-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-core-jakarta</artifactId>
+            <version>2.2.19</version>
         </dependency>
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>2.1.1</version>
         </dependency>
 
         <!-- Geotools -->
@@ -260,7 +291,7 @@
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-spatial</artifactId>
-            <version>6.2.13.Final</version>
+            <version>${hibernate-spatial.version}</version>
         </dependency>
 
         <dependency>
@@ -295,10 +326,6 @@
             <artifactId>geoserver-manager</artifactId>
             <version>1.7.0</version>
         </dependency>
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -316,42 +343,6 @@
                 <version>20.0.5</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>2.3.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.swagger.core.v3</groupId>
-                        <artifactId>swagger-annotations</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>${openapi-codegen.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.swagger.core.v3</groupId>
-                        <artifactId>swagger-annotations</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-simple</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.openapitools</groupId>
-                <artifactId>jackson-databind-nullable</artifactId>
-                <version>0.2.6</version>
-            </dependency>
-            <dependency>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-core-jakarta</artifactId>
-                <version>2.2.19</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
