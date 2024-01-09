@@ -512,7 +512,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
 	public ResponseEntity<Void> updateGeoresourceAsBody(
-			String georesourceId,
+			@P("georesourceId") String georesourceId,
 			GeoresourcePUTInputType featureData) {
 		logger.info("Received request to update georesource features for datasetId '{}'", georesourceId);
 
