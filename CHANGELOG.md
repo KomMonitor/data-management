@@ -1,6 +1,7 @@
 # Change Log
 
-## 3.1.0-beta.2
+## 3.1.0-beta.3
+* Fix PreAuthorize method parameter referencing [2c1d345](2c1d345dd1c1b6901be62ebf6e0498b4302924b7)
 * Switch to using AnnotationParameterNameDiscoverer for Spring Security method parameters [d74a65f](d74a65fe2d22f5ca9642f3500578e888122f8895)
 * Fix Hibernate dialect config and enable controller sorting [7cecc22](7cecc22f82611ba2023205d057b79cd8a4be0d69)
 * Use latest Spring Boot version and clean deps management [670a8c7](670a8c74a469ee10c56981e09264c4b9838c722c)
