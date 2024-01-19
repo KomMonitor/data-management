@@ -5,16 +5,16 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 @Entity(name = "MetadataSpatialUnits")
 public class MetadataSpatialUnitsEntity extends AbstractMetadata implements RestrictedByRole {

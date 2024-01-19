@@ -1,18 +1,12 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Objects;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-
-import org.hibernate.annotations.GenericGenerator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * definition of the period of validity of a certain dataset
@@ -42,8 +36,10 @@ public PeriodOfValidityEntity_spatialUnits startDate(LocalDate startDate) {
    * a timestamp representing the starting date according to ISO 8601 (e.g. 2018-01-30)
    * @return startDate
   **/
-  @ApiModelProperty(required = true, value = "a timestamp representing the starting date according to ISO 8601 (e.g. 2018-01-30)")
-  public LocalDate getStartDate() {
+   @NotNull
+   @Schema(name = "startDate", description = "a timestamp representing the starting date according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.REQUIRED)
+   @JsonProperty("startDate")
+   public LocalDate getStartDate() {
     return startDate;
   }
 
@@ -60,7 +56,12 @@ public PeriodOfValidityEntity_spatialUnits startDate(LocalDate startDate) {
    * an optional timestamp representing the ending date according to ISO 8601 (e.g. 2018-01-30). The parameter can be omitted, if the end date is unknown.
    * @return endDate
   **/
-  @ApiModelProperty(value = "an optional timestamp representing the ending date according to ISO 8601 (e.g. 2018-01-30). The parameter can be omitted, if the end date is unknown.")
+  /**
+   * an optional timestamp representing the ending date according to ISO 8601 (e.g. 2018-01-30). The parameter can be omitted, if the end date is unknown.
+   * @return endDate
+   **/
+  @Schema(name = "endDate", description = "an optional timestamp representing the ending date according to ISO 8601 (e.g. 2018-01-30). The parameter can be omitted, if the end date is unknown.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("endDate")
   public LocalDate getEndDate() {
     return endDate;
   }

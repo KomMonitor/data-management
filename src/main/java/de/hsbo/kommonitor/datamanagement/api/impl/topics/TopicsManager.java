@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +16,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicInputType;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicResourceEnum;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
+import de.hsbo.kommonitor.datamanagement.model.TopicInputType;
+import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.TopicResourceEnum;
+import de.hsbo.kommonitor.datamanagement.model.TopicTypeEnum;
 
 @Transactional
 @Repository

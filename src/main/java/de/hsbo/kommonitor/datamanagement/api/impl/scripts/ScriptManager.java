@@ -8,10 +8,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.model.roles.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.*;
 import org.geotools.data.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +24,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundExce
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
-import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessInputType;
-import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptPUTInputType;
 
 @Transactional
 @Repository

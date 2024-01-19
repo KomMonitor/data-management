@@ -51,10 +51,10 @@ import com.google.common.collect.Lists;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.GeometrySimplifierUtil;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeIndicatorValues;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeValueMapping;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPropertiesWithoutGeomType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeIndicatorValues;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeValueMapping;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
 
 public class IndicatorDatabaseHandler {
 

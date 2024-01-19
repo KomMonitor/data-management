@@ -3,21 +3,23 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 import java.util.Collection;
 import java.util.HashSet;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
-import de.hsbo.kommonitor.datamanagement.model.indicators.CreationTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
 
 @Entity(name = "MetadataIndicators")
 public class MetadataIndicatorsEntity extends AbstractMetadata implements RestrictedByRole {

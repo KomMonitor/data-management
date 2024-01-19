@@ -1,22 +1,19 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
-import java.util.Objects;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * array of periods of validity, each consisting of a start and end date
  */
-@ApiModel(description = "array of periods of validity, each consisting of a start and end date")
-
-@javax.annotation.Generated(value = "de.prospectiveharvest.codegen.PHServerGenerator", date = "2019-09-17T12:19:42.197+02:00")
-
+@Schema(description = "definition of the period of validity of a certain dataset")
 public class AvailablePeriodsOfValidityType extends ArrayList<PeriodOfValidityType>  {
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -44,7 +41,7 @@ public class AvailablePeriodsOfValidityType extends ArrayList<PeriodOfValidityTy
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

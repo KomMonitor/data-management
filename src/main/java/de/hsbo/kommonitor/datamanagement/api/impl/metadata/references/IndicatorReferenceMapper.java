@@ -5,8 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
 
 public class IndicatorReferenceMapper {
 

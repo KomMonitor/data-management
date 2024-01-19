@@ -4,10 +4,10 @@ import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
-import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToGeoresources;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourceReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeRefrencesToGeoresources;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
 
 public class ReferenceManager {
 

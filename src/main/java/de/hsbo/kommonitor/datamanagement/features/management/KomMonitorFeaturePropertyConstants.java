@@ -3,6 +3,8 @@ package de.hsbo.kommonitor.datamanagement.features.management;
 public class KomMonitorFeaturePropertyConstants {
 	
 	public static final String UNIQUE_FEATURE_ID_PRIMARYKEY_NAME = "fid";
+
+	public static final String UNIQUE_FEATURE_ID_PRIMARYKEY_DUPLICATE_NAME = "fid_1";
 	public static final String GEOMETRY_COLUMN_NAME = "geometry";
 
 	public static final String VALID_START_DATE_NAME = "validStartDate";

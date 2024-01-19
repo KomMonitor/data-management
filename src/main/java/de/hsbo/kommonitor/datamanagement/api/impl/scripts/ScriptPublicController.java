@@ -2,11 +2,12 @@ package de.hsbo.kommonitor.datamanagement.api.impl.scripts;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.ProcessScriptsPublicApi;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathPublicController;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.model.scripts.ProcessScriptOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.ProcessScriptOverviewType;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
-public class ScriptPublicController extends BasePathPublicController implements ProcessScriptsPublicApi {
+public class ScriptPublicController extends BasePathController implements ProcessScriptsPublicApi {
 
     private static Logger logger = LoggerFactory.getLogger(ScriptPublicController.class);
 
@@ -58,7 +57,7 @@ public class ScriptPublicController extends BasePathPublicController implements 
     }
 
     @Override
-    public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForPublicIndicator(@PathVariable("indicatorId") String indicatorId) {
+    public ResponseEntity<ProcessScriptOverviewType> getProcessScriptForPublicIndicator(String indicatorId) {
         logger.info("Received request to get process script metadata for indicatorId '{}'", indicatorId);
         String accept = request.getHeader("Accept");
 
@@ -80,7 +79,7 @@ public class ScriptPublicController extends BasePathPublicController implements 
     }
 
     @Override
-    public ResponseEntity<byte[]> getProcessScriptCodeForPublicIndicator(@PathVariable("indicatorId") String indicatorId) {
+    public ResponseEntity<byte[]> getProcessScriptCodeForPublicIndicator(String indicatorId) {
         logger.info("Received request to get scriptCode for associated indicatorId '{}'", indicatorId);
 
         try {
@@ -101,7 +100,7 @@ public class ScriptPublicController extends BasePathPublicController implements 
     }
 
     @Override
-    public ResponseEntity<byte[]> getPublicProcessScriptCode(@PathVariable("scriptId") String scriptId) {
+    public ResponseEntity<byte[]> getPublicProcessScriptCode(String scriptId) {
         logger.info("Received request to get scriptCode for scriptId '{}'", scriptId);
 
         try {
@@ -122,7 +121,7 @@ public class ScriptPublicController extends BasePathPublicController implements 
     }
 
     @Override
-    public ResponseEntity<ProcessScriptOverviewType> getPublicProcessScriptForScriptId(@PathVariable("scriptId") String scriptId) {
+    public ResponseEntity<ProcessScriptOverviewType> getPublicProcessScriptForScriptId(String scriptId) {
         logger.info("Received request to get process script metadata for scriptId '{}'", scriptId);
         String accept = request.getHeader("Accept");
 

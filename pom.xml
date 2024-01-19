@@ -4,7 +4,7 @@
 
     <groupId>de.hsbo.kommonitor</groupId>
     <artifactId>kommonitor-data-management-app</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
     <packaging>jar</packaging>
 
     <name>KomMonitor Data Management</name>
@@ -14,16 +14,8 @@
 	    <url>https://github.com/KomMonitor/data-management</url>
         <connection>scm:git:https://github.com/KomMonitor/data-management.git</connection>
         <developerConnection>scm:git:https://github.com/KomMonitor/data-management.git</developerConnection>
-	    <tag>v3.0.0</tag>
+	    <tag>v3.1.0</tag>
   </scm>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.7</version>
-        <relativePath />
-        <!-- lookup parent from repository -->
-    </parent>
 
     <licenses>
         <license>
@@ -38,51 +30,42 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>
-        <spring-boot.version>2.7.15</spring-boot.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <spring-boot.version>3.2.1</spring-boot.version>
         <logstash.logback.version>5.0</logstash.logback.version>
         <docker.image.prefix>kommonitor</docker.image.prefix>
         <springfox.version>2.9.2</springfox.version>
         <geotools.version>19.0</geotools.version>
         <postgresql.version>42.6.0</postgresql.version>
-        <hibernate.version>5.6.15.Final</hibernate.version>
+        <hibernate-spatial.version>6.3.1.Final</hibernate-spatial.version>
         <release-plugin.version>3.0.0-M1</release-plugin.version>
         <changelog-plugin.version>0.5.1</changelog-plugin.version>
         <log4j2.version>2.20.0</log4j2.version>
+        <openapi-codegen.version>7.1.0</openapi-codegen.version>
     </properties>
 
 
     <dependencies>
-
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>32.1.2-jre</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-starter</artifactId>
-        </dependency>
-    
-        <!-- <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-tomcat</artifactId>
-                <scope>provided</scope>
-        </dependency> -->
-
-
-        <!-- Spring -->
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        
         <!-- define as runtime scope -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -101,6 +84,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
         
         <!-- define as runtime scope -->
         <dependency>
@@ -108,17 +103,6 @@
             <artifactId>aspectjweaver</artifactId>
             <scope>runtime</scope>
         </dependency>
-
-        <!-- Consul dependencies -->
-        <!-- <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-consul-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-consul-discovery</artifactId>
-        </dependency> -->
-
 
         <!-- Date Time support -->
         <dependency>
@@ -144,9 +128,6 @@
 		    <!-- <version>2.13.0</version> -->
 		</dependency>
 
-
-
-
         <!-- Java Topology Suite -->
         <dependency>
             <groupId>org.locationtech.jts</groupId>
@@ -159,36 +140,48 @@
             <version>2.4</version>
         </dependency>
 
-        <!-- springfox -->
+        <!-- Springdoc OpenAPI-->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox.version}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
             <exclusions>
                 <exclusion>
-                    <groupId>io.swagger</groupId>
+                    <groupId>io.swagger.core.v3</groupId>
                     <artifactId>swagger-annotations</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.swagger</groupId>
-                    <artifactId>swagger-models</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${springfox.version}</version>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>${openapi-codegen.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>swagger-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-core-jakarta</artifactId>
+            <version>2.2.19</version>
         </dependency>
         <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>1.6.9</version>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.6</version>
         </dependency>
         <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-models</artifactId>
-            <version>1.6.9</version>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>2.1.1</version>
         </dependency>
 
         <!-- Geotools -->
@@ -251,16 +244,6 @@
             <version>${geotools.version}</version>
             <type>jar</type>
         </dependency>
-        <!-- <dependency>
-                <groupId>org.geotools</groupId>
-                <artifactId>gt-metadata</artifactId>
-                <version>${geotools.version}</version>
-        </dependency> -->
-        <!-- <dependency>
-                <groupId>org.geotools</groupId>
-                <artifactId>gt-data</artifactId>
-                <version>${geotools.version}</version>
-        </dependency> -->
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-shapefile</artifactId>
@@ -305,22 +288,10 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Hibernate -->
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>${hibernate.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${hibernate.version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-spatial</artifactId>
-            <version>${hibernate.version}</version>
+            <version>${hibernate-spatial.version}</version>
         </dependency>
 
         <dependency>
@@ -349,7 +320,6 @@
             <version>2.3.1</version>
         </dependency>
 
-
         <!-- Geoserver Manager -->
         <dependency>
             <groupId>it.geosolutions</groupId>
@@ -374,7 +344,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -576,5 +545,142 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+    <profiles>
+        <profile>
+            <id>generate-models</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.n52.kommonitor</groupId>
+                                            <artifactId>kommonitor-api-specs</artifactId>
+                                            <version>0.0.5-SNAPSHOT</version>
+                                            <type>jar</type>
+                                            <includes>
+                                                specs/data-management/kommonitor_dataAccessAPI.yaml
+                                            </includes>
+                                            <outputDirectory>${project.basedir}/src/main/resources</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.openapitools</groupId>
+                        <artifactId>openapi-generator-maven-plugin</artifactId>
+                        <version>${openapi-codegen.version}</version>
+                        <executions>
+                            <execution>
+                                <id>generate-models</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>
+                                        ${project.basedir}/src/main/resources/specs/data-management/kommonitor_dataAccessAPI.yaml
+                                    </inputSpec>
+                                    <!-- target to generate java server code -->
+                                    <generatorName>spring</generatorName>
+                                    <output>${project.basedir}</output>
+                                    <modelPackage>de.hsbo.kommonitor.datamanagement.model</modelPackage>
+                                    <generateModels>true</generateModels>
+                                    <generateApis>false</generateApis>
+
+                                    <configHelp>false</configHelp>
+                                    <generateSupportingFiles>false</generateSupportingFiles>
+                                    <!-- pass any necessary config options -->
+                                    <configOptions>
+                                        <sourceFolder>src/main/java</sourceFolder>
+                                        <dateLibrary>java8</dateLibrary>
+                                        <serializableModel>true</serializableModel>
+                                        <useSpringBoot3>true</useSpringBoot3>
+                                    </configOptions>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>generate-api</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.n52.kommonitor</groupId>
+                                            <artifactId>kommonitor-api-specs</artifactId>
+                                            <version>0.0.5-SNAPSHOT</version>
+                                            <type>jar</type>
+                                            <includes>specs/data-management/kommonitor_dataAccessAPI.yaml</includes>
+                                            <outputDirectory>${project.basedir}/src/main/resources</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.openapitools</groupId>
+                        <artifactId>openapi-generator-maven-plugin</artifactId>
+                        <version>${openapi-codegen.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${project.basedir}/src/main/resources/specs/data-management/kommonitor_dataAccessAPI.yaml</inputSpec>
+                                    <!-- target to generate java server code -->
+                                    <generatorName>spring</generatorName>
+                                    <output>${project.basedir}</output>
+                                    <apiPackage>de.hsbo.kommonitor.datamanagement.api</apiPackage>
+                                    <modelPackage>de.hsbo.kommonitor.datamanagement.model</modelPackage>
+                                    <generateModels>false</generateModels>
+                                    <generateApis>true</generateApis>
+
+                                    <configHelp>false</configHelp>
+                                    <generateSupportingFiles>false</generateSupportingFiles>
+
+                                    <!-- pass any necessary config options -->
+                                    <configOptions>
+                                        <sourceFolder>src/main/java</sourceFolder>
+                                        <dateLibrary>java8</dateLibrary>
+                                        <useSpringBoot3>true</useSpringBoot3>
+                                        <skipDefaultInterface>true</skipDefaultInterface>
+                                        <useTags>true</useTags>
+                                        <useResponseEntity>true</useResponseEntity>
+                                    </configOptions>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

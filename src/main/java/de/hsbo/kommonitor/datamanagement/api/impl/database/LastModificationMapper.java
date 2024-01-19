@@ -1,7 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.database;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.model.database.LastModificationOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.LastModificationOverviewType;
 
 public class LastModificationMapper {
 

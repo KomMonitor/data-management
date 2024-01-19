@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,15 +26,14 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceM
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingItemType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.DefaultClassificationMappingType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.GeoresourceReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.indicators.IndicatorSpatialUnitJoinItem;
-import de.hsbo.kommonitor.datamanagement.model.indicators.OgcServicesType;
-import de.hsbo.kommonitor.datamanagement.model.roles.RolesEntity;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicsEntity;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourceReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorSpatialUnitJoinItem;
+import de.hsbo.kommonitor.datamanagement.model.OgcServicesType;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 @Component
 public class IndicatorsMapper {

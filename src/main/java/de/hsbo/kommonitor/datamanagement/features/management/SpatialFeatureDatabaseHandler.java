@@ -35,6 +35,7 @@ import org.geotools.factory.GeoTools;
 import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.feature.type.AttributeDescriptorImpl;
 import org.geotools.feature.type.GeometryDescriptorImpl;
@@ -49,6 +50,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -74,8 +76,8 @@ import de.hsbo.kommonitor.datamanagement.api.impl.util.GeometrySimplifierUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.georesources.GeoresourcePUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.spatialunits.SpatialUnitPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourcePUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPUTInputType;
 
 public class SpatialFeatureDatabaseHandler {
 
@@ -242,7 +244,18 @@ public class SpatialFeatureDatabaseHandler {
 		List<AttributeDescriptor> usableAttributeDescriptors = new ArrayList<>();
 		for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
 			if (!(attributeDescriptor instanceof GeometryDescriptorImpl)) {
+				if (attributeDescriptor.getLocalName().equals(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME)) {
+					logger.debug("Features contain 'fid' property, which is reserved as PK. Will use 'fid_1' as property name instead.");
+					Name name = attributeDescriptor.getName();
+					attributeDescriptor = new AttributeDescriptorImpl(
+							attributeDescriptor.getType(),
+							new NameImpl(name.getNamespaceURI(), name.getSeparator(), KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_DUPLICATE_NAME),
+							attributeDescriptor.getMinOccurs(),
+							attributeDescriptor.getMaxOccurs(),
+							attributeDescriptor.isNillable(),
+							attributeDescriptor.getDefaultValue());
 
+				}
 				usableAttributeDescriptors.add(attributeDescriptor);
 			}
 		}
@@ -368,6 +381,18 @@ public class SpatialFeatureDatabaseHandler {
 		List<AttributeDescriptor> usableAttributeDescriptors = new ArrayList<>();
 		for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
 			if (!(attributeDescriptor instanceof GeometryDescriptorImpl)) {
+				if (attributeDescriptor.getLocalName().equals(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME)) {
+					logger.debug("Features contain 'fid' property, which is reserved as PK. Will use 'fid_1' as property name instead.");
+					Name name = attributeDescriptor.getName();
+					attributeDescriptor = new AttributeDescriptorImpl(
+							attributeDescriptor.getType(),
+							new NameImpl(name.getNamespaceURI(), name.getSeparator(), KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_DUPLICATE_NAME),
+							attributeDescriptor.getMinOccurs(),
+							attributeDescriptor.getMaxOccurs(),
+							attributeDescriptor.isNillable(),
+							attributeDescriptor.getDefaultValue());
+
+				}
 
 				usableAttributeDescriptors.add(attributeDescriptor);
 			}
@@ -685,7 +710,7 @@ public class SpatialFeatureDatabaseHandler {
 
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
 		String geoJsonString = featureData.getGeoJsonString();
-		Boolean isPartialUpdate = featureData.isIsPartialUpdate();
+		Boolean isPartialUpdate = featureData.getIsPartialUpdate();
 
 		logger.info("Start Georesource update");
 		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString, isPartialUpdate);
@@ -696,7 +721,7 @@ public class SpatialFeatureDatabaseHandler {
 
 		PeriodOfValidityType periodOfValidity = featureData.getPeriodOfValidity();
 		String geoJsonString = featureData.getGeoJsonString();
-		Boolean isPartialUpdate = featureData.isIsPartialUpdate();
+		Boolean isPartialUpdate = featureData.getIsPartialUpdate();
 
 		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString, isPartialUpdate);
 	}
@@ -835,6 +860,7 @@ public class SpatialFeatureDatabaseHandler {
 
 		while (featureIterator.hasNext()) {
 			SimpleFeature feature = featureIterator.next();
+			Property fid_property = feature.getProperty(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME);
 
 			feature = reTypeFeature(feature, targetSchema);
 
@@ -843,6 +869,9 @@ public class SpatialFeatureDatabaseHandler {
 			}
 			if (feature.getAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME) == null) {
 				feature.setAttribute(KomMonitorFeaturePropertyConstants.VALID_END_DATE_NAME, endDate_new);
+			}
+			if (fid_property != null) {
+				feature.setAttribute(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_DUPLICATE_NAME, fid_property.getValue());
 			}
 
 			retypedFeaturesList.add(feature);

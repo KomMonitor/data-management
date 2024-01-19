@@ -1,24 +1,13 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.scripts;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
+import org.hibernate.annotations.GenericGenerator;
+
+import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.hibernate.annotations.GenericGenerator;
-
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 
 @Entity(name = "ScriptMetadata")
 public class ScriptMetadataEntity {

@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.session.SessionRegistryImpl;
@@ -24,34 +25,45 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
  * configure authentication with keycloak
  * @author Arne
  */
-@Configuration
-@EnableWebSecurity
-public class KeyCloakSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter {
+//@Configuration
+//@EnableWebSecurity
+public class KeyCloakSecurityConfiguration {
 
-    @Override
+//    @Override
     public void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
+//        super.configure(http);
         http.authorizeRequests()
                 .anyRequest()
                 .permitAll();
-        http.csrf().disable();
+//        http.csrf().disable();
     }
 
-    @Autowired
+//    @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
-        auth.authenticationProvider(keycloakAuthenticationProvider);
+//        KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
+//        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
+//        auth.authenticationProvider(keycloakAuthenticationProvider);
     }
 
-    @Bean
-    @Override
+//    @Bean
+//    @Override
     protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
         return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
     }
 
-    @Bean
+//    @Bean
     public KeycloakConfigResolver KeycloakConfigResolver() {
         return new KeycloakSpringBootConfigResolver();
+    }
+
+//    @Override
+    public void init(WebSecurity builder) throws Exception {
+
+
+    }
+
+//    @Override
+    public void configure(WebSecurity builder) throws Exception {
+
     }
 }

@@ -1,11 +1,13 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hsbo.kommonitor.datamanagement.api.TopicsApi;
+import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.model.TopicInputType;
+import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import de.hsbo.kommonitor.datamanagement.api.TopicsApi;
-import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
-import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicInputType;
-import de.hsbo.kommonitor.datamanagement.model.topics.TopicOverviewType;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @Controller
 public class TopicsController extends BasePathController implements TopicsApi {
@@ -50,7 +43,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('publisher')")
-	public ResponseEntity<TopicOverviewType> addTopic(@RequestBody TopicInputType topicData) {
+	public ResponseEntity<TopicOverviewType> addTopic(TopicInputType topicData) {
 		
 		logger.info("Received request to insert new topic");
 		
@@ -87,7 +80,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('creator')")
-	public ResponseEntity deleteTopic(@PathVariable("topicId") String topicId) {
+	public ResponseEntity deleteTopic(String topicId) {
 		logger.info("Received request to delete topic for topicId '{}'", topicId);
 		
 		String accept = request.getHeader("Accept");
@@ -113,7 +106,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('editor')")
-	public ResponseEntity updateTopic(@PathVariable("topicId") String topicId, @RequestBody TopicInputType topicData) {
+	public ResponseEntity<Void> updateTopic(String topicId, TopicInputType topicData) {
 		logger.info("Received request to update topic with topicId '{}'", topicId);
 
 		String accept = request.getHeader("Accept");
