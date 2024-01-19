@@ -1,6 +1,6 @@
 # Change Log
 
-## 3.1.0-beta.4
+## 3.1.0
 * Add handling for PK clashing &#39;fid&#39; feature property [75ee9bf](75ee9bf4d96bbb2fd8b3e7e54c11f9ef6740e969)
 * Fix PreAuthorize method parameter referencing [2c1d345](2c1d345dd1c1b6901be62ebf6e0498b4302924b7)
 * Switch to using AnnotationParameterNameDiscoverer for Spring Security method parameters [d74a65f](d74a65fe2d22f5ca9642f3500578e888122f8895)
