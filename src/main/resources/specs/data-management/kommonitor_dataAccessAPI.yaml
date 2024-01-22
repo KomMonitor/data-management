@@ -5064,8 +5064,6 @@ components:
         - isPOI
         - metadata
         - topicReference
-        - wfsUrl
-        - wmsUrl
       type: object
       properties:
         allowedRoles:
@@ -5203,6 +5201,9 @@ components:
         - datasetName
         - metadata
         - periodOfValidity
+        - isPOI
+        - isLOI
+        - isAOI
       type: object
       properties:
         allowedRoles:
