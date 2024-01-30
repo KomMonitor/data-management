@@ -1453,9 +1453,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -1571,9 +1569,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -1629,9 +1625,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties:
-                type: string
+              $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         required: true
       responses:
         "200":
@@ -1734,9 +1728,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -1932,9 +1924,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -3185,9 +3175,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                      type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -3247,9 +3235,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -3295,9 +3281,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -3441,9 +3425,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -5708,8 +5690,24 @@ components:
     IndicatorPropertiesWithoutGeomType:
       title: IndicatorPropertiesWithoutGeomType
       type: object
-      additionalProperties:
-        type: string
+      required:
+        - id
+        - name
+        - validStartDate
+        - validEndDate
+      properties:
+        id:
+          type: string
+          description: the id of the spatial feature
+        name:
+          type: string
+          description: the name of the spatial feature
+        validStartDate:
+          type: string
+          description: the start date from which on the spatial feature is valid
+        validEndDate:
+          type: string
+          description: the end date until the spatial feature is valid - or null if not set
     IndicatorReferenceType:
       title: IndicatorReferenceType
       required:

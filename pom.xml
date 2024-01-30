@@ -43,7 +43,7 @@
         <changelog-plugin.version>0.5.1</changelog-plugin.version>
         <log4j2.version>2.20.0</log4j2.version>
         <openapi-codegen.version>7.1.0</openapi-codegen.version>
-        <kommonitor-oas.version>0.0.6-SNAPSHOT</kommonitor-oas.version>
+        <kommonitor-oas.version>latest</kommonitor-oas.version>
     </properties>
 
 
