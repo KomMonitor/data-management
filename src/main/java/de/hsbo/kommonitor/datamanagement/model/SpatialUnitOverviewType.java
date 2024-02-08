@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +26,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-08T21:24:51.431812+01:00[Europe/Berlin]")
 public class SpatialUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -52,6 +53,14 @@ public class SpatialUnitOverviewType implements Serializable {
   private String wfsUrl;
 
   private String wmsUrl;
+
+  private Boolean isOutlineLayer;
+
+  private String outlineColor;
+
+  private BigDecimal outlineWidth;
+
+  private String outlineDashArrayString;
 
   public SpatialUnitOverviewType() {
     super();
@@ -296,6 +305,86 @@ public class SpatialUnitOverviewType implements Serializable {
     this.wmsUrl = wmsUrl;
   }
 
+  public SpatialUnitOverviewType isOutlineLayer(Boolean isOutlineLayer) {
+    this.isOutlineLayer = isOutlineLayer;
+    return this;
+  }
+
+  /**
+   * if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control
+   * @return isOutlineLayer
+  */
+  
+  @Schema(name = "isOutlineLayer", description = "if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("isOutlineLayer")
+  public Boolean getIsOutlineLayer() {
+    return isOutlineLayer;
+  }
+
+  public void setIsOutlineLayer(Boolean isOutlineLayer) {
+    this.isOutlineLayer = isOutlineLayer;
+  }
+
+  public SpatialUnitOverviewType outlineColor(String outlineColor) {
+    this.outlineColor = outlineColor;
+    return this;
+  }
+
+  /**
+   * outline color for this layer as hex code
+   * @return outlineColor
+  */
+  
+  @Schema(name = "outlineColor", description = "outline color for this layer as hex code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("outlineColor")
+  public String getOutlineColor() {
+    return outlineColor;
+  }
+
+  public void setOutlineColor(String outlineColor) {
+    this.outlineColor = outlineColor;
+  }
+
+  public SpatialUnitOverviewType outlineWidth(BigDecimal outlineWidth) {
+    this.outlineWidth = outlineWidth;
+    return this;
+  }
+
+  /**
+   * outline width as stroke width for outline geometry
+   * @return outlineWidth
+  */
+  @Valid 
+  @Schema(name = "outlineWidth", description = "outline width as stroke width for outline geometry", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("outlineWidth")
+  public BigDecimal getOutlineWidth() {
+    return outlineWidth;
+  }
+
+  public void setOutlineWidth(BigDecimal outlineWidth) {
+    this.outlineWidth = outlineWidth;
+  }
+
+  public SpatialUnitOverviewType outlineDashArrayString(String outlineDashArrayString) {
+    this.outlineDashArrayString = outlineDashArrayString;
+    return this;
+  }
+
+  /**
+   * string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)
+   * @return outlineDashArrayString
+  */
+  
+  @Schema(name = "outlineDashArrayString", description = "string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("outlineDashArrayString")
+  public String getOutlineDashArrayString() {
+    return outlineDashArrayString;
+  }
+
+  public void setOutlineDashArrayString(String outlineDashArrayString) {
+    this.outlineDashArrayString = outlineDashArrayString;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -314,12 +403,16 @@ public class SpatialUnitOverviewType implements Serializable {
         Objects.equals(this.spatialUnitLevel, spatialUnitOverviewType.spatialUnitLevel) &&
         Objects.equals(this.userPermissions, spatialUnitOverviewType.userPermissions) &&
         Objects.equals(this.wfsUrl, spatialUnitOverviewType.wfsUrl) &&
-        Objects.equals(this.wmsUrl, spatialUnitOverviewType.wmsUrl);
+        Objects.equals(this.wmsUrl, spatialUnitOverviewType.wmsUrl) &&
+        Objects.equals(this.isOutlineLayer, spatialUnitOverviewType.isOutlineLayer) &&
+        Objects.equals(this.outlineColor, spatialUnitOverviewType.outlineColor) &&
+        Objects.equals(this.outlineWidth, spatialUnitOverviewType.outlineWidth) &&
+        Objects.equals(this.outlineDashArrayString, spatialUnitOverviewType.outlineDashArrayString);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, availablePeriodsOfValidity, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, spatialUnitId, spatialUnitLevel, userPermissions, wfsUrl, wmsUrl);
+    return Objects.hash(allowedRoles, availablePeriodsOfValidity, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, spatialUnitId, spatialUnitLevel, userPermissions, wfsUrl, wmsUrl, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString);
   }
 
   @Override
@@ -336,6 +429,10 @@ public class SpatialUnitOverviewType implements Serializable {
     sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");
     sb.append("    wfsUrl: ").append(toIndentedString(wfsUrl)).append("\n");
     sb.append("    wmsUrl: ").append(toIndentedString(wmsUrl)).append("\n");
+    sb.append("    isOutlineLayer: ").append(toIndentedString(isOutlineLayer)).append("\n");
+    sb.append("    outlineColor: ").append(toIndentedString(outlineColor)).append("\n");
+    sb.append("    outlineWidth: ").append(toIndentedString(outlineWidth)).append("\n");
+    sb.append("    outlineDashArrayString: ").append(toIndentedString(outlineDashArrayString)).append("\n");
     sb.append("}");
     return sb.toString();
   }

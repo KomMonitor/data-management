@@ -50,6 +50,12 @@ public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefresh
 			
 			alterTableStmt.addBatch("ALTER TABLE \"lastmodification\" ADD COLUMN IF NOT EXISTS \"accesscontrol\" timestamp with time zone");
 			
+			// UPDATE SPATIAL UNIT isOutlineLayer property
+			alterTableStmt.addBatch("ALTER TABLE \"metadataspatialunits\" ADD COLUMN IF NOT EXISTS \"isoutlinelayer\" boolean DEFAULT false");
+			alterTableStmt.addBatch("ALTER TABLE \"metadataspatialunits\" ADD COLUMN IF NOT EXISTS \"outlinecolor\" varchar(255)");
+			alterTableStmt.addBatch("ALTER TABLE \"metadataspatialunits\" ADD COLUMN IF NOT EXISTS \"outlinewidth\" integer DEFAULT 3");
+			alterTableStmt.addBatch("ALTER TABLE \"metadataspatialunits\" ADD COLUMN IF NOT EXISTS \"outlinedasharraystring\" varchar(255) DEFAULT '20'");
+			
 			// remove relic tables as they were never used
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"users_roles\" CASCADE");
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"roles_privileges\" CASCADE");
