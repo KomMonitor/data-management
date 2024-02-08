@@ -115,7 +115,13 @@ public class SpatialUnitsMapper {
 		
 		dataset.setIsOutlineLayer(spatialUnitEntity.isOutlineLayer());
 		dataset.setOutlineColor(spatialUnitEntity.getOutlineColor());
-		dataset.setOutlineWidth(BigDecimal.valueOf(spatialUnitEntity.getOutlineWidth().intValue()));
+		Integer outlineWidth = spatialUnitEntity.getOutlineWidth();
+		if (outlineWidth == null) {
+			dataset.setOutlineWidth(BigDecimal.valueOf(3));
+		}
+		else {
+			dataset.setOutlineWidth(BigDecimal.valueOf(outlineWidth.intValue()));
+		}		
 		dataset.setOutlineDashArrayString(spatialUnitEntity.getOutlineDashArrayString());
 
 		return dataset;
