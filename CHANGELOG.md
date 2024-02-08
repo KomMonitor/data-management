@@ -1,6 +1,7 @@
 # Change Log
 
-## 3.2.0
+## 3.2.1
+* fix NULL POINTER EXCEPTION bug on outlineWidth [78aac59](78aac5973e3bbc465476b6a1953369d356a1d8ed)
 * implement spatial unit outline functionality in spec and code [852d64c](852d64c3a32456d340bc8dc66e7486476fadf4fa)
 * Regenerate model class according to updated spec definition [577f638](577f638b70c6d2b132ce63f080b01f01bdfcc3a4)
 * Update model classes according the latest OAS schema [fa58788](fa587886946eeef9bcda1a4fd6ab344ef0a1c8fb)
