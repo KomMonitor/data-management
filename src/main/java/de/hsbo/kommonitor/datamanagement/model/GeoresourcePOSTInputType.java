@@ -27,7 +27,7 @@ import jakarta.annotation.Generated;
  * GeoresourcePOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-01-22T13:57:49.514058200+01:00[Europe/Berlin]")
 public class GeoresourcePOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -74,8 +74,11 @@ public class GeoresourcePOSTInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public GeoresourcePOSTInputType(String datasetName, CommonMetadataType metadata, PeriodOfValidityType periodOfValidity) {
+  public GeoresourcePOSTInputType(String datasetName, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, PeriodOfValidityType periodOfValidity) {
     this.datasetName = datasetName;
+    this.isAOI = isAOI;
+    this.isLOI = isLOI;
+    this.isPOI = isPOI;
     this.metadata = metadata;
     this.periodOfValidity = periodOfValidity;
   }
@@ -177,8 +180,8 @@ public class GeoresourcePOSTInputType implements Serializable {
    * boolean value indicating if the dataset contains areas of interest
    * @return isAOI
   */
-  
-  @Schema(name = "isAOI", description = "boolean value indicating if the dataset contains areas of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "isAOI", description = "boolean value indicating if the dataset contains areas of interest", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isAOI")
   public Boolean getIsAOI() {
     return isAOI;
@@ -197,8 +200,8 @@ public class GeoresourcePOSTInputType implements Serializable {
    * boolean value indicating if the dataset contains lines of interest
    * @return isLOI
   */
-  
-  @Schema(name = "isLOI", description = "boolean value indicating if the dataset contains lines of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "isLOI", description = "boolean value indicating if the dataset contains lines of interest", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isLOI")
   public Boolean getIsLOI() {
     return isLOI;
@@ -217,8 +220,8 @@ public class GeoresourcePOSTInputType implements Serializable {
    * boolean value indicating if the dataset contains points of interest
    * @return isPOI
   */
-  
-  @Schema(name = "isPOI", description = "boolean value indicating if the dataset contains points of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "isPOI", description = "boolean value indicating if the dataset contains points of interest", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isPOI")
   public Boolean getIsPOI() {
     return isPOI;

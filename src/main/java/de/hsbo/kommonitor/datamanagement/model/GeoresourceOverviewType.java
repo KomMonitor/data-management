@@ -28,7 +28,7 @@ import jakarta.annotation.Generated;
  * GeoresourceOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-01-22T13:57:49.514058200+01:00[Europe/Berlin]")
 public class GeoresourceOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -81,7 +81,7 @@ public class GeoresourceOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public GeoresourceOverviewType(List<@Valid PeriodOfValidityType> availablePeriodsOfValidity, String datasetName, String georesourceId, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, String topicReference, String wfsUrl, String wmsUrl) {
+  public GeoresourceOverviewType(List<@Valid PeriodOfValidityType> availablePeriodsOfValidity, String datasetName, String georesourceId, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, String topicReference) {
     this.availablePeriodsOfValidity = availablePeriodsOfValidity;
     this.datasetName = datasetName;
     this.georesourceId = georesourceId;
@@ -90,8 +90,6 @@ public class GeoresourceOverviewType implements Serializable {
     this.isPOI = isPOI;
     this.metadata = metadata;
     this.topicReference = topicReference;
-    this.wfsUrl = wfsUrl;
-    this.wmsUrl = wmsUrl;
   }
 
   public GeoresourceOverviewType allowedRoles(List<String> allowedRoles) {
@@ -467,8 +465,8 @@ public class GeoresourceOverviewType implements Serializable {
    * the URL of a running WFS instance serving the spatial features of the associated dataset
    * @return wfsUrl
   */
-  @NotNull 
-  @Schema(name = "wfsUrl", description = "the URL of a running WFS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "wfsUrl", description = "the URL of a running WFS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("wfsUrl")
   public String getWfsUrl() {
     return wfsUrl;
@@ -487,8 +485,8 @@ public class GeoresourceOverviewType implements Serializable {
    * the URL of a running WMS instance serving the spatial features of the associated dataset
    * @return wmsUrl
   */
-  @NotNull 
-  @Schema(name = "wmsUrl", description = "the URL of a running WMS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "wmsUrl", description = "the URL of a running WMS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("wmsUrl")
   public String getWmsUrl() {
     return wmsUrl;

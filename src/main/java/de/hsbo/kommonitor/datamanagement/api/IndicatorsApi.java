@@ -6,11 +6,14 @@
 package de.hsbo.kommonitor.datamanagement.api;
 
 import java.math.BigDecimal;
-
-import de.hsbo.kommonitor.datamanagement.model.*;
-
-import java.util.Map;
-
+import de.hsbo.kommonitor.datamanagement.model.IndicatorMetadataPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHDisplayOrderInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,7 +40,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-14T08:36:20.041405+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-01-30T09:21:25.827354100+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "indicators", description = "the Indicators API")
 public interface IndicatorsApi {
@@ -438,7 +441,7 @@ public interface IndicatorsApi {
         tags = { "indicators" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IndicatorPropertiesWithoutGeomType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -483,7 +486,7 @@ public interface IndicatorsApi {
         tags = { "indicators" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IndicatorPropertiesWithoutGeomType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -648,7 +651,7 @@ public interface IndicatorsApi {
         tags = { "indicators" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IndicatorPropertiesWithoutGeomType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -678,9 +681,9 @@ public interface IndicatorsApi {
      * retrieve single feature database record specified by its unique database primary key id test
      *
      * @param indicatorId unique identifier of the selected indicator dataset (required)
+     * @param spatialUnitId the unique identifier of the spatial level (required)
      * @param featureId the identifier of the indicator dataset spatial feature (required)
      * @param featureRecordId the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity (required)
-     * @param spatialUnitId the unique identifier of the spatial level (required)
      * @param simplifyGeometries Controls simplification of feature geometries. Each option will preserve topology to neighbour features. Simplification increases from &#39;weak&#39; to &#39;strong&#39;, while &#39;original&#39; will return original feature geometries without any simplification. (optional, default to original)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
@@ -695,7 +698,7 @@ public interface IndicatorsApi {
         tags = { "indicators" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IndicatorPropertiesWithoutGeomType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),

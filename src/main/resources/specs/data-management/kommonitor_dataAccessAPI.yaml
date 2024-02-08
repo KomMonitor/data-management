@@ -1453,9 +1453,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -1571,9 +1569,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -1629,9 +1625,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties:
-                type: string
+              $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         required: true
       responses:
         "200":
@@ -1734,9 +1728,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -1932,9 +1924,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -3185,9 +3175,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                      type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -3247,9 +3235,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -3295,9 +3281,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -3441,9 +3425,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties:
-                    type: string
+                  $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
         "400":
           description: Invalid status value
           content: {}
@@ -5064,8 +5046,6 @@ components:
         - isPOI
         - metadata
         - topicReference
-        - wfsUrl
-        - wmsUrl
       type: object
       properties:
         allowedRoles:
@@ -5203,6 +5183,9 @@ components:
         - datasetName
         - metadata
         - periodOfValidity
+        - isPOI
+        - isLOI
+        - isAOI
       type: object
       properties:
         allowedRoles:
@@ -5707,8 +5690,24 @@ components:
     IndicatorPropertiesWithoutGeomType:
       title: IndicatorPropertiesWithoutGeomType
       type: object
-      additionalProperties:
-        type: string
+      required:
+        - id
+        - name
+        - validStartDate
+        - validEndDate
+      properties:
+        id:
+          type: string
+          description: the id of the spatial feature
+        name:
+          type: string
+          description: the name of the spatial feature
+        validStartDate:
+          type: string
+          description: the start date from which on the spatial feature is valid
+        validEndDate:
+          type: string
+          description: the end date until the spatial feature is valid - or null if not set
     IndicatorReferenceType:
       title: IndicatorReferenceType
       required:
@@ -6099,11 +6098,25 @@ components:
           type: string
           description: the URL of a running WMS instance serving the spatial features
             of the associated dataset
+        isOutlineLayer:
+          type: boolean
+          description: if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control
+        outlineColor:
+          type: string
+          description: outline color for this layer as hex code
+        outlineWidth:
+          type: number
+          format: int32
+          description: outline width as stroke width for outline geometry
+        outlineDashArrayString:
+          type: string
+          description: 'string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)'
     SpatialUnitPATCHInputType:
       title: SpatialUnitPATCHInputType
       required:
         - allowedRoles
         - metadata
+        - datasetName
         - nextLowerHierarchyLevel
         - nextUpperHierarchyLevel
       type: object
@@ -6114,8 +6127,9 @@ components:
             dataset
           items:
             type: string
-        datasetName:
+        datasetName: 
           type: string
+          description: the name of the spatial unit - its "spatialUnitLevel"
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
         nextLowerHierarchyLevel:
@@ -6126,6 +6140,20 @@ components:
           type: string
           description: the identifier/name of the spatial unit level that contains
             the features of the nearest upper hierarchy level
+        isOutlineLayer:
+          type: boolean
+          description: if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control
+          default: false
+        outlineColor:
+          type: string
+          description: outline color for this layer as hex code
+        outlineWidth:
+          type: number
+          format: int32
+          description: outline width as stroke width for outline geometry
+        outlineDashArrayString:
+          type: string
+          description: 'string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)'
     SpatialUnitPOSTInputType:
       title: SpatialUnitPOSTInputType
       required:
@@ -6169,6 +6197,20 @@ components:
           type: string
           description: the name and identifier of the spatial unit level the features
             apply to
+        isOutlineLayer:
+          type: boolean
+          description: if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control
+          default: false
+        outlineColor:
+          type: string
+          description: outline color for this layer as hex code
+        outlineWidth:
+          type: number
+          format: int32
+          description: outline width as stroke width for outline geometry
+        outlineDashArrayString:
+          type: string
+          description: 'string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)'
     SpatialUnitPUTInputType:
       title: SpatialUnitPUTInputType
       required:

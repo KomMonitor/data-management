@@ -2,44 +2,64 @@ package de.hsbo.kommonitor.datamanagement.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Objects;
 
 /**
  * IndicatorPropertiesWithoutGeomType
  */
-public class IndicatorPropertiesWithoutGeomType extends HashMap<String, String>  {
-  
-	/*
-	 * README
-	 * 
-	 * the properties of this type will be set directly. 
-	 * BUT, MORE IMPORTANTLY, the properties will also be set within the HashMap as Key-Value Pairs!!!
-	 * ONLY THE KEY-VALUE-PAIRS WITHIN HASHMAP WILL BE INCLUDED IN JSON RESPONSE!!
-	 * 
-	 * So do not try to moduiy their value by setting the property alone, instead modify HasMap Entry as well
-	 */
 
-  private String id = null;
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-01-30T08:37:12.436301800+01:00[Europe/Berlin]")
+public class IndicatorPropertiesWithoutGeomType extends HashMap<String, String> implements Serializable {
 
-  private String name = null;
+  /*
+   * README
+   *
+   * the properties of this type will be set directly.
+   * BUT, MORE IMPORTANTLY, the properties will also be set within the HashMap as Key-Value Pairs!!!
+   * ONLY THE KEY-VALUE-PAIRS WITHIN HASHMAP WILL BE INCLUDED IN JSON RESPONSE!!
+   *
+   * So do not try to modify their value by setting the property alone, instead modify HasMap Entry as well
+   */
 
-  private String validStartDate = null;
+  private static final long serialVersionUID = 1L;
 
-  private String validEndDate = null;
+  private String id;
+
+  private String name;
+
+  private String validStartDate;
+
+  private String validEndDate;
+
+  public IndicatorPropertiesWithoutGeomType() {
+    super();
+  }
+
+  /**
+   * Constructor with only required parameters
+   */
+  public IndicatorPropertiesWithoutGeomType(String id, String name, String validStartDate, String validEndDate) {
+    this.id = id;
+    this.name = name;
+    this.validStartDate = validStartDate;
+    this.validEndDate = validEndDate;
+  }
 
   public IndicatorPropertiesWithoutGeomType id(String id) {
     this.id = id;
     return this;
   }
 
-   /**
+  /**
    * the id of the spatial feature
    * @return id
-  **/
-  @NotNull
+  */
+  @NotNull 
   @Schema(name = "ID", description = "the id of the spatial feature", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("ID")
   public String getId() {
@@ -55,11 +75,11 @@ public class IndicatorPropertiesWithoutGeomType extends HashMap<String, String> 
     return this;
   }
 
-   /**
+  /**
    * the name of the spatial feature
    * @return name
-  **/
-  @NotNull
+  */
+  @NotNull 
   @Schema(name = "NAME", description = "the name of the spatial feature", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("NAME")
   public String getName() {
@@ -75,11 +95,11 @@ public class IndicatorPropertiesWithoutGeomType extends HashMap<String, String> 
     return this;
   }
 
-   /**
+  /**
    * the start date from which on the spatial feature is valid
    * @return validStartDate
-  **/
-  @NotNull
+  */
+  @NotNull 
   @Schema(name = "validStartDate", description = "the start date from which on the spatial feature is valid", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("validStartDate")
   public String getValidStartDate() {
@@ -95,11 +115,11 @@ public class IndicatorPropertiesWithoutGeomType extends HashMap<String, String> 
     return this;
   }
 
-   /**
+  /**
    * the end date until the spatial feature is valid - or null if not set
    * @return validEndDate
-  **/
-  @NotNull
+  */
+  @NotNull 
   @Schema(name = "validEndDate", description = "the end date until the spatial feature is valid - or null if not set", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("validEndDate")
   public String getValidEndDate() {
@@ -109,7 +129,6 @@ public class IndicatorPropertiesWithoutGeomType extends HashMap<String, String> 
   public void setValidEndDate(String validEndDate) {
     this.validEndDate = validEndDate;
   }
-
 
   @Override
   public boolean equals(Object o) {

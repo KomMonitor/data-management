@@ -22,6 +22,10 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata implements Rest
 	private int sridEpsg;
 	private String nextLowerHierarchyLevel = null;
 	private String nextUpperHierarchyLevel = null;
+	private boolean isOutlineLayer = false;
+	private String outlineColor = null;
+	private Integer outlineWidth = null;
+	private String outlineDashArrayString = null;
 
 	@ManyToMany()
 	@JoinTable(name = "metadataSpatialUnits_roles",
@@ -55,6 +59,38 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata implements Rest
 	public void setNextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
 		this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
 	}
+	public boolean isOutlineLayer() {
+		return isOutlineLayer;
+	}
+
+	public void setOutlineLayer(boolean isOutlineLayer) {
+		this.isOutlineLayer = isOutlineLayer;
+	}
+
+	public String getOutlineColor() {
+		return outlineColor;
+	}
+
+	public void setOutlineColor(String outlineColor) {
+		this.outlineColor = outlineColor;
+	}
+
+	public String getOutlineDashArrayString() {
+		return outlineDashArrayString;
+	}
+
+	public void setOutlineDashArrayString(String outlineDashArrayString) {
+		this.outlineDashArrayString = outlineDashArrayString;
+	}
+
+	public Integer getOutlineWidth() {
+		return outlineWidth;
+	}
+
+	public void setOutlineWidth(Integer outlineWidth) {
+		this.outlineWidth = outlineWidth;
+	}
+	
 	public HashSet<PeriodOfValidityEntity_spatialUnits> getSpatialUnitsPeriodsOfValidity() throws IOException, SQLException {
 		AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(this.getDbTableName());
 

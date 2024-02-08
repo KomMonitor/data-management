@@ -4,7 +4,7 @@
 
     <groupId>de.hsbo.kommonitor</groupId>
     <artifactId>kommonitor-data-management-app</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>KomMonitor Data Management</name>
@@ -14,7 +14,7 @@
 	    <url>https://github.com/KomMonitor/data-management</url>
         <connection>scm:git:https://github.com/KomMonitor/data-management.git</connection>
         <developerConnection>scm:git:https://github.com/KomMonitor/data-management.git</developerConnection>
-	    <tag>v3.1.0</tag>
+	    <tag>HEAD</tag>
   </scm>
 
     <licenses>
@@ -43,6 +43,7 @@
         <changelog-plugin.version>0.5.1</changelog-plugin.version>
         <log4j2.version>2.20.0</log4j2.version>
         <openapi-codegen.version>7.1.0</openapi-codegen.version>
+        <kommonitor-oas.version>latest</kommonitor-oas.version>
     </properties>
 
 
@@ -565,7 +566,7 @@
                                         <artifactItem>
                                             <groupId>org.n52.kommonitor</groupId>
                                             <artifactId>kommonitor-api-specs</artifactId>
-                                            <version>0.0.5-SNAPSHOT</version>
+                                            <version>${kommonitor-oas.version}</version>
                                             <type>jar</type>
                                             <includes>
                                                 specs/data-management/kommonitor_dataAccessAPI.yaml
@@ -633,7 +634,7 @@
                                         <artifactItem>
                                             <groupId>org.n52.kommonitor</groupId>
                                             <artifactId>kommonitor-api-specs</artifactId>
-                                            <version>0.0.5-SNAPSHOT</version>
+                                            <version>${kommonitor-oas.version}</version>
                                             <type>jar</type>
                                             <includes>specs/data-management/kommonitor_dataAccessAPI.yaml</includes>
                                             <outputDirectory>${project.basedir}/src/main/resources</outputDirectory>

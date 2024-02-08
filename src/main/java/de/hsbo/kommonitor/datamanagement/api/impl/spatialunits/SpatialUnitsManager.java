@@ -295,6 +295,11 @@ public class SpatialUnitsManager {
         entity.setNextUpperHierarchyLevel(featureData.getNextUpperHierarchyLevel());
         entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
         entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
+        
+        entity.setOutlineLayer(featureData.getIsOutlineLayer());
+        entity.setOutlineColor(featureData.getOutlineColor());
+        entity.setOutlineWidth(featureData.getOutlineWidth().intValue());
+        entity.setOutlineDashArrayString(featureData.getOutlineDashArrayString());
 
         /*
          * the remaining properties cannot be set initially!
@@ -539,6 +544,11 @@ public class SpatialUnitsManager {
         entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
         entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
         entity.setRoles(retrieveRoles(metadata.getAllowedRoles()));
+        
+        entity.setOutlineLayer(metadata.getIsOutlineLayer());
+        entity.setOutlineColor(metadata.getOutlineColor());
+        entity.setOutlineWidth(metadata.getOutlineWidth().intValue());
+        entity.setOutlineDashArrayString(metadata.getOutlineDashArrayString());
         
         /*
          * UPDATE DATASETNAME and adjust hierarchy order if needed

@@ -7,8 +7,6 @@ package de.hsbo.kommonitor.datamanagement.api;
 
 import java.math.BigDecimal;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
-import java.util.Map;
-
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:36:13.690775700+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-01-30T09:21:25.827354100+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "indicators-public", description = "the Indicators API")
 public interface IndicatorsPublicApi {
@@ -197,7 +195,7 @@ public interface IndicatorsPublicApi {
         tags = { "indicators-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IndicatorPropertiesWithoutGeomType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -242,7 +240,7 @@ public interface IndicatorsPublicApi {
         tags = { "indicators-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IndicatorPropertiesWithoutGeomType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -324,7 +322,7 @@ public interface IndicatorsPublicApi {
         tags = { "indicators-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IndicatorPropertiesWithoutGeomType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -369,7 +367,7 @@ public interface IndicatorsPublicApi {
         tags = { "indicators-public" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IndicatorPropertiesWithoutGeomType.class)))
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
