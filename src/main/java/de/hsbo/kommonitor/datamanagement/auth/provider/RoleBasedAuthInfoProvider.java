@@ -1,14 +1,13 @@
-package de.hsbo.kommonitor.datamanagement.auth;
+package de.hsbo.kommonitor.datamanagement.auth.provider;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
-import org.keycloak.KeycloakPrincipal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 
-import java.lang.reflect.ParameterizedType;
 import java.security.Principal;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -20,12 +19,11 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  * @author <a href="mailto:j.speckamp@52north.org">Jan Speckamp</a>
  */
-public abstract class AuthInfoProvider<T extends Principal> {
+public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
 
-    private Class<T> type = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())
-        .getActualTypeArguments()[0];
+    private Principal principal;
 
-    private T principal;
+    private TokenParser tokenParser;
 
     @Value("${kommonitor.access-control.authenticated-users.organizationalUnit:kommonitor}")
     private String adminRolePrefix;
@@ -37,11 +35,12 @@ public abstract class AuthInfoProvider<T extends Principal> {
 
     private static final Pattern roleExtractorRegex = Pattern.compile("-(?=(creator)|(publisher)|(editor)|(viewer)$)");
 
-    public AuthInfoProvider() {
+    public RoleBasedAuthInfoProvider() {
     }
 
-    public AuthInfoProvider(T principal, String adminRolePrefix, String publicRole) {
+    public RoleBasedAuthInfoProvider(Principal principal, TokenParser tokenParser, String adminRolePrefix, String publicRole) {
         this.principal = principal;
+        this.tokenParser = tokenParser;
         this.adminRolePrefix = adminRolePrefix;
         this.publicRole = publicRole;
         permissionSet = new TreeSet();
@@ -51,19 +50,11 @@ public abstract class AuthInfoProvider<T extends Principal> {
         permissionSet.add(PermissionLevelType.VIEWER);
     }
 
-    public AuthInfoProvider(T principal) {
+    public void setPrincipal(Principal principal) {
         this.principal = principal;
     }
 
-    public void setPrincipal(T principal) {
-        this.principal = principal;
-    }
-
-    public boolean supportsPrincipal(Principal principal) {
-        return type.isInstance(principal);
-    }
-
-    public T getPrincipal() {
+    public Principal getPrincipal() {
         return principal;
     }
 
@@ -182,8 +173,14 @@ public abstract class AuthInfoProvider<T extends Principal> {
                 .anyMatch(r -> r.getSecond().compareTo(neededLevel) <= 0);
     }
 
-    public abstract Set<String> getOwnedRoles(T principal);
+    @Override
+    public Set<String> getOwnedRoles(Principal principal) {
+        return tokenParser.getOwnedRoles(principal);
+    }
 
-    public abstract boolean hasRealmAdminRole(T principal);
+    @Override
+    public boolean hasRealmAdminRole(Principal principal) {
+        return tokenParser.hasRealmAdminRole(principal, adminRolePrefix);
+    }
 
 }

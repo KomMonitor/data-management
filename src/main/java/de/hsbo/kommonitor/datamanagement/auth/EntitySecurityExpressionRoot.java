@@ -11,6 +11,10 @@ import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetad
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
+import de.hsbo.kommonitor.datamanagement.auth.token.TokenParserFactory;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHDisplayOrderInputType;
 
 import java.security.Principal;
@@ -37,12 +41,16 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
     private Object returnObject;
     private AuthInfoProvider authInfoProvider;
 
+    private TokenParser tokenParser;
+
     private final AuthHelperService authHelperService;
     private final GeoresourcesMetadataRepository georesourceRepository;
     private final IndicatorsMetadataRepository indicatorRepository;
     private final SpatialUnitsMetadataRepository spatialunitsRepository;
     private final IndicatorSpatialUnitsRepository indicatorspatialunitsRepository;
     private final AuthInfoProviderFactory authInfoProviderFactory;
+
+    private final TokenParserFactory tokenParserFactory;
 
     public EntitySecurityExpressionRoot(Authentication authentication) {
         super(authentication);
@@ -53,13 +61,18 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         this.spatialunitsRepository = this.authHelperService.getSpatialunitsRepository();
         this.indicatorspatialunitsRepository = this.authHelperService.getIndicatorSpatialunitsRepository();
         this.authInfoProviderFactory = this.authHelperService.getAuthInfoProviderFactory();
+        this.tokenParserFactory = this.authHelperService.getTokenParserFactory();
 
         if (Principal.class.isAssignableFrom(this.getAuthentication().getPrincipal().getClass())) {
-            this.authInfoProvider = (this.authInfoProviderFactory.createAuthInfoProvider(((Principal) this.getAuthentication().getPrincipal())));
+            Principal principal = ((Principal) this.getAuthentication().getPrincipal());
+            this.tokenParser = (this.tokenParserFactory.createTokenParser(principal));
+            this.authInfoProvider = this.authInfoProviderFactory.createAuthInfoProvider(principal, tokenParser);
         }
         else {
-            this.authInfoProvider = (this.authInfoProviderFactory.createAuthInfoProvider(this.getAuthentication()));
+            this.tokenParser = (this.tokenParserFactory.createTokenParser(this.getAuthentication()));
+            this.authInfoProvider = this.authInfoProviderFactory.createAuthInfoProvider(this.getAuthentication(), tokenParser);
         }
+
     }
 
     /**

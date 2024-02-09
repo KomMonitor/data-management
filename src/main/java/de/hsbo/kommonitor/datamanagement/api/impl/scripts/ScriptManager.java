@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
 
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.geotools.data.Base64;
 import org.slf4j.Logger;

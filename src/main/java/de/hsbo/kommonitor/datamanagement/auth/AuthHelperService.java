@@ -10,6 +10,9 @@ import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataR
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import javax.annotation.PostConstruct;
+
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.auth.token.TokenParserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +39,9 @@ public final class AuthHelperService {
     
     @Autowired
     private AuthInfoProviderFactory authInfoProviderFactory;
+
+    @Autowired
+    private TokenParserFactory tokenParserFactory;
     
     @PostConstruct
     private void init(){
@@ -46,6 +52,10 @@ public final class AuthHelperService {
     
     public AuthInfoProviderFactory getAuthInfoProviderFactory(){
         return this.authInfoProviderFactory;
+    }
+
+    public TokenParserFactory getTokenParserFactory(){
+        return this.tokenParserFactory;
     }
     
     public GeoresourcesMetadataRepository getGeoresourceRepository(){
