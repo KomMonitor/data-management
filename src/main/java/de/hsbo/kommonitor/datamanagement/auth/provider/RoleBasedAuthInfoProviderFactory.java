@@ -12,7 +12,10 @@ import org.springframework.stereotype.Component;
 import java.security.Principal;
 
 @Component
-@ConditionalOnProperty
+@ConditionalOnProperty(
+        value="kommonitor.access-control.profile",
+        havingValue = "role-based",
+        matchIfMissing = true)
 public class RoleBasedAuthInfoProviderFactory implements AuthInfoProviderFactory{
     @Value("${kommonitor.access-control.authenticated-users.organizationalUnit:kommonitor}")
     private String adminRolePrefix;
