@@ -28,12 +28,4 @@ public interface AuthInfoProvider {
 
     boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel);
 
-    Set<String> getOwnedRoles(Principal principal);
-
-    boolean hasRealmAdminRole(Principal principal);
-
-    void setPrincipal(Principal principal);
-
-    Principal getPrincipal();
-
 }

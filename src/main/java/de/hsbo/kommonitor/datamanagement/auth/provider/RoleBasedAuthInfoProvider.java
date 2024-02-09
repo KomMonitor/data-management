@@ -38,7 +38,7 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
     public RoleBasedAuthInfoProvider() {
     }
 
-    public RoleBasedAuthInfoProvider(Principal principal, TokenParser tokenParser, String adminRolePrefix, String publicRole) {
+    public RoleBasedAuthInfoProvider(Principal principal, TokenParser<?> tokenParser, String adminRolePrefix, String publicRole) {
         this.principal = principal;
         this.tokenParser = tokenParser;
         this.adminRolePrefix = adminRolePrefix;
@@ -48,10 +48,6 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
         permissionSet.add(PermissionLevelType.PUBLISHER);
         permissionSet.add(PermissionLevelType.EDITOR);
         permissionSet.add(PermissionLevelType.VIEWER);
-    }
-
-    public void setPrincipal(Principal principal) {
-        this.principal = principal;
     }
 
     public Principal getPrincipal() {
@@ -173,12 +169,10 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
                 .anyMatch(r -> r.getSecond().compareTo(neededLevel) <= 0);
     }
 
-    @Override
     public Set<String> getOwnedRoles(Principal principal) {
         return tokenParser.getOwnedRoles(principal);
     }
 
-    @Override
     public boolean hasRealmAdminRole(Principal principal) {
         return tokenParser.hasRealmAdminRole(principal, adminRolePrefix);
     }
