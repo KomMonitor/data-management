@@ -298,7 +298,12 @@ public class SpatialUnitsManager {
         
         entity.setOutlineLayer(featureData.getIsOutlineLayer());
         entity.setOutlineColor(featureData.getOutlineColor());
-        entity.setOutlineWidth(featureData.getOutlineWidth().intValue());
+
+        BigDecimal outlineWidth = featureData.getOutlineWidth();
+        if (outlineWidth != null) {
+            entity.setOutlineWidth(outlineWidth.intValue());
+        }
+
         entity.setOutlineDashArrayString(featureData.getOutlineDashArrayString());
 
         /*
@@ -547,7 +552,12 @@ public class SpatialUnitsManager {
         
         entity.setOutlineLayer(metadata.getIsOutlineLayer());
         entity.setOutlineColor(metadata.getOutlineColor());
-        entity.setOutlineWidth(metadata.getOutlineWidth().intValue());
+
+        BigDecimal outlineWidth = metadata.getOutlineWidth();
+        if (outlineWidth != null) {
+            entity.setOutlineWidth(outlineWidth.intValue());
+        }
+
         entity.setOutlineDashArrayString(metadata.getOutlineDashArrayString());
         
         /*
