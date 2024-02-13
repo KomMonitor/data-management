@@ -78,7 +78,6 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
         }
 
         // disallow access by default
-        // TODO: should this be allow all by default?
         if (allowedRoleEntities == null || allowedRoleEntities.isEmpty()) {
             return false;
         }
