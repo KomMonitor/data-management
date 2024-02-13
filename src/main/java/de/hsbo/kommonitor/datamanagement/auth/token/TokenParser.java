@@ -1,5 +1,8 @@
 package de.hsbo.kommonitor.datamanagement.auth.token;
 
+import de.hsbo.kommonitor.datamanagement.auth.Group;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+
 import java.lang.reflect.ParameterizedType;
 import java.security.Principal;
 import java.util.Set;
@@ -12,4 +15,8 @@ public abstract class TokenParser<T extends Principal> {
     public abstract Set<String> getOwnedRoles(T principal);
 
     public abstract boolean hasRealmAdminRole(T principal, String adminRolePrefix);
+
+    public abstract Set<String> getGroupsClaim(T principal);
+
+    public abstract Set<Group> getGroupMemberships(T principal);
 }
