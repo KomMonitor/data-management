@@ -493,16 +493,41 @@ public class IndicatorsController extends BasePathController implements Indicato
 
     @Override
     @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
-    public ResponseEntity updateIndicatorRoles(
+    public ResponseEntity updateIndicatorPermissionsBySpatialUnit(
             @P("indicatorId") String indicatorId,
             String spatialUnitId,
-            IndicatorPATCHInputType indicatorData) {
+            PermissionLevelInputType indicatorData) {
         logger.info("Received request to update indicator roles for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
-
-        String accept = request.getHeader("Accept");
-
         try {
             indicatorId = indicatorsManager.updateIndicatorRoles(indicatorData, indicatorId, spatialUnitId);
+            lastModManager.updateLastDatabaseModification_indicators();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+
+        if (indicatorId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = indicatorId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
+    public ResponseEntity updateIndicatorPermissions(
+            @P("indicatorId") String indicatorId,
+            PermissionLevelInputType indicatorData) {
+        logger.info("Received request to update indicator roles for indicatorId '{}'", indicatorId);
+        try {
+            indicatorId = indicatorsManager.updateIndicatorRoles(indicatorData, indicatorId);
             lastModManager.updateLastDatabaseModification_indicators();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);

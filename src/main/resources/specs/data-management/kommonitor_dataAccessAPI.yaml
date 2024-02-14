@@ -430,6 +430,43 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+    put:
+      tags:
+        - georesources
+      summary: update the permissions for the selected geo-resource dataset
+      description: update the permissions for the selected geo-resource dataset
+      operationId: updateGeoresourcePermissions
+      parameters:
+        - name: georesourceId
+          in: path
+          description: identifier of the geo-resource dataset
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: GeoResource permission level input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionLevelInputType'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid status value
+          content: {}
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
   /georesources/{georesourceId}/schema:
     get:
       tags:
@@ -1216,6 +1253,42 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+    put:
+      tags:
+        - indicators
+      summary: Modify/Update the selected indicator dataset permissions
+      operationId: updateIndicatorPermissions
+      parameters:
+        - name: indicatorId
+          in: path
+          description: unique identifier of the selected indicator dataset
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Indicator parameters input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionLevelInputType'
+        required: true
+      responses:
+        "204":
+          description: No Content
+          content: {}
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "405":
+          description: Invalid input
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+      x-codegen-request-body-name: indicatorData
   /indicators/{indicatorId}/{spatialUnitId}:
     get:
       tags:
@@ -1310,50 +1383,6 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
-    patch:
-      tags:
-        - indicators
-      summary: Modify/Update the selected indicator dataset
-      operationId: updateIndicatorRoles
-      parameters:
-        - name: indicatorId
-          in: path
-          description: unique identifier of the selected indicator dataset
-          required: true
-          schema:
-            type: string
-        - name: spatialUnitId
-          in: path
-          description: the unique identifier of the spatial level
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Indicator parameters input
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/IndicatorPATCHInputType'
-        required: true
-      responses:
-        "200":
-          description: OK
-        "204":
-          description: No Content
-          content: {}
-        "401":
-          description: API key is missing or invalid
-          content: {}
-        "403":
-          description: Forbidden
-          content: {}
-        "405":
-          description: Invalid input
-          content: {}
-      deprecated: false
-      security:
-        - kommonitor-data-access_oauth: []
-      x-codegen-request-body-name: indicatorData
   /indicators/{indicatorId}/{spatialUnitId}/permissions:
     get:
       tags:
@@ -1400,6 +1429,50 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+    put:
+      tags:
+        - indicators
+      summary: Modify/Update the selected indicator dataset permissions
+      operationId: updateIndicatorPermissionsBySpatialUnit
+      parameters:
+        - name: indicatorId
+          in: path
+          description: unique identifier of the selected indicator dataset
+          required: true
+          schema:
+            type: string
+        - name: spatialUnitId
+          in: path
+          description: the unique identifier of the spatial level
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Indicator parameters input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionLevelInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "204":
+          description: No Content
+          content: {}
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "405":
+          description: Invalid input
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+      x-codegen-request-body-name: indicatorData
   /indicators/{indicatorId}/{spatialUnitId}/singleFeature/{featureId}:
     get:
       tags:
@@ -4412,6 +4485,52 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+    put:
+      tags:
+        - spatial-units
+      summary: update information about the permissions for the selected spatial
+        unit dataset
+      description: update information about the permissions for the selected spatial
+        unit dataset
+      operationId: updateSpatialUnitsPermissions
+      parameters:
+        - name: spatialUnitId
+          in: path
+          description: identifier of the spatial unit dataset
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Spatial unit permission level input.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionLevelInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PermissionLevelType'
+        "400":
+          description: Invalid status value
+          content: {}
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
   /spatial-units/{spatialUnitId}/schema:
     get:
       tags:
@@ -5507,8 +5626,8 @@ components:
         indicatorId:
           type: string
           description: unique ID of the associated indicator
-    IndicatorPATCHInputType:
-      title: IndicatorPATCHInputType
+    PermissionLevelInputType:
+      title: PermissionLevelInputType
       required:
         - allowedRoles
       type: object

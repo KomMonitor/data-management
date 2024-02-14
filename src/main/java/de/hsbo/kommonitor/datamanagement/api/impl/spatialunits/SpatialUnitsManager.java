@@ -34,6 +34,7 @@ import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelInputType;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPATCHInputType;
@@ -529,6 +530,23 @@ public class SpatialUnitsManager {
                     "Tried to update spatialUnit metadata, but no dataset existes with datasetId " + spatialUnitId);
         }
     }
+
+    public String updatePermissionLevels(PermissionLevelInputType permissionLevels, String spatialUnitId) throws Exception {
+        logger.info("Trying to update spatialUnit permissions for datasetId '{}'", spatialUnitId);
+        if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+            MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+            
+            metadataEntity.setRoles(retrieveRoles(permissionLevels.getAllowedRoles()));
+
+            spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
+            return spatialUnitId;
+        } else {
+            logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Update request has no effect.", spatialUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update spatialUnit metadata, but no dataset existes with datasetId " + spatialUnitId);
+        }
+    }
+
 
     private void updateMetadata(SpatialUnitPATCHInputType metadata, MetadataSpatialUnitsEntity entity) throws Exception {
 
