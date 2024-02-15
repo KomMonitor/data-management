@@ -1,8 +1,8 @@
 package de.hsbo.kommonitor.datamanagement.auth.provider;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +45,6 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
         this.publicRole = publicRole;
         permissionSet = new TreeSet();
         permissionSet.add(PermissionLevelType.CREATOR);
-        permissionSet.add(PermissionLevelType.PUBLISHER);
         permissionSet.add(PermissionLevelType.EDITOR);
         permissionSet.add(PermissionLevelType.VIEWER);
     }
@@ -69,8 +68,8 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
      * @param entity entity that has access rights defined by a role
      * @return
      */
-    public boolean checkPermissions(final RestrictedByRole entity, final PermissionLevelType neededLevel) {
-        Set<RolesEntity> allowedRoleEntities = entity.getRoles();
+    public boolean checkPermissions(final RestrictedEntity entity, final PermissionLevelType neededLevel) {
+        Set<PermissionEntity> allowedRoleEntities = entity.getPermissions();
 
         // User is global administrator
         if (hasRealmAdminRole(getPrincipal())) {
@@ -106,17 +105,16 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
                                 && ar.getSecond().compareTo(neededLevel) <= 0)));
     }
 
-    public List<PermissionLevelType> getPermissions(RestrictedByRole entity) {
+    public List<PermissionLevelType> getPermissions(RestrictedEntity entity) {
         // User is global administrator
         if (hasRealmAdminRole(getPrincipal())) {
             return Arrays.asList(
                     PermissionLevelType.CREATOR,
-                    PermissionLevelType.PUBLISHER,
                     PermissionLevelType.EDITOR,
                     PermissionLevelType.VIEWER);
         }
 
-        Set<RolesEntity> allowedRoleEntities = entity.getRoles();
+        Set<PermissionEntity> allowedRoleEntities = entity.getPermissions();
 
         if (allowedRoleEntities == null || allowedRoleEntities.isEmpty()) {
             return Collections.emptyList();

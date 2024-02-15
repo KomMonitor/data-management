@@ -1,18 +1,9 @@
 package de.hsbo.kommonitor.datamanagement.auth.provider;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
-import org.keycloak.KeycloakPrincipal;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.util.Pair;
 
-import java.lang.reflect.ParameterizedType;
-import java.security.Principal;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * Interface that provides authentication and authorization information
@@ -22,9 +13,9 @@ import java.util.stream.Collectors;
  */
 public interface AuthInfoProvider {
 
-    boolean checkPermissions(final RestrictedByRole entity, final PermissionLevelType neededLevel);
+    boolean checkPermissions(final RestrictedEntity entity, final PermissionLevelType neededLevel);
 
-    List<PermissionLevelType> getPermissions(RestrictedByRole entity);
+    List<PermissionLevelType> getPermissions(RestrictedEntity entity);
 
     boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel);
 

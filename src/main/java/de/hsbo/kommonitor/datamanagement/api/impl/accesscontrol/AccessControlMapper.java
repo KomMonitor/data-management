@@ -8,9 +8,9 @@ import de.hsbo.kommonitor.datamanagement.model.RoleOverviewType;
 
 public class AccessControlMapper {
 
-    public static RoleOverviewType mapToSwaggerRole(RolesEntity roleEntity) {
+    public static RoleOverviewType mapToSwaggerRole(PermissionEntity roleEntity) {
         RoleOverviewType role = new RoleOverviewType();
-        role.setRoleId(roleEntity.getRoleId());
+        role.setRoleId(roleEntity.getPermissionId());
         role.setPermissionLevel(roleEntity.getPermissionLevel());
         return role;
     }
@@ -25,10 +25,10 @@ public class AccessControlMapper {
         return ou;
     }
 
-    public static List<RoleOverviewType> mapToSwaggerRoles(List<RolesEntity> roleEntities) {
+    public static List<RoleOverviewType> mapToSwaggerRoles(List<PermissionEntity> roleEntities) {
         List<RoleOverviewType> roles = new ArrayList<RoleOverviewType>(roleEntities.size());
 
-        for (RolesEntity roleEntity : roleEntities) {
+        for (PermissionEntity roleEntity : roleEntities) {
             roles.add(mapToSwaggerRole(roleEntity));
         }
         return roles;

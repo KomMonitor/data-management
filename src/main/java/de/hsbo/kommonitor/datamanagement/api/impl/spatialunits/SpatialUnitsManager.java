@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
 import jakarta.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
@@ -18,12 +19,10 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
@@ -34,7 +33,7 @@ import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPOSTInputType;
@@ -45,29 +44,20 @@ import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPUTInputType;
 @Component
 public class SpatialUnitsManager {
 
-
     private static Logger logger = LoggerFactory.getLogger(SpatialUnitsManager.class);
 
-    /**
-     *
-     */
-//	@PersistenceContext
-//	EntityManager em;
 
     @Autowired
     SpatialUnitsMetadataRepository spatialUnitsMetadataRepo;
 
     @Autowired
-    private RolesRepository rolesRepository;
+    private PermissionRepository permissionRepository;
 
     @Autowired
     private IndicatorsManager indicatorsManager;
 
     @Autowired
     OGCWebServiceManager ogcServiceManager;
-
-    @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
-    private String publicRole;
 
     public SpatialUnitOverviewType addSpatialUnit(SpatialUnitPOSTInputType featureData) throws Exception {
         String metadataId = null;
@@ -169,10 +159,10 @@ public class SpatialUnitsManager {
         }
 
     }
-    
+
     private void updateSpatialUnitHierarchy_onUpdate(String metadataId, String oldName, String newName) {
-		
-    	/*
+
+        /*
          * automatically update metadata entries with respect to hierarchy
          *
          *
@@ -193,8 +183,8 @@ public class SpatialUnitsManager {
                 metadataSpatialUnitsEntity.setNextUpperHierarchyLevel(newName);
             }
         }
-		
-	}
+
+    }
 
     private void updateSpatialUnitHierarchy_onDelete(String metadataId) {
         /*
@@ -295,7 +285,7 @@ public class SpatialUnitsManager {
         entity.setNextUpperHierarchyLevel(featureData.getNextUpperHierarchyLevel());
         entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
         entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
-        
+
         entity.setOutlineLayer(featureData.getIsOutlineLayer());
         entity.setOutlineColor(featureData.getOutlineColor());
 
@@ -313,7 +303,8 @@ public class SpatialUnitsManager {
         entity.setWfsUrl(null);
         entity.setWmsUrl(null);
 
-        entity.setRoles(retrieveRoles(featureData.getAllowedRoles()));
+        //
+        entity.setPermissions(getPermissionEntities(featureData.getAllowedRoles()));
 
         // persist in db
         spatialUnitsMetadataRepo.saveAndFlush(entity);
@@ -323,10 +314,10 @@ public class SpatialUnitsManager {
         return entity;
     }
 
-    private Collection<RolesEntity> retrieveRoles(List<String> roleIds) throws ResourceNotFoundException {
-        Collection<RolesEntity> allowedRoles = new ArrayList<>();
-        for (String id : roleIds) {
-            RolesEntity role = rolesRepository.findByRoleId(id);
+    private Collection<PermissionEntity> getPermissionEntities(List<String> ids) throws ResourceNotFoundException {
+        Collection<PermissionEntity> allowedRoles = new ArrayList<>();
+        for (String id : ids) {
+            PermissionEntity role = permissionRepository.findByPermissionId(id);
             if (role == null) {
                 throw new ResourceNotFoundException(400, String.format("The requested role %s does not exist.", id));
             }
@@ -355,7 +346,7 @@ public class SpatialUnitsManager {
 
             // handle OGC web service - null parameter is defaultStyle
             ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
-            
+
             // as a new spatial unit feature table was generated, we must regenerate all views for all indicators that have 
             // the modified spatial unit
             indicatorsManager.recreateAllViewsForSpatialUnitById(spatialUnitId);
@@ -374,93 +365,93 @@ public class SpatialUnitsManager {
     }
 
     public boolean deleteSpatialUnitDatasetById(String spatialUnitId) throws Exception {
-		logger.info("Trying to delete spatialUnit dataset with datasetId '{}'", spatialUnitId);
-		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)){
-			boolean success = true;
-			MetadataSpatialUnitsEntity spatialUnitEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
-			String dbTableName = spatialUnitEntity.getDbTableName();
-			
-			try {
-				/*
-				 * delete all associated indicator layers
-				 */
-				deleteAssociatedIndicatorLayers(spatialUnitId);
-			} catch (Exception e) {
-				logger.error("Error while deleting associated indicator layer entries for spatial unit with id {}",
-						spatialUnitId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}
+        logger.info("Trying to delete spatialUnit dataset with datasetId '{}'", spatialUnitId);
+        if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+            boolean success = true;
+            MetadataSpatialUnitsEntity spatialUnitEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+            String dbTableName = spatialUnitEntity.getDbTableName();
 
-			// delete any linked roles first
-			try {
-				spatialUnitEntity = removeAnyLinkedRoles(spatialUnitEntity);
-			} catch (Exception e) {
-				logger.error("Error while deleting roles for spatial unit with id {}", spatialUnitEntity);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}
+            try {
+                /*
+                 * delete all associated indicator layers
+                 */
+                deleteAssociatedIndicatorLayers(spatialUnitId);
+            } catch (Exception e) {
+                logger.error("Error while deleting associated indicator layer entries for spatial unit with id {}",
+                        spatialUnitId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
 
-			try {
-				/*
-				 * delete featureTable
-				 */
-				SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);
-			} catch (Exception e) {
-				logger.error("Error while deleting feature table for spatial unit with id {}", spatialUnitId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}
-			
-			try {
+            // delete any linked roles first
+            try {
+                spatialUnitEntity = removeAnyLinkedRoles(spatialUnitEntity);
+            } catch (Exception e) {
+                logger.error("Error while deleting roles for spatial unit with id {}", spatialUnitEntity);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
 
-				// update spatial unit hierarchy and make it consistent again
-				updateSpatialUnitHierarchy_onDelete(spatialUnitId);	
-			} catch (Exception e) {
-				logger.error("Error while updating spatial unit hierarchy due to deletion of spatial unit with id {}", spatialUnitId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}	
-			
-			try {
-				/*
-				 * delete metadata entry
-				 */
-				spatialUnitsMetadataRepo.deleteByDatasetId(spatialUnitId);
-			} catch (Exception e) {
-				logger.error("Error while deleting metadata entry for spatial unit with id {}", spatialUnitId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-				success = false;
-			}
-			
-			try {
-				// handle OGC web service
-				ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
-			} catch (Exception e) {
-				logger.error("Error while unpublishing OGC service layer for spatial unit with id {}", spatialUnitId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}			
-			
-			return success;
-		}else{
-			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Delete request has no effect.", spatialUnitId);
-			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Tried to delete spatialUnit dataset, but no dataset existes with datasetId " + spatialUnitId);
-		}
-	}
+            try {
+                /*
+                 * delete featureTable
+                 */
+                SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);
+            } catch (Exception e) {
+                logger.error("Error while deleting feature table for spatial unit with id {}", spatialUnitId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
+
+            try {
+
+                // update spatial unit hierarchy and make it consistent again
+                updateSpatialUnitHierarchy_onDelete(spatialUnitId);
+            } catch (Exception e) {
+                logger.error("Error while updating spatial unit hierarchy due to deletion of spatial unit with id {}", spatialUnitId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
+
+            try {
+                /*
+                 * delete metadata entry
+                 */
+                spatialUnitsMetadataRepo.deleteByDatasetId(spatialUnitId);
+            } catch (Exception e) {
+                logger.error("Error while deleting metadata entry for spatial unit with id {}", spatialUnitId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+                success = false;
+            }
+
+            try {
+                // handle OGC web service
+                ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
+            } catch (Exception e) {
+                logger.error("Error while unpublishing OGC service layer for spatial unit with id {}", spatialUnitId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
+
+            return success;
+        } else {
+            logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Delete request has no effect.", spatialUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Tried to delete spatialUnit dataset, but no dataset existes with datasetId " + spatialUnitId);
+        }
+    }
 
     private MetadataSpatialUnitsEntity removeAnyLinkedRoles(MetadataSpatialUnitsEntity spatialUnitEntity) {
-    	spatialUnitEntity.setRoles(new ArrayList<>());
-		
-		spatialUnitsMetadataRepo.saveAndFlush(spatialUnitEntity);
-		
-		spatialUnitEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitEntity.getDatasetId());
-		
-		return spatialUnitEntity;
-	}
+        spatialUnitEntity.setPermissions(new ArrayList<>());
 
-	private boolean deleteAssociatedIndicatorLayers(String spatialUnitId) throws Exception {
+        spatialUnitsMetadataRepo.saveAndFlush(spatialUnitEntity);
+
+        spatialUnitEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitEntity.getDatasetId());
+
+        return spatialUnitEntity;
+    }
+
+    private boolean deleteAssociatedIndicatorLayers(String spatialUnitId) throws Exception {
         logger.info("Must delete and unpublish all indicator data tables and views that are associated to submitted spatial unit with id '{}'", spatialUnitId);
         /*
          * identify all indicator layers for the spatialUnitId and delete/unpublish them
@@ -494,8 +485,8 @@ public class SpatialUnitsManager {
 
             // handle OGC web service - null parameter is defaultStyle
             ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
-            
-            
+
+
             indicatorsManager.recreateAllViewsForSpatialUnitById(spatialUnitId);
 
             /*
@@ -548,8 +539,7 @@ public class SpatialUnitsManager {
         entity.setNextUpperHierarchyLevel(metadata.getNextUpperHierarchyLevel());
         entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
         entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
-        entity.setRoles(retrieveRoles(metadata.getAllowedRoles()));
-        
+
         entity.setOutlineLayer(metadata.getIsOutlineLayer());
         entity.setOutlineColor(metadata.getOutlineColor());
 
@@ -559,18 +549,18 @@ public class SpatialUnitsManager {
         }
 
         entity.setOutlineDashArrayString(metadata.getOutlineDashArrayString());
-        
+
         /*
          * UPDATE DATASETNAME and adjust hierarchy order if needed
          * also adjust spatialUnitName in all affected indicatorSpatialUnitJoinEntities
          */
         String oldName = entity.getDatasetName();
         String newName = metadata.getDatasetName();
-		if(! newName.equals(oldName) && newName != null && newName != "") {
-        	// update datasetName
-        	entity.setDatasetName(newName);
-        	updateSpatialUnitHierarchy_onUpdate(entity.getDatasetId(), oldName, newName);
-        	indicatorsManager.updateJoinedSpatialUnitName(entity.getDatasetId(), oldName, newName);
+        if (!newName.equals(oldName) && newName != null && newName != "") {
+            // update datasetName
+            entity.setDatasetName(newName);
+            updateSpatialUnitHierarchy_onUpdate(entity.getDatasetId(), oldName, newName);
+            indicatorsManager.updateJoinedSpatialUnitName(entity.getDatasetId(), oldName, newName);
         }
 
         /*
@@ -579,7 +569,7 @@ public class SpatialUnitsManager {
          */
     }
 
-	public List<SpatialUnitOverviewType> getAllSpatialUnitsMetadata() throws Exception {
+    public List<SpatialUnitOverviewType> getAllSpatialUnitsMetadata() throws Exception {
         return getAllSpatialUnitsMetadata(null);
     }
 
@@ -590,8 +580,7 @@ public class SpatialUnitsManager {
 
         if (provider == null) {
             spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll().stream()
-                    .filter(s -> s.getRoles().stream()
-                            .anyMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole)))
+                    .filter(MetadataSpatialUnitsEntity::isPublic)
                     .collect(Collectors.toList());
         } else {
             spatialUnitMeatadataEntities = spatialUnitsMetadataRepo.findAll().stream()
@@ -602,11 +591,11 @@ public class SpatialUnitsManager {
             // safely remove an entity form the collection if no permissions have been found. Actually, this should
             // never happen, however, it is meant as an additional security check.
             Iterator<MetadataSpatialUnitsEntity> iter = spatialUnitMeatadataEntities.iterator();
-            while(iter.hasNext()) {
+            while (iter.hasNext()) {
                 MetadataSpatialUnitsEntity s = iter.next();
                 try {
                     s.setUserPermissions(provider.getPermissions(s));
-                } catch(NoSuchElementException ex) {
+                } catch (NoSuchElementException ex) {
                     logger.error("No permissions found for spatial unit '{}'. Entity will be removed" +
                             " from resulting list.", s.getDatasetId());
                     iter.remove();
@@ -760,8 +749,7 @@ public class SpatialUnitsManager {
     private MetadataSpatialUnitsEntity fetchEntity(AuthInfoProvider provider, String spatialUnitId) throws ResourceNotFoundException {
         MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
         if (provider == null) {
-            if (metadataEntity == null || metadataEntity.getRoles().stream()
-                    .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
+            if (metadataEntity == null || !metadataEntity.isPublic()) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
                         "was not found.", spatialUnitId));
             }
@@ -772,7 +760,7 @@ public class SpatialUnitsManager {
             }
             try {
                 metadataEntity.setUserPermissions(provider.getPermissions(metadataEntity));
-            } catch(NoSuchElementException ex) {
+            } catch (NoSuchElementException ex) {
                 logger.error("No permissions found for spatial unit '{}'", metadataEntity.getDatasetId());
             }
 
@@ -792,15 +780,15 @@ public class SpatialUnitsManager {
         List<PermissionLevelType> permissions = provider.getPermissions(spatialUnitsMetadataEntity);
         return permissions;
     }
-    
-	public String getSingleSpatialUnitFeatureRecords(String spatialUnitId, String featureId,
-			String simplifyGeometries) throws Exception {
-		return getSingleSpatialUnitFeatureRecords(spatialUnitId, featureId, simplifyGeometries, null);
-	}
 
-	public String getSingleSpatialUnitFeatureRecords(String spatialUnitId, String featureId, String simplifyGeometries,
-			AuthInfoProvider authInfoProvider) throws Exception {
-		logger.info("Retrieving single spatialUnit Feature records for Dataset '{}' and featureId '{}'", spatialUnitId, featureId);
+    public String getSingleSpatialUnitFeatureRecords(String spatialUnitId, String featureId,
+                                                     String simplifyGeometries) throws Exception {
+        return getSingleSpatialUnitFeatureRecords(spatialUnitId, featureId, simplifyGeometries, null);
+    }
+
+    public String getSingleSpatialUnitFeatureRecords(String spatialUnitId, String featureId, String simplifyGeometries,
+                                                     AuthInfoProvider authInfoProvider) throws Exception {
+        logger.info("Retrieving single spatialUnit Feature records for Dataset '{}' and featureId '{}'", spatialUnitId, featureId);
 
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
             MetadataSpatialUnitsEntity metadataEntity = fetchEntity(authInfoProvider, spatialUnitId);
@@ -808,7 +796,7 @@ public class SpatialUnitsManager {
             String dbTableName = metadataEntity.getDbTableName();
 
             String geoJson = SpatialFeatureDatabaseHandler.getSingleFeatureRecordsByFeatureId(dbTableName, featureId,
-					simplifyGeometries);
+                    simplifyGeometries);
             return geoJson;
 
         } else {
@@ -816,38 +804,38 @@ public class SpatialUnitsManager {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to get spatialUnit features, but no dataset existes with datasetId " + spatialUnitId);
         }
-	}
+    }
 
-	public String getSingleSpatialUnitFeatureRecord(String spatialUnitId, String featureId, String featureRecordId,
-			String simplifyGeometries) throws Exception {
-		return getSingleSpatialUnitFeatureRecord(spatialUnitId, featureId, featureRecordId, simplifyGeometries, null);
-	}
+    public String getSingleSpatialUnitFeatureRecord(String spatialUnitId, String featureId, String featureRecordId,
+                                                    String simplifyGeometries) throws Exception {
+        return getSingleSpatialUnitFeatureRecord(spatialUnitId, featureId, featureRecordId, simplifyGeometries, null);
+    }
 
-	public String getSingleSpatialUnitFeatureRecord(String spatialUnitId, String featureId, String featureRecordId,
-			String simplifyGeometries, AuthInfoProvider authInfoProvider) throws Exception {
-		logger.info(
-				"Retrieving single spatialUnit Feature record for Dataset '{}' and featureId '{}' and recordId '{}'",
-				spatialUnitId, featureId, featureRecordId);
+    public String getSingleSpatialUnitFeatureRecord(String spatialUnitId, String featureId, String featureRecordId,
+                                                    String simplifyGeometries, AuthInfoProvider authInfoProvider) throws Exception {
+        logger.info(
+                "Retrieving single spatialUnit Feature record for Dataset '{}' and featureId '{}' and recordId '{}'",
+                spatialUnitId, featureId, featureRecordId);
 
-		if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
-			MetadataSpatialUnitsEntity metadataEntity = fetchEntity(authInfoProvider, spatialUnitId);
+        if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+            MetadataSpatialUnitsEntity metadataEntity = fetchEntity(authInfoProvider, spatialUnitId);
 
-			String dbTableName = metadataEntity.getDbTableName();
+            String dbTableName = metadataEntity.getDbTableName();
 
-			String geoJson = SpatialFeatureDatabaseHandler.getSingleFeatureRecordByRecordId(dbTableName, featureId,
-					featureRecordId, simplifyGeometries);
-			return geoJson;
+            String geoJson = SpatialFeatureDatabaseHandler.getSingleFeatureRecordByRecordId(dbTableName, featureId,
+                    featureRecordId, simplifyGeometries);
+            return geoJson;
 
-		} else {
-			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Get request has no effect.",
-					spatialUnitId);
-			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to get spatialUnit features, but no dataset existes with datasetId " + spatialUnitId);
-		}
-	}
+        } else {
+            logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Get request has no effect.",
+                    spatialUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to get spatialUnit features, but no dataset existes with datasetId " + spatialUnitId);
+        }
+    }
 
-	public boolean deleteSingleSpatialUnitFeatureRecordsByFeatureId(String spatialUnitId, String featureId) throws Exception {
-		logger.info("Trying to delete single spatialUnit feature database records for dataset with datasetId '{}' and featureId '{}'", spatialUnitId, featureId);
+    public boolean deleteSingleSpatialUnitFeatureRecordsByFeatureId(String spatialUnitId, String featureId) throws Exception {
+        logger.info("Trying to delete single spatialUnit feature database records for dataset with datasetId '{}' and featureId '{}'", spatialUnitId, featureId);
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
             String datasetName = metadataEntity.getDatasetName();
@@ -864,7 +852,7 @@ public class SpatialUnitsManager {
 
             // handle OGC web service - null parameter is defaultStyle
             ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
-            
+
             // as a new spatial unit feature table was generated, we must regenerate all views for all indicators that have 
             // the modified spatial unit
             indicatorsManager.recreateAllViewsForSpatialUnitById(spatialUnitId);
@@ -880,11 +868,11 @@ public class SpatialUnitsManager {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to delete all spatialUnit features for dataset, but no dataset existes with datasetId " + spatialUnitId);
         }
-	}
+    }
 
-	public boolean deleteSingleSpatialUnitFeatureRecordByRecordId(String spatialUnitId, String featureId,
-			String featureRecordId) throws Exception {
-		logger.info("Trying to delete single spatialUnit feature database record for dataset with datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
+    public boolean deleteSingleSpatialUnitFeatureRecordByRecordId(String spatialUnitId, String featureId,
+                                                                  String featureRecordId) throws Exception {
+        logger.info("Trying to delete single spatialUnit feature database record for dataset with datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
             String datasetName = metadataEntity.getDatasetName();
@@ -892,7 +880,8 @@ public class SpatialUnitsManager {
             /*
              * call DB tool to delete features
              */
-            SpatialFeatureDatabaseHandler.deleteSingleFeatureRecordForRecordId(ResourceTypeEnum.SPATIAL_UNIT, dbTableName, featureId, featureRecordId);;
+            SpatialFeatureDatabaseHandler.deleteSingleFeatureRecordForRecordId(ResourceTypeEnum.SPATIAL_UNIT, dbTableName, featureId, featureRecordId);
+            ;
 
             // set lastUpdate in metadata in case of successful update
             metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());
@@ -901,7 +890,7 @@ public class SpatialUnitsManager {
 
             // handle OGC web service - null parameter is defaultStyle
             ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
-            
+
             // as a new spatial unit feature table was generated, we must regenerate all views for all indicators that have 
             // the modified spatial unit
             indicatorsManager.recreateAllViewsForSpatialUnitById(spatialUnitId);
@@ -917,11 +906,11 @@ public class SpatialUnitsManager {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to delete all spatialUnit features for dataset, but no dataset existes with datasetId " + spatialUnitId);
         }
-	}
+    }
 
-	public String updateFeatureRecordByRecordId(String spatialUnitFeatureRecordData, String spatialUnitId,
-			String featureId, String featureRecordId) throws IOException, Exception {
-		logger.info("Trying to update single spatialUnit feature database record for dataset with datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
+    public String updateFeatureRecordByRecordId(String spatialUnitFeatureRecordData, String spatialUnitId,
+                                                String featureId, String featureRecordId) throws IOException, Exception {
+        logger.info("Trying to update single spatialUnit feature database record for dataset with datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
             String datasetName = metadataEntity.getDatasetName();
@@ -938,7 +927,7 @@ public class SpatialUnitsManager {
 
             // handle OGC web service - null parameter is defaultStyle
             ogcServiceManager.publishDbLayerAsOgcService(dbTableName, datasetName, null, ResourceTypeEnum.SPATIAL_UNIT);
-            
+
             // as a new spatial unit feature table was generated, we must regenerate all views for all indicators that have 
             // the modified spatial unit
             indicatorsManager.recreateAllViewsForSpatialUnitById(spatialUnitId);
@@ -954,6 +943,6 @@ public class SpatialUnitsManager {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to delete all spatialUnit features for dataset, but no dataset existes with datasetId " + spatialUnitId);
         }
-	}
+    }
 
 }

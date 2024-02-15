@@ -5,104 +5,130 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import jakarta.persistence.*;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 
 @Entity(name = "MetadataSpatialUnits")
-public class MetadataSpatialUnitsEntity extends AbstractMetadata implements RestrictedByRole {
+public class MetadataSpatialUnitsEntity extends AbstractMetadata implements RestrictedEntity {
 
-	private int sridEpsg;
-	private String nextLowerHierarchyLevel = null;
-	private String nextUpperHierarchyLevel = null;
-	private boolean isOutlineLayer = false;
-	private String outlineColor = null;
-	private Integer outlineWidth = null;
-	private String outlineDashArrayString = null;
+    private int sridEpsg;
+    private String nextLowerHierarchyLevel = null;
+    private String nextUpperHierarchyLevel = null;
+    private boolean isOutlineLayer = false;
+    private String outlineColor = null;
+    private Integer outlineWidth = null;
+    private String outlineDashArrayString = null;
 
-	@ManyToMany()
-	@JoinTable(name = "metadataSpatialUnits_roles",
-			joinColumns = @JoinColumn(name = "metadataspatialunits_id", referencedColumnName = "datasetid"),
-			inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "roleid"))
-	private Collection<RolesEntity> roles;
+    @ManyToMany()
+    @JoinTable(name = "metadataSpatialUnits_permissions",
+            joinColumns = @JoinColumn(name = "metadataspatialunits_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    private Collection<PermissionEntity> permissions;
 
-	public HashSet<RolesEntity> getRoles() {
-		return new HashSet<RolesEntity>(roles);
-	}
+    @ManyToOne
+    private OrganizationalUnitEntity owner;
 
-	public void setRoles(Collection<RolesEntity> roles) {
-		this.roles = new HashSet<RolesEntity>(roles);
-	}
+    @Column
+    private boolean isPublic;
 
-	public int getSridEpsg() {
-		return sridEpsg;
-	}
-	public void setSridEpsg(int sridEpsg) {
-		this.sridEpsg = sridEpsg;
-	}
-	public String getNextLowerHierarchyLevel() {
-		return nextLowerHierarchyLevel;
-	}
-	public void setNextLowerHierarchyLevel(String nextLowerHierarchyLevel) {
-		this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
-	}
-	public String getNextUpperHierarchyLevel() {
-		return nextUpperHierarchyLevel;
-	}
-	public void setNextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
-		this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
-	}
-	public boolean isOutlineLayer() {
-		return isOutlineLayer;
-	}
+    public HashSet<PermissionEntity> getPermissions() {
+        return new HashSet<>(permissions);
+    }
 
-	public void setOutlineLayer(boolean isOutlineLayer) {
-		this.isOutlineLayer = isOutlineLayer;
-	}
+    public void setPermissions(Collection<PermissionEntity> permissions) {
+        this.permissions = new HashSet<>(permissions);
+    }
 
-	public String getOutlineColor() {
-		return outlineColor;
-	}
+    public OrganizationalUnitEntity getOwner() {
+        return owner;
+    }
 
-	public void setOutlineColor(String outlineColor) {
-		this.outlineColor = outlineColor;
-	}
+    public void setOwner(OrganizationalUnitEntity owner) {
+        this.owner = owner;
+    }
 
-	public String getOutlineDashArrayString() {
-		return outlineDashArrayString;
-	}
+    @Override
+    public boolean isPublic() {
+        return isPublic;
+    }
 
-	public void setOutlineDashArrayString(String outlineDashArrayString) {
-		this.outlineDashArrayString = outlineDashArrayString;
-	}
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
+    }
 
-	public Integer getOutlineWidth() {
-		return outlineWidth;
-	}
+    public int getSridEpsg() {
+        return sridEpsg;
+    }
 
-	public void setOutlineWidth(Integer outlineWidth) {
-		this.outlineWidth = outlineWidth;
-	}
-	
-	public HashSet<PeriodOfValidityEntity_spatialUnits> getSpatialUnitsPeriodsOfValidity() throws IOException, SQLException {
-		AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(this.getDbTableName());
+    public void setSridEpsg(int sridEpsg) {
+        this.sridEpsg = sridEpsg;
+    }
 
-		HashSet<PeriodOfValidityEntity_spatialUnits> hashSet = new HashSet<PeriodOfValidityEntity_spatialUnits>();		
-        
+    public String getNextLowerHierarchyLevel() {
+        return nextLowerHierarchyLevel;
+    }
+
+    public void setNextLowerHierarchyLevel(String nextLowerHierarchyLevel) {
+        this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
+    }
+
+    public String getNextUpperHierarchyLevel() {
+        return nextUpperHierarchyLevel;
+    }
+
+    public void setNextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
+        this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
+    }
+
+    public boolean isOutlineLayer() {
+        return isOutlineLayer;
+    }
+
+    public void setOutlineLayer(boolean isOutlineLayer) {
+        this.isOutlineLayer = isOutlineLayer;
+    }
+
+    public String getOutlineColor() {
+        return outlineColor;
+    }
+
+    public void setOutlineColor(String outlineColor) {
+        this.outlineColor = outlineColor;
+    }
+
+    public String getOutlineDashArrayString() {
+        return outlineDashArrayString;
+    }
+
+    public void setOutlineDashArrayString(String outlineDashArrayString) {
+        this.outlineDashArrayString = outlineDashArrayString;
+    }
+
+    public Integer getOutlineWidth() {
+        return outlineWidth;
+    }
+
+    public void setOutlineWidth(Integer outlineWidth) {
+        this.outlineWidth = outlineWidth;
+    }
+
+    public HashSet<PeriodOfValidityEntity_spatialUnits> getSpatialUnitsPeriodsOfValidity() throws IOException, SQLException {
+        AvailablePeriodsOfValidityType availablePeriodsOfValidity = SpatialFeatureDatabaseHandler.getAvailablePeriodsOfValidity(this.getDbTableName());
+
+        HashSet<PeriodOfValidityEntity_spatialUnits> hashSet = new HashSet<PeriodOfValidityEntity_spatialUnits>();
+
         for (PeriodOfValidityType periodOfValidityType : availablePeriodsOfValidity) {
-        	PeriodOfValidityEntity_spatialUnits periodEntity = new PeriodOfValidityEntity_spatialUnits(periodOfValidityType);
+            PeriodOfValidityEntity_spatialUnits periodEntity = new PeriodOfValidityEntity_spatialUnits(periodOfValidityType);
             hashSet.add(periodEntity);
-        }        
-		
-		return hashSet;
-	}
+        }
 
+        return hashSet;
+    }
 
 }

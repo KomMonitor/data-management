@@ -3,26 +3,17 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 import java.util.Collection;
 import java.util.HashSet;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import jakarta.persistence.*;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 
 @Entity(name = "MetadataIndicators")
-public class MetadataIndicatorsEntity extends AbstractMetadata implements RestrictedByRole {
+public class MetadataIndicatorsEntity extends AbstractMetadata implements RestrictedEntity {
 
 	@Column(columnDefinition="text")
 	private String processDescription = null;
@@ -231,17 +222,40 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 
 	@ManyToMany()
     @JoinTable(name = "metadataIndicators_roles",
-            joinColumns = @JoinColumn(name = "metadataindicators_id", referencedColumnName = "datasetid"),
-            inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "roleid"))
-    private Collection<RolesEntity> roles = new HashSet<RolesEntity>();
+            joinColumns = @JoinColumn(name = "metadataindicators_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id"))
+	private Collection<PermissionEntity> permissions;
 
-    public HashSet<RolesEntity> getRoles() {
-        return new HashSet<RolesEntity>(roles);
-    }
+	@ManyToOne
+	private OrganizationalUnitEntity owner;
 
-    public void setRoles(Collection<RolesEntity> roles) {
-        this.roles = new HashSet<RolesEntity>(roles);
-    }
+	@Column
+	private boolean isPublic;
+
+	public HashSet<PermissionEntity> getPermissions() {
+		return new HashSet<>(permissions);
+	}
+
+	public void setPermissions(Collection<PermissionEntity> permissions) {
+		this.permissions = new HashSet<>(permissions);
+	}
+
+	public OrganizationalUnitEntity getOwner() {
+		return owner;
+	}
+
+	public void setOwner(OrganizationalUnitEntity owner) {
+		this.owner = owner;
+	}
+
+	@Override
+	public boolean isPublic() {
+		return isPublic;
+	}
+
+	public void setPublic(boolean aPublic) {
+		isPublic = aPublic;
+	}
 
 	public String getReferenceDateNote() {
 		return referenceDateNote;

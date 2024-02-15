@@ -31,9 +31,6 @@ public class AccessControlController extends BasePathController implements Acces
     private final HttpServletRequest request;
 
     @Autowired
-    RolesManager rolesManager;
-
-    @Autowired
     OrganizationalUnitManager organizationalUnitManager;
 
     @Autowired

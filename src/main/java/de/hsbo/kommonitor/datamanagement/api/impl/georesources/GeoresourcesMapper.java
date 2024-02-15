@@ -16,7 +16,7 @@ import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 
 public class GeoresourcesMapper {
 	
@@ -129,16 +129,16 @@ private static GeoresourcesMetadataRepository georesourceMetadataRepo;
 		dataset.setWmsUrl(georesourceMetadataEntity.getWmsUrl());
 		dataset.setWfsUrl(georesourceMetadataEntity.getWfsUrl());
 
-		dataset.setAllowedRoles(getAllowedRoleIds(georesourceMetadataEntity.getRoles()));
+		dataset.setAllowedRoles(getPermissions(georesourceMetadataEntity.getPermissions()));
 		dataset.setUserPermissions(georesourceMetadataEntity.getUserPermissions());
 
 		return dataset;
 	}
 
-	private static List<String> getAllowedRoleIds(HashSet<RolesEntity> roles) {
+	private static List<String> getPermissions(HashSet<PermissionEntity> roles) {
 		return roles
 				.stream()
-				.map(r -> r.getRoleId())
+				.map(PermissionEntity::getPermissionId)
 				.collect(Collectors.toList());
 	}
 }

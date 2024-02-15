@@ -5,18 +5,16 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import jakarta.persistence.*;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.model.*;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 
 @Entity(name = "MetadataGeoresources")
-public class MetadataGeoresourcesEntity extends AbstractMetadata implements RestrictedByRole {
+public class MetadataGeoresourcesEntity extends AbstractMetadata implements RestrictedEntity {
 
 	private int sridEpsg;
 	
@@ -100,17 +98,40 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata implements Rest
 	}
 
 	@ManyToMany()
-	@JoinTable(name = "metadataGeoresources_roles",
-			joinColumns = @JoinColumn(name = "metadatageoresources_id", referencedColumnName = "datasetid"),
-			inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "roleid"))
-	private Collection<RolesEntity> roles;
+	@JoinTable(name = "metadataGeoresources_permissions",
+			joinColumns = @JoinColumn(name = "metadatageoresources_id"),
+			inverseJoinColumns = @JoinColumn(name = "permission_id"))
+	private Collection<PermissionEntity> permissions;
 
-	public HashSet<RolesEntity> getRoles() {
-		return new HashSet<RolesEntity>(roles);
+	@ManyToOne
+	private OrganizationalUnitEntity owner;
+
+	@Column
+	private boolean isPublic;
+
+	public HashSet<PermissionEntity> getPermissions() {
+		return new HashSet<>(permissions);
 	}
 
-	public void setRoles(Collection<RolesEntity> roles) {
-		this.roles = new HashSet<RolesEntity>(roles);
+	public void setPermissions(Collection<PermissionEntity> permissions) {
+		this.permissions = new HashSet<>(permissions);
+	}
+
+	public OrganizationalUnitEntity getOwner() {
+		return owner;
+	}
+
+	public void setOwner(OrganizationalUnitEntity owner) {
+		this.owner = owner;
+	}
+
+	@Override
+	public boolean isPublic() {
+		return isPublic;
+	}
+
+	public void setPublic(boolean aPublic) {
+		isPublic = aPublic;
 	}
 
 	public boolean isLOI() {

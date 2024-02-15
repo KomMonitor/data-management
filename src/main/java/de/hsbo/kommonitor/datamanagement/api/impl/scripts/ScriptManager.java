@@ -217,7 +217,7 @@ public class ScriptManager {
 
 		if (provider == null) {
 			scriptEntities = scriptMetadataRepo.findAll().stream()
-					.filter(s -> s.getMetadataIndicatorsEntity().getRoles().isEmpty()).collect(Collectors.toList());
+					.filter(s -> s.getMetadataIndicatorsEntity().getPermissions().isEmpty()).collect(Collectors.toList());
 		} else {
 			scriptEntities = scriptMetadataRepo.findAll().stream()
 					.filter(s -> provider.checkPermissions(s.getMetadataIndicatorsEntity(), PermissionLevelType.VIEWER))
@@ -515,7 +515,7 @@ public class ScriptManager {
 
 	private ScriptMetadataEntity checkScriptMetadataEntity(AuthInfoProvider provider, ScriptMetadataEntity entity) throws ResourceNotFoundException {
 		if (provider == null) {
-			if (entity == null || !entity.getMetadataIndicatorsEntity().getRoles().isEmpty()) {
+			if (entity == null || !entity.getMetadataIndicatorsEntity().getPermissions().isEmpty()) {
 				throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "The requested resource " +
 						"was not found.");
 			}

@@ -28,7 +28,7 @@ public class OrganizationalUnitManager {
     OrganizationalUnitRepository organizationalUnitRepository;
 
     @Autowired
-    RolesManager rolesManager;
+    PermissionManager permissionManager;
 
     @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
     private String defaultAnonymousOUname;
@@ -59,9 +59,9 @@ public class OrganizationalUnitManager {
         OrganizationalUnitEntity saved = organizationalUnitRepository.saveAndFlush(jpaUnit);
 
         // Generate appropriate roles
-        List<RolesEntity> roles = new ArrayList<>();
+        List<PermissionEntity> roles = new ArrayList<>();
         for (PermissionLevelType level : PermissionLevelType.values()) {
-            roles.add(rolesManager.addRole(saved, level));
+            roles.add(permissionManager.addRole(saved, level));
         }
         saved.setRoles(roles);
 

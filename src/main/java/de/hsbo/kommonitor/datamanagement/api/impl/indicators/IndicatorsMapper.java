@@ -33,7 +33,7 @@ import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorSpatialUnitJoinItem;
 import de.hsbo.kommonitor.datamanagement.model.OgcServicesType;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 
 @Component
 public class IndicatorsMapper {
@@ -84,7 +84,7 @@ public class IndicatorsMapper {
 		Map<String, List<IndicatorSpatialUnitJoinEntity>> indicatorSpatialUnitsMap = new HashMap<String, List<IndicatorSpatialUnitJoinEntity>>();
 		
 		List<IndicatorSpatialUnitJoinEntity> allEntities = indicatorSpatialUnitsRepo.findAll();
-		
+
 		for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitEntity : allEntities) {
 			if(indicatorSpatialUnitEntity == null) {
 				continue;
@@ -231,16 +231,18 @@ public class IndicatorsMapper {
 		;
 		indicatorOverviewType.setInterpretation(indicatorsMetadataEntity.getInterpretation());
 		indicatorOverviewType.setTags(new ArrayList<String>(indicatorsMetadataEntity.getTags()));
-		indicatorOverviewType.setAllowedRoles(getAllowedRoleIds(indicatorsMetadataEntity.getRoles()));
 		indicatorOverviewType.setUserPermissions(indicatorsMetadataEntity.getUserPermissions());
+
+
+		indicatorOverviewType.setAllowedRoles(getAllowedRoleIds(indicatorsMetadataEntity.getPermissions()));
 
 		return indicatorOverviewType;
 	}
 
-	private List<String> getAllowedRoleIds(HashSet<RolesEntity> roles) {
+	private List<String> getAllowedRoleIds(HashSet<PermissionEntity> roles) {
 		return roles
 				.stream()
-				.map(r -> r.getRoleId())
+				.map(r -> r.getPermissionId())
 				.collect(Collectors.toList());
 	}
 
@@ -289,8 +291,8 @@ public class IndicatorsMapper {
 			item.setSpatialUnitId(indicatorSpatialUnitJoinEntity.getSpatialUnitId());
 			item.setSpatialUnitName(indicatorSpatialUnitJoinEntity.getSpatialUnitName());
 
-			List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getRoles().stream()
-					.map(r -> r.getRoleId())
+			List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getPermissions().stream()
+					.map(PermissionEntity::getPermissionId)
 					.collect(Collectors.toList());
 			item.setAllowedRoles(allowedRoles);
 			item.setUserPermissions(indicatorSpatialUnitJoinEntity.getUserPermissions());

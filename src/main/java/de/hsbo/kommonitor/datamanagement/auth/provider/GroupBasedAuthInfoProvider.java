@@ -1,8 +1,8 @@
 package de.hsbo.kommonitor.datamanagement.auth.provider;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.auth.Group;
 import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
@@ -20,20 +20,12 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider{
 
     private TokenParser tokenParser;
 
-    private SortedSet permissionSet;
-
     public GroupBasedAuthInfoProvider() {
     }
 
     public GroupBasedAuthInfoProvider(Principal principal, TokenParser<?> tokenParser) {
         this.principal = principal;
         this.tokenParser = tokenParser;
-
-        permissionSet = new TreeSet();
-        permissionSet.add(PermissionLevelType.CREATOR);
-        permissionSet.add(PermissionLevelType.PUBLISHER);
-        permissionSet.add(PermissionLevelType.EDITOR);
-        permissionSet.add(PermissionLevelType.VIEWER);
     }
 
     public Principal getPrincipal() {
@@ -41,8 +33,8 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider{
     }
 
     @Override
-    public boolean checkPermissions(RestrictedByRole entity, PermissionLevelType neededLevel) {
-        Set<RolesEntity> allowedRoleEntities = entity.getRoles();
+    public boolean checkPermissions(RestrictedEntity entity, PermissionLevelType neededLevel) {
+        Set<PermissionEntity> allowedRoleEntities = entity.getPermissions();
 
         // User is global administrator
         if (tokenParser.hasRealmAdminRole(getPrincipal(), ADMIN_ROLE_NAME)) {
@@ -75,7 +67,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider{
     }
 
     @Override
-    public List<PermissionLevelType> getPermissions(RestrictedByRole entity) {
+    public List<PermissionLevelType> getPermissions(RestrictedEntity entity) {
         return Collections.emptyList();
     }
 

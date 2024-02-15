@@ -3,13 +3,13 @@ package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RolesRepository extends JpaRepository<RolesEntity, Long> {
+public interface PermissionRepository extends JpaRepository<PermissionEntity, Long> {
 
-    RolesEntity findByRoleId(String roleId);    
+    PermissionEntity findByPermissionId(String id);
     
-    RolesEntity findByRoleName(String roleName);
+    PermissionEntity findByName(String name);
     
-    RolesEntity findByOrganizationalUnitAndPermissionLevel(OrganizationalUnitEntity ou, PermissionLevelType level);
+    PermissionEntity findByOrganizationalUnitAndPermissionLevel(OrganizationalUnitEntity ou, PermissionLevelType level);
 
     boolean existsByRoleId(String roleId);
 

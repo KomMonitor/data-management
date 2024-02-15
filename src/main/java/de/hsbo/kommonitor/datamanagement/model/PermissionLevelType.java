@@ -26,8 +26,6 @@ public enum PermissionLevelType {
   
   CREATOR("creator"),
   
-  PUBLISHER("publisher"),
-  
   EDITOR("editor"),
   
   VIEWER("viewer");
@@ -58,4 +56,3 @@ public enum PermissionLevelType {
     throw new IllegalArgumentException("Unexpected value '" + value + "'");
   }
 }
-

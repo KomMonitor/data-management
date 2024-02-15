@@ -29,7 +29,7 @@ public class OrganizationalUnitEntity {
     public String description;
 
     @OneToMany(mappedBy = "organizationalUnit", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
-    public List<RolesEntity> roles;
+    public List<PermissionEntity> roles;
 
     public String getName() {
         return name;
@@ -55,11 +55,11 @@ public class OrganizationalUnitEntity {
         this.description = description;
     }
 
-    public List<RolesEntity> getRoles() {
+    public List<PermissionEntity> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<RolesEntity> roles) {
+    public void setRoles(List<PermissionEntity> roles) {
         this.roles = roles;
     }
 

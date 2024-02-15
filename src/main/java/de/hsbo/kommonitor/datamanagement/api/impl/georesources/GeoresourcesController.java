@@ -53,7 +53,6 @@ public class GeoresourcesController extends BasePathController implements Geores
 	@PreAuthorize("hasRequiredPermissionLevel('publisher')")
 	public ResponseEntity<GeoresourceOverviewType> addGeoresourceAsBody(GeoresourcePOSTInputType featureData) {
 		logger.info("Received request to insert new georesource");
-		String accept = request.getHeader("Accept");
 
 		/*
 		 * analyse input data and save it within database
