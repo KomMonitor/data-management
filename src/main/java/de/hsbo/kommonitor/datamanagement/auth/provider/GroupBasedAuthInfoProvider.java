@@ -12,20 +12,24 @@ import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GroupBasedAuthInfoProvider implements AuthInfoProvider{
+public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
 
     private static final String ADMIN_ROLE_NAME = "kommonitor-creator";
+    private final Set<Group> groups;
 
     private Principal principal;
 
-    private TokenParser tokenParser;
+    private TokenParser<Principal> tokenParser;
 
     public GroupBasedAuthInfoProvider() {
+        groups = null;
     }
 
-    public GroupBasedAuthInfoProvider(Principal principal, TokenParser<?> tokenParser) {
+    public GroupBasedAuthInfoProvider(Principal principal, TokenParser<Principal> tokenParser) {
         this.principal = principal;
         this.tokenParser = tokenParser;
+
+        groups = tokenParser.getGroupMemberships(principal);
     }
 
     public Principal getPrincipal() {
@@ -36,23 +40,28 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider{
     public boolean checkPermissions(RestrictedEntity entity, PermissionLevelType neededLevel) {
         Set<PermissionEntity> allowedRoleEntities = entity.getPermissions();
 
+        // Entity is public
+        if (neededLevel.equals(PermissionLevelType.VIEWER) && entity.isPublic()) {
+            return true;
+        }
+
         // User is global administrator
         if (tokenParser.hasRealmAdminRole(getPrincipal(), ADMIN_ROLE_NAME)) {
             return true;
         }
 
-        // disallow access if now organizational user has access rights
-        if (allowedRoleEntities == null || allowedRoleEntities.isEmpty()) {
+
+        // Disallow access if user does not belong to a group as all permissions are tied to groups
+        if (groups == null || groups.isEmpty()) {
             return false;
         }
 
-        Set<Group> groups = tokenParser.getGroupMemberships(getPrincipal());
+        // User is in owning group and has all permissions
+        //if (groups.stream().anyMatch(group -> entity.getOwner().getOrganizationalUnitId().equals(group.getIdentifier()))) {
+        //    return true;
+        // }
 
-        // also disallow access if now user does not belong to a group
-        if(groups == null || groups.isEmpty()) {
-            return false;
-        }
-
+        // Parse permissions
         Set<Pair<OrganizationalUnitEntity, PermissionLevelType>> allowedRoles = allowedRoleEntities.stream()
                 .map(e -> Pair.of(e.getOrganizationalUnit(), e.getPermissionLevel()))
                 .collect(Collectors.toSet());
@@ -68,6 +77,24 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider{
 
     @Override
     public List<PermissionLevelType> getPermissions(RestrictedEntity entity) {
+        String owningId = entity.getOwner().getOrganizationalUnitId();
+
+        // User is in owning group and has all permissions
+        if (groups.stream().anyMatch(group -> owningId.equals(group.getIdentifier()))) {
+            return Arrays.asList(
+                    PermissionLevelType.CREATOR,
+                    PermissionLevelType.EDITOR,
+                    PermissionLevelType.VIEWER);
+        }
+
+        // Check permissions for a matching permission
+        // 1. for all groups of the user try to permission defined for the group
+        // 2. Aggregate and keep the highest level
+        
+        //return entity.getPermissions()
+        //        .stream()
+        //        .filter(pe -> pe.getOrganizationalUnit().getOrganizationalUnitId())
+        //        .map(PermissionEntity::getPermissionLevel).collect(Collectors.toList());
         return Collections.emptyList();
     }
 
@@ -76,8 +103,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider{
         // TODO: Implement more fine-grained evaluation
         if (neededLevel.equals("viewer")) {
             return true;
-        }
-        else {
+        } else {
             return tokenParser.hasRealmAdminRole(principal, ADMIN_ROLE_NAME);
         }
     }

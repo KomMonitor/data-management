@@ -1,7 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.auth;
 
-import java.util.List;
-
 public class Group {
 
     private Group parentGroup;
