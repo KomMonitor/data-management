@@ -744,6 +744,25 @@ public class GeoresourcesManager {
 		}
 	}
 
+	public String updatePermissions(PermissionLevelInputType permissionLevelInput, String georesourceId) throws Exception {
+		logger.info("Trying to update georesource permissions for datasetId '{}'", georesourceId);
+		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+
+			metadataEntity.setPermissions(retrievePermissions(permissionLevelInput.getAllowedRoles()));
+
+			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
+			return georesourceId;
+		} else {
+			logger.error(
+					"No georesource dataset with datasetId '{}' was found in database. Update request has no effect.",
+					georesourceId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to update georesource metadata, but no dataset existes with datasetId " + georesourceId);
+		}
+	}
+
+
 	private void updateMetadata(GeoresourcePATCHInputType metadata, MetadataGeoresourcesEntity entity)
 			throws Exception {
 		entity.setDatasetName(metadata.getDatasetName());

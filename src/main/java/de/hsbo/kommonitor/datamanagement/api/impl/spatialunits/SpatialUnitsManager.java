@@ -12,9 +12,9 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
+import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.transaction.Transactional;
 
-import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +31,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebSe
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
-import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPATCHInputType;
-import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPUTInputType;
 
 @Transactional
 @Repository
@@ -520,6 +514,23 @@ public class SpatialUnitsManager {
                     "Tried to update spatialUnit metadata, but no dataset existes with datasetId " + spatialUnitId);
         }
     }
+
+    public String updatePermissionLevels(PermissionLevelInputType permissionLevels, String spatialUnitId) throws Exception {
+        logger.info("Trying to update spatialUnit permissions for datasetId '{}'", spatialUnitId);
+        if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+            MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+            
+            metadataEntity.setPermissions(getPermissionEntities(permissionLevels.getAllowedRoles()));
+
+            spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
+            return spatialUnitId;
+        } else {
+            logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Update request has no effect.", spatialUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update spatialUnit metadata, but no dataset existes with datasetId " + spatialUnitId);
+        }
+    }
+
 
     private void updateMetadata(SpatialUnitPATCHInputType metadata, MetadataSpatialUnitsEntity entity) throws Exception {
 

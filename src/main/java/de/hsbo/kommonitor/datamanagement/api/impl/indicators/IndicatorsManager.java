@@ -30,6 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
@@ -168,7 +169,7 @@ public class IndicatorsManager {
         }
     }
 
-    public String updateIndicatorRoles(IndicatorPATCHInputType indicatorData, String indicatorId, String spatialUnitId) throws Exception {
+    public String updateIndicatorPermissions(PermissionLevelInputType indicatorData, String indicatorId, String spatialUnitId) throws Exception {
         logger.info("Trying to update indicator roles for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
         if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)) {
             IndicatorSpatialUnitJoinEntity indicatorEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
@@ -197,7 +198,36 @@ public class IndicatorsManager {
         }
     }
 
-    private boolean keyPropertiesHaveChanged(IndicatorSpatialUnitJoinEntity indicatorEntity, IndicatorPATCHInputType indicatorData) {
+    public String updateIndicatorPermissions(PermissionLevelInputType indicatorData, String indicatorId) throws Exception {
+        logger.info("Trying to update indicator roles for indicatorId '{}'", indicatorId);
+        if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+            var indicatorEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+
+            if (keyPropertiesHaveChanged(indicatorEntity, indicatorData)) {
+                indicatorEntity.setPermissions(retrievePermissions(indicatorData.getAllowedRoles()));
+                indicatorsMetadataRepo.saveAndFlush(indicatorEntity);
+                logger.info(
+                        "Succesfully updated the roles for indicator dataset with indicatorId '{}'.",
+                        indicatorId);
+                return indicatorEntity.getDatasetId();
+            } else {
+                logger.info(
+                        "The roles for indicator dataset with indicatorId '{}' have not changed. Update has no effect.",
+                        indicatorId);
+                return "";
+            }
+
+
+        } else {
+            logger.error(
+                    "No indicator dataset with indicatorId '{}' was found in database. Update request has no effect.",
+                    indicatorId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update indicator metadata, but no dataset existes with datasetId " + indicatorId);
+        }
+    }
+
+    private boolean keyPropertiesHaveChanged(RestrictedEntity indicatorEntity, PermissionLevelInputType indicatorData) {
         List<String> oldRoleIds = indicatorEntity.getPermissions().stream().map(PermissionEntity::getPermissionId).collect(Collectors.toList());
         HashSet<String> newRoleIds = new HashSet<String>(indicatorData.getAllowedRoles());
         return !CollectionUtils.isEqualCollection(oldRoleIds, newRoleIds);

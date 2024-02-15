@@ -19,34 +19,34 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * IndicatorPATCHInputType
+ * PermissionLevelInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
-public class IndicatorPATCHInputType implements Serializable {
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-13T14:55:48.334317263+01:00[Europe/Berlin]")
+public class PermissionLevelInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Valid
   private List<String> allowedRoles = new ArrayList<>();
 
-  public IndicatorPATCHInputType() {
+  public PermissionLevelInputType() {
     super();
   }
 
   /**
    * Constructor with only required parameters
    */
-  public IndicatorPATCHInputType(List<String> allowedRoles) {
+  public PermissionLevelInputType(List<String> allowedRoles) {
     this.allowedRoles = allowedRoles;
   }
 
-  public IndicatorPATCHInputType allowedRoles(List<String> allowedRoles) {
+  public PermissionLevelInputType allowedRoles(List<String> allowedRoles) {
     this.allowedRoles = allowedRoles;
     return this;
   }
 
-  public IndicatorPATCHInputType addAllowedRolesItem(String allowedRolesItem) {
+  public PermissionLevelInputType addAllowedRolesItem(String allowedRolesItem) {
     if (this.allowedRoles == null) {
       this.allowedRoles = new ArrayList<>();
     }
@@ -77,8 +77,8 @@ public class IndicatorPATCHInputType implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    IndicatorPATCHInputType indicatorPATCHInputType = (IndicatorPATCHInputType) o;
-    return Objects.equals(this.allowedRoles, indicatorPATCHInputType.allowedRoles);
+    PermissionLevelInputType permissionLevelInputType = (PermissionLevelInputType) o;
+    return Objects.equals(this.allowedRoles, permissionLevelInputType.allowedRoles);
   }
 
   @Override
@@ -89,7 +89,7 @@ public class IndicatorPATCHInputType implements Serializable {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class IndicatorPATCHInputType {\n");
+    sb.append("class PermissionLevelInputType {\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("}");
     return sb.toString();

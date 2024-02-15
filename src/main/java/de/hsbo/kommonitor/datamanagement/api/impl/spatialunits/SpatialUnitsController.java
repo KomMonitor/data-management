@@ -10,6 +10,8 @@ import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -568,6 +570,34 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@Override
+	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
+	public ResponseEntity<List<PermissionLevelType>> updateSpatialUnitsPermissions(
+			@P("spatialUnitId") String spatialUnitId,
+			PermissionLevelInputType permissionLevelInputType) {
+		 logger.info("Received request to update spatial unit roles for spatialUnitId '{}'", spatialUnitId);
+        try {
+            spatialUnitId = spatialUnitsManager.updatePermissionLevels(permissionLevelInputType, spatialUnitId);
+            lastModManager.updateLastDatabaseModification_indicators();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+
+        if (spatialUnitId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = spatialUnitId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 	}
 
 }
