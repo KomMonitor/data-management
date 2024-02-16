@@ -72,7 +72,7 @@ public class AccessControlController extends BasePathController implements Acces
     }
 
     @Override
-    @PreAuthorize("hasRequiredPermissionLevel('creator')")
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
     public ResponseEntity<Void> addOrganizationalUnit(OrganizationalUnitInputType organizationalUnitData) {
         logger.info("Received request to insert new organizationalUnit with associated Roles");
 
@@ -101,7 +101,7 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
-    @PreAuthorize("hasRequiredPermissionLevel('creator')")
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
     @Override public ResponseEntity<Void> updateOrganizationalUnit(
             String organizationalUnitId,
             OrganizationalUnitInputType inputData) {
@@ -129,7 +129,7 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
-    @PreAuthorize("hasRequiredPermissionLevel('creator')")
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
     @Override public ResponseEntity deleteOrganizationalUnit(String organizationalUnitId) {
         logger.info("Received request to delete organizationalUnit and associated roles for id '{}'",
                     organizationalUnitId);

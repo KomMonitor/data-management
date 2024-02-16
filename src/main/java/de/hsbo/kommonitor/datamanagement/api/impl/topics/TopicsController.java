@@ -42,7 +42,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('publisher')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
 	public ResponseEntity<TopicOverviewType> addTopic(TopicInputType topicData) {
 		
 		logger.info("Received request to insert new topic");
@@ -79,7 +79,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
 	public ResponseEntity deleteTopic(String topicId) {
 		logger.info("Received request to delete topic for topicId '{}'", topicId);
 		
@@ -105,7 +105,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('editor')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity<Void> updateTopic(String topicId, TopicInputType topicData) {
 		logger.info("Received request to update topic with topicId '{}'", topicId);
 

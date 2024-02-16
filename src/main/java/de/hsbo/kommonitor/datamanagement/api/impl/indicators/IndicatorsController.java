@@ -170,7 +170,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 
     @Override
-    @PreAuthorize("hasRequiredPermissionLevel('publisher')")
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
     public ResponseEntity<IndicatorOverviewType> addIndicatorAsBody(IndicatorPOSTInputType indicatorData) {
         logger.info("Received request to insert new indicator");
 

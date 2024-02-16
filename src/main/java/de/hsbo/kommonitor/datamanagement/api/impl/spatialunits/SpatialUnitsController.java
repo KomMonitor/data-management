@@ -53,7 +53,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('publisher')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity<SpatialUnitOverviewType> addSpatialUnitAsBody(SpatialUnitPOSTInputType featureData) {
 		logger.info("Received request to insert new spatial unit");
 

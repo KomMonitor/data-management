@@ -54,7 +54,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('publisher')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity<ProcessScriptOverviewType> addProcessScriptAsBody(ProcessScriptPOSTInputType processScriptData) {
 		logger.info("Received request to insert new process script");
 
@@ -90,7 +90,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity deleteProcessScript(String indicatorId) {
 		logger.info("Received request to delete process scripts for indicatorId '{}'", indicatorId);
 		
@@ -170,7 +170,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('editor')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity updateProcessScriptAsBody(
 			String indicatorId,
 			ProcessScriptPUTInputType processScriptData) {
@@ -230,7 +230,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity deleteProcessScriptByScriptId(String scriptId) {
 		logger.info("Received request to delete process scripts for scriptId '{}'", scriptId);
 		
@@ -305,7 +305,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('editor')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity updateProcessScriptAsBodyByScriptId(String scriptId,
 			@RequestBody ProcessScriptPUTInputType processScriptData) {
 		logger.info("Received request to update process script with scriptId '{}'", scriptId);
