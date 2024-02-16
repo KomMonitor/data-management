@@ -68,18 +68,29 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
             return true;
         }
 
-
         // Disallow access if user does not belong to a group as all permissions are tied to groups
         if (groups == null || groups.isEmpty()) {
             return false;
         }
 
         // User is in owning group and has all permissions
-        //if (groups.stream().anyMatch(group -> entity.getOwner().getOrganizationalUnitId().equals(group.getIdentifier()))) {
-        //    return true;
-        // }
+        if (groups.stream().anyMatch(group -> entity.getOwner().getName().equals(group.getName()))) {
+            return true;
+         }
 
-        // Parse permissions
+        // User has resource administrator permissions for the owning group
+        Set<String> ownedRoles = tokenParser.getOwnedRoles(getPrincipal());
+        if (ownedRoles.stream()
+                .filter(r -> roleExtractorRegex.split(r, 2).length == 2)
+                .map(r -> {
+                    String[] split = roleExtractorRegex.split(r, 2);
+                    return Pair.of(split[0], split[1]);
+                })
+                .anyMatch(r -> r.getFirst().equals(entity.getOwner().getName()) && hasAdminPermissionForResourceType(r.getSecond(), PermissionResourceType.RESOURCES))) {
+            return true;
+        }
+
+        // For non-owning groups, check if resource permissions
         Set<Pair<OrganizationalUnitEntity, PermissionLevelType>> allowedRoles = allowedRoleEntities.stream()
                 .map(e -> Pair.of(e.getOrganizationalUnit(), e.getPermissionLevel()))
                 .collect(Collectors.toSet());
@@ -145,11 +156,11 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         }
     }
 
-    private boolean hasAdminPermissionForResourceType(String r, PermissionResourceType resourceType) {
+    private boolean hasAdminPermissionForResourceType(String adminRole, PermissionResourceType resourceType) {
         return switch (resourceType) {
-            case RESOURCES -> (r.equals(CLIENT_RESOURCES_ADMIN_ROLE_NAME) || r.equals(UNIT_RESOURCES_ADMIN_ROLE_NAME));
-            case THEMES -> (r.equals(CLIENT_THEMES_ADMIN_ROLE_NAME) || r.equals(UNIT_THEMES_ADMIN_ROLE_NAME));
-            case USERS -> (r.equals(CLIENT_USERS_ADMIN_ROLE_NAME) || r.equals(UNIT_USERS_ADMIN_ROLE_NAME));
+            case RESOURCES -> (adminRole.equals(CLIENT_RESOURCES_ADMIN_ROLE_NAME) || adminRole.equals(UNIT_RESOURCES_ADMIN_ROLE_NAME));
+            case THEMES -> (adminRole.equals(CLIENT_THEMES_ADMIN_ROLE_NAME) || adminRole.equals(UNIT_THEMES_ADMIN_ROLE_NAME));
+            case USERS -> (adminRole.equals(CLIENT_USERS_ADMIN_ROLE_NAME) || adminRole.equals(UNIT_USERS_ADMIN_ROLE_NAME));
         };
     }
 }
