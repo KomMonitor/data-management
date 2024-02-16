@@ -1,7 +1,9 @@
 package de.hsbo.kommonitor.datamanagement.auth.provider;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 
 import java.util.List;
 
@@ -36,5 +38,13 @@ public interface AuthInfoProvider {
      * @return True if user has at least one permissionlevel lower or equal the given level
      */
     boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel);
+
+    /**
+     * Checks if the current user has the given permission level for the given resource type
+     *
+     * @param permissionResourceType resource type what the permission refers to
+     * @return True if user has the required permission
+     */
+    boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel, PermissionResourceType permissionResourceType);
 
 }

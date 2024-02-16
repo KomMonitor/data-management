@@ -6,15 +6,33 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity
 import de.hsbo.kommonitor.datamanagement.auth.Group;
 import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 import org.springframework.data.util.Pair;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
 
     private static final String ADMIN_ROLE_NAME = "kommonitor-creator";
+    private static final String CLIENT_RESOURCES_ADMIN_ROLE_NAME = "client-resources-creator";
+    private static final String UNIT_RESOURCES_ADMIN_ROLE_NAME = "unit-resources-creator";
+    private static final String CLIENT_THEMES_ADMIN_ROLE_NAME = "client-themes-creator";
+    private static final String UNIT_THEMES_ADMIN_ROLE_NAME = "unit-themes-creator";
+    private static final String CLIENT_USERS_ADMIN_ROLE_NAME = "client-users-creator";
+    private static final String UNIT_USERS_ADMIN_ROLE_NAME = "unit-users-creator";
+
+//    private static final Pattern roleExtractorRegex = Pattern.compile(".(?=(client-resources-creator)|(unit-resources-creator)|(client-themes-creator)|(unit-themes-creator)|(client-users-creator)|(unit-users-creator)$)");
+    private static final Pattern roleExtractorRegex = Pattern.compile(
+            ".(?=(" + CLIENT_RESOURCES_ADMIN_ROLE_NAME + ")" +
+                    "|(" + UNIT_RESOURCES_ADMIN_ROLE_NAME + ")" +
+                    "|(" + CLIENT_THEMES_ADMIN_ROLE_NAME + ")" +
+                    "|(" + UNIT_THEMES_ADMIN_ROLE_NAME + ")" +
+                    "|(" + CLIENT_USERS_ADMIN_ROLE_NAME + ")" +
+                    "|(" + UNIT_USERS_ADMIN_ROLE_NAME + ")$)");
+
     private final Set<Group> groups;
 
     private Principal principal;
@@ -79,8 +97,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
     public List<PermissionLevelType> getPermissions(RestrictedEntity entity) {
         String owningId = entity.getOwner().getOrganizationalUnitId();
 
-        // User is in owning group and has all permissions
-        if (groups.stream().anyMatch(group -> owningId.equals(group.getIdentifier()))) {
+        if (groups.stream().anyMatch(group -> owningId.equals(group.getName()))) {
             return Arrays.asList(
                     PermissionLevelType.CREATOR,
                     PermissionLevelType.EDITOR,
@@ -100,11 +117,39 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
 
     @Override
     public boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel) {
-        // TODO: Implement more fine-grained evaluation
-        if (neededLevel.equals("viewer")) {
+        if (neededLevel.getValue().equals("viewer")) {
+            return true;
+        }
+
+        return tokenParser.hasRealmAdminRole(principal, ADMIN_ROLE_NAME);
+    }
+
+    @Override
+    public boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel, PermissionResourceType resourceType) {
+        if (neededLevel.getValue().equals("viewer")) {
+            return true;
+        } else if (tokenParser.hasRealmAdminRole(principal, ADMIN_ROLE_NAME)) {
             return true;
         } else {
-            return tokenParser.hasRealmAdminRole(principal, ADMIN_ROLE_NAME);
+            Set<String> ownedRoles = tokenParser.getOwnedRoles(getPrincipal());
+
+            return ownedRoles.stream()
+                    .filter(kcRole -> roleExtractorRegex.split(kcRole, 2).length == 2)
+                    .map(r -> {
+                        String[] split = roleExtractorRegex.split(r, 2);
+                        return split[1];
+
+                    })
+                    .anyMatch(r -> hasAdminPermissionForResourceType(r, resourceType));
+
         }
+    }
+
+    private boolean hasAdminPermissionForResourceType(String r, PermissionResourceType resourceType) {
+        return switch (resourceType) {
+            case RESOURCES -> (r.equals(CLIENT_RESOURCES_ADMIN_ROLE_NAME) || r.equals(UNIT_RESOURCES_ADMIN_ROLE_NAME));
+            case THEMES -> (r.equals(CLIENT_THEMES_ADMIN_ROLE_NAME) || r.equals(UNIT_THEMES_ADMIN_ROLE_NAME));
+            case USERS -> (r.equals(CLIENT_USERS_ADMIN_ROLE_NAME) || r.equals(UNIT_USERS_ADMIN_ROLE_NAME));
+        };
     }
 }

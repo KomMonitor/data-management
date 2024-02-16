@@ -5,6 +5,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUn
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 
@@ -164,6 +165,11 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
                 })
                 // check if role with min. permission level is present for user
                 .anyMatch(r -> r.getSecond().compareTo(neededLevel) <= 0);
+    }
+
+    @Override
+    public boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel, PermissionResourceType permissionResourceType) {
+        return false;
     }
 
     public Set<String> getOwnedRoles(Principal principal) {

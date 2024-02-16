@@ -21,6 +21,7 @@ import java.security.Principal;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
@@ -163,6 +164,16 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         logger.debug("called haRequiredPermissionLevel with required permission level " + requiredPermissionLevel);
         try{
             return this.authInfoProvider.hasRequiredPermissionLevel(PermissionLevelType.fromValue(requiredPermissionLevel));
+        }catch (Exception ex){
+            logger.error("unable to evaluate if required permission level " + requiredPermissionLevel + " is met; return not authorized", ex);
+            return false;
+        }
+    }
+
+    public boolean hasRequiredPermissionLevel(String requiredPermissionLevel, String permissionResourceType){
+        logger.debug("called haRequiredPermissionLevel with required permission level " + requiredPermissionLevel + " and permission resource type " + permissionResourceType);
+        try{
+            return this.authInfoProvider.hasRequiredPermissionLevel(PermissionLevelType.fromValue(requiredPermissionLevel), PermissionResourceType.fromValue(permissionResourceType));
         }catch (Exception ex){
             logger.error("unable to evaluate if required permission level " + requiredPermissionLevel + " is met; return not authorized", ex);
             return false;
