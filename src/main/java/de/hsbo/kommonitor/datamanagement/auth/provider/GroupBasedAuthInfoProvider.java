@@ -24,7 +24,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
     private static final String CLIENT_USERS_ADMIN_ROLE_NAME = "client-users-creator";
     private static final String UNIT_USERS_ADMIN_ROLE_NAME = "unit-users-creator";
 
-//    private static final Pattern roleExtractorRegex = Pattern.compile(".(?=(client-resources-creator)|(unit-resources-creator)|(client-themes-creator)|(unit-themes-creator)|(client-users-creator)|(unit-users-creator)$)");
+    //    private static final Pattern roleExtractorRegex = Pattern.compile(".(?=(client-resources-creator)|(unit-resources-creator)|(client-themes-creator)|(unit-themes-creator)|(client-users-creator)|(unit-users-creator)$)");
     private static final Pattern roleExtractorRegex = Pattern.compile(
             ".(?=(" + CLIENT_RESOURCES_ADMIN_ROLE_NAME + ")" +
                     "|(" + UNIT_RESOURCES_ADMIN_ROLE_NAME + ")" +
@@ -56,7 +56,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
 
     @Override
     public boolean checkPermissions(RestrictedEntity entity, PermissionLevelType neededLevel) {
-        Set<PermissionEntity> allowedRoleEntities = entity.getPermissions();
+        Set<PermissionEntity> permissionEntities = entity.getPermissions();
 
         // Entity is public
         if (neededLevel.equals(PermissionLevelType.VIEWER) && entity.isPublic()) {
@@ -76,26 +76,19 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         // User is in owning group and has all permissions
         if (groups.stream().anyMatch(group -> entity.getOwner().getName().equals(group.getName()))) {
             return true;
-         }
+        }
 
         // User has resource administrator permissions for the owning group
-        Set<String> ownedRoles = tokenParser.getOwnedRoles(getPrincipal());
-        if (ownedRoles.stream()
-                .filter(r -> roleExtractorRegex.split(r, 2).length == 2)
-                .map(r -> {
-                    String[] split = roleExtractorRegex.split(r, 2);
-                    return Pair.of(split[0], split[1]);
-                })
-                .anyMatch(r -> r.getFirst().equals(entity.getOwner().getName()) && hasAdminPermissionForResourceType(r.getSecond(), PermissionResourceType.RESOURCES))) {
+        if (hasResourceAdministrationPermission(entity)) {
             return true;
         }
 
-        // For non-owning groups, check if resource permissions
-        Set<Pair<OrganizationalUnitEntity, PermissionLevelType>> allowedRoles = allowedRoleEntities.stream()
+        // For non-owning groups, check resource permissions
+        Set<Pair<OrganizationalUnitEntity, PermissionLevelType>> permissions = permissionEntities.stream()
                 .map(e -> Pair.of(e.getOrganizationalUnit(), e.getPermissionLevel()))
                 .collect(Collectors.toSet());
 
-        return allowedRoles.stream()
+        return permissions.stream()
                 .filter(r -> r.getSecond().compareTo(neededLevel) <= 0)
                 .anyMatch(r -> groups
                         .stream()
@@ -108,21 +101,45 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
     public List<PermissionLevelType> getPermissions(RestrictedEntity entity) {
         String owningId = entity.getOwner().getOrganizationalUnitId();
 
-        if (groups.stream().anyMatch(group -> owningId.equals(group.getName()))) {
-            return Arrays.asList(
-                    PermissionLevelType.CREATOR,
-                    PermissionLevelType.EDITOR,
-                    PermissionLevelType.VIEWER);
+        // Since all permissions are tied to groups, users without a group can't have permissions on a resource
+        if (groups == null || groups.isEmpty()) {
+            return Collections.emptyList();
         }
+
+        List<PermissionLevelType> fullPermissions = Arrays.asList(
+                PermissionLevelType.CREATOR,
+                PermissionLevelType.EDITOR,
+                PermissionLevelType.VIEWER
+        );
+
+        // Owning groups have full permission
+        if (groups.stream().anyMatch(group -> owningId.equals(group.getName()))) {
+            return fullPermissions;
+        }
+
+        // Resource administrator permission for the owning group also includes full permission
+        if (hasResourceAdministrationPermission(entity)) {
+            return fullPermissions;
+        }
+
+        // For non-owning groups, check resource permissions
+        Set<PermissionEntity> permissionEntities = entity.getPermissions();
+        Set<Pair<OrganizationalUnitEntity, PermissionLevelType>> permissions = permissionEntities.stream()
+                .map(e -> Pair.of(e.getOrganizationalUnit(), e.getPermissionLevel()))
+                .collect(Collectors.toSet());
 
         // Check permissions for a matching permission
         // 1. for all groups of the user try to permission defined for the group
         // 2. Aggregate and keep the highest level
-        
-        //return entity.getPermissions()
-        //        .stream()
-        //        .filter(pe -> pe.getOrganizationalUnit().getOrganizationalUnitId())
-        //        .map(PermissionEntity::getPermissionLevel).collect(Collectors.toList());
+        permissions.stream()
+                .filter(r -> groups
+                        .stream()
+                        .anyMatch(g -> g.getName().equals(r.getFirst().getName()))
+                )
+                .map(Pair::getSecond)
+                .min(Comparator.comparing(PermissionLevelType::ordinal))
+                .orElseThrow(NoSuchElementException::new);
+
         return Collections.emptyList();
     }
 
@@ -152,15 +169,30 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
 
                     })
                     .anyMatch(r -> hasAdminPermissionForResourceType(r, resourceType));
-
         }
+    }
+
+    private boolean hasResourceAdministrationPermission(RestrictedEntity entity) {
+        Set<String> ownedRoles = tokenParser.getOwnedRoles(getPrincipal());
+        return ownedRoles.stream()
+                .filter(r -> roleExtractorRegex.split(r, 2).length == 2)
+                .map(r -> {
+                    String[] split = roleExtractorRegex.split(r, 2);
+                    return Pair.of(split[0], split[1]);
+                })
+                .anyMatch(r -> r.getFirst().equals(entity.getOwner().getName()) && hasAdminPermissionForResourceType(r.getSecond(), PermissionResourceType.RESOURCES));
     }
 
     private boolean hasAdminPermissionForResourceType(String adminRole, PermissionResourceType resourceType) {
         return switch (resourceType) {
-            case RESOURCES -> (adminRole.equals(CLIENT_RESOURCES_ADMIN_ROLE_NAME) || adminRole.equals(UNIT_RESOURCES_ADMIN_ROLE_NAME));
-            case THEMES -> (adminRole.equals(CLIENT_THEMES_ADMIN_ROLE_NAME) || adminRole.equals(UNIT_THEMES_ADMIN_ROLE_NAME));
-            case USERS -> (adminRole.equals(CLIENT_USERS_ADMIN_ROLE_NAME) || adminRole.equals(UNIT_USERS_ADMIN_ROLE_NAME));
+            case RESOURCES ->
+                    (adminRole.equals(CLIENT_RESOURCES_ADMIN_ROLE_NAME) || adminRole.equals(UNIT_RESOURCES_ADMIN_ROLE_NAME));
+            case THEMES ->
+                    (adminRole.equals(CLIENT_THEMES_ADMIN_ROLE_NAME) || adminRole.equals(UNIT_THEMES_ADMIN_ROLE_NAME));
+            case USERS ->
+                    (adminRole.equals(CLIENT_USERS_ADMIN_ROLE_NAME) || adminRole.equals(UNIT_USERS_ADMIN_ROLE_NAME));
         };
     }
+
+
 }
