@@ -35,7 +35,7 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata implements Rest
     private OrganizationalUnitEntity owner;
 
     @Column
-    private boolean isPublic;
+    private Boolean isPublic;
 
     public HashSet<PermissionEntity> getPermissions() {
         return new HashSet<>(permissions);
@@ -54,7 +54,7 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata implements Rest
     }
 
     @Override
-    public boolean isPublic() {
+    public Boolean isPublic() {
         return isPublic;
     }
 

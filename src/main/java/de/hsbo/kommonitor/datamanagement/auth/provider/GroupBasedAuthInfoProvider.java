@@ -59,7 +59,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         Set<PermissionEntity> permissionEntities = entity.getPermissions();
 
         // Entity is public
-        if (neededLevel.equals(PermissionLevelType.VIEWER) && entity.isPublic()) {
+        if (neededLevel.equals(PermissionLevelType.VIEWER) && (entity.isPublic() != null && entity.isPublic())) {
             return true;
         }
 
@@ -74,13 +74,14 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         }
 
         // User is in owning group and has all permissions
-        if (groups.stream().anyMatch(group -> entity.getOwner().getName().equals(group.getName()))) {
-            return true;
-        }
-
-        // User has resource administrator permissions for the owning group
-        if (hasResourceAdministrationPermission(entity)) {
-            return true;
+        if (entity.getOwner() != null) {
+            if (groups.stream().anyMatch(group -> entity.getOwner().getName().equals(group.getName()))) {
+                return true;
+            }
+            // User has resource administrator permissions for the owning group
+            if (hasResourceAdministrationPermission(entity)) {
+                return true;
+            }
         }
 
         // For non-owning groups, check resource permissions
@@ -99,7 +100,8 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
 
     @Override
     public List<PermissionLevelType> getPermissions(RestrictedEntity entity) {
-        String owningId = entity.getOwner().getOrganizationalUnitId();
+        OrganizationalUnitEntity ownerEntity = entity.getOwner();
+
 
         // Since all permissions are tied to groups, users without a group can't have permissions on a resource
         if (groups == null || groups.isEmpty()) {
@@ -112,14 +114,23 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
                 PermissionLevelType.VIEWER
         );
 
-        // Owning groups have full permission
-        if (groups.stream().anyMatch(group -> owningId.equals(group.getName()))) {
+        // Global administrators hav full permissions
+        if (tokenParser.hasRealmAdminRole(getPrincipal(), ADMIN_ROLE_NAME)) {
             return fullPermissions;
         }
 
-        // Resource administrator permission for the owning group also includes full permission
-        if (hasResourceAdministrationPermission(entity)) {
-            return fullPermissions;
+        if (ownerEntity != null) {
+            String owningId = entity.getOwner().getOrganizationalUnitId();
+
+            // Owning groups have full permission
+            if (groups.stream().anyMatch(group -> owningId.equals(group.getName()))) {
+                return fullPermissions;
+            }
+
+            // Resource administrator permission for the owning group also includes full permission
+            if (hasResourceAdministrationPermission(entity)) {
+                return fullPermissions;
+            }
         }
 
         // For non-owning groups, check resource permissions

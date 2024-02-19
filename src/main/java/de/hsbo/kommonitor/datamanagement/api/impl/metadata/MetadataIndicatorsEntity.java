@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
@@ -11,6 +12,7 @@ import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
+import org.checkerframework.checker.units.qual.N;
 
 @Entity(name = "MetadataIndicators")
 public class MetadataIndicatorsEntity extends AbstractMetadata implements RestrictedEntity {
@@ -230,7 +232,8 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	private OrganizationalUnitEntity owner;
 
 	@Column
-	private boolean isPublic;
+	@Nullable
+	private Boolean isPublic;
 
 	public HashSet<PermissionEntity> getPermissions() {
 		return new HashSet<>(permissions);
@@ -249,7 +252,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	}
 
 	@Override
-	public boolean isPublic() {
+	public Boolean isPublic() {
 		return isPublic;
 	}
 

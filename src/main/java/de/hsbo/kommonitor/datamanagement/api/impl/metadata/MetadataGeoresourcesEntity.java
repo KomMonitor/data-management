@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
@@ -107,7 +108,8 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata implements Rest
 	private OrganizationalUnitEntity owner;
 
 	@Column
-	private boolean isPublic;
+	@Nullable
+	private Boolean isPublic;
 
 	public HashSet<PermissionEntity> getPermissions() {
 		return new HashSet<>(permissions);
@@ -126,7 +128,7 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata implements Rest
 	}
 
 	@Override
-	public boolean isPublic() {
+	public Boolean isPublic() {
 		return isPublic;
 	}
 

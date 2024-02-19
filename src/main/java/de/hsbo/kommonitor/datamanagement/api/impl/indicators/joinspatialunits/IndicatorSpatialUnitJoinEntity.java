@@ -1,6 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
@@ -150,7 +151,8 @@ public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedE
     private OrganizationalUnitEntity owner;
 
     @Column
-    private boolean isPublic;
+    @Nullable
+    private Boolean isPublic;
 
     public HashSet<PermissionEntity> getPermissions() {
         return new HashSet<>(permissions);
@@ -169,7 +171,7 @@ public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedE
     }
 
     @Override
-    public boolean isPublic() {
+    public Boolean isPublic() {
         return isPublic;
     }
 

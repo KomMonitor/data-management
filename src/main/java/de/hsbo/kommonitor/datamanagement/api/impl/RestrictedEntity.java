@@ -14,5 +14,5 @@ public interface RestrictedEntity {
 
     Set<PermissionEntity> getPermissions();
 
-    boolean isPublic();
+    Boolean isPublic();
 }
