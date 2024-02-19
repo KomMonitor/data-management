@@ -14,7 +14,7 @@ public abstract class TokenParser<T extends Principal> {
 
     public abstract Set<String> getOwnedRoles(T principal);
 
-    public abstract boolean hasRealmAdminRole(T principal, String adminRolePrefix);
+    public abstract boolean hasRealmAdminRole(T principal, String adminRole);
 
     public abstract Set<String> getGroupsClaim(T principal);
 

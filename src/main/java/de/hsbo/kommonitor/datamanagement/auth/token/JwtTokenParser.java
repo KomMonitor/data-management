@@ -15,8 +15,8 @@ public class JwtTokenParser extends TokenParser<JwtAuthenticationToken> {
     }
 
     @Override
-    public boolean hasRealmAdminRole(JwtAuthenticationToken principal, String adminRolePrefix) {
-        return getOwnedRoles(principal).stream().anyMatch(r -> r.equals(adminRolePrefix + "-creator"));
+    public boolean hasRealmAdminRole(JwtAuthenticationToken principal, String adminRole) {
+        return getOwnedRoles(principal).stream().anyMatch(r -> r.equals(adminRole));
     }
 
     @Override

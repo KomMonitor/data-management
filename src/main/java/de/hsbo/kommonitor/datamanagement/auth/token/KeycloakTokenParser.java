@@ -20,11 +20,11 @@ public class KeycloakTokenParser extends TokenParser<KeycloakPrincipal> {
     }
 
     @Override
-    public boolean hasRealmAdminRole(KeycloakPrincipal principal, String adminRolePrefix) {
+    public boolean hasRealmAdminRole(KeycloakPrincipal principal, String adminRole) {
         return principal.getKeycloakSecurityContext()
                 .getToken()
                 .getRealmAccess()
-                .isUserInRole(adminRolePrefix + "-creator");
+                .isUserInRole(adminRole);
     }
 
     @Override
