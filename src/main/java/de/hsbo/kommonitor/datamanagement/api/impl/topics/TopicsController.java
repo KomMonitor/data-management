@@ -105,7 +105,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
 	public ResponseEntity<Void> updateTopic(String topicId, TopicInputType topicData) {
 		logger.info("Received request to update topic with topicId '{}'", topicId);
 

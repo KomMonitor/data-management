@@ -29,6 +29,10 @@ public class PermissionEntity {
     @Column(nullable = true)
     private PermissionLevelType permissionLevel = null;
 
+    private String name;
+
+    private String roleId;
+
     /*
      * default constructor is required by hibernate / jpa
      */
@@ -56,4 +60,19 @@ public class PermissionEntity {
         this.permissionLevel = permissionLevel;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
 }
