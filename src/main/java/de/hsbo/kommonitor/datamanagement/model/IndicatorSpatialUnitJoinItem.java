@@ -31,6 +31,8 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
   @Valid
   private List<String> permissions;
 
+  private String ownerId;
+
   private String spatialUnitId;
 
   private String spatialUnitName;
@@ -76,6 +78,26 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
 
   public void setPermissions(List<String> permissions) {
     this.permissions = permissions;
+  }
+
+  public IndicatorSpatialUnitJoinItem ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
   }
 
   public IndicatorSpatialUnitJoinItem spatialUnitId(String spatialUnitId) {
@@ -156,6 +178,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     }
     IndicatorSpatialUnitJoinItem indicatorSpatialUnitJoinItem = (IndicatorSpatialUnitJoinItem) o;
     return Objects.equals(this.permissions, indicatorSpatialUnitJoinItem.permissions) &&
+        Objects.equals(this.ownerId, indicatorSpatialUnitJoinItem.ownerId) &&
         Objects.equals(this.spatialUnitId, indicatorSpatialUnitJoinItem.spatialUnitId) &&
         Objects.equals(this.spatialUnitName, indicatorSpatialUnitJoinItem.spatialUnitName) &&
         Objects.equals(this.userPermissions, indicatorSpatialUnitJoinItem.userPermissions);
@@ -163,7 +186,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, spatialUnitId, spatialUnitName, userPermissions);
+    return Objects.hash(permissions, ownerId, spatialUnitId, spatialUnitName, userPermissions);
   }
 
   @Override
@@ -171,6 +194,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorSpatialUnitJoinItem {\n");
     sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    spatialUnitId: ").append(toIndentedString(spatialUnitId)).append("\n");
     sb.append("    spatialUnitName: ").append(toIndentedString(spatialUnitName)).append("\n");
     sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");

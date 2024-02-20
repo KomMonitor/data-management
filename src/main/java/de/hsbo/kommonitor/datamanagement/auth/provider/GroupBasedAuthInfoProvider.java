@@ -183,6 +183,20 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         }
     }
 
+    public List<Group> getResourceAdminGroups() {
+        //TODO check for group hierarchies
+        Set<String> ownedRoles = tokenParser.getOwnedRoles(getPrincipal());
+        return ownedRoles.stream()
+                .filter(r -> roleExtractorRegex.split(r, 2).length == 2)
+                .map(r -> {
+                    String[] split = roleExtractorRegex.split(r, 2);
+                    return  Pair.of(split[0], split[1]);
+                })
+                .filter(r -> hasAdminPermissionForResourceType(r.getSecond(), PermissionResourceType.RESOURCES))
+                .map(r -> new Group(r.getFirst()))
+                .collect(Collectors.toList());
+    }
+
     private boolean hasResourceAdministrationPermission(RestrictedEntity entity) {
         Set<String> ownedRoles = tokenParser.getOwnedRoles(getPrincipal());
         return ownedRoles.stream()

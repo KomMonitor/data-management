@@ -55,6 +55,8 @@ public class SpatialUnitPOSTInputType implements Serializable {
 
   private String outlineDashArrayString;
 
+  private String ownerId;
+
   public SpatialUnitPOSTInputType() {
     super();
   }
@@ -321,6 +323,26 @@ public class SpatialUnitPOSTInputType implements Serializable {
     this.outlineDashArrayString = outlineDashArrayString;
   }
 
+  public SpatialUnitPOSTInputType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -341,12 +363,13 @@ public class SpatialUnitPOSTInputType implements Serializable {
         Objects.equals(this.isOutlineLayer, spatialUnitPOSTInputType.isOutlineLayer) &&
         Objects.equals(this.outlineColor, spatialUnitPOSTInputType.outlineColor) &&
         Objects.equals(this.outlineWidth, spatialUnitPOSTInputType.outlineWidth) &&
-        Objects.equals(this.outlineDashArrayString, spatialUnitPOSTInputType.outlineDashArrayString);
+        Objects.equals(this.outlineDashArrayString, spatialUnitPOSTInputType.outlineDashArrayString) &&
+        Objects.equals(this.ownerId, spatialUnitPOSTInputType.ownerId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, geoJsonString, jsonSchema, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, periodOfValidity, spatialUnitLevel, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString);
+    return Objects.hash(permissions, geoJsonString, jsonSchema, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, periodOfValidity, spatialUnitLevel, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString, ownerId);
   }
 
   @Override
@@ -365,6 +388,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
     sb.append("    outlineColor: ").append(toIndentedString(outlineColor)).append("\n");
     sb.append("    outlineWidth: ").append(toIndentedString(outlineWidth)).append("\n");
     sb.append("    outlineDashArrayString: ").append(toIndentedString(outlineDashArrayString)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

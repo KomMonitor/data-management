@@ -1,6 +1,19 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
@@ -21,18 +34,7 @@ import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorSpatialUnitJoinItem;
 import de.hsbo.kommonitor.datamanagement.model.OgcServicesType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 
 @Component
 public class IndicatorsMapper {
@@ -234,6 +236,7 @@ public class IndicatorsMapper {
 
 
 		indicatorOverviewType.setPermissions(getAllowedRoleIds(indicatorsMetadataEntity.getPermissions()));
+		indicatorOverviewType.setOwnerId(indicatorsMetadataEntity.getOwner().getOrganizationalUnitId());
 
 		return indicatorOverviewType;
 	}
@@ -295,6 +298,7 @@ public class IndicatorsMapper {
 					.collect(Collectors.toList());
 			item.setPermissions(allowedRoles);
 			item.setUserPermissions(indicatorSpatialUnitJoinEntity.getUserPermissions());
+			item.setOwnerId(indicatorSpatialUnitJoinEntity.getOwner().getOrganizationalUnitId());
 
 			indicatorSpatialUnitJoinItems.add(item);
 			// This is a QAD to prevent shared collection references for spatial unit roles

@@ -59,6 +59,8 @@ public class GeoresourceOverviewType implements Serializable {
 
   private CommonMetadataType metadata;
 
+  private String ownerId;
+
   private ColorType poiMarkerColor;
 
   private String poiSymbolBootstrap3Name;
@@ -348,6 +350,26 @@ public class GeoresourceOverviewType implements Serializable {
     this.metadata = metadata;
   }
 
+  public GeoresourceOverviewType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
   public GeoresourceOverviewType poiMarkerColor(ColorType poiMarkerColor) {
     this.poiMarkerColor = poiMarkerColor;
     return this;
@@ -517,6 +539,7 @@ public class GeoresourceOverviewType implements Serializable {
         Objects.equals(this.loiDashArrayString, georesourceOverviewType.loiDashArrayString) &&
         Objects.equals(this.loiWidth, georesourceOverviewType.loiWidth) &&
         Objects.equals(this.metadata, georesourceOverviewType.metadata) &&
+        Objects.equals(this.ownerId, georesourceOverviewType.ownerId) &&
         Objects.equals(this.poiMarkerColor, georesourceOverviewType.poiMarkerColor) &&
         Objects.equals(this.poiSymbolBootstrap3Name, georesourceOverviewType.poiSymbolBootstrap3Name) &&
         Objects.equals(this.poiSymbolColor, georesourceOverviewType.poiSymbolColor) &&
@@ -528,7 +551,7 @@ public class GeoresourceOverviewType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, aoiColor, availablePeriodsOfValidity, datasetName, georesourceId, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference, userPermissions, wfsUrl, wmsUrl);
+    return Objects.hash(permissions, aoiColor, availablePeriodsOfValidity, datasetName, georesourceId, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, ownerId, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference, userPermissions, wfsUrl, wmsUrl);
   }
 
   @Override
@@ -547,6 +570,7 @@ public class GeoresourceOverviewType implements Serializable {
     sb.append("    loiDashArrayString: ").append(toIndentedString(loiDashArrayString)).append("\n");
     sb.append("    loiWidth: ").append(toIndentedString(loiWidth)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    poiMarkerColor: ").append(toIndentedString(poiMarkerColor)).append("\n");
     sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");
     sb.append("    poiSymbolColor: ").append(toIndentedString(poiSymbolColor)).append("\n");

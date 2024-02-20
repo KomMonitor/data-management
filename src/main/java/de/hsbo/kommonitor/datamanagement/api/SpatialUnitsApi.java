@@ -6,6 +6,7 @@
 package de.hsbo.kommonitor.datamanagement.api;
 
 import java.math.BigDecimal;
+import de.hsbo.kommonitor.datamanagement.model.OwnerInputType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelInputType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
@@ -739,6 +740,48 @@ public interface SpatialUnitsApi {
     ResponseEntity<Void> updateSpatialUnitMetadataAsBody(
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "metadata", description = "metadata input", required = true) @Valid @RequestBody SpatialUnitPATCHInputType metadata
+    );
+
+
+    /**
+     * PUT /spatial-units/{spatialUnitId}/ownership : update information about the ownership for the selected spatial unit dataset
+     * update information about the ownership for the selected spatial unit dataset
+     *
+     * @param spatialUnitId identifier of the spatial unit dataset (required)
+     * @param ownerInputType Spatial unit ownership input. (required)
+     * @return OK (status code 200)
+     *         or No Content (status code 204)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "updateSpatialUnitsOwnership",
+        summary = "update information about the ownership for the selected spatial unit dataset",
+        description = "update information about the ownership for the selected spatial unit dataset",
+        tags = { "spatial-units" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PUT,
+        value = "/spatial-units/{spatialUnitId}/ownership",
+        consumes = { "application/json" }
+    )
+
+    ResponseEntity<Void> updateSpatialUnitsOwnership(
+        @Parameter(name = "spatialUnitId", description = "identifier of the spatial unit dataset", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
+        @Parameter(name = "OwnerInputType", description = "Spatial unit ownership input.", required = true) @Valid @RequestBody OwnerInputType ownerInputType
     );
 
 

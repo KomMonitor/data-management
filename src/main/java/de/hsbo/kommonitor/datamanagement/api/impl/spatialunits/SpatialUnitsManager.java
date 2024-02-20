@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.transaction.Transactional;
@@ -43,6 +45,9 @@ public class SpatialUnitsManager {
 
     @Autowired
     SpatialUnitsMetadataRepository spatialUnitsMetadataRepo;
+
+    @Autowired
+    OrganizationalUnitRepository organizationalUnitRepository;
 
     @Autowired
     private PermissionRepository permissionRepository;
@@ -299,6 +304,7 @@ public class SpatialUnitsManager {
 
         //
         entity.setPermissions(getPermissionEntities(featureData.getPermissions()));
+        entity.setOwner(getOrganizationalUnitEntity(featureData.getOwnerId()));
 
         // persist in db
         spatialUnitsMetadataRepo.saveAndFlush(entity);
@@ -320,6 +326,14 @@ public class SpatialUnitsManager {
             }
         }
         return allowedRoles;
+    }
+
+    private OrganizationalUnitEntity getOrganizationalUnitEntity(String id) throws ResourceNotFoundException {
+        OrganizationalUnitEntity entity = organizationalUnitRepository.findByOrganizationalUnitId(id);
+        if (entity == null) {
+            throw new ResourceNotFoundException(400, String.format("The requested organizationalUnit does not exist.", id));
+        }
+        return entity;
     }
 
     public boolean deleteAllSpatialUnitFeaturesByDatasetById(String spatialUnitId) throws Exception {
@@ -521,6 +535,21 @@ public class SpatialUnitsManager {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
             
             metadataEntity.setPermissions(getPermissionEntities(permissionLevels.getPermissions()));
+
+            spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
+            return spatialUnitId;
+        } else {
+            logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Update request has no effect.", spatialUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update spatialUnit metadata, but no dataset existes with datasetId " + spatialUnitId);
+        }
+    }
+
+    public String updateOwnership(OwnerInputType owner, String spatialUnitId) throws Exception {
+        logger.info("Trying to update spatialUnit ownership for datasetId '{}'", spatialUnitId);
+        if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
+            MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
+            metadataEntity.setOwner(getOrganizationalUnitEntity(owner.getOwnerId()));
 
             spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
             return spatialUnitId;

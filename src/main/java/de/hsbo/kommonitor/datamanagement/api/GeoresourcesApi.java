@@ -10,6 +10,7 @@ import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourcePATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourcePOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourcePUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.OwnerInputType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelInputType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;

@@ -6,9 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -80,7 +77,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
    * list of role identifiers that have read access rights for this dataset
    * @return permissions
   */
-  @NotNull 
+  @NotNull
   @Schema(name = "permissions", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissions")
   public List<String> getPermissions() {

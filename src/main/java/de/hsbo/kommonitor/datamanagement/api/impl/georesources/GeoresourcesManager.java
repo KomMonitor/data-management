@@ -13,6 +13,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import jakarta.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -56,6 +59,9 @@ public class GeoresourcesManager {
 
 	@Autowired
 	GeoresourcesMetadataRepository georesourcesMetadataRepo;
+
+	@Autowired
+	OrganizationalUnitRepository organizationalUnitRepository;
 
 	@Autowired
 	private PermissionRepository permissionRepository;
@@ -164,6 +170,15 @@ public class GeoresourcesManager {
 		return allowedRoles;
 	}
 
+	private OrganizationalUnitEntity getOrganizationalUnitEntity(String id) throws ResourceNotFoundException {
+		OrganizationalUnitEntity entity = organizationalUnitRepository.findByOrganizationalUnitId(id);
+		if (entity == null) {
+			throw new ResourceNotFoundException(400, String.format("The requested organizationalUnit does not exist.", id));
+		}
+		return entity;
+	}
+
+
 	private void updateMetadataWithOgcServiceUrls(String metadataId, String dbTableName) {
 		MetadataGeoresourcesEntity metadata = georesourcesMetadataRepo.findByDatasetId(metadataId);
 
@@ -267,6 +282,7 @@ public class GeoresourcesManager {
 		entity.setWmsUrl(null);
 
 		entity.setPermissions(retrievePermissions(featureData.getPermissions()));
+		entity.setOwner(getOrganizationalUnitEntity(featureData.getOwnerId()));
 
 		// persist in db
 		georesourcesMetadataRepo.saveAndFlush(entity);
@@ -762,6 +778,20 @@ public class GeoresourcesManager {
 		}
 	}
 
+	public String updateOwnership(OwnerInputType owner, String georesourceId) throws Exception {
+		logger.info("Trying to update georesource ownership for datasetId '{}'", georesourceId);
+		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+			metadataEntity.setOwner(getOrganizationalUnitEntity(owner.getOwnerId()));
+
+			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
+			return georesourceId;
+		} else {
+			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Update request has no effect.", georesourceId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to update spatialUnit metadata, but no dataset existes with datasetId " + georesourceId);
+		}
+	}
 
 	private void updateMetadata(GeoresourcePATCHInputType metadata, MetadataGeoresourcesEntity entity)
 			throws Exception {

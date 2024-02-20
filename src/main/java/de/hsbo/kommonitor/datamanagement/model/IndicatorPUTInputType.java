@@ -39,6 +39,8 @@ public class IndicatorPUTInputType implements Serializable {
   @Valid
   private List<@Valid IndicatorPOSTInputTypeIndicatorValues> indicatorValues = new ArrayList<>();
 
+  private String ownerId;
+
   public IndicatorPUTInputType() {
     super();
   }
@@ -148,6 +150,26 @@ public class IndicatorPUTInputType implements Serializable {
     this.indicatorValues = indicatorValues;
   }
 
+  public IndicatorPUTInputType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -160,12 +182,13 @@ public class IndicatorPUTInputType implements Serializable {
     return Objects.equals(this.permissions, indicatorPUTInputType.permissions) &&
         Objects.equals(this.applicableSpatialUnit, indicatorPUTInputType.applicableSpatialUnit) &&
         Objects.equals(this.defaultClassificationMapping, indicatorPUTInputType.defaultClassificationMapping) &&
-        Objects.equals(this.indicatorValues, indicatorPUTInputType.indicatorValues);
+        Objects.equals(this.indicatorValues, indicatorPUTInputType.indicatorValues) &&
+        Objects.equals(this.ownerId, indicatorPUTInputType.ownerId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, applicableSpatialUnit, defaultClassificationMapping, indicatorValues);
+    return Objects.hash(permissions, applicableSpatialUnit, defaultClassificationMapping, indicatorValues, ownerId);
   }
 
   @Override
@@ -176,6 +199,7 @@ public class IndicatorPUTInputType implements Serializable {
     sb.append("    applicableSpatialUnit: ").append(toIndentedString(applicableSpatialUnit)).append("\n");
     sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    indicatorValues: ").append(toIndentedString(indicatorValues)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

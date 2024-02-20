@@ -57,6 +57,8 @@ public class GeoresourcePOSTInputType implements Serializable {
 
   private CommonMetadataType metadata;
 
+  private String ownerId;
+
   private PeriodOfValidityType periodOfValidity;
 
   private ColorType poiMarkerColor;
@@ -331,6 +333,26 @@ public class GeoresourcePOSTInputType implements Serializable {
     this.metadata = metadata;
   }
 
+  public GeoresourcePOSTInputType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
   public GeoresourcePOSTInputType periodOfValidity(PeriodOfValidityType periodOfValidity) {
     this.periodOfValidity = periodOfValidity;
     return this;
@@ -452,6 +474,7 @@ public class GeoresourcePOSTInputType implements Serializable {
         Objects.equals(this.loiDashArrayString, georesourcePOSTInputType.loiDashArrayString) &&
         Objects.equals(this.loiWidth, georesourcePOSTInputType.loiWidth) &&
         Objects.equals(this.metadata, georesourcePOSTInputType.metadata) &&
+        Objects.equals(this.ownerId, georesourcePOSTInputType.ownerId) &&
         Objects.equals(this.periodOfValidity, georesourcePOSTInputType.periodOfValidity) &&
         Objects.equals(this.poiMarkerColor, georesourcePOSTInputType.poiMarkerColor) &&
         Objects.equals(this.poiSymbolBootstrap3Name, georesourcePOSTInputType.poiSymbolBootstrap3Name) &&
@@ -461,7 +484,7 @@ public class GeoresourcePOSTInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, aoiColor, datasetName, geoJsonString, isAOI, isLOI, isPOI, jsonSchema, loiColor, loiDashArrayString, loiWidth, metadata, periodOfValidity, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
+    return Objects.hash(permissions, aoiColor, datasetName, geoJsonString, isAOI, isLOI, isPOI, jsonSchema, loiColor, loiDashArrayString, loiWidth, metadata, ownerId, periodOfValidity, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
   }
 
   @Override
@@ -480,6 +503,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     sb.append("    loiDashArrayString: ").append(toIndentedString(loiDashArrayString)).append("\n");
     sb.append("    loiWidth: ").append(toIndentedString(loiWidth)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    periodOfValidity: ").append(toIndentedString(periodOfValidity)).append("\n");
     sb.append("    poiMarkerColor: ").append(toIndentedString(poiMarkerColor)).append("\n");
     sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");
