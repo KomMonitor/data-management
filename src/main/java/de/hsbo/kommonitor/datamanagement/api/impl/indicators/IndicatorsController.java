@@ -492,10 +492,10 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
-    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'creator')")
     public ResponseEntity updateIndicatorPermissionsBySpatialUnit(
             @P("indicatorId") String indicatorId,
-            String spatialUnitId,
+            @P("spatialUnitId") String spatialUnitId,
             PermissionLevelInputType indicatorData) {
         logger.info("Received request to update indicator roles for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
         try {
@@ -521,7 +521,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
-    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'creator')")
     public ResponseEntity updateIndicatorPermissions(
             @P("indicatorId") String indicatorId,
             PermissionLevelInputType indicatorData) {

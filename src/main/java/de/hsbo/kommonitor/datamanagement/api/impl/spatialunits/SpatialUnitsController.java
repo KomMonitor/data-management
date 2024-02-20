@@ -573,14 +573,14 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
+	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'creator')")
 	public ResponseEntity<List<PermissionLevelType>> updateSpatialUnitsPermissions(
 			@P("spatialUnitId") String spatialUnitId,
 			PermissionLevelInputType permissionLevelInputType) {
 		 logger.info("Received request to update spatial unit roles for spatialUnitId '{}'", spatialUnitId);
         try {
             spatialUnitId = spatialUnitsManager.updatePermissionLevels(permissionLevelInputType, spatialUnitId);
-            lastModManager.updateLastDatabaseModification_indicators();
+            lastModManager.updateLastDatabaseModification_spatialUnits();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
         }

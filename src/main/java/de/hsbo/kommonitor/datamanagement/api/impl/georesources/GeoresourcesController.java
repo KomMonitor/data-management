@@ -304,7 +304,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	}
 
 	@Override
-	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
+	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'creator')")
 	public ResponseEntity updateGeoresourcePermissions(
 			@P("georesourceId") String georesourceId,
 	 		PermissionLevelInputType permissionLevelInputType) {
