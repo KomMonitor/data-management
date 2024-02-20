@@ -829,8 +829,6 @@ public class GeoresourcesManager {
 
 		entity.setTopicReference(metadata.getTopicReference());
 
-		entity.setPermissions(retrievePermissions(metadata.getPermissions()));
-
 		// persist in db
 		georesourcesMetadataRepo.saveAndFlush(entity);
 	}

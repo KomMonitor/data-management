@@ -8,9 +8,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.ColorType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -26,13 +23,10 @@ import jakarta.annotation.Generated;
  * GeoresourcePATCHInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T16:30:32.501430+01:00[Europe/Berlin]")
 public class GeoresourcePATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
-
-  @Valid
-  private List<String> permissions;
 
   private String aoiColor;
 
@@ -69,34 +63,6 @@ public class GeoresourcePATCHInputType implements Serializable {
    */
   public GeoresourcePATCHInputType(CommonMetadataType metadata) {
     this.metadata = metadata;
-  }
-
-  public GeoresourcePATCHInputType permissions(List<String> permissions) {
-    this.permissions = permissions;
-    return this;
-  }
-
-  public GeoresourcePATCHInputType addPermissionsItem(String permissionsItem) {
-    if (this.permissions == null) {
-      this.permissions = new ArrayList<>();
-    }
-    this.permissions.add(permissionsItem);
-    return this;
-  }
-
-  /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return permissions
-  */
-  
-  @Schema(name = "permissions", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("permissions")
-  public List<String> getPermissions() {
-    return permissions;
-  }
-
-  public void setPermissions(List<String> permissions) {
-    this.permissions = permissions;
   }
 
   public GeoresourcePATCHInputType aoiColor(String aoiColor) {
@@ -368,8 +334,7 @@ public class GeoresourcePATCHInputType implements Serializable {
       return false;
     }
     GeoresourcePATCHInputType georesourcePATCHInputType = (GeoresourcePATCHInputType) o;
-    return Objects.equals(this.permissions, georesourcePATCHInputType.permissions) &&
-        Objects.equals(this.aoiColor, georesourcePATCHInputType.aoiColor) &&
+    return Objects.equals(this.aoiColor, georesourcePATCHInputType.aoiColor) &&
         Objects.equals(this.datasetName, georesourcePATCHInputType.datasetName) &&
         Objects.equals(this.isAOI, georesourcePATCHInputType.isAOI) &&
         Objects.equals(this.isLOI, georesourcePATCHInputType.isLOI) &&
@@ -386,14 +351,13 @@ public class GeoresourcePATCHInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, aoiColor, datasetName, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
+    return Objects.hash(aoiColor, datasetName, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class GeoresourcePATCHInputType {\n");
-    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    aoiColor: ").append(toIndentedString(aoiColor)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
     sb.append("    isAOI: ").append(toIndentedString(isAOI)).append("\n");

@@ -5455,12 +5455,6 @@ components:
         - metadata
       type: object
       properties:
-        permissions:
-          type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
-          items:
-            type: string
         aoiColor:
           type: string
           description: color name or color code (i.e. hex number) for areas of interest
@@ -5623,7 +5617,6 @@ components:
       title: IndicatorMetadataPATCHInputType
       required:
         - abbreviation
-        - permissions
         - interpretation
         - isHeadlineIndicator
         - metadata
@@ -5636,12 +5629,6 @@ components:
         abbreviation:
           type: string
           description: abbreviated mark of the indicator
-        permissions:
-          type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
-          items:
-            type: string
         characteristicValue:
           type: string
           description: the distuingishing characteristic value of the indicator
@@ -6564,19 +6551,12 @@ components:
     SpatialUnitPATCHInputType:
       title: SpatialUnitPATCHInputType
       required:
-        - permissions
         - metadata
         - datasetName
         - nextLowerHierarchyLevel
         - nextUpperHierarchyLevel
       type: object
       properties:
-        permissions:
-          type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
-          items:
-            type: string
         datasetName: 
           type: string
           description: the name of the spatial unit - its "spatialUnitLevel"

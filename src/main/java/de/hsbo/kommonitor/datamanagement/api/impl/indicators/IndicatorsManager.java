@@ -322,7 +322,6 @@ public class IndicatorsManager {
         entity.setProcessDescription(metadata.getProcessDescription());
         entity.setUnit(metadata.getUnit());
         entity.setLowestSpatialUnitForComputation(metadata.getLowestSpatialUnitForComputation());
-        entity.setPermissions(retrievePermissions(metadata.getPermissions()));
 
         if (metadata.getDefaultClassificationMapping() != null) {
             entity.setDefaultClassificationMappingItems(metadata.getDefaultClassificationMapping().getItems());
