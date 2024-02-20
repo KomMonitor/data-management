@@ -131,6 +131,7 @@ private static GeoresourcesMetadataRepository georesourceMetadataRepo;
 
 		dataset.setAllowedRoles(getPermissions(georesourceMetadataEntity.getPermissions()));
 		dataset.setUserPermissions(georesourceMetadataEntity.getUserPermissions());
+		dataset.setOwnerId(georesourceMetadataEntity.getOwner().getOrganizationalUnitId());
 
 		return dataset;
 	}

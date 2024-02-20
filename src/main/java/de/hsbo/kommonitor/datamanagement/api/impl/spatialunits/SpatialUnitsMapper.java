@@ -112,6 +112,7 @@ public class SpatialUnitsMapper {
 
 		dataset.setAllowedRoles(getRoleIds(spatialUnitEntity.getPermissions()));
 		dataset.setUserPermissions(spatialUnitEntity.getUserPermissions());
+		dataset.setOwnerId(spatialUnitEntity.getOwner().getOrganizationalUnitId());
 		
 		dataset.setIsOutlineLayer(spatialUnitEntity.isOutlineLayer());
 		dataset.setOutlineColor(spatialUnitEntity.getOutlineColor());

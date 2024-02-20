@@ -87,7 +87,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
     public boolean isAuthorizedForEntity(String entityID, String entityType, String permissionLevel) {
         logger.debug("called isAuthorizedForEntity with entity id " + entityID);
         // Fail fast if user has not the required permission, with no need to request an entity
-        if (!hasRequiredPermissionLevel(permissionLevel)){
+        if (!hasRequiredPermissionLevel(permissionLevel, PermissionResourceType.RESOURCES.getValue())){
             return false;
         }
 
