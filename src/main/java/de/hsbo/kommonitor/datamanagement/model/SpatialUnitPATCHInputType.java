@@ -24,13 +24,13 @@ import jakarta.annotation.Generated;
  * SpatialUnitPATCHInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-08T21:24:51.431812+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
 public class SpatialUnitPATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Valid
-  private List<String> allowedRoles = new ArrayList<>();
+  private List<String> permissions = new ArrayList<>();
 
   private String datasetName;
 
@@ -55,40 +55,40 @@ public class SpatialUnitPATCHInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public SpatialUnitPATCHInputType(List<String> allowedRoles, String datasetName, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel) {
-    this.allowedRoles = allowedRoles;
+  public SpatialUnitPATCHInputType(List<String> permissions, String datasetName, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel) {
+    this.permissions = permissions;
     this.datasetName = datasetName;
     this.metadata = metadata;
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
   }
 
-  public SpatialUnitPATCHInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public SpatialUnitPATCHInputType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public SpatialUnitPATCHInputType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+  public SpatialUnitPATCHInputType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
    * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
+   * @return permissions
   */
   @NotNull 
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 
   public SpatialUnitPATCHInputType datasetName(String datasetName) {
@@ -260,7 +260,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
       return false;
     }
     SpatialUnitPATCHInputType spatialUnitPATCHInputType = (SpatialUnitPATCHInputType) o;
-    return Objects.equals(this.allowedRoles, spatialUnitPATCHInputType.allowedRoles) &&
+    return Objects.equals(this.permissions, spatialUnitPATCHInputType.permissions) &&
         Objects.equals(this.datasetName, spatialUnitPATCHInputType.datasetName) &&
         Objects.equals(this.metadata, spatialUnitPATCHInputType.metadata) &&
         Objects.equals(this.nextLowerHierarchyLevel, spatialUnitPATCHInputType.nextLowerHierarchyLevel) &&
@@ -273,14 +273,14 @@ public class SpatialUnitPATCHInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, datasetName, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString);
+    return Objects.hash(permissions, datasetName, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class SpatialUnitPATCHInputType {\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    nextLowerHierarchyLevel: ").append(toIndentedString(nextLowerHierarchyLevel)).append("\n");

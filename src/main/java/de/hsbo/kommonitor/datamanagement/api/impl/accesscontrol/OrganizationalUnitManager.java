@@ -4,7 +4,10 @@ import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Transactional
 @Repository
@@ -56,14 +59,18 @@ public class OrganizationalUnitManager {
         jpaUnit.setName(name);
         jpaUnit.setContact(inputOrganizationalUnit.getContact());
         jpaUnit.setDescription(inputOrganizationalUnit.getDescription());
+        jpaUnit.setKeycloakId(UUID.fromString(inputOrganizationalUnit.getKeycloakId()));
+        jpaUnit.setMandant(inputOrganizationalUnit.getMandant());
         OrganizationalUnitEntity saved = organizationalUnitRepository.saveAndFlush(jpaUnit);
 
         // Generate appropriate roles
         List<PermissionEntity> roles = new ArrayList<>();
         for (PermissionLevelType level : PermissionLevelType.values()) {
-            roles.add(permissionManager.addRole(saved, level));
+            roles.add(permissionManager.addPermission(saved, level, PermissionResourceType.RESOURCES));
         }
-        saved.setRoles(roles);
+        roles.add(permissionManager.addPermission(saved, PermissionLevelType.CREATOR, PermissionResourceType.USERS));
+        roles.add(permissionManager.addPermission(saved, PermissionLevelType.CREATOR, PermissionResourceType.THEMES));
+        saved.setPermissions(roles);
 
         return AccessControlMapper.mapToSwaggerOrganizationalUnit(saved);
     }
@@ -96,10 +103,16 @@ public class OrganizationalUnitManager {
 
         OrganizationalUnitEntity OrganizationalUnitEntity =
             organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
-        OrganizationalUnitOverviewType organizationalUnit =
-            AccessControlMapper.mapToSwaggerOrganizationalUnit(OrganizationalUnitEntity);
 
-        return organizationalUnit;
+        return AccessControlMapper.mapToSwaggerOrganizationalUnit(OrganizationalUnitEntity);
+    }
+
+    public OrganizationalUnitPermissionOverviewType getOrganizationalUnitPermissionsById(String organizationalUnitId) {
+        logger.info("Retrieving OrganizationalUnit->permissions for organizationalUnitId '{}'", organizationalUnitId);
+
+        OrganizationalUnitEntity organizationalUnitEntity =
+                organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
+        return AccessControlMapper.mapToSwapperOUPermissionOverviewType(organizationalUnitEntity);
     }
 
     public List<OrganizationalUnitOverviewType> getOrganizationalUnits() {
@@ -122,6 +135,8 @@ public class OrganizationalUnitManager {
             organizationalUnitEntity.setName(newData.getName());
             organizationalUnitEntity.setContact(newData.getContact());
             organizationalUnitEntity.setDescription(newData.getDescription());
+            organizationalUnitEntity.setKeycloakId(UUID.fromString(newData.getKeycloakId()));
+            organizationalUnitEntity.setMandant(newData.getMandant());
 
             organizationalUnitRepository.saveAndFlush(organizationalUnitEntity);
             return organizationalUnitEntity.getOrganizationalUnitId();

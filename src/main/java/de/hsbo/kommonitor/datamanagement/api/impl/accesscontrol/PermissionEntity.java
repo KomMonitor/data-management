@@ -26,20 +26,20 @@ public class PermissionEntity {
 
     // We default to no permissions just in case
     @Enumerated(EnumType.ORDINAL)
-    @Column(nullable = true)
+    @Column()
     private PermissionLevelType permissionLevel = null;
 
     private String name;
 
-    private String roleId;
+    private String permissionType;
 
     /*
      * default constructor is required by hibernate / jpa
      */
+
     public PermissionEntity() {
 
     }
-
     public OrganizationalUnitEntity getOrganizationalUnit() {
         return organizationalUnit;
     }
@@ -50,6 +50,14 @@ public class PermissionEntity {
 
     public void setOrganizationalUnit(OrganizationalUnitEntity unit) {
         this.organizationalUnit = unit;
+    }
+
+    public String getPermissionType() {
+        return permissionType;
+    }
+
+    public void setPermissionType(String permissionType) {
+        this.permissionType = permissionType;
     }
 
     public PermissionLevelType getPermissionLevel() {
@@ -66,13 +74,5 @@ public class PermissionEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
     }
 }

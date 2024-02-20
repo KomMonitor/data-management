@@ -33,7 +33,7 @@ import jakarta.annotation.Generated;
  * IndicatorOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
 public class IndicatorOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class IndicatorOverviewType implements Serializable {
   private String abbreviation;
 
   @Valid
-  private List<String> allowedRoles;
+  private List<String> permissions;
 
   @Valid
   private List<String> applicableDates = new ArrayList<>();
@@ -139,32 +139,32 @@ public class IndicatorOverviewType implements Serializable {
     this.abbreviation = abbreviation;
   }
 
-  public IndicatorOverviewType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public IndicatorOverviewType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public IndicatorOverviewType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+  public IndicatorOverviewType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
    * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
+   * @return permissions
   */
   
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 
   public IndicatorOverviewType applicableDates(List<String> applicableDates) {
@@ -673,7 +673,7 @@ public class IndicatorOverviewType implements Serializable {
     }
     IndicatorOverviewType indicatorOverviewType = (IndicatorOverviewType) o;
     return Objects.equals(this.abbreviation, indicatorOverviewType.abbreviation) &&
-        Objects.equals(this.allowedRoles, indicatorOverviewType.allowedRoles) &&
+        Objects.equals(this.permissions, indicatorOverviewType.permissions) &&
         Objects.equals(this.applicableDates, indicatorOverviewType.applicableDates) &&
         Objects.equals(this.applicableSpatialUnits, indicatorOverviewType.applicableSpatialUnits) &&
         Objects.equals(this.characteristicValue, indicatorOverviewType.characteristicValue) &&
@@ -700,7 +700,7 @@ public class IndicatorOverviewType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, allowedRoles, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, displayOrder, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, processDescription, referenceDateNote, referencedGeoresources, referencedIndicators, tags, topicReference, unit, userPermissions);
+    return Objects.hash(abbreviation, permissions, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, displayOrder, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, processDescription, referenceDateNote, referencedGeoresources, referencedIndicators, tags, topicReference, unit, userPermissions);
   }
 
   @Override
@@ -708,7 +708,7 @@ public class IndicatorOverviewType implements Serializable {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorOverviewType {\n");
     sb.append("    abbreviation: ").append(toIndentedString(abbreviation)).append("\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    applicableDates: ").append(toIndentedString(applicableDates)).append("\n");
     sb.append("    applicableSpatialUnits: ").append(toIndentedString(applicableSpatialUnits)).append("\n");
     sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");

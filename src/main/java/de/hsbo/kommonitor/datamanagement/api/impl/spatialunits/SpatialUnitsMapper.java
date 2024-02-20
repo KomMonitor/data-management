@@ -1,5 +1,14 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_spatialUnits;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,15 +17,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_spatialUnits;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
-import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
 
 public class SpatialUnitsMapper {
 	
@@ -110,7 +110,7 @@ public class SpatialUnitsMapper {
 		dataset.setWmsUrl(spatialUnitEntity.getWmsUrl());
 		dataset.setWfsUrl(spatialUnitEntity.getWfsUrl());
 
-		dataset.setAllowedRoles(getRoleIds(spatialUnitEntity.getPermissions()));
+		dataset.setPermissions(getRoleIds(spatialUnitEntity.getPermissions()));
 		dataset.setUserPermissions(spatialUnitEntity.getUserPermissions());
 		
 		dataset.setIsOutlineLayer(spatialUnitEntity.isOutlineLayer());

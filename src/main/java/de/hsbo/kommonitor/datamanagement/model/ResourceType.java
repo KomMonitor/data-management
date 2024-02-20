@@ -18,19 +18,23 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Gets or Sets TopicResourceEnum
+ * Gets or Sets ResourceType
  */
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
-public enum TopicResourceEnum {
+public enum ResourceType {
   
-  INDICATOR("indicator"),
+  GEORESOURCES("georesources"),
   
-  GEORESOURCE("georesource");
+  SPATIALUNITS_("spatialunits,"),
+  
+  INDICATORS("indicators"),
+  
+  INDICATORSPATIALUNITS("indicatorspatialunits");
 
   private String value;
 
-  TopicResourceEnum(String value) {
+  ResourceType(String value) {
     this.value = value;
   }
 
@@ -45,8 +49,8 @@ public enum TopicResourceEnum {
   }
 
   @JsonCreator
-  public static TopicResourceEnum fromValue(String value) {
-    for (TopicResourceEnum b : TopicResourceEnum.values()) {
+  public static ResourceType fromValue(String value) {
+    for (ResourceType b : ResourceType.values()) {
       if (b.value.equals(value)) {
         return b;
       }

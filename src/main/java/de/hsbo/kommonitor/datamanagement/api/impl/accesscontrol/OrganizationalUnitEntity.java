@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.util.List;
+import java.util.UUID;
 
 @Entity(name = "OrganizationalUnits")
 public class OrganizationalUnitEntity {
@@ -22,6 +23,12 @@ public class OrganizationalUnitEntity {
     @Column(nullable = false, unique = true)
     public String name;
 
+    @Column(nullable = false, unique = true)
+    public UUID keycloakId;
+
+    @Column(nullable = false)
+    public boolean isMandant;
+
     @Column(nullable = false)
     public String contact;
 
@@ -29,7 +36,7 @@ public class OrganizationalUnitEntity {
     public String description;
 
     @OneToMany(mappedBy = "organizationalUnit", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
-    public List<PermissionEntity> roles;
+    public List<PermissionEntity> permissions;
 
     public String getName() {
         return name;
@@ -37,6 +44,22 @@ public class OrganizationalUnitEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public UUID getKeycloakId() {
+        return keycloakId;
+    }
+
+    public void setKeycloakId(UUID keycloakId) {
+        this.keycloakId = keycloakId;
+    }
+
+    public boolean isMandant() {
+        return isMandant;
+    }
+
+    public void setMandant(boolean mandant) {
+        isMandant = mandant;
     }
 
     public String getContact() {
@@ -55,12 +78,12 @@ public class OrganizationalUnitEntity {
         this.description = description;
     }
 
-    public List<PermissionEntity> getRoles() {
-        return roles;
+    public List<PermissionEntity> getPermissions() {
+        return permissions;
     }
 
-    public void setRoles(List<PermissionEntity> roles) {
-        this.roles = roles;
+    public void setPermissions(List<PermissionEntity> permissions) {
+        this.permissions = permissions;
     }
 
     public String getOrganizationalUnitId() {

@@ -1,36 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-
-import jakarta.transaction.Transactional;
-
-import de.hsbo.kommonitor.datamanagement.model.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.geotools.data.DataStore;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.filter.text.cql2.CQLException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
@@ -47,7 +18,49 @@ import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourceReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorMetadataPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHDisplayOrderInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeIndicatorValues;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeValueMapping;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelInputType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import jakarta.transaction.Transactional;
+import org.apache.commons.collections.CollectionUtils;
+import org.geotools.data.DataStore;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.filter.text.cql2.CQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Transactional
 @Repository
@@ -175,7 +188,7 @@ public class IndicatorsManager {
             IndicatorSpatialUnitJoinEntity indicatorEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
 
             if (keyPropertiesHaveChanged(indicatorEntity, indicatorData)) {
-                indicatorEntity.setPermissions(retrievePermissions(indicatorData.getAllowedRoles()));
+                indicatorEntity.setPermissions(retrievePermissions(indicatorData.getPermissions()));
                 indicatorsSpatialUnitsRepo.saveAndFlush(indicatorEntity);
                 logger.info(
                         "Succesfully updated the roles for indicator dataset with indicatorId '{}' and spatialUnitId '{}'.",
@@ -204,7 +217,7 @@ public class IndicatorsManager {
             var indicatorEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
 
             if (keyPropertiesHaveChanged(indicatorEntity, indicatorData)) {
-                indicatorEntity.setPermissions(retrievePermissions(indicatorData.getAllowedRoles()));
+                indicatorEntity.setPermissions(retrievePermissions(indicatorData.getPermissions()));
                 indicatorsMetadataRepo.saveAndFlush(indicatorEntity);
                 logger.info(
                         "Succesfully updated the roles for indicator dataset with indicatorId '{}'.",
@@ -229,7 +242,7 @@ public class IndicatorsManager {
 
     private boolean keyPropertiesHaveChanged(RestrictedEntity indicatorEntity, PermissionLevelInputType indicatorData) {
         List<String> oldRoleIds = indicatorEntity.getPermissions().stream().map(PermissionEntity::getPermissionId).collect(Collectors.toList());
-        HashSet<String> newRoleIds = new HashSet<String>(indicatorData.getAllowedRoles());
+        HashSet<String> newRoleIds = new HashSet<String>(indicatorData.getPermissions());
         return !CollectionUtils.isEqualCollection(oldRoleIds, newRoleIds);
     }
 
@@ -280,7 +293,7 @@ public class IndicatorsManager {
         entity.setProcessDescription(metadata.getProcessDescription());
         entity.setUnit(metadata.getUnit());
         entity.setLowestSpatialUnitForComputation(metadata.getLowestSpatialUnitForComputation());
-        entity.setPermissions(retrievePermissions(metadata.getAllowedRoles()));
+        entity.setPermissions(retrievePermissions(metadata.getPermissions()));
 
         if (metadata.getDefaultClassificationMapping() != null) {
             entity.setDefaultClassificationMappingItems(metadata.getDefaultClassificationMapping().getItems());
@@ -361,7 +374,7 @@ public class IndicatorsManager {
                 /*
                  * set wms and wfs urls within metadata
                  */
-                persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName, indicatorData.getAllowedRoles());
+                persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName, indicatorData.getPermissions());
 
             } else {
                 logger.info(
@@ -386,7 +399,7 @@ public class IndicatorsManager {
                     }
                     publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 
-                    persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName, indicatorData.getAllowedRoles());
+                    persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName, indicatorData.getPermissions());
                 } catch (Exception e) {
                     /*
                      * remove partially created resources and thrwo error
@@ -994,7 +1007,7 @@ public class IndicatorsManager {
 //                String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), createTitleForWebService(spatialUnitName, indicatorName), indicatorViewTableName);
 //                publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, createTitleForWebService(spatialUnitName, indicatorName), styleName, ResourceTypeEnum.INDICATOR);
 //
-//                persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorViewTableName, styleName, indicatorData.getAllowedRoles());
+//                persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorViewTableName, styleName, indicatorData.getPermissions());
 //
 //            } else {
 //                logger.info("As creationType is set to '{}', Only the metadata entry was created. No featureTable and view have been created..", creationType.toString());
@@ -1270,7 +1283,7 @@ public class IndicatorsManager {
         entity.setWfsUrl(null);
         entity.setWmsUrl(null);
 
-        entity.setPermissions(retrievePermissions(indicatorData.getAllowedRoles()));
+        entity.setPermissions(retrievePermissions(indicatorData.getPermissions()));
 
         /*
          * process availableTimestamps property for indicator metadata entity
