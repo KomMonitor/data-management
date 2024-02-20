@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:06.233419477+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T16:10:15.748154600+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "georesources", description = "the Georesources API")
 public interface GeoresourcesApi {
@@ -823,6 +823,46 @@ public interface GeoresourcesApi {
     ResponseEntity<Void> updateGeoresourceMetadataAsBody(
         @Parameter(name = "georesourceId", description = "identifier of the geo-resource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
         @Parameter(name = "metadata", description = "metadata input", required = true) @Valid @RequestBody GeoresourcePATCHInputType metadata
+    );
+
+
+    /**
+     * PUT /georesources/{georesourceId}/ownership : update the ownership for the selected geo-resource dataset
+     * update the ownership for the selected geo-resource dataset
+     *
+     * @param georesourceId identifier of the geo-resource dataset (required)
+     * @param ownerInputType GeoResource ownership input (optional)
+     * @return No Content (status code 204)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "updateGeoresourceOwnership",
+        summary = "update the ownership for the selected geo-resource dataset",
+        description = "update the ownership for the selected geo-resource dataset",
+        tags = { "georesources" },
+        responses = {
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PUT,
+        value = "/georesources/{georesourceId}/ownership",
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<Void> updateGeoresourceOwnership(
+        @Parameter(name = "georesourceId", description = "identifier of the geo-resource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
+        @Parameter(name = "OwnerInputType", description = "GeoResource ownership input") @Valid @RequestBody(required = false) OwnerInputType ownerInputType
     );
 
 

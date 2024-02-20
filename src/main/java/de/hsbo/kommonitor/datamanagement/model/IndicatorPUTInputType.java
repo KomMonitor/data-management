@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * IndicatorPUTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T16:11:02.006849300+01:00[Europe/Berlin]")
 public class IndicatorPUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -48,10 +48,11 @@ public class IndicatorPUTInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorPUTInputType(List<String> permissions, String applicableSpatialUnit, List<@Valid IndicatorPOSTInputTypeIndicatorValues> indicatorValues) {
+  public IndicatorPUTInputType(List<String> permissions, String applicableSpatialUnit, List<@Valid IndicatorPOSTInputTypeIndicatorValues> indicatorValues, String ownerId) {
     this.permissions = permissions;
     this.applicableSpatialUnit = applicableSpatialUnit;
     this.indicatorValues = indicatorValues;
+    this.ownerId = ownerId;
   }
 
   public IndicatorPUTInputType permissions(List<String> permissions) {
@@ -159,8 +160,8 @@ public class IndicatorPUTInputType implements Serializable {
    * identifier of the owning group
    * @return ownerId
   */
-
-  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("ownerId")
   public String getOwnerId() {
     return ownerId;

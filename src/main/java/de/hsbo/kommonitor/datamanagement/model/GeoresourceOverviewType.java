@@ -28,7 +28,7 @@ import jakarta.annotation.Generated;
  * GeoresourceOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T16:11:02.006849300+01:00[Europe/Berlin]")
 public class GeoresourceOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -83,7 +83,7 @@ public class GeoresourceOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public GeoresourceOverviewType(List<@Valid PeriodOfValidityType> availablePeriodsOfValidity, String datasetName, String georesourceId, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, String topicReference) {
+  public GeoresourceOverviewType(List<@Valid PeriodOfValidityType> availablePeriodsOfValidity, String datasetName, String georesourceId, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, String ownerId, String topicReference) {
     this.availablePeriodsOfValidity = availablePeriodsOfValidity;
     this.datasetName = datasetName;
     this.georesourceId = georesourceId;
@@ -91,6 +91,7 @@ public class GeoresourceOverviewType implements Serializable {
     this.isLOI = isLOI;
     this.isPOI = isPOI;
     this.metadata = metadata;
+    this.ownerId = ownerId;
     this.topicReference = topicReference;
   }
 
@@ -359,8 +360,8 @@ public class GeoresourceOverviewType implements Serializable {
    * identifier of the owning group
    * @return ownerId
   */
-
-  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("ownerId")
   public String getOwnerId() {
     return ownerId;

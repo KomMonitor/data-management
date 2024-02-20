@@ -1350,19 +1350,19 @@ paths:
       responses:
         "204":
           description: No Content
-          content: { }
+          content: {}
         "401":
           description: API key is missing or invalid
-          content: { }
+          content: {}
         "403":
           description: Forbidden
-          content: { }
+          content: {}
         "405":
           description: Invalid input
-          content: { }
+          content: {}
       deprecated: false
       security:
-        - kommonitor-data-access_oauth: [ ]
+        - kommonitor-data-access_oauth: []
       x-codegen-request-body-name: indicatorData
   /indicators/{indicatorId}/{spatialUnitId}:
     get:
@@ -1547,6 +1547,51 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+      x-codegen-request-body-name: indicatorData
+  /indicators/{indicatorId}/{spatialUnitId}/ownership:
+    put:
+      tags:
+        - indicators
+      summary: Modify/Update the selected indicator dataset ownership
+      operationId: updateIndicatorOwnershipBySpatialUnit
+      parameters:
+        - name: indicatorId
+          in: path
+          description: unique identifier of the selected indicator dataset
+          required: true
+          schema:
+            type: string
+        - name: spatialUnitId
+          in: path
+          description: the unique identifier of the spatial level
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Indicator parameters input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "204":
+          description: No Content
+          content: { }
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
       x-codegen-request-body-name: indicatorData
   /indicators/{indicatorId}/{spatialUnitId}/singleFeature/{featureId}:
     get:
@@ -5325,6 +5370,7 @@ components:
         - isLOI
         - isPOI
         - metadata
+        - ownerId
         - topicReference
       type: object
       properties:
@@ -5469,6 +5515,7 @@ components:
         - isPOI
         - isLOI
         - isAOI
+        - ownerId
       type: object
       properties:
         permissions:
@@ -5677,6 +5724,7 @@ components:
         - metadata
         - ogcServices
         - processDescription
+        - ownerId
         - tags
         - topicReference
         - unit
@@ -5820,6 +5868,7 @@ components:
         - interpretation
         - isHeadlineIndicator
         - metadata
+        - ownerId
         - processDescription
         - tags
         - topicReference
@@ -5961,6 +6010,7 @@ components:
         - permissions
         - applicableSpatialUnit
         - indicatorValues
+        - ownerId
       type: object
       properties:
         permissions:
@@ -6162,10 +6212,10 @@ components:
     ResourceType:
       type: string
       enum:
-        - georesources
-        - spatialunits,
-        - indicators
-        - indicatorspatialunits
+      - georesources
+      - spatialunits,
+      - indicators
+      - indicatorspatialunits
     OrganizationalUnitPermissionOverviewElementType:
       type: object
       required:
@@ -6527,7 +6577,7 @@ components:
             dataset
           items:
             type: string
-        datasetName:
+        datasetName: 
           type: string
           description: the name of the spatial unit - its "spatialUnitLevel"
         metadata:

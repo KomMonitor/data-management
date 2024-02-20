@@ -27,7 +27,7 @@ import jakarta.annotation.Generated;
  * GeoresourcePOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T16:11:02.006849300+01:00[Europe/Berlin]")
 public class GeoresourcePOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -76,12 +76,13 @@ public class GeoresourcePOSTInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public GeoresourcePOSTInputType(String datasetName, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, PeriodOfValidityType periodOfValidity) {
+  public GeoresourcePOSTInputType(String datasetName, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, String ownerId, PeriodOfValidityType periodOfValidity) {
     this.datasetName = datasetName;
     this.isAOI = isAOI;
     this.isLOI = isLOI;
     this.isPOI = isPOI;
     this.metadata = metadata;
+    this.ownerId = ownerId;
     this.periodOfValidity = periodOfValidity;
   }
 
@@ -342,8 +343,8 @@ public class GeoresourcePOSTInputType implements Serializable {
    * identifier of the owning group
    * @return ownerId
   */
-
-  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("ownerId")
   public String getOwnerId() {
     return ownerId;

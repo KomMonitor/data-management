@@ -33,7 +33,7 @@ import jakarta.annotation.Generated;
  * IndicatorOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T16:11:02.006849300+01:00[Europe/Berlin]")
 public class IndicatorOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -103,7 +103,7 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorOverviewType(String abbreviation, List<String> applicableDates, List<@Valid IndicatorSpatialUnitJoinItem> applicableSpatialUnits, String characteristicValue, CreationTypeEnum creationType, String indicatorId, String indicatorName, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, List<@Valid OgcServicesType> ogcServices, String processDescription, List<String> tags, String topicReference, String unit) {
+  public IndicatorOverviewType(String abbreviation, List<String> applicableDates, List<@Valid IndicatorSpatialUnitJoinItem> applicableSpatialUnits, String characteristicValue, CreationTypeEnum creationType, String indicatorId, String indicatorName, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, List<@Valid OgcServicesType> ogcServices, String ownerId, String processDescription, List<String> tags, String topicReference, String unit) {
     this.abbreviation = abbreviation;
     this.applicableDates = applicableDates;
     this.applicableSpatialUnits = applicableSpatialUnits;
@@ -115,6 +115,7 @@ public class IndicatorOverviewType implements Serializable {
     this.isHeadlineIndicator = isHeadlineIndicator;
     this.metadata = metadata;
     this.ogcServices = ogcServices;
+    this.ownerId = ownerId;
     this.processDescription = processDescription;
     this.tags = tags;
     this.topicReference = topicReference;
@@ -482,8 +483,8 @@ public class IndicatorOverviewType implements Serializable {
    * identifier of the owning group
    * @return ownerId
   */
-
-  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("ownerId")
   public String getOwnerId() {
     return ownerId;
