@@ -532,7 +532,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
 	public ResponseEntity<Void> updateSpatialUnitFeatureRecordAsBody(
@@ -598,6 +598,34 @@ public class SpatialUnitsController extends BasePathController implements Spatia
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+	}
+
+	@Override
+	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'creator')")
+	public ResponseEntity<Void> updateSpatialUnitsOwnership(
+			@P("spatialUnitId") String spatialUnitId,
+			OwnerInputType ownerInputType) {
+		logger.info("Received request to update ownership for spatialUnitId '{}'", spatialUnitId);
+		try {
+			spatialUnitId = spatialUnitsManager.updateOwnership(ownerInputType, spatialUnitId);
+			lastModManager.updateLastDatabaseModification_spatialUnits();
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+		}
+
+		if (spatialUnitId != null) {
+			HttpHeaders responseHeaders = new HttpHeaders();
+
+			String location = spatialUnitId;
+			try {
+				responseHeaders.setLocation(new URI(location));
+			} catch (URISyntaxException e) {
+				return ApiUtils.createResponseEntityFromException(e);
+			}
+			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }

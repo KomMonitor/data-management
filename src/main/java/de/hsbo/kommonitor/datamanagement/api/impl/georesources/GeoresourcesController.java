@@ -332,6 +332,33 @@ public class GeoresourcesController extends BasePathController implements Geores
 	}
 
 	@Override
+	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'creator')")
+	public ResponseEntity<Void> updateGeoresourceOwnership(
+			@P("georesourceId") String georesourceId,
+			OwnerInputType ownerInputType) {
+		logger.info("Received request to update georesource ownership for georesourceId '{}'.", georesourceId);
+		try {
+			georesourceId = georesourcesManager.updateOwnership(ownerInputType, georesourceId);
+			lastModManager.updateLastDatabaseModification_georesources();
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+		}
+		if (georesourceId != null) {
+			HttpHeaders responseHeaders = new HttpHeaders();
+
+			String location = georesourceId;
+			try {
+				responseHeaders.setLocation(new URI(location));
+			} catch (URISyntaxException e) {
+				return ApiUtils.createResponseEntityFromException(e);
+			}
+			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Override
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
 	public ResponseEntity<byte[]> getAllGeoresourceFeaturesById(
 			@P("georesourceId") String georesourceId,

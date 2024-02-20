@@ -6,9 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -24,13 +21,10 @@ import jakarta.annotation.Generated;
  * SpatialUnitPATCHInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-08T21:24:51.431812+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-19T12:18:49.214095300+01:00[Europe/Berlin]")
 public class SpatialUnitPATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
-
-  @Valid
-  private List<String> allowedRoles = new ArrayList<>();
 
   private String datasetName;
 
@@ -55,40 +49,11 @@ public class SpatialUnitPATCHInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public SpatialUnitPATCHInputType(List<String> allowedRoles, String datasetName, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel) {
-    this.allowedRoles = allowedRoles;
+  public SpatialUnitPATCHInputType(String datasetName, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel) {
     this.datasetName = datasetName;
     this.metadata = metadata;
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
-  }
-
-  public SpatialUnitPATCHInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
-    return this;
-  }
-
-  public SpatialUnitPATCHInputType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
-    }
-    this.allowedRoles.add(allowedRolesItem);
-    return this;
-  }
-
-  /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
-  */
-  @NotNull 
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
-  }
-
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
   }
 
   public SpatialUnitPATCHInputType datasetName(String datasetName) {
@@ -260,8 +225,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
       return false;
     }
     SpatialUnitPATCHInputType spatialUnitPATCHInputType = (SpatialUnitPATCHInputType) o;
-    return Objects.equals(this.allowedRoles, spatialUnitPATCHInputType.allowedRoles) &&
-        Objects.equals(this.datasetName, spatialUnitPATCHInputType.datasetName) &&
+    return Objects.equals(this.datasetName, spatialUnitPATCHInputType.datasetName) &&
         Objects.equals(this.metadata, spatialUnitPATCHInputType.metadata) &&
         Objects.equals(this.nextLowerHierarchyLevel, spatialUnitPATCHInputType.nextLowerHierarchyLevel) &&
         Objects.equals(this.nextUpperHierarchyLevel, spatialUnitPATCHInputType.nextUpperHierarchyLevel) &&
@@ -273,14 +237,13 @@ public class SpatialUnitPATCHInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, datasetName, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString);
+    return Objects.hash(datasetName, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class SpatialUnitPATCHInputType {\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    nextLowerHierarchyLevel: ").append(toIndentedString(nextLowerHierarchyLevel)).append("\n");

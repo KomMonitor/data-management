@@ -549,6 +549,62 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'creator')")
+    public ResponseEntity<Void> updateIndicatorOwnership(
+            @P("indicatorId")String indicatorId,
+            OwnerInputType indicatorData) {
+        try {
+            indicatorId = indicatorsManager.updateOwnership(indicatorData, indicatorId);
+            lastModManager.updateLastDatabaseModification_indicators();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+
+        if (indicatorId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = indicatorId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'creator')")
+    public ResponseEntity<Void> updateIndicatorOwnershipBySpatialUnit(
+            @P("indicatorId") String indicatorId,
+            @P("spatialUnitId") String spatialUnitId,
+            OwnerInputType indicatorData) {
+        logger.info("Received request to update indicator ownership for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
+        try {
+            indicatorId = indicatorsManager.updateOwnership(indicatorData, indicatorId, spatialUnitId);
+            lastModManager.updateLastDatabaseModification_indicators();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+
+        if (indicatorId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = indicatorId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
     @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
 	public ResponseEntity<Void> updateIndicatorFeatureRecordAsBody(
             @P("indicatorId") String indicatorId,

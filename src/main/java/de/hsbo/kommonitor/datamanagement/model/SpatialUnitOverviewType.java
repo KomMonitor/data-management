@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-08T21:24:51.431812+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-19T12:18:49.214095300+01:00[Europe/Berlin]")
 public class SpatialUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -61,6 +61,8 @@ public class SpatialUnitOverviewType implements Serializable {
   private BigDecimal outlineWidth;
 
   private String outlineDashArrayString;
+
+  private String ownerId;
 
   public SpatialUnitOverviewType() {
     super();
@@ -385,6 +387,26 @@ public class SpatialUnitOverviewType implements Serializable {
     this.outlineDashArrayString = outlineDashArrayString;
   }
 
+  public SpatialUnitOverviewType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+  
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -407,12 +429,13 @@ public class SpatialUnitOverviewType implements Serializable {
         Objects.equals(this.isOutlineLayer, spatialUnitOverviewType.isOutlineLayer) &&
         Objects.equals(this.outlineColor, spatialUnitOverviewType.outlineColor) &&
         Objects.equals(this.outlineWidth, spatialUnitOverviewType.outlineWidth) &&
-        Objects.equals(this.outlineDashArrayString, spatialUnitOverviewType.outlineDashArrayString);
+        Objects.equals(this.outlineDashArrayString, spatialUnitOverviewType.outlineDashArrayString) &&
+        Objects.equals(this.ownerId, spatialUnitOverviewType.ownerId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, availablePeriodsOfValidity, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, spatialUnitId, spatialUnitLevel, userPermissions, wfsUrl, wmsUrl, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString);
+    return Objects.hash(allowedRoles, availablePeriodsOfValidity, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, spatialUnitId, spatialUnitLevel, userPermissions, wfsUrl, wmsUrl, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString, ownerId);
   }
 
   @Override
@@ -433,6 +456,7 @@ public class SpatialUnitOverviewType implements Serializable {
     sb.append("    outlineColor: ").append(toIndentedString(outlineColor)).append("\n");
     sb.append("    outlineWidth: ").append(toIndentedString(outlineWidth)).append("\n");
     sb.append("    outlineDashArrayString: ").append(toIndentedString(outlineDashArrayString)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

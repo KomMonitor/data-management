@@ -33,7 +33,7 @@ import jakarta.annotation.Generated;
  * IndicatorOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-19T12:18:49.214095300+01:00[Europe/Berlin]")
 public class IndicatorOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -73,6 +73,8 @@ public class IndicatorOverviewType implements Serializable {
 
   @Valid
   private List<@Valid OgcServicesType> ogcServices = new ArrayList<>();
+
+  private String ownerId;
 
   private String processDescription;
 
@@ -471,6 +473,26 @@ public class IndicatorOverviewType implements Serializable {
     this.ogcServices = ogcServices;
   }
 
+  public IndicatorOverviewType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+  
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
   public IndicatorOverviewType processDescription(String processDescription) {
     this.processDescription = processDescription;
     return this;
@@ -688,6 +710,7 @@ public class IndicatorOverviewType implements Serializable {
         Objects.equals(this.lowestSpatialUnitForComputation, indicatorOverviewType.lowestSpatialUnitForComputation) &&
         Objects.equals(this.metadata, indicatorOverviewType.metadata) &&
         Objects.equals(this.ogcServices, indicatorOverviewType.ogcServices) &&
+        Objects.equals(this.ownerId, indicatorOverviewType.ownerId) &&
         Objects.equals(this.processDescription, indicatorOverviewType.processDescription) &&
         Objects.equals(this.referenceDateNote, indicatorOverviewType.referenceDateNote) &&
         Objects.equals(this.referencedGeoresources, indicatorOverviewType.referencedGeoresources) &&
@@ -700,7 +723,7 @@ public class IndicatorOverviewType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, allowedRoles, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, displayOrder, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, processDescription, referenceDateNote, referencedGeoresources, referencedIndicators, tags, topicReference, unit, userPermissions);
+    return Objects.hash(abbreviation, allowedRoles, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, displayOrder, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, ownerId, processDescription, referenceDateNote, referencedGeoresources, referencedIndicators, tags, topicReference, unit, userPermissions);
   }
 
   @Override
@@ -723,6 +746,7 @@ public class IndicatorOverviewType implements Serializable {
     sb.append("    lowestSpatialUnitForComputation: ").append(toIndentedString(lowestSpatialUnitForComputation)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    ogcServices: ").append(toIndentedString(ogcServices)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    referenceDateNote: ").append(toIndentedString(referenceDateNote)).append("\n");
     sb.append("    referencedGeoresources: ").append(toIndentedString(referencedGeoresources)).append("\n");

@@ -30,15 +30,12 @@ import jakarta.annotation.Generated;
  * IndicatorMetadataPATCHInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-19T12:18:49.214095300+01:00[Europe/Berlin]")
 public class IndicatorMetadataPATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private String abbreviation;
-
-  @Valid
-  private List<String> allowedRoles = new ArrayList<>();
 
   private String characteristicValue;
 
@@ -84,9 +81,8 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorMetadataPATCHInputType(String abbreviation, List<String> allowedRoles, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String processDescription, List<String> tags, String topicReference, String unit) {
+  public IndicatorMetadataPATCHInputType(String abbreviation, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String processDescription, List<String> tags, String topicReference, String unit) {
     this.abbreviation = abbreviation;
-    this.allowedRoles = allowedRoles;
     this.interpretation = interpretation;
     this.isHeadlineIndicator = isHeadlineIndicator;
     this.metadata = metadata;
@@ -114,34 +110,6 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
 
   public void setAbbreviation(String abbreviation) {
     this.abbreviation = abbreviation;
-  }
-
-  public IndicatorMetadataPATCHInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
-    return this;
-  }
-
-  public IndicatorMetadataPATCHInputType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
-    }
-    this.allowedRoles.add(allowedRolesItem);
-    return this;
-  }
-
-  /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
-  */
-  @NotNull 
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
-  }
-
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
   }
 
   public IndicatorMetadataPATCHInputType characteristicValue(String characteristicValue) {
@@ -518,7 +486,6 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
     }
     IndicatorMetadataPATCHInputType indicatorMetadataPATCHInputType = (IndicatorMetadataPATCHInputType) o;
     return Objects.equals(this.abbreviation, indicatorMetadataPATCHInputType.abbreviation) &&
-        Objects.equals(this.allowedRoles, indicatorMetadataPATCHInputType.allowedRoles) &&
         Objects.equals(this.characteristicValue, indicatorMetadataPATCHInputType.characteristicValue) &&
         Objects.equals(this.creationType, indicatorMetadataPATCHInputType.creationType) &&
         Objects.equals(this.datasetName, indicatorMetadataPATCHInputType.datasetName) &&
@@ -540,7 +507,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, allowedRoles, characteristicValue, creationType, datasetName, defaultClassificationMapping, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit);
+    return Objects.hash(abbreviation, characteristicValue, creationType, datasetName, defaultClassificationMapping, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit);
   }
 
   @Override
@@ -548,7 +515,6 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorMetadataPATCHInputType {\n");
     sb.append("    abbreviation: ").append(toIndentedString(abbreviation)).append("\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");
     sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");

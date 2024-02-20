@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
 import jakarta.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -58,6 +60,9 @@ public class IndicatorsManager {
 
     @Autowired
     private IndicatorsMetadataRepository indicatorsMetadataRepo;
+
+    @Autowired
+    private OrganizationalUnitRepository organizationalUnitRepository;
 
     @Autowired
     private IndicatorSpatialUnitsRepository indicatorsSpatialUnitsRepo;
@@ -207,7 +212,7 @@ public class IndicatorsManager {
                 indicatorEntity.setPermissions(retrievePermissions(indicatorData.getAllowedRoles()));
                 indicatorsMetadataRepo.saveAndFlush(indicatorEntity);
                 logger.info(
-                        "Succesfully updated the roles for indicator dataset with indicatorId '{}'.",
+                        "Successfully updated the roles for indicator dataset with indicatorId '{}'.",
                         indicatorId);
                 return indicatorEntity.getDatasetId();
             } else {
@@ -223,7 +228,43 @@ public class IndicatorsManager {
                     "No indicator dataset with indicatorId '{}' was found in database. Update request has no effect.",
                     indicatorId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                    "Tried to update indicator metadata, but no dataset existes with datasetId " + indicatorId);
+                    "Tried to update indicator permissions, but no dataset exists with datasetId " + indicatorId);
+        }
+    }
+
+    public String updateOwnership(OwnerInputType owner, String indicatorId, String spatialUnitId) throws Exception {
+        logger.info("Trying to update indicator ownership for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
+        if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)) {
+            IndicatorSpatialUnitJoinEntity indicatorEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+            indicatorEntity.setOwner(getOrganizationalUnitEntity(owner.getOwnerId()));
+
+            indicatorsSpatialUnitsRepo.saveAndFlush(indicatorEntity);
+            logger.info("Succesfully updated the ownership for indicator dataset with indicatorId '{}' and spatialUnitId '{}'.",
+                        indicatorId, spatialUnitId);
+            return indicatorEntity.getEntryId();
+
+        } else {
+            logger.error(
+                    "No indicator dataset with indicatorId '{}' and spatialUnitId '{}' was found in database. Update request has no effect.",
+                    indicatorId, spatialUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update indicator permissions, but no dataset exists with datasetId " + indicatorId);
+        }
+    }
+
+    public String updateOwnership(OwnerInputType owner, String indicatorId) throws Exception {
+        logger.info("Trying to update indicator metadata ownership for datasetId '{}'", indicatorId);
+        if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+            MetadataIndicatorsEntity metadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+            metadataEntity.setOwner(getOrganizationalUnitEntity(owner.getOwnerId()));
+
+            indicatorsMetadataRepo.saveAndFlush(metadataEntity);
+            logger.info("Successfully updated the ownership for indicator dataset with indicatorId '{}'.", indicatorId);
+            return indicatorId;
+        } else {
+            logger.error("No indicator dataset with datasetId '{}' was found in database. Update request has no effect.", indicatorId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update indicator ownership, but no dataset exists with datasetId " + indicatorId);
         }
     }
 
@@ -280,7 +321,6 @@ public class IndicatorsManager {
         entity.setProcessDescription(metadata.getProcessDescription());
         entity.setUnit(metadata.getUnit());
         entity.setLowestSpatialUnitForComputation(metadata.getLowestSpatialUnitForComputation());
-        entity.setPermissions(retrievePermissions(metadata.getAllowedRoles()));
 
         if (metadata.getDefaultClassificationMapping() != null) {
             entity.setDefaultClassificationMappingItems(metadata.getDefaultClassificationMapping().getItems());
@@ -1065,6 +1105,14 @@ public class IndicatorsManager {
         return allowedRoles;
     }
 
+    private OrganizationalUnitEntity getOrganizationalUnitEntity(String id) throws ResourceNotFoundException {
+        OrganizationalUnitEntity entity = organizationalUnitRepository.findByOrganizationalUnitId(id);
+        if (entity == null) {
+            throw new ResourceNotFoundException(400, String.format("The requested organizationalUnit does not exist.", id));
+        }
+        return entity;
+    }
+
 //	private void handleInitialIndicatorPersistanceAndPublishing(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, String indicatorName,
 //			String spatialUnitName, String metadataId) throws CQLException, IOException, SQLException, Exception {
 //		String indicatorValueTableName = createIndicatorValueTable(indicatorValues, metadataId);
@@ -1271,6 +1319,7 @@ public class IndicatorsManager {
         entity.setWmsUrl(null);
 
         entity.setPermissions(retrievePermissions(indicatorData.getAllowedRoles()));
+        entity.setOwner(getOrganizationalUnitEntity(indicatorData.getOwnerId()));
 
         /*
          * process availableTimestamps property for indicator metadata entity
