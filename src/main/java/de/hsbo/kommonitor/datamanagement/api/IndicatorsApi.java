@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-13T14:55:48.928542762+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:06.233419477+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "indicators", description = "the Indicators API")
 public interface IndicatorsApi {

@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TopicTypeEnum
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
 public enum TopicTypeEnum {
   
   MAIN("main"),

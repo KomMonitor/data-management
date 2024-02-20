@@ -1,5 +1,14 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,15 +17,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 
 public class GeoresourcesMapper {
 	
@@ -129,7 +129,7 @@ private static GeoresourcesMetadataRepository georesourceMetadataRepo;
 		dataset.setWmsUrl(georesourceMetadataEntity.getWmsUrl());
 		dataset.setWfsUrl(georesourceMetadataEntity.getWfsUrl());
 
-		dataset.setAllowedRoles(getPermissions(georesourceMetadataEntity.getPermissions()));
+		dataset.setPermissions(getPermissions(georesourceMetadataEntity.getPermissions()));
 		dataset.setUserPermissions(georesourceMetadataEntity.getUserPermissions());
 
 		return dataset;

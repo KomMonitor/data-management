@@ -5,8 +5,7 @@ import de.hsbo.kommonitor.datamanagement.api.AccessControlApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
-import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,8 +75,6 @@ public class AccessControlController extends BasePathController implements Acces
     public ResponseEntity<Void> addOrganizationalUnit(OrganizationalUnitInputType organizationalUnitData) {
         logger.info("Received request to insert new organizationalUnit with associated Roles");
 
-        String accept = request.getHeader("Accept");
-
         OrganizationalUnitOverviewType persisted;
         try {
             persisted = organizationalUnitManager.addOrganizationalUnit(organizationalUnitData);
@@ -145,6 +142,22 @@ public class AccessControlController extends BasePathController implements Acces
 
         } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
+    @Override public ResponseEntity<OrganizationalUnitPermissionOverviewType> getOrganizationalUnitPermissions(
+            String organizationalUnitId,
+            ResourceType resourceType) {
+        logger.info("Received request to get organizationalUnit permissions for id '{}'", organizationalUnitId);
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json")) {
+            OrganizationalUnitPermissionOverviewType permissions =
+                    organizationalUnitManager.getOrganizationalUnitPermissionsById(organizationalUnitId);
+            return new ResponseEntity<>(permissions, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

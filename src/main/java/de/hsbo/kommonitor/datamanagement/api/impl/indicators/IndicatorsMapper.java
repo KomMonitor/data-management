@@ -1,19 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
@@ -24,6 +11,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorR
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
@@ -33,7 +21,18 @@ import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorSpatialUnitJoinItem;
 import de.hsbo.kommonitor.datamanagement.model.OgcServicesType;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class IndicatorsMapper {
@@ -234,7 +233,7 @@ public class IndicatorsMapper {
 		indicatorOverviewType.setUserPermissions(indicatorsMetadataEntity.getUserPermissions());
 
 
-		indicatorOverviewType.setAllowedRoles(getAllowedRoleIds(indicatorsMetadataEntity.getPermissions()));
+		indicatorOverviewType.setPermissions(getAllowedRoleIds(indicatorsMetadataEntity.getPermissions()));
 
 		return indicatorOverviewType;
 	}
@@ -294,7 +293,7 @@ public class IndicatorsMapper {
 			List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getPermissions().stream()
 					.map(PermissionEntity::getPermissionId)
 					.collect(Collectors.toList());
-			item.setAllowedRoles(allowedRoles);
+			item.setPermissions(allowedRoles);
 			item.setUserPermissions(indicatorSpatialUnitJoinEntity.getUserPermissions());
 
 			indicatorSpatialUnitJoinItems.add(item);

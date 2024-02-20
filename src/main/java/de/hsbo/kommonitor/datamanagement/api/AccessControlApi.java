@@ -7,6 +7,8 @@ package de.hsbo.kommonitor.datamanagement.api;
 
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.ResourceType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,7 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:36:13.690775700+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:06.233419477+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "access-control", description = "the AccessControl API")
 public interface AccessControlApi {
@@ -154,6 +156,48 @@ public interface AccessControlApi {
 
 
     /**
+     * GET /organizationalUnits/{organizationalUnitId}/permissions : Retrieve information about selected organizationalUnits permissions
+     * retrieve information about selected organizationalUnits permissions
+     *
+     * @param organizationalUnitId organizationalUnitId (required)
+     * @param resourceType resourceType (optional)
+     * @return OK (status code 200)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "getOrganizationalUnitPermissions",
+        summary = "Retrieve information about selected organizationalUnits permissions",
+        description = "retrieve information about selected organizationalUnits permissions",
+        tags = { "access-control" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationalUnitPermissionOverviewType.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/organizationalUnits/{organizationalUnitId}/permissions",
+        produces = { "application/json" }
+    )
+    
+    ResponseEntity<OrganizationalUnitPermissionOverviewType> getOrganizationalUnitPermissions(
+        @Parameter(name = "organizationalUnitId", description = "organizationalUnitId", required = true, in = ParameterIn.PATH) @PathVariable("organizationalUnitId") String organizationalUnitId,
+        @Parameter(name = "resourceType", description = "resourceType", in = ParameterIn.QUERY) @Valid @RequestParam(value = "resourceType", required = false) ResourceType resourceType
+    );
+
+
+    /**
      * GET /organizationalUnits : Retrieve information about available organizationalUnits
      * retrieve information about available organizationalUnits
      *
@@ -197,7 +241,7 @@ public interface AccessControlApi {
      * Modify organizationalUnit information
      *
      * @param organizationalUnitId organizationalUnitId (required)
-     * @param inputData roleData (required)
+     * @param inputData organizationUnitMetadata (required)
      * @return OK (status code 200)
      *         or Created (status code 201)
      *         or API key is missing or invalid (status code 401)
@@ -230,7 +274,7 @@ public interface AccessControlApi {
     
     ResponseEntity<Void> updateOrganizationalUnit(
         @Parameter(name = "organizationalUnitId", description = "organizationalUnitId", required = true, in = ParameterIn.PATH) @PathVariable("organizationalUnitId") String organizationalUnitId,
-        @Parameter(name = "inputData", description = "roleData", required = true) @Valid @RequestBody OrganizationalUnitInputType inputData
+        @Parameter(name = "inputData", description = "organizationUnitMetadata", required = true) @Valid @RequestBody OrganizationalUnitInputType inputData
     );
 
 }

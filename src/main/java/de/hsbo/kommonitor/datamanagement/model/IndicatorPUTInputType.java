@@ -24,13 +24,13 @@ import jakarta.annotation.Generated;
  * IndicatorPUTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
 public class IndicatorPUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Valid
-  private List<String> allowedRoles = new ArrayList<>();
+  private List<String> permissions = new ArrayList<>();
 
   private String applicableSpatialUnit;
 
@@ -46,38 +46,38 @@ public class IndicatorPUTInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorPUTInputType(List<String> allowedRoles, String applicableSpatialUnit, List<@Valid IndicatorPOSTInputTypeIndicatorValues> indicatorValues) {
-    this.allowedRoles = allowedRoles;
+  public IndicatorPUTInputType(List<String> permissions, String applicableSpatialUnit, List<@Valid IndicatorPOSTInputTypeIndicatorValues> indicatorValues) {
+    this.permissions = permissions;
     this.applicableSpatialUnit = applicableSpatialUnit;
     this.indicatorValues = indicatorValues;
   }
 
-  public IndicatorPUTInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public IndicatorPUTInputType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public IndicatorPUTInputType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+  public IndicatorPUTInputType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
    * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
+   * @return permissions
   */
   @NotNull 
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 
   public IndicatorPUTInputType applicableSpatialUnit(String applicableSpatialUnit) {
@@ -157,7 +157,7 @@ public class IndicatorPUTInputType implements Serializable {
       return false;
     }
     IndicatorPUTInputType indicatorPUTInputType = (IndicatorPUTInputType) o;
-    return Objects.equals(this.allowedRoles, indicatorPUTInputType.allowedRoles) &&
+    return Objects.equals(this.permissions, indicatorPUTInputType.permissions) &&
         Objects.equals(this.applicableSpatialUnit, indicatorPUTInputType.applicableSpatialUnit) &&
         Objects.equals(this.defaultClassificationMapping, indicatorPUTInputType.defaultClassificationMapping) &&
         Objects.equals(this.indicatorValues, indicatorPUTInputType.indicatorValues);
@@ -165,14 +165,14 @@ public class IndicatorPUTInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, applicableSpatialUnit, defaultClassificationMapping, indicatorValues);
+    return Objects.hash(permissions, applicableSpatialUnit, defaultClassificationMapping, indicatorValues);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorPUTInputType {\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    applicableSpatialUnit: ").append(toIndentedString(applicableSpatialUnit)).append("\n");
     sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    indicatorValues: ").append(toIndentedString(indicatorValues)).append("\n");

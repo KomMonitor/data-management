@@ -27,13 +27,13 @@ import jakarta.annotation.Generated;
  * GeoresourcePOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-01-22T13:57:49.514058200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
 public class GeoresourcePOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Valid
-  private List<String> allowedRoles;
+  private List<String> permissions;
 
   private String aoiColor;
 
@@ -83,32 +83,32 @@ public class GeoresourcePOSTInputType implements Serializable {
     this.periodOfValidity = periodOfValidity;
   }
 
-  public GeoresourcePOSTInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public GeoresourcePOSTInputType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public GeoresourcePOSTInputType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+  public GeoresourcePOSTInputType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
    * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
+   * @return permissions
   */
   
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 
   public GeoresourcePOSTInputType aoiColor(String aoiColor) {
@@ -440,7 +440,7 @@ public class GeoresourcePOSTInputType implements Serializable {
       return false;
     }
     GeoresourcePOSTInputType georesourcePOSTInputType = (GeoresourcePOSTInputType) o;
-    return Objects.equals(this.allowedRoles, georesourcePOSTInputType.allowedRoles) &&
+    return Objects.equals(this.permissions, georesourcePOSTInputType.permissions) &&
         Objects.equals(this.aoiColor, georesourcePOSTInputType.aoiColor) &&
         Objects.equals(this.datasetName, georesourcePOSTInputType.datasetName) &&
         Objects.equals(this.geoJsonString, georesourcePOSTInputType.geoJsonString) &&
@@ -461,14 +461,14 @@ public class GeoresourcePOSTInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, aoiColor, datasetName, geoJsonString, isAOI, isLOI, isPOI, jsonSchema, loiColor, loiDashArrayString, loiWidth, metadata, periodOfValidity, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
+    return Objects.hash(permissions, aoiColor, datasetName, geoJsonString, isAOI, isLOI, isPOI, jsonSchema, loiColor, loiDashArrayString, loiWidth, metadata, periodOfValidity, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class GeoresourcePOSTInputType {\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    aoiColor: ").append(toIndentedString(aoiColor)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
     sb.append("    geoJsonString: ").append(toIndentedString(geoJsonString)).append("\n");

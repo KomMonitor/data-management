@@ -28,13 +28,13 @@ import jakarta.annotation.Generated;
  * GeoresourceOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-01-22T13:57:49.514058200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
 public class GeoresourceOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Valid
-  private List<String> allowedRoles;
+  private List<String> permissions;
 
   private String aoiColor;
 
@@ -92,32 +92,32 @@ public class GeoresourceOverviewType implements Serializable {
     this.topicReference = topicReference;
   }
 
-  public GeoresourceOverviewType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public GeoresourceOverviewType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public GeoresourceOverviewType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+  public GeoresourceOverviewType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
    * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
+   * @return permissions
   */
   
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 
   public GeoresourceOverviewType aoiColor(String aoiColor) {
@@ -505,7 +505,7 @@ public class GeoresourceOverviewType implements Serializable {
       return false;
     }
     GeoresourceOverviewType georesourceOverviewType = (GeoresourceOverviewType) o;
-    return Objects.equals(this.allowedRoles, georesourceOverviewType.allowedRoles) &&
+    return Objects.equals(this.permissions, georesourceOverviewType.permissions) &&
         Objects.equals(this.aoiColor, georesourceOverviewType.aoiColor) &&
         Objects.equals(this.availablePeriodsOfValidity, georesourceOverviewType.availablePeriodsOfValidity) &&
         Objects.equals(this.datasetName, georesourceOverviewType.datasetName) &&
@@ -528,14 +528,14 @@ public class GeoresourceOverviewType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, aoiColor, availablePeriodsOfValidity, datasetName, georesourceId, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference, userPermissions, wfsUrl, wmsUrl);
+    return Objects.hash(permissions, aoiColor, availablePeriodsOfValidity, datasetName, georesourceId, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference, userPermissions, wfsUrl, wmsUrl);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class GeoresourceOverviewType {\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    aoiColor: ").append(toIndentedString(aoiColor)).append("\n");
     sb.append("    availablePeriodsOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");

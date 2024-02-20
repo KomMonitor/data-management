@@ -298,7 +298,7 @@ public class SpatialUnitsManager {
         entity.setWmsUrl(null);
 
         //
-        entity.setPermissions(getPermissionEntities(featureData.getAllowedRoles()));
+        entity.setPermissions(getPermissionEntities(featureData.getPermissions()));
 
         // persist in db
         spatialUnitsMetadataRepo.saveAndFlush(entity);
@@ -520,7 +520,7 @@ public class SpatialUnitsManager {
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
             
-            metadataEntity.setPermissions(getPermissionEntities(permissionLevels.getAllowedRoles()));
+            metadataEntity.setPermissions(getPermissionEntities(permissionLevels.getPermissions()));
 
             spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
             return spatialUnitId;

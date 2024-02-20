@@ -2128,7 +2128,7 @@ paths:
           schema:
             type: string
       requestBody:
-        description: roleData
+        description: organizationUnitMetadata
         content:
           application/json:
             schema:
@@ -5209,7 +5209,7 @@ components:
         - topicReference
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
           description: list of role identifiers that have read access rights for this
             dataset
@@ -5287,7 +5287,7 @@ components:
         - metadata
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
           description: list of role identifiers that have read access rights for this
             dataset
@@ -5349,7 +5349,7 @@ components:
         - isAOI
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
           description: list of role identifiers that have read access rights for this
             dataset
@@ -5451,7 +5451,7 @@ components:
       title: IndicatorMetadataPATCHInputType
       required:
         - abbreviation
-        - allowedRoles
+        - permissions
         - interpretation
         - isHeadlineIndicator
         - metadata
@@ -5464,7 +5464,7 @@ components:
         abbreviation:
           type: string
           description: abbreviated mark of the indicator
-        allowedRoles:
+        permissions:
           type: array
           description: list of role identifiers that have read access rights for this
             dataset
@@ -5560,7 +5560,7 @@ components:
         abbreviation:
           type: string
           description: abbreviated mark of the indicator
-        allowedRoles:
+        permissions:
           type: array
           description: list of role identifiers that have read access rights for this
             dataset
@@ -5671,10 +5671,10 @@ components:
     PermissionLevelInputType:
       title: PermissionLevelInputType
       required:
-        - allowedRoles
+        - permissions
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
           description: list of role identifiers that have read access rights for this
             dataset
@@ -5684,7 +5684,7 @@ components:
       title: IndicatorPOSTInputType
       required:
         - abbreviation
-        - allowedRoles
+        - permissions
         - characteristicValue
         - creationType
         - datasetName
@@ -5701,7 +5701,7 @@ components:
         abbreviation:
           type: string
           description: abbreviated mark of the indicator
-        allowedRoles:
+        permissions:
           type: array
           description: list of role identifiers that have read access rights for this
             dataset
@@ -5827,12 +5827,12 @@ components:
     IndicatorPUTInputType:
       title: IndicatorPUTInputType
       required:
-        - allowedRoles
+        - permissions
         - applicableSpatialUnit
         - indicatorValues
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
           description: list of role identifiers that have read access rights for this
             dataset
@@ -5896,7 +5896,7 @@ components:
         - spatialUnitName
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
           description: list of role identifiers that have read access rights for this
             dataset
@@ -5963,53 +5963,72 @@ components:
     OrganizationalUnitInputType:
       title: OrganizationalUnitInputType
       required:
-        - contact
         - name
+        - mandant
+        - keycloakId
+        - contact
       type: object
       properties:
+        organizationalUnitId:
+          type: string
+          description: unique id of this organizational Unit
+        name:
+          type: string
+          description: name of this organizational Unit
+        mandant:
+          type: boolean
+          description: flag whether this unit is an autonomous mandant
+        keycloakId:
+          type: string
+          description: uuid of the corresponding Keycloak group
         contact:
           type: string
           description: contact information of the person responsible for this group
         description:
           type: string
           description: additional information
-        name:
-          type: string
-          description: name of this organizational Unit
       description: organizational unit (group)
     OrganizationalUnitOverviewType:
       title: OrganizationalUnitOverviewType
       required:
-        - contact
-        - name
         - organizationalUnitId
-        - roles
+        - name
+        - mandant
+        - keycloakId
+        - contact
+        - permissions
       type: object
       properties:
+        organizationalUnitId:
+          type: string
+          description: unique id of this organizational Unit
+        name:
+          type: string
+          description: name of this organizational Unit
+        mandant:
+          type: boolean
+          description: flag whether this unit is an autonomous mandant
+        keycloakId:
+          type: string
+          description: uuid of the corresponding Keycloak group
         contact:
           type: string
           description: contact information of the person responsible for this group
         description:
           type: string
           description: additional information
-        name:
-          type: string
-          description: name of this organizational Unit
-        organizationalUnitId:
-          type: string
-          description: unique id of this organizational Unit
-        roles:
+        permissions:
           type: array
           items:
-            $ref: '#/components/schemas/RoleOverviewType'
+            $ref: '#/components/schemas/PermissionOverviewType'
       description: organizational unit (group)
     ResourceType:
       type: string
       enum:
-      - georesources
-      - spatialunits,
-      - indicators
-      - indicatorspatialunits
+        - georesources
+        - spatialunits,
+        - indicators
+        - indicatorspatialunits
     OrganizationalUnitPermissionOverviewElementType:
       type: object
       required:
@@ -6261,24 +6280,25 @@ components:
             They are used within the script to parameterize the indicator computation
           items:
             $ref: '#/components/schemas/ProcessInputType'
-    RoleOverviewType:
-      title: RoleOverviewType
+    PermissionOverviewType:
+      title: PermissionOverviewType
       required:
         - permissionLevel
-        - roleId
+        - permissionId
       type: object
       properties:
         permissionLevel:
           $ref: '#/components/schemas/PermissionLevelType'
-        roleId:
+        permissioneType:
+          $ref: '#/components/schemas/PermissionResourceType'
+        permissionId:
           type: string
-          description: the unique role identifier
-      description: Combination of organizationalUnit and permissionLevel to control
-        access to a resource
+          description: the unique identifier of the permission
+      description: Metadata of a permission
     SpatialUnitOverviewType:
       title: SpatialUnitOverviewType
       required:
-        - allowedRoles
+        - permissions
         - metadata
         - nextLowerHierarchyLevel
         - nextUpperHierarchyLevel
@@ -6289,7 +6309,7 @@ components:
         - wmsUrl
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
           description: list of role identifiers that have read access rights for this
             dataset
@@ -6346,20 +6366,20 @@ components:
     SpatialUnitPATCHInputType:
       title: SpatialUnitPATCHInputType
       required:
-        - allowedRoles
+        - permissions
         - metadata
         - datasetName
         - nextLowerHierarchyLevel
         - nextUpperHierarchyLevel
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
           description: list of role identifiers that have read access rights for this
             dataset
           items:
             type: string
-        datasetName: 
+        datasetName:
           type: string
           description: the name of the spatial unit - its "spatialUnitLevel"
         metadata:
@@ -6389,7 +6409,7 @@ components:
     SpatialUnitPOSTInputType:
       title: SpatialUnitPOSTInputType
       required:
-        - allowedRoles
+        - permissions
         - geoJsonString
         - jsonSchema
         - metadata
@@ -6399,7 +6419,7 @@ components:
         - spatialUnitLevel
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
           description: list of role identifiers that have read access rights for this
             dataset
@@ -6540,13 +6560,8 @@ components:
     PermissionLevelType:
       type: string
       description: Permission Levels for CRUD operations.
-        "crud" = create, read, update, delete
-        "cru" = create, read, update
-        "ru" = read, update
-        "r" = read
       enum:
         - creator
-        - publisher
         - editor
         - viewer
     PermissionResourceType:

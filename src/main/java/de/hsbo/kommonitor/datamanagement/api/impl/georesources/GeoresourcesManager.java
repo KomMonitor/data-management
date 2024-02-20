@@ -266,7 +266,7 @@ public class GeoresourcesManager {
 		entity.setWfsUrl(null);
 		entity.setWmsUrl(null);
 
-		entity.setPermissions(retrievePermissions(featureData.getAllowedRoles()));
+		entity.setPermissions(retrievePermissions(featureData.getPermissions()));
 
 		// persist in db
 		georesourcesMetadataRepo.saveAndFlush(entity);
@@ -749,7 +749,7 @@ public class GeoresourcesManager {
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
-			metadataEntity.setPermissions(retrievePermissions(permissionLevelInput.getAllowedRoles()));
+			metadataEntity.setPermissions(retrievePermissions(permissionLevelInput.getPermissions()));
 
 			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 			return georesourceId;
@@ -799,7 +799,7 @@ public class GeoresourcesManager {
 
 		entity.setTopicReference(metadata.getTopicReference());
 
-		entity.setPermissions(retrievePermissions(metadata.getAllowedRoles()));
+		entity.setPermissions(retrievePermissions(metadata.getPermissions()));
 
 		// persist in db
 		georesourcesMetadataRepo.saveAndFlush(entity);
