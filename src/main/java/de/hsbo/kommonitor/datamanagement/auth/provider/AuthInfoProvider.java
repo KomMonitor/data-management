@@ -1,18 +1,11 @@
 package de.hsbo.kommonitor.datamanagement.auth.provider;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
-import org.keycloak.KeycloakPrincipal;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.util.Pair;
+import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 
-import java.lang.reflect.ParameterizedType;
-import java.security.Principal;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * Interface that provides authentication and authorization information
@@ -22,10 +15,36 @@ import java.util.stream.Collectors;
  */
 public interface AuthInfoProvider {
 
-    boolean checkPermissions(final RestrictedByRole entity, final PermissionLevelType neededLevel);
+    /**
+     * Checks if the current user has at least the given level of permission on the given entitiy
+     *
+     * @param entity entity to be checked
+     * @param neededLevel level to be checked
+     * @return True if the user has at least the given level on the given entity
+     */
+    boolean checkPermissions(final RestrictedEntity entity, final PermissionLevelType neededLevel);
 
-    List<PermissionLevelType> getPermissions(RestrictedByRole entity);
+    /**
+     * Lists all permissions the current user has on given entity
+     * @param entity entity to be checked
+     * @return list of permissions
+     */
+    List<PermissionLevelType> getPermissions(RestrictedEntity entity);
 
+    /**
+     * Checks if the current user has the given permission level on at least one entity in the database
+     *
+     * @param neededLevel level to be checked
+     * @return True if user has at least one permissionlevel lower or equal the given level
+     */
     boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel);
+
+    /**
+     * Checks if the current user has the given permission level for the given resource type
+     *
+     * @param permissionResourceType resource type what the permission refers to
+     * @return True if user has the required permission
+     */
+    boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel, PermissionResourceType permissionResourceType);
 
 }

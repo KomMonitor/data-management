@@ -25,13 +25,13 @@ import jakarta.annotation.Generated;
  * SpatialUnitPOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-08T21:24:51.431812+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
 public class SpatialUnitPOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Valid
-  private List<String> allowedRoles = new ArrayList<>();
+  private List<String> permissions = new ArrayList<>();
 
   private String geoJsonString;
 
@@ -55,6 +55,10 @@ public class SpatialUnitPOSTInputType implements Serializable {
 
   private String outlineDashArrayString;
 
+  private String ownerId;
+
+  private Boolean isPublic;
+
   public SpatialUnitPOSTInputType() {
     super();
   }
@@ -62,8 +66,8 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public SpatialUnitPOSTInputType(List<String> allowedRoles, String geoJsonString, String jsonSchema, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel, PeriodOfValidityType periodOfValidity, String spatialUnitLevel) {
-    this.allowedRoles = allowedRoles;
+  public SpatialUnitPOSTInputType(List<String> permissions, String geoJsonString, String jsonSchema, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel, PeriodOfValidityType periodOfValidity, String spatialUnitLevel, Boolean isPublic) {
+    this.permissions = permissions;
     this.geoJsonString = geoJsonString;
     this.jsonSchema = jsonSchema;
     this.metadata = metadata;
@@ -71,34 +75,35 @@ public class SpatialUnitPOSTInputType implements Serializable {
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
     this.periodOfValidity = periodOfValidity;
     this.spatialUnitLevel = spatialUnitLevel;
+    this.isPublic = isPublic;
   }
 
-  public SpatialUnitPOSTInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public SpatialUnitPOSTInputType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public SpatialUnitPOSTInputType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+  public SpatialUnitPOSTInputType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
+   * list of permissions on this entity
+   * @return permissions
   */
   @NotNull 
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 
   public SpatialUnitPOSTInputType geoJsonString(String geoJsonString) {
@@ -321,6 +326,46 @@ public class SpatialUnitPOSTInputType implements Serializable {
     this.outlineDashArrayString = outlineDashArrayString;
   }
 
+  public SpatialUnitPOSTInputType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+  
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
+  public SpatialUnitPOSTInputType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+  @NotNull 
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -330,7 +375,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
       return false;
     }
     SpatialUnitPOSTInputType spatialUnitPOSTInputType = (SpatialUnitPOSTInputType) o;
-    return Objects.equals(this.allowedRoles, spatialUnitPOSTInputType.allowedRoles) &&
+    return Objects.equals(this.permissions, spatialUnitPOSTInputType.permissions) &&
         Objects.equals(this.geoJsonString, spatialUnitPOSTInputType.geoJsonString) &&
         Objects.equals(this.jsonSchema, spatialUnitPOSTInputType.jsonSchema) &&
         Objects.equals(this.metadata, spatialUnitPOSTInputType.metadata) &&
@@ -341,19 +386,21 @@ public class SpatialUnitPOSTInputType implements Serializable {
         Objects.equals(this.isOutlineLayer, spatialUnitPOSTInputType.isOutlineLayer) &&
         Objects.equals(this.outlineColor, spatialUnitPOSTInputType.outlineColor) &&
         Objects.equals(this.outlineWidth, spatialUnitPOSTInputType.outlineWidth) &&
-        Objects.equals(this.outlineDashArrayString, spatialUnitPOSTInputType.outlineDashArrayString);
+        Objects.equals(this.outlineDashArrayString, spatialUnitPOSTInputType.outlineDashArrayString) &&
+        Objects.equals(this.ownerId, spatialUnitPOSTInputType.ownerId) &&
+        Objects.equals(this.isPublic, spatialUnitPOSTInputType.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, geoJsonString, jsonSchema, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, periodOfValidity, spatialUnitLevel, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString);
+    return Objects.hash(permissions, geoJsonString, jsonSchema, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, periodOfValidity, spatialUnitLevel, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString, ownerId, isPublic);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class SpatialUnitPOSTInputType {\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    geoJsonString: ").append(toIndentedString(geoJsonString)).append("\n");
     sb.append("    jsonSchema: ").append(toIndentedString(jsonSchema)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
@@ -365,6 +412,8 @@ public class SpatialUnitPOSTInputType implements Serializable {
     sb.append("    outlineColor: ").append(toIndentedString(outlineColor)).append("\n");
     sb.append("    outlineWidth: ").append(toIndentedString(outlineWidth)).append("\n");
     sb.append("    outlineDashArrayString: ").append(toIndentedString(outlineDashArrayString)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");
     return sb.toString();
   }

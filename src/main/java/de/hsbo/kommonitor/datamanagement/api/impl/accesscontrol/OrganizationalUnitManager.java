@@ -4,7 +4,10 @@ import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Transactional
 @Repository
@@ -28,7 +31,7 @@ public class OrganizationalUnitManager {
     OrganizationalUnitRepository organizationalUnitRepository;
 
     @Autowired
-    RolesManager rolesManager;
+    PermissionManager permissionManager;
 
     @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
     private String defaultAnonymousOUname;
@@ -37,15 +40,15 @@ public class OrganizationalUnitManager {
     private String defaultAuthenticatedOUname;
 
     public OrganizationalUnitOverviewType addOrganizationalUnit(
-        OrganizationalUnitInputType inputOrganizationalUnit
+            OrganizationalUnitInputType inputOrganizationalUnit
     ) throws Exception {
         String name = inputOrganizationalUnit.getName();
         logger.info("Trying to persist OrganizationalUnit with name '{}'", name);
 
         if (organizationalUnitRepository.existsByName(name)) {
             logger.error(
-                "The OrganizationalUnit with name '{}' already exists. Thus aborting add OrganizationalUnit request.",
-                name);
+                    "The OrganizationalUnit with name '{}' already exists. Thus aborting add OrganizationalUnit request.",
+                    name);
             throw new Exception("OrganizationalUnit already exists. Aborting addOrganizationalUnit request.");
         }
 
@@ -56,14 +59,31 @@ public class OrganizationalUnitManager {
         jpaUnit.setName(name);
         jpaUnit.setContact(inputOrganizationalUnit.getContact());
         jpaUnit.setDescription(inputOrganizationalUnit.getDescription());
+        jpaUnit.setKeycloakId(UUID.fromString(inputOrganizationalUnit.getKeycloakId()));
+        jpaUnit.setMandant(inputOrganizationalUnit.getMandant());
+
+        if (!inputOrganizationalUnit.getParentId().isEmpty()) {
+            OrganizationalUnitEntity parent =
+                    organizationalUnitRepository.findByOrganizationalUnitId(inputOrganizationalUnit.getParentId());
+            if (parent == null) {
+                logger.error(
+                        "parent with given id {} does not exist.",
+                        inputOrganizationalUnit.getParentId());
+                throw new Exception("parent with given id does not exist");
+            }
+            jpaUnit.setParent(parent);
+        }
+
         OrganizationalUnitEntity saved = organizationalUnitRepository.saveAndFlush(jpaUnit);
 
         // Generate appropriate roles
-        List<RolesEntity> roles = new ArrayList<>();
+        List<PermissionEntity> roles = new ArrayList<>();
         for (PermissionLevelType level : PermissionLevelType.values()) {
-            roles.add(rolesManager.addRole(saved, level));
+            roles.add(permissionManager.addPermission(saved, level, PermissionResourceType.RESOURCES));
         }
-        saved.setRoles(roles);
+        roles.add(permissionManager.addPermission(saved, PermissionLevelType.CREATOR, PermissionResourceType.USERS));
+        roles.add(permissionManager.addPermission(saved, PermissionLevelType.CREATOR, PermissionResourceType.THEMES));
+        saved.setPermissions(roles);
 
         return AccessControlMapper.mapToSwaggerOrganizationalUnit(saved);
     }
@@ -75,7 +95,7 @@ public class OrganizationalUnitManager {
             if (unit.getName().equals(defaultAnonymousOUname) || unit.getName().equals(defaultAuthenticatedOUname)) {
                 logger.error("Trying to delete default OrganizationalUnits.");
                 throw new ApiException(HttpStatus.FORBIDDEN.value(),
-                                       "Tried to delete default OrganizationalUnits");
+                        "Tried to delete default OrganizationalUnits");
             }
 
             // This should automatically propagate to associated roles via @CascadeType.REMOVE
@@ -83,11 +103,11 @@ public class OrganizationalUnitManager {
             return true;
         } else {
             logger.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
-                         organizationalUnitId);
+                    organizationalUnitId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                                                "Tried to delete OrganizationalUnit, but no OrganizationalUnit " +
-                                                    "existes with id " +
-                                                    organizationalUnitId);
+                    "Tried to delete OrganizationalUnit, but no OrganizationalUnit " +
+                            "existes with id " +
+                            organizationalUnitId);
         }
     }
 
@@ -95,11 +115,17 @@ public class OrganizationalUnitManager {
         logger.info("Retrieving OrganizationalUnit for organizationalUnitId '{}'", organizationalUnitId);
 
         OrganizationalUnitEntity OrganizationalUnitEntity =
-            organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
-        OrganizationalUnitOverviewType organizationalUnit =
-            AccessControlMapper.mapToSwaggerOrganizationalUnit(OrganizationalUnitEntity);
+                organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
 
-        return organizationalUnit;
+        return AccessControlMapper.mapToSwaggerOrganizationalUnit(OrganizationalUnitEntity);
+    }
+
+    public OrganizationalUnitPermissionOverviewType getOrganizationalUnitPermissionsById(String organizationalUnitId) {
+        logger.info("Retrieving OrganizationalUnit->permissions for organizationalUnitId '{}'", organizationalUnitId);
+
+        OrganizationalUnitEntity organizationalUnitEntity =
+                organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
+        return AccessControlMapper.mapToSwapperOUPermissionOverviewType(organizationalUnitEntity);
     }
 
     public List<OrganizationalUnitOverviewType> getOrganizationalUnits() {
@@ -107,30 +133,44 @@ public class OrganizationalUnitManager {
 
         List<OrganizationalUnitEntity> OrganizationalUnitEntities = organizationalUnitRepository.findAll();
         List<OrganizationalUnitOverviewType> organizationalUnits =
-            AccessControlMapper.mapToSwaggerOrganizationalUnits(OrganizationalUnitEntities);
+                AccessControlMapper.mapToSwaggerOrganizationalUnits(OrganizationalUnitEntities);
 
         return organizationalUnits;
     }
 
     public String updateOrganizationalUnit(OrganizationalUnitInputType newData,
-                                           String organizationalUnitId) throws ResourceNotFoundException {
+                                           String organizationalUnitId) throws Exception {
         logger.info("Trying to update OrganizationalUnit with organizationalUnitId '{}'", organizationalUnitId);
         if (organizationalUnitRepository.existsByOrganizationalUnitId(organizationalUnitId)) {
             OrganizationalUnitEntity organizationalUnitEntity =
-                organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
+                    organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
 
             organizationalUnitEntity.setName(newData.getName());
             organizationalUnitEntity.setContact(newData.getContact());
             organizationalUnitEntity.setDescription(newData.getDescription());
+            organizationalUnitEntity.setKeycloakId(UUID.fromString(newData.getKeycloakId()));
+            organizationalUnitEntity.setMandant(newData.getMandant());
+
+            if (organizationalUnitEntity.getParent() != null) {
+                OrganizationalUnitEntity parent =
+                        organizationalUnitRepository.findByOrganizationalUnitId(newData.getParentId());
+                if (parent == null) {
+                    logger.error(
+                            "parent with given id {} does not exist.",
+                            newData.getParentId());
+                    throw new Exception("parent with given id does not exist");
+                }
+                organizationalUnitEntity.setParent(parent);
+            }
 
             organizationalUnitRepository.saveAndFlush(organizationalUnitEntity);
             return organizationalUnitEntity.getOrganizationalUnitId();
         } else {
             logger.error("No OrganizationalUnit with id '{}' was found in database. Update request has no effect.",
-                         organizationalUnitId);
+                    organizationalUnitId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                                                "Tried to update OrganizationalUnit, but no OrganizationalUnit " +
-                                                    "exists with id " + organizationalUnitId);
+                    "Tried to update OrganizationalUnit, but no OrganizationalUnit " +
+                            "exists with id " + organizationalUnitId);
         }
     }
 

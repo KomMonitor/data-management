@@ -5,8 +5,7 @@ import de.hsbo.kommonitor.datamanagement.api.AccessControlApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
-import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +28,6 @@ public class AccessControlController extends BasePathController implements Acces
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
-
-    @Autowired
-    RolesManager rolesManager;
 
     @Autowired
     OrganizationalUnitManager organizationalUnitManager;
@@ -75,11 +71,9 @@ public class AccessControlController extends BasePathController implements Acces
     }
 
     @Override
-    @PreAuthorize("hasRequiredPermissionLevel('creator')")
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
     public ResponseEntity<Void> addOrganizationalUnit(OrganizationalUnitInputType organizationalUnitData) {
         logger.info("Received request to insert new organizationalUnit with associated Roles");
-
-        String accept = request.getHeader("Accept");
 
         OrganizationalUnitOverviewType persisted;
         try {
@@ -104,7 +98,7 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
-    @PreAuthorize("hasRequiredPermissionLevel('creator')")
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
     @Override public ResponseEntity<Void> updateOrganizationalUnit(
             String organizationalUnitId,
             OrganizationalUnitInputType inputData) {
@@ -132,7 +126,7 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
-    @PreAuthorize("hasRequiredPermissionLevel('creator')")
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
     @Override public ResponseEntity deleteOrganizationalUnit(String organizationalUnitId) {
         logger.info("Received request to delete organizationalUnit and associated roles for id '{}'",
                     organizationalUnitId);
@@ -148,6 +142,22 @@ public class AccessControlController extends BasePathController implements Acces
 
         } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
+    @Override public ResponseEntity<OrganizationalUnitPermissionOverviewType> getOrganizationalUnitPermissions(
+            String organizationalUnitId,
+            ResourceType resourceType) {
+        logger.info("Received request to get organizationalUnit permissions for id '{}'", organizationalUnitId);
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json")) {
+            OrganizationalUnitPermissionOverviewType permissions =
+                    organizationalUnitManager.getOrganizationalUnitPermissionsById(organizationalUnitId);
+            return new ResponseEntity<>(permissions, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

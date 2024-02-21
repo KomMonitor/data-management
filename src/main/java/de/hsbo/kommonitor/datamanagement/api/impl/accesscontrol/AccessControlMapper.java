@@ -1,19 +1,16 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewTypePermissions;
+import de.hsbo.kommonitor.datamanagement.model.PermissionOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.RoleOverviewType;
+import java.util.stream.Collectors;
 
 public class AccessControlMapper {
-
-    public static RoleOverviewType mapToSwaggerRole(RolesEntity roleEntity) {
-        RoleOverviewType role = new RoleOverviewType();
-        role.setRoleId(roleEntity.getRoleId());
-        role.setPermissionLevel(roleEntity.getPermissionLevel());
-        return role;
-    }
 
     public static OrganizationalUnitOverviewType mapToSwaggerOrganizationalUnit(OrganizationalUnitEntity ouEntity) {
         OrganizationalUnitOverviewType ou = new OrganizationalUnitOverviewType();
@@ -21,21 +18,21 @@ public class AccessControlMapper {
         ou.setName(ouEntity.getName());
         ou.setContact(ouEntity.getContact());
         ou.setDescription(ouEntity.getDescription());
-        ou.setRoles(mapToSwaggerRoles(ouEntity.getRoles()));
+        ou.setPermissions(mapToSwaggerPermissions(ouEntity.getPermissions()));
+        ou.setKeycloakId(ouEntity.getKeycloakId().toString());
+        ou.setMandant(ouEntity.isMandant());
+        if (ouEntity.getParent() != null) {
+            ou.setParentId(ouEntity.getParent().getOrganizationalUnitId());
+        }
+        if (ouEntity.getChildren() != null) {
+            ou.setChildren(ouEntity.getChildren().stream().map(OrganizationalUnitEntity::getOrganizationalUnitId)
+                    .collect(Collectors.toList()));
+        }
         return ou;
     }
 
-    public static List<RoleOverviewType> mapToSwaggerRoles(List<RolesEntity> roleEntities) {
-        List<RoleOverviewType> roles = new ArrayList<RoleOverviewType>(roleEntities.size());
-
-        for (RolesEntity roleEntity : roleEntities) {
-            roles.add(mapToSwaggerRole(roleEntity));
-        }
-        return roles;
-    }
-
     public static List<OrganizationalUnitOverviewType> mapToSwaggerOrganizationalUnits(
-        List<OrganizationalUnitEntity> ouEntities
+            List<OrganizationalUnitEntity> ouEntities
     ) {
         List<OrganizationalUnitOverviewType> ous = new ArrayList<>(ouEntities.size());
 
@@ -43,6 +40,41 @@ public class AccessControlMapper {
             ous.add(mapToSwaggerOrganizationalUnit(entity));
         }
         return ous;
+    }
+
+    public static PermissionOverviewType mapToSwaggerPermission(PermissionEntity roleEntity) {
+        PermissionOverviewType role = new PermissionOverviewType();
+        role.setPermissionId(roleEntity.getPermissionId());
+        role.setPermissioneType(PermissionResourceType.fromValue(roleEntity.getPermissionType()));
+        role.setPermissionLevel(roleEntity.getPermissionLevel());
+        return role;
+    }
+
+    public static List<PermissionOverviewType> mapToSwaggerPermissions(List<PermissionEntity> roleEntities) {
+        List<PermissionOverviewType> roles = new ArrayList<PermissionOverviewType>(roleEntities.size());
+
+        for (PermissionEntity roleEntity : roleEntities) {
+            roles.add(mapToSwaggerPermission(roleEntity));
+        }
+        return roles;
+    }
+
+    public static OrganizationalUnitPermissionOverviewType mapToSwapperOUPermissionOverviewType(
+            OrganizationalUnitEntity ouEntity) {
+        OrganizationalUnitPermissionOverviewType ou = new OrganizationalUnitPermissionOverviewType();
+        ou.setOrganizationalUnitId(ouEntity.getOrganizationalUnitId());
+        ou.setName(ouEntity.getName());
+        ou.setContact(ouEntity.getContact());
+        ou.setDescription(ouEntity.getDescription());
+
+        OrganizationalUnitPermissionOverviewTypePermissions permissions =
+                new OrganizationalUnitPermissionOverviewTypePermissions();
+
+        //TODO(auti); create mapping
+
+        ou.setPermissions(permissions);
+
+        return ou;
     }
 
 }

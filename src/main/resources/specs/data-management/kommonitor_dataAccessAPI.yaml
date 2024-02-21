@@ -467,6 +467,44 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /georesources/{georesourceId}/ownership:
+    put:
+      tags:
+        - georesources
+      summary: update the ownership for the selected geo-resource dataset
+      description: update the ownership for the selected geo-resource dataset
+      operationId: updateGeoresourceOwnership
+      parameters:
+        - name: georesourceId
+          in: path
+          description: identifier of the geo-resource dataset
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: GeoResource ownership input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerInputType'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid status value
+          content: { }
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /georesources/{georesourceId}/schema:
     get:
       tags:
@@ -1289,6 +1327,43 @@ paths:
       security:
         - kommonitor-data-access_oauth: []
       x-codegen-request-body-name: indicatorData
+  /indicators/{indicatorId}/ownership:
+    put:
+      tags:
+        - indicators
+      summary: Modify/Update the selected indicator dataset ownership
+      operationId: updateIndicatorOwnership
+      parameters:
+        - name: indicatorId
+          in: path
+          description: unique identifier of the selected indicator dataset
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Indicator parameters input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerInputType'
+        required: true
+      responses:
+        "204":
+          description: No Content
+          content: {}
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "405":
+          description: Invalid input
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+      x-codegen-request-body-name: indicatorData
   /indicators/{indicatorId}/{spatialUnitId}:
     get:
       tags:
@@ -1472,6 +1547,51 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+      x-codegen-request-body-name: indicatorData
+  /indicators/{indicatorId}/{spatialUnitId}/ownership:
+    put:
+      tags:
+        - indicators
+      summary: Modify/Update the selected indicator dataset ownership
+      operationId: updateIndicatorOwnershipBySpatialUnit
+      parameters:
+        - name: indicatorId
+          in: path
+          description: unique identifier of the selected indicator dataset
+          required: true
+          schema:
+            type: string
+        - name: spatialUnitId
+          in: path
+          description: the unique identifier of the spatial level
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Indicator parameters input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "204":
+          description: No Content
+          content: { }
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
       x-codegen-request-body-name: indicatorData
   /indicators/{indicatorId}/{spatialUnitId}/singleFeature/{featureId}:
     get:
@@ -2128,7 +2248,7 @@ paths:
           schema:
             type: string
       requestBody:
-        description: roleData
+        description: organizationUnitMetadata
         content:
           application/json:
             schema:
@@ -2178,6 +2298,48 @@ paths:
           content: {}
         "403":
           description: Forbidden
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+  /organizationalUnits/{organizationalUnitId}/permissions:
+    get:
+      tags:
+        - access-control
+      summary: Retrieve information about selected organizationalUnits permissions
+      description: retrieve information about selected organizationalUnits permissions
+      operationId: getOrganizationalUnitPermissions
+      parameters:
+        - name: organizationalUnitId
+          in: path
+          description: organizationalUnitId
+          required: true
+          schema:
+            type: string
+        - name: resourceType
+          in: query
+          description: resourceType
+          required: false
+          schema:
+            $ref: "#/components/schemas/ResourceType"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationalUnitPermissionOverviewType'
+        "400":
+          description: Invalid status value
+          content: {}
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
           content: {}
       deprecated: false
       security:
@@ -4531,6 +4693,50 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /spatial-units/{spatialUnitId}/ownership:
+    put:
+      tags:
+        - spatial-units
+      summary: update information about the ownership for the selected spatial
+        unit dataset
+      description: update information about the ownership for the selected spatial
+        unit dataset
+      operationId: updateSpatialUnitsOwnership
+      parameters:
+        - name: spatialUnitId
+          in: path
+          description: identifier of the spatial unit dataset
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Spatial unit ownership input.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "204":
+          description: No Content
+          content: { }
+        "400":
+          description: Invalid status value
+          content: { }
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /spatial-units/{spatialUnitId}/schema:
     get:
       tags:
@@ -5164,13 +5370,13 @@ components:
         - isLOI
         - isPOI
         - metadata
+        - ownerId
         - topicReference
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         aoiColor:
@@ -5209,6 +5415,9 @@ components:
           example: 0.0
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
+        ownerId:
+          type: string
+          description: identifier of the owning group
         poiMarkerColor:
           description: If georesource is a POI then custom POI marker color can be
             set by specifying one of the following color names
@@ -5245,12 +5454,6 @@ components:
         - metadata
       type: object
       properties:
-        allowedRoles:
-          type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
-          items:
-            type: string
         aoiColor:
           type: string
           description: color name or color code (i.e. hex number) for areas of interest
@@ -5305,12 +5508,13 @@ components:
         - isPOI
         - isLOI
         - isAOI
+        - ownerId
+        - isPublic
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         aoiColor:
@@ -5350,6 +5554,9 @@ components:
           example: 0.0
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
+        ownerId:
+          type: string
+          description: identifier of the owning group
         periodOfValidity:
           $ref: '#/components/schemas/PeriodOfValidityType'
         poiMarkerColor:
@@ -5368,6 +5575,9 @@ components:
         topicReference:
           type: string
           description: id of the last topic hierarchy entity
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
     GeoresourcePUTInputType:
       title: GeoresourcePUTInputType
       required:
@@ -5409,7 +5619,6 @@ components:
       title: IndicatorMetadataPATCHInputType
       required:
         - abbreviation
-        - allowedRoles
         - interpretation
         - isHeadlineIndicator
         - metadata
@@ -5422,12 +5631,6 @@ components:
         abbreviation:
           type: string
           description: abbreviated mark of the indicator
-        allowedRoles:
-          type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
-          items:
-            type: string
         characteristicValue:
           type: string
           description: the distuingishing characteristic value of the indicator
@@ -5510,18 +5713,19 @@ components:
         - metadata
         - ogcServices
         - processDescription
+        - ownerId
         - tags
         - topicReference
         - unit
+        - isPublic
       type: object
       properties:
         abbreviation:
           type: string
           description: abbreviated mark of the indicator
-        allowedRoles:
+        permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         applicableDates:
@@ -5579,6 +5783,9 @@ components:
             spatial units
           items:
             $ref: '#/components/schemas/OgcServicesType'
+        ownerId:
+          type: string
+          description: identifier of the owning group
         processDescription:
           type: string
           description: description about how the indicator was computed
@@ -5612,6 +5819,9 @@ components:
             the current user
           items:
             $ref: '#/components/schemas/PermissionLevelType'
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
     IndicatorPATCHDisplayOrderInputType:
       title: IndicatorPATCHDisplayOrderInputType
       required:
@@ -5629,20 +5839,23 @@ components:
     PermissionLevelInputType:
       title: PermissionLevelInputType
       required:
-        - allowedRoles
+        - permissions
+        - isPublic
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
+        isPublic:
+          type: boolean
+          description: flag whether this resource is publicly viewable
     IndicatorPOSTInputType:
       title: IndicatorPOSTInputType
       required:
         - abbreviation
-        - allowedRoles
+        - permissions
         - characteristicValue
         - creationType
         - datasetName
@@ -5650,19 +5863,20 @@ components:
         - interpretation
         - isHeadlineIndicator
         - metadata
+        - ownerId
         - processDescription
         - tags
         - topicReference
         - unit
+        - isPublic
       type: object
       properties:
         abbreviation:
           type: string
           description: abbreviated mark of the indicator
-        allowedRoles:
+        permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         characteristicValue:
@@ -5700,6 +5914,9 @@ components:
             can be computed and thus is available (only necessary for computable indicators)
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
+        ownerId:
+          type: string
+          description: identifier of the owning group
         processDescription:
           type: string
           description: description about how the indicator was computed
@@ -5732,6 +5949,9 @@ components:
         unit:
           type: string
           description: unit of the indicator values
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
     IndicatorPOSTInputTypeIndicatorValues:
       title: IndicatorPOSTInputTypeIndicatorValues
       type: object
@@ -5785,15 +6005,15 @@ components:
     IndicatorPUTInputType:
       title: IndicatorPUTInputType
       required:
-        - allowedRoles
+        - permissions
         - applicableSpatialUnit
         - indicatorValues
+        - ownerId
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         applicableSpatialUnit:
@@ -5806,6 +6026,9 @@ components:
             to spatial features via identifiers
           items:
             $ref: '#/components/schemas/IndicatorPOSTInputTypeIndicatorValues'
+        ownerId:
+          type: string
+          description: identifier of the owning group
     IndicatorPropertiesWithoutGeomType:
       title: IndicatorPropertiesWithoutGeomType
       type: object
@@ -5854,12 +6077,14 @@ components:
         - spatialUnitName
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
+        ownerId:
+          type: string
+          description: identifier of the owning group
         spatialUnitId:
           type: string
           description: ID of the applicable spatial unit
@@ -5921,28 +6146,117 @@ components:
     OrganizationalUnitInputType:
       title: OrganizationalUnitInputType
       required:
-        - contact
         - name
+        - mandant
+        - keycloakId
+        - contact
       type: object
       properties:
+        organizationalUnitId:
+          type: string
+          description: unique id of this organizational Unit
+        name:
+          type: string
+          description: name of this organizational Unit
+        mandant:
+          type: boolean
+          description: flag whether this unit is an autonomous mandant
+        keycloakId:
+          type: string
+          description: uuid of the corresponding Keycloak group
         contact:
           type: string
           description: contact information of the person responsible for this group
         description:
           type: string
           description: additional information
-        name:
+        parentId:
           type: string
-          description: name of this organizational Unit
+          description: uuid of the parent group
       description: organizational unit (group)
     OrganizationalUnitOverviewType:
       title: OrganizationalUnitOverviewType
       required:
+        - organizationalUnitId
+        - name
+        - mandant
+        - keycloakId
+        - contact
+        - permissions
+        - parent
+        - children
+      type: object
+      properties:
+        organizationalUnitId:
+          type: string
+          description: unique id of this organizational Unit
+        name:
+          type: string
+          description: name of this organizational Unit
+        mandant:
+          type: boolean
+          description: flag whether this unit is an autonomous mandant
+        keycloakId:
+          type: string
+          description: uuid of the corresponding Keycloak group
+        contact:
+          type: string
+          description: contact information of the person responsible for this group
+        description:
+          type: string
+          description: additional information
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PermissionOverviewType'
+        parentId:
+          type: string
+          description: uuid of the parent group
+        children:
+          type: array
+          items:
+            type: string
+          description: uuids of the first-level children
+      description: organizational unit (group)
+    ResourceType:
+      type: string
+      enum:
+        - georesources
+        - spatialunits,
+        - indicators
+        - indicatorspatialunits
+    OrganizationalUnitPermissionOverviewElementType:
+      type: object
+      required:
+        - id
+        - permissionLevel
+        - roleId
+      properties:
+        id:
+          type: string
+          format: uuid
+        permissionLevel:
+          type: string
+        roleId:
+          type: string
+          format: uuid
+    OrganizationalUnitPermissionOverviewSpatialUnitElementType:
+      allOf:
+        - $ref: '#/components/schemas/OrganizationalUnitPermissionOverviewElementType'
+        - type: object
+          required:
+            - spatialUnitId
+          properties:
+            spatialUnitId:
+              type: string
+              format: uuid
+    OrganizationalUnitPermissionOverviewType:
+      type: object
+      required:
         - contact
         - name
         - organizationalUnitId
-        - roles
-      type: object
+        - permissions
       properties:
         contact:
           type: string
@@ -5956,11 +6270,33 @@ components:
         organizationalUnitId:
           type: string
           description: unique id of this organizational Unit
-        roles:
-          type: array
-          items:
-            $ref: '#/components/schemas/RoleOverviewType'
-      description: organizational unit (group)
+        permissions:
+          type: object
+          properties:
+            georesources:
+              type: array
+              items:
+                $ref: "#/components/schemas/OrganizationalUnitPermissionOverviewElementType"
+            spatialunits:
+              type: array
+              items:
+                $ref: "#/components/schemas/OrganizationalUnitPermissionOverviewElementType"
+            indicators:
+              type: array
+              items:
+                $ref: "#/components/schemas/OrganizationalUnitPermissionOverviewElementType"
+            indicatorspatialunits:
+              type: array
+              items:
+                $ref: "#/components/schemas/OrganizationalUnitPermissionOverviewSpatialUnitElementType"
+    OwnerInputType:
+      title: OwnerType
+      required:
+        - ownerId
+      properties:
+        ownerId:
+          type: string
+          description: ID of the owning group
     PeriodOfValidityType:
       title: PeriodOfValidityType
       required:
@@ -6148,24 +6484,25 @@ components:
             They are used within the script to parameterize the indicator computation
           items:
             $ref: '#/components/schemas/ProcessInputType'
-    RoleOverviewType:
-      title: RoleOverviewType
+    PermissionOverviewType:
+      title: PermissionOverviewType
       required:
         - permissionLevel
-        - roleId
+        - permissionId
       type: object
       properties:
         permissionLevel:
           $ref: '#/components/schemas/PermissionLevelType'
-        roleId:
+        permissioneType:
+          $ref: '#/components/schemas/PermissionResourceType'
+        permissionId:
           type: string
-          description: the unique role identifier
-      description: Combination of organizationalUnit and permissionLevel to control
-        access to a resource
+          description: the unique identifier of the permission
+      description: Metadata of a permission
     SpatialUnitOverviewType:
       title: SpatialUnitOverviewType
       required:
-        - allowedRoles
+        - permissions
         - metadata
         - nextLowerHierarchyLevel
         - nextUpperHierarchyLevel
@@ -6176,10 +6513,9 @@ components:
         - wmsUrl
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         availablePeriodsOfValidity:
@@ -6230,23 +6566,19 @@ components:
         outlineDashArrayString:
           type: string
           description: 'string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)'
+        ownerId:
+          type: string
+          description: identifier of the owning group
     SpatialUnitPATCHInputType:
       title: SpatialUnitPATCHInputType
       required:
-        - allowedRoles
         - metadata
         - datasetName
         - nextLowerHierarchyLevel
         - nextUpperHierarchyLevel
       type: object
       properties:
-        allowedRoles:
-          type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
-          items:
-            type: string
-        datasetName: 
+        datasetName:
           type: string
           description: the name of the spatial unit - its "spatialUnitLevel"
         metadata:
@@ -6276,7 +6608,7 @@ components:
     SpatialUnitPOSTInputType:
       title: SpatialUnitPOSTInputType
       required:
-        - allowedRoles
+        - permissions
         - geoJsonString
         - jsonSchema
         - metadata
@@ -6284,12 +6616,12 @@ components:
         - nextUpperHierarchyLevel
         - periodOfValidity
         - spatialUnitLevel
+        - isPublic
       type: object
       properties:
-        allowedRoles:
+        permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         geoJsonString:
@@ -6330,6 +6662,12 @@ components:
         outlineDashArrayString:
           type: string
           description: 'string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)'
+        ownerId:
+          type: string
+          description: identifier of the owning group
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
     SpatialUnitPUTInputType:
       title: SpatialUnitPUTInputType
       required:
@@ -6427,15 +6765,17 @@ components:
     PermissionLevelType:
       type: string
       description: Permission Levels for CRUD operations.
-        "crud" = create, read, update, delete
-        "cru" = create, read, update
-        "ru" = read, update
-        "r" = read
       enum:
         - creator
-        - publisher
         - editor
         - viewer
+    PermissionResourceType:
+      type: string
+      description: Defines what resource type a permission refers to (resource, themes or users)
+      enum:
+        - resources
+        - themes
+        - users
     IndicatorTypeEnum:
       type: string
       description: indicates whether the indicator is a status indicator (values represent the extent of the watched

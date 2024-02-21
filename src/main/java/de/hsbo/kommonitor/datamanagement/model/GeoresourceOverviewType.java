@@ -28,13 +28,13 @@ import jakarta.annotation.Generated;
  * GeoresourceOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-01-22T13:57:49.514058200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
 public class GeoresourceOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Valid
-  private List<String> allowedRoles;
+  private List<String> permissions;
 
   private String aoiColor;
 
@@ -59,6 +59,8 @@ public class GeoresourceOverviewType implements Serializable {
 
   private CommonMetadataType metadata;
 
+  private String ownerId;
+
   private ColorType poiMarkerColor;
 
   private String poiSymbolBootstrap3Name;
@@ -81,7 +83,7 @@ public class GeoresourceOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public GeoresourceOverviewType(List<@Valid PeriodOfValidityType> availablePeriodsOfValidity, String datasetName, String georesourceId, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, String topicReference) {
+  public GeoresourceOverviewType(List<@Valid PeriodOfValidityType> availablePeriodsOfValidity, String datasetName, String georesourceId, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, String ownerId, String topicReference) {
     this.availablePeriodsOfValidity = availablePeriodsOfValidity;
     this.datasetName = datasetName;
     this.georesourceId = georesourceId;
@@ -89,35 +91,36 @@ public class GeoresourceOverviewType implements Serializable {
     this.isLOI = isLOI;
     this.isPOI = isPOI;
     this.metadata = metadata;
+    this.ownerId = ownerId;
     this.topicReference = topicReference;
   }
 
-  public GeoresourceOverviewType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public GeoresourceOverviewType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public GeoresourceOverviewType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+  public GeoresourceOverviewType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
+   * list of permissions on this entity
+   * @return permissions
   */
   
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 
   public GeoresourceOverviewType aoiColor(String aoiColor) {
@@ -348,6 +351,26 @@ public class GeoresourceOverviewType implements Serializable {
     this.metadata = metadata;
   }
 
+  public GeoresourceOverviewType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+  @NotNull 
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
   public GeoresourceOverviewType poiMarkerColor(ColorType poiMarkerColor) {
     this.poiMarkerColor = poiMarkerColor;
     return this;
@@ -505,7 +528,7 @@ public class GeoresourceOverviewType implements Serializable {
       return false;
     }
     GeoresourceOverviewType georesourceOverviewType = (GeoresourceOverviewType) o;
-    return Objects.equals(this.allowedRoles, georesourceOverviewType.allowedRoles) &&
+    return Objects.equals(this.permissions, georesourceOverviewType.permissions) &&
         Objects.equals(this.aoiColor, georesourceOverviewType.aoiColor) &&
         Objects.equals(this.availablePeriodsOfValidity, georesourceOverviewType.availablePeriodsOfValidity) &&
         Objects.equals(this.datasetName, georesourceOverviewType.datasetName) &&
@@ -517,6 +540,7 @@ public class GeoresourceOverviewType implements Serializable {
         Objects.equals(this.loiDashArrayString, georesourceOverviewType.loiDashArrayString) &&
         Objects.equals(this.loiWidth, georesourceOverviewType.loiWidth) &&
         Objects.equals(this.metadata, georesourceOverviewType.metadata) &&
+        Objects.equals(this.ownerId, georesourceOverviewType.ownerId) &&
         Objects.equals(this.poiMarkerColor, georesourceOverviewType.poiMarkerColor) &&
         Objects.equals(this.poiSymbolBootstrap3Name, georesourceOverviewType.poiSymbolBootstrap3Name) &&
         Objects.equals(this.poiSymbolColor, georesourceOverviewType.poiSymbolColor) &&
@@ -528,14 +552,14 @@ public class GeoresourceOverviewType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, aoiColor, availablePeriodsOfValidity, datasetName, georesourceId, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference, userPermissions, wfsUrl, wmsUrl);
+    return Objects.hash(permissions, aoiColor, availablePeriodsOfValidity, datasetName, georesourceId, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, ownerId, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference, userPermissions, wfsUrl, wmsUrl);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class GeoresourceOverviewType {\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    aoiColor: ").append(toIndentedString(aoiColor)).append("\n");
     sb.append("    availablePeriodsOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
@@ -547,6 +571,7 @@ public class GeoresourceOverviewType implements Serializable {
     sb.append("    loiDashArrayString: ").append(toIndentedString(loiDashArrayString)).append("\n");
     sb.append("    loiWidth: ").append(toIndentedString(loiWidth)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    poiMarkerColor: ").append(toIndentedString(poiMarkerColor)).append("\n");
     sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");
     sb.append("    poiSymbolColor: ").append(toIndentedString(poiSymbolColor)).append("\n");

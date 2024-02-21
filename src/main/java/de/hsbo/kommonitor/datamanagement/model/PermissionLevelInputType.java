@@ -22,13 +22,15 @@ import jakarta.annotation.Generated;
  * PermissionLevelInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-13T14:55:48.334317263+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
 public class PermissionLevelInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Valid
-  private List<String> allowedRoles = new ArrayList<>();
+  private List<String> permissions = new ArrayList<>();
+
+  private Boolean isPublic;
 
   public PermissionLevelInputType() {
     super();
@@ -37,36 +39,57 @@ public class PermissionLevelInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public PermissionLevelInputType(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public PermissionLevelInputType(List<String> permissions, Boolean isPublic) {
+    this.permissions = permissions;
+    this.isPublic = isPublic;
   }
 
-  public PermissionLevelInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public PermissionLevelInputType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public PermissionLevelInputType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+  public PermissionLevelInputType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
+   * list of permissions on this entity
+   * @return permissions
   */
   @NotNull 
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
+  }
+
+  public PermissionLevelInputType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether this resource is publicly viewable
+   * @return isPublic
+  */
+  @NotNull 
+  @Schema(name = "isPublic", description = "flag whether this resource is publicly viewable", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
   }
 
   @Override
@@ -78,19 +101,21 @@ public class PermissionLevelInputType implements Serializable {
       return false;
     }
     PermissionLevelInputType permissionLevelInputType = (PermissionLevelInputType) o;
-    return Objects.equals(this.allowedRoles, permissionLevelInputType.allowedRoles);
+    return Objects.equals(this.permissions, permissionLevelInputType.permissions) &&
+        Objects.equals(this.isPublic, permissionLevelInputType.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles);
+    return Objects.hash(permissions, isPublic);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class PermissionLevelInputType {\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");
     return sb.toString();
   }

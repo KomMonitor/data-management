@@ -33,7 +33,7 @@ import jakarta.annotation.Generated;
  * IndicatorOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
 public class IndicatorOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class IndicatorOverviewType implements Serializable {
   private String abbreviation;
 
   @Valid
-  private List<String> allowedRoles;
+  private List<String> permissions;
 
   @Valid
   private List<String> applicableDates = new ArrayList<>();
@@ -74,6 +74,8 @@ public class IndicatorOverviewType implements Serializable {
   @Valid
   private List<@Valid OgcServicesType> ogcServices = new ArrayList<>();
 
+  private String ownerId;
+
   private String processDescription;
 
   private String referenceDateNote;
@@ -94,6 +96,8 @@ public class IndicatorOverviewType implements Serializable {
   @Valid
   private List<PermissionLevelType> userPermissions;
 
+  private Boolean isPublic;
+
   public IndicatorOverviewType() {
     super();
   }
@@ -101,7 +105,7 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorOverviewType(String abbreviation, List<String> applicableDates, List<@Valid IndicatorSpatialUnitJoinItem> applicableSpatialUnits, String characteristicValue, CreationTypeEnum creationType, String indicatorId, String indicatorName, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, List<@Valid OgcServicesType> ogcServices, String processDescription, List<String> tags, String topicReference, String unit) {
+  public IndicatorOverviewType(String abbreviation, List<String> applicableDates, List<@Valid IndicatorSpatialUnitJoinItem> applicableSpatialUnits, String characteristicValue, CreationTypeEnum creationType, String indicatorId, String indicatorName, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, List<@Valid OgcServicesType> ogcServices, String ownerId, String processDescription, List<String> tags, String topicReference, String unit, Boolean isPublic) {
     this.abbreviation = abbreviation;
     this.applicableDates = applicableDates;
     this.applicableSpatialUnits = applicableSpatialUnits;
@@ -113,10 +117,12 @@ public class IndicatorOverviewType implements Serializable {
     this.isHeadlineIndicator = isHeadlineIndicator;
     this.metadata = metadata;
     this.ogcServices = ogcServices;
+    this.ownerId = ownerId;
     this.processDescription = processDescription;
     this.tags = tags;
     this.topicReference = topicReference;
     this.unit = unit;
+    this.isPublic = isPublic;
   }
 
   public IndicatorOverviewType abbreviation(String abbreviation) {
@@ -139,32 +145,32 @@ public class IndicatorOverviewType implements Serializable {
     this.abbreviation = abbreviation;
   }
 
-  public IndicatorOverviewType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public IndicatorOverviewType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public IndicatorOverviewType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+  public IndicatorOverviewType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
+   * list of permissions on this entity
+   * @return permissions
   */
   
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 
   public IndicatorOverviewType applicableDates(List<String> applicableDates) {
@@ -471,6 +477,26 @@ public class IndicatorOverviewType implements Serializable {
     this.ogcServices = ogcServices;
   }
 
+  public IndicatorOverviewType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+  @NotNull 
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
   public IndicatorOverviewType processDescription(String processDescription) {
     this.processDescription = processDescription;
     return this;
@@ -663,6 +689,26 @@ public class IndicatorOverviewType implements Serializable {
     this.userPermissions = userPermissions;
   }
 
+  public IndicatorOverviewType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+  @NotNull 
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -673,7 +719,7 @@ public class IndicatorOverviewType implements Serializable {
     }
     IndicatorOverviewType indicatorOverviewType = (IndicatorOverviewType) o;
     return Objects.equals(this.abbreviation, indicatorOverviewType.abbreviation) &&
-        Objects.equals(this.allowedRoles, indicatorOverviewType.allowedRoles) &&
+        Objects.equals(this.permissions, indicatorOverviewType.permissions) &&
         Objects.equals(this.applicableDates, indicatorOverviewType.applicableDates) &&
         Objects.equals(this.applicableSpatialUnits, indicatorOverviewType.applicableSpatialUnits) &&
         Objects.equals(this.characteristicValue, indicatorOverviewType.characteristicValue) &&
@@ -688,6 +734,7 @@ public class IndicatorOverviewType implements Serializable {
         Objects.equals(this.lowestSpatialUnitForComputation, indicatorOverviewType.lowestSpatialUnitForComputation) &&
         Objects.equals(this.metadata, indicatorOverviewType.metadata) &&
         Objects.equals(this.ogcServices, indicatorOverviewType.ogcServices) &&
+        Objects.equals(this.ownerId, indicatorOverviewType.ownerId) &&
         Objects.equals(this.processDescription, indicatorOverviewType.processDescription) &&
         Objects.equals(this.referenceDateNote, indicatorOverviewType.referenceDateNote) &&
         Objects.equals(this.referencedGeoresources, indicatorOverviewType.referencedGeoresources) &&
@@ -695,12 +742,13 @@ public class IndicatorOverviewType implements Serializable {
         Objects.equals(this.tags, indicatorOverviewType.tags) &&
         Objects.equals(this.topicReference, indicatorOverviewType.topicReference) &&
         Objects.equals(this.unit, indicatorOverviewType.unit) &&
-        Objects.equals(this.userPermissions, indicatorOverviewType.userPermissions);
+        Objects.equals(this.userPermissions, indicatorOverviewType.userPermissions) &&
+        Objects.equals(this.isPublic, indicatorOverviewType.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, allowedRoles, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, displayOrder, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, processDescription, referenceDateNote, referencedGeoresources, referencedIndicators, tags, topicReference, unit, userPermissions);
+    return Objects.hash(abbreviation, permissions, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, displayOrder, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, ownerId, processDescription, referenceDateNote, referencedGeoresources, referencedIndicators, tags, topicReference, unit, userPermissions, isPublic);
   }
 
   @Override
@@ -708,7 +756,7 @@ public class IndicatorOverviewType implements Serializable {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorOverviewType {\n");
     sb.append("    abbreviation: ").append(toIndentedString(abbreviation)).append("\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    applicableDates: ").append(toIndentedString(applicableDates)).append("\n");
     sb.append("    applicableSpatialUnits: ").append(toIndentedString(applicableSpatialUnits)).append("\n");
     sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");
@@ -723,6 +771,7 @@ public class IndicatorOverviewType implements Serializable {
     sb.append("    lowestSpatialUnitForComputation: ").append(toIndentedString(lowestSpatialUnitForComputation)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    ogcServices: ").append(toIndentedString(ogcServices)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    referenceDateNote: ").append(toIndentedString(referenceDateNote)).append("\n");
     sb.append("    referencedGeoresources: ").append(toIndentedString(referencedGeoresources)).append("\n");
@@ -731,6 +780,7 @@ public class IndicatorOverviewType implements Serializable {
     sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
     sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
     sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");
     return sb.toString();
   }

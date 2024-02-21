@@ -1,5 +1,40 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
+import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourcePATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourcePOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourcePUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.OwnerInputType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelInputType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import jakarta.transaction.Transactional;
+import org.geotools.filter.text.cql2.CQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -12,34 +47,6 @@ import java.util.NoSuchElementException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-
-import jakarta.transaction.Transactional;
-
-import de.hsbo.kommonitor.datamanagement.model.*;
-import org.geotools.filter.text.cql2.CQLException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
-import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
-import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
-import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 @Transactional
 @Repository
@@ -58,7 +65,10 @@ public class GeoresourcesManager {
 	GeoresourcesMetadataRepository georesourcesMetadataRepo;
 
 	@Autowired
-	private RolesRepository rolesRepository;
+	OrganizationalUnitRepository organizationalUnitRepository;
+
+	@Autowired
+	private PermissionRepository permissionRepository;
 
 	@Autowired
 	OGCWebServiceManager ogcServiceManager;
@@ -150,10 +160,10 @@ public class GeoresourcesManager {
 		}
 	}
 
-	private Collection<RolesEntity> retrieveRoles(List<String> roleIds) throws ResourceNotFoundException {
-		Collection<RolesEntity> allowedRoles = new ArrayList<>();
-		for (String id : roleIds) {
-			RolesEntity role = rolesRepository.findByRoleId(id);
+	private Collection<PermissionEntity> retrievePermissions(List<String> permissionIds) throws ResourceNotFoundException {
+		Collection<PermissionEntity> allowedRoles = new ArrayList<>();
+		for (String id : permissionIds) {
+			PermissionEntity role = permissionRepository.findByPermissionId(id);
 			if (role == null) {
 				throw new ResourceNotFoundException(400, String.format("The requested role %s does not exist.", id));
 			}
@@ -163,6 +173,15 @@ public class GeoresourcesManager {
 		}
 		return allowedRoles;
 	}
+
+	private OrganizationalUnitEntity getOrganizationalUnitEntity(String id) throws ResourceNotFoundException {
+		OrganizationalUnitEntity entity = organizationalUnitRepository.findByOrganizationalUnitId(id);
+		if (entity == null) {
+			throw new ResourceNotFoundException(400, String.format("The requested organizationalUnit does not exist.", id));
+		}
+		return entity;
+	}
+
 
 	private void updateMetadataWithOgcServiceUrls(String metadataId, String dbTableName) {
 		MetadataGeoresourcesEntity metadata = georesourcesMetadataRepo.findByDatasetId(metadataId);
@@ -266,7 +285,9 @@ public class GeoresourcesManager {
 		entity.setWfsUrl(null);
 		entity.setWmsUrl(null);
 
-		entity.setRoles(retrieveRoles(featureData.getAllowedRoles()));
+		entity.setPermissions(retrievePermissions(featureData.getPermissions()));
+		entity.setOwner(getOrganizationalUnitEntity(featureData.getOwnerId()));
+		entity.setPublic(featureData.getIsPublic());
 
 		// persist in db
 		georesourcesMetadataRepo.saveAndFlush(entity);
@@ -431,7 +452,7 @@ public class GeoresourcesManager {
 	}
 
 	private MetadataGeoresourcesEntity removeAnyLinkedRoles(MetadataGeoresourcesEntity georesourceEntity) {
-		georesourceEntity.setRoles(new ArrayList<>());
+		georesourceEntity.setPermissions(new ArrayList<>());
 
 		georesourcesMetadataRepo.saveAndFlush(georesourceEntity);
 
@@ -451,9 +472,7 @@ public class GeoresourcesManager {
 		MetadataGeoresourcesEntity georesourceMetadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
         if (authInfoProvider == null) {
-            if (georesourceMetadataEntity == null ||
-                    georesourceMetadataEntity.getRoles().stream()
-                            .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
+            if (georesourceMetadataEntity == null || !georesourceMetadataEntity.isPublic()) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
             }
         } else {
@@ -484,8 +503,7 @@ public class GeoresourcesManager {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
             if (authInfoProvider == null) {
-                if (metadataEntity == null || metadataEntity.getRoles().stream()
-                        .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
+                if (metadataEntity == null || !metadataEntity.isPublic()) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
@@ -519,8 +537,7 @@ public class GeoresourcesManager {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 			
 			if (authInfoProvider == null) {
-                if (metadataEntity == null || metadataEntity.getRoles().stream()
-                        .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
+                if (metadataEntity == null || !metadataEntity.isPublic()) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
@@ -559,8 +576,7 @@ public class GeoresourcesManager {
             MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
             if (provider == null) {
-                if (metadataEntity == null || metadataEntity.getRoles().stream()
-                        .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
+                if (metadataEntity == null || !metadataEntity.isPublic()) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
@@ -595,8 +611,7 @@ public class GeoresourcesManager {
             MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
             if (provider == null) {
-                if (metadataEntity == null || metadataEntity.getRoles().stream()
-                        .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
+                if (metadataEntity == null || !metadataEntity.isPublic()) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
@@ -629,8 +644,7 @@ public class GeoresourcesManager {
 
 		MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
-        if (metadataEntity == null || metadataEntity.getRoles().stream()
-                .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
+        if (metadataEntity == null || !metadataEntity.isPublic()) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
         }
 
@@ -756,7 +770,8 @@ public class GeoresourcesManager {
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
-			metadataEntity.setRoles(retrieveRoles(permissionLevelInput.getAllowedRoles()));
+			metadataEntity.setPermissions(retrievePermissions(permissionLevelInput.getPermissions()));
+			metadataEntity.setPublic(permissionLevelInput.getIsPublic());
 
 			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 			return georesourceId;
@@ -769,6 +784,20 @@ public class GeoresourcesManager {
 		}
 	}
 
+	public String updateOwnership(OwnerInputType owner, String georesourceId) throws Exception {
+		logger.info("Trying to update georesource ownership for datasetId '{}'", georesourceId);
+		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
+			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+			metadataEntity.setOwner(getOrganizationalUnitEntity(owner.getOwnerId()));
+
+			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
+			return georesourceId;
+		} else {
+			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Update request has no effect.", georesourceId);
+			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+					"Tried to update spatialUnit metadata, but no dataset existes with datasetId " + georesourceId);
+		}
+	}
 
 	private void updateMetadata(GeoresourcePATCHInputType metadata, MetadataGeoresourcesEntity entity)
 			throws Exception {
@@ -805,7 +834,6 @@ public class GeoresourcesManager {
 		entity.setAoiColor(metadata.getAoiColor());
 
 		entity.setTopicReference(metadata.getTopicReference());
-		entity.setRoles(retrieveRoles(metadata.getAllowedRoles()));
 
 		// persist in db
 		georesourcesMetadataRepo.saveAndFlush(entity);
@@ -818,7 +846,7 @@ public class GeoresourcesManager {
 		logger.info("Retrieving all public georesources metadata from db");
 
         List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll().stream()
-                .filter(g -> g.getRoles().stream().anyMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole)))
+                .filter(MetadataGeoresourcesEntity::isPublic)
                 .collect(Collectors.toList());
 
 		return generateSwaggerGeoresourcesMetadata(georesourcesMeatadataEntities);
@@ -896,8 +924,7 @@ public class GeoresourcesManager {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
 			if (authInfoProvider == null) {
-                if (metadataEntity == null || metadataEntity.getRoles().stream()
-                        .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
+                if (metadataEntity == null || !metadataEntity.isPublic()) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {
@@ -927,8 +954,7 @@ public class GeoresourcesManager {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
 			if (authInfoProvider == null) {
-                if (metadataEntity == null || metadataEntity.getRoles().stream()
-                        .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
+                if (metadataEntity == null || !metadataEntity.isPublic()) {
                     throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
                 }
             } else {

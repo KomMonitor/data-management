@@ -27,13 +27,13 @@ import jakarta.annotation.Generated;
  * GeoresourcePOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-01-22T13:57:49.514058200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
 public class GeoresourcePOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Valid
-  private List<String> allowedRoles;
+  private List<String> permissions;
 
   private String aoiColor;
 
@@ -57,6 +57,8 @@ public class GeoresourcePOSTInputType implements Serializable {
 
   private CommonMetadataType metadata;
 
+  private String ownerId;
+
   private PeriodOfValidityType periodOfValidity;
 
   private ColorType poiMarkerColor;
@@ -67,6 +69,8 @@ public class GeoresourcePOSTInputType implements Serializable {
 
   private String topicReference;
 
+  private Boolean isPublic;
+
   public GeoresourcePOSTInputType() {
     super();
   }
@@ -74,41 +78,43 @@ public class GeoresourcePOSTInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public GeoresourcePOSTInputType(String datasetName, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, PeriodOfValidityType periodOfValidity) {
+  public GeoresourcePOSTInputType(String datasetName, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, String ownerId, PeriodOfValidityType periodOfValidity, Boolean isPublic) {
     this.datasetName = datasetName;
     this.isAOI = isAOI;
     this.isLOI = isLOI;
     this.isPOI = isPOI;
     this.metadata = metadata;
+    this.ownerId = ownerId;
     this.periodOfValidity = periodOfValidity;
+    this.isPublic = isPublic;
   }
 
-  public GeoresourcePOSTInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public GeoresourcePOSTInputType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public GeoresourcePOSTInputType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+  public GeoresourcePOSTInputType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
+   * list of permissions on this entity
+   * @return permissions
   */
   
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 
   public GeoresourcePOSTInputType aoiColor(String aoiColor) {
@@ -331,6 +337,26 @@ public class GeoresourcePOSTInputType implements Serializable {
     this.metadata = metadata;
   }
 
+  public GeoresourcePOSTInputType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+  @NotNull 
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
   public GeoresourcePOSTInputType periodOfValidity(PeriodOfValidityType periodOfValidity) {
     this.periodOfValidity = periodOfValidity;
     return this;
@@ -431,6 +457,26 @@ public class GeoresourcePOSTInputType implements Serializable {
     this.topicReference = topicReference;
   }
 
+  public GeoresourcePOSTInputType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+  @NotNull 
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -440,7 +486,7 @@ public class GeoresourcePOSTInputType implements Serializable {
       return false;
     }
     GeoresourcePOSTInputType georesourcePOSTInputType = (GeoresourcePOSTInputType) o;
-    return Objects.equals(this.allowedRoles, georesourcePOSTInputType.allowedRoles) &&
+    return Objects.equals(this.permissions, georesourcePOSTInputType.permissions) &&
         Objects.equals(this.aoiColor, georesourcePOSTInputType.aoiColor) &&
         Objects.equals(this.datasetName, georesourcePOSTInputType.datasetName) &&
         Objects.equals(this.geoJsonString, georesourcePOSTInputType.geoJsonString) &&
@@ -452,23 +498,25 @@ public class GeoresourcePOSTInputType implements Serializable {
         Objects.equals(this.loiDashArrayString, georesourcePOSTInputType.loiDashArrayString) &&
         Objects.equals(this.loiWidth, georesourcePOSTInputType.loiWidth) &&
         Objects.equals(this.metadata, georesourcePOSTInputType.metadata) &&
+        Objects.equals(this.ownerId, georesourcePOSTInputType.ownerId) &&
         Objects.equals(this.periodOfValidity, georesourcePOSTInputType.periodOfValidity) &&
         Objects.equals(this.poiMarkerColor, georesourcePOSTInputType.poiMarkerColor) &&
         Objects.equals(this.poiSymbolBootstrap3Name, georesourcePOSTInputType.poiSymbolBootstrap3Name) &&
         Objects.equals(this.poiSymbolColor, georesourcePOSTInputType.poiSymbolColor) &&
-        Objects.equals(this.topicReference, georesourcePOSTInputType.topicReference);
+        Objects.equals(this.topicReference, georesourcePOSTInputType.topicReference) &&
+        Objects.equals(this.isPublic, georesourcePOSTInputType.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, aoiColor, datasetName, geoJsonString, isAOI, isLOI, isPOI, jsonSchema, loiColor, loiDashArrayString, loiWidth, metadata, periodOfValidity, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
+    return Objects.hash(permissions, aoiColor, datasetName, geoJsonString, isAOI, isLOI, isPOI, jsonSchema, loiColor, loiDashArrayString, loiWidth, metadata, ownerId, periodOfValidity, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference, isPublic);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class GeoresourcePOSTInputType {\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    aoiColor: ").append(toIndentedString(aoiColor)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
     sb.append("    geoJsonString: ").append(toIndentedString(geoJsonString)).append("\n");
@@ -480,11 +528,13 @@ public class GeoresourcePOSTInputType implements Serializable {
     sb.append("    loiDashArrayString: ").append(toIndentedString(loiDashArrayString)).append("\n");
     sb.append("    loiWidth: ").append(toIndentedString(loiWidth)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    periodOfValidity: ").append(toIndentedString(periodOfValidity)).append("\n");
     sb.append("    poiMarkerColor: ").append(toIndentedString(poiMarkerColor)).append("\n");
     sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");
     sb.append("    poiSymbolColor: ").append(toIndentedString(poiSymbolColor)).append("\n");
     sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");
     return sb.toString();
   }

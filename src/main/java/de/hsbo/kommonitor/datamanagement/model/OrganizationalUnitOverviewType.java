@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.hsbo.kommonitor.datamanagement.model.RoleOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionOverviewType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,21 +24,30 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "OrganizationalUnitOverviewType", description = "organizational unit (group)")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
 public class OrganizationalUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
+
+  private String organizationalUnitId;
+
+  private String name;
+
+  private Boolean mandant;
+
+  private String keycloakId;
 
   private String contact;
 
   private String description;
 
-  private String name;
+  @Valid
+  private List<@Valid PermissionOverviewType> permissions = new ArrayList<>();
 
-  private String organizationalUnitId;
+  private String parentId;
 
   @Valid
-  private List<@Valid RoleOverviewType> roles = new ArrayList<>();
+  private List<String> children = new ArrayList<>();
 
   public OrganizationalUnitOverviewType() {
     super();
@@ -47,11 +56,94 @@ public class OrganizationalUnitOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public OrganizationalUnitOverviewType(String contact, String name, String organizationalUnitId, List<@Valid RoleOverviewType> roles) {
-    this.contact = contact;
-    this.name = name;
+  public OrganizationalUnitOverviewType(String organizationalUnitId, String name, Boolean mandant, String keycloakId, String contact, List<@Valid PermissionOverviewType> permissions, List<String> children) {
     this.organizationalUnitId = organizationalUnitId;
-    this.roles = roles;
+    this.name = name;
+    this.mandant = mandant;
+    this.keycloakId = keycloakId;
+    this.contact = contact;
+    this.permissions = permissions;
+    this.children = children;
+  }
+
+  public OrganizationalUnitOverviewType organizationalUnitId(String organizationalUnitId) {
+    this.organizationalUnitId = organizationalUnitId;
+    return this;
+  }
+
+  /**
+   * unique id of this organizational Unit
+   * @return organizationalUnitId
+  */
+  @NotNull 
+  @Schema(name = "organizationalUnitId", description = "unique id of this organizational Unit", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("organizationalUnitId")
+  public String getOrganizationalUnitId() {
+    return organizationalUnitId;
+  }
+
+  public void setOrganizationalUnitId(String organizationalUnitId) {
+    this.organizationalUnitId = organizationalUnitId;
+  }
+
+  public OrganizationalUnitOverviewType name(String name) {
+    this.name = name;
+    return this;
+  }
+
+  /**
+   * name of this organizational Unit
+   * @return name
+  */
+  @NotNull 
+  @Schema(name = "name", description = "name of this organizational Unit", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("name")
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public OrganizationalUnitOverviewType mandant(Boolean mandant) {
+    this.mandant = mandant;
+    return this;
+  }
+
+  /**
+   * flag whether this unit is an autonomous mandant
+   * @return mandant
+  */
+  @NotNull 
+  @Schema(name = "mandant", description = "flag whether this unit is an autonomous mandant", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("mandant")
+  public Boolean getMandant() {
+    return mandant;
+  }
+
+  public void setMandant(Boolean mandant) {
+    this.mandant = mandant;
+  }
+
+  public OrganizationalUnitOverviewType keycloakId(String keycloakId) {
+    this.keycloakId = keycloakId;
+    return this;
+  }
+
+  /**
+   * uuid of the corresponding Keycloak group
+   * @return keycloakId
+  */
+  @NotNull 
+  @Schema(name = "keycloakId", description = "uuid of the corresponding Keycloak group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("keycloakId")
+  public String getKeycloakId() {
+    return keycloakId;
+  }
+
+  public void setKeycloakId(String keycloakId) {
+    this.keycloakId = keycloakId;
   }
 
   public OrganizationalUnitOverviewType contact(String contact) {
@@ -94,72 +186,80 @@ public class OrganizationalUnitOverviewType implements Serializable {
     this.description = description;
   }
 
-  public OrganizationalUnitOverviewType name(String name) {
-    this.name = name;
+  public OrganizationalUnitOverviewType permissions(List<@Valid PermissionOverviewType> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  /**
-   * name of this organizational Unit
-   * @return name
-  */
-  @NotNull 
-  @Schema(name = "name", description = "name of this organizational Unit", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("name")
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public OrganizationalUnitOverviewType organizationalUnitId(String organizationalUnitId) {
-    this.organizationalUnitId = organizationalUnitId;
-    return this;
-  }
-
-  /**
-   * unique id of this organizational Unit
-   * @return organizationalUnitId
-  */
-  @NotNull 
-  @Schema(name = "organizationalUnitId", description = "unique id of this organizational Unit", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("organizationalUnitId")
-  public String getOrganizationalUnitId() {
-    return organizationalUnitId;
-  }
-
-  public void setOrganizationalUnitId(String organizationalUnitId) {
-    this.organizationalUnitId = organizationalUnitId;
-  }
-
-  public OrganizationalUnitOverviewType roles(List<@Valid RoleOverviewType> roles) {
-    this.roles = roles;
-    return this;
-  }
-
-  public OrganizationalUnitOverviewType addRolesItem(RoleOverviewType rolesItem) {
-    if (this.roles == null) {
-      this.roles = new ArrayList<>();
+  public OrganizationalUnitOverviewType addPermissionsItem(PermissionOverviewType permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.roles.add(rolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
-   * Get roles
-   * @return roles
+   * Get permissions
+   * @return permissions
   */
   @NotNull @Valid 
-  @Schema(name = "roles", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("roles")
-  public List<@Valid RoleOverviewType> getRoles() {
-    return roles;
+  @Schema(name = "permissions", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("permissions")
+  public List<@Valid PermissionOverviewType> getPermissions() {
+    return permissions;
   }
 
-  public void setRoles(List<@Valid RoleOverviewType> roles) {
-    this.roles = roles;
+  public void setPermissions(List<@Valid PermissionOverviewType> permissions) {
+    this.permissions = permissions;
+  }
+
+  public OrganizationalUnitOverviewType parentId(String parentId) {
+    this.parentId = parentId;
+    return this;
+  }
+
+  /**
+   * uuid of the parent group
+   * @return parentId
+  */
+  
+  @Schema(name = "parentId", description = "uuid of the parent group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("parentId")
+  public String getParentId() {
+    return parentId;
+  }
+
+  public void setParentId(String parentId) {
+    this.parentId = parentId;
+  }
+
+  public OrganizationalUnitOverviewType children(List<String> children) {
+    this.children = children;
+    return this;
+  }
+
+  public OrganizationalUnitOverviewType addChildrenItem(String childrenItem) {
+    if (this.children == null) {
+      this.children = new ArrayList<>();
+    }
+    this.children.add(childrenItem);
+    return this;
+  }
+
+  /**
+   * uuids of the first-level children
+   * @return children
+  */
+  @NotNull 
+  @Schema(name = "children", description = "uuids of the first-level children", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("children")
+  public List<String> getChildren() {
+    return children;
+  }
+
+  public void setChildren(List<String> children) {
+    this.children = children;
   }
 
   @Override
@@ -171,27 +271,35 @@ public class OrganizationalUnitOverviewType implements Serializable {
       return false;
     }
     OrganizationalUnitOverviewType organizationalUnitOverviewType = (OrganizationalUnitOverviewType) o;
-    return Objects.equals(this.contact, organizationalUnitOverviewType.contact) &&
-        Objects.equals(this.description, organizationalUnitOverviewType.description) &&
+    return Objects.equals(this.organizationalUnitId, organizationalUnitOverviewType.organizationalUnitId) &&
         Objects.equals(this.name, organizationalUnitOverviewType.name) &&
-        Objects.equals(this.organizationalUnitId, organizationalUnitOverviewType.organizationalUnitId) &&
-        Objects.equals(this.roles, organizationalUnitOverviewType.roles);
+        Objects.equals(this.mandant, organizationalUnitOverviewType.mandant) &&
+        Objects.equals(this.keycloakId, organizationalUnitOverviewType.keycloakId) &&
+        Objects.equals(this.contact, organizationalUnitOverviewType.contact) &&
+        Objects.equals(this.description, organizationalUnitOverviewType.description) &&
+        Objects.equals(this.permissions, organizationalUnitOverviewType.permissions) &&
+        Objects.equals(this.parentId, organizationalUnitOverviewType.parentId) &&
+        Objects.equals(this.children, organizationalUnitOverviewType.children);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(contact, description, name, organizationalUnitId, roles);
+    return Objects.hash(organizationalUnitId, name, mandant, keycloakId, contact, description, permissions, parentId, children);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class OrganizationalUnitOverviewType {\n");
+    sb.append("    organizationalUnitId: ").append(toIndentedString(organizationalUnitId)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    mandant: ").append(toIndentedString(mandant)).append("\n");
+    sb.append("    keycloakId: ").append(toIndentedString(keycloakId)).append("\n");
     sb.append("    contact: ").append(toIndentedString(contact)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
-    sb.append("    organizationalUnitId: ").append(toIndentedString(organizationalUnitId)).append("\n");
-    sb.append("    roles: ").append(toIndentedString(roles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
+    sb.append("    parentId: ").append(toIndentedString(parentId)).append("\n");
+    sb.append("    children: ").append(toIndentedString(children)).append("\n");
     sb.append("}");
     return sb.toString();
   }

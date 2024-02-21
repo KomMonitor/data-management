@@ -18,15 +18,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Permission Levels for CRUD operations. \"crud\" = create, read, update, delete \"cru\" = create, read, update \"ru\" = read, update \"r\" = read
+ * Permission Levels for CRUD operations.
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
 public enum PermissionLevelType {
   
   CREATOR("creator"),
-  
-  PUBLISHER("publisher"),
   
   EDITOR("editor"),
   

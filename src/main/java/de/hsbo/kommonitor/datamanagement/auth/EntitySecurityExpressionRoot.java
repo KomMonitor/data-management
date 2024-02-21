@@ -5,7 +5,7 @@
  */
 package de.hsbo.kommonitor.datamanagement.auth;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
@@ -21,6 +21,7 @@ import java.security.Principal;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
@@ -86,12 +87,12 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
     public boolean isAuthorizedForEntity(String entityID, String entityType, String permissionLevel) {
         logger.debug("called isAuthorizedForEntity with entity id " + entityID);
         // Fail fast if user has not the required permission, with no need to request an entity
-        if (!hasRequiredPermissionLevel(permissionLevel)){
+        if (!hasRequiredPermissionLevel(permissionLevel, PermissionResourceType.RESOURCES.getValue())){
             return false;
         }
 
         try {
-            RestrictedByRole entity = this.retrieveEntity(entityID, EntityType.fromValue(entityType));
+            RestrictedEntity entity = this.retrieveEntity(entityID, EntityType.fromValue(entityType));
             if (entity == null) {
                 throw new ResourceNotFoundException(NOTFOUNDCODE, "could not find entity " + entityID + " of type " + entityType);
             }
@@ -141,7 +142,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         logger.debug("called isAuthorizedForJoinedEntity with entity id " + entityID1 + " and " + entityID2);
 
         try {
-            RestrictedByRole entity = this.retrieveJoinedEntity(entityID1, entityID2, JoinedEntityType.fromValue(joinedEntityType));
+            RestrictedEntity entity = this.retrieveJoinedEntity(entityID1, entityID2, JoinedEntityType.fromValue(joinedEntityType));
             if (entity == null) {
                 throw new ResourceNotFoundException(NOTFOUNDCODE, "could not find entity for id " + entityID1 + " and " + entityID2 + " of type " + joinedEntityType);
             }
@@ -169,6 +170,16 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         }
     }
 
+    public boolean hasRequiredPermissionLevel(String requiredPermissionLevel, String permissionResourceType){
+        logger.debug("called haRequiredPermissionLevel with required permission level " + requiredPermissionLevel + " and permission resource type " + permissionResourceType);
+        try{
+            return this.authInfoProvider.hasRequiredPermissionLevel(PermissionLevelType.fromValue(requiredPermissionLevel), PermissionResourceType.fromValue(permissionResourceType));
+        }catch (Exception ex){
+            logger.error("unable to evaluate if required permission level " + requiredPermissionLevel + " is met; return not authorized", ex);
+            return false;
+        }
+    }
+
     /**
      * retrieve the entity from the corresponding repository
      * @param entityID
@@ -176,7 +187,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
      * @return
      * @throws Exception 
      */
-    private RestrictedByRole retrieveEntity(String entityID, EntityType entityType) throws Exception {
+    private RestrictedEntity retrieveEntity(String entityID, EntityType entityType) throws Exception {
         switch (entityType) {
             case GEORESOURCE:
                 return this.georesourceRepository.findByDatasetId(entityID);
@@ -189,7 +200,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         }
     }
     
-    private RestrictedByRole retrieveJoinedEntity(String entityID1, String entityID2, JoinedEntityType joinedEntityType){
+    private RestrictedEntity retrieveJoinedEntity(String entityID1, String entityID2, JoinedEntityType joinedEntityType){
         switch(joinedEntityType){
             case INDICATOR_SPATIALUNIT:
                 return this.indicatorspatialunitsRepository.findByIndicatorMetadataIdAndSpatialUnitId(entityID1, entityID2);
