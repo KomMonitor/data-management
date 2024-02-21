@@ -101,13 +101,6 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
     @Override
     public List<PermissionLevelType> getPermissions(RestrictedEntity entity) {
         OrganizationalUnitEntity ownerEntity = entity.getOwner();
-
-
-        // Since all permissions are tied to groups, users without a group can't have permissions on a resource
-        if (groups == null || groups.isEmpty()) {
-            return Collections.emptyList();
-        }
-
         List<PermissionLevelType> fullPermissions = Arrays.asList(
                 PermissionLevelType.CREATOR,
                 PermissionLevelType.EDITOR,
@@ -117,6 +110,11 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         // Global administrators hav full permissions
         if (tokenParser.hasRealmAdminRole(getPrincipal(), ADMIN_ROLE_NAME)) {
             return fullPermissions;
+        }
+
+        // Since all permissions are tied to groups, users without a group can't have permissions on a resource
+        if (groups == null || groups.isEmpty()) {
+            return Collections.emptyList();
         }
 
         if (ownerEntity != null) {
@@ -165,8 +163,6 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
 
     @Override
     public boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel, PermissionResourceType resourceType) {
-        return true;
-        /*
         if (neededLevel.getValue().equals("viewer")) {
             return true;
         } else if (tokenParser.hasRealmAdminRole(principal, ADMIN_ROLE_NAME)) {
@@ -183,7 +179,6 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
                     })
                     .anyMatch(r -> hasAdminPermissionForResourceType(r, resourceType));
         }
-         */
     }
 
     public List<Group> getResourceAdminGroups() {
@@ -208,7 +203,8 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
                     String[] split = roleExtractorRegex.split(r, 2);
                     return Pair.of(split[0], split[1]);
                 })
-                .anyMatch(r -> hasResourceAdminPermissionForOwningGroup(r.getFirst(), r.getSecond(), entity));
+                .anyMatch(r -> hasUnitResourceAdminPermissionForOwningGroup(r.getFirst(), r.getSecond(), entity) ||
+                        hasClientResourceAdminPermissionForOwningGroup(r.getFirst(), r.getSecond(), entity));
     }
 
     private boolean hasAdminPermissionForResourceType(String adminRole, PermissionResourceType resourceType) {
@@ -222,9 +218,32 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         };
     }
 
-    private boolean hasResourceAdminPermissionForOwningGroup (String kcGroup, String kcRole, RestrictedEntity entity) {
+    private boolean hasUnitResourceAdminPermissionForOwningGroup (String kcGroup, String kcRole, RestrictedEntity entity) {
         return kcGroup.equals(entity.getOwner().getName())
                 && hasAdminPermissionForResourceType(kcRole, PermissionResourceType.RESOURCES);
     }
+
+    /**
+     * Check if owning group is a subgroup of a group with *.client-resource-creator permission
+     *
+     * @param kcGroup Keycloak group
+     * @param kcRole Keycloak role for group
+     * @param entity Resource to check
+     * @return true if the Keycloak group has admin permission for resources of the owning group
+     */
+    private boolean hasClientResourceAdminPermissionForOwningGroup(String kcGroup, String kcRole, RestrictedEntity entity) {
+        if (!kcRole.equals(CLIENT_RESOURCES_ADMIN_ROLE_NAME)) {
+            return false;
+        }
+        OrganizationalUnitEntity currentOwner = entity.getOwner();
+        while (currentOwner != null) {
+            if (currentOwner.getName().equals(kcGroup)) {
+                return true;
+            }
+            currentOwner = currentOwner.getParent();
+        }
+        return false;
+    }
+
 
 }
