@@ -47,8 +47,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         this.principal = principal;
         this.tokenParser = tokenParser;
 
-        // groups = tokenParser.getGroupMemberships(principal);
-        groups = null;
+        groups = tokenParser.getGroupMemberships(principal);
     }
 
     public Principal getPrincipal() {
@@ -121,10 +120,10 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         }
 
         if (ownerEntity != null) {
-            String owningId = entity.getOwner().getOrganizationalUnitId();
+            String ownerName = entity.getOwner().getName();
 
             // Owning groups have full permission
-            if (groups.stream().anyMatch(group -> owningId.equals(group.getName()))) {
+            if (groups.stream().anyMatch(group -> ownerName.equals(group.getName()))) {
                 return fullPermissions;
             }
 
@@ -209,7 +208,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
                     String[] split = roleExtractorRegex.split(r, 2);
                     return Pair.of(split[0], split[1]);
                 })
-                .anyMatch(r -> r.getFirst().equals(entity.getOwner().getName()) && hasAdminPermissionForResourceType(r.getSecond(), PermissionResourceType.RESOURCES));
+                .anyMatch(r -> hasResourceAdminPermissionForOwningGroup(r.getFirst(), r.getSecond(), entity));
     }
 
     private boolean hasAdminPermissionForResourceType(String adminRole, PermissionResourceType resourceType) {
@@ -223,5 +222,9 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         };
     }
 
+    private boolean hasResourceAdminPermissionForOwningGroup (String kcGroup, String kcRole, RestrictedEntity entity) {
+        return kcGroup.equals(entity.getOwner().getName())
+                && hasAdminPermissionForResourceType(kcRole, PermissionResourceType.RESOURCES);
+    }
 
 }
