@@ -19,7 +19,7 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputTypeRefrencesToOtherIndicators
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
 public class IndicatorPOSTInputTypeRefrencesToOtherIndicators implements Serializable {
 
   private static final long serialVersionUID = 1L;

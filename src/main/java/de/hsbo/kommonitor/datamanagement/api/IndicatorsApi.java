@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:06.233419477+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:10.685766091+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "indicators", description = "the Indicators API")
 public interface IndicatorsApi {
@@ -926,7 +926,7 @@ public interface IndicatorsApi {
         value = "/indicators/{indicatorId}/ownership",
         consumes = { "application/json" }
     )
-
+    
     ResponseEntity<Void> updateIndicatorOwnership(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "indicatorData", description = "Indicator parameters input", required = true) @Valid @RequestBody OwnerInputType indicatorData
@@ -965,7 +965,7 @@ public interface IndicatorsApi {
         value = "/indicators/{indicatorId}/{spatialUnitId}/ownership",
         consumes = { "application/json" }
     )
-
+    
     ResponseEntity<Void> updateIndicatorOwnershipBySpatialUnit(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,

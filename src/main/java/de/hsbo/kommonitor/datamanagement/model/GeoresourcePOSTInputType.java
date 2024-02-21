@@ -27,7 +27,7 @@ import jakarta.annotation.Generated;
  * GeoresourcePOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T16:11:02.006849300+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
 public class GeoresourcePOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -69,6 +69,8 @@ public class GeoresourcePOSTInputType implements Serializable {
 
   private String topicReference;
 
+  private Boolean isPublic;
+
   public GeoresourcePOSTInputType() {
     super();
   }
@@ -76,7 +78,7 @@ public class GeoresourcePOSTInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public GeoresourcePOSTInputType(String datasetName, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, String ownerId, PeriodOfValidityType periodOfValidity) {
+  public GeoresourcePOSTInputType(String datasetName, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, String ownerId, PeriodOfValidityType periodOfValidity, Boolean isPublic) {
     this.datasetName = datasetName;
     this.isAOI = isAOI;
     this.isLOI = isLOI;
@@ -84,6 +86,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     this.metadata = metadata;
     this.ownerId = ownerId;
     this.periodOfValidity = periodOfValidity;
+    this.isPublic = isPublic;
   }
 
   public GeoresourcePOSTInputType permissions(List<String> permissions) {
@@ -100,11 +103,11 @@ public class GeoresourcePOSTInputType implements Serializable {
   }
 
   /**
-   * list of role identifiers that have read access rights for this dataset
+   * list of permissions on this entity
    * @return permissions
   */
   
-  @Schema(name = "permissions", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("permissions")
   public List<String> getPermissions() {
     return permissions;
@@ -454,6 +457,26 @@ public class GeoresourcePOSTInputType implements Serializable {
     this.topicReference = topicReference;
   }
 
+  public GeoresourcePOSTInputType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+  @NotNull 
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -480,12 +503,13 @@ public class GeoresourcePOSTInputType implements Serializable {
         Objects.equals(this.poiMarkerColor, georesourcePOSTInputType.poiMarkerColor) &&
         Objects.equals(this.poiSymbolBootstrap3Name, georesourcePOSTInputType.poiSymbolBootstrap3Name) &&
         Objects.equals(this.poiSymbolColor, georesourcePOSTInputType.poiSymbolColor) &&
-        Objects.equals(this.topicReference, georesourcePOSTInputType.topicReference);
+        Objects.equals(this.topicReference, georesourcePOSTInputType.topicReference) &&
+        Objects.equals(this.isPublic, georesourcePOSTInputType.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, aoiColor, datasetName, geoJsonString, isAOI, isLOI, isPOI, jsonSchema, loiColor, loiDashArrayString, loiWidth, metadata, ownerId, periodOfValidity, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
+    return Objects.hash(permissions, aoiColor, datasetName, geoJsonString, isAOI, isLOI, isPOI, jsonSchema, loiColor, loiDashArrayString, loiWidth, metadata, ownerId, periodOfValidity, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference, isPublic);
   }
 
   @Override
@@ -510,6 +534,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");
     sb.append("    poiSymbolColor: ").append(toIndentedString(poiSymbolColor)).append("\n");
     sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");
     return sb.toString();
   }

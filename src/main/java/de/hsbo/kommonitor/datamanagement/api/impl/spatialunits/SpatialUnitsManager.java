@@ -1,6 +1,36 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
+import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.OwnerInputType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelInputType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPUTInputType;
+import jakarta.transaction.Transactional;
+import org.geotools.filter.text.cql2.CQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,30 +40,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
-import de.hsbo.kommonitor.datamanagement.model.*;
-import jakarta.transaction.Transactional;
-
-import org.geotools.filter.text.cql2.CQLException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
-import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
-import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 
 @Transactional
 @Repository
@@ -305,6 +311,7 @@ public class SpatialUnitsManager {
         //
         entity.setPermissions(getPermissionEntities(featureData.getPermissions()));
         entity.setOwner(getOrganizationalUnitEntity(featureData.getOwnerId()));
+        entity.setPublic(featureData.getIsPublic());
 
         // persist in db
         spatialUnitsMetadataRepo.saveAndFlush(entity);
@@ -535,6 +542,7 @@ public class SpatialUnitsManager {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
             
             metadataEntity.setPermissions(getPermissionEntities(permissionLevels.getPermissions()));
+            metadataEntity.setPublic(permissionLevels.getIsPublic());
 
             spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
             return spatialUnitId;

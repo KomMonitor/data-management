@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
 public class SpatialUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -97,11 +97,11 @@ public class SpatialUnitOverviewType implements Serializable {
   }
 
   /**
-   * list of role identifiers that have read access rights for this dataset
+   * list of permissions on this entity
    * @return permissions
   */
   @NotNull 
-  @Schema(name = "permissions", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissions")
   public List<String> getPermissions() {
     return permissions;
@@ -396,7 +396,7 @@ public class SpatialUnitOverviewType implements Serializable {
    * identifier of the owning group
    * @return ownerId
   */
-
+  
   @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("ownerId")
   public String getOwnerId() {

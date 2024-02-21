@@ -26,9 +26,10 @@ public class PermissionManager {
     public PermissionEntity addPermission(OrganizationalUnitEntity organizationalUnit,
                                           PermissionLevelType level,
                                           PermissionResourceType type) throws Exception {
-        logger.info("Trying to persist role with roleName '{}' and permissionLevel '{}'",
+        logger.info("Trying to persist permission for organizationalUnit '{}' and permissionLevel '{}' with type '{}'",
                 organizationalUnit.getName(),
-                level);
+                level.getValue(),
+                type.getValue());
 
         Optional<PermissionEntity> existing =
                 permissionRepository.findByOrganizationalUnitAndPermissionLevelAndPermissionType(

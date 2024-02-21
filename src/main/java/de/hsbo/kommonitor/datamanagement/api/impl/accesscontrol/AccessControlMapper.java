@@ -8,6 +8,7 @@ import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AccessControlMapper {
 
@@ -18,6 +19,13 @@ public class AccessControlMapper {
         ou.setContact(ouEntity.getContact());
         ou.setDescription(ouEntity.getDescription());
         ou.setPermissions(mapToSwaggerPermissions(ouEntity.getPermissions()));
+        if (ouEntity.getParent() != null) {
+            ou.setParentId(ouEntity.getParent().getOrganizationalUnitId());
+        }
+        if (ouEntity.getChildren() != null) {
+            ou.setChildren(ouEntity.getChildren().stream().map(OrganizationalUnitEntity::getOrganizationalUnitId)
+                    .collect(Collectors.toList()));
+        }
         return ou;
     }
 

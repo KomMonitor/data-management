@@ -5376,8 +5376,7 @@ components:
       properties:
         permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         aoiColor:
@@ -5510,12 +5509,12 @@ components:
         - isLOI
         - isAOI
         - ownerId
+        - isPublic
       type: object
       properties:
         permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         aoiColor:
@@ -5576,6 +5575,9 @@ components:
         topicReference:
           type: string
           description: id of the last topic hierarchy entity
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
     GeoresourcePUTInputType:
       title: GeoresourcePUTInputType
       required:
@@ -5715,6 +5717,7 @@ components:
         - tags
         - topicReference
         - unit
+        - isPublic
       type: object
       properties:
         abbreviation:
@@ -5722,8 +5725,7 @@ components:
           description: abbreviated mark of the indicator
         permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         applicableDates:
@@ -5817,6 +5819,9 @@ components:
             the current user
           items:
             $ref: '#/components/schemas/PermissionLevelType'
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
     IndicatorPATCHDisplayOrderInputType:
       title: IndicatorPATCHDisplayOrderInputType
       required:
@@ -5835,14 +5840,17 @@ components:
       title: PermissionLevelInputType
       required:
         - permissions
+        - isPublic
       type: object
       properties:
         permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
+        isPublic:
+          type: boolean
+          description: flag whether this resource is publicly viewable
     IndicatorPOSTInputType:
       title: IndicatorPOSTInputType
       required:
@@ -5860,6 +5868,7 @@ components:
         - tags
         - topicReference
         - unit
+        - isPublic
       type: object
       properties:
         abbreviation:
@@ -5867,8 +5876,7 @@ components:
           description: abbreviated mark of the indicator
         permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         characteristicValue:
@@ -5941,6 +5949,9 @@ components:
         unit:
           type: string
           description: unit of the indicator values
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
     IndicatorPOSTInputTypeIndicatorValues:
       title: IndicatorPOSTInputTypeIndicatorValues
       type: object
@@ -6002,8 +6013,7 @@ components:
       properties:
         permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         applicableSpatialUnit:
@@ -6069,8 +6079,7 @@ components:
       properties:
         permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         ownerId:
@@ -6161,6 +6170,9 @@ components:
         description:
           type: string
           description: additional information
+        parentId:
+          type: string
+          description: uuid of the parent group
       description: organizational unit (group)
     OrganizationalUnitOverviewType:
       title: OrganizationalUnitOverviewType
@@ -6171,6 +6183,8 @@ components:
         - keycloakId
         - contact
         - permissions
+        - parent
+        - children
       type: object
       properties:
         organizationalUnitId:
@@ -6195,14 +6209,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PermissionOverviewType'
+        parentId:
+          type: string
+          description: uuid of the parent group
+        children:
+          type: array
+          items:
+            type: string
+          description: uuids of the first-level children
       description: organizational unit (group)
     ResourceType:
       type: string
       enum:
-      - georesources
-      - spatialunits,
-      - indicators
-      - indicatorspatialunits
+        - georesources
+        - spatialunits,
+        - indicators
+        - indicatorspatialunits
     OrganizationalUnitPermissionOverviewElementType:
       type: object
       required:
@@ -6493,8 +6515,7 @@ components:
       properties:
         permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         availablePeriodsOfValidity:
@@ -6557,7 +6578,7 @@ components:
         - nextUpperHierarchyLevel
       type: object
       properties:
-        datasetName: 
+        datasetName:
           type: string
           description: the name of the spatial unit - its "spatialUnitLevel"
         metadata:
@@ -6595,12 +6616,12 @@ components:
         - nextUpperHierarchyLevel
         - periodOfValidity
         - spatialUnitLevel
+        - isPublic
       type: object
       properties:
         permissions:
           type: array
-          description: list of role identifiers that have read access rights for this
-            dataset
+          description: list of permissions on this entity
           items:
             type: string
         geoJsonString:
@@ -6644,6 +6665,9 @@ components:
         ownerId:
           type: string
           description: identifier of the owning group
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
     SpatialUnitPUTInputType:
       title: SpatialUnitPUTInputType
       required:

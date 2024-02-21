@@ -182,6 +182,8 @@ public class IndicatorsManager {
 
             if (keyPropertiesHaveChanged(indicatorEntity, indicatorData)) {
                 indicatorEntity.setPermissions(retrievePermissions(indicatorData.getPermissions()));
+                indicatorEntity.setPublic(indicatorData.getIsPublic());
+
                 indicatorsSpatialUnitsRepo.saveAndFlush(indicatorEntity);
                 logger.info(
                         "Succesfully updated the roles for indicator dataset with indicatorId '{}' and spatialUnitId '{}'.",
@@ -211,6 +213,7 @@ public class IndicatorsManager {
 
             if (keyPropertiesHaveChanged(indicatorEntity, indicatorData)) {
                 indicatorEntity.setPermissions(retrievePermissions(indicatorData.getPermissions()));
+                indicatorEntity.setPublic(indicatorData.getIsPublic());
                 indicatorsMetadataRepo.saveAndFlush(indicatorEntity);
                 logger.info(
                         "Successfully updated the roles for indicator dataset with indicatorId '{}'.",
@@ -794,7 +797,6 @@ public class IndicatorsManager {
             try {
 				/*
 				 * delete featureTable and views for each spatial unit
-<<<<<<< HEAD
 				 */
 
                 IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorForSpatialUnit.getIndicatorViewTableName());
@@ -863,7 +865,6 @@ public class IndicatorsManager {
                 try {
 					/*
 					 * delete featureTable and views for each spatial unit
-<<<<<<< HEAD
 					 */
 
                     IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
@@ -1321,6 +1322,7 @@ public class IndicatorsManager {
 
         entity.setPermissions(retrievePermissions(indicatorData.getPermissions()));
         entity.setOwner(getOrganizationalUnitEntity(indicatorData.getOwnerId()));
+        entity.setPublic(indicatorData.getIsPublic());
 
         /*
          * process availableTimestamps property for indicator metadata entity

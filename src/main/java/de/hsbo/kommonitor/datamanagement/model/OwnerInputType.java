@@ -19,7 +19,7 @@ import jakarta.annotation.Generated;
  * OwnerInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-19T12:18:49.214095300+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
 public class OwnerInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;

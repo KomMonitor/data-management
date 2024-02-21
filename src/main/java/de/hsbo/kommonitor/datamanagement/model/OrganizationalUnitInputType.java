@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "OrganizationalUnitInputType", description = "organizational unit (group)")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-20T01:40:05.349474681+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
 public class OrganizationalUnitInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -36,6 +36,8 @@ public class OrganizationalUnitInputType implements Serializable {
   private String contact;
 
   private String description;
+
+  private String parentId;
 
   public OrganizationalUnitInputType() {
     super();
@@ -171,6 +173,26 @@ public class OrganizationalUnitInputType implements Serializable {
     this.description = description;
   }
 
+  public OrganizationalUnitInputType parentId(String parentId) {
+    this.parentId = parentId;
+    return this;
+  }
+
+  /**
+   * uuid of the parent group
+   * @return parentId
+  */
+  
+  @Schema(name = "parentId", description = "uuid of the parent group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("parentId")
+  public String getParentId() {
+    return parentId;
+  }
+
+  public void setParentId(String parentId) {
+    this.parentId = parentId;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -185,12 +207,13 @@ public class OrganizationalUnitInputType implements Serializable {
         Objects.equals(this.mandant, organizationalUnitInputType.mandant) &&
         Objects.equals(this.keycloakId, organizationalUnitInputType.keycloakId) &&
         Objects.equals(this.contact, organizationalUnitInputType.contact) &&
-        Objects.equals(this.description, organizationalUnitInputType.description);
+        Objects.equals(this.description, organizationalUnitInputType.description) &&
+        Objects.equals(this.parentId, organizationalUnitInputType.parentId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(organizationalUnitId, name, mandant, keycloakId, contact, description);
+    return Objects.hash(organizationalUnitId, name, mandant, keycloakId, contact, description, parentId);
   }
 
   @Override
@@ -203,6 +226,7 @@ public class OrganizationalUnitInputType implements Serializable {
     sb.append("    keycloakId: ").append(toIndentedString(keycloakId)).append("\n");
     sb.append("    contact: ").append(toIndentedString(contact)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
+    sb.append("    parentId: ").append(toIndentedString(parentId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

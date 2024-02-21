@@ -1,5 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.CascadeType;
@@ -9,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +40,13 @@ public class OrganizationalUnitEntity {
 
     @OneToMany(mappedBy = "organizationalUnit", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     public List<PermissionEntity> permissions;
+
+    @ManyToOne
+    @JoinColumn(name = "parent")
+    public OrganizationalUnitEntity parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    public List<OrganizationalUnitEntity> children;
 
     public String getName() {
         return name;
@@ -92,5 +102,21 @@ public class OrganizationalUnitEntity {
 
     public void setOrganizationalUnitId(String organizationalUnitId) {
         this.organizationalUnitId = organizationalUnitId;
+    }
+
+    public OrganizationalUnitEntity getParent() {
+        return parent;
+    }
+
+    public void setParent(OrganizationalUnitEntity parent) {
+        this.parent = parent;
+    }
+
+    public List<OrganizationalUnitEntity> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<OrganizationalUnitEntity> children) {
+        this.children = children;
     }
 }
