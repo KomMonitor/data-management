@@ -62,7 +62,7 @@ public class OrganizationalUnitManager {
         jpaUnit.setKeycloakId(UUID.fromString(inputOrganizationalUnit.getKeycloakId()));
         jpaUnit.setMandant(inputOrganizationalUnit.getMandant());
 
-        if (!inputOrganizationalUnit.getParentId().isEmpty()) {
+        if (inputOrganizationalUnit.getParentId() != null && !inputOrganizationalUnit.getParentId().isEmpty()) {
             OrganizationalUnitEntity parent =
                     organizationalUnitRepository.findByOrganizationalUnitId(inputOrganizationalUnit.getParentId());
             if (parent == null) {
