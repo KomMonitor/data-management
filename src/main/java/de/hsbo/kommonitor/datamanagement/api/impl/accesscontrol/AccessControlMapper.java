@@ -19,6 +19,8 @@ public class AccessControlMapper {
         ou.setContact(ouEntity.getContact());
         ou.setDescription(ouEntity.getDescription());
         ou.setPermissions(mapToSwaggerPermissions(ouEntity.getPermissions()));
+        ou.setKeycloakId(ouEntity.getKeycloakId().toString());
+        ou.setMandant(ouEntity.isMandant());
         if (ouEntity.getParent() != null) {
             ou.setParentId(ouEntity.getParent().getOrganizationalUnitId());
         }
