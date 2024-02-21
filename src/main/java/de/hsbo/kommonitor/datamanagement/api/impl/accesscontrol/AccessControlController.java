@@ -60,13 +60,16 @@ public class AccessControlController extends BasePathController implements Acces
     public ResponseEntity<OrganizationalUnitOverviewType> getOrganizationalUnitById(String organizationalUnitId) {
         logger.debug("Received request to get organizationalUnit with id '{}'", organizationalUnitId);
         String accept = request.getHeader("Accept");
-
-        if (accept != null && accept.contains("application/json")) {
-            OrganizationalUnitOverviewType unit =
-                organizationalUnitManager.getOrganizationalUnitById(organizationalUnitId);
-            return new ResponseEntity<>(unit, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                OrganizationalUnitOverviewType unit =
+                        organizationalUnitManager.getOrganizationalUnitById(organizationalUnitId);
+                return new ResponseEntity<>(unit, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
         }
     }
 
@@ -152,12 +155,16 @@ public class AccessControlController extends BasePathController implements Acces
         logger.info("Received request to get organizationalUnit permissions for id '{}'", organizationalUnitId);
         String accept = request.getHeader("Accept");
 
-        if (accept != null && accept.contains("application/json")) {
-            OrganizationalUnitPermissionOverviewType permissions =
-                    organizationalUnitManager.getOrganizationalUnitPermissionsById(organizationalUnitId);
-            return new ResponseEntity<>(permissions, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                OrganizationalUnitPermissionOverviewType permissions =
+                        organizationalUnitManager.getOrganizationalUnitPermissionsById(organizationalUnitId);
+                return new ResponseEntity<>(permissions, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
         }
     }
 

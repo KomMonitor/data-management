@@ -111,21 +111,39 @@ public class OrganizationalUnitManager {
         }
     }
 
-    public OrganizationalUnitOverviewType getOrganizationalUnitById(String organizationalUnitId) {
+    public OrganizationalUnitOverviewType getOrganizationalUnitById(String organizationalUnitId) throws ResourceNotFoundException {
         logger.info("Retrieving OrganizationalUnit for organizationalUnitId '{}'", organizationalUnitId);
 
-        OrganizationalUnitEntity OrganizationalUnitEntity =
+        OrganizationalUnitEntity organizationalUnitEntity =
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
-
-        return AccessControlMapper.mapToSwaggerOrganizationalUnit(OrganizationalUnitEntity);
+        if (organizationalUnitEntity != null) {
+            return AccessControlMapper.mapToSwaggerOrganizationalUnit(organizationalUnitEntity);
+        } else {
+            logger.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
+                    organizationalUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to delete OrganizationalUnit, but no OrganizationalUnit " +
+                            "existes with id " +
+                            organizationalUnitId);
+        }
     }
 
-    public OrganizationalUnitPermissionOverviewType getOrganizationalUnitPermissionsById(String organizationalUnitId) {
+    public OrganizationalUnitPermissionOverviewType getOrganizationalUnitPermissionsById(String organizationalUnitId) throws ResourceNotFoundException {
         logger.info("Retrieving OrganizationalUnit->permissions for organizationalUnitId '{}'", organizationalUnitId);
 
         OrganizationalUnitEntity organizationalUnitEntity =
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
-        return AccessControlMapper.mapToSwapperOUPermissionOverviewType(organizationalUnitEntity);
+
+        if (organizationalUnitEntity != null) {
+            return AccessControlMapper.mapToSwapperOUPermissionOverviewType(organizationalUnitEntity);
+        } else {
+            logger.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
+                    organizationalUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to delete OrganizationalUnit, but no OrganizationalUnit " +
+                            "existes with id " +
+                            organizationalUnitId);
+        }
     }
 
     public List<OrganizationalUnitOverviewType> getOrganizationalUnits() {
