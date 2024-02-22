@@ -1,6 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.auth.provider;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
@@ -23,6 +24,12 @@ public interface AuthInfoProvider {
      * @return True if the user has at least the given level on the given entity
      */
     boolean checkPermissions(final RestrictedEntity entity, final PermissionLevelType neededLevel);
+
+    /**
+     * Checks if the current user has the permission to manage an Organization
+     * @param entity Organization that should be managed i.e., perform operations to chang the hierarchy or metadata
+     */
+    boolean checkOrganizationalUnitPermissions(OrganizationalUnitEntity entity);
 
     /**
      * Lists all permissions the current user has on given entity

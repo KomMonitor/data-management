@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 
 import java.net.URI;
@@ -101,9 +102,9 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
-    @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
+    @PreAuthorize("isAuthorizedForOrganization(#organizationalUnitId)")
     @Override public ResponseEntity<Void> updateOrganizationalUnit(
-            String organizationalUnitId,
+            @P("organizationalUnitId") String organizationalUnitId,
             OrganizationalUnitInputType inputData) {
         logger.info("Received request to update new organizationalUnit with associated Roles");
         String accept = request.getHeader("Accept");
@@ -129,8 +130,8 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
-    @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
-    @Override public ResponseEntity deleteOrganizationalUnit(String organizationalUnitId) {
+    @PreAuthorize("isAuthorizedForOrganization(#organizationalUnitId)")
+    @Override public ResponseEntity deleteOrganizationalUnit(@P("organizationalUnitId") String organizationalUnitId) {
         logger.info("Received request to delete organizationalUnit and associated roles for id '{}'",
                     organizationalUnitId);
         try {

@@ -6,6 +6,8 @@
 package de.hsbo.kommonitor.datamanagement.auth;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
@@ -49,6 +51,8 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
     private final IndicatorsMetadataRepository indicatorRepository;
     private final SpatialUnitsMetadataRepository spatialunitsRepository;
     private final IndicatorSpatialUnitsRepository indicatorspatialunitsRepository;
+
+    private final OrganizationalUnitRepository organizationalUnitRepository;
     private final AuthInfoProviderFactory authInfoProviderFactory;
 
     private final TokenParserFactory tokenParserFactory;
@@ -61,6 +65,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         this.indicatorRepository = this.authHelperService.getIndicatorRepository();
         this.spatialunitsRepository = this.authHelperService.getSpatialunitsRepository();
         this.indicatorspatialunitsRepository = this.authHelperService.getIndicatorSpatialunitsRepository();
+        this.organizationalUnitRepository = this.authHelperService.getOrganizationalUnitRepository();
         this.authInfoProviderFactory = this.authHelperService.getAuthInfoProviderFactory();
         this.tokenParserFactory = this.authHelperService.getTokenParserFactory();
 
@@ -86,7 +91,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
      */
     public boolean isAuthorizedForEntity(String entityID, String entityType, String permissionLevel) {
         logger.debug("called isAuthorizedForEntity with entity id " + entityID);
-        // Fail fast if user has not the required permission, with no need to request an entity
+        // Fail fast if user has not the required role for managing resources, with no need to request an entity
         if (!hasRequiredPermissionLevel(permissionLevel, PermissionResourceType.RESOURCES.getValue())){
             return false;
         }
@@ -101,6 +106,34 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
             return isAuthorized;
         } catch (Exception ex) {
             logger.error("unable to evaluate permissions for entity with id " + entityID + " of type " + entityType + "; return not authorized", ex);
+            return false;
+        }
+    }
+
+    /**
+     * custom security method to check if a user has permissions to manage an OrganizationalUnit,
+     * to be used with @PreAuthorize and @PostAuthorize annotations
+     * @param organizationalUnitId
+
+     * @return
+     */
+    public boolean isAuthorizedForOrganization(String organizationalUnitId) {
+        logger.debug("called isAuthorizedForOrganization with OrganizationalUnit id " + organizationalUnitId);
+        // Fail fast if user has not the required role for managing users, with no need to request an entity
+        if (!this.authInfoProvider.hasRequiredPermissionLevel(PermissionLevelType.CREATOR, PermissionResourceType.USERS)) {
+            return false;
+        }
+
+        try {
+            OrganizationalUnitEntity ouEntity = this.organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
+            if (ouEntity == null) {
+                throw new ResourceNotFoundException(NOTFOUNDCODE, "could not find OrganizationalUnit " + organizationalUnitId);
+            }
+            boolean isAuthorized = this.authInfoProvider.checkOrganizationalUnitPermissions(ouEntity);
+            logger.info("access for " + this.getAuthentication().getName() + " to OrganizationalUnit " + organizationalUnitId + " authorized? " + isAuthorized);
+            return isAuthorized;
+        } catch (Exception ex) {
+            logger.error("unable to evaluate permissions for OrganizationalUnit with id " + organizationalUnitId, ex);
             return false;
         }
     }

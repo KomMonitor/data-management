@@ -5,6 +5,7 @@
  */
 package de.hsbo.kommonitor.datamanagement.auth;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
@@ -36,6 +37,9 @@ public final class AuthHelperService {
     
     @Autowired
     private IndicatorSpatialUnitsRepository indicatorspatialUnitsRepository;
+
+    @Autowired
+    private OrganizationalUnitRepository organizationalUnitRepository;
     
     @Autowired
     private AuthInfoProviderFactory authInfoProviderFactory;
@@ -72,6 +76,10 @@ public final class AuthHelperService {
     
     public IndicatorSpatialUnitsRepository getIndicatorSpatialunitsRepository(){
         return this.indicatorspatialUnitsRepository;
+    }
+
+    public OrganizationalUnitRepository getOrganizationalUnitRepository(){
+        return this.organizationalUnitRepository;
     }
     
     /**

@@ -73,8 +73,8 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
             return false;
         }
 
-        // User is in owning group and has all permissions
         if (entity.getOwner() != null) {
+            // User is in owning group and has all permissions
             if (groups.stream().anyMatch(group -> entity.getOwner().getName().equals(group.getName()))) {
                 return true;
             }
@@ -181,6 +181,16 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         }
     }
 
+    public boolean checkOrganizationalUnitPermissions(OrganizationalUnitEntity entity) {
+
+        // User is global administrator
+        if (tokenParser.hasRealmAdminRole(getPrincipal(), ADMIN_ROLE_NAME)) {
+            return true;
+        }
+
+        return hasUsersAdministrationPermission(entity);
+    }
+
     public List<Group> getResourceAdminGroups() {
         //TODO check for group hierarchies
         Set<String> ownedRoles = tokenParser.getOwnedRoles(getPrincipal());
@@ -232,18 +242,49 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
      * @return true if the Keycloak group has admin permission for resources of the owning group
      */
     private boolean hasClientResourceAdminPermissionForOwningGroup(String kcGroup, String kcRole, RestrictedEntity entity) {
-        if (!kcRole.equals(CLIENT_RESOURCES_ADMIN_ROLE_NAME)) {
-            return false;
-        }
-        OrganizationalUnitEntity currentOwner = entity.getOwner();
-        while (currentOwner != null) {
-            if (currentOwner.getName().equals(kcGroup)) {
+        return kcRole.equals(CLIENT_RESOURCES_ADMIN_ROLE_NAME) && roleGroupIsParent(kcGroup, entity.getOwner());
+    }
+
+    private boolean hasUsersAdministrationPermission(OrganizationalUnitEntity entity) {
+        Set<String> ownedRoles = tokenParser.getOwnedRoles(getPrincipal());
+        return ownedRoles.stream()
+                .filter(r -> roleExtractorRegex.split(r, 2).length == 2)
+                .map(r -> {
+                    String[] split = roleExtractorRegex.split(r, 2);
+                    return Pair.of(split[0], split[1]);
+                })
+                .anyMatch(r -> hasUnitUsersAdminPermissionForOwningGroup(r.getFirst(), r.getSecond(), entity) ||
+                        hasClientUsersAdminPermissionForOwningGroup(r.getFirst(), r.getSecond(), entity));
+    }
+
+    private boolean hasUnitUsersAdminPermissionForOwningGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
+        return kcGroup.equals(entity.getName())
+                && hasAdminPermissionForResourceType(kcRole, PermissionResourceType.USERS);
+    }
+
+    private boolean hasClientUsersAdminPermissionForOwningGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
+        return kcRole.equals(CLIENT_USERS_ADMIN_ROLE_NAME) && roleGroupIsParent(kcGroup, entity);
+    }
+
+    /**
+     * Checks if a Keycloak group is parent of an OrganizationalUnit
+     *
+     * @param kcGroup Keycloak Group
+     * @param entity OrganizationalUnit
+     * @return true if the OrganizationalUnit has a parent, which has the same name as the Keycloak group
+     */
+    private boolean roleGroupIsParent(String kcGroup, OrganizationalUnitEntity entity) {
+        OrganizationalUnitEntity currentOrga = entity;
+        while (currentOrga != null) {
+            if (currentOrga.getName().equals(kcGroup)) {
                 return true;
             }
-            currentOwner = currentOwner.getParent();
+            currentOrga = currentOrga.getParent();
         }
         return false;
     }
+
+
 
 
 }
