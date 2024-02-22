@@ -170,17 +170,25 @@ public class OrganizationalUnitManager {
             organizationalUnitEntity.setMandant(newData.getMandant());
 
             if (organizationalUnitEntity.getParent() != null) {
-                OrganizationalUnitEntity parent =
-                        organizationalUnitRepository.findByOrganizationalUnitId(newData.getParentId());
-                if (parent == null) {
-                    logger.error(
-                            "parent with given id {} does not exist.",
-                            newData.getParentId());
-                    throw new Exception("parent with given id does not exist");
-                }
-                organizationalUnitEntity.setParent(parent);
-            }
 
+                if (newData.getParentId() == null) {
+                    // child group becomes a root group
+                    organizationalUnitEntity.setParent(null);
+
+                } else {
+                    // child group gets a new parent group
+                    OrganizationalUnitEntity parent =
+                            organizationalUnitRepository.findByOrganizationalUnitId(newData.getParentId());
+                    if (parent == null) {
+                        logger.error(
+                                "parent with given id {} does not exist.",
+                                newData.getParentId());
+                        throw new Exception("parent with given id does not exist");
+                    }
+                    organizationalUnitEntity.setParent(parent);
+                }
+            }
+            //TODO check if we want to allow moving a root group to a child group
             organizationalUnitRepository.saveAndFlush(organizationalUnitEntity);
             return organizationalUnitEntity.getOrganizationalUnitId();
         } else {
