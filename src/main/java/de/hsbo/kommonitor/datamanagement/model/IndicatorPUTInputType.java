@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * IndicatorPUTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-23T07:34:14.780092100+01:00[Europe/Berlin]")
 public class IndicatorPUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -39,6 +39,8 @@ public class IndicatorPUTInputType implements Serializable {
   @Valid
   private List<@Valid IndicatorPOSTInputTypeIndicatorValues> indicatorValues = new ArrayList<>();
 
+  private Boolean isPublic;
+
   private String ownerId;
 
   public IndicatorPUTInputType() {
@@ -48,10 +50,11 @@ public class IndicatorPUTInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorPUTInputType(List<String> permissions, String applicableSpatialUnit, List<@Valid IndicatorPOSTInputTypeIndicatorValues> indicatorValues, String ownerId) {
+  public IndicatorPUTInputType(List<String> permissions, String applicableSpatialUnit, List<@Valid IndicatorPOSTInputTypeIndicatorValues> indicatorValues, Boolean isPublic, String ownerId) {
     this.permissions = permissions;
     this.applicableSpatialUnit = applicableSpatialUnit;
     this.indicatorValues = indicatorValues;
+    this.isPublic = isPublic;
     this.ownerId = ownerId;
   }
 
@@ -151,6 +154,26 @@ public class IndicatorPUTInputType implements Serializable {
     this.indicatorValues = indicatorValues;
   }
 
+  public IndicatorPUTInputType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+  @NotNull 
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   public IndicatorPUTInputType ownerId(String ownerId) {
     this.ownerId = ownerId;
     return this;
@@ -184,12 +207,13 @@ public class IndicatorPUTInputType implements Serializable {
         Objects.equals(this.applicableSpatialUnit, indicatorPUTInputType.applicableSpatialUnit) &&
         Objects.equals(this.defaultClassificationMapping, indicatorPUTInputType.defaultClassificationMapping) &&
         Objects.equals(this.indicatorValues, indicatorPUTInputType.indicatorValues) &&
+        Objects.equals(this.isPublic, indicatorPUTInputType.isPublic) &&
         Objects.equals(this.ownerId, indicatorPUTInputType.ownerId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, applicableSpatialUnit, defaultClassificationMapping, indicatorValues, ownerId);
+    return Objects.hash(permissions, applicableSpatialUnit, defaultClassificationMapping, indicatorValues, isPublic, ownerId);
   }
 
   @Override
@@ -200,6 +224,7 @@ public class IndicatorPUTInputType implements Serializable {
     sb.append("    applicableSpatialUnit: ").append(toIndentedString(applicableSpatialUnit)).append("\n");
     sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    indicatorValues: ").append(toIndentedString(indicatorValues)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("}");
     return sb.toString();

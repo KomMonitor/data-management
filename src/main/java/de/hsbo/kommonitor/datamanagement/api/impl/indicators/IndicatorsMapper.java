@@ -236,7 +236,10 @@ public class IndicatorsMapper {
 
 
 		indicatorOverviewType.setPermissions(getAllowedRoleIds(indicatorsMetadataEntity.getPermissions()));
-		indicatorOverviewType.setOwnerId(indicatorsMetadataEntity.getOwner().getOrganizationalUnitId());
+		if (indicatorsMetadataEntity.getOwner() != null) {
+			indicatorOverviewType.setOwnerId(indicatorsMetadataEntity.getOwner().getOrganizationalUnitId());
+		}
+		indicatorOverviewType.setIsPublic(indicatorsMetadataEntity.isPublic());
 
 		return indicatorOverviewType;
 	}
@@ -298,7 +301,10 @@ public class IndicatorsMapper {
 					.collect(Collectors.toList());
 			item.setPermissions(allowedRoles);
 			item.setUserPermissions(indicatorSpatialUnitJoinEntity.getUserPermissions());
-			item.setOwnerId(indicatorSpatialUnitJoinEntity.getOwner().getOrganizationalUnitId());
+			if (indicatorSpatialUnitJoinEntity.getOwner() != null) {
+				item.setOwnerId(indicatorSpatialUnitJoinEntity.getOwner().getOrganizationalUnitId());
+			}
+			item.setIsPublic(indicatorSpatialUnitJoinEntity.isPublic());
 
 			indicatorSpatialUnitJoinItems.add(item);
 			// This is a QAD to prevent shared collection references for spatial unit roles

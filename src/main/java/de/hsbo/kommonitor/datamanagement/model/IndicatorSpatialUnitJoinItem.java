@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  * IndicatorSpatialUnitJoinItem
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-23T07:34:14.780092100+01:00[Europe/Berlin]")
 public class IndicatorSpatialUnitJoinItem implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -39,6 +39,8 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
 
   @Valid
   private List<PermissionLevelType> userPermissions;
+
+  private Boolean isPublic;
 
   public IndicatorSpatialUnitJoinItem() {
     super();
@@ -168,6 +170,26 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     this.userPermissions = userPermissions;
   }
 
+  public IndicatorSpatialUnitJoinItem isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+  
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -181,12 +203,13 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
         Objects.equals(this.ownerId, indicatorSpatialUnitJoinItem.ownerId) &&
         Objects.equals(this.spatialUnitId, indicatorSpatialUnitJoinItem.spatialUnitId) &&
         Objects.equals(this.spatialUnitName, indicatorSpatialUnitJoinItem.spatialUnitName) &&
-        Objects.equals(this.userPermissions, indicatorSpatialUnitJoinItem.userPermissions);
+        Objects.equals(this.userPermissions, indicatorSpatialUnitJoinItem.userPermissions) &&
+        Objects.equals(this.isPublic, indicatorSpatialUnitJoinItem.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, ownerId, spatialUnitId, spatialUnitName, userPermissions);
+    return Objects.hash(permissions, ownerId, spatialUnitId, spatialUnitName, userPermissions, isPublic);
   }
 
   @Override
@@ -198,6 +221,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     sb.append("    spatialUnitId: ").append(toIndentedString(spatialUnitId)).append("\n");
     sb.append("    spatialUnitName: ").append(toIndentedString(spatialUnitName)).append("\n");
     sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");
     return sb.toString();
   }

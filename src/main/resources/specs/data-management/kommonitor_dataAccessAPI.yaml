@@ -395,9 +395,7 @@ paths:
       tags:
         - georesources
       summary: retrieve information about the permissions for the selected geo-resource
-        dataset
       description: retrieve information about the permissions for the selected geo-resource
-        dataset
       operationId: getGeoresourcePermissionsById
       parameters:
         - name: georesourceId
@@ -6008,6 +6006,7 @@ components:
         - permissions
         - applicableSpatialUnit
         - indicatorValues
+        - isPublic
         - ownerId
       type: object
       properties:
@@ -6026,6 +6025,9 @@ components:
             to spatial features via identifiers
           items:
             $ref: '#/components/schemas/IndicatorPOSTInputTypeIndicatorValues'
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
         ownerId:
           type: string
           description: identifier of the owning group
@@ -6097,6 +6099,9 @@ components:
             the current user
           items:
             $ref: '#/components/schemas/PermissionLevelType'
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
     LastModificationOverviewType:
       title: LastModificationOverviewType
       type: object
@@ -6221,10 +6226,10 @@ components:
     ResourceType:
       type: string
       enum:
-        - georesources
-        - spatialunits,
-        - indicators
-        - indicatorspatialunits
+      - georesources
+      - spatialunits,
+      - indicators
+      - indicatorspatialunits
     OrganizationalUnitPermissionOverviewElementType:
       type: object
       required:
@@ -6578,7 +6583,7 @@ components:
         - nextUpperHierarchyLevel
       type: object
       properties:
-        datasetName:
+        datasetName: 
           type: string
           description: the name of the spatial unit - its "spatialUnitLevel"
         metadata:

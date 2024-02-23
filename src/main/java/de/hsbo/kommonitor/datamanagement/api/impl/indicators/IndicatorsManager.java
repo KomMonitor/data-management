@@ -156,7 +156,11 @@ public class IndicatorsManager {
                     persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId,
                             indicatorSpatialUnitJoinEntity.getIndicatorName(),
                             indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
-                            indicatorSpatialUnitJoinEntity.getIndicatorViewTableName(), styleName, allowedRoles);
+                            indicatorSpatialUnitJoinEntity.getIndicatorViewTableName(),
+                            styleName,
+                            allowedRoles,
+                            indicatorSpatialUnitJoinEntity.getOwner().getOrganizationalUnitId(),
+                            indicatorSpatialUnitJoinEntity.isPublic());
                 } catch (Exception e) {
                     logger.error("An error ocurred while trying to publish data layer for indicator with id {} and spatial unit with id {}.", indicatorId, indicatorSpatialUnitJoinEntity.getSpatialUnitId());
                     logger.error("Error was: {}", e.getMessage());
@@ -405,7 +409,9 @@ public class IndicatorsManager {
                 /*
                  * set wms and wfs urls within metadata
                  */
-                persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName, indicatorData.getPermissions());
+                persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(),
+                        spatialUnitName, indicatorViewTableName, styleName,
+                        indicatorData.getPermissions(), indicatorData.getOwnerId(), indicatorData.getIsPublic());
 
             } else {
                 logger.info(
@@ -430,7 +436,9 @@ public class IndicatorsManager {
                     }
                     publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 
-                    persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName, indicatorData.getPermissions());
+                    persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(),
+                            spatialUnitName, indicatorViewTableName, styleName,
+                            indicatorData.getPermissions(), indicatorData.getOwnerId(), indicatorData.getIsPublic());
                 } catch (Exception e) {
                     /*
                      * remove partially created resources and thrwo error
@@ -1229,8 +1237,10 @@ public class IndicatorsManager {
         return dbTableName;
     }
 
-    private void persistNamesOfIndicatorTablesAndServicesInJoinTable(String indicatorMetadataId, String indicatorName, String spatialUnitName,
-                                                                     String indicatorViewTableName, String styleName, List<String> permissions) throws ResourceNotFoundException {
+    private void persistNamesOfIndicatorTablesAndServicesInJoinTable(String indicatorMetadataId, String indicatorName,
+                                                                     String spatialUnitName, String indicatorViewTableName,
+                                                                     String styleName, List<String> permissions, String ownerId,
+                                                                     boolean istPublic) throws ResourceNotFoundException {
         logger.info(
                 "Create or modify entry in indicator spatial units join table for indicatorId '{}', and spatialUnitName '{}'. Set indicatorValueTable with name '{}'.",
                 indicatorMetadataId, spatialUnitName, indicatorViewTableName);
@@ -1256,6 +1266,8 @@ public class IndicatorsManager {
         entity.setDefaultStyleName(styleName);
 
         entity.setPermissions(retrievePermissions(permissions));
+        entity.setOwner(getOrganizationalUnitEntity(ownerId));
+        entity.setPublic(istPublic);
 
         indicatorsSpatialUnitsRepo.saveAndFlush(entity);
 
