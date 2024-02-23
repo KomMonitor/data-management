@@ -115,6 +115,7 @@ public class SpatialUnitsMapper {
 		if (spatialUnitEntity.getOwner() != null) {
 			dataset.setOwnerId(spatialUnitEntity.getOwner().getOrganizationalUnitId());
 		}
+		dataset.setIsPublic(spatialUnitEntity.isPublic());
 
 		dataset.setIsOutlineLayer(spatialUnitEntity.isOutlineLayer());
 		dataset.setOutlineColor(spatialUnitEntity.getOutlineColor());

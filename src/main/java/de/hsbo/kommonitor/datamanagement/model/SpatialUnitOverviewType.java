@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-23T11:01:00.481008900+01:00[Europe/Berlin]")
 public class SpatialUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -36,6 +36,8 @@ public class SpatialUnitOverviewType implements Serializable {
 
   @Valid
   private List<@Valid PeriodOfValidityType> availablePeriodsOfValidity;
+
+  private Boolean isPublic;
 
   private CommonMetadataType metadata;
 
@@ -71,8 +73,9 @@ public class SpatialUnitOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public SpatialUnitOverviewType(List<String> permissions, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel, String spatialUnitId, String spatialUnitLevel, List<PermissionLevelType> userPermissions, String wfsUrl, String wmsUrl) {
+  public SpatialUnitOverviewType(List<String> permissions, Boolean isPublic, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel, String spatialUnitId, String spatialUnitLevel, List<PermissionLevelType> userPermissions, String wfsUrl, String wmsUrl) {
     this.permissions = permissions;
+    this.isPublic = isPublic;
     this.metadata = metadata;
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
@@ -137,6 +140,26 @@ public class SpatialUnitOverviewType implements Serializable {
 
   public void setAvailablePeriodsOfValidity(List<@Valid PeriodOfValidityType> availablePeriodsOfValidity) {
     this.availablePeriodsOfValidity = availablePeriodsOfValidity;
+  }
+
+  public SpatialUnitOverviewType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+  @NotNull 
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
   }
 
   public SpatialUnitOverviewType metadata(CommonMetadataType metadata) {
@@ -418,6 +441,7 @@ public class SpatialUnitOverviewType implements Serializable {
     SpatialUnitOverviewType spatialUnitOverviewType = (SpatialUnitOverviewType) o;
     return Objects.equals(this.permissions, spatialUnitOverviewType.permissions) &&
         Objects.equals(this.availablePeriodsOfValidity, spatialUnitOverviewType.availablePeriodsOfValidity) &&
+        Objects.equals(this.isPublic, spatialUnitOverviewType.isPublic) &&
         Objects.equals(this.metadata, spatialUnitOverviewType.metadata) &&
         Objects.equals(this.nextLowerHierarchyLevel, spatialUnitOverviewType.nextLowerHierarchyLevel) &&
         Objects.equals(this.nextUpperHierarchyLevel, spatialUnitOverviewType.nextUpperHierarchyLevel) &&
@@ -435,7 +459,7 @@ public class SpatialUnitOverviewType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, availablePeriodsOfValidity, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, spatialUnitId, spatialUnitLevel, userPermissions, wfsUrl, wmsUrl, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString, ownerId);
+    return Objects.hash(permissions, availablePeriodsOfValidity, isPublic, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, spatialUnitId, spatialUnitLevel, userPermissions, wfsUrl, wmsUrl, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString, ownerId);
   }
 
   @Override
@@ -444,6 +468,7 @@ public class SpatialUnitOverviewType implements Serializable {
     sb.append("class SpatialUnitOverviewType {\n");
     sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    availablePeriodsOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    nextLowerHierarchyLevel: ").append(toIndentedString(nextLowerHierarchyLevel)).append("\n");
     sb.append("    nextUpperHierarchyLevel: ").append(toIndentedString(nextUpperHierarchyLevel)).append("\n");

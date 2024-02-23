@@ -28,7 +28,7 @@ import jakarta.annotation.Generated;
  * GeoresourceOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-23T11:01:00.481008900+01:00[Europe/Berlin]")
 public class GeoresourceOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -50,6 +50,8 @@ public class GeoresourceOverviewType implements Serializable {
   private Boolean isLOI;
 
   private Boolean isPOI;
+
+  private Boolean isPublic;
 
   private String loiColor;
 
@@ -83,13 +85,14 @@ public class GeoresourceOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public GeoresourceOverviewType(List<@Valid PeriodOfValidityType> availablePeriodsOfValidity, String datasetName, String georesourceId, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, String ownerId, String topicReference) {
+  public GeoresourceOverviewType(List<@Valid PeriodOfValidityType> availablePeriodsOfValidity, String datasetName, String georesourceId, Boolean isAOI, Boolean isLOI, Boolean isPOI, Boolean isPublic, CommonMetadataType metadata, String ownerId, String topicReference) {
     this.availablePeriodsOfValidity = availablePeriodsOfValidity;
     this.datasetName = datasetName;
     this.georesourceId = georesourceId;
     this.isAOI = isAOI;
     this.isLOI = isLOI;
     this.isPOI = isPOI;
+    this.isPublic = isPublic;
     this.metadata = metadata;
     this.ownerId = ownerId;
     this.topicReference = topicReference;
@@ -269,6 +272,26 @@ public class GeoresourceOverviewType implements Serializable {
 
   public void setIsPOI(Boolean isPOI) {
     this.isPOI = isPOI;
+  }
+
+  public GeoresourceOverviewType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+  @NotNull 
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
   }
 
   public GeoresourceOverviewType loiColor(String loiColor) {
@@ -536,6 +559,7 @@ public class GeoresourceOverviewType implements Serializable {
         Objects.equals(this.isAOI, georesourceOverviewType.isAOI) &&
         Objects.equals(this.isLOI, georesourceOverviewType.isLOI) &&
         Objects.equals(this.isPOI, georesourceOverviewType.isPOI) &&
+        Objects.equals(this.isPublic, georesourceOverviewType.isPublic) &&
         Objects.equals(this.loiColor, georesourceOverviewType.loiColor) &&
         Objects.equals(this.loiDashArrayString, georesourceOverviewType.loiDashArrayString) &&
         Objects.equals(this.loiWidth, georesourceOverviewType.loiWidth) &&
@@ -552,7 +576,7 @@ public class GeoresourceOverviewType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, aoiColor, availablePeriodsOfValidity, datasetName, georesourceId, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, ownerId, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference, userPermissions, wfsUrl, wmsUrl);
+    return Objects.hash(permissions, aoiColor, availablePeriodsOfValidity, datasetName, georesourceId, isAOI, isLOI, isPOI, isPublic, loiColor, loiDashArrayString, loiWidth, metadata, ownerId, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference, userPermissions, wfsUrl, wmsUrl);
   }
 
   @Override
@@ -567,6 +591,7 @@ public class GeoresourceOverviewType implements Serializable {
     sb.append("    isAOI: ").append(toIndentedString(isAOI)).append("\n");
     sb.append("    isLOI: ").append(toIndentedString(isLOI)).append("\n");
     sb.append("    isPOI: ").append(toIndentedString(isPOI)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("    loiColor: ").append(toIndentedString(loiColor)).append("\n");
     sb.append("    loiDashArrayString: ").append(toIndentedString(loiDashArrayString)).append("\n");
     sb.append("    loiWidth: ").append(toIndentedString(loiWidth)).append("\n");
