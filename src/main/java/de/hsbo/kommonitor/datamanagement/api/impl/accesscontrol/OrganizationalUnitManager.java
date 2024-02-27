@@ -2,11 +2,8 @@ package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
-import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
-import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
+import de.hsbo.kommonitor.datamanagement.auth.KeycloakAdminService;
+import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +29,9 @@ public class OrganizationalUnitManager {
 
     @Autowired
     PermissionManager permissionManager;
+
+    @Autowired
+    KeycloakAdminService keycloakAdminService;
 
     @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
     private String defaultAnonymousOUname;
@@ -59,9 +59,9 @@ public class OrganizationalUnitManager {
         jpaUnit.setName(name);
         jpaUnit.setContact(inputOrganizationalUnit.getContact());
         jpaUnit.setDescription(inputOrganizationalUnit.getDescription());
-        jpaUnit.setKeycloakId(UUID.fromString(inputOrganizationalUnit.getKeycloakId()));
         jpaUnit.setMandant(inputOrganizationalUnit.getMandant());
 
+        String keycloakId;
         if (inputOrganizationalUnit.getParentId() != null && !inputOrganizationalUnit.getParentId().isEmpty()) {
             OrganizationalUnitEntity parent =
                     organizationalUnitRepository.findByOrganizationalUnitId(inputOrganizationalUnit.getParentId());
@@ -72,8 +72,13 @@ public class OrganizationalUnitManager {
                 throw new Exception("parent with given id does not exist");
             }
             jpaUnit.setParent(parent);
+            keycloakId = keycloakAdminService.addSubGroup(inputOrganizationalUnit, parent);
+
+        } else {
+            keycloakId = keycloakAdminService.addGroup(inputOrganizationalUnit);
         }
 
+        jpaUnit.setKeycloakId(UUID.fromString(keycloakId));
         OrganizationalUnitEntity saved = organizationalUnitRepository.saveAndFlush(jpaUnit);
 
         // Generate appropriate roles

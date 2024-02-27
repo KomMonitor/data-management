@@ -5,8 +5,12 @@ import de.hsbo.kommonitor.datamanagement.api.AccessControlApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.*;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.ResourceType;
 import jakarta.servlet.http.HttpServletRequest;
+import org.keycloak.admin.client.Keycloak;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,9 @@ public class AccessControlController extends BasePathController implements Acces
 
     @Autowired
     private LastModificationManager lastModManager;
+
+    @Autowired
+    private Keycloak keycloak;
 
     @Autowired
     public AccessControlController(ObjectMapper objectMapper, HttpServletRequest request) {
