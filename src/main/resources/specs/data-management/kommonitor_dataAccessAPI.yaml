@@ -5367,6 +5367,7 @@ components:
         - isAOI
         - isLOI
         - isPOI
+        - isPublic
         - metadata
         - ownerId
         - topicReference
@@ -5400,6 +5401,9 @@ components:
           type: boolean
           description: boolean value indicating if the dataset contains points of
             interest
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
         loiColor:
           type: string
           description: color name or color code (i.e. hex number) for lines of interest
@@ -6507,6 +6511,7 @@ components:
     SpatialUnitOverviewType:
       title: SpatialUnitOverviewType
       required:
+        - isPublic
         - permissions
         - metadata
         - nextLowerHierarchyLevel
@@ -6527,6 +6532,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PeriodOfValidityType'
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
         nextLowerHierarchyLevel:

@@ -39,6 +39,8 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
 
     private TokenParser<Principal> tokenParser;
 
+    private SortedSet<PermissionLevelType> permissionSet;
+
     public GroupBasedAuthInfoProvider() {
         groups = null;
     }
@@ -48,6 +50,10 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         this.tokenParser = tokenParser;
 
         groups = tokenParser.getGroupMemberships(principal);
+        permissionSet = new TreeSet();
+        permissionSet.add(PermissionLevelType.CREATOR);
+        permissionSet.add(PermissionLevelType.EDITOR);
+        permissionSet.add(PermissionLevelType.VIEWER);
     }
 
     public Principal getPrincipal() {
@@ -140,16 +146,17 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         // Check permissions for a matching permission
         // 1. for all groups of the user try to permission defined for the group
         // 2. Aggregate and keep the highest level
-        permissions.stream()
+        PermissionLevelType max_permission = permissions.stream()
                 .filter(r -> groups
                         .stream()
                         .anyMatch(g -> g.getName().equals(r.getFirst().getName()))
                 )
                 .map(Pair::getSecond)
                 .min(Comparator.comparing(PermissionLevelType::ordinal))
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(NoSuchElementException::new)
+        ;
 
-        return Collections.emptyList();
+        return new ArrayList<>(permissionSet.tailSet(max_permission));
     }
 
     @Override

@@ -32,7 +32,7 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
     @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
     private String publicRole;
 
-    private SortedSet permissionSet;
+    private SortedSet<PermissionLevelType> permissionSet;
 
     private static final Pattern roleExtractorRegex = Pattern.compile("-(?=(creator)|(publisher)|(editor)|(viewer)$)");
 
@@ -44,7 +44,7 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
         this.tokenParser = tokenParser;
         this.adminRolePrefix = adminRolePrefix;
         this.publicRole = publicRole;
-        permissionSet = new TreeSet();
+        permissionSet = new TreeSet<>();
         permissionSet.add(PermissionLevelType.CREATOR);
         permissionSet.add(PermissionLevelType.EDITOR);
         permissionSet.add(PermissionLevelType.VIEWER);

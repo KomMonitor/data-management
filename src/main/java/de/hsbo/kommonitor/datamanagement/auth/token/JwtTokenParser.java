@@ -10,7 +10,13 @@ public class JwtTokenParser extends TokenParser<JwtAuthenticationToken> {
 
     @Override
     public Set<String> getOwnedRoles(JwtAuthenticationToken principal) {
-        List<String> roles = ((Map<String, List<String>>) principal.getTokenAttributes().get("realm_access")).get("roles");
+        List<String> roles;
+        Object realmAccessClaim = principal.getTokenAttributes().get("realm_access");
+        if (realmAccessClaim != null) {
+            roles = ((Map<String, List<String>>)realmAccessClaim).get("roles");
+        } else {
+            roles = Collections.EMPTY_LIST;
+        }
         return new HashSet<>(roles);
     }
 

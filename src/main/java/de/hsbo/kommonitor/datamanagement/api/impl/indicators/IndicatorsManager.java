@@ -279,7 +279,8 @@ public class IndicatorsManager {
     private boolean keyPropertiesHaveChanged(RestrictedEntity indicatorEntity, PermissionLevelInputType indicatorData) {
         List<String> oldRoleIds = indicatorEntity.getPermissions().stream().map(PermissionEntity::getPermissionId).collect(Collectors.toList());
         HashSet<String> newRoleIds = new HashSet<String>(indicatorData.getPermissions());
-        return !CollectionUtils.isEqualCollection(oldRoleIds, newRoleIds);
+
+        return !CollectionUtils.isEqualCollection(oldRoleIds, newRoleIds) || indicatorEntity.isPublic() != indicatorData.getIsPublic();
     }
 
     private boolean keyPropertiesHaveChanged(MetadataIndicatorsEntity metadataEntity, String indicatorName,
