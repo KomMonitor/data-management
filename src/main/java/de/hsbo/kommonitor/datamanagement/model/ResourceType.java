@@ -26,7 +26,7 @@ public enum ResourceType {
   
   GEORESOURCES("georesources"),
   
-  SPATIALUNITS_("spatialunits,"),
+  SPATIALUNITS("spatialunits"),
   
   INDICATORS("indicators"),
   

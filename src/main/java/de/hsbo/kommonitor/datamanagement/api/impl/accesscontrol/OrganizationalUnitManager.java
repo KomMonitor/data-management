@@ -7,6 +7,7 @@ import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
+import de.hsbo.kommonitor.datamanagement.model.ResourceType;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,14 +129,14 @@ public class OrganizationalUnitManager {
         }
     }
 
-    public OrganizationalUnitPermissionOverviewType getOrganizationalUnitPermissionsById(String organizationalUnitId) throws ResourceNotFoundException {
+    public OrganizationalUnitPermissionOverviewType getOrganizationalUnitPermissionsById(String organizationalUnitId, ResourceType resourceType) throws ResourceNotFoundException {
         logger.info("Retrieving OrganizationalUnit->permissions for organizationalUnitId '{}'", organizationalUnitId);
 
         OrganizationalUnitEntity organizationalUnitEntity =
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
 
         if (organizationalUnitEntity != null) {
-            return AccessControlMapper.mapToSwapperOUPermissionOverviewType(organizationalUnitEntity);
+            return AccessControlMapper.mapToSwapperOUPermissionOverviewType(organizationalUnitEntity, resourceType);
         } else {
             logger.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
                     organizationalUnitId);

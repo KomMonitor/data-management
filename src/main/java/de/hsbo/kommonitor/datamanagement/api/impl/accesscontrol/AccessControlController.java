@@ -159,7 +159,7 @@ public class AccessControlController extends BasePathController implements Acces
         try {
             if (accept != null && accept.contains("application/json")) {
                 OrganizationalUnitPermissionOverviewType permissions =
-                        organizationalUnitManager.getOrganizationalUnitPermissionsById(organizationalUnitId);
+                        organizationalUnitManager.getOrganizationalUnitPermissionsById(organizationalUnitId, resourceType);
                 return new ResponseEntity<>(permissions, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
