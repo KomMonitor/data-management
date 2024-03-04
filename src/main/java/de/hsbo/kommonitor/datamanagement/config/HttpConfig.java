@@ -3,8 +3,11 @@ package de.hsbo.kommonitor.datamanagement.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.env.Environment;
+import org.springframework.format.FormatterRegistry;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,9 +32,10 @@ import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.Geoserve
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
+import de.hsbo.kommonitor.datamanagement.model.ResourceType;
 
 @Configuration
-public class HttpConfig {
+public class HttpConfig implements WebMvcConfigurer {
 	
 	@Autowired
 	private SpatialUnitsMetadataRepository spatialUnitsRepo;
@@ -119,5 +123,18 @@ public class HttpConfig {
     @Bean
     public TopicsHelper topicsHelper(){
     	return new TopicsHelper(topicsRepo);
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new Converter<String, ResourceType>() {
+            @Override
+            public ResourceType convert(String source) {
+                if (source == null || source.isBlank()) {
+                    return null;
+                }
+                return ResourceType.valueOf(source);
+            }
+        });
     }
 }
