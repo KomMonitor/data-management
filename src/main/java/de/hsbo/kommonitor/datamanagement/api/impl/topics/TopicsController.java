@@ -45,7 +45,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
     }
 
     @Override
-    //@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
     public ResponseEntity<TopicOverviewType> addTopic(TopicInputType topicData) {
 
         logger.info("Received request to insert new topic");
@@ -108,7 +108,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
     }
 
     @Override
-    //@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
     public ResponseEntity<List<TopicDefaultPermissionType>> getTopicResourcePermissions() {
         try {
             return new ResponseEntity<>(topicsManager.getTopicDefaultPermissions(), HttpStatus.OK);
@@ -118,7 +118,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
     }
 
     @Override
-    //@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
     public ResponseEntity<DefaultResourcePermissionType> getTopicResourcePermissionsById(String topicId) {
         try {
             DefaultResourcePermissionType response = topicsManager.getTopicDefaultPermissionsById(topicId);
@@ -133,7 +133,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
     }
 
     @Override
-    //@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
     public ResponseEntity<Void> updateTopic(String topicId, TopicInputType topicData) {
         logger.info("Received request to update topic with topicId '{}'", topicId);
 
