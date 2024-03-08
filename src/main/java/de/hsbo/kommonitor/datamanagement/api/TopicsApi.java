@@ -5,6 +5,8 @@
  */
 package de.hsbo.kommonitor.datamanagement.api;
 
+import de.hsbo.kommonitor.datamanagement.model.DefaultResourcePermissionType;
+import de.hsbo.kommonitor.datamanagement.model.TopicDefaultPermissionType;
 import de.hsbo.kommonitor.datamanagement.model.TopicInputType;
 import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
@@ -33,7 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:10.685766091+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-03-08T11:42:47.407280514+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "topics", description = "the Topics API")
 public interface TopicsApi {
@@ -114,6 +116,85 @@ public interface TopicsApi {
     )
     
     ResponseEntity<Void> deleteTopic(
+        @Parameter(name = "topicId", description = "unique identifier of the topic", required = true, in = ParameterIn.PATH) @PathVariable("topicId") String topicId
+    );
+
+
+    /**
+     * GET /topics/resources/permissions : retrieve information about default permissions for resources for all topics
+     * retrieve information about default permissions for resources for all topics
+     *
+     * @return OK (status code 200)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "getTopicResourcePermissions",
+        summary = "retrieve information about default permissions for resources for all topics",
+        description = "retrieve information about default permissions for resources for all topics",
+        tags = { "topics" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TopicDefaultPermissionType.class)))
+            }),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/topics/resources/permissions",
+        produces = { "application/json" }
+    )
+    
+    ResponseEntity<List<TopicDefaultPermissionType>> getTopicResourcePermissions(
+        
+    );
+
+
+    /**
+     * GET /topics/{topicId}/resources/permissions : retrieve information about default permissions for resources in this topic
+     * retrieve information about default permissions for resources in this topic
+     *
+     * @param topicId unique identifier of the topic (required)
+     * @return OK (status code 200)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "getTopicResourcePermissionsById",
+        summary = "retrieve information about default permissions for resources in this topic",
+        description = "retrieve information about default permissions for resources in this topic",
+        tags = { "topics" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = DefaultResourcePermissionType.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/topics/{topicId}/resources/permissions",
+        produces = { "application/json" }
+    )
+    
+    ResponseEntity<DefaultResourcePermissionType> getTopicResourcePermissionsById(
         @Parameter(name = "topicId", description = "unique identifier of the topic", required = true, in = ParameterIn.PATH) @PathVariable("topicId") String topicId
     );
 

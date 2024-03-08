@@ -19,37 +19,58 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * PermissionLevelInputType
+ * Default permissions (template) for resources associated with this topic
  */
 
+@Schema(name = "DefaultResourcePermissionType", description = "Default permissions (template) for resources associated with this topic")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-03-08T11:42:46.348441096+01:00[Europe/Berlin]")
-public class PermissionLevelInputType implements Serializable {
+public class DefaultResourcePermissionType implements Serializable {
 
   private static final long serialVersionUID = 1L;
+
+  private Boolean isPublic;
 
   @Valid
   private List<String> permissions = new ArrayList<>();
 
-  private Boolean isPublic;
-
-  public PermissionLevelInputType() {
+  public DefaultResourcePermissionType() {
     super();
   }
 
   /**
    * Constructor with only required parameters
    */
-  public PermissionLevelInputType(List<String> permissions, Boolean isPublic) {
+  public DefaultResourcePermissionType(Boolean isPublic, List<String> permissions) {
+    this.isPublic = isPublic;
     this.permissions = permissions;
+  }
+
+  public DefaultResourcePermissionType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * true if resources should be public
+   * @return isPublic
+  */
+  @NotNull 
+  @Schema(name = "isPublic", description = "true if resources should be public", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
     this.isPublic = isPublic;
   }
 
-  public PermissionLevelInputType permissions(List<String> permissions) {
+  public DefaultResourcePermissionType permissions(List<String> permissions) {
     this.permissions = permissions;
     return this;
   }
 
-  public PermissionLevelInputType addPermissionsItem(String permissionsItem) {
+  public DefaultResourcePermissionType addPermissionsItem(String permissionsItem) {
     if (this.permissions == null) {
       this.permissions = new ArrayList<>();
     }
@@ -58,11 +79,11 @@ public class PermissionLevelInputType implements Serializable {
   }
 
   /**
-   * list of permissions on this entity
+   * Get permissions
    * @return permissions
   */
   @NotNull 
-  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "permissions", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissions")
   public List<String> getPermissions() {
     return permissions;
@@ -70,26 +91,6 @@ public class PermissionLevelInputType implements Serializable {
 
   public void setPermissions(List<String> permissions) {
     this.permissions = permissions;
-  }
-
-  public PermissionLevelInputType isPublic(Boolean isPublic) {
-    this.isPublic = isPublic;
-    return this;
-  }
-
-  /**
-   * flag whether this resource is publicly viewable
-   * @return isPublic
-  */
-  @NotNull 
-  @Schema(name = "isPublic", description = "flag whether this resource is publicly viewable", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("isPublic")
-  public Boolean getIsPublic() {
-    return isPublic;
-  }
-
-  public void setIsPublic(Boolean isPublic) {
-    this.isPublic = isPublic;
   }
 
   @Override
@@ -100,22 +101,22 @@ public class PermissionLevelInputType implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    PermissionLevelInputType permissionLevelInputType = (PermissionLevelInputType) o;
-    return Objects.equals(this.permissions, permissionLevelInputType.permissions) &&
-        Objects.equals(this.isPublic, permissionLevelInputType.isPublic);
+    DefaultResourcePermissionType defaultResourcePermissionType = (DefaultResourcePermissionType) o;
+    return Objects.equals(this.isPublic, defaultResourcePermissionType.isPublic) &&
+        Objects.equals(this.permissions, defaultResourcePermissionType.permissions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, isPublic);
+    return Objects.hash(isPublic, permissions);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class PermissionLevelInputType {\n");
-    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
+    sb.append("class DefaultResourcePermissionType {\n");
     sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("}");
     return sb.toString();
   }

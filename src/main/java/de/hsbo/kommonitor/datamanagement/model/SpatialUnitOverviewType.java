@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-23T11:01:00.481008900+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-03-08T11:42:46.348441096+01:00[Europe/Berlin]")
 public class SpatialUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -36,8 +36,6 @@ public class SpatialUnitOverviewType implements Serializable {
 
   @Valid
   private List<@Valid PeriodOfValidityType> availablePeriodsOfValidity;
-
-  private Boolean isPublic;
 
   private CommonMetadataType metadata;
 
@@ -66,6 +64,8 @@ public class SpatialUnitOverviewType implements Serializable {
 
   private String ownerId;
 
+  private Boolean isPublic;
+
   public SpatialUnitOverviewType() {
     super();
   }
@@ -73,9 +73,8 @@ public class SpatialUnitOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public SpatialUnitOverviewType(List<String> permissions, Boolean isPublic, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel, String spatialUnitId, String spatialUnitLevel, List<PermissionLevelType> userPermissions, String wfsUrl, String wmsUrl) {
+  public SpatialUnitOverviewType(List<String> permissions, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel, String spatialUnitId, String spatialUnitLevel, List<PermissionLevelType> userPermissions, String wfsUrl, String wmsUrl, Boolean isPublic) {
     this.permissions = permissions;
-    this.isPublic = isPublic;
     this.metadata = metadata;
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
@@ -84,6 +83,7 @@ public class SpatialUnitOverviewType implements Serializable {
     this.userPermissions = userPermissions;
     this.wfsUrl = wfsUrl;
     this.wmsUrl = wmsUrl;
+    this.isPublic = isPublic;
   }
 
   public SpatialUnitOverviewType permissions(List<String> permissions) {
@@ -140,26 +140,6 @@ public class SpatialUnitOverviewType implements Serializable {
 
   public void setAvailablePeriodsOfValidity(List<@Valid PeriodOfValidityType> availablePeriodsOfValidity) {
     this.availablePeriodsOfValidity = availablePeriodsOfValidity;
-  }
-
-  public SpatialUnitOverviewType isPublic(Boolean isPublic) {
-    this.isPublic = isPublic;
-    return this;
-  }
-
-  /**
-   * flag whether the resource is publicly accessible
-   * @return isPublic
-  */
-  @NotNull 
-  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("isPublic")
-  public Boolean getIsPublic() {
-    return isPublic;
-  }
-
-  public void setIsPublic(Boolean isPublic) {
-    this.isPublic = isPublic;
   }
 
   public SpatialUnitOverviewType metadata(CommonMetadataType metadata) {
@@ -430,6 +410,26 @@ public class SpatialUnitOverviewType implements Serializable {
     this.ownerId = ownerId;
   }
 
+  public SpatialUnitOverviewType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+  @NotNull 
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -441,7 +441,6 @@ public class SpatialUnitOverviewType implements Serializable {
     SpatialUnitOverviewType spatialUnitOverviewType = (SpatialUnitOverviewType) o;
     return Objects.equals(this.permissions, spatialUnitOverviewType.permissions) &&
         Objects.equals(this.availablePeriodsOfValidity, spatialUnitOverviewType.availablePeriodsOfValidity) &&
-        Objects.equals(this.isPublic, spatialUnitOverviewType.isPublic) &&
         Objects.equals(this.metadata, spatialUnitOverviewType.metadata) &&
         Objects.equals(this.nextLowerHierarchyLevel, spatialUnitOverviewType.nextLowerHierarchyLevel) &&
         Objects.equals(this.nextUpperHierarchyLevel, spatialUnitOverviewType.nextUpperHierarchyLevel) &&
@@ -454,12 +453,13 @@ public class SpatialUnitOverviewType implements Serializable {
         Objects.equals(this.outlineColor, spatialUnitOverviewType.outlineColor) &&
         Objects.equals(this.outlineWidth, spatialUnitOverviewType.outlineWidth) &&
         Objects.equals(this.outlineDashArrayString, spatialUnitOverviewType.outlineDashArrayString) &&
-        Objects.equals(this.ownerId, spatialUnitOverviewType.ownerId);
+        Objects.equals(this.ownerId, spatialUnitOverviewType.ownerId) &&
+        Objects.equals(this.isPublic, spatialUnitOverviewType.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, availablePeriodsOfValidity, isPublic, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, spatialUnitId, spatialUnitLevel, userPermissions, wfsUrl, wmsUrl, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString, ownerId);
+    return Objects.hash(permissions, availablePeriodsOfValidity, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, spatialUnitId, spatialUnitLevel, userPermissions, wfsUrl, wmsUrl, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString, ownerId, isPublic);
   }
 
   @Override
@@ -468,7 +468,6 @@ public class SpatialUnitOverviewType implements Serializable {
     sb.append("class SpatialUnitOverviewType {\n");
     sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    availablePeriodsOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
-    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    nextLowerHierarchyLevel: ").append(toIndentedString(nextLowerHierarchyLevel)).append("\n");
     sb.append("    nextUpperHierarchyLevel: ").append(toIndentedString(nextUpperHierarchyLevel)).append("\n");
@@ -482,6 +481,7 @@ public class SpatialUnitOverviewType implements Serializable {
     sb.append("    outlineWidth: ").append(toIndentedString(outlineWidth)).append("\n");
     sb.append("    outlineDashArrayString: ").append(toIndentedString(outlineDashArrayString)).append("\n");
     sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");
     return sb.toString();
   }

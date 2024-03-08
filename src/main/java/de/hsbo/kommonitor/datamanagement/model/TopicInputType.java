@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import de.hsbo.kommonitor.datamanagement.model.DefaultResourcePermissionType;
 import de.hsbo.kommonitor.datamanagement.model.TopicResourceEnum;
 import de.hsbo.kommonitor.datamanagement.model.TopicTypeEnum;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import jakarta.annotation.Generated;
  * TopicInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-03-08T11:42:46.348441096+01:00[Europe/Berlin]")
 public class TopicInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -40,6 +41,8 @@ public class TopicInputType implements Serializable {
   private String topicName;
 
   private TopicResourceEnum topicResource;
+
+  private DefaultResourcePermissionType defaultPermissions;
 
   private TopicTypeEnum topicType;
 
@@ -164,6 +167,26 @@ public class TopicInputType implements Serializable {
     this.topicResource = topicResource;
   }
 
+  public TopicInputType defaultPermissions(DefaultResourcePermissionType defaultPermissions) {
+    this.defaultPermissions = defaultPermissions;
+    return this;
+  }
+
+  /**
+   * Get defaultPermissions
+   * @return defaultPermissions
+  */
+  @Valid 
+  @Schema(name = "defaultPermissions", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("defaultPermissions")
+  public DefaultResourcePermissionType getDefaultPermissions() {
+    return defaultPermissions;
+  }
+
+  public void setDefaultPermissions(DefaultResourcePermissionType defaultPermissions) {
+    this.defaultPermissions = defaultPermissions;
+  }
+
   public TopicInputType topicType(TopicTypeEnum topicType) {
     this.topicType = topicType;
     return this;
@@ -198,12 +221,13 @@ public class TopicInputType implements Serializable {
         Objects.equals(this.topicId, topicInputType.topicId) &&
         Objects.equals(this.topicName, topicInputType.topicName) &&
         Objects.equals(this.topicResource, topicInputType.topicResource) &&
+        Objects.equals(this.defaultPermissions, topicInputType.defaultPermissions) &&
         Objects.equals(this.topicType, topicInputType.topicType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(subTopics, topicDescription, topicId, topicName, topicResource, topicType);
+    return Objects.hash(subTopics, topicDescription, topicId, topicName, topicResource, defaultPermissions, topicType);
   }
 
   @Override
@@ -215,6 +239,7 @@ public class TopicInputType implements Serializable {
     sb.append("    topicId: ").append(toIndentedString(topicId)).append("\n");
     sb.append("    topicName: ").append(toIndentedString(topicName)).append("\n");
     sb.append("    topicResource: ").append(toIndentedString(topicResource)).append("\n");
+    sb.append("    defaultPermissions: ").append(toIndentedString(defaultPermissions)).append("\n");
     sb.append("    topicType: ").append(toIndentedString(topicType)).append("\n");
     sb.append("}");
     return sb.toString();

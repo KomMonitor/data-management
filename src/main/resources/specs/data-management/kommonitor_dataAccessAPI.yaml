@@ -5272,6 +5272,86 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /topics/resources/permissions:
+    get:
+      tags:
+        - topics
+      summary: retrieve information about default permissions for resources for all topics
+      description: retrieve information about default permissions for resources for all topics
+      operationId: getTopicResourcePermissions
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  title: TopicDefaultPermissionType
+                  description: association Object for connecting topicIds with defaultPermissions
+                  required:
+                    - topic
+                    - defaultPermissions
+                  properties:
+                    topicId:
+                      type: string
+                      description: uuid of the topic
+                    defaultPermissions:
+                      $ref: '#/components/schemas/DefaultResourcePermissionType'
+        "400":
+          description: Invalid status value
+          content: { }
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+  /topics/{topicId}/resources/permissions:
+    get:
+      tags:
+        - topics
+      summary: retrieve information about default permissions for resources in this topic
+      description: retrieve information about default permissions for resources in this topic
+      operationId: getTopicResourcePermissionsById
+      parameters:
+        - name: topicId
+          in: path
+          description: unique identifier of the topic
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultResourcePermissionType'
+        "400":
+          description: Invalid status value
+          content: {}
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+
+
 components:
   schemas:
     CommonMetadataType:
@@ -5367,10 +5447,10 @@ components:
         - isAOI
         - isLOI
         - isPOI
-        - isPublic
         - metadata
         - ownerId
         - topicReference
+        - isPublic
       type: object
       properties:
         permissions:
@@ -6230,10 +6310,10 @@ components:
     ResourceType:
       type: string
       enum:
-      - georesources
-      - spatialunits,
-      - indicators
-      - indicatorspatialunits
+        - georesources
+        - spatialunits,
+        - indicators
+        - indicatorspatialunits
     OrganizationalUnitPermissionOverviewElementType:
       type: object
       required:
@@ -6511,7 +6591,6 @@ components:
     SpatialUnitOverviewType:
       title: SpatialUnitOverviewType
       required:
-        - isPublic
         - permissions
         - metadata
         - nextLowerHierarchyLevel
@@ -6521,6 +6600,7 @@ components:
         - userPermissions
         - wfsUrl
         - wmsUrl
+        - isPublic
       type: object
       properties:
         permissions:
@@ -6532,9 +6612,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PeriodOfValidityType'
-        isPublic:
-          type: boolean
-          description: flag whether the resource is publicly accessible
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
         nextLowerHierarchyLevel:
@@ -6582,6 +6659,9 @@ components:
         ownerId:
           type: string
           description: identifier of the owning group
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
     SpatialUnitPATCHInputType:
       title: SpatialUnitPATCHInputType
       required:
@@ -6591,7 +6671,7 @@ components:
         - nextUpperHierarchyLevel
       type: object
       properties:
-        datasetName: 
+        datasetName:
           type: string
           description: the name of the spatial unit - its "spatialUnitLevel"
         metadata:
@@ -6724,11 +6804,29 @@ components:
           description: topic resource indicating if the topic object corresponds to
             an indicator or to a georesource
           $ref: '#/components/schemas/TopicResourceEnum'
+        defaultPermissions:
+          $ref: '#/components/schemas/DefaultResourcePermissionType'
         topicType:
           description: topic type indicating if the topic object is a subtopic or
             a main topic - only topics of type 'sub' shall be subTopics of topics
             with type 'main'
           $ref: '#/components/schemas/TopicTypeEnum'
+    DefaultResourcePermissionType:
+      type: object
+      title: DefaultResourcePermissionType
+      description: Default permissions (template) for resources associated with this topic
+      required:
+        - isPublic
+        - permissions
+      properties:
+        isPublic:
+          type: boolean
+          description: true if resources should be public
+        permissions:
+          type: array
+          items:
+            type: string
+            description: list of permissionIds
     TopicOverviewType:
       title: TopicOverviewType
       required:
