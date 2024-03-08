@@ -30,10 +30,8 @@ public class ApiUtils {
         er.setType(exception.getClass().getSimpleName());
 
         BodyBuilder bb = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR);
-        ResponseEntity respEn = bb.contentType(MediaType.parseMediaType("application/json"))
-                .body(er);
 
-        return respEn;
+        return bb.contentType(MediaType.parseMediaType("application/json")).body(er);
     }
 
 }

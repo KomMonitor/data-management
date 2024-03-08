@@ -5,6 +5,8 @@ import de.hsbo.kommonitor.datamanagement.api.TopicsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.model.DefaultResourcePermissionType;
+import de.hsbo.kommonitor.datamanagement.model.TopicDefaultPermissionType;
 import de.hsbo.kommonitor.datamanagement.model.TopicInputType;
 import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,124 +21,150 @@ import org.springframework.stereotype.Controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @Controller
 public class TopicsController extends BasePathController implements TopicsApi {
-	
-	private static Logger logger = LoggerFactory.getLogger(TopicsController.class);
 
-	private final ObjectMapper objectMapper;
+    private static Logger logger = LoggerFactory.getLogger(TopicsController.class);
 
-	private final HttpServletRequest request;
+    private final ObjectMapper objectMapper;
 
-	@Autowired
-	TopicsManager topicsManager;
-	
-	@Autowired
+    private final HttpServletRequest request;
+
+    @Autowired
+    TopicsManager topicsManager;
+
+    @Autowired
     private LastModificationManager lastModManager;
 
-	@org.springframework.beans.factory.annotation.Autowired
-	public TopicsController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
-	}
+    @org.springframework.beans.factory.annotation.Autowired
+    public TopicsController(ObjectMapper objectMapper, HttpServletRequest request) {
+        this.objectMapper = objectMapper;
+        this.request = request;
+    }
 
-	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
-	public ResponseEntity<TopicOverviewType> addTopic(TopicInputType topicData) {
-		
-		logger.info("Received request to insert new topic");
-		
-		String accept = request.getHeader("Accept");
+    @Override
+    //@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
+    public ResponseEntity<TopicOverviewType> addTopic(TopicInputType topicData) {
 
-		/*
-		 * analyse input data and save it within database
-		 */
-		TopicOverviewType topic;
-		try {
-			topic = topicsManager.addTopic(topicData);
-			lastModManager.updateLastDatabaseModification_topics();
-		} catch (Exception e1) {
-			return ApiUtils.createResponseEntityFromException(e1);
-			
-		}
+        logger.info("Received request to insert new topic");
 
-		if (topic != null) {
-			HttpHeaders responseHeaders = new HttpHeaders();
+        String accept = request.getHeader("Accept");
 
-			String location = topic.getTopicId();
-			try {
-				responseHeaders.setLocation(new URI(location));
-			} catch (URISyntaxException e) {
+        /*
+         * analyse input data and save it within database
+         */
+        TopicOverviewType topic;
+        try {
+            topic = topicsManager.addTopic(topicData);
+            lastModManager.updateLastDatabaseModification_topics();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+
+        }
+
+        if (topic != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = topic.getTopicId();
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
 //				return ApiResponseUtil.createResponseEntityFromException(e);
-			}
+            }
 
-			return new ResponseEntity<TopicOverviewType>(topic, responseHeaders, HttpStatus.CREATED);
-		}else{
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+            return new ResponseEntity<TopicOverviewType>(topic, responseHeaders, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-	}
+    }
 
-	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
-	public ResponseEntity deleteTopic(String topicId) {
-		logger.info("Received request to delete topic for topicId '{}'", topicId);
-		
-		String accept = request.getHeader("Accept");
+    @Override
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
+    public ResponseEntity deleteTopic(String topicId) {
+        logger.info("Received request to delete topic for topicId '{}'", topicId);
 
-		/*
-		 * delete topic with the specified id
-		 */
-			
-			boolean isDeleted;
-			try {
-				isDeleted = topicsManager.deleteTopicById(topicId);
-				lastModManager.updateLastDatabaseModification_topics();
-			
-			if(isDeleted)
-				return new ResponseEntity<>(HttpStatus.OK);
-			
-			} catch (Exception e) {
-				return ApiUtils.createResponseEntityFromException(e);
-			}
-		
-		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+        String accept = request.getHeader("Accept");
 
-	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
-	public ResponseEntity<Void> updateTopic(String topicId, TopicInputType topicData) {
-		logger.info("Received request to update topic with topicId '{}'", topicId);
+        /*
+         * delete topic with the specified id
+         */
 
-		String accept = request.getHeader("Accept");
+        boolean isDeleted;
+        try {
+            isDeleted = topicsManager.deleteTopicById(topicId);
+            lastModManager.updateLastDatabaseModification_topics();
 
-		/*
-		 * analyse input data and save it within database
-		 */
-		
-		try {
-			topicId = topicsManager.updateTopic(topicData, topicId);
-			lastModManager.updateLastDatabaseModification_topics();
-		} catch (Exception e1) {
-			return ApiUtils.createResponseEntityFromException(e1);
+            if (isDeleted)
+                return new ResponseEntity<>(HttpStatus.OK);
 
-		}
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
 
-		if (topicId != null) {
-			HttpHeaders responseHeaders = new HttpHeaders();
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-			String location = topicId;
-			try {
-				responseHeaders.setLocation(new URI(location));
-			} catch (URISyntaxException e) {
-				// return ApiResponseUtil.createResponseEntityFromException(e);
-			}
+    @Override
+    //@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
+    public ResponseEntity<List<TopicDefaultPermissionType>> getTopicResourcePermissions() {
+        try {
+            return new ResponseEntity<>(topicsManager.getTopicDefaultPermissions(), HttpStatus.OK);
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+    }
 
-			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+    @Override
+    //@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
+    public ResponseEntity<DefaultResourcePermissionType> getTopicResourcePermissionsById(String topicId) {
+        try {
+            DefaultResourcePermissionType response = topicsManager.getTopicDefaultPermissionsById(topicId);
+            if (response != null) {
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+    }
+
+    @Override
+    //@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
+    public ResponseEntity<Void> updateTopic(String topicId, TopicInputType topicData) {
+        logger.info("Received request to update topic with topicId '{}'", topicId);
+
+        String accept = request.getHeader("Accept");
+
+        /*
+         * analyse input data and save it within database
+         */
+
+        try {
+            topicId = topicsManager.updateTopic(topicData, topicId);
+            lastModManager.updateLastDatabaseModification_topics();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+
+        }
+
+        if (topicId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = topicId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                // return ApiResponseUtil.createResponseEntityFromException(e);
+            }
+
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
