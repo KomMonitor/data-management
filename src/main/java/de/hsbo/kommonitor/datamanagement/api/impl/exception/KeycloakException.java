@@ -1,12 +1,15 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.exception;
 
-public class KeycloakException extends ApiException{
+public class KeycloakException extends Exception{
 
-    /**
-     * @param code
-     * @param msg
-     */
-    public KeycloakException(int code, String msg) {
-        super(code, msg);
+    public KeycloakException() {
+    }
+
+    public KeycloakException(String message) {
+        super(message);
+    }
+
+    public KeycloakException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
