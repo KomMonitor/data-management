@@ -4,6 +4,8 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.AccessControlCon
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.KeycloakException;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.idm.*;
@@ -11,18 +13,15 @@ import org.keycloak.representations.idm.authorization.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
 import java.util.*;
 
 @Service
 public class KeycloakAdminService {
 
     private static final Logger LOG = LoggerFactory.getLogger(AccessControlController.class);
-
-    private static final String REALM_NAME = "kommonitor";
 
     private static final String CLIENT_RESOURCES_ADMIN_ROLE_NAME = "client-resources-creator";
     private static final String UNIT_RESOURCES_ADMIN_ROLE_NAME = "unit-resources-creator";
@@ -42,6 +41,9 @@ public class KeycloakAdminService {
             UNIT_USERS_ADMIN_ROLE_NAME
             );
 
+    @Value("${keycloak.realm}")
+    private String keycloakRealm;
+
     private Keycloak keycloak;
 
     @Autowired
@@ -50,7 +52,7 @@ public class KeycloakAdminService {
     }
 
     public String addGroup(OrganizationalUnitInputType inputOrganizationalUnit) throws KeycloakException {
-        GroupsResource groupsResource = keycloak.realm(REALM_NAME).groups();
+        GroupsResource groupsResource = getRealmResource().groups();
         GroupRepresentation group = new GroupRepresentation();
         group.setName(inputOrganizationalUnit.getName());
 
@@ -60,7 +62,7 @@ public class KeycloakAdminService {
     }
 
     public String addSubGroup(OrganizationalUnitInputType inputOrganizationalUnit, OrganizationalUnitEntity parent) throws KeycloakException {
-        GroupsResource groupsResource = keycloak.realm(REALM_NAME).groups();
+        GroupsResource groupsResource = getRealmResource().groups();
         GroupRepresentation group = new GroupRepresentation();
         group.setName(inputOrganizationalUnit.getName());
 
@@ -255,7 +257,7 @@ public class KeycloakAdminService {
     }
 
     public RealmResource getRealmResource() {
-        return keycloak.realm(REALM_NAME);
+        return keycloak.realm(keycloakRealm);
     }
 
 
