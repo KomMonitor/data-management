@@ -131,6 +131,8 @@ public class KeycloakAdminService {
     }
 
     public void createRolePolicies(OrganizationalUnitInputType inputOrganizationalUnit, OrganizationalUnitEntity parent) throws KeycloakException {
+        LOG.info("Trying to create policies for OrganizationalUnit '{}' and Keycloak group ID '{}'.",
+                inputOrganizationalUnit.getName(), inputOrganizationalUnit.getKeycloakId());
         ManagementPermissionRepresentation managementPermission = new ManagementPermissionRepresentation(true);
 
         // 1. enable fine grain permissions on new group
@@ -201,9 +203,9 @@ public class KeycloakAdminService {
             } catch (KeycloakException ex) {
                 LOG.error("Error while setting role policy for role.", ex);
             }
-
         });
-
+        LOG.info("Successfully created policies for OrganizationalUnit '{}' and Keycloak group ID '{}'.",
+                inputOrganizationalUnit.getName(), inputOrganizationalUnit.getKeycloakId());
     }
 
     public void putRolePolicyForKeycloakGroupResourceScope(ClientRepresentation clientRepresentation, String scopePermissionName, String scopePermissionId, String resourceId, String scopeId, Set<String> policies) {
