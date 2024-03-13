@@ -54,4 +54,5 @@ public interface AuthInfoProvider {
      */
     boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel, PermissionResourceType permissionResourceType);
 
+    boolean checkOrganizationalUnitCreationPermissions(OrganizationalUnitEntity parent);
 }

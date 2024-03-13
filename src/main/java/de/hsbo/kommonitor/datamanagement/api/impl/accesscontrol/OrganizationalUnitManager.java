@@ -1,8 +1,10 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.KeycloakException;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.auth.KeycloakAdminService;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -40,7 +42,8 @@ public class OrganizationalUnitManager {
     private String defaultAuthenticatedOUname;
 
     public OrganizationalUnitOverviewType addOrganizationalUnit(
-            OrganizationalUnitInputType inputOrganizationalUnit
+            OrganizationalUnitInputType inputOrganizationalUnit,
+            AuthInfoProvider provider
     ) throws Exception {
         String name = inputOrganizationalUnit.getName();
         logger.info("Trying to persist OrganizationalUnit with name '{}'", name);
@@ -61,10 +64,11 @@ public class OrganizationalUnitManager {
         jpaUnit.setDescription(inputOrganizationalUnit.getDescription());
         jpaUnit.setMandant(inputOrganizationalUnit.getMandant());
 
-        String keycloakId;
+        String keycloakId = inputOrganizationalUnit.getKeycloakId();
+        OrganizationalUnitEntity parent = null;
+
         if (inputOrganizationalUnit.getParentId() != null && !inputOrganizationalUnit.getParentId().isEmpty()) {
-            OrganizationalUnitEntity parent =
-                    organizationalUnitRepository.findByOrganizationalUnitId(inputOrganizationalUnit.getParentId());
+            parent = organizationalUnitRepository.findByOrganizationalUnitId(inputOrganizationalUnit.getParentId());
             if (parent == null) {
                 logger.error(
                         "parent with given id {} does not exist.",
@@ -72,11 +76,22 @@ public class OrganizationalUnitManager {
                 throw new Exception("parent with given id does not exist");
             }
             jpaUnit.setParent(parent);
-            keycloakId = keycloakAdminService.addSubGroup(inputOrganizationalUnit, parent);
+//            keycloakId = keycloakAdminService.addSubGroup(inputOrganizationalUnit, parent);
 
         } else {
-            keycloakId = keycloakAdminService.addGroup(inputOrganizationalUnit);
+//            keycloakId = keycloakAdminService.addGroup(inputOrganizationalUnit);
         }
+        if (!provider.checkOrganizationalUnitCreationPermissions(parent)) {
+            throw new ApiException(405, "The OrganizationalUnit can not be created due to insufficient permissions.");
+        }
+
+        keycloakAdminService.createRolePolicies(inputOrganizationalUnit, parent);
+
+//        if(keycloakAdminService.enablePermissions(inputOrganizationalUnit)) {
+//            throw new KeycloakException(String.format("Could not enable permissions for group %s",
+//                    inputOrganizationalUnit.getKeycloakId()));
+//        }
+
 
         jpaUnit.setKeycloakId(UUID.fromString(keycloakId));
         OrganizationalUnitEntity saved = organizationalUnitRepository.saveAndFlush(jpaUnit);

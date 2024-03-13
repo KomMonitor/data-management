@@ -5,6 +5,8 @@ import de.hsbo.kommonitor.datamanagement.api.AccessControlApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
@@ -42,6 +44,9 @@ public class AccessControlController extends BasePathController implements Acces
 
     @Autowired
     private Keycloak keycloak;
+
+    @Autowired
+    AuthInfoProviderFactory authInfoProviderFactory;
 
     @Autowired
     public AccessControlController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -85,10 +90,11 @@ public class AccessControlController extends BasePathController implements Acces
     @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
     public ResponseEntity<Void> addOrganizationalUnit(OrganizationalUnitInputType organizationalUnitData) {
         logger.info("Received request to insert new organizationalUnit with associated Roles");
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
         OrganizationalUnitOverviewType persisted;
         try {
-            persisted = organizationalUnitManager.addOrganizationalUnit(organizationalUnitData);
+            persisted = organizationalUnitManager.addOrganizationalUnit(organizationalUnitData, provider);
             lastModManager.updateLastDatabaseModification_accessControl();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);

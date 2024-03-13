@@ -188,6 +188,35 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         }
     }
 
+    @Override
+    public boolean checkOrganizationalUnitCreationPermissions(OrganizationalUnitEntity entity) {
+        // User wants to create a root organizational unit
+        if (entity == null) {
+            return tokenParser.hasRealmAdminRole(principal, ADMIN_ROLE_NAME);
+        }
+        // User wants to create a subgroup, so we have to check if he has kommonitor-creator role or
+        // *.client-users-creator role for any parent
+        if (tokenParser.hasRealmAdminRole(principal, ADMIN_ROLE_NAME)) {
+            return true;
+        }
+        Set<String> ownedRoles = tokenParser.getOwnedRoles(principal);
+        while (entity != null) {
+            OrganizationalUnitEntity finalEntity = entity;
+            boolean allowed = ownedRoles.stream()
+                    .filter(r -> roleExtractorRegex.split(r, 2).length == 2)
+                    .map(r -> {
+                        String[] split = roleExtractorRegex.split(r, 2);
+                        return Pair.of(split[0], split[1]);
+                    })
+                    .anyMatch(r -> hasClientUsersAdminPermissionForParentGroup(r.getFirst(), r.getSecond(), finalEntity));
+            if (allowed) {
+                return true;
+            }
+            entity = entity.getParent();
+        }
+        return false;
+    }
+
     public boolean checkOrganizationalUnitPermissions(OrganizationalUnitEntity entity) {
 
         // User is global administrator
@@ -250,6 +279,10 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
      */
     private boolean hasClientResourceAdminPermissionForOwningGroup(String kcGroup, String kcRole, RestrictedEntity entity) {
         return kcRole.equals(CLIENT_RESOURCES_ADMIN_ROLE_NAME) && roleGroupIsParent(kcGroup, entity.getOwner());
+    }
+
+    private boolean hasClientUsersAdminPermissionForParentGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
+        return kcRole.equals(CLIENT_USERS_ADMIN_ROLE_NAME) && kcGroup.equals(entity.getName());
     }
 
     private boolean hasUsersAdministrationPermission(OrganizationalUnitEntity entity) {
