@@ -115,7 +115,7 @@ public class OrganizationalUnitManager {
                 throw new ApiException(HttpStatus.FORBIDDEN.value(),
                         "Tried to delete default OrganizationalUnits");
             }
-
+            keycloakAdminService.deleteGroupAndRoles(unit);
             // This should automatically propagate to associated roles via @CascadeType.REMOVE
             organizationalUnitRepository.deleteByOrganizationalUnitId(organizationalUnitId);
             return true;

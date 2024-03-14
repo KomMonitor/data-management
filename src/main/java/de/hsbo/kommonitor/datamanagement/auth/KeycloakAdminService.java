@@ -82,6 +82,42 @@ public class KeycloakAdminService {
         return keycloakGroupId;
     }
 
+    public void addRole(RoleRepresentation roleRep) {
+        getRealmResource().roles().create(roleRep);
+    }
+
+    public void deleteGroup(String groupId) {
+        getRealmResource().groups().group(groupId).remove();
+    }
+
+    public void deleteRole(String roleId) {
+        getRealmResource().roles().get(roleId).remove();
+    }
+
+    public void deleteGroupAndRoles(OrganizationalUnitEntity entity) {
+        LOG.info("Trying to delete Keycloak group for OrganizationalUnit '{}' and Keycloak group '{}'.", entity.getName(), entity.getKeycloakId().toString());
+        try {
+            deleteGroup(entity.getKeycloakId().toString());
+        } catch (NotFoundException ex) {
+            LOG.warn("Group '{}' does not exist. Deletion will be skipped.", entity.getKeycloakId().toString());
+        }
+
+        LOG.info("Successfully deleted Keycloak group for OrganizationalUnit '{}' and Keycloak group '{}'.", entity.getName(), entity.getKeycloakId().toString());
+
+        LOG.info("Trying to delete roles for OrganizationalUnit '{}'.", entity.getName());
+        ADMIN_ROLES.stream()
+                .map(r -> String.join(".", entity.getName(), r))
+                .forEach(r -> {
+                    try {
+                        deleteRole(r);
+                        LOG.debug("Successfully deleted role '{}'", r);
+                    } catch (NotFoundException ex) {
+                        LOG.warn("Role '{}' does not exists. Deletion will be skipped.", r);
+                    }
+                });
+        LOG.info("Successfully deleted roles for OrganizationalUnit '{}'.", entity.getName());
+    }
+
     public ManagementPermissionReference enablePermissions(OrganizationalUnitInputType inputOrganizationalUnit) {
         GroupResource groupResource = getRealmResource().groups().group(inputOrganizationalUnit.getKeycloakId());
         ManagementPermissionRepresentation managementPermission = new ManagementPermissionRepresentation(true);
@@ -169,7 +205,7 @@ public class KeycloakAdminService {
         // Create all admin roles for group
         ADMIN_ROLES.stream()
                 .map(r -> mapToRoleRepresentation(String.join(".",inputOrganizationalUnit.getName(), r)))
-                .forEach(rP -> getRealmResource().roles().create(rP));
+                .forEach(this::addRole);
 
         // Associate user admin roles with query-users and query-group roles
         String unitUserRoleName = String.join(".", inputOrganizationalUnit.getName(), UNIT_USERS_ADMIN_ROLE_NAME);
