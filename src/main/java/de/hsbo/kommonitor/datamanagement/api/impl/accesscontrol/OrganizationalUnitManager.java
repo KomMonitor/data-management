@@ -64,7 +64,7 @@ public class OrganizationalUnitManager {
         jpaUnit.setDescription(inputOrganizationalUnit.getDescription());
         jpaUnit.setMandant(inputOrganizationalUnit.getMandant());
 
-        String keycloakId = inputOrganizationalUnit.getKeycloakId();
+        String keycloakId;
         OrganizationalUnitEntity parent = null;
 
         if (inputOrganizationalUnit.getParentId() != null && !inputOrganizationalUnit.getParentId().isEmpty()) {
@@ -75,23 +75,21 @@ public class OrganizationalUnitManager {
                         inputOrganizationalUnit.getParentId());
                 throw new Exception("parent with given id does not exist");
             }
+            if (!provider.checkOrganizationalUnitCreationPermissions(parent)) {
+                throw new ApiException(405, "The OrganizationalUnit can not be created due to insufficient permissions.");
+            }
             jpaUnit.setParent(parent);
-//            keycloakId = keycloakAdminService.addSubGroup(inputOrganizationalUnit, parent);
+            keycloakId = keycloakAdminService.addSubGroup(inputOrganizationalUnit, parent);
 
         } else {
-//            keycloakId = keycloakAdminService.addGroup(inputOrganizationalUnit);
+            if (!provider.checkOrganizationalUnitCreationPermissions(null)) {
+                throw new ApiException(405, "The OrganizationalUnit can not be created due to insufficient permissions.");
+            }
+            keycloakId = keycloakAdminService.addGroup(inputOrganizationalUnit);
         }
-        if (!provider.checkOrganizationalUnitCreationPermissions(parent)) {
-            throw new ApiException(405, "The OrganizationalUnit can not be created due to insufficient permissions.");
-        }
-
+        inputOrganizationalUnit.setKeycloakId(keycloakId);
+        keycloakAdminService.createRolesForGroup(inputOrganizationalUnit);
         keycloakAdminService.createRolePolicies(inputOrganizationalUnit, parent);
-
-//        if(keycloakAdminService.enablePermissions(inputOrganizationalUnit)) {
-//            throw new KeycloakException(String.format("Could not enable permissions for group %s",
-//                    inputOrganizationalUnit.getKeycloakId()));
-//        }
-
 
         jpaUnit.setKeycloakId(UUID.fromString(keycloakId));
         OrganizationalUnitEntity saved = organizationalUnitRepository.saveAndFlush(jpaUnit);
