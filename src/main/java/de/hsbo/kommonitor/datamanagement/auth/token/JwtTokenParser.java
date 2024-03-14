@@ -45,7 +45,11 @@ public class JwtTokenParser extends TokenParser<JwtAuthenticationToken> {
 
     @Override
     public Set<String> getGroupsClaim(JwtAuthenticationToken principal) {
-        List<String> groups = (List<String>) principal.getTokenAttributes().get("groups");
+        Object groupsClaim = principal.getTokenAttributes().get("groups");
+        if(groupsClaim == null) {
+            return Collections.emptySet();
+        }
+        List<String> groups = (List<String>) groupsClaim;
         return new HashSet<>(groups);
     }
 }
