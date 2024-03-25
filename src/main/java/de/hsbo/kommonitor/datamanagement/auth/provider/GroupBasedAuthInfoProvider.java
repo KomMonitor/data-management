@@ -153,8 +153,13 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
                 )
                 .map(Pair::getSecond)
                 .min(Comparator.comparing(PermissionLevelType::ordinal))
-                .orElseThrow(NoSuchElementException::new)
-        ;
+                .orElseGet(() -> {
+                    if (entity.isPublic()) {
+                        return PermissionLevelType.VIEWER;
+                    } else {
+                        throw new NoSuchElementException();
+                    }
+                });
 
         return new ArrayList<>(permissionSet.tailSet(max_permission));
     }
