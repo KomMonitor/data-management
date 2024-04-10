@@ -437,9 +437,11 @@ public class GeoserverManager implements OGCWebServiceManager {
 	private Color[] getColorsFromClassification(List<DefaultClassificationMappingItemType> classificationItems) {
 		Color[] colors = new Color[classificationItems.size()];
 		
-		for (int i=0; i<classificationItems.size(); i++) {
-			colors[i] = Color.decode(classificationItems.get(i).getDefaultColorAsHex());
-		}
+		//TODO FIXME since April 2023, a changed model for classification is no longer declaring explicit color values.
+		// However, GeroServer funcionality was never really used and deployed anyway
+//		for (int i=0; i<classificationItems.size(); i++) {
+//			colors[i] = Color.decode(classificationItems.get(i).getDefaultColorAsHex());
+//		}
 		return colors;
 	}
 

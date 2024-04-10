@@ -16,7 +16,10 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.geotools.data.DataStore;
@@ -261,6 +264,16 @@ public class IndicatorsManager {
         if (metadata.getDefaultClassificationMapping() != null) {
             entity.setDefaultClassificationMappingItems(metadata.getDefaultClassificationMapping().getItems());
             entity.setColorBrewerSchemeName(metadata.getDefaultClassificationMapping().getColorBrewerSchemeName());
+            @NotNull
+    		@Valid
+    		@DecimalMin("1")
+    		@DecimalMax("9")
+    		BigDecimal numClasses = metadata.getDefaultClassificationMapping().getNumClasses();
+            if (numClasses == null) {
+            	numClasses = new BigDecimal(5);
+            }
+    		entity.setNumClasses(numClasses.intValue());
+    		entity.setClassificationMethod(metadata.getDefaultClassificationMapping().getClassificationMethod());
         }
 
 
@@ -1231,6 +1244,16 @@ public class IndicatorsManager {
 
         entity.setDefaultClassificationMappingItems(indicatorData.getDefaultClassificationMapping().getItems());
         entity.setColorBrewerSchemeName(indicatorData.getDefaultClassificationMapping().getColorBrewerSchemeName());
+        @NotNull
+		@Valid
+		@DecimalMin("1")
+		@DecimalMax("9")
+		BigDecimal numClasses = indicatorData.getDefaultClassificationMapping().getNumClasses();
+        if (numClasses == null) {
+        	numClasses = new BigDecimal(5);
+        }
+		entity.setNumClasses(numClasses.intValue());
+		entity.setClassificationMethod(indicatorData.getDefaultClassificationMapping().getClassificationMethod());
 
         entity.setAbbreviation(indicatorData.getAbbreviation());
         entity.setHeadlineIndicator(indicatorData.getIsHeadlineIndicator());

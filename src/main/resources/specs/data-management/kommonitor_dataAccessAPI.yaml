@@ -5002,22 +5002,26 @@ components:
     DefaultClassificationMappingItemType:
       title: DefaultClassificationMappingItemType
       required:
-        - defaultColorAsHex
-        - defaultCustomRating
+        - spatialUnitId
+        - breaks
       type: object
       properties:
-        defaultColorAsHex:
+        spatialUnitId:
           type: string
-          description: the default color for the specified value interval as hex
-            string inclusive leading '#', i.e. '#ffffff'
-        defaultCustomRating:
-          type: string
-          description: the default custom rating string for the specified value interval,\
-            \ i.e. 'very high'/'very low' or 'good'/'bad'"
+          description: spatial unit id for manual classification
+        breaks:
+          type: array
+          description: array of numeric break values
+          items:
+            type: number
+            format: float
+            nullable: true
     DefaultClassificationMappingType:
       title: DefaultClassificationMappingType
       required:
         - colorBrewerSchemeName
+        - numClasses
+        - classificationMethod
         - items
       type: object
       properties:
@@ -5026,13 +5030,23 @@ components:
           description: the name of the colorBrewer color scheme used to define the
             colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
             for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.
+        numClasses:
+          type: number
+          format: int16
+          description: the number of classes
+          minimum: 1
+          maximum: 9
+        classificationMethod:
+          type: string
+          description: the classification method as enumeration
+          enum:
+            - REGIONAL_DEFAULT
+            - JENKS
+            - EQUAL_INTERVAL
+            - QUANTILE
         items:
           type: array
-          description: array of classification mapping items. The order of the items
-            corresponds to indicator value intervals from low to high. The number
-            of items represents the number of classes. In combination they represent
-            the default classification and mapping to custom rating of the indicator
-            values
+          description: array of classification mapping items. each item holds the break values for a certain spatial unit. not all spatial units of a certain indicator must be set.
           items:
             $ref: '#/components/schemas/DefaultClassificationMappingItemType'
     GeoresourceOverviewType:
@@ -5679,8 +5693,6 @@ components:
             type: string
         applicableSpatialUnit:
           type: string
-        defaultClassificationMapping:
-          $ref: '#/components/schemas/DefaultClassificationMappingType'
         indicatorValues:
           type: array
           description: an array of entries containing indicator values and mapping

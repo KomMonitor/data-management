@@ -56,11 +56,17 @@ public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefresh
 			alterTableStmt.addBatch("ALTER TABLE \"metadataspatialunits\" ADD COLUMN IF NOT EXISTS \"outlinewidth\" integer DEFAULT 3");
 			alterTableStmt.addBatch("ALTER TABLE \"metadataspatialunits\" ADD COLUMN IF NOT EXISTS \"outlinedasharraystring\" varchar(255) DEFAULT '20'");
 			
+			// default classification for indicators
+			alterTableStmt.addBatch("ALTER TABLE \"metadataindicators\" ADD COLUMN IF NOT EXISTS \"numclasses\" integer default 5");
+			alterTableStmt.addBatch("ALTER TABLE \"metadataindicators\" ADD COLUMN IF NOT EXISTS \"classificationmethod\" integer default 2");
+			
 			// remove relic tables as they were never used
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"users_roles\" CASCADE");
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"roles_privileges\" CASCADE");
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"users\" CASCADE");			
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"privileges\" CASCADE");
+			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"metadataindicators_defaultclassificationmapping\" CASCADE");
+			
 			
 			logger.info("Adding new DATABASE COLUMNS if they do not exist...");
 			alterTableStmt.executeBatch();

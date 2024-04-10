@@ -248,6 +248,8 @@ public class IndicatorsMapper {
 			MetadataIndicatorsEntity indicatorsMetadataEntity) {
 		DefaultClassificationMappingType defaultClassification = new DefaultClassificationMappingType();
 		defaultClassification.setColorBrewerSchemeName(indicatorsMetadataEntity.getColorBrewerSchemeName());
+		defaultClassification.setNumClasses(new BigDecimal(indicatorsMetadataEntity.getNumClasses()));
+		defaultClassification.setClassificationMethod(indicatorsMetadataEntity.getClassificationMethod());
 
 		Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems = indicatorsMetadataEntity
 				.getDefaultClassificationMappingItems();

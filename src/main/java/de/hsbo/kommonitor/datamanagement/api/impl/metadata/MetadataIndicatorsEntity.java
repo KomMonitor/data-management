@@ -3,6 +3,12 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 import java.util.Collection;
 import java.util.HashSet;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType.ClassificationMethodEnum;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -12,14 +18,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
-
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
-import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
 
 @Entity(name = "MetadataIndicators")
 public class MetadataIndicatorsEntity extends AbstractMetadata implements RestrictedByRole {
@@ -52,6 +50,11 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	
 	private String colorBrewerSchemeName;
 	
+	@Column(columnDefinition = "integer default 5")
+	private int numClasses;
+	@Column(columnDefinition = "integer default 2")
+	private ClassificationMethodEnum classificationMethod;
+	
 	/*
 	 * references to other indicators are mapped by hand
 	 * within the entity "IndicatorReferenceEntity"
@@ -63,7 +66,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	 */
 	
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "metadataIndicators_defaultClassificationMapping", 
+	@JoinTable(name = "metadataIndicators_defaultClassification", 
 	joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), 
 	inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid"))
 	private Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems;
@@ -170,6 +173,22 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 		this.availableTimestamps = availableTimestamps;
 	}
 	
+	public int getNumClasses() {
+		return numClasses;
+	}
+
+	public void setNumClasses(int numClasses) {
+		this.numClasses = numClasses;
+	}
+
+	public ClassificationMethodEnum getClassificationMethod() {
+		return classificationMethod;
+	}
+
+	public void setClassificationMethod(ClassificationMethodEnum classificationMethod) {
+		this.classificationMethod = classificationMethod;
+	}
+
 	public void addTimestampIfNotExist(String timestamp)throws Exception {
 		if (this.availableTimestamps == null)
 			this.availableTimestamps = new HashSet<String>();
