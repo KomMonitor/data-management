@@ -1,6 +1,7 @@
 # Change Log
 
-## 3.3.0
+## 3.3.1
+* fix new defaultclassificationmapping table generation [982595f](982595f58a56ac6694e2089005a25c9788d3f67c)
 * implement custom indicator classification including regional defaults [fb5062e](fb5062efcb87ce160170695efd128591f36d04e8)
 * Revert SNAPSHOT version [b8f5713](b8f5713b81c825f557d8f3671b03c54d5c6e4d37)
 * Fix missing outline width handling [7cefbc3](7cefbc3a7fc69cd1070895709cab12b8e5b7c7fe)
