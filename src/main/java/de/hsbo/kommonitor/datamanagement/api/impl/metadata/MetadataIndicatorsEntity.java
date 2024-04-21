@@ -66,7 +66,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	 */
 	
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "metadataIndicators_defaultClassification", 
+	@JoinTable(name = "metadataindicators_defaultclassification", 
 	joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), 
 	inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid"))
 	private Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems;

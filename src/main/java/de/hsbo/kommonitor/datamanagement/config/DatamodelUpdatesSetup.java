@@ -59,6 +59,7 @@ public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefresh
 			// default classification for indicators
 			alterTableStmt.addBatch("ALTER TABLE \"metadataindicators\" ADD COLUMN IF NOT EXISTS \"numclasses\" integer default 5");
 			alterTableStmt.addBatch("ALTER TABLE \"metadataindicators\" ADD COLUMN IF NOT EXISTS \"classificationmethod\" integer default 2");
+			alterTableStmt.addBatch("CREATE TABLE IF NOT EXISTS \"metadataindicators_defaultclassification\" (\"dataset_id\" varchar(255), \\\"mapping_id\\\" varchar(255))");
 			
 			// remove relic tables as they were never used
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"users_roles\" CASCADE");
