@@ -1,6 +1,8 @@
 # Change Log
 
-## 3.3.1
+## 3.3.2
+* implement poi marker text functionality [7989b1d](7989b1d6fe0f72e8b6d7dad848633a02e3f9e56f)
+* implement regional reference values [c1adf27](c1adf2742e951b201c63a12f3bf947fd8c423361)
 * fix new defaultclassificationmapping table generation [982595f](982595f58a56ac6694e2089005a25c9788d3f67c)
 * implement custom indicator classification including regional defaults [fb5062e](fb5062efcb87ce160170695efd128591f36d04e8)
 * Revert SNAPSHOT version [b8f5713](b8f5713b81c825f557d8f3671b03c54d5c6e4d37)
