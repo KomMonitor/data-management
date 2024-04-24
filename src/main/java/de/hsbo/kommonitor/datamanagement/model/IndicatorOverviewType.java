@@ -1,123 +1,109 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
-import de.hsbo.kommonitor.datamanagement.model.GeoresourceReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorSpatialUnitJoinItem;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.OgcServicesType;
-import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.io.Serializable;
-import java.time.OffsetDateTime;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import java.util.Objects;
+
+import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * IndicatorOverviewType
  */
+@Validated
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-04-23T11:43:09.197508532Z[GMT]")
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
-public class IndicatorOverviewType implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+public class IndicatorOverviewType   {
+  @JsonProperty("abbreviation")
+  private String abbreviation = null;
 
-  private String abbreviation;
-
+  @JsonProperty("allowedRoles")
   @Valid
-  private List<String> allowedRoles;
+  private List<String> allowedRoles = null;
 
+  @JsonProperty("applicableDates")
   @Valid
-  private List<String> applicableDates = new ArrayList<>();
+  private List<String> applicableDates = new ArrayList<String>();
 
+  @JsonProperty("applicableSpatialUnits")
   @Valid
-  private List<@Valid IndicatorSpatialUnitJoinItem> applicableSpatialUnits = new ArrayList<>();
+  private List<IndicatorSpatialUnitJoinItem> applicableSpatialUnits = new ArrayList<IndicatorSpatialUnitJoinItem>();
 
-  private String characteristicValue;
+  @JsonProperty("characteristicValue")
+  private String characteristicValue = null;
 
-  private CreationTypeEnum creationType;
+  @JsonProperty("creationType")
+  private CreationTypeEnum creationType = null;
 
-  private DefaultClassificationMappingType defaultClassificationMapping;
+  @JsonProperty("defaultClassificationMapping")
+  private DefaultClassificationMappingType defaultClassificationMapping = null;
 
-  private BigDecimal displayOrder;
-
-  private String indicatorId;
-
-  private String indicatorName;
-
-  private IndicatorTypeEnum indicatorType;
-
-  private String interpretation;
-
-  private Boolean isHeadlineIndicator;
-
-  private String lowestSpatialUnitForComputation;
-
-  private CommonMetadataType metadata;
-
+  @JsonProperty("regionalReferenceValues")
   @Valid
-  private List<@Valid OgcServicesType> ogcServices = new ArrayList<>();
+  private List<RegionalReferenceValueType> regionalReferenceValues = new ArrayList<RegionalReferenceValueType>();
 
-  private String processDescription;
+  @JsonProperty("displayOrder")
+  private BigDecimal displayOrder = null;
 
-  private String referenceDateNote;
+  @JsonProperty("indicatorId")
+  private String indicatorId = null;
 
+  @JsonProperty("indicatorName")
+  private String indicatorName = null;
+
+  @JsonProperty("indicatorType")
+  private IndicatorTypeEnum indicatorType = null;
+
+  @JsonProperty("interpretation")
+  private String interpretation = null;
+
+  @JsonProperty("isHeadlineIndicator")
+  private Boolean isHeadlineIndicator = null;
+
+  @JsonProperty("lowestSpatialUnitForComputation")
+  private String lowestSpatialUnitForComputation = null;
+
+  @JsonProperty("metadata")
+  private CommonMetadataType metadata = null;
+
+  @JsonProperty("ogcServices")
   @Valid
-  private List<@Valid GeoresourceReferenceType> referencedGeoresources;
+  private List<OgcServicesType> ogcServices = new ArrayList<OgcServicesType>();
 
+  @JsonProperty("processDescription")
+  private String processDescription = null;
+
+  @JsonProperty("referenceDateNote")
+  private String referenceDateNote = null;
+
+  @JsonProperty("referencedGeoresources")
   @Valid
-  private List<@Valid IndicatorReferenceType> referencedIndicators;
+  private List<GeoresourceReferenceType> referencedGeoresources = null;
 
+  @JsonProperty("referencedIndicators")
   @Valid
-  private List<String> tags = new ArrayList<>();
+  private List<IndicatorReferenceType> referencedIndicators = null;
 
-  private String topicReference;
-
-  private String unit;
-
+  @JsonProperty("tags")
   @Valid
-  private List<PermissionLevelType> userPermissions;
+  private List<String> tags = new ArrayList<String>();
 
-  public IndicatorOverviewType() {
-    super();
-  }
+  @JsonProperty("topicReference")
+  private String topicReference = null;
 
-  /**
-   * Constructor with only required parameters
-   */
-  public IndicatorOverviewType(String abbreviation, List<String> applicableDates, List<@Valid IndicatorSpatialUnitJoinItem> applicableSpatialUnits, String characteristicValue, CreationTypeEnum creationType, String indicatorId, String indicatorName, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, List<@Valid OgcServicesType> ogcServices, String processDescription, List<String> tags, String topicReference, String unit) {
-    this.abbreviation = abbreviation;
-    this.applicableDates = applicableDates;
-    this.applicableSpatialUnits = applicableSpatialUnits;
-    this.characteristicValue = characteristicValue;
-    this.creationType = creationType;
-    this.indicatorId = indicatorId;
-    this.indicatorName = indicatorName;
-    this.interpretation = interpretation;
-    this.isHeadlineIndicator = isHeadlineIndicator;
-    this.metadata = metadata;
-    this.ogcServices = ogcServices;
-    this.processDescription = processDescription;
-    this.tags = tags;
-    this.topicReference = topicReference;
-    this.unit = unit;
-  }
+  @JsonProperty("unit")
+  private String unit = null;
+
+  @JsonProperty("userPermissions")
+  @Valid
+  private List<PermissionLevelType> userPermissions = null;
 
   public IndicatorOverviewType abbreviation(String abbreviation) {
     this.abbreviation = abbreviation;
@@ -127,11 +113,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * abbreviated mark of the indicator
    * @return abbreviation
-  */
-  @NotNull 
-  @Schema(name = "abbreviation", description = "abbreviated mark of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("abbreviation")
-  public String getAbbreviation() {
+   **/
+  @Schema(required = true, description = "abbreviated mark of the indicator")
+      @NotNull
+
+    public String getAbbreviation() {
     return abbreviation;
   }
 
@@ -146,7 +132,7 @@ public class IndicatorOverviewType implements Serializable {
 
   public IndicatorOverviewType addAllowedRolesItem(String allowedRolesItem) {
     if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+      this.allowedRoles = new ArrayList<String>();
     }
     this.allowedRoles.add(allowedRolesItem);
     return this;
@@ -155,11 +141,10 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * list of role identifiers that have read access rights for this dataset
    * @return allowedRoles
-  */
+   **/
+  @Schema(description = "list of role identifiers that have read access rights for this dataset")
   
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
+    public List<String> getAllowedRoles() {
     return allowedRoles;
   }
 
@@ -173,9 +158,6 @@ public class IndicatorOverviewType implements Serializable {
   }
 
   public IndicatorOverviewType addApplicableDatesItem(String applicableDatesItem) {
-    if (this.applicableDates == null) {
-      this.applicableDates = new ArrayList<>();
-    }
     this.applicableDates.add(applicableDatesItem);
     return this;
   }
@@ -183,11 +165,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * array of applicable dates (year and month and day as YEAR-MONTH-DAY) according to ISO 8601 (e.g. 2018-01-30)
    * @return applicableDates
-  */
-  @NotNull 
-  @Schema(name = "applicableDates", description = "array of applicable dates (year and month and day as YEAR-MONTH-DAY) according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("applicableDates")
-  public List<String> getApplicableDates() {
+   **/
+  @Schema(required = true, description = "array of applicable dates (year and month and day as YEAR-MONTH-DAY) according to ISO 8601 (e.g. 2018-01-30)")
+      @NotNull
+
+    public List<String> getApplicableDates() {
     return applicableDates;
   }
 
@@ -195,15 +177,12 @@ public class IndicatorOverviewType implements Serializable {
     this.applicableDates = applicableDates;
   }
 
-  public IndicatorOverviewType applicableSpatialUnits(List<@Valid IndicatorSpatialUnitJoinItem> applicableSpatialUnits) {
+  public IndicatorOverviewType applicableSpatialUnits(List<IndicatorSpatialUnitJoinItem> applicableSpatialUnits) {
     this.applicableSpatialUnits = applicableSpatialUnits;
     return this;
   }
 
   public IndicatorOverviewType addApplicableSpatialUnitsItem(IndicatorSpatialUnitJoinItem applicableSpatialUnitsItem) {
-    if (this.applicableSpatialUnits == null) {
-      this.applicableSpatialUnits = new ArrayList<>();
-    }
     this.applicableSpatialUnits.add(applicableSpatialUnitsItem);
     return this;
   }
@@ -211,15 +190,15 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * array of spatial unit levels for which the dataset is applicable
    * @return applicableSpatialUnits
-  */
-  @NotNull @Valid 
-  @Schema(name = "applicableSpatialUnits", description = "array of spatial unit levels for which the dataset is applicable", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("applicableSpatialUnits")
-  public List<@Valid IndicatorSpatialUnitJoinItem> getApplicableSpatialUnits() {
+   **/
+  @Schema(required = true, description = "array of spatial unit levels for which the dataset is applicable")
+      @NotNull
+    @Valid
+    public List<IndicatorSpatialUnitJoinItem> getApplicableSpatialUnits() {
     return applicableSpatialUnits;
   }
 
-  public void setApplicableSpatialUnits(List<@Valid IndicatorSpatialUnitJoinItem> applicableSpatialUnits) {
+  public void setApplicableSpatialUnits(List<IndicatorSpatialUnitJoinItem> applicableSpatialUnits) {
     this.applicableSpatialUnits = applicableSpatialUnits;
   }
 
@@ -231,11 +210,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * the distuingishing characteristic value of the indicator
    * @return characteristicValue
-  */
-  @NotNull 
-  @Schema(name = "characteristicValue", description = "the distuingishing characteristic value of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("characteristicValue")
-  public String getCharacteristicValue() {
+   **/
+  @Schema(required = true, description = "the distuingishing characteristic value of the indicator")
+      @NotNull
+
+    public String getCharacteristicValue() {
     return characteristicValue;
   }
 
@@ -251,11 +230,12 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * Get creationType
    * @return creationType
-  */
-  @NotNull @Valid 
-  @Schema(name = "creationType", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("creationType")
-  public CreationTypeEnum getCreationType() {
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
+
+    @Valid
+    public CreationTypeEnum getCreationType() {
     return creationType;
   }
 
@@ -271,16 +251,41 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * Get defaultClassificationMapping
    * @return defaultClassificationMapping
-  */
-  @Valid 
-  @Schema(name = "defaultClassificationMapping", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("defaultClassificationMapping")
-  public DefaultClassificationMappingType getDefaultClassificationMapping() {
+   **/
+  @Schema(description = "")
+  
+    @Valid
+    public DefaultClassificationMappingType getDefaultClassificationMapping() {
     return defaultClassificationMapping;
   }
 
   public void setDefaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
     this.defaultClassificationMapping = defaultClassificationMapping;
+  }
+
+  public IndicatorOverviewType regionalReferenceValues(List<RegionalReferenceValueType> regionalReferenceValues) {
+    this.regionalReferenceValues = regionalReferenceValues;
+    return this;
+  }
+
+  public IndicatorOverviewType addRegionalReferenceValuesItem(RegionalReferenceValueType regionalReferenceValuesItem) {
+    this.regionalReferenceValues.add(regionalReferenceValuesItem);
+    return this;
+  }
+
+  /**
+   * list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)
+   * @return regionalReferenceValues
+   **/
+  @Schema(required = true, description = "list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)")
+      @NotNull
+    @Valid
+    public List<RegionalReferenceValueType> getRegionalReferenceValues() {
+    return regionalReferenceValues;
+  }
+
+  public void setRegionalReferenceValues(List<RegionalReferenceValueType> regionalReferenceValues) {
+    this.regionalReferenceValues = regionalReferenceValues;
   }
 
   public IndicatorOverviewType displayOrder(BigDecimal displayOrder) {
@@ -291,11 +296,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * an order number to control display order in clients
    * @return displayOrder
-  */
-  @Valid 
-  @Schema(name = "displayOrder", example = "0.0", description = "an order number to control display order in clients", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("displayOrder")
-  public BigDecimal getDisplayOrder() {
+   **/
+  @Schema(example = "0", description = "an order number to control display order in clients")
+  
+    @Valid
+    public BigDecimal getDisplayOrder() {
     return displayOrder;
   }
 
@@ -311,11 +316,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * unique identifier of this resource
    * @return indicatorId
-  */
-  @NotNull 
-  @Schema(name = "indicatorId", description = "unique identifier of this resource", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("indicatorId")
-  public String getIndicatorId() {
+   **/
+  @Schema(required = true, description = "unique identifier of this resource")
+      @NotNull
+
+    public String getIndicatorId() {
     return indicatorId;
   }
 
@@ -331,11 +336,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * name of the indicator
    * @return indicatorName
-  */
-  @NotNull 
-  @Schema(name = "indicatorName", description = "name of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("indicatorName")
-  public String getIndicatorName() {
+   **/
+  @Schema(required = true, description = "name of the indicator")
+      @NotNull
+
+    public String getIndicatorName() {
     return indicatorName;
   }
 
@@ -351,11 +356,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * Get indicatorType
    * @return indicatorType
-  */
-  @Valid 
-  @Schema(name = "indicatorType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("indicatorType")
-  public IndicatorTypeEnum getIndicatorType() {
+   **/
+  @Schema(description = "")
+  
+    @Valid
+    public IndicatorTypeEnum getIndicatorType() {
     return indicatorType;
   }
 
@@ -371,11 +376,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * interpretation of the indicator values
    * @return interpretation
-  */
-  @NotNull 
-  @Schema(name = "interpretation", description = "interpretation of the indicator values", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("interpretation")
-  public String getInterpretation() {
+   **/
+  @Schema(required = true, description = "interpretation of the indicator values")
+      @NotNull
+
+    public String getInterpretation() {
     return interpretation;
   }
 
@@ -391,11 +396,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * boolean value indicating if the indicator is a headline indicator
    * @return isHeadlineIndicator
-  */
-  @NotNull 
-  @Schema(name = "isHeadlineIndicator", description = "boolean value indicating if the indicator is a headline indicator", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("isHeadlineIndicator")
-  public Boolean getIsHeadlineIndicator() {
+   **/
+  @Schema(required = true, description = "boolean value indicating if the indicator is a headline indicator")
+      @NotNull
+
+    public Boolean isIsHeadlineIndicator() {
     return isHeadlineIndicator;
   }
 
@@ -411,11 +416,10 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)
    * @return lowestSpatialUnitForComputation
-  */
+   **/
+  @Schema(description = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)")
   
-  @Schema(name = "lowestSpatialUnitForComputation", description = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("lowestSpatialUnitForComputation")
-  public String getLowestSpatialUnitForComputation() {
+    public String getLowestSpatialUnitForComputation() {
     return lowestSpatialUnitForComputation;
   }
 
@@ -431,11 +435,12 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * Get metadata
    * @return metadata
-  */
-  @NotNull @Valid 
-  @Schema(name = "metadata", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("metadata")
-  public CommonMetadataType getMetadata() {
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
+
+    @Valid
+    public CommonMetadataType getMetadata() {
     return metadata;
   }
 
@@ -443,15 +448,12 @@ public class IndicatorOverviewType implements Serializable {
     this.metadata = metadata;
   }
 
-  public IndicatorOverviewType ogcServices(List<@Valid OgcServicesType> ogcServices) {
+  public IndicatorOverviewType ogcServices(List<OgcServicesType> ogcServices) {
     this.ogcServices = ogcServices;
     return this;
   }
 
   public IndicatorOverviewType addOgcServicesItem(OgcServicesType ogcServicesItem) {
-    if (this.ogcServices == null) {
-      this.ogcServices = new ArrayList<>();
-    }
     this.ogcServices.add(ogcServicesItem);
     return this;
   }
@@ -459,15 +461,15 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * list of available OGC services for that indicator for different spatial units
    * @return ogcServices
-  */
-  @NotNull @Valid 
-  @Schema(name = "ogcServices", description = "list of available OGC services for that indicator for different spatial units", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("ogcServices")
-  public List<@Valid OgcServicesType> getOgcServices() {
+   **/
+  @Schema(required = true, description = "list of available OGC services for that indicator for different spatial units")
+      @NotNull
+    @Valid
+    public List<OgcServicesType> getOgcServices() {
     return ogcServices;
   }
 
-  public void setOgcServices(List<@Valid OgcServicesType> ogcServices) {
+  public void setOgcServices(List<OgcServicesType> ogcServices) {
     this.ogcServices = ogcServices;
   }
 
@@ -479,11 +481,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * description about how the indicator was computed
    * @return processDescription
-  */
-  @NotNull 
-  @Schema(name = "processDescription", description = "description about how the indicator was computed", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("processDescription")
-  public String getProcessDescription() {
+   **/
+  @Schema(required = true, description = "description about how the indicator was computed")
+      @NotNull
+
+    public String getProcessDescription() {
     return processDescription;
   }
 
@@ -499,11 +501,10 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * an optional note on the reference date of the indicator
    * @return referenceDateNote
-  */
+   **/
+  @Schema(description = "an optional note on the reference date of the indicator")
   
-  @Schema(name = "referenceDateNote", description = "an optional note on the reference date of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("referenceDateNote")
-  public String getReferenceDateNote() {
+    public String getReferenceDateNote() {
     return referenceDateNote;
   }
 
@@ -511,14 +512,14 @@ public class IndicatorOverviewType implements Serializable {
     this.referenceDateNote = referenceDateNote;
   }
 
-  public IndicatorOverviewType referencedGeoresources(List<@Valid GeoresourceReferenceType> referencedGeoresources) {
+  public IndicatorOverviewType referencedGeoresources(List<GeoresourceReferenceType> referencedGeoresources) {
     this.referencedGeoresources = referencedGeoresources;
     return this;
   }
 
   public IndicatorOverviewType addReferencedGeoresourcesItem(GeoresourceReferenceType referencedGeoresourcesItem) {
     if (this.referencedGeoresources == null) {
-      this.referencedGeoresources = new ArrayList<>();
+      this.referencedGeoresources = new ArrayList<GeoresourceReferenceType>();
     }
     this.referencedGeoresources.add(referencedGeoresourcesItem);
     return this;
@@ -527,26 +528,25 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * list of references to georesources
    * @return referencedGeoresources
-  */
-  @Valid 
-  @Schema(name = "referencedGeoresources", description = "list of references to georesources", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("referencedGeoresources")
-  public List<@Valid GeoresourceReferenceType> getReferencedGeoresources() {
+   **/
+  @Schema(description = "list of references to georesources")
+      @Valid
+    public List<GeoresourceReferenceType> getReferencedGeoresources() {
     return referencedGeoresources;
   }
 
-  public void setReferencedGeoresources(List<@Valid GeoresourceReferenceType> referencedGeoresources) {
+  public void setReferencedGeoresources(List<GeoresourceReferenceType> referencedGeoresources) {
     this.referencedGeoresources = referencedGeoresources;
   }
 
-  public IndicatorOverviewType referencedIndicators(List<@Valid IndicatorReferenceType> referencedIndicators) {
+  public IndicatorOverviewType referencedIndicators(List<IndicatorReferenceType> referencedIndicators) {
     this.referencedIndicators = referencedIndicators;
     return this;
   }
 
   public IndicatorOverviewType addReferencedIndicatorsItem(IndicatorReferenceType referencedIndicatorsItem) {
     if (this.referencedIndicators == null) {
-      this.referencedIndicators = new ArrayList<>();
+      this.referencedIndicators = new ArrayList<IndicatorReferenceType>();
     }
     this.referencedIndicators.add(referencedIndicatorsItem);
     return this;
@@ -555,15 +555,14 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * list of references to other indicators
    * @return referencedIndicators
-  */
-  @Valid 
-  @Schema(name = "referencedIndicators", description = "list of references to other indicators", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("referencedIndicators")
-  public List<@Valid IndicatorReferenceType> getReferencedIndicators() {
+   **/
+  @Schema(description = "list of references to other indicators")
+      @Valid
+    public List<IndicatorReferenceType> getReferencedIndicators() {
     return referencedIndicators;
   }
 
-  public void setReferencedIndicators(List<@Valid IndicatorReferenceType> referencedIndicators) {
+  public void setReferencedIndicators(List<IndicatorReferenceType> referencedIndicators) {
     this.referencedIndicators = referencedIndicators;
   }
 
@@ -573,9 +572,6 @@ public class IndicatorOverviewType implements Serializable {
   }
 
   public IndicatorOverviewType addTagsItem(String tagsItem) {
-    if (this.tags == null) {
-      this.tags = new ArrayList<>();
-    }
     this.tags.add(tagsItem);
     return this;
   }
@@ -583,11 +579,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * list of tag labels for the indicator
    * @return tags
-  */
-  @NotNull 
-  @Schema(name = "tags", description = "list of tag labels for the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("tags")
-  public List<String> getTags() {
+   **/
+  @Schema(required = true, description = "list of tag labels for the indicator")
+      @NotNull
+
+    public List<String> getTags() {
     return tags;
   }
 
@@ -603,11 +599,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * id of the last topic hierarchy entity 
    * @return topicReference
-  */
-  @NotNull 
-  @Schema(name = "topicReference", description = "id of the last topic hierarchy entity ", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("topicReference")
-  public String getTopicReference() {
+   **/
+  @Schema(required = true, description = "id of the last topic hierarchy entity ")
+      @NotNull
+
+    public String getTopicReference() {
     return topicReference;
   }
 
@@ -623,11 +619,11 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * unit of the indicator values
    * @return unit
-  */
-  @NotNull 
-  @Schema(name = "unit", description = "unit of the indicator values", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("unit")
-  public String getUnit() {
+   **/
+  @Schema(required = true, description = "unit of the indicator values")
+      @NotNull
+
+    public String getUnit() {
     return unit;
   }
 
@@ -642,7 +638,7 @@ public class IndicatorOverviewType implements Serializable {
 
   public IndicatorOverviewType addUserPermissionsItem(PermissionLevelType userPermissionsItem) {
     if (this.userPermissions == null) {
-      this.userPermissions = new ArrayList<>();
+      this.userPermissions = new ArrayList<PermissionLevelType>();
     }
     this.userPermissions.add(userPermissionsItem);
     return this;
@@ -651,11 +647,10 @@ public class IndicatorOverviewType implements Serializable {
   /**
    * list of permissions that are effective on this dataset for the current user
    * @return userPermissions
-  */
-  @Valid 
-  @Schema(name = "userPermissions", description = "list of permissions that are effective on this dataset for the current user", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("userPermissions")
-  public List<PermissionLevelType> getUserPermissions() {
+   **/
+  @Schema(description = "list of permissions that are effective on this dataset for the current user")
+      @Valid
+    public List<PermissionLevelType> getUserPermissions() {
     return userPermissions;
   }
 
@@ -663,8 +658,9 @@ public class IndicatorOverviewType implements Serializable {
     this.userPermissions = userPermissions;
   }
 
+
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -679,6 +675,7 @@ public class IndicatorOverviewType implements Serializable {
         Objects.equals(this.characteristicValue, indicatorOverviewType.characteristicValue) &&
         Objects.equals(this.creationType, indicatorOverviewType.creationType) &&
         Objects.equals(this.defaultClassificationMapping, indicatorOverviewType.defaultClassificationMapping) &&
+        Objects.equals(this.regionalReferenceValues, indicatorOverviewType.regionalReferenceValues) &&
         Objects.equals(this.displayOrder, indicatorOverviewType.displayOrder) &&
         Objects.equals(this.indicatorId, indicatorOverviewType.indicatorId) &&
         Objects.equals(this.indicatorName, indicatorOverviewType.indicatorName) &&
@@ -700,13 +697,14 @@ public class IndicatorOverviewType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, allowedRoles, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, displayOrder, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, processDescription, referenceDateNote, referencedGeoresources, referencedIndicators, tags, topicReference, unit, userPermissions);
+    return Objects.hash(abbreviation, allowedRoles, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, regionalReferenceValues, displayOrder, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, processDescription, referenceDateNote, referencedGeoresources, referencedIndicators, tags, topicReference, unit, userPermissions);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorOverviewType {\n");
+    
     sb.append("    abbreviation: ").append(toIndentedString(abbreviation)).append("\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    applicableDates: ").append(toIndentedString(applicableDates)).append("\n");
@@ -714,6 +712,7 @@ public class IndicatorOverviewType implements Serializable {
     sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");
     sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
     sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
+    sb.append("    regionalReferenceValues: ").append(toIndentedString(regionalReferenceValues)).append("\n");
     sb.append("    displayOrder: ").append(toIndentedString(displayOrder)).append("\n");
     sb.append("    indicatorId: ").append(toIndentedString(indicatorId)).append("\n");
     sb.append("    indicatorName: ").append(toIndentedString(indicatorName)).append("\n");
@@ -739,11 +738,10 @@ public class IndicatorOverviewType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
   }
 }
-

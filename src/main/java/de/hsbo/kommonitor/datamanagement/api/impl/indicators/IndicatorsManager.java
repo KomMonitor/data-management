@@ -284,9 +284,11 @@ public class IndicatorsManager {
         entity.setTopicReference(metadata.getTopicReference());
 
         entity.setAbbreviation(metadata.getAbbreviation());
-        entity.setHeadlineIndicator(metadata.getIsHeadlineIndicator());
+        entity.setHeadlineIndicator(metadata.isIsHeadlineIndicator());
         entity.setInterpretation(metadata.getInterpretation());
         entity.setTags(new HashSet<String>(metadata.getTags()));
+        
+        entity.setRegionalReferenceValues(metadata.getRegionalReferenceValues());
 
         // persist in db
         indicatorsMetadataRepo.saveAndFlush(entity);
@@ -1269,6 +1271,8 @@ public class IndicatorsManager {
         entity.setWmsUrl(null);
 
         entity.setRoles(retrieveRoles(indicatorData.getAllowedRoles()));
+        
+        entity.setRegionalReferenceValues(new ArrayList<RegionalReferenceValueType>());
 
         /*
          * process availableTimestamps property for indicator metadata entity

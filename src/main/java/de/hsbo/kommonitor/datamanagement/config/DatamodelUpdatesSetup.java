@@ -61,6 +61,9 @@ public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefresh
 			alterTableStmt.addBatch("ALTER TABLE \"metadataindicators\" ADD COLUMN IF NOT EXISTS \"classificationmethod\" integer default 2");
 			alterTableStmt.addBatch("CREATE TABLE IF NOT EXISTS \"metadataindicators_defaultclassification\" (\"dataset_id\" varchar(255), \\\"mapping_id\\\" varchar(255))");
 			
+			//regionalReferenceValues
+			alterTableStmt.addBatch("CREATE TABLE IF NOT EXISTS \"metadataindicators_regionalreferencevalues\" (\"dataset_id\" varchar(255), \\\"mapping_id\\\" varchar(255))");
+			
 			// remove relic tables as they were never used
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"users_roles\" CASCADE");
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"roles_privileges\" CASCADE");

@@ -9,6 +9,7 @@ import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType.ClassificationMethodEnum;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.RegionalReferenceValueType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -47,6 +48,12 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
     @CollectionTable(name = "indicator_tags", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"))
     @Column(name = "tag")
     private Collection<String> tags;
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "metadataindicators_regionalreferencevalues", 
+	joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), 
+	inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid"))
+    private Collection<RegionalReferenceValueType> regionalReferenceValues;
 	
 	private String colorBrewerSchemeName;
 	
@@ -276,6 +283,14 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 
 	public void setDisplayOrder(int displayOrder) {
 		this.displayOrder = displayOrder;
+	}
+
+	public Collection<RegionalReferenceValueType> getRegionalReferenceValues() {
+		return regionalReferenceValues;
+	}
+
+	public void setRegionalReferenceValues(Collection<RegionalReferenceValueType> regionalReferenceValues) {
+		this.regionalReferenceValues = regionalReferenceValues;
 	}
 
 }

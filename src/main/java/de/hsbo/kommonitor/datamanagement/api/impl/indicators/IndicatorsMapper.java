@@ -33,6 +33,7 @@ import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorSpatialUnitJoinItem;
 import de.hsbo.kommonitor.datamanagement.model.OgcServicesType;
+import de.hsbo.kommonitor.datamanagement.model.RegionalReferenceValueType;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 @Component
@@ -233,6 +234,12 @@ public class IndicatorsMapper {
 		indicatorOverviewType.setTags(new ArrayList<String>(indicatorsMetadataEntity.getTags()));
 		indicatorOverviewType.setAllowedRoles(getAllowedRoleIds(indicatorsMetadataEntity.getRoles()));
 		indicatorOverviewType.setUserPermissions(indicatorsMetadataEntity.getUserPermissions());
+		
+		List<RegionalReferenceValueType> refValues = new ArrayList<RegionalReferenceValueType>();
+		for (RegionalReferenceValueType regionalReferenceValueItem : indicatorsMetadataEntity.getRegionalReferenceValues()) {
+			refValues.add(regionalReferenceValueItem);
+		}
+		indicatorOverviewType.setRegionalReferenceValues(refValues);
 
 		return indicatorOverviewType;
 	}

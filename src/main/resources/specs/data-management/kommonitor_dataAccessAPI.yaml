@@ -5049,6 +5049,35 @@ components:
           description: array of classification mapping items. each item holds the break values for a certain spatial unit. not all spatial units of a certain indicator must be set.
           items:
             $ref: '#/components/schemas/DefaultClassificationMappingItemType'
+    RegionalReferenceValueType:
+      title: RegionalReferenceValueType
+      required:
+        - referenceDate
+        - regionalSum
+        - regionalAverage
+        - spatiallyUnassignable
+      type: object
+      properties:
+        referenceDate:
+          type: string
+          description: reference date according
+            to ISO 8601 (e.g. 2018-01-30)
+          format: date
+        regionalSum:
+          type: number
+          format: float
+          description: regional sum value
+          nullable: true
+        regionalAverage:
+          type: number
+          format: float
+          description: regional average value
+          nullable: true
+        spatiallyUnassignable:
+          type: number
+          format: float
+          description: number of items that cannot be spatially assigned to any spatial unit 
+          nullable: true
     GeoresourceOverviewType:
       title: GeoresourceOverviewType
       required:
@@ -5336,6 +5365,11 @@ components:
           description: the meaningful name of the indicator
         defaultClassificationMapping:
           $ref: '#/components/schemas/DefaultClassificationMappingType'
+        regionalReferenceValues:
+          type: array
+          description: list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)
+          items:
+            $ref: '#/components/schemas/RegionalReferenceValueType'  
         displayOrder:
           type: number
           description: an order number to control display order in clients
@@ -5408,6 +5442,7 @@ components:
         - tags
         - topicReference
         - unit
+        - regionalReferenceValues
       type: object
       properties:
         abbreviation:
@@ -5440,6 +5475,11 @@ components:
           $ref: '#/components/schemas/CreationTypeEnum'
         defaultClassificationMapping:
           $ref: '#/components/schemas/DefaultClassificationMappingType'
+        regionalReferenceValues:
+          type: array
+          description: list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)
+          items:
+            $ref: '#/components/schemas/RegionalReferenceValueType'
         displayOrder:
           type: number
           description: an order number to control display order in clients
