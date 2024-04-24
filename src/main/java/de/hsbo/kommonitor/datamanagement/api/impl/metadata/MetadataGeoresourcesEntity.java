@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -27,6 +28,11 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata implements Rest
 	private boolean isAOI;
 	
 	private String topicReference;
+	
+	@Column(columnDefinition = "integer default 1")
+	private PoiMarkerStyleEnum poiMarkerStyle;
+	
+	private String poiMarkerText;
 	
 	private ColorType poiMarkerColor;
 	
@@ -168,5 +174,23 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata implements Rest
 	public void setLoiWidth(Integer loiWidth) {
 		this.loiWidth = loiWidth;
 	}
+
+	public PoiMarkerStyleEnum getPoiMarkerStyle() {
+		return poiMarkerStyle;
+	}
+
+	public void setPoiMarkerStyle(PoiMarkerStyleEnum poiMarkerStyle) {
+		this.poiMarkerStyle = poiMarkerStyle;
+	}
+
+	public String getPoiMarkerText() {
+		return poiMarkerText;
+	}
+
+	public void setPoiMarkerText(String poiMarkerText) {
+		this.poiMarkerText = poiMarkerText;
+	}
+	
+	
 
 }

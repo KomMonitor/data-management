@@ -1,75 +1,75 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import de.hsbo.kommonitor.datamanagement.model.ColorType;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.io.Serializable;
-import java.time.OffsetDateTime;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import java.util.Objects;
+
+import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * GeoresourcePATCHInputType
  */
+@Validated
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-04-24T20:35:27.161908166Z[GMT]")
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
-public class GeoresourcePATCHInputType implements Serializable {
 
-  private static final long serialVersionUID = 1L;
-
+public class GeoresourcePATCHInputType   {
+  @JsonProperty("allowedRoles")
   @Valid
-  private List<String> allowedRoles;
+  private List<String> allowedRoles = null;
 
-  private String aoiColor;
+  @JsonProperty("aoiColor")
+  private String aoiColor = null;
 
-  private String datasetName;
+  @JsonProperty("datasetName")
+  private String datasetName = null;
 
-  private Boolean isAOI;
+  @JsonProperty("isAOI")
+  private Boolean isAOI = null;
 
-  private Boolean isLOI;
+  @JsonProperty("isLOI")
+  private Boolean isLOI = null;
 
-  private Boolean isPOI;
+  @JsonProperty("isPOI")
+  private Boolean isPOI = null;
 
-  private String loiColor;
+  @JsonProperty("loiColor")
+  private String loiColor = null;
 
-  private String loiDashArrayString;
+  @JsonProperty("loiDashArrayString")
+  private String loiDashArrayString = null;
 
-  private BigDecimal loiWidth;
+  @JsonProperty("loiWidth")
+  private BigDecimal loiWidth = null;
 
-  private CommonMetadataType metadata;
+  @JsonProperty("metadata")
+  private CommonMetadataType metadata = null;
 
-  private ColorType poiMarkerColor;
+  @JsonProperty("poiMarkerStyle")
+  private PoiMarkerStyleEnum poiMarkerStyle = null;
 
-  private String poiSymbolBootstrap3Name;
+  @JsonProperty("poiMarkerText")
+  private String poiMarkerText = null;
 
-  private ColorType poiSymbolColor;
+  @JsonProperty("poiMarkerColor")
+  private ColorType poiMarkerColor = null;
 
-  private String topicReference;
+  @JsonProperty("poiSymbolBootstrap3Name")
+  private String poiSymbolBootstrap3Name = null;
 
-  public GeoresourcePATCHInputType() {
-    super();
-  }
+  @JsonProperty("poiSymbolColor")
+  private ColorType poiSymbolColor = null;
 
-  /**
-   * Constructor with only required parameters
-   */
-  public GeoresourcePATCHInputType(CommonMetadataType metadata) {
-    this.metadata = metadata;
-  }
+  @JsonProperty("topicReference")
+  private String topicReference = null;
 
   public GeoresourcePATCHInputType allowedRoles(List<String> allowedRoles) {
     this.allowedRoles = allowedRoles;
@@ -78,7 +78,7 @@ public class GeoresourcePATCHInputType implements Serializable {
 
   public GeoresourcePATCHInputType addAllowedRolesItem(String allowedRolesItem) {
     if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+      this.allowedRoles = new ArrayList<String>();
     }
     this.allowedRoles.add(allowedRolesItem);
     return this;
@@ -87,11 +87,10 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * list of role identifiers that have read access rights for this dataset
    * @return allowedRoles
-  */
+   **/
+  @Schema(description = "list of role identifiers that have read access rights for this dataset")
   
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
+    public List<String> getAllowedRoles() {
     return allowedRoles;
   }
 
@@ -107,11 +106,10 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * color name or color code (i.e. hex number) for areas of interest
    * @return aoiColor
-  */
+   **/
+  @Schema(description = "color name or color code (i.e. hex number) for areas of interest")
   
-  @Schema(name = "aoiColor", description = "color name or color code (i.e. hex number) for areas of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("aoiColor")
-  public String getAoiColor() {
+    public String getAoiColor() {
     return aoiColor;
   }
 
@@ -127,11 +125,10 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * the meaningful name of the dataset
    * @return datasetName
-  */
+   **/
+  @Schema(description = "the meaningful name of the dataset")
   
-  @Schema(name = "datasetName", description = "the meaningful name of the dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("datasetName")
-  public String getDatasetName() {
+    public String getDatasetName() {
     return datasetName;
   }
 
@@ -147,11 +144,10 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * boolean value indicating if the dataset contains areas of interest
    * @return isAOI
-  */
+   **/
+  @Schema(description = "boolean value indicating if the dataset contains areas of interest")
   
-  @Schema(name = "isAOI", description = "boolean value indicating if the dataset contains areas of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("isAOI")
-  public Boolean getIsAOI() {
+    public Boolean isIsAOI() {
     return isAOI;
   }
 
@@ -167,11 +163,10 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * boolean value indicating if the dataset contains lines of interest
    * @return isLOI
-  */
+   **/
+  @Schema(description = "boolean value indicating if the dataset contains lines of interest")
   
-  @Schema(name = "isLOI", description = "boolean value indicating if the dataset contains lines of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("isLOI")
-  public Boolean getIsLOI() {
+    public Boolean isIsLOI() {
     return isLOI;
   }
 
@@ -187,11 +182,10 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * boolean value indicating if the dataset contains points of interest
    * @return isPOI
-  */
+   **/
+  @Schema(description = "boolean value indicating if the dataset contains points of interest")
   
-  @Schema(name = "isPOI", description = "boolean value indicating if the dataset contains points of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("isPOI")
-  public Boolean getIsPOI() {
+    public Boolean isIsPOI() {
     return isPOI;
   }
 
@@ -207,11 +201,10 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * color name or color code (i.e. hex number) for lines of interest
    * @return loiColor
-  */
+   **/
+  @Schema(description = "color name or color code (i.e. hex number) for lines of interest")
   
-  @Schema(name = "loiColor", description = "color name or color code (i.e. hex number) for lines of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("loiColor")
-  public String getLoiColor() {
+    public String getLoiColor() {
     return loiColor;
   }
 
@@ -227,11 +220,10 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)
    * @return loiDashArrayString
-  */
+   **/
+  @Schema(description = "string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)")
   
-  @Schema(name = "loiDashArrayString", description = "string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("loiDashArrayString")
-  public String getLoiDashArrayString() {
+    public String getLoiDashArrayString() {
     return loiDashArrayString;
   }
 
@@ -247,11 +239,11 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * display width for lines of interest (number of pixels in leaflet)
    * @return loiWidth
-  */
-  @Valid 
-  @Schema(name = "loiWidth", example = "0.0", description = "display width for lines of interest (number of pixels in leaflet)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("loiWidth")
-  public BigDecimal getLoiWidth() {
+   **/
+  @Schema(example = "0", description = "display width for lines of interest (number of pixels in leaflet)")
+  
+    @Valid
+    public BigDecimal getLoiWidth() {
     return loiWidth;
   }
 
@@ -267,16 +259,55 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * Get metadata
    * @return metadata
-  */
-  @NotNull @Valid 
-  @Schema(name = "metadata", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("metadata")
-  public CommonMetadataType getMetadata() {
+   **/
+  @Schema(required = true, description = "")
+      @NotNull
+
+    @Valid
+    public CommonMetadataType getMetadata() {
     return metadata;
   }
 
   public void setMetadata(CommonMetadataType metadata) {
     this.metadata = metadata;
+  }
+
+  public GeoresourcePATCHInputType poiMarkerStyle(PoiMarkerStyleEnum poiMarkerStyle) {
+    this.poiMarkerStyle = poiMarkerStyle;
+    return this;
+  }
+
+  /**
+   * the poi marker type, either text or symbol
+   * @return poiMarkerStyle
+   **/
+  @Schema(description = "the poi marker type, either text or symbol")
+  
+    public PoiMarkerStyleEnum getPoiMarkerStyle() {
+    return poiMarkerStyle;
+  }
+
+  public void setPoiMarkerStyle(PoiMarkerStyleEnum poiMarkerStyle) {
+    this.poiMarkerStyle = poiMarkerStyle;
+  }
+
+  public GeoresourcePATCHInputType poiMarkerText(String poiMarkerText) {
+    this.poiMarkerText = poiMarkerText;
+    return this;
+  }
+
+  /**
+   * the poi marker text string to be used if poiMarkerStyle is set to text
+   * @return poiMarkerText
+   **/
+  @Schema(description = "the poi marker text string to be used if poiMarkerStyle is set to text")
+  
+  @Size(max=3)   public String getPoiMarkerText() {
+    return poiMarkerText;
+  }
+
+  public void setPoiMarkerText(String poiMarkerText) {
+    this.poiMarkerText = poiMarkerText;
   }
 
   public GeoresourcePATCHInputType poiMarkerColor(ColorType poiMarkerColor) {
@@ -287,11 +318,11 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * Get poiMarkerColor
    * @return poiMarkerColor
-  */
-  @Valid 
-  @Schema(name = "poiMarkerColor", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("poiMarkerColor")
-  public ColorType getPoiMarkerColor() {
+   **/
+  @Schema(description = "")
+  
+    @Valid
+    public ColorType getPoiMarkerColor() {
     return poiMarkerColor;
   }
 
@@ -307,11 +338,10 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)
    * @return poiSymbolBootstrap3Name
-  */
+   **/
+  @Schema(description = "If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)")
   
-  @Schema(name = "poiSymbolBootstrap3Name", description = "If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("poiSymbolBootstrap3Name")
-  public String getPoiSymbolBootstrap3Name() {
+    public String getPoiSymbolBootstrap3Name() {
     return poiSymbolBootstrap3Name;
   }
 
@@ -327,11 +357,11 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * Get poiSymbolColor
    * @return poiSymbolColor
-  */
-  @Valid 
-  @Schema(name = "poiSymbolColor", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("poiSymbolColor")
-  public ColorType getPoiSymbolColor() {
+   **/
+  @Schema(description = "")
+  
+    @Valid
+    public ColorType getPoiSymbolColor() {
     return poiSymbolColor;
   }
 
@@ -347,11 +377,10 @@ public class GeoresourcePATCHInputType implements Serializable {
   /**
    * id of the last topic hierarchy entity 
    * @return topicReference
-  */
+   **/
+  @Schema(description = "id of the last topic hierarchy entity ")
   
-  @Schema(name = "topicReference", description = "id of the last topic hierarchy entity ", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("topicReference")
-  public String getTopicReference() {
+    public String getTopicReference() {
     return topicReference;
   }
 
@@ -359,8 +388,9 @@ public class GeoresourcePATCHInputType implements Serializable {
     this.topicReference = topicReference;
   }
 
+
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -378,6 +408,8 @@ public class GeoresourcePATCHInputType implements Serializable {
         Objects.equals(this.loiDashArrayString, georesourcePATCHInputType.loiDashArrayString) &&
         Objects.equals(this.loiWidth, georesourcePATCHInputType.loiWidth) &&
         Objects.equals(this.metadata, georesourcePATCHInputType.metadata) &&
+        Objects.equals(this.poiMarkerStyle, georesourcePATCHInputType.poiMarkerStyle) &&
+        Objects.equals(this.poiMarkerText, georesourcePATCHInputType.poiMarkerText) &&
         Objects.equals(this.poiMarkerColor, georesourcePATCHInputType.poiMarkerColor) &&
         Objects.equals(this.poiSymbolBootstrap3Name, georesourcePATCHInputType.poiSymbolBootstrap3Name) &&
         Objects.equals(this.poiSymbolColor, georesourcePATCHInputType.poiSymbolColor) &&
@@ -386,13 +418,14 @@ public class GeoresourcePATCHInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, aoiColor, datasetName, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
+    return Objects.hash(allowedRoles, aoiColor, datasetName, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, poiMarkerStyle, poiMarkerText, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class GeoresourcePATCHInputType {\n");
+    
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    aoiColor: ").append(toIndentedString(aoiColor)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
@@ -403,6 +436,8 @@ public class GeoresourcePATCHInputType implements Serializable {
     sb.append("    loiDashArrayString: ").append(toIndentedString(loiDashArrayString)).append("\n");
     sb.append("    loiWidth: ").append(toIndentedString(loiWidth)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
+    sb.append("    poiMarkerStyle: ").append(toIndentedString(poiMarkerStyle)).append("\n");
+    sb.append("    poiMarkerText: ").append(toIndentedString(poiMarkerText)).append("\n");
     sb.append("    poiMarkerColor: ").append(toIndentedString(poiMarkerColor)).append("\n");
     sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");
     sb.append("    poiSymbolColor: ").append(toIndentedString(poiSymbolColor)).append("\n");
@@ -415,11 +450,10 @@ public class GeoresourcePATCHInputType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
   }
 }
-

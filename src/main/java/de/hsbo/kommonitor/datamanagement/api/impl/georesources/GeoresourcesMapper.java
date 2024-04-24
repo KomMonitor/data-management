@@ -118,6 +118,8 @@ private static GeoresourcesMetadataRepository georesourceMetadataRepo;
 		dataset.setIsPOI(georesourceMetadataEntity.isPOI());
 		dataset.setIsLOI(georesourceMetadataEntity.isLOI());
 		dataset.setIsAOI(georesourceMetadataEntity.isAOI());
+		dataset.setPoiMarkerStyle(georesourceMetadataEntity.getPoiMarkerStyle());
+		dataset.setPoiMarkerText(georesourceMetadataEntity.getPoiMarkerText());
 		dataset.setPoiSymbolBootstrap3Name(georesourceMetadataEntity.getPoiSymbolBootstrap3Name());
 		dataset.setPoiMarkerColor(georesourceMetadataEntity.getPoiMarkerColor());
 		dataset.setPoiSymbolColor(georesourceMetadataEntity.getPoiSymbolColor());

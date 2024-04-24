@@ -5133,6 +5133,12 @@ components:
           example: 0.0
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
+        poiMarkerStyle:
+          $ref: '#/components/schemas/PoiMarkerStyleEnum'
+        poiMarkerText:
+          type: string
+          description: the poi marker text string to be used if poiMarkerStyle is set to text
+          maxLength: 3
         poiMarkerColor:
           description: If georesource is a POI then custom POI marker color can be
             set by specifying one of the following color names
@@ -5204,6 +5210,12 @@ components:
           example: 0.0
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
+        poiMarkerStyle:
+          $ref: '#/components/schemas/PoiMarkerStyleEnum'
+        poiMarkerText:
+          type: string
+          description: the poi marker text string to be used if poiMarkerStyle is set to text
+          maxLength: 3
         poiMarkerColor:
           description: If georesource is a POI then custom POI marker color can be
             set by specifying one of the following color names
@@ -5276,6 +5288,12 @@ components:
           $ref: '#/components/schemas/CommonMetadataType'
         periodOfValidity:
           $ref: '#/components/schemas/PeriodOfValidityType'
+        poiMarkerStyle:
+          $ref: '#/components/schemas/PoiMarkerStyleEnum'
+        poiMarkerText:
+          type: string
+          description: the poi marker text string to be used if poiMarkerStyle is set to text
+          maxLength: 3
         poiMarkerColor:
           description: If georesource is a POI then custom POI marker color can be
             set by specifying one of the following color names
@@ -6397,6 +6415,12 @@ components:
       enum:
         - main
         - sub
+    PoiMarkerStyleEnum:
+      type: string
+      description: the poi marker type, either text or symbol
+      enum:
+        - text
+        - symbol
   securitySchemes:
     kommonitor-data-access_oauth:
       type: oauth2

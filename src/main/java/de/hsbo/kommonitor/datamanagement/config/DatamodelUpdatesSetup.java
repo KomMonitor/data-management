@@ -64,6 +64,11 @@ public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefresh
 			//regionalReferenceValues
 			alterTableStmt.addBatch("CREATE TABLE IF NOT EXISTS \"metadataindicators_regionalreferencevalues\" (\"dataset_id\" varchar(255), \\\"mapping_id\\\" varchar(255))");
 			
+			// text values for poi markers
+			alterTableStmt.addBatch("ALTER TABLE \"metadatageoresources\" ADD COLUMN IF NOT EXISTS \"poimarkerstyle\" integer default 1");
+			alterTableStmt.addBatch("ALTER TABLE \"metadatageoresources\" ADD COLUMN IF NOT EXISTS \"poimarkertext\" varchar(255)");
+			
+			
 			// remove relic tables as they were never used
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"users_roles\" CASCADE");
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"roles_privileges\" CASCADE");
