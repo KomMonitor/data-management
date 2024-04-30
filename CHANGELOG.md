@@ -1,6 +1,7 @@
 # Change Log
 
-## 3.2.1
+## 3.2.2
+* Fix missing AnnotationParameter [ec729cf](ec729cf39cbae0962fb2b8071e3d3407ab261150)
 * Revert SNAPSHOT version [b8f5713](b8f5713b81c825f557d8f3671b03c54d5c6e4d37)
 * Fix missing outline width handling [7cefbc3](7cefbc3a7fc69cd1070895709cab12b8e5b7c7fe)
 * Merge branch &#39;develop&#39; [7be8aa7](7be8aa792c1da1ec6829eed39adfb284d0afe6e2)
