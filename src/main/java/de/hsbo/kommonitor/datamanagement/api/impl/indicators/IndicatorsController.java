@@ -235,7 +235,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
     public ResponseEntity<byte[]> getIndicatorBySpatialUnitIdAndId(
             @P("indicatorId") String indicatorId,
-            String spatialUnitId,
+            @P("spatialUnitId") String spatialUnitId,
             String simplifyGeometries) {
         logger.info("Received request to get indicators features for spatialUnitId '{}' and Id '{}' ",
                 spatialUnitId, indicatorId);
