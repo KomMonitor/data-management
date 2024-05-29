@@ -109,9 +109,9 @@ public class OrganizationalUnitManager {
             return AccessControlMapper.mapToSwaggerOrganizationalUnit(saved);
         } catch (ClientErrorException | KeycloakException ex) {
             logger.error(String.format("Creating roles and policies for OrganizationalUnit %s and Keycloak ID %s failed." +
-                            "Group creation aborted.", inputOrganizationalUnit.getName()), keycloakId);
+                            "Group creation aborted.", inputOrganizationalUnit.getName(), keycloakId));
             keycloakAdminService.deleteGroup(keycloakId);
-            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Cresting group and roles in Keycloak failed " +
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Creating group and roles in Keycloak failed " +
                     "due to internal Keycloak conflicts.");
         }
     }
