@@ -7,6 +7,7 @@ import de.hsbo.kommonitor.datamanagement.auth.KeycloakAdminService;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.ClientErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,22 +89,31 @@ public class OrganizationalUnitManager {
             keycloakId = keycloakAdminService.addGroup(inputOrganizationalUnit);
         }
         inputOrganizationalUnit.setKeycloakId(keycloakId);
-        keycloakAdminService.createRolesForGroup(inputOrganizationalUnit);
-        keycloakAdminService.createRolePolicies(inputOrganizationalUnit, parent);
 
-        jpaUnit.setKeycloakId(UUID.fromString(keycloakId));
-        OrganizationalUnitEntity saved = organizationalUnitRepository.saveAndFlush(jpaUnit);
+        try {
+            keycloakAdminService.createRolesForGroup(inputOrganizationalUnit);
+            keycloakAdminService.createRolePolicies(inputOrganizationalUnit, parent);
 
-        // Generate appropriate roles
-        List<PermissionEntity> roles = new ArrayList<>();
-        for (PermissionLevelType level : PermissionLevelType.values()) {
-            roles.add(permissionManager.addPermission(saved, level, PermissionResourceType.RESOURCES));
+            jpaUnit.setKeycloakId(UUID.fromString(keycloakId));
+            OrganizationalUnitEntity saved = organizationalUnitRepository.saveAndFlush(jpaUnit);
+
+            // Generate appropriate roles
+            List<PermissionEntity> roles = new ArrayList<>();
+            for (PermissionLevelType level : PermissionLevelType.values()) {
+                roles.add(permissionManager.addPermission(saved, level, PermissionResourceType.RESOURCES));
+            }
+            roles.add(permissionManager.addPermission(saved, PermissionLevelType.CREATOR, PermissionResourceType.USERS));
+            roles.add(permissionManager.addPermission(saved, PermissionLevelType.CREATOR, PermissionResourceType.THEMES));
+            saved.setPermissions(roles);
+
+            return AccessControlMapper.mapToSwaggerOrganizationalUnit(saved);
+        } catch (ClientErrorException | KeycloakException ex) {
+            logger.error(String.format("Creating roles and policies for OrganizationalUnit %s and Keycloak ID %s failed." +
+                            "Group creation aborted.", inputOrganizationalUnit.getName()), keycloakId);
+            keycloakAdminService.deleteGroup(keycloakId);
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Cresting group and roles in Keycloak failed " +
+                    "due to internal Keycloak conflicts.");
         }
-        roles.add(permissionManager.addPermission(saved, PermissionLevelType.CREATOR, PermissionResourceType.USERS));
-        roles.add(permissionManager.addPermission(saved, PermissionLevelType.CREATOR, PermissionResourceType.THEMES));
-        saved.setPermissions(roles);
-
-        return AccessControlMapper.mapToSwaggerOrganizationalUnit(saved);
     }
 
     public boolean deleteOrganizationalUnitAndRolesById(String organizationalUnitId) throws ApiException {
@@ -181,10 +191,14 @@ public class OrganizationalUnitManager {
             OrganizationalUnitEntity organizationalUnitEntity =
                     organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
 
+            keycloakAdminService.updateGroupAndRoles(organizationalUnitEntity, newData);
+
             organizationalUnitEntity.setName(newData.getName());
             organizationalUnitEntity.setContact(newData.getContact());
             organizationalUnitEntity.setDescription(newData.getDescription());
-            organizationalUnitEntity.setKeycloakId(UUID.fromString(newData.getKeycloakId()));
+            if (newData.getKeycloakId() != null) {
+                organizationalUnitEntity.setKeycloakId(UUID.fromString(newData.getKeycloakId()));
+            }
             organizationalUnitEntity.setMandant(newData.getMandant());
 
             if (organizationalUnitEntity.getParent() != null) {
