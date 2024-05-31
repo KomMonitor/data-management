@@ -6192,7 +6192,7 @@ components:
         - keycloakId
         - contact
         - permissions
-        - userAdminPermissions
+        - userAdminRoles
         - parentId
         - children
       type: object
@@ -6219,11 +6219,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PermissionOverviewType'
-        userAdminPermissions:
+        userAdminRoles:
           type: array
-          description: 'list of admin permissions that are effective on this group for the current user '
+          description: list of admin roles that are effective on this group for the current user
           items:
-            $ref: '#/components/schemas/AdminPermissionType'
+            $ref: '#/components/schemas/AdminRoleType'
+        adminRoles:
+          type: array
+          description: list of Keycloak group based admin roles that have been assigned to this organizational unit
+          items:
+            $ref: '#/components/schemas/GroupAdminRolesType'
         parentId:
           type: string
           description: uuid of the parent group
@@ -6767,6 +6772,21 @@ components:
             a main topic - only topics of type 'sub' shall be subTopics of topics
             with type 'main'
           $ref: '#/components/schemas/TopicTypeEnum'
+    GroupAdminRolesType:
+      title: GroupAdminRolesType
+      required:
+        - organizationalUnitId
+        - adminRoles
+      type: object
+      properties:
+        organizationalUnitId:
+          type: string
+          description: unique id of the organizational Unit
+        adminRoles:
+          type: array
+          description: Admin roles that refer to the organizational unit
+          items:
+            $ref: '#/components/schemas/AdminRoleType'
     ColorType:
       type: string
       description: Defines assignable colors for different feature styles, such as POI, LOI and AOI colors.
@@ -6795,7 +6815,7 @@ components:
         - resources
         - themes
         - users
-    AdminPermissionType:
+    AdminRoleType:
       type: string
       description: Permissions for administrative tasks regarding resources, themes and users
       enum:

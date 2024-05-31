@@ -5,7 +5,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUn
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.auth.Group;
 import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
-import de.hsbo.kommonitor.datamanagement.model.AdminPermissionType;
+import de.hsbo.kommonitor.datamanagement.model.AdminRoleType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 import org.springframework.data.util.Pair;
@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static de.hsbo.kommonitor.datamanagement.model.AdminPermissionType.*;
+import static de.hsbo.kommonitor.datamanagement.model.AdminRoleType.*;
 
 public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
 
@@ -220,7 +220,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
     }
 
     @Override
-    public List<AdminPermissionType> getOrganizationalUnitCreationPermissions(OrganizationalUnitEntity entity) {
+    public List<AdminRoleType> getOrganizationalUnitCreationPermissions(OrganizationalUnitEntity entity) {
 
         // Global administrators hav full permissions
         if (tokenParser.hasRealmAdminRole(getPrincipal(), ADMIN_ROLE_NAME)) {

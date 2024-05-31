@@ -2,8 +2,7 @@ package de.hsbo.kommonitor.datamanagement.auth.provider;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
-import de.hsbo.kommonitor.datamanagement.model.AdminPermissionType;
+import de.hsbo.kommonitor.datamanagement.model.AdminRoleType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 
@@ -57,5 +56,5 @@ public interface AuthInfoProvider {
 
     boolean checkOrganizationalUnitCreationPermissions(OrganizationalUnitEntity parent);
 
-    List<AdminPermissionType> getOrganizationalUnitCreationPermissions(OrganizationalUnitEntity entity);
+    List<AdminRoleType> getOrganizationalUnitCreationPermissions(OrganizationalUnitEntity entity);
 }

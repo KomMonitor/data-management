@@ -21,8 +21,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Permissions for administrative tasks regarding resources, themes and users
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-31T11:22:16.269961700+02:00[Europe/Berlin]")
-public enum AdminPermissionType {
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-31T16:02:51.425651700+02:00[Europe/Berlin]")
+public enum AdminRoleType {
   
   CLIENT_USERS_CREATOR("client-users-creator"),
   
@@ -38,7 +38,7 @@ public enum AdminPermissionType {
 
   private String value;
 
-  AdminPermissionType(String value) {
+  AdminRoleType(String value) {
     this.value = value;
   }
 
@@ -53,8 +53,8 @@ public enum AdminPermissionType {
   }
 
   @JsonCreator
-  public static AdminPermissionType fromValue(String value) {
-    for (AdminPermissionType b : AdminPermissionType.values()) {
+  public static AdminRoleType fromValue(String value) {
+    for (AdminRoleType b : AdminRoleType.values()) {
       if (b.value.equals(value)) {
         return b;
       }

@@ -4,7 +4,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
-import de.hsbo.kommonitor.datamanagement.model.AdminPermissionType;
+import de.hsbo.kommonitor.datamanagement.model.AdminRoleType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static de.hsbo.kommonitor.datamanagement.model.AdminPermissionType.CLIENT_USERS_CREATOR;
+import static de.hsbo.kommonitor.datamanagement.model.AdminRoleType.CLIENT_USERS_CREATOR;
 
 /**
  * Interface that provides authentication and authorization information
@@ -186,7 +186,7 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
     }
 
     @Override
-    public List<AdminPermissionType> getOrganizationalUnitCreationPermissions(OrganizationalUnitEntity entity) {
+    public List<AdminRoleType> getOrganizationalUnitCreationPermissions(OrganizationalUnitEntity entity) {
         if (hasRealmAdminRole(getPrincipal())) {
             return Collections.singletonList(CLIENT_USERS_CREATOR);
         }

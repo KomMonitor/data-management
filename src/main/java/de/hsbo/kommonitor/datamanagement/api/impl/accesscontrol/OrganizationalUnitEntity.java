@@ -1,7 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
-import de.hsbo.kommonitor.datamanagement.model.AdminPermissionType;
-import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.AdminRoleType;
+import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -42,7 +42,10 @@ public class OrganizationalUnitEntity {
     public List<OrganizationalUnitEntity> children;
 
     @Transient
-    private List<AdminPermissionType> userAdminPermissions;
+    private List<AdminRoleType> userAdminRoles;
+
+    @Transient
+    private List<GroupAdminRolesType> adminRoles;
 
     public String getName() {
         return name;
@@ -116,11 +119,11 @@ public class OrganizationalUnitEntity {
         this.children = children;
     }
 
-    public List<AdminPermissionType> getUserAdminPermissions() {
-        return userAdminPermissions;
+    public List<AdminRoleType> getUserAdminRoles() {
+        return userAdminRoles;
     }
 
-    public void setUserAdminPermissions(List<AdminPermissionType> userAdminPermissions) {
-        this.userAdminPermissions = userAdminPermissions;
+    public void setUserAdminPermissions(List<AdminRoleType> userAdminRoles) {
+        this.userAdminRoles = userAdminRoles;
     }
 }
