@@ -6789,6 +6789,16 @@ components:
         - resources
         - themes
         - users
+    AdminPermissionType:
+      type: string
+      description: Permissions for administrative tasks regarding resources, themes and users
+      enum:
+        - client-users-creator
+        - unit-users-creator
+        - client-resources-creator
+        - unit-resources-creator
+        - client-themes-creator
+        - unit-themes-creator
     IndicatorTypeEnum:
       type: string
       description: indicates whether the indicator is a status indicator (values represent the extent of the watched
