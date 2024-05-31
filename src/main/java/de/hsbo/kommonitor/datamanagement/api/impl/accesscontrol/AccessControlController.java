@@ -58,10 +58,12 @@ public class AccessControlController extends BasePathController implements Acces
     @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<List<OrganizationalUnitOverviewType>> getOrganizationalUnits() {
         logger.debug("Received request to get all organizationalUnits");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
         String accept = request.getHeader("Accept");
 
         if (accept != null && accept.contains("application/json")) {
-            List<OrganizationalUnitOverviewType> roles = organizationalUnitManager.getOrganizationalUnits();
+            List<OrganizationalUnitOverviewType> roles = organizationalUnitManager.getOrganizationalUnits(provider);
             return new ResponseEntity<>(roles, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -72,11 +74,13 @@ public class AccessControlController extends BasePathController implements Acces
     @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<OrganizationalUnitOverviewType> getOrganizationalUnitById(String organizationalUnitId) {
         logger.debug("Received request to get organizationalUnit with id '{}'", organizationalUnitId);
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
         String accept = request.getHeader("Accept");
         try {
             if (accept != null && accept.contains("application/json")) {
                 OrganizationalUnitOverviewType unit =
-                        organizationalUnitManager.getOrganizationalUnitById(organizationalUnitId);
+                        organizationalUnitManager.getOrganizationalUnitById(organizationalUnitId, provider);
                 return new ResponseEntity<>(unit, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

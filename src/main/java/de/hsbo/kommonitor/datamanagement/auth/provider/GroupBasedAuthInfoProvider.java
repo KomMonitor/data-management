@@ -5,6 +5,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUn
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.auth.Group;
 import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
+import de.hsbo.kommonitor.datamanagement.model.AdminPermissionType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 import org.springframework.data.util.Pair;
@@ -14,24 +15,20 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static de.hsbo.kommonitor.datamanagement.model.AdminPermissionType.*;
+
 public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
 
     private static final String ADMIN_ROLE_NAME = "kommonitor-creator";
-    private static final String CLIENT_RESOURCES_ADMIN_ROLE_NAME = "client-resources-creator";
-    private static final String UNIT_RESOURCES_ADMIN_ROLE_NAME = "unit-resources-creator";
-    private static final String CLIENT_THEMES_ADMIN_ROLE_NAME = "client-themes-creator";
-    private static final String UNIT_THEMES_ADMIN_ROLE_NAME = "unit-themes-creator";
-    private static final String CLIENT_USERS_ADMIN_ROLE_NAME = "client-users-creator";
-    private static final String UNIT_USERS_ADMIN_ROLE_NAME = "unit-users-creator";
 
     //    private static final Pattern roleExtractorRegex = Pattern.compile(".(?=(client-resources-creator)|(unit-resources-creator)|(client-themes-creator)|(unit-themes-creator)|(client-users-creator)|(unit-users-creator)$)");
     private static final Pattern roleExtractorRegex = Pattern.compile(
-            ".(?=(" + CLIENT_RESOURCES_ADMIN_ROLE_NAME + ")" +
-                    "|(" + UNIT_RESOURCES_ADMIN_ROLE_NAME + ")" +
-                    "|(" + CLIENT_THEMES_ADMIN_ROLE_NAME + ")" +
-                    "|(" + UNIT_THEMES_ADMIN_ROLE_NAME + ")" +
-                    "|(" + CLIENT_USERS_ADMIN_ROLE_NAME + ")" +
-                    "|(" + UNIT_USERS_ADMIN_ROLE_NAME + ")$)");
+            ".(?=(" + CLIENT_RESOURCES_CREATOR + ")" +
+                    "|(" + UNIT_RESOURCES_CREATOR + ")" +
+                    "|(" + CLIENT_THEMES_CREATOR + ")" +
+                    "|(" + UNIT_THEMES_CREATOR + ")" +
+                    "|(" + CLIENT_USERS_CREATOR + ")" +
+                    "|(" + UNIT_USERS_CREATOR + ")$)");
 
     private final Set<Group> groups;
 
@@ -222,6 +219,42 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         return false;
     }
 
+    @Override
+    public List<AdminPermissionType> getOrganizationalUnitCreationPermissions(OrganizationalUnitEntity entity) {
+
+        // Global administrators hav full permissions
+        if (tokenParser.hasRealmAdminRole(getPrincipal(), ADMIN_ROLE_NAME)) {
+            return Collections.singletonList(CLIENT_USERS_CREATOR);
+        }
+
+        // Since all permissions are tied to groups, users without a group can't have permissions on a resource
+        if (groups == null || groups.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        Set<String> ownedRoles = tokenParser.getOwnedRoles(principal);
+        OrganizationalUnitEntity currentEntity = entity;
+        while (entity != null) {
+            OrganizationalUnitEntity finalEntity = entity;
+            boolean allowed = ownedRoles.stream()
+                    .filter(r -> roleExtractorRegex.split(r, 2).length == 2)
+                    .map(r -> {
+                        String[] split = roleExtractorRegex.split(r, 2);
+                        return Pair.of(split[0], split[1]);
+                    })
+                    .anyMatch(r -> hasClientUsersAdminPermissionForParentGroup(r.getFirst(), r.getSecond(), finalEntity))
+                    ;
+            if (allowed) {
+                return Collections.singletonList(CLIENT_USERS_CREATOR);
+            }
+            entity = entity.getParent();
+        }
+        if (hasUsersAdministrationPermission(currentEntity)) {
+            return Collections.singletonList(UNIT_USERS_CREATOR);
+        }
+        return Collections.emptyList();
+    }
+
     public boolean checkOrganizationalUnitPermissions(OrganizationalUnitEntity entity) {
 
         // User is global administrator
@@ -261,11 +294,11 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
     private boolean hasAdminPermissionForResourceType(String adminRole, PermissionResourceType resourceType) {
         return switch (resourceType) {
             case RESOURCES ->
-                    (adminRole.equals(CLIENT_RESOURCES_ADMIN_ROLE_NAME) || adminRole.equals(UNIT_RESOURCES_ADMIN_ROLE_NAME));
+                    (adminRole.equals(CLIENT_RESOURCES_CREATOR.getValue()) || adminRole.equals(UNIT_RESOURCES_CREATOR.getValue()));
             case THEMES ->
-                    (adminRole.equals(CLIENT_THEMES_ADMIN_ROLE_NAME) || adminRole.equals(UNIT_THEMES_ADMIN_ROLE_NAME));
+                    (adminRole.equals(CLIENT_THEMES_CREATOR.getValue()) || adminRole.equals(UNIT_THEMES_CREATOR.getValue()));
             case USERS ->
-                    (adminRole.equals(CLIENT_USERS_ADMIN_ROLE_NAME) || adminRole.equals(UNIT_USERS_ADMIN_ROLE_NAME));
+                    (adminRole.equals(CLIENT_USERS_CREATOR.getValue()) || adminRole.equals(UNIT_USERS_CREATOR.getValue()));
         };
     }
 
@@ -283,11 +316,11 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
      * @return true if the Keycloak group has admin permission for resources of the owning group
      */
     private boolean hasClientResourceAdminPermissionForOwningGroup(String kcGroup, String kcRole, RestrictedEntity entity) {
-        return kcRole.equals(CLIENT_RESOURCES_ADMIN_ROLE_NAME) && roleGroupIsParent(kcGroup, entity.getOwner());
+        return kcRole.equals(CLIENT_RESOURCES_CREATOR.getValue()) && roleGroupIsParent(kcGroup, entity.getOwner());
     }
 
     private boolean hasClientUsersAdminPermissionForParentGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
-        return kcRole.equals(CLIENT_USERS_ADMIN_ROLE_NAME) && kcGroup.equals(entity.getName());
+        return kcRole.equals(CLIENT_USERS_CREATOR.getValue()) && kcGroup.equals(entity.getName());
     }
 
     private boolean hasUsersAdministrationPermission(OrganizationalUnitEntity entity) {
@@ -308,7 +341,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
     }
 
     private boolean hasClientUsersAdminPermissionForOwningGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
-        return kcRole.equals(CLIENT_USERS_ADMIN_ROLE_NAME) && roleGroupIsParent(kcGroup, entity);
+        return kcRole.equals(CLIENT_USERS_CREATOR.getValue()) && roleGroupIsParent(kcGroup, entity);
     }
 
     /**

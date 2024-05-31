@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.hsbo.kommonitor.datamanagement.model.AdminPermissionType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionOverviewType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +25,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "OrganizationalUnitOverviewType", description = "organizational unit (group)")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-31T13:09:30.638755900+02:00[Europe/Berlin]")
 public class OrganizationalUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -44,6 +45,9 @@ public class OrganizationalUnitOverviewType implements Serializable {
   @Valid
   private List<@Valid PermissionOverviewType> permissions = new ArrayList<>();
 
+  @Valid
+  private List<AdminPermissionType> userAdminPermissions = new ArrayList<>();
+
   private String parentId;
 
   @Valid
@@ -56,13 +60,15 @@ public class OrganizationalUnitOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public OrganizationalUnitOverviewType(String organizationalUnitId, String name, Boolean mandant, String keycloakId, String contact, List<@Valid PermissionOverviewType> permissions, List<String> children) {
+  public OrganizationalUnitOverviewType(String organizationalUnitId, String name, Boolean mandant, String keycloakId, String contact, List<@Valid PermissionOverviewType> permissions, List<AdminPermissionType> userAdminPermissions, String parentId, List<String> children) {
     this.organizationalUnitId = organizationalUnitId;
     this.name = name;
     this.mandant = mandant;
     this.keycloakId = keycloakId;
     this.contact = contact;
     this.permissions = permissions;
+    this.userAdminPermissions = userAdminPermissions;
+    this.parentId = parentId;
     this.children = children;
   }
 
@@ -214,6 +220,34 @@ public class OrganizationalUnitOverviewType implements Serializable {
     this.permissions = permissions;
   }
 
+  public OrganizationalUnitOverviewType userAdminPermissions(List<AdminPermissionType> userAdminPermissions) {
+    this.userAdminPermissions = userAdminPermissions;
+    return this;
+  }
+
+  public OrganizationalUnitOverviewType addUserAdminPermissionsItem(AdminPermissionType userAdminPermissionsItem) {
+    if (this.userAdminPermissions == null) {
+      this.userAdminPermissions = new ArrayList<>();
+    }
+    this.userAdminPermissions.add(userAdminPermissionsItem);
+    return this;
+  }
+
+  /**
+   * list of admin permissions that are effective on this group for the current user 
+   * @return userAdminPermissions
+  */
+  @NotNull @Valid 
+  @Schema(name = "userAdminPermissions", description = "list of admin permissions that are effective on this group for the current user ", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("userAdminPermissions")
+  public List<AdminPermissionType> getUserAdminPermissions() {
+    return userAdminPermissions;
+  }
+
+  public void setUserAdminPermissions(List<AdminPermissionType> userAdminPermissions) {
+    this.userAdminPermissions = userAdminPermissions;
+  }
+
   public OrganizationalUnitOverviewType parentId(String parentId) {
     this.parentId = parentId;
     return this;
@@ -223,8 +257,8 @@ public class OrganizationalUnitOverviewType implements Serializable {
    * uuid of the parent group
    * @return parentId
   */
-  
-  @Schema(name = "parentId", description = "uuid of the parent group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "parentId", description = "uuid of the parent group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("parentId")
   public String getParentId() {
     return parentId;
@@ -278,13 +312,14 @@ public class OrganizationalUnitOverviewType implements Serializable {
         Objects.equals(this.contact, organizationalUnitOverviewType.contact) &&
         Objects.equals(this.description, organizationalUnitOverviewType.description) &&
         Objects.equals(this.permissions, organizationalUnitOverviewType.permissions) &&
+        Objects.equals(this.userAdminPermissions, organizationalUnitOverviewType.userAdminPermissions) &&
         Objects.equals(this.parentId, organizationalUnitOverviewType.parentId) &&
         Objects.equals(this.children, organizationalUnitOverviewType.children);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(organizationalUnitId, name, mandant, keycloakId, contact, description, permissions, parentId, children);
+    return Objects.hash(organizationalUnitId, name, mandant, keycloakId, contact, description, permissions, userAdminPermissions, parentId, children);
   }
 
   @Override
@@ -298,6 +333,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     sb.append("    contact: ").append(toIndentedString(contact)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
+    sb.append("    userAdminPermissions: ").append(toIndentedString(userAdminPermissions)).append("\n");
     sb.append("    parentId: ").append(toIndentedString(parentId)).append("\n");
     sb.append("    children: ").append(toIndentedString(children)).append("\n");
     sb.append("}");

@@ -28,6 +28,7 @@ public class AccessControlMapper {
             ou.setChildren(ouEntity.getChildren().stream().map(OrganizationalUnitEntity::getOrganizationalUnitId)
                     .collect(Collectors.toList()));
         }
+        ou.setUserAdminPermissions(ouEntity.getUserAdminPermissions());
         return ou;
     }
 

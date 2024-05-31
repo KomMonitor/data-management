@@ -1,16 +1,9 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import de.hsbo.kommonitor.datamanagement.model.AdminPermissionType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 
 import java.util.List;
 import java.util.UUID;
@@ -47,6 +40,9 @@ public class OrganizationalUnitEntity {
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     public List<OrganizationalUnitEntity> children;
+
+    @Transient
+    private List<AdminPermissionType> userAdminPermissions;
 
     public String getName() {
         return name;
@@ -118,5 +114,13 @@ public class OrganizationalUnitEntity {
 
     public void setChildren(List<OrganizationalUnitEntity> children) {
         this.children = children;
+    }
+
+    public List<AdminPermissionType> getUserAdminPermissions() {
+        return userAdminPermissions;
+    }
+
+    public void setUserAdminPermissions(List<AdminPermissionType> userAdminPermissions) {
+        this.userAdminPermissions = userAdminPermissions;
     }
 }

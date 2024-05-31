@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.KeycloakException;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.auth.KeycloakAdminService;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -156,6 +158,24 @@ public class OrganizationalUnitManager {
         }
     }
 
+    public OrganizationalUnitOverviewType getOrganizationalUnitById(String organizationalUnitId, AuthInfoProvider provider) throws ResourceNotFoundException {
+        logger.info("Retrieving OrganizationalUnit for organizationalUnitId '{}'", organizationalUnitId);
+
+        OrganizationalUnitEntity organizationalUnitEntity =
+                organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
+        if (organizationalUnitEntity != null) {
+            organizationalUnitEntity.setUserAdminPermissions(provider.getOrganizationalUnitCreationPermissions(organizationalUnitEntity));
+            return AccessControlMapper.mapToSwaggerOrganizationalUnit(organizationalUnitEntity);
+        } else {
+            logger.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
+                    organizationalUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to delete OrganizationalUnit, but no OrganizationalUnit " +
+                            "existes with id " +
+                            organizationalUnitId);
+        }
+    }
+
     public OrganizationalUnitPermissionOverviewType getOrganizationalUnitPermissionsById(String organizationalUnitId) throws ResourceNotFoundException {
         logger.info("Retrieving OrganizationalUnit->permissions for organizationalUnitId '{}'", organizationalUnitId);
 
@@ -177,9 +197,27 @@ public class OrganizationalUnitManager {
     public List<OrganizationalUnitOverviewType> getOrganizationalUnits() {
         logger.info("Retrieving all organizationalUnits from db");
 
-        List<OrganizationalUnitEntity> OrganizationalUnitEntities = organizationalUnitRepository.findAll();
+        List<OrganizationalUnitEntity> organizationalUnitEntities = organizationalUnitRepository.findAll();
+
         List<OrganizationalUnitOverviewType> organizationalUnits =
-                AccessControlMapper.mapToSwaggerOrganizationalUnits(OrganizationalUnitEntities);
+                AccessControlMapper.mapToSwaggerOrganizationalUnits(organizationalUnitEntities);
+
+        return organizationalUnits;
+    }
+
+    public List<OrganizationalUnitOverviewType> getOrganizationalUnits(AuthInfoProvider provider) {
+        logger.info("Retrieving all organizationalUnits from db");
+
+        List<OrganizationalUnitEntity> organizationalUnitEntities = organizationalUnitRepository.findAll();
+
+        Iterator<OrganizationalUnitEntity> iter = organizationalUnitEntities.iterator();
+        while(iter.hasNext()) {
+            OrganizationalUnitEntity o = iter.next();
+            o.setUserAdminPermissions(provider.getOrganizationalUnitCreationPermissions(o));
+        }
+
+        List<OrganizationalUnitOverviewType> organizationalUnits =
+                AccessControlMapper.mapToSwaggerOrganizationalUnits(organizationalUnitEntities);
 
         return organizationalUnits;
     }

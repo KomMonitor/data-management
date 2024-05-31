@@ -4,6 +4,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
+import de.hsbo.kommonitor.datamanagement.model.AdminPermissionType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,8 @@ import java.security.Principal;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static de.hsbo.kommonitor.datamanagement.model.AdminPermissionType.CLIENT_USERS_CREATOR;
 
 /**
  * Interface that provides authentication and authorization information
@@ -67,7 +70,7 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
      * restricted access
      *
      * @param entity entity that has access rights defined by a role
-     * @return
+     * @return true if access is allowed
      */
     public boolean checkPermissions(final RestrictedEntity entity, final PermissionLevelType neededLevel) {
         Set<PermissionEntity> allowedRoleEntities = entity.getPermissions();
@@ -180,6 +183,14 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
     @Override
     public boolean checkOrganizationalUnitCreationPermissions(OrganizationalUnitEntity parent) {
         return hasRealmAdminRole(getPrincipal());
+    }
+
+    @Override
+    public List<AdminPermissionType> getOrganizationalUnitCreationPermissions(OrganizationalUnitEntity entity) {
+        if (hasRealmAdminRole(getPrincipal())) {
+            return Collections.singletonList(CLIENT_USERS_CREATOR);
+        }
+        return Collections.emptyList();
     }
 
     public Set<String> getOwnedRoles(Principal principal) {
