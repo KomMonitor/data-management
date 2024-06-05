@@ -1,6 +1,7 @@
 # Change Log
 
-## 4.0.0
+## 4.0.1
+* fix erroneous data model updates and deletion of old relic tables [a0cd3a6](a0cd3a6aea8f0267a1c77b142e92ee39f1ea36a8)
 * Fix missing AnnotationParameter [df30096](df30096299d7a731a57939bfcad5f2cb8aee8169)
 * implement poi marker text functionality [7989b1d](7989b1d6fe0f72e8b6d7dad848633a02e3f9e56f)
 * implement regional reference values [c1adf27](c1adf2742e951b201c63a12f3bf947fd8c423361)
