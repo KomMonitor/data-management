@@ -1,6 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.auth;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.AccessControlController;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.KeycloakException;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
@@ -34,6 +33,9 @@ public class KeycloakAdminService {
 
     private static final String QUERY_USERS_ROLE_NAME = "query-users";
     private static final String QUERY_GROUPS_ROLE_NAME = "query-groups";
+
+    private static final String KOMMONITOR_ID_ATTRIBUTE = "kommonitorId";
+    private static final String KOMMONITOR_MANDANT_ATTRIBUTE = "mandant";
 
     private static final List<String> ADMIN_ROLES = Arrays.asList(
             CLIENT_RESOURCES_ADMIN_ROLE_NAME,
@@ -78,7 +80,7 @@ public class KeycloakAdminService {
     public GroupRepresentation createGroupRepresentation(OrganizationalUnitInputType inputOrganizationalUnit) {
         GroupRepresentation group = new GroupRepresentation();
         group.setName(inputOrganizationalUnit.getName());
-        group.setAttributes(Map.of("mandant", List.of(inputOrganizationalUnit.getMandant().toString())));
+        group.singleAttribute(KOMMONITOR_MANDANT_ATTRIBUTE, inputOrganizationalUnit.getMandant().toString());
         return group;
     }
 
@@ -102,6 +104,19 @@ public class KeycloakAdminService {
         getRealmResource().roles().get(roleName).remove();
     }
 
+    public void deleteRolesForGroupName(String name) {
+        ADMIN_ROLES.stream()
+                .map(r -> String.join(".",name, r))
+                .forEach(r -> {
+                    try {
+                        deleteRole(r);
+                        LOG.debug("Successfully deleted role '{}'", r);
+                    } catch (NotFoundException ex) {
+                        LOG.warn("Role '{}' does not exists. Deletion will be skipped.", r);
+                    }
+                });
+    }
+
     public void deleteGroupAndRoles(OrganizationalUnitEntity entity) {
         LOG.info("Trying to delete Keycloak group for OrganizationalUnit '{}' and Keycloak group '{}'.", entity.getName(), entity.getKeycloakId().toString());
         try {
@@ -112,16 +127,7 @@ public class KeycloakAdminService {
         LOG.info("Successfully deleted Keycloak group for OrganizationalUnit '{}' and Keycloak group '{}'.", entity.getName(), entity.getKeycloakId().toString());
 
         LOG.info("Trying to delete roles for OrganizationalUnit '{}'.", entity.getName());
-        ADMIN_ROLES.stream()
-                .map(r -> String.join(".", entity.getName(), r))
-                .forEach(r -> {
-                    try {
-                        deleteRole(r);
-                        LOG.debug("Successfully deleted role '{}'", r);
-                    } catch (NotFoundException ex) {
-                        LOG.warn("Role '{}' does not exists. Deletion will be skipped.", r);
-                    }
-                });
+        deleteRolesForGroupName(entity.getName());
         LOG.info("Successfully deleted roles for OrganizationalUnit '{}'.", entity.getName());
     }
 
@@ -142,7 +148,7 @@ public class KeycloakAdminService {
             String oldRoleName = "";
             try {
                 oldRoleName = String.join(".", entity.getName(), r);
-                RoleRepresentation roleRepresentation = mapToRoleRepresentation(String.join(".",newInputOrganizationalUnit.getName(), r));
+                RoleRepresentation roleRepresentation = mapToRoleRepresentation(newInputOrganizationalUnit, r);
                 updateRole(oldRoleName, roleRepresentation);
                 LOG.debug("Successfully updated role '{}'", roleRepresentation.getName());
             } catch (NotFoundException ex) {
@@ -224,9 +230,13 @@ public class KeycloakAdminService {
         return policySet;
     }
 
-    private RoleRepresentation mapToRoleRepresentation(String name) {
+    private RoleRepresentation mapToRoleRepresentation(OrganizationalUnitInputType organizationalUnitInputType, String roleName) {
         RoleRepresentation role = new RoleRepresentation();
+        String name = String.join(".", organizationalUnitInputType.getName(), roleName);
         role.setName(name);
+        Map<String, List<String>> attributes = new HashMap<>();
+        attributes.put(KOMMONITOR_ID_ATTRIBUTE, Collections.singletonList(organizationalUnitInputType.getOrganizationalUnitId()));
+        role.setAttributes(attributes);
         return role;
     }
 
@@ -240,7 +250,7 @@ public class KeycloakAdminService {
 
         // Create all admin roles for group
         ADMIN_ROLES.stream()
-                .map(r -> mapToRoleRepresentation(String.join(".",inputOrganizationalUnit.getName(), r)))
+                .map(r -> mapToRoleRepresentation(inputOrganizationalUnit, r))
                 .forEach(this::addRole);
 
         // Associate user admin roles with query-users and query-group roles
@@ -382,6 +392,52 @@ public class KeycloakAdminService {
         return keycloak.realm(keycloakRealm);
     }
 
+    public List<RoleRepresentation> getRolesForGroup(String groupId) {
+        GroupResource groupResource = getRealmResource().groups().group(groupId);
+        return groupResource.roles().realmLevel().listAll();
+    }
 
 
+    /**
+     * This methods references OrganizationalUnitEntity with the corresponding Keycloak roles
+     * by setting the KomMonitor group ID as an extra parameter to the Keycloak role entities
+     *
+     * @param entity the OrganizationalUnitEntity representing a KomMonitor group
+     */
+    public void referenceOrganizationalUnitWithRoles(OrganizationalUnitEntity entity){
+        ADMIN_ROLES.forEach(r -> {
+            String roleName = "";
+            try {
+                roleName = String.join(".", entity.getName(), r);
+                RoleResource roleResource = getRealmResource().roles().get(roleName);
+                RoleRepresentation roleRep = roleResource.toRepresentation();
+                roleRep.singleAttribute(KOMMONITOR_ID_ATTRIBUTE, entity.getOrganizationalUnitId());
+                roleResource.update(roleRep);
+                LOG.debug("Successfully referenced KomMonitor group ID '{}' with Keycloak role '{}'", entity.getOrganizationalUnitId(), roleRep.getName());
+            } catch (NotFoundException ex) {
+                LOG.warn("Role '{}' does not exists. Update will be skipped.", roleName);
+            }
+        });
+    }
+
+    /**
+     * This methods references OrganizationalUnitEntity with the corresponding Keycloak roles
+     * by setting the KomMonitor group ID as an extra parameter to the Keycloak role entities
+     *
+     * @param entity the OrganizationalUnitEntity representing a KomMonitor group
+     */
+    public void referenceOrganizationalUnitWithGroup(OrganizationalUnitEntity entity){
+        try {
+            GroupResource groupResource = getRealmResource().groups().group(entity.getKeycloakId().toString());
+
+            GroupRepresentation groupRep = new GroupRepresentation();
+            groupRep.setName(entity.getName());
+            groupRep.singleAttribute(KOMMONITOR_MANDANT_ATTRIBUTE, String.valueOf(entity.isMandant()));
+            groupRep.singleAttribute(KOMMONITOR_ID_ATTRIBUTE, entity.getOrganizationalUnitId());
+            groupResource.update(groupRep);
+            LOG.debug("Successfully referenced KomMonitor group ID '{}' with Keycloak group '{}'", entity.getOrganizationalUnitId(), groupRep.getName());
+        } catch (NotFoundException ex) {
+            LOG.warn("Group '{}' does not exists. Update will be skipped.", entity.getName());
+        }
+    }
 }
