@@ -402,9 +402,14 @@ public class KeycloakAdminService {
         return keycloak.realm(keycloakRealm);
     }
 
-    public List<RoleRepresentation> getRolesForGroup(String groupId) {
-        GroupResource groupResource = getRealmResource().groups().group(groupId);
-        return groupResource.roles().realmLevel().listAll();
+    public List<RoleRepresentation> getRolesForGroup(String groupId) throws KeycloakException{
+        try {
+            GroupResource groupResource = getRealmResource().groups().group(groupId);
+            return groupResource.roles().realmLevel().listAll();
+        } catch (NotFoundException ex) {
+            LOG.debug("No Keycloak group with ID '' found.", groupId);
+            throw new KeycloakException("Keycloak group not found.", ex);
+        }
     }
 
 
