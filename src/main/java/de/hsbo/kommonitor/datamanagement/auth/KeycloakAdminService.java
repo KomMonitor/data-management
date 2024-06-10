@@ -34,8 +34,9 @@ public class KeycloakAdminService {
     private static final String QUERY_USERS_ROLE_NAME = "query-users";
     private static final String QUERY_GROUPS_ROLE_NAME = "query-groups";
 
-    private static final String KOMMONITOR_ID_ATTRIBUTE = "kommonitorId";
-    private static final String KOMMONITOR_MANDANT_ATTRIBUTE = "mandant";
+    public static final String KOMMONITOR_ID_ATTRIBUTE = "kommonitorId";
+    public static final String KOMMONITOR_ROLE_TYPE_ATTRIBUTE = "roleType";
+    public static final String KOMMONITOR_MANDANT_ATTRIBUTE = "mandant";
 
     private static final List<String> ADMIN_ROLES = Arrays.asList(
             CLIENT_RESOURCES_ADMIN_ROLE_NAME,
@@ -186,6 +187,15 @@ public class KeycloakAdminService {
             LOG.warn("More than one role with name {} exists. Only first role will be returned.", name);
         }
         return roleList.get(0);
+    }
+
+    public RoleRepresentation getRoleById(String id) throws KeycloakException {
+        try {
+            return getRealmResource().rolesById().getRole(id);
+        } catch (NotFoundException ex) {
+            LOG.debug("Role with ID `{}` not found.", id);
+            throw new KeycloakException("Specified role not found.", ex);
+        }
     }
 
     public RoleRepresentation getClientRoleByName(String clientId, String name) throws  KeycloakException {
@@ -412,6 +422,7 @@ public class KeycloakAdminService {
                 RoleResource roleResource = getRealmResource().roles().get(roleName);
                 RoleRepresentation roleRep = roleResource.toRepresentation();
                 roleRep.singleAttribute(KOMMONITOR_ID_ATTRIBUTE, entity.getOrganizationalUnitId());
+                roleRep.singleAttribute(KOMMONITOR_ROLE_TYPE_ATTRIBUTE, r);
                 roleResource.update(roleRep);
                 LOG.debug("Successfully referenced KomMonitor group ID '{}' with Keycloak role '{}'", entity.getOrganizationalUnitId(), roleRep.getName());
             } catch (NotFoundException ex) {

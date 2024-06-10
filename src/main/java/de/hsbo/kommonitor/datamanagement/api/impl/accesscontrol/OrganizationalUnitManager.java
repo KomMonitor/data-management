@@ -17,10 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional
 @Repository
@@ -170,8 +168,10 @@ public class OrganizationalUnitManager {
         OrganizationalUnitEntity organizationalUnitEntity =
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
         if (organizationalUnitEntity != null) {
-            organizationalUnitEntity.setUserAdminPermissions(provider.getOrganizationalUnitCreationPermissions(organizationalUnitEntity));
-            return AccessControlMapper.mapToSwaggerOrganizationalUnit(organizationalUnitEntity);
+            OrganizationalUnitOverviewType orgaOverview = AccessControlMapper.mapToSwaggerOrganizationalUnit(organizationalUnitEntity);
+            orgaOverview.setUserAdminRoles(provider.getOrganizationalUnitCreationPermissions(organizationalUnitEntity));
+            orgaOverview.setAdminRoles(getGroupAdminRoles(organizationalUnitEntity));
+            return orgaOverview;
         } else {
             logger.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
                     organizationalUnitId);
@@ -180,6 +180,43 @@ public class OrganizationalUnitManager {
                             "existes with id " +
                             organizationalUnitId);
         }
+    }
+
+    /**
+     * Fetches all Keycloak roles that are associated with a Keycloak group that represents the provided
+     * {@link OrganizationalUnitEntity} and returns them as a list of  {@link GroupAdminRolesType}
+     *
+     * @param organizationalUnitEntity The organizational unit to request the associated roles for. This unit must
+     *                                 have a corresponding Keycloak group.
+     * @return administrative roles for the organizational unit
+     */
+    public List<GroupAdminRolesType> getGroupAdminRoles (OrganizationalUnitEntity organizationalUnitEntity) {
+        List<RoleRepresentation> simpleRolesRepList = keycloakAdminService.getRolesForGroup(organizationalUnitEntity.getKeycloakId().toString());
+
+        // Requested roles for group are a simple representation and do not contain attributes. Hence, we have
+        // to request every single role firs, to fetch all details.
+        List<RoleRepresentation> rolesRepList = simpleRolesRepList.stream()
+                .map(r -> {
+                    try {
+                        return keycloakAdminService.getRoleById(r.getId());
+                    } catch (KeycloakException ex) {
+                        logger.error("Error while fetching Keycloak role with ID '{}'.", r.getId());
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .toList();
+
+        Map<String, List<RoleRepresentation>> groupsMap =
+                rolesRepList.stream().collect(Collectors.groupingBy(r -> r.getAttributes().get(KeycloakAdminService.KOMMONITOR_ID_ATTRIBUTE).get(0)));
+
+        return groupsMap.entrySet().stream()
+                .map(e -> {
+                    List<AdminRoleType> roleNames = e.getValue().stream()
+                            .map(v -> AdminRoleType.fromValue(v.getAttributes().get(KeycloakAdminService.KOMMONITOR_ROLE_TYPE_ATTRIBUTE).get(0)))
+                            .collect(Collectors.toList());
+                    return new GroupAdminRolesType(e.getKey(), roleNames);
+                }).toList();
     }
 
     public OrganizationalUnitPermissionOverviewType getOrganizationalUnitPermissionsById(String organizationalUnitId) throws ResourceNotFoundException {
@@ -216,17 +253,13 @@ public class OrganizationalUnitManager {
 
         List<OrganizationalUnitEntity> organizationalUnitEntities = organizationalUnitRepository.findAll();
 
-        Iterator<OrganizationalUnitEntity> iter = organizationalUnitEntities.iterator();
-        while(iter.hasNext()) {
-            OrganizationalUnitEntity o = iter.next();
-            List<RoleRepresentation> roles = keycloakAdminService.getRolesForGroup(o.getKeycloakId().toString());
-            o.setUserAdminPermissions(provider.getOrganizationalUnitCreationPermissions(o));
-        }
-
-        List<OrganizationalUnitOverviewType> organizationalUnits =
-                AccessControlMapper.mapToSwaggerOrganizationalUnits(organizationalUnitEntities);
-
-        return organizationalUnits;
+        return organizationalUnitEntities.stream()
+                .map(o -> {
+                    OrganizationalUnitOverviewType orgaOverview = AccessControlMapper.mapToSwaggerOrganizationalUnit(o);
+                    orgaOverview.setUserAdminRoles(provider.getOrganizationalUnitCreationPermissions(o));
+                    orgaOverview.setAdminRoles(getGroupAdminRoles(o));
+                    return orgaOverview;
+                }).toList();
     }
 
     public String updateOrganizationalUnit(OrganizationalUnitInputType newData,
