@@ -5,7 +5,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.hsbo.kommonitor.datamanagement.model.AdminRoleType;
-import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionOverviewType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +25,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "OrganizationalUnitOverviewType", description = "organizational unit (group)")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-05-31T16:02:51.425651700+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-06-10T13:40:31.582152900+02:00[Europe/Berlin]")
 public class OrganizationalUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -48,9 +47,6 @@ public class OrganizationalUnitOverviewType implements Serializable {
 
   @Valid
   private List<AdminRoleType> userAdminRoles = new ArrayList<>();
-
-  @Valid
-  private List<@Valid GroupAdminRolesType> adminRoles;
 
   private String parentId;
 
@@ -252,34 +248,6 @@ public class OrganizationalUnitOverviewType implements Serializable {
     this.userAdminRoles = userAdminRoles;
   }
 
-  public OrganizationalUnitOverviewType adminRoles(List<@Valid GroupAdminRolesType> adminRoles) {
-    this.adminRoles = adminRoles;
-    return this;
-  }
-
-  public OrganizationalUnitOverviewType addAdminRolesItem(GroupAdminRolesType adminRolesItem) {
-    if (this.adminRoles == null) {
-      this.adminRoles = new ArrayList<>();
-    }
-    this.adminRoles.add(adminRolesItem);
-    return this;
-  }
-
-  /**
-   * list of Keycloak group based admin roles that have been assigned to this organizational unit
-   * @return adminRoles
-  */
-  @Valid 
-  @Schema(name = "adminRoles", description = "list of Keycloak group based admin roles that have been assigned to this organizational unit", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("adminRoles")
-  public List<@Valid GroupAdminRolesType> getAdminRoles() {
-    return adminRoles;
-  }
-
-  public void setAdminRoles(List<@Valid GroupAdminRolesType> adminRoles) {
-    this.adminRoles = adminRoles;
-  }
-
   public OrganizationalUnitOverviewType parentId(String parentId) {
     this.parentId = parentId;
     return this;
@@ -345,14 +313,13 @@ public class OrganizationalUnitOverviewType implements Serializable {
         Objects.equals(this.description, organizationalUnitOverviewType.description) &&
         Objects.equals(this.permissions, organizationalUnitOverviewType.permissions) &&
         Objects.equals(this.userAdminRoles, organizationalUnitOverviewType.userAdminRoles) &&
-        Objects.equals(this.adminRoles, organizationalUnitOverviewType.adminRoles) &&
         Objects.equals(this.parentId, organizationalUnitOverviewType.parentId) &&
         Objects.equals(this.children, organizationalUnitOverviewType.children);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(organizationalUnitId, name, mandant, keycloakId, contact, description, permissions, userAdminRoles, adminRoles, parentId, children);
+    return Objects.hash(organizationalUnitId, name, mandant, keycloakId, contact, description, permissions, userAdminRoles, parentId, children);
   }
 
   @Override
@@ -367,7 +334,6 @@ public class OrganizationalUnitOverviewType implements Serializable {
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    userAdminRoles: ").append(toIndentedString(userAdminRoles)).append("\n");
-    sb.append("    adminRoles: ").append(toIndentedString(adminRoles)).append("\n");
     sb.append("    parentId: ").append(toIndentedString(parentId)).append("\n");
     sb.append("    children: ").append(toIndentedString(children)).append("\n");
     sb.append("}");

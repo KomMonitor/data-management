@@ -7,10 +7,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManag
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
-import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.ResourceType;
+import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.keycloak.admin.client.Keycloak;
 import org.slf4j.Logger;
@@ -178,6 +175,25 @@ public class AccessControlController extends BasePathController implements Acces
                 OrganizationalUnitPermissionOverviewType permissions =
                         organizationalUnitManager.getOrganizationalUnitPermissionsById(organizationalUnitId);
                 return new ResponseEntity<>(permissions, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<OrganizationalUnitRoleAuthorityType> getOrganizationalUnitRoleAuthorities(String organizationalUnitId) {
+        logger.info("Received request to get organizationalUnit permissions for id '{}'", organizationalUnitId);
+        String accept = request.getHeader("Accept");
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                OrganizationalUnitRoleAuthorityType roleAuthority = new OrganizationalUnitRoleAuthorityType(
+                        organizationalUnitManager.getGroupAdminRoles(organizationalUnitId)
+                );
+                        ;
+                return new ResponseEntity<>(roleAuthority, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }

@@ -8,6 +8,7 @@ package de.hsbo.kommonitor.datamanagement.api;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitRoleAuthorityType;
 import de.hsbo.kommonitor.datamanagement.model.ResourceType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:10.685766091+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-06-10T13:54:38.352223800+02:00[Europe/Berlin]")
 @Validated
 @Tag(name = "access-control", description = "the AccessControl API")
 public interface AccessControlApi {
@@ -194,6 +195,46 @@ public interface AccessControlApi {
     ResponseEntity<OrganizationalUnitPermissionOverviewType> getOrganizationalUnitPermissions(
         @Parameter(name = "organizationalUnitId", description = "organizationalUnitId", required = true, in = ParameterIn.PATH) @PathVariable("organizationalUnitId") String organizationalUnitId,
         @Parameter(name = "resourceType", description = "resourceType", in = ParameterIn.QUERY) @Valid @RequestParam(value = "resourceType", required = false) ResourceType resourceType
+    );
+
+
+    /**
+     * GET /organizationalUnits/{organizationalUnitId}/role-authorities : Fetch all role authorities for the selected organizationalUnit.
+     * Fetch all role authorities for the selected organizationalUnit. In particular, these are all roles that have been assigned to the selected organizational that represent delegated administrative tasks for other organizational unit.
+     *
+     * @param organizationalUnitId organizationalUnitId (required)
+     * @return OK (status code 200)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "getOrganizationalUnitRoleAuthorities",
+        summary = "Fetch all role authorities for the selected organizationalUnit.",
+        description = "Fetch all role authorities for the selected organizationalUnit. In particular, these are all roles that have been assigned to the selected organizational that represent delegated administrative tasks for other organizational unit.",
+        tags = { "access-control" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationalUnitRoleAuthorityType.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/organizationalUnits/{organizationalUnitId}/role-authorities",
+        produces = { "application/json" }
+    )
+    
+    ResponseEntity<OrganizationalUnitRoleAuthorityType> getOrganizationalUnitRoleAuthorities(
+        @Parameter(name = "organizationalUnitId", description = "organizationalUnitId", required = true, in = ParameterIn.PATH) @PathVariable("organizationalUnitId") String organizationalUnitId
     );
 
 
