@@ -8,6 +8,7 @@ import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.ClientErrorException;
+import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,7 +191,7 @@ public class OrganizationalUnitManager {
      * @return administrative roles for the organizational unit
      */
     public List<GroupAdminRolesType> getGroupAdminRoles (String organizationalUnitId) throws ResourceNotFoundException {
-        logger.info("Retrieving OrganizationalUnit for organizationalUnitId '{}'", organizationalUnitId);
+        logger.info("Retrieving authorized admin roles for OrganizationalUnitId '{}'", organizationalUnitId);
 
         OrganizationalUnitEntity organizationalUnitEntity =
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
@@ -233,6 +234,51 @@ public class OrganizationalUnitManager {
                         " '%s'.", organizationalUnitEntity.getOrganizationalUnitId()), ex);
                 return Collections.emptyList();
             }
+        } else {
+            logger.error("No OrganizationalUnit with id '{}' was found in database.",
+                    organizationalUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to fetch Keycloak roles, but no OrganizationalUnit existes with id " +
+                            organizationalUnitId);
+        }
+    }
+
+    public List<GroupAdminRolesType> getDelegatedGroupAdminRoles (String organizationalUnitId) throws ResourceNotFoundException {
+        logger.info("Retrieving delegated admin roles for OrganizationalUnitId '{}'", organizationalUnitId);
+
+        OrganizationalUnitEntity organizationalUnitEntity =
+                organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
+        if (organizationalUnitEntity != null) {
+            logger.info("Fetch delegated admin roles from Keycloak for organizational unit {}", organizationalUnitEntity.getOrganizationalUnitId());
+            Map<String, Set<GroupRepresentation>> roleDelegateGroups =  keycloakAdminService.getRoleDelegates(organizationalUnitEntity);
+
+            Map<String, List<AdminRoleType>> roleDelegateResultMap = new HashMap<>();
+            roleDelegateGroups.forEach((k,v) -> {
+                v.forEach(g -> {
+                    try {
+                        GroupRepresentation groupRep = keycloakAdminService.getGroupById(g.getId());
+                        List<String> kommonitorIdAttr = groupRep.getAttributes().get(KeycloakAdminService.KOMMONITOR_ID_ATTRIBUTE);
+                        if(kommonitorIdAttr == null) {
+                            logger.warn("Role delegate Keycloak group with ID '{}' does not contain '{}' attribute. " +
+                                    "Can not reference KomMonitor Organizational Unit.", groupRep.getId(), KeycloakAdminService.KOMMONITOR_ID_ATTRIBUTE);
+                        }
+                        else {
+                            String kommonitorId = kommonitorIdAttr.get(0);
+                            if(roleDelegateResultMap.containsKey(kommonitorId)) {
+                                roleDelegateResultMap.get(kommonitorId).add(AdminRoleType.fromValue(k));
+                            }
+                            else {
+                                roleDelegateResultMap.put(kommonitorId, new ArrayList<>(List.of(AdminRoleType.fromValue(k))));
+                            }
+                        }
+                    } catch(KeycloakException ex) {
+                        logger.error(String.format("Error while handling role delegate for group with ID '%s'", g.getId()), ex);
+                    }
+                });
+            });
+            return roleDelegateResultMap.entrySet().stream()
+                    .map(e -> new GroupAdminRolesType(e.getKey(), e.getValue()))
+                    .collect(Collectors.toList());
         } else {
             logger.error("No OrganizationalUnit with id '{}' was found in database.",
                     organizationalUnitId);

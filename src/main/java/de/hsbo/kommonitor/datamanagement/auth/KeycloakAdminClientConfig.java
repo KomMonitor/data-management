@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.auth;
 
+import jakarta.ws.rs.client.ClientBuilder;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -30,6 +31,10 @@ public class KeycloakAdminClientConfig {
                 .clientId(CLIENT_ID)
                 .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
                 .clientSecret(cliSecret)
+                .resteasyClient(
+                        ClientBuilder.newBuilder()
+                                .register(new KeycloakRestClientProvider(), 1000)
+                                .build())
                 .build();
     }
 
