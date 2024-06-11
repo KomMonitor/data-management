@@ -167,6 +167,15 @@ public class KeycloakAdminService {
         return groupResource.setPermissions(managementPermission);
     }
 
+    public GroupRepresentation getGroupById(String id) throws KeycloakException {
+        try {
+            return getRealmResource().groups().group(id).toRepresentation();
+        } catch (NotFoundException ex) {
+            LOG.debug("Group with ID `{}` not found.", id);
+            throw new KeycloakException("Specified group not found.", ex);
+        }
+    }
+
     public ClientRepresentation getClientByName(String name) throws KeycloakException {
         List<ClientRepresentation> clientList = getRealmResource().clients().findByClientId(name);
         if (clientList.size() == 0) {
@@ -407,9 +416,33 @@ public class KeycloakAdminService {
             GroupResource groupResource = getRealmResource().groups().group(groupId);
             return groupResource.roles().realmLevel().listAll();
         } catch (NotFoundException ex) {
-            LOG.debug("No Keycloak group with ID '' found.", groupId);
+            LOG.debug("No Keycloak group with ID '{}' found.", groupId);
             throw new KeycloakException("Keycloak group not found.", ex);
         }
+    }
+
+    public Set<GroupRepresentation> getAssociatedGroupsForRole(String roleName) throws KeycloakException {
+        try {
+            return getRealmResource().roles().get(roleName).getRoleGroupMembers();
+        } catch (NotFoundException ex) {
+            LOG.debug("No Keycloak role with ID '{}' found.", roleName);
+            throw new KeycloakException("Keycloak role not found.", ex);
+        }
+    }
+
+    public Map<String, Set<GroupRepresentation>> getRoleDelegates(OrganizationalUnitEntity entity)  {
+        Map<String, Set<GroupRepresentation>> roleDelegates = new HashMap<>();
+        ADMIN_ROLES.forEach(r -> {
+            String roleName = "";
+            try {
+                roleName = String.join(".", entity.getName(), r);
+                Set<GroupRepresentation> groups = getAssociatedGroupsForRole(roleName);
+                roleDelegates.put(r, groups);
+            } catch (NotFoundException | KeycloakException ex) {
+                LOG.warn("Role '{}' does not exists. Update will be skipped.", roleName);
+            }
+        });
+        return roleDelegates;
     }
 
 

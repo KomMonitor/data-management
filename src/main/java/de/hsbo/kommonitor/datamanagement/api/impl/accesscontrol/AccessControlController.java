@@ -185,7 +185,7 @@ public class AccessControlController extends BasePathController implements Acces
 
     @Override
     public ResponseEntity<OrganizationalUnitRoleAuthorityType> getOrganizationalUnitRoleAuthorities(String organizationalUnitId) {
-        logger.info("Received request to get organizationalUnit permissions for id '{}'", organizationalUnitId);
+        logger.info("Received request to get organizationalUnit role authorities for id '{}'", organizationalUnitId);
         String accept = request.getHeader("Accept");
         try {
             if (accept != null && accept.contains("application/json")) {
@@ -193,6 +193,24 @@ public class AccessControlController extends BasePathController implements Acces
                         organizationalUnitManager.getGroupAdminRoles(organizationalUnitId)
                 );
                         ;
+                return new ResponseEntity<>(roleAuthority, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<OrganizationalUnitRoleDelegateType> getOrganizationalUnitRoleDelegates(String organizationalUnitId) {
+        logger.info("Received request to get organizationalUnit role delegates for id '{}'", organizationalUnitId);
+        String accept = request.getHeader("Accept");
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                OrganizationalUnitRoleDelegateType roleAuthority = new OrganizationalUnitRoleDelegateType(
+                        organizationalUnitManager.getDelegatedGroupAdminRoles(organizationalUnitId)
+                );
                 return new ResponseEntity<>(roleAuthority, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

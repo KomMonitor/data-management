@@ -9,6 +9,7 @@ import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitRoleAuthorityType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitRoleDelegateType;
 import de.hsbo.kommonitor.datamanagement.model.ResourceType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-06-10T13:54:38.352223800+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-06-10T14:48:38.327368600+02:00[Europe/Berlin]")
 @Validated
 @Tag(name = "access-control", description = "the AccessControl API")
 public interface AccessControlApi {
@@ -234,6 +235,46 @@ public interface AccessControlApi {
     )
     
     ResponseEntity<OrganizationalUnitRoleAuthorityType> getOrganizationalUnitRoleAuthorities(
+        @Parameter(name = "organizationalUnitId", description = "organizationalUnitId", required = true, in = ParameterIn.PATH) @PathVariable("organizationalUnitId") String organizationalUnitId
+    );
+
+
+    /**
+     * GET /organizationalUnits/{organizationalUnitId}/role-delegates : Fetch all role delegates for the selected organizationalUnit.
+     * Fetch all role delegates for the selected organizationalUnit. In particular, these are all roles that represent delegated administrative tasks and have been assigned to other organizational unit.
+     *
+     * @param organizationalUnitId organizationalUnitId (required)
+     * @return OK (status code 200)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "getOrganizationalUnitRoleDelegates",
+        summary = "Fetch all role delegates for the selected organizationalUnit.",
+        description = "Fetch all role delegates for the selected organizationalUnit. In particular, these are all roles that represent delegated administrative tasks and have been assigned to other organizational unit.",
+        tags = { "access-control" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationalUnitRoleDelegateType.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/organizationalUnits/{organizationalUnitId}/role-delegates",
+        produces = { "application/json" }
+    )
+    
+    ResponseEntity<OrganizationalUnitRoleDelegateType> getOrganizationalUnitRoleDelegates(
         @Parameter(name = "organizationalUnitId", description = "organizationalUnitId", required = true, in = ParameterIn.PATH) @PathVariable("organizationalUnitId") String organizationalUnitId
     );
 
