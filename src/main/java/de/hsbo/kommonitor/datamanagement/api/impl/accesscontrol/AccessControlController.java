@@ -183,8 +183,10 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
+    @PreAuthorize("isAuthorizedForOrganization(#organizationalUnitId)")
     @Override
-    public ResponseEntity<OrganizationalUnitRoleAuthorityType> getOrganizationalUnitRoleAuthorities(String organizationalUnitId) {
+    public ResponseEntity<OrganizationalUnitRoleAuthorityType> getOrganizationalUnitRoleAuthorities(
+            @P("organizationalUnitId") String organizationalUnitId) {
         logger.info("Received request to get organizationalUnit role authorities for id '{}'", organizationalUnitId);
         String accept = request.getHeader("Accept");
         try {
@@ -202,8 +204,10 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
+    @PreAuthorize("isAuthorizedForOrganization(#organizationalUnitId)")
     @Override
-    public ResponseEntity<OrganizationalUnitRoleDelegateType> getOrganizationalUnitRoleDelegates(String organizationalUnitId) {
+    public ResponseEntity<OrganizationalUnitRoleDelegateType> getOrganizationalUnitRoleDelegates(
+            @P("organizationalUnitId")String organizationalUnitId) {
         logger.info("Received request to get organizationalUnit role delegates for id '{}'", organizationalUnitId);
         String accept = request.getHeader("Accept");
         try {
@@ -215,6 +219,19 @@ public class AccessControlController extends BasePathController implements Acces
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @PreAuthorize("isAuthorizedForOrganization(#organizationalUnitId)")
+    @Override
+    public ResponseEntity<Void> updateRoleDelegates(@P("organizationalUnitId")String organizationalUnitId,
+                                                    List<GroupAdminRolesType> organizationalUnitData) {
+        logger.info("Received request to update organizationalUnit role delegates for id '{}'", organizationalUnitId);
+        try {
+            organizationalUnitManager.updateDelegatedGroupAdminRoles(organizationalUnitId, organizationalUnitData);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
         }

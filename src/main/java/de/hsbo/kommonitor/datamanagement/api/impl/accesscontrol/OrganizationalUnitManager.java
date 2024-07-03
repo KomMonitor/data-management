@@ -250,7 +250,7 @@ public class OrganizationalUnitManager {
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
         if (organizationalUnitEntity != null) {
             logger.info("Fetch delegated admin roles from Keycloak for organizational unit {}", organizationalUnitEntity.getOrganizationalUnitId());
-            Map<String, Set<GroupRepresentation>> roleDelegateGroups =  keycloakAdminService.getRoleDelegates(organizationalUnitEntity);
+            Map<String, Set<GroupRepresentation>> roleDelegateGroups =  keycloakAdminService.getRoleDelegatesSortedByRoleName(organizationalUnitEntity);
 
             Map<String, List<AdminRoleType>> roleDelegateResultMap = new HashMap<>();
             roleDelegateGroups.forEach((k,v) -> {
@@ -378,4 +378,43 @@ public class OrganizationalUnitManager {
         }
     }
 
+    public void updateDelegatedGroupAdminRoles(String organizationalUnitId, List<GroupAdminRolesType> organizationalUnitData) throws ResourceNotFoundException {
+        logger.info("Updating delegated admin roles for OrganizationalUnitId '{}'", organizationalUnitId);
+
+        OrganizationalUnitEntity organizationalUnitEntity =
+                organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
+
+        if (organizationalUnitEntity != null) {
+            // GroupAdminRoles should come with an organization name, since Keycloak roles are only findable via name
+            List<GroupAdminRolesType> preparedOrganizationalUnitData = organizationalUnitData.stream()
+                    .map(o -> {
+                        if (o.getOrganizationalUnitName() == null || o.getKeycloakId() == null) {
+                            OrganizationalUnitEntity delegatedOrga =
+                                    organizationalUnitRepository.findByOrganizationalUnitId(o.getOrganizationalUnitId());
+                            if (delegatedOrga == null) {
+                                logger.warn("No delegated OrganizationalUnit with id '{}' was found in database.", organizationalUnitId);
+                                return new GroupAdminRolesType(o.getOrganizationalUnitId(), o.getAdminRoles());
+                            } else {
+                                return new GroupAdminRolesType(o.getOrganizationalUnitId(), o.getAdminRoles())
+                                        .organizationalUnitName(delegatedOrga.getName())
+                                        .keycloakId(delegatedOrga.getKeycloakId().toString());
+                            }
+                        } else {
+                            return new GroupAdminRolesType(o.getOrganizationalUnitId(), o.getAdminRoles())
+                                    .organizationalUnitName(o.getOrganizationalUnitName())
+                                    .keycloakId(o.getKeycloakId());
+                        }
+                    })
+                    .filter(o -> o.getOrganizationalUnitName() != null && o.getKeycloakId() != null).toList();
+
+            keycloakAdminService.updateRoleDelegates(organizationalUnitEntity, preparedOrganizationalUnitData);
+        } else {
+            logger.error("No OrganizationalUnit with id '{}' was found in database.",
+                    organizationalUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update Keycloak roles, but no OrganizationalUnit existes with id " +
+                            organizationalUnitId);
+        }
+
+    }
 }

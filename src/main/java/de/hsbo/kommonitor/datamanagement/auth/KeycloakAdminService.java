@@ -1,7 +1,10 @@
 package de.hsbo.kommonitor.datamanagement.auth;
 
+import com.google.common.collect.Lists;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.KeycloakException;
+import de.hsbo.kommonitor.datamanagement.model.AdminRoleType;
+import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class KeycloakAdminService {
@@ -259,6 +263,13 @@ public class KeycloakAdminService {
         return role;
     }
 
+    private RoleRepresentation mapToRoleRepresentation(String orgaName, String roleName) {
+        RoleRepresentation role = new RoleRepresentation();
+        String name = String.join(".", orgaName, roleName);
+        role.setName(name);
+        return role;
+    }
+
     public void createRolesForGroup(OrganizationalUnitInputType inputOrganizationalUnit) throws KeycloakException {
         LOG.info("Trying to create roles for OrganizationalUnit '{}' and Keycloak group ID '{}'.",
                 inputOrganizationalUnit.getName(), inputOrganizationalUnit.getKeycloakId());
@@ -430,7 +441,7 @@ public class KeycloakAdminService {
         }
     }
 
-    public Map<String, Set<GroupRepresentation>> getRoleDelegates(OrganizationalUnitEntity entity)  {
+    public Map<String, Set<GroupRepresentation>> getRoleDelegatesSortedByRoleName(OrganizationalUnitEntity entity)  {
         Map<String, Set<GroupRepresentation>> roleDelegates = new HashMap<>();
         ADMIN_ROLES.forEach(r -> {
             String roleName = "";
@@ -438,6 +449,36 @@ public class KeycloakAdminService {
                 roleName = String.join(".", entity.getName(), r);
                 Set<GroupRepresentation> groups = getAssociatedGroupsForRole(roleName);
                 roleDelegates.put(r, groups);
+            } catch (NotFoundException | KeycloakException ex) {
+                LOG.warn("Role '{}' does not exists. Update will be skipped.", roleName);
+            }
+        });
+        return roleDelegates;
+    }
+
+    public Map<String, Set<String>> getRoleDelegatesSortedByGroup(OrganizationalUnitEntity entity)  {
+        Map<String, Set<String>> roleDelegates = new HashMap<>();
+        ADMIN_ROLES.forEach(r -> {
+            String roleName = "";
+            try {
+                roleName = String.join(".", entity.getName(), r);
+                Set<GroupRepresentation> groups = getAssociatedGroupsForRole(roleName);
+                String finalRoleName = roleName;
+                groups.forEach(g -> {
+                    try {
+                        GroupRepresentation groupRep = getGroupById(g.getId());
+                        if(roleDelegates.containsKey(entity.getOrganizationalUnitId())) {
+                            roleDelegates.get(entity.getOrganizationalUnitId()).add(finalRoleName);
+                        } else {
+                            Set<String> roleSet = new HashSet<>();
+                            roleSet.add(finalRoleName);
+                            roleDelegates.put(entity.getOrganizationalUnitId(), roleSet);
+                        }
+                    } catch (KeycloakException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                });
             } catch (NotFoundException | KeycloakException ex) {
                 LOG.warn("Role '{}' does not exists. Update will be skipped.", roleName);
             }
@@ -488,5 +529,68 @@ public class KeycloakAdminService {
         } catch (NotFoundException ex) {
             LOG.warn("Group '{}' does not exists. Update will be skipped.", entity.getName());
         }
+    }
+
+    private Map<String, Set<AdminRoleType>> groupRoleDelegatesByKeycloakId(List<GroupAdminRolesType> roleDelegates) {
+        return roleDelegates
+                .stream()
+                .collect(Collectors.toMap(GroupAdminRolesType::getKeycloakId, rD -> new HashSet<>(rD.getAdminRoles())));
+    }
+
+    public void updateRoleDelegates(OrganizationalUnitEntity entity, List<GroupAdminRolesType> roleDelegates) {
+//        Map<String, Set<String>> currentRoleDelegates = getRoleDelegatesSortedByGroup(entity);
+//        LOG.info("Test");
+        Map<String, Set<AdminRoleType>> roleDelegateMap = groupRoleDelegatesByKeycloakId(roleDelegates);
+        // 1. Check for all possible admin roles for the selected OrganizationalUnit, which Keycloak groups are
+        // associated with it and check if the provided list of role delegates still have the same association.
+        // If there is a match, remove the admin role from the provided list so that only new role delegates remain in
+        // the list, which can be newly assigned to the associated group.
+        ADMIN_ROLES.forEach(aR -> {
+                    String roleName = String.join(".", entity.getName(), aR);
+                    try {
+                        Set<GroupRepresentation> groups = getAssociatedGroupsForRole(roleName);
+                        groups.forEach(g -> {
+                            try {
+                                // if an admin role is not presented in the provided roles delegates, it must
+                                // be removed from the delegated group
+                                if(!roleDelegateMap.containsKey(g.getId())
+                                        || !roleDelegateMap.get(g.getId()).contains(AdminRoleType.fromValue(aR))) {
+                                    RoleRepresentation roleRep = getRoleByName(roleName);
+                                    GroupResource groupResource = getRealmResource().groups().group(g.getId());
+                                    groupResource.roles().realmLevel().remove(List.of(roleRep));
+                                } else {
+                                    // do nothing, if the admin role is still present in the role delegates, but remove
+                                    // the role from the list, so that only new role delegates will remain in the end
+                                    roleDelegateMap.get(g.getId()).remove(AdminRoleType.fromValue(aR));
+                                }
+
+                            } catch (KeycloakException ex) {
+                                LOG.error(String.format("Error while fetching Keycloak group '%s'.", g.getId()), ex);
+                            }
+                        });
+                    } catch (KeycloakException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                });
+        // 2. For alle remaining role delegates associate a Keycloak role with the delegated Keycloak group
+        roleDelegates.stream()
+                .filter(r -> !r.getAdminRoles().isEmpty())
+                .forEach(r -> {
+                    GroupResource groupResource = getRealmResource().groups().group(r.getKeycloakId());
+                    List<RoleRepresentation> roleRepList = r.getAdminRoles().stream()
+                            .map(aR -> {
+                                String roleName = String.join(".", entity.getName(), aR.getValue());
+                                try {
+                                    return getRoleByName(roleName);
+                                } catch (KeycloakException ex) {
+                                    LOG.error(String.format("Error while fetching role with name %s", roleName), ex);
+                                    return null;
+                                }
+                            })
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList());
+                    groupResource.roles().realmLevel().add(roleRepList);
+                });
     }
 }

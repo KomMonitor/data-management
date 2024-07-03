@@ -5,6 +5,7 @@
  */
 package de.hsbo.kommonitor.datamanagement.api;
 
+import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
@@ -37,7 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-06-10T14:48:38.327368600+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-06-14T16:02:27.196880700+02:00[Europe/Berlin]")
 @Validated
 @Tag(name = "access-control", description = "the AccessControl API")
 public interface AccessControlApi {
@@ -357,6 +358,48 @@ public interface AccessControlApi {
     ResponseEntity<Void> updateOrganizationalUnit(
         @Parameter(name = "organizationalUnitId", description = "organizationalUnitId", required = true, in = ParameterIn.PATH) @PathVariable("organizationalUnitId") String organizationalUnitId,
         @Parameter(name = "inputData", description = "organizationUnitMetadata", required = true) @Valid @RequestBody OrganizationalUnitInputType inputData
+    );
+
+
+    /**
+     * PUT /organizationalUnits/{organizationalUnitId}/role-delegates : Update role delegates for the selected Organizational Unit
+     * Add role delegates for the selected Organizational Unit
+     *
+     * @param organizationalUnitId organizationalUnitId (required)
+     * @param organizationalUnitData data (required)
+     * @return OK (status code 200)
+     *         or Created (status code 201)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "updateRoleDelegates",
+        summary = "Update role delegates for the selected Organizational Unit",
+        description = "Add role delegates for the selected Organizational Unit",
+        tags = { "access-control" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PUT,
+        value = "/organizationalUnits/{organizationalUnitId}/role-delegates",
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<Void> updateRoleDelegates(
+        @Parameter(name = "organizationalUnitId", description = "organizationalUnitId", required = true, in = ParameterIn.PATH) @PathVariable("organizationalUnitId") String organizationalUnitId,
+        @Parameter(name = "organizationalUnitData", description = "data", required = true) @Valid @RequestBody List<GroupAdminRolesType> organizationalUnitData
     );
 
 }
