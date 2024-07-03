@@ -20,32 +20,36 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * GroupAdminRolesType
+ * GroupAdminRolesPUTInputType
  */
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-07-03T15:11:35.751137300+02:00[Europe/Berlin]")
-public class GroupAdminRolesType implements Serializable {
+public class GroupAdminRolesPUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private String organizationalUnitId;
 
+  private String organizationalUnitName;
+
+  private String keycloakId;
+
   @Valid
   private List<AdminRoleType> adminRoles = new ArrayList<>();
 
-  public GroupAdminRolesType() {
+  public GroupAdminRolesPUTInputType() {
     super();
   }
 
   /**
    * Constructor with only required parameters
    */
-  public GroupAdminRolesType(String organizationalUnitId, List<AdminRoleType> adminRoles) {
+  public GroupAdminRolesPUTInputType(String organizationalUnitId, List<AdminRoleType> adminRoles) {
     this.organizationalUnitId = organizationalUnitId;
     this.adminRoles = adminRoles;
   }
 
-  public GroupAdminRolesType organizationalUnitId(String organizationalUnitId) {
+  public GroupAdminRolesPUTInputType organizationalUnitId(String organizationalUnitId) {
     this.organizationalUnitId = organizationalUnitId;
     return this;
   }
@@ -65,12 +69,52 @@ public class GroupAdminRolesType implements Serializable {
     this.organizationalUnitId = organizationalUnitId;
   }
 
-  public GroupAdminRolesType adminRoles(List<AdminRoleType> adminRoles) {
+  public GroupAdminRolesPUTInputType organizationalUnitName(String organizationalUnitName) {
+    this.organizationalUnitName = organizationalUnitName;
+    return this;
+  }
+
+  /**
+   * unique name of the organizational Unit
+   * @return organizationalUnitName
+  */
+  
+  @Schema(name = "organizationalUnitName", description = "unique name of the organizational Unit", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("organizationalUnitName")
+  public String getOrganizationalUnitName() {
+    return organizationalUnitName;
+  }
+
+  public void setOrganizationalUnitName(String organizationalUnitName) {
+    this.organizationalUnitName = organizationalUnitName;
+  }
+
+  public GroupAdminRolesPUTInputType keycloakId(String keycloakId) {
+    this.keycloakId = keycloakId;
+    return this;
+  }
+
+  /**
+   * unique Keycloak group ID
+   * @return keycloakId
+  */
+  
+  @Schema(name = "keycloakId", description = "unique Keycloak group ID", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("keycloakId")
+  public String getKeycloakId() {
+    return keycloakId;
+  }
+
+  public void setKeycloakId(String keycloakId) {
+    this.keycloakId = keycloakId;
+  }
+
+  public GroupAdminRolesPUTInputType adminRoles(List<AdminRoleType> adminRoles) {
     this.adminRoles = adminRoles;
     return this;
   }
 
-  public GroupAdminRolesType addAdminRolesItem(AdminRoleType adminRolesItem) {
+  public GroupAdminRolesPUTInputType addAdminRolesItem(AdminRoleType adminRolesItem) {
     if (this.adminRoles == null) {
       this.adminRoles = new ArrayList<>();
     }
@@ -101,21 +145,25 @@ public class GroupAdminRolesType implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    GroupAdminRolesType groupAdminRolesType = (GroupAdminRolesType) o;
-    return Objects.equals(this.organizationalUnitId, groupAdminRolesType.organizationalUnitId) &&
-        Objects.equals(this.adminRoles, groupAdminRolesType.adminRoles);
+    GroupAdminRolesPUTInputType groupAdminRolesPUTInputType = (GroupAdminRolesPUTInputType) o;
+    return Objects.equals(this.organizationalUnitId, groupAdminRolesPUTInputType.organizationalUnitId) &&
+        Objects.equals(this.organizationalUnitName, groupAdminRolesPUTInputType.organizationalUnitName) &&
+        Objects.equals(this.keycloakId, groupAdminRolesPUTInputType.keycloakId) &&
+        Objects.equals(this.adminRoles, groupAdminRolesPUTInputType.adminRoles);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(organizationalUnitId, adminRoles);
+    return Objects.hash(organizationalUnitId, organizationalUnitName, keycloakId, adminRoles);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class GroupAdminRolesType {\n");
+    sb.append("class GroupAdminRolesPUTInputType {\n");
     sb.append("    organizationalUnitId: ").append(toIndentedString(organizationalUnitId)).append("\n");
+    sb.append("    organizationalUnitName: ").append(toIndentedString(organizationalUnitName)).append("\n");
+    sb.append("    keycloakId: ").append(toIndentedString(keycloakId)).append("\n");
     sb.append("    adminRoles: ").append(toIndentedString(adminRoles)).append("\n");
     sb.append("}");
     return sb.toString();

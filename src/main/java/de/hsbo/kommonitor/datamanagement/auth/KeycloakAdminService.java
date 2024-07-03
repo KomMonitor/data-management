@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.KeycloakException;
 import de.hsbo.kommonitor.datamanagement.model.AdminRoleType;
+import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesPUTInputType;
 import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
 import jakarta.ws.rs.NotFoundException;
@@ -531,15 +532,13 @@ public class KeycloakAdminService {
         }
     }
 
-    private Map<String, Set<AdminRoleType>> groupRoleDelegatesByKeycloakId(List<GroupAdminRolesType> roleDelegates) {
+    private Map<String, Set<AdminRoleType>> groupRoleDelegatesByKeycloakId(List<GroupAdminRolesPUTInputType> roleDelegates) {
         return roleDelegates
                 .stream()
-                .collect(Collectors.toMap(GroupAdminRolesType::getKeycloakId, rD -> new HashSet<>(rD.getAdminRoles())));
+                .collect(Collectors.toMap(GroupAdminRolesPUTInputType::getKeycloakId, rD -> new HashSet<>(rD.getAdminRoles())));
     }
 
-    public void updateRoleDelegates(OrganizationalUnitEntity entity, List<GroupAdminRolesType> roleDelegates) {
-//        Map<String, Set<String>> currentRoleDelegates = getRoleDelegatesSortedByGroup(entity);
-//        LOG.info("Test");
+    public void updateRoleDelegates(OrganizationalUnitEntity entity, List<GroupAdminRolesPUTInputType> roleDelegates) {
         Map<String, Set<AdminRoleType>> roleDelegateMap = groupRoleDelegatesByKeycloakId(roleDelegates);
         // 1. Check for all possible admin roles for the selected OrganizationalUnit, which Keycloak groups are
         // associated with it and check if the provided list of role delegates still have the same association.

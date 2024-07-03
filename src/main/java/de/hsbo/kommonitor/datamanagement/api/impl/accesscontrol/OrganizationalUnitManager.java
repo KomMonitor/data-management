@@ -378,7 +378,7 @@ public class OrganizationalUnitManager {
         }
     }
 
-    public void updateDelegatedGroupAdminRoles(String organizationalUnitId, List<GroupAdminRolesType> organizationalUnitData) throws ResourceNotFoundException {
+    public void updateDelegatedGroupAdminRoles(String organizationalUnitId, List<GroupAdminRolesPUTInputType> organizationalUnitData) throws ResourceNotFoundException {
         logger.info("Updating delegated admin roles for OrganizationalUnitId '{}'", organizationalUnitId);
 
         OrganizationalUnitEntity organizationalUnitEntity =
@@ -386,21 +386,21 @@ public class OrganizationalUnitManager {
 
         if (organizationalUnitEntity != null) {
             // GroupAdminRoles should come with an organization name, since Keycloak roles are only findable via name
-            List<GroupAdminRolesType> preparedOrganizationalUnitData = organizationalUnitData.stream()
+            List<GroupAdminRolesPUTInputType> preparedOrganizationalUnitData = organizationalUnitData.stream()
                     .map(o -> {
                         if (o.getOrganizationalUnitName() == null || o.getKeycloakId() == null) {
                             OrganizationalUnitEntity delegatedOrga =
                                     organizationalUnitRepository.findByOrganizationalUnitId(o.getOrganizationalUnitId());
                             if (delegatedOrga == null) {
                                 logger.warn("No delegated OrganizationalUnit with id '{}' was found in database.", organizationalUnitId);
-                                return new GroupAdminRolesType(o.getOrganizationalUnitId(), o.getAdminRoles());
+                                return new GroupAdminRolesPUTInputType(o.getOrganizationalUnitId(), o.getAdminRoles());
                             } else {
-                                return new GroupAdminRolesType(o.getOrganizationalUnitId(), o.getAdminRoles())
+                                return new GroupAdminRolesPUTInputType(o.getOrganizationalUnitId(), o.getAdminRoles())
                                         .organizationalUnitName(delegatedOrga.getName())
                                         .keycloakId(delegatedOrga.getKeycloakId().toString());
                             }
                         } else {
-                            return new GroupAdminRolesType(o.getOrganizationalUnitId(), o.getAdminRoles())
+                            return new GroupAdminRolesPUTInputType(o.getOrganizationalUnitId(), o.getAdminRoles())
                                     .organizationalUnitName(o.getOrganizationalUnitName())
                                     .keycloakId(o.getKeycloakId());
                         }

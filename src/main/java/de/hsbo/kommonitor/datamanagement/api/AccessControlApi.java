@@ -5,7 +5,7 @@
  */
 package de.hsbo.kommonitor.datamanagement.api;
 
-import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesType;
+import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesPUTInputType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-06-14T16:02:27.196880700+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-07-03T15:12:10.357035600+02:00[Europe/Berlin]")
 @Validated
 @Tag(name = "access-control", description = "the AccessControl API")
 public interface AccessControlApi {
@@ -399,7 +399,7 @@ public interface AccessControlApi {
     
     ResponseEntity<Void> updateRoleDelegates(
         @Parameter(name = "organizationalUnitId", description = "organizationalUnitId", required = true, in = ParameterIn.PATH) @PathVariable("organizationalUnitId") String organizationalUnitId,
-        @Parameter(name = "organizationalUnitData", description = "data", required = true) @Valid @RequestBody List<GroupAdminRolesType> organizationalUnitData
+        @Parameter(name = "organizationalUnitData", description = "data", required = true) @Valid @RequestBody List<GroupAdminRolesPUTInputType> organizationalUnitData
     );
 
 }

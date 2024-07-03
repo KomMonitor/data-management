@@ -227,7 +227,7 @@ public class AccessControlController extends BasePathController implements Acces
     @PreAuthorize("isAuthorizedForOrganization(#organizationalUnitId)")
     @Override
     public ResponseEntity<Void> updateRoleDelegates(@P("organizationalUnitId")String organizationalUnitId,
-                                                    List<GroupAdminRolesType> organizationalUnitData) {
+                                                    List<GroupAdminRolesPUTInputType> organizationalUnitData) {
         logger.info("Received request to update organizationalUnit role delegates for id '{}'", organizationalUnitId);
         try {
             organizationalUnitManager.updateDelegatedGroupAdminRoles(organizationalUnitId, organizationalUnitData);
