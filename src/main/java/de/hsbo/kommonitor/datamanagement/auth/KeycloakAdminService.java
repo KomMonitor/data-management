@@ -94,8 +94,8 @@ public class KeycloakAdminService {
         getRealmResource().roles().create(roleRep);
     }
 
-    public void updateRole(String roleName, RoleRepresentation roleRep) {
-        getRealmResource().roles().get(roleName).update(roleRep);
+    public void updateRole(String roleId, RoleRepresentation roleRep) {
+        getRealmResource().rolesById().updateRole(roleId, roleRep);
     }
 
     public void updateGroup(String groupId, GroupRepresentation groupRep) {
@@ -140,8 +140,11 @@ public class KeycloakAdminService {
     public void updateGroupAndRoles(OrganizationalUnitEntity entity, OrganizationalUnitInputType newInputOrganizationalUnit) {
         LOG.info("Trying to update Keycloak group for OrganizationalUnit '{}' and Keycloak group '{}'.", entity.getName(), entity.getKeycloakId().toString());
         try {
-            updateGroup(entity.getKeycloakId().toString(), createGroupRepresentation(newInputOrganizationalUnit));
-        } catch (NotFoundException ex) {
+            GroupRepresentation groupRep = getGroupById(entity.getKeycloakId().toString());
+            groupRep.setName(newInputOrganizationalUnit.getName());
+            groupRep.singleAttribute(KOMMONITOR_MANDANT_ATTRIBUTE, newInputOrganizationalUnit.getMandant().toString());
+            updateGroup(groupRep.getId(), groupRep);
+        } catch (NotFoundException | KeycloakException ex) {
             LOG.warn("Group '{}' does not exist. Deletion will be skipped.", entity.getKeycloakId().toString());
         }
         LOG.info("Successfully updated Keycloak group for OrganizationalUnit '{}' and Keycloak group '{}'.", entity.getName(), entity.getKeycloakId().toString());
@@ -154,10 +157,11 @@ public class KeycloakAdminService {
             String oldRoleName = "";
             try {
                 oldRoleName = String.join(".", entity.getName(), r);
-                RoleRepresentation roleRepresentation = mapToRoleRepresentation(newInputOrganizationalUnit, r);
-                updateRole(oldRoleName, roleRepresentation);
+                RoleRepresentation roleRepresentation = getRoleByName(oldRoleName);
+                roleRepresentation.setName(String.join(".", newInputOrganizationalUnit.getName(), r));
+                updateRole(roleRepresentation.getId(), roleRepresentation);
                 LOG.debug("Successfully updated role '{}'", roleRepresentation.getName());
-            } catch (NotFoundException ex) {
+            } catch (KeycloakException | NotFoundException ex) {
                 LOG.warn("Role '{}' does not exists. Update will be skipped.", oldRoleName);
             }
         });
