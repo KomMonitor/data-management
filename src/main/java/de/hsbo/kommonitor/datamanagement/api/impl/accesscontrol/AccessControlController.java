@@ -237,4 +237,24 @@ public class AccessControlController extends BasePathController implements Acces
         }
     }
 
+    @PreAuthorize("isAuthorizedForAdminOperations()")
+    @Override
+    public ResponseEntity<Void> snycAllOrganizationalUnits() {
+        logger.debug("Received request to synchronize all organizationalUnits");
+        organizationalUnitManager.syncOrganizationalUnits();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthorizedForAdminOperations()")
+    @Override
+    public ResponseEntity<Void> snycOrganizationalUnit(String organizationalUnitId) {
+        logger.debug("Received request to synchronize organizationalUnit with ID '{}'.", organizationalUnitId);
+        try {
+            organizationalUnitManager.syncOrganizationalUnit(organizationalUnitId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
 }

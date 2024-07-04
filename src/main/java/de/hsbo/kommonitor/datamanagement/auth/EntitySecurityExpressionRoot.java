@@ -82,6 +82,15 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
     }
 
     /**
+     * Checks whether the user has admin permissions to perform admin operations or not.
+     *
+     * @return true if the user has global admin permissions
+     */
+    public boolean isAuthorizedForAdminOperations() {
+        return this.authInfoProvider.hasGlobalAdminPermissions();
+    }
+
+    /**
      * custom security method to check if a user has permissions to access a entity,
      * to be used with @PreAuthorize and @PostAuthorize annotations
      * @param entityID

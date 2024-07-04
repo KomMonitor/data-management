@@ -185,6 +185,33 @@ public class KeycloakAdminService {
         }
     }
 
+    public GroupRepresentation findGroupByName(String name) throws KeycloakException {
+        List<GroupRepresentation> groupList = getRealmResource().groups().query(name);
+        if (groupList.size() == 0) {
+            throw new KeycloakException(String.format("No client exists with name %s.", name));
+        }
+        if (groupList.size() > 1) {
+            LOG.warn("More than one client with name {} exists. Only first client will be returned.", name);
+        }
+        return groupList.get(0);
+    }
+
+    public RolePolicyRepresentation findRolePolicyByName(String name) throws KeycloakException {
+        ClientRepresentation realmAdminClient = getClientByName(REALM_MANAGEMENT_CLIENT_NAME);
+        return getRealmResource().clients().get(realmAdminClient.getId()).authorization().policies().role().findByName(name);
+    }
+
+    public RolePolicyResource getRolePolicyById(String id) throws KeycloakException {
+        ClientRepresentation realmAdminClient = getClientByName(REALM_MANAGEMENT_CLIENT_NAME);
+        return getRealmResource().clients().get(realmAdminClient.getId()).authorization().policies().role().findById(id);
+    }
+
+    public void updateRolePolicy(String id, RolePolicyRepresentation rolePolicyRepresentation) throws KeycloakException {
+        RolePolicyResource rolePolicyResource = getRolePolicyById(id);
+        rolePolicyResource.update(rolePolicyRepresentation);
+    }
+
+
     public ClientRepresentation getClientByName(String name) throws KeycloakException {
         List<ClientRepresentation> clientList = getRealmResource().clients().findByClientId(name);
         if (clientList.size() == 0) {
@@ -242,7 +269,7 @@ public class KeycloakAdminService {
         RolePolicyRepresentation rolePolicyRepresentation = new RolePolicyRepresentation();
         rolePolicyRepresentation.setLogic(Logic.POSITIVE);
         rolePolicyRepresentation.setName("member-of-" + keycloakId + "." + roleName);
-        rolePolicyRepresentation.setDescription("memberOf(" + keycloakId + "." + roleName + ")");
+        rolePolicyRepresentation.setDescription("memberOf(" + groupName + "." + roleName + ")");
         rolePolicyRepresentation.setRoles(Set.of(createClientRoleDef(groupName + "." + roleName)));
         return rolePolicyRepresentation;
     }
@@ -493,7 +520,7 @@ public class KeycloakAdminService {
 
 
     /**
-     * This methods references OrganizationalUnitEntity with the corresponding Keycloak roles
+     * This method references OrganizationalUnitEntity with the corresponding Keycloak roles
      * by setting the KomMonitor group ID as an extra parameter to the Keycloak role entities
      *
      * @param entity the OrganizationalUnitEntity representing a KomMonitor group
@@ -596,4 +623,45 @@ public class KeycloakAdminService {
                     groupResource.roles().realmLevel().add(roleRepList);
                 });
     }
+
+    public void syncGroup(OrganizationalUnitEntity entity) throws KeycloakException {
+        LOG.debug("Trying to sync OrganizationalUnit '{}' with Keycloak group.", entity.getOrganizationalUnitId());
+        GroupRepresentation detailedGroupRep = getGroupById(entity.getKeycloakId().toString());
+        Map<String, List<String>> attributes = detailedGroupRep.getAttributes();
+        boolean updateNeeded = false;
+        if (!attributes.containsKey(KeycloakAdminService.KOMMONITOR_ID_ATTRIBUTE)) {
+            detailedGroupRep.singleAttribute(KeycloakAdminService.KOMMONITOR_ID_ATTRIBUTE, entity.getOrganizationalUnitId());
+            updateNeeded = true;
+        }
+        if (!attributes.containsKey(KeycloakAdminService.KOMMONITOR_MANDANT_ATTRIBUTE)) {
+            detailedGroupRep.singleAttribute(KeycloakAdminService.KOMMONITOR_MANDANT_ATTRIBUTE, String.valueOf(entity.isMandant()));
+            updateNeeded = true;
+        }
+        if (updateNeeded) {
+            updateGroup(entity.getKeycloakId().toString(), detailedGroupRep);
+            LOG.debug("Successfully updated Keycloak group with OrganizationalUnit ID '{}'.", entity.getOrganizationalUnitId());
+        }
+        else {
+            LOG.debug("No update needed for Keycloak group with OrganizationalUnit ID '{}'.", entity.getOrganizationalUnitId());
+        }
+    }
+
+    public void syncRoles(OrganizationalUnitEntity entity) {
+        referenceOrganizationalUnitWithRoles(entity);
+    }
+
+    public void syncRolePolicies(OrganizationalUnitEntity entity) throws KeycloakException {
+        RolePolicyRepresentation unitRolePolicyRep = findRolePolicyByName("member-of-" + entity.getName() + "." + UNIT_USERS_ADMIN_ROLE_NAME);
+        if (unitRolePolicyRep != null) {
+            unitRolePolicyRep.setName("member-of-" + entity.getKeycloakId() + "." + UNIT_USERS_ADMIN_ROLE_NAME);
+            updateRolePolicy(unitRolePolicyRep.getId(), unitRolePolicyRep);
+        }
+
+        RolePolicyRepresentation clientRolePolicyRep = findRolePolicyByName("member-of-" + entity.getName() + "." + CLIENT_USERS_ADMIN_ROLE_NAME);
+        if(clientRolePolicyRep != null) {
+            clientRolePolicyRep.setName("member-of-" + entity.getKeycloakId() + "." + CLIENT_USERS_ADMIN_ROLE_NAME);
+            updateRolePolicy(clientRolePolicyRep.getId(), clientRolePolicyRep);
+        }
+    }
+
 }

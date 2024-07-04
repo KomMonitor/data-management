@@ -65,6 +65,11 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
         return adminRolePrefix;
     }
 
+    @Override
+    public boolean hasGlobalAdminPermissions() {
+        return hasRealmAdminRole(getPrincipal());
+    }
+
     /**
      * checks whether the current principal allows access to an entity with
      * restricted access

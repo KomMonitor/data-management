@@ -58,6 +58,11 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
     }
 
     @Override
+    public boolean hasGlobalAdminPermissions() {
+        return tokenParser.hasRealmAdminRole(getPrincipal(), ADMIN_ROLE_NAME);
+    }
+
+    @Override
     public boolean checkPermissions(RestrictedEntity entity, PermissionLevelType neededLevel) {
         Set<PermissionEntity> permissionEntities = entity.getPermissions();
 

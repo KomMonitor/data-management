@@ -8,8 +8,10 @@ import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.ClientErrorException;
+import org.keycloak.admin.client.resource.RolePolicyResource;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
+import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
 @Component
 public class OrganizationalUnitManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(OrganizationalUnitManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OrganizationalUnitManager.class);
 
     @Autowired
     OrganizationalUnitRepository organizationalUnitRepository;
@@ -48,10 +50,10 @@ public class OrganizationalUnitManager {
             AuthInfoProvider provider
     ) throws Exception {
         String name = inputOrganizationalUnit.getName();
-        logger.info("Trying to persist OrganizationalUnit with name '{}'", name);
+        LOG.info("Trying to persist OrganizationalUnit with name '{}'", name);
 
         if (organizationalUnitRepository.existsByName(name)) {
-            logger.error(
+            LOG.error(
                     "The OrganizationalUnit with name '{}' already exists. Thus aborting add OrganizationalUnit request.",
                     name);
             throw new Exception("OrganizationalUnit already exists. Aborting addOrganizationalUnit request.");
@@ -72,7 +74,7 @@ public class OrganizationalUnitManager {
         if (inputOrganizationalUnit.getParentId() != null && !inputOrganizationalUnit.getParentId().isEmpty()) {
             parent = organizationalUnitRepository.findByOrganizationalUnitId(inputOrganizationalUnit.getParentId());
             if (parent == null) {
-                logger.error(
+                LOG.error(
                         "parent with given id {} does not exist.",
                         inputOrganizationalUnit.getParentId());
                 throw new Exception("parent with given id does not exist");
@@ -106,12 +108,14 @@ public class OrganizationalUnitManager {
             roles.add(permissionManager.addPermission(saved, PermissionLevelType.CREATOR, PermissionResourceType.USERS));
             roles.add(permissionManager.addPermission(saved, PermissionLevelType.CREATOR, PermissionResourceType.THEMES));
             saved.setPermissions(roles);
+            // Reference roles
             keycloakAdminService.referenceOrganizationalUnitWithGroup(saved);
+            // Reference groups
             keycloakAdminService.referenceOrganizationalUnitWithRoles(saved);
 
             return AccessControlMapper.mapToSwaggerOrganizationalUnit(saved);
         } catch (ClientErrorException | KeycloakException ex) {
-            logger.error(String.format("Creating roles and policies for OrganizationalUnit %s and Keycloak ID %s failed." +
+            LOG.error(String.format("Creating roles and policies for OrganizationalUnit %s and Keycloak ID %s failed." +
                             "Group creation aborted.", inputOrganizationalUnit.getName(), keycloakId));
             keycloakAdminService.deleteGroup(keycloakId);
             keycloakAdminService.deleteRolesForGroupName(inputOrganizationalUnit.getName());
@@ -128,7 +132,7 @@ public class OrganizationalUnitManager {
         if (unit != null) {
             // Prevent deletion of default units.
             if (unit.getName().equals(defaultAnonymousOUname) || unit.getName().equals(defaultAuthenticatedOUname)) {
-                logger.error("Trying to delete default OrganizationalUnits.");
+                LOG.error("Trying to delete default OrganizationalUnits.");
                 throw new ApiException(HttpStatus.FORBIDDEN.value(),
                         "Tried to delete default OrganizationalUnits");
             }
@@ -137,7 +141,7 @@ public class OrganizationalUnitManager {
             organizationalUnitRepository.deleteByOrganizationalUnitId(organizationalUnitId);
             return true;
         } else {
-            logger.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
+            LOG.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
                     organizationalUnitId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to delete OrganizationalUnit, but no OrganizationalUnit " +
@@ -147,14 +151,14 @@ public class OrganizationalUnitManager {
     }
 
     public OrganizationalUnitOverviewType getOrganizationalUnitById(String organizationalUnitId) throws ResourceNotFoundException {
-        logger.info("Retrieving OrganizationalUnit for organizationalUnitId '{}'", organizationalUnitId);
+        LOG.info("Retrieving OrganizationalUnit for organizationalUnitId '{}'", organizationalUnitId);
 
         OrganizationalUnitEntity organizationalUnitEntity =
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
         if (organizationalUnitEntity != null) {
             return AccessControlMapper.mapToSwaggerOrganizationalUnit(organizationalUnitEntity);
         } else {
-            logger.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
+            LOG.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
                     organizationalUnitId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to delete OrganizationalUnit, but no OrganizationalUnit " +
@@ -164,7 +168,7 @@ public class OrganizationalUnitManager {
     }
 
     public OrganizationalUnitOverviewType getOrganizationalUnitById(String organizationalUnitId, AuthInfoProvider provider) throws ResourceNotFoundException {
-        logger.info("Retrieving OrganizationalUnit for organizationalUnitId '{}'", organizationalUnitId);
+        LOG.info("Retrieving OrganizationalUnit for organizationalUnitId '{}'", organizationalUnitId);
 
         OrganizationalUnitEntity organizationalUnitEntity =
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
@@ -173,7 +177,7 @@ public class OrganizationalUnitManager {
             orgaOverview.setUserAdminRoles(provider.getOrganizationalUnitCreationPermissions(organizationalUnitEntity));
             return orgaOverview;
         } else {
-            logger.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
+            LOG.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
                     organizationalUnitId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to delete OrganizationalUnit, but no OrganizationalUnit " +
@@ -191,13 +195,13 @@ public class OrganizationalUnitManager {
      * @return administrative roles for the organizational unit
      */
     public List<GroupAdminRolesType> getGroupAdminRoles (String organizationalUnitId) throws ResourceNotFoundException {
-        logger.info("Retrieving authorized admin roles for OrganizationalUnitId '{}'", organizationalUnitId);
+        LOG.info("Retrieving authorized admin roles for OrganizationalUnitId '{}'", organizationalUnitId);
 
         OrganizationalUnitEntity organizationalUnitEntity =
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
         if (organizationalUnitEntity != null) {
             try {
-                logger.info("Fetch admin roles from Keycloak for organizational unit {}", organizationalUnitEntity.getOrganizationalUnitId());
+                LOG.info("Fetch admin roles from Keycloak for organizational unit {}", organizationalUnitEntity.getOrganizationalUnitId());
                 List<RoleRepresentation> simpleRolesRepList = keycloakAdminService.getRolesForGroup(organizationalUnitEntity.getKeycloakId().toString());
 
                 // Requested roles for group are a simple representation and do not contain attributes. Hence, we have
@@ -207,20 +211,20 @@ public class OrganizationalUnitManager {
                             try {
                                 return keycloakAdminService.getRoleById(r.getId());
                             } catch (KeycloakException ex) {
-                                logger.error("Error while fetching Keycloak role with ID '{}'.", r.getId());
+                                LOG.error("Error while fetching Keycloak role with ID '{}'.", r.getId());
                                 return null;
                             }
                         })
                         .filter(Objects::nonNull)
                         .toList();
-                logger.debug("Found {} assigned admin roles for organizational unit {}", rolesRepList.size(), organizationalUnitEntity.getOrganizationalUnitId());
+                LOG.debug("Found {} assigned admin roles for organizational unit {}", rolesRepList.size(), organizationalUnitEntity.getOrganizationalUnitId());
                 Map<String, List<RoleRepresentation>> groupsMap =
                         rolesRepList.stream()
                                 .filter(r -> r.getAttributes().get(KeycloakAdminService.KOMMONITOR_ID_ATTRIBUTE) != null
                                         && r.getAttributes().get(KeycloakAdminService.KOMMONITOR_ROLE_TYPE_ATTRIBUTE) != null
                                 )
                                 .collect(Collectors.groupingBy(r -> r.getAttributes().get(KeycloakAdminService.KOMMONITOR_ID_ATTRIBUTE).get(0)));
-                logger.debug("Found admin roles for {} groups that are valid.", groupsMap.size());
+                LOG.debug("Found admin roles for {} groups that are valid.", groupsMap.size());
 
                 return groupsMap.entrySet().stream()
                         .map(e -> {
@@ -230,12 +234,12 @@ public class OrganizationalUnitManager {
                             return new GroupAdminRolesType(e.getKey(), roleNames);
                         }).toList();
             } catch(KeycloakException ex) {
-                logger.error(String.format("Error while trying to fetch admin roles from Keycloak for OrganizationalUnit" +
+                LOG.error(String.format("Error while trying to fetch admin roles from Keycloak for OrganizationalUnit" +
                         " '%s'.", organizationalUnitEntity.getOrganizationalUnitId()), ex);
                 return Collections.emptyList();
             }
         } else {
-            logger.error("No OrganizationalUnit with id '{}' was found in database.",
+            LOG.error("No OrganizationalUnit with id '{}' was found in database.",
                     organizationalUnitId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to fetch Keycloak roles, but no OrganizationalUnit existes with id " +
@@ -244,12 +248,12 @@ public class OrganizationalUnitManager {
     }
 
     public List<GroupAdminRolesType> getDelegatedGroupAdminRoles (String organizationalUnitId) throws ResourceNotFoundException {
-        logger.info("Retrieving delegated admin roles for OrganizationalUnitId '{}'", organizationalUnitId);
+        LOG.info("Retrieving delegated admin roles for OrganizationalUnitId '{}'", organizationalUnitId);
 
         OrganizationalUnitEntity organizationalUnitEntity =
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
         if (organizationalUnitEntity != null) {
-            logger.info("Fetch delegated admin roles from Keycloak for organizational unit {}", organizationalUnitEntity.getOrganizationalUnitId());
+            LOG.info("Fetch delegated admin roles from Keycloak for organizational unit {}", organizationalUnitEntity.getOrganizationalUnitId());
             Map<String, Set<GroupRepresentation>> roleDelegateGroups =  keycloakAdminService.getRoleDelegatesSortedByRoleName(organizationalUnitEntity);
 
             Map<String, List<AdminRoleType>> roleDelegateResultMap = new HashMap<>();
@@ -259,7 +263,7 @@ public class OrganizationalUnitManager {
                         GroupRepresentation groupRep = keycloakAdminService.getGroupById(g.getId());
                         List<String> kommonitorIdAttr = groupRep.getAttributes().get(KeycloakAdminService.KOMMONITOR_ID_ATTRIBUTE);
                         if(kommonitorIdAttr == null) {
-                            logger.warn("Role delegate Keycloak group with ID '{}' does not contain '{}' attribute. " +
+                            LOG.warn("Role delegate Keycloak group with ID '{}' does not contain '{}' attribute. " +
                                     "Can not reference KomMonitor Organizational Unit.", groupRep.getId(), KeycloakAdminService.KOMMONITOR_ID_ATTRIBUTE);
                         }
                         else {
@@ -272,7 +276,7 @@ public class OrganizationalUnitManager {
                             }
                         }
                     } catch(KeycloakException ex) {
-                        logger.error(String.format("Error while handling role delegate for group with ID '%s'", g.getId()), ex);
+                        LOG.error(String.format("Error while handling role delegate for group with ID '%s'", g.getId()), ex);
                     }
                 });
             });
@@ -280,7 +284,7 @@ public class OrganizationalUnitManager {
                     .map(e -> new GroupAdminRolesType(e.getKey(), e.getValue()))
                     .collect(Collectors.toList());
         } else {
-            logger.error("No OrganizationalUnit with id '{}' was found in database.",
+            LOG.error("No OrganizationalUnit with id '{}' was found in database.",
                     organizationalUnitId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to fetch Keycloak roles, but no OrganizationalUnit existes with id " +
@@ -289,7 +293,7 @@ public class OrganizationalUnitManager {
     }
 
     public OrganizationalUnitPermissionOverviewType getOrganizationalUnitPermissionsById(String organizationalUnitId) throws ResourceNotFoundException {
-        logger.info("Retrieving OrganizationalUnit->permissions for organizationalUnitId '{}'", organizationalUnitId);
+        LOG.info("Retrieving OrganizationalUnit->permissions for organizationalUnitId '{}'", organizationalUnitId);
 
         OrganizationalUnitEntity organizationalUnitEntity =
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
@@ -297,7 +301,7 @@ public class OrganizationalUnitManager {
         if (organizationalUnitEntity != null) {
             return AccessControlMapper.mapToSwapperOUPermissionOverviewType(organizationalUnitEntity);
         } else {
-            logger.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
+            LOG.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
                     organizationalUnitId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to delete OrganizationalUnit, but no OrganizationalUnit " +
@@ -307,7 +311,7 @@ public class OrganizationalUnitManager {
     }
 
     public List<OrganizationalUnitOverviewType> getOrganizationalUnits() {
-        logger.info("Retrieving all organizationalUnits from db");
+        LOG.info("Retrieving all organizationalUnits from db");
 
         List<OrganizationalUnitEntity> organizationalUnitEntities = organizationalUnitRepository.findAll();
 
@@ -318,7 +322,7 @@ public class OrganizationalUnitManager {
     }
 
     public List<OrganizationalUnitOverviewType> getOrganizationalUnits(AuthInfoProvider provider) {
-        logger.info("Retrieving all organizationalUnits from db");
+        LOG.info("Retrieving all organizationalUnits from db");
 
         List<OrganizationalUnitEntity> organizationalUnitEntities = organizationalUnitRepository.findAll();
 
@@ -332,7 +336,7 @@ public class OrganizationalUnitManager {
 
     public String updateOrganizationalUnit(OrganizationalUnitInputType newData,
                                            String organizationalUnitId) throws Exception {
-        logger.info("Trying to update OrganizationalUnit with organizationalUnitId '{}'", organizationalUnitId);
+        LOG.info("Trying to update OrganizationalUnit with organizationalUnitId '{}'", organizationalUnitId);
         if (organizationalUnitRepository.existsByOrganizationalUnitId(organizationalUnitId)) {
             OrganizationalUnitEntity organizationalUnitEntity =
                     organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
@@ -358,7 +362,7 @@ public class OrganizationalUnitManager {
                     OrganizationalUnitEntity parent =
                             organizationalUnitRepository.findByOrganizationalUnitId(newData.getParentId());
                     if (parent == null) {
-                        logger.error(
+                        LOG.error(
                                 "parent with given id {} does not exist.",
                                 newData.getParentId());
                         throw new Exception("parent with given id does not exist");
@@ -370,7 +374,7 @@ public class OrganizationalUnitManager {
             organizationalUnitRepository.saveAndFlush(organizationalUnitEntity);
             return organizationalUnitEntity.getOrganizationalUnitId();
         } else {
-            logger.error("No OrganizationalUnit with id '{}' was found in database. Update request has no effect.",
+            LOG.error("No OrganizationalUnit with id '{}' was found in database. Update request has no effect.",
                     organizationalUnitId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to update OrganizationalUnit, but no OrganizationalUnit " +
@@ -379,7 +383,7 @@ public class OrganizationalUnitManager {
     }
 
     public void updateDelegatedGroupAdminRoles(String organizationalUnitId, List<GroupAdminRolesPUTInputType> organizationalUnitData) throws ResourceNotFoundException {
-        logger.info("Updating delegated admin roles for OrganizationalUnitId '{}'", organizationalUnitId);
+        LOG.info("Updating delegated admin roles for OrganizationalUnitId '{}'", organizationalUnitId);
 
         OrganizationalUnitEntity organizationalUnitEntity =
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
@@ -392,7 +396,7 @@ public class OrganizationalUnitManager {
                             OrganizationalUnitEntity delegatedOrga =
                                     organizationalUnitRepository.findByOrganizationalUnitId(o.getOrganizationalUnitId());
                             if (delegatedOrga == null) {
-                                logger.warn("No delegated OrganizationalUnit with id '{}' was found in database.", organizationalUnitId);
+                                LOG.warn("No delegated OrganizationalUnit with id '{}' was found in database.", organizationalUnitId);
                                 return new GroupAdminRolesPUTInputType(o.getOrganizationalUnitId(), o.getAdminRoles());
                             } else {
                                 return new GroupAdminRolesPUTInputType(o.getOrganizationalUnitId(), o.getAdminRoles())
@@ -409,12 +413,57 @@ public class OrganizationalUnitManager {
 
             keycloakAdminService.updateRoleDelegates(organizationalUnitEntity, preparedOrganizationalUnitData);
         } else {
-            logger.error("No OrganizationalUnit with id '{}' was found in database.",
+            LOG.error("No OrganizationalUnit with id '{}' was found in database.",
                     organizationalUnitId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to update Keycloak roles, but no OrganizationalUnit existes with id " +
                             organizationalUnitId);
         }
-
     }
+
+    protected void syncOrganizationalUnits() {
+        organizationalUnitRepository.findAll().forEach(this::syncOrganizationalUnit);
+    }
+
+    protected void syncOrganizationalUnit(String organizationalUnitId) throws ResourceNotFoundException {
+
+        OrganizationalUnitEntity entity = organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
+        if (entity != null) {
+            syncOrganizationalUnit(entity);
+        } else {
+            LOG.error("No OrganizationalUnit with id '{}' was found in database. Sync request has no effect.",
+                    organizationalUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to sync OrganizationalUnit, but no OrganizationalUnit existes with id " + organizationalUnitId);
+        }
+    }
+
+    protected void syncOrganizationalUnit(OrganizationalUnitEntity entity) {
+
+        LOG.debug("Trying to sync OrganizationalUnit '{}' with Keycloak group.", entity.getOrganizationalUnitId());
+        if (entity.getKeycloakId() == null) {
+            try {
+                GroupRepresentation groupRep = keycloakAdminService.findGroupByName(entity.getName());
+                entity.setKeycloakId(UUID.fromString(groupRep.getId()));
+                organizationalUnitRepository.saveAndFlush(entity);
+                LOG.debug("Successfully updated OrganizationalUnit with Keycloak ID '{}'.", groupRep.getId());
+
+            } catch (KeycloakException e) {
+                LOG.error("Can not find Keycloak group with name '{}'", entity.getName());
+            }
+        }
+        try {
+            LOG.debug("Trying to sync Keycloak group to OrganizationalUnit '{}'", entity.getOrganizationalUnitId());
+            keycloakAdminService.syncGroup(entity);
+            LOG.debug("Successfully synced Keycloak group to OrganizationalUnit '{}'", entity.getOrganizationalUnitId());
+            LOG.debug("Trying to sync Keycloak roles to OrganizationalUnit '{}'", entity.getOrganizationalUnitId());
+            keycloakAdminService.syncRoles(entity);
+            LOG.debug("Trying to sync Keycloak role policies to OrganizationalUnit '{}'", entity.getOrganizationalUnitId());
+            keycloakAdminService.syncRolePolicies(entity);
+            LOG.debug("Successfully synced Keycloak role policies to OrganizationalUnit '{}'", entity.getOrganizationalUnitId());
+        } catch (KeycloakException e) {
+            LOG.error(String.format("Error while trying to sync Keycloak group with ID '%s'.", entity.getKeycloakId()));
+        }
+    }
+
 }

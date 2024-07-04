@@ -16,6 +16,8 @@ import java.util.List;
  */
 public interface AuthInfoProvider {
 
+    boolean hasGlobalAdminPermissions();
+
     /**
      * Checks if the current user has at least the given level of permission on the given entitiy
      *

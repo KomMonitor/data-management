@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-07-03T15:12:10.357035600+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-07-04T11:49:10.338027800+02:00[Europe/Berlin]")
 @Validated
 @Tag(name = "access-control", description = "the AccessControl API")
 public interface AccessControlApi {
@@ -316,6 +316,81 @@ public interface AccessControlApi {
     
     ResponseEntity<List<OrganizationalUnitOverviewType>> getOrganizationalUnits(
         
+    );
+
+
+    /**
+     * POST /organizationalUnits/sync : Synchronize the all OrganizationalUnits and Keycloak entities
+     * Synchronize the all OrganizationalUnis and Keycloak entities (group, roles and role policies) with each other.
+     *
+     * @return OK (status code 200)
+     *         or Created (status code 201)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "snycAllOrganizationalUnits",
+        summary = "Synchronize the all OrganizationalUnits and Keycloak entities",
+        description = "Synchronize the all OrganizationalUnis and Keycloak entities (group, roles and role policies) with each other.",
+        tags = { "access-control" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/organizationalUnits/sync"
+    )
+    
+    ResponseEntity<Void> snycAllOrganizationalUnits(
+        
+    );
+
+
+    /**
+     * POST /organizationalUnits/{organizationalUnitId}/sync : Synchronize the specified OrganizationalUnit and Keycloak entities
+     * Synchronize the specified OrganizationalUnit and Keycloak entities (group, roles and role policies) with each other.
+     *
+     * @param organizationalUnitId organizationalUnitId (required)
+     * @return OK (status code 200)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "snycOrganizationalUnit",
+        summary = "Synchronize the specified OrganizationalUnit and Keycloak entities",
+        description = "Synchronize the specified OrganizationalUnit and Keycloak entities (group, roles and role policies) with each other.",
+        tags = { "access-control" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/organizationalUnits/{organizationalUnitId}/sync"
+    )
+    
+    ResponseEntity<Void> snycOrganizationalUnit(
+        @Parameter(name = "organizationalUnitId", description = "organizationalUnitId", required = true, in = ParameterIn.PATH) @PathVariable("organizationalUnitId") String organizationalUnitId
     );
 
 
