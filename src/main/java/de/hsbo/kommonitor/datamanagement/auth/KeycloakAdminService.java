@@ -400,8 +400,30 @@ public class KeycloakAdminService {
                 LOG.error("Error while setting role policy for role.", ex);
             }
         });
+
+        // 5. add view permission for subgroups to upper groups
+        while(parent != null) {
+            associateViewPermissionWithUpperGroup(parent, Set.of(unitRolePolicyId, clientRolePolicyId));
+            parent = parent.getParent();
+        }
         LOG.info("Successfully created policies for OrganizationalUnit '{}' and Keycloak group ID '{}'.",
                 inputOrganizationalUnit.getName(), inputOrganizationalUnit.getKeycloakId());
+    }
+
+    public void associateViewPermissionWithUpperGroup(OrganizationalUnitEntity parent, Set<String> policies) throws KeycloakException {
+        ClientRepresentation realmAdminClient = getClientByName(REALM_MANAGEMENT_CLIENT_NAME);
+        String permissionName = "view.permission.group." + parent.getKeycloakId().toString();
+        ScopePermissionRepresentation scopePermRepCanidate = getRealmResource().clients().get(realmAdminClient.getId()).authorization().permissions().scope().findByName(permissionName);
+        if(scopePermRepCanidate != null) {
+            ScopePermissionResource scopePermRes = getRealmResource().clients().get(realmAdminClient.getId()).authorization().permissions().scope().findById(scopePermRepCanidate.getId());
+            ScopePermissionRepresentation scopePermRep = scopePermRes.toRepresentation();
+            Set<String> upperPolicies = scopePermRes.associatedPolicies().stream().map(AbstractPolicyRepresentation::getId).collect(Collectors.toSet());
+            upperPolicies.addAll(policies);
+            scopePermRep.setPolicies(upperPolicies);
+            scopePermRes.update(scopePermRep);
+        } else {
+            LOG.warn("Keycloak permission {} not found.", permissionName);
+        }
     }
 
     public void putRolePolicyForKeycloakGroupResourceScope(ClientRepresentation clientRepresentation, String scopePermissionName, String scopePermissionId, String resourceId, String scopeId, Set<String> policies) {
