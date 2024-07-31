@@ -8,10 +8,8 @@ import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.ClientErrorException;
-import org.keycloak.admin.client.resource.RolePolicyResource;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
-import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -421,7 +419,7 @@ public class OrganizationalUnitManager {
         }
     }
 
-    protected void syncOrganizationalUnits() {
+    protected void syncAllOrganizationalUnits() {
         organizationalUnitRepository.findAll().forEach(this::syncOrganizationalUnit);
     }
 
@@ -461,6 +459,9 @@ public class OrganizationalUnitManager {
             LOG.debug("Trying to sync Keycloak role policies to OrganizationalUnit '{}'", entity.getOrganizationalUnitId());
             keycloakAdminService.syncRolePolicies(entity);
             LOG.debug("Successfully synced Keycloak role policies to OrganizationalUnit '{}'", entity.getOrganizationalUnitId());
+            LOG.debug("Trying to sync Keycloak upper group associations for OrganizationalUnit '{}'", entity.getOrganizationalUnitId());
+            keycloakAdminService.syncUpperGroupAssociation(entity);
+            LOG.debug("Successfully syncedKeycloak upper group associations for OrganizationalUnit '{}'", entity.getOrganizationalUnitId());
         } catch (KeycloakException e) {
             LOG.error(String.format("Error while trying to sync Keycloak group with ID '%s'.", entity.getKeycloakId()));
         }

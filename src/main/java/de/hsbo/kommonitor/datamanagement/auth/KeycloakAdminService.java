@@ -686,4 +686,20 @@ public class KeycloakAdminService {
         }
     }
 
+    public void syncUpperGroupAssociation(OrganizationalUnitEntity entity) throws KeycloakException {
+        Set<String> policies = new HashSet<>();
+        RolePolicyRepresentation unitRolePolicyRep = findRolePolicyByName("member-of-" + entity.getKeycloakId() + "." + UNIT_USERS_ADMIN_ROLE_NAME);
+        if(unitRolePolicyRep != null) {
+            policies.add(unitRolePolicyRep.getId());
+        }
+        RolePolicyRepresentation clientRolePolicyRep = findRolePolicyByName("member-of-" + entity.getKeycloakId() + "." + CLIENT_USERS_ADMIN_ROLE_NAME);
+        if(clientRolePolicyRep != null) {
+            policies.add(clientRolePolicyRep.getId());
+        }
+        OrganizationalUnitEntity parent = entity.getParent();
+        while(parent != null) {
+            associateViewPermissionWithUpperGroup(parent, policies);
+            parent = parent.getParent();
+        }
+    }
 }

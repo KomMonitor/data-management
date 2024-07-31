@@ -241,7 +241,7 @@ public class AccessControlController extends BasePathController implements Acces
     @Override
     public ResponseEntity<Void> snycAllOrganizationalUnits() {
         logger.debug("Received request to synchronize all organizationalUnits");
-        organizationalUnitManager.syncOrganizationalUnits();
+        organizationalUnitManager.syncAllOrganizationalUnits();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
