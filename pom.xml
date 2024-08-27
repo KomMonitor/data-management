@@ -37,7 +37,7 @@
         <docker.image.prefix>kommonitor</docker.image.prefix>
         <springfox.version>2.9.2</springfox.version>
         <geotools.version>19.0</geotools.version>
-        <postgresql.version>42.6.0</postgresql.version>
+        <postgresql.version>42.6.1</postgresql.version>
         <hibernate-spatial.version>6.3.1.Final</hibernate-spatial.version>
         <release-plugin.version>3.0.0-M1</release-plugin.version>
         <changelog-plugin.version>0.5.1</changelog-plugin.version>
