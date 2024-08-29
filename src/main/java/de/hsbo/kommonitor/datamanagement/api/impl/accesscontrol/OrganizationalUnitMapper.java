@@ -21,6 +21,9 @@ public class OrganizationalUnitMapper {
         ou.setPermissions(mapToSwaggerPermissions(ouEntity.getPermissions()));
         ou.setKeycloakId(ouEntity.getKeycloakId().toString());
         ou.setMandant(ouEntity.isMandant());
+        if (ouEntity.getMandant() != null) {
+            ou.setMandantId(ouEntity.getMandant().getOrganizationalUnitId());
+        }
         if (ouEntity.getParent() != null) {
             ou.setParentId(ouEntity.getParent().getOrganizationalUnitId());
         }

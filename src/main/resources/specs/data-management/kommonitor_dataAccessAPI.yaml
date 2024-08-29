@@ -6407,6 +6407,9 @@ components:
         parentId:
           type: string
           description: uuid of the parent group
+        mandantId:
+          type: string
+          description: uuid of the group that acts as mandant
         children:
           type: array
           items:
