@@ -102,26 +102,31 @@ public class OrganizationalUnitManager {
             keycloakId = keycloakAdminService.addGroup(inputOrganizationalUnit);
         }
 
-        // Find mandant, possibly traversing upwards the hierarchy
-        OrganizationalUnitEntity current = jpaUnit;
-        do {
-            if (current.isMandant()) {
-                // We have found a mandant
-                jpaUnit.setMandant(current);
-                break;
-            } else {
-                // Check if there are more upstream units to search
-                if (current.getParent() != null) {
-                    current = current.getParent();
+        try {
+            // Find mandant, possibly traversing upwards the hierarchy
+            OrganizationalUnitEntity current = jpaUnit;
+            do {
+                if (current.isMandant()) {
+                    // We have found a mandant
+                    jpaUnit.setMandant(current);
+                    break;
                 } else {
-                    // there is no mandant in this hierarchy
-                    String msg = String.format("Creating OrganizationalUnit %s failed - Unit is not a mandant and no mandant " +
-                            "is found in the hierarchy! Group creation aborted.", inputOrganizationalUnit.getName());
-                    LOG.error(msg);
-                    throw new ApiException(400, msg);
+                    // Check if there are more upstream units to search
+                    if (current.getParent() != null) {
+                        current = current.getParent();
+                    } else {
+                        // there is no mandant in this hierarchy
+                        String msg = String.format("Creating OrganizationalUnit %s failed - Unit is not a mandant and no mandant " +
+                                "is found in the hierarchy! Group creation aborted.", inputOrganizationalUnit.getName());
+                        LOG.error(msg);
+                        throw new ApiException(400, msg);
+                    }
                 }
-            }
-        } while (true);
+            } while (true);
+        } catch (ApiException ex) {
+            keycloakAdminService.deleteGroup(keycloakId);
+            throw ex;
+        }
 
         inputOrganizationalUnit.setKeycloakId(keycloakId);
         OrganizationalUnitEntity saved = null;
