@@ -55,13 +55,20 @@ public class OrganizationalUnitManager {
             LOG.error(
                     "The OrganizationalUnit with name '{}' already exists. Thus aborting add OrganizationalUnit request.",
                     name);
-            throw new Exception("OrganizationalUnit already exists. Aborting addOrganizationalUnit request.");
+            throw new ApiException(400, "OrganizationalUnit already exists. Aborting addOrganizationalUnit request.");
         }
 
         // We do not allow Mandants with parents
         if (inputOrganizationalUnit.getParentId() != null && inputOrganizationalUnit.getMandant()) {
             LOG.warn("trying to add organizationalUnit as mandant in hierarchy!");
-            throw new Exception("OrganizationalUnit cannot be Mandant and have a parent OrganizationalUnit. Aborting addOrganizationalUnit request.");
+            throw new ApiException(400, "OrganizationalUnit cannot be Mandant and have a parent OrganizationalUnit. Aborting addOrganizationalUnit " +
+                    "request.");
+        }
+
+        // We require global admin rights to create a mandant
+        if (inputOrganizationalUnit.getMandant() && !provider.hasGlobalAdminPermissions()) {
+            LOG.warn("trying to create mandant without global admin rola!");
+            throw new ApiException(403, "Cannot create OrganizationalUnit as Mandant without global admin role!");
         }
 
         /*
