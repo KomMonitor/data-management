@@ -1,11 +1,9 @@
 package de.hsbo.kommonitor.datamanagement.auth;
 
-import com.google.common.collect.Lists;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.KeycloakException;
 import de.hsbo.kommonitor.datamanagement.model.AdminRoleType;
 import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesPUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
@@ -50,7 +48,7 @@ public class KeycloakAdminService {
             UNIT_THEMES_ADMIN_ROLE_NAME,
             CLIENT_USERS_ADMIN_ROLE_NAME,
             UNIT_USERS_ADMIN_ROLE_NAME
-            );
+    );
 
     @Value("${keycloak.realm}")
     private String keycloakRealm;
@@ -112,7 +110,7 @@ public class KeycloakAdminService {
 
     public void deleteRolesForGroupName(String name) {
         ADMIN_ROLES.stream()
-                .map(r -> String.join(".",name, r))
+                .map(r -> String.join(".", name, r))
                 .forEach(r -> {
                     try {
                         deleteRole(r);
@@ -185,15 +183,22 @@ public class KeycloakAdminService {
         }
     }
 
-    public GroupRepresentation findGroupByName(String name) throws KeycloakException {
-        List<GroupRepresentation> groupList = getRealmResource().groups().query(name);
+    public GroupRepresentation getGroupByName(String name) throws KeycloakException {
+        List<GroupRepresentation> groupList = getRealmResource().groups().groups(name, true, 0, 2, true);
+
         if (groupList.size() == 0) {
             throw new KeycloakException(String.format("No client exists with name %s.", name));
         }
         if (groupList.size() > 1) {
-            LOG.warn("More than one client with name {} exists. Only first client will be returned.", name);
+            LOG.warn("More than one group matched the search: '{}'. Only first group will be returned.", name);
         }
-        return groupList.get(0);
+
+        // 'populateHierarchy' parameter is not accessible in the keycloak library so we need to descend manually
+        GroupRepresentation current = groupList.get(0);
+        while (!current.getSubGroups().isEmpty()) {
+            current = current.getSubGroups().get(0);
+        }
+        return current;
     }
 
     public RolePolicyRepresentation findRolePolicyByName(String name) throws KeycloakException {
@@ -223,7 +228,7 @@ public class KeycloakAdminService {
         return clientList.get(0);
     }
 
-    public RoleRepresentation getRoleByName(String name) throws  KeycloakException {
+    public RoleRepresentation getRoleByName(String name) throws KeycloakException {
         List<RoleRepresentation> roleList = getRealmResource().roles().list(name, true);
         if (roleList.size() == 0) {
             throw new KeycloakException(String.format("No role exists with name %s.", name));
@@ -243,7 +248,7 @@ public class KeycloakAdminService {
         }
     }
 
-    public RoleRepresentation getClientRoleByName(String clientId, String name) throws  KeycloakException {
+    public RoleRepresentation getClientRoleByName(String clientId, String name) throws KeycloakException {
         List<RoleRepresentation> roleList = getRealmResource().clients().get(clientId).roles().list(name, true);
         if (roleList.size() == 0) {
             throw new KeycloakException(String.format("No role exists with for client %s with name %s.", clientId, name));
@@ -255,7 +260,7 @@ public class KeycloakAdminService {
     }
 
     public PolicyRepresentation getPolicyByName(String clientId, String policyName) {
-        return  getRealmResource().clients().get(clientId).authorization().policies().findByName(policyName);
+        return getRealmResource().clients().get(clientId).authorization().policies().findByName(policyName);
     }
 
     private RolePolicyRepresentation.RoleDefinition createClientRoleDef(String roleName) throws KeycloakException {
@@ -361,14 +366,14 @@ public class KeycloakAdminService {
         policies.add(unitRolePolicyId);
         policies.add(clientRolePolicyId);
 
-        if(parent != null) {
+        if (parent != null) {
             Set<String> parentPolicies = getParentPolicies(realmAdminClient, parent);
             policies.addAll(parentPolicies);
         }
 
         // 3. set policies for new group to enable group and subgroup management for admins with associated roles
         Map<String, String> scopePermissions = groupManagementPermissionRef.getScopePermissions();
-        scopePermissions.forEach((k,v) -> {
+        scopePermissions.forEach((k, v) -> {
             try {
                 ScopeRepresentation policyScope = getPolicyScope(realmAdminClient, v);
                 String name = policyScope.getName().replace("-", ".") + ".permission.group." + inputOrganizationalUnit.getKeycloakId();
@@ -389,7 +394,7 @@ public class KeycloakAdminService {
                 ManagementPermissionReference roleManagementPermissionRef = roleResource.setPermissions(managementPermission);
                 String scopePermissionId = roleManagementPermissionRef.getScopePermissions().get("map-role");
 
-                ScopeRepresentation policyScope =  getPolicyScope(realmAdminClient, scopePermissionId);
+                ScopeRepresentation policyScope = getPolicyScope(realmAdminClient, scopePermissionId);
 
                 String name = "map-role.permission." + roleRepresentation.getId();
                 putRolePolicyForKeycloakGroupResourceScope(realmAdminClient, name, policyScope.getId(), roleManagementPermissionRef.getResource(), scopePermissionId, policies);
@@ -402,7 +407,7 @@ public class KeycloakAdminService {
         });
 
         // 5. add view permission for subgroups to upper groups
-        while(parent != null) {
+        while (parent != null) {
             associateViewPermissionWithUpperGroup(parent, Set.of(unitRolePolicyId, clientRolePolicyId));
             parent = parent.getParent();
         }
@@ -414,7 +419,7 @@ public class KeycloakAdminService {
         ClientRepresentation realmAdminClient = getClientByName(REALM_MANAGEMENT_CLIENT_NAME);
         String permissionName = "view.permission.group." + parent.getKeycloakId().toString();
         ScopePermissionRepresentation scopePermRepCanidate = getRealmResource().clients().get(realmAdminClient.getId()).authorization().permissions().scope().findByName(permissionName);
-        if(scopePermRepCanidate != null) {
+        if (scopePermRepCanidate != null) {
             ScopePermissionResource scopePermRes = getRealmResource().clients().get(realmAdminClient.getId()).authorization().permissions().scope().findById(scopePermRepCanidate.getId());
             ScopePermissionRepresentation scopePermRep = scopePermRes.toRepresentation();
             Set<String> upperPolicies = scopePermRes.associatedPolicies().stream().map(AbstractPolicyRepresentation::getId).collect(Collectors.toSet());
@@ -454,7 +459,7 @@ public class KeycloakAdminService {
 
     public String handleGroupCreationResponse(Response response) throws KeycloakException {
         if (response.getStatusInfo().equals(Response.Status.CREATED)) {
-            String [] parts = response.getLocation().getPath().split("/");
+            String[] parts = response.getLocation().getPath().split("/");
             return parts[parts.length - 1];
         } else {
             throw new KeycloakException(String.format("Error while requesting Keycloak Admin REST API to create group. " +
@@ -476,7 +481,7 @@ public class KeycloakAdminService {
         return keycloak.realm(keycloakRealm);
     }
 
-    public List<RoleRepresentation> getRolesForGroup(String groupId) throws KeycloakException{
+    public List<RoleRepresentation> getRolesForGroup(String groupId) throws KeycloakException {
         try {
             GroupResource groupResource = getRealmResource().groups().group(groupId);
             return groupResource.roles().realmLevel().listAll();
@@ -495,7 +500,7 @@ public class KeycloakAdminService {
         }
     }
 
-    public Map<String, Set<GroupRepresentation>> getRoleDelegatesSortedByRoleName(OrganizationalUnitEntity entity)  {
+    public Map<String, Set<GroupRepresentation>> getRoleDelegatesSortedByRoleName(OrganizationalUnitEntity entity) {
         Map<String, Set<GroupRepresentation>> roleDelegates = new HashMap<>();
         ADMIN_ROLES.forEach(r -> {
             String roleName = "";
@@ -510,7 +515,7 @@ public class KeycloakAdminService {
         return roleDelegates;
     }
 
-    public Map<String, Set<String>> getRoleDelegatesSortedByGroup(OrganizationalUnitEntity entity)  {
+    public Map<String, Set<String>> getRoleDelegatesSortedByGroup(OrganizationalUnitEntity entity) {
         Map<String, Set<String>> roleDelegates = new HashMap<>();
         ADMIN_ROLES.forEach(r -> {
             String roleName = "";
@@ -521,7 +526,7 @@ public class KeycloakAdminService {
                 groups.forEach(g -> {
                     try {
                         GroupRepresentation groupRep = getGroupById(g.getId());
-                        if(roleDelegates.containsKey(entity.getOrganizationalUnitId())) {
+                        if (roleDelegates.containsKey(entity.getOrganizationalUnitId())) {
                             roleDelegates.get(entity.getOrganizationalUnitId()).add(finalRoleName);
                         } else {
                             Set<String> roleSet = new HashSet<>();
@@ -547,7 +552,7 @@ public class KeycloakAdminService {
      *
      * @param entity the OrganizationalUnitEntity representing a KomMonitor group
      */
-    public void referenceOrganizationalUnitWithRoles(OrganizationalUnitEntity entity){
+    public void referenceOrganizationalUnitWithRoles(OrganizationalUnitEntity entity) {
         ADMIN_ROLES.forEach(r -> {
             String roleName = "";
             try {
@@ -570,7 +575,7 @@ public class KeycloakAdminService {
      *
      * @param entity the OrganizationalUnitEntity representing a KomMonitor group
      */
-    public void referenceOrganizationalUnitWithGroup(OrganizationalUnitEntity entity){
+    public void referenceOrganizationalUnitWithGroup(OrganizationalUnitEntity entity) {
         try {
             GroupResource groupResource = getRealmResource().groups().group(entity.getKeycloakId().toString());
 
@@ -598,33 +603,33 @@ public class KeycloakAdminService {
         // If there is a match, remove the admin role from the provided list so that only new role delegates remain in
         // the list, which can be newly assigned to the associated group.
         ADMIN_ROLES.forEach(aR -> {
-                    String roleName = String.join(".", entity.getName(), aR);
+            String roleName = String.join(".", entity.getName(), aR);
+            try {
+                Set<GroupRepresentation> groups = getAssociatedGroupsForRole(roleName);
+                groups.forEach(g -> {
                     try {
-                        Set<GroupRepresentation> groups = getAssociatedGroupsForRole(roleName);
-                        groups.forEach(g -> {
-                            try {
-                                // if an admin role is not presented in the provided roles delegates, it must
-                                // be removed from the delegated group
-                                if(!roleDelegateMap.containsKey(g.getId())
-                                        || !roleDelegateMap.get(g.getId()).contains(AdminRoleType.fromValue(aR))) {
-                                    RoleRepresentation roleRep = getRoleByName(roleName);
-                                    GroupResource groupResource = getRealmResource().groups().group(g.getId());
-                                    groupResource.roles().realmLevel().remove(List.of(roleRep));
-                                } else {
-                                    // do nothing, if the admin role is still present in the role delegates, but remove
-                                    // the role from the list, so that only new role delegates will remain in the end
-                                    roleDelegateMap.get(g.getId()).remove(AdminRoleType.fromValue(aR));
-                                }
+                        // if an admin role is not presented in the provided roles delegates, it must
+                        // be removed from the delegated group
+                        if (!roleDelegateMap.containsKey(g.getId())
+                                || !roleDelegateMap.get(g.getId()).contains(AdminRoleType.fromValue(aR))) {
+                            RoleRepresentation roleRep = getRoleByName(roleName);
+                            GroupResource groupResource = getRealmResource().groups().group(g.getId());
+                            groupResource.roles().realmLevel().remove(List.of(roleRep));
+                        } else {
+                            // do nothing, if the admin role is still present in the role delegates, but remove
+                            // the role from the list, so that only new role delegates will remain in the end
+                            roleDelegateMap.get(g.getId()).remove(AdminRoleType.fromValue(aR));
+                        }
 
-                            } catch (KeycloakException ex) {
-                                LOG.error(String.format("Error while fetching Keycloak group '%s'.", g.getId()), ex);
-                            }
-                        });
-                    } catch (KeycloakException e) {
-                        throw new RuntimeException(e);
+                    } catch (KeycloakException ex) {
+                        LOG.error(String.format("Error while fetching Keycloak group '%s'.", g.getId()), ex);
                     }
-
                 });
+            } catch (KeycloakException e) {
+                throw new RuntimeException(e);
+            }
+
+        });
         // 2. For alle remaining role delegates associate a Keycloak role with the delegated Keycloak group
         roleDelegates.stream()
                 .filter(r -> !r.getAdminRoles().isEmpty())
@@ -662,8 +667,7 @@ public class KeycloakAdminService {
         if (updateNeeded) {
             updateGroup(entity.getKeycloakId().toString(), detailedGroupRep);
             LOG.debug("Successfully updated Keycloak group with OrganizationalUnit ID '{}'.", entity.getOrganizationalUnitId());
-        }
-        else {
+        } else {
             LOG.debug("No update needed for Keycloak group with OrganizationalUnit ID '{}'.", entity.getOrganizationalUnitId());
         }
     }
@@ -680,7 +684,7 @@ public class KeycloakAdminService {
         }
 
         RolePolicyRepresentation clientRolePolicyRep = findRolePolicyByName("member-of-" + entity.getName() + "." + CLIENT_USERS_ADMIN_ROLE_NAME);
-        if(clientRolePolicyRep != null) {
+        if (clientRolePolicyRep != null) {
             clientRolePolicyRep.setName("member-of-" + entity.getKeycloakId() + "." + CLIENT_USERS_ADMIN_ROLE_NAME);
             updateRolePolicy(clientRolePolicyRep.getId(), clientRolePolicyRep);
         }
@@ -689,15 +693,15 @@ public class KeycloakAdminService {
     public void syncUpperGroupAssociation(OrganizationalUnitEntity entity) throws KeycloakException {
         Set<String> policies = new HashSet<>();
         RolePolicyRepresentation unitRolePolicyRep = findRolePolicyByName("member-of-" + entity.getKeycloakId() + "." + UNIT_USERS_ADMIN_ROLE_NAME);
-        if(unitRolePolicyRep != null) {
+        if (unitRolePolicyRep != null) {
             policies.add(unitRolePolicyRep.getId());
         }
         RolePolicyRepresentation clientRolePolicyRep = findRolePolicyByName("member-of-" + entity.getKeycloakId() + "." + CLIENT_USERS_ADMIN_ROLE_NAME);
-        if(clientRolePolicyRep != null) {
+        if (clientRolePolicyRep != null) {
             policies.add(clientRolePolicyRep.getId());
         }
         OrganizationalUnitEntity parent = entity.getParent();
-        while(parent != null) {
+        while (parent != null) {
             associateViewPermissionWithUpperGroup(parent, policies);
             parent = parent.getParent();
         }

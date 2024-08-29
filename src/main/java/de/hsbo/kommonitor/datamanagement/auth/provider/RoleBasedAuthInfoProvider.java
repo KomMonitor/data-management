@@ -186,6 +186,11 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
     }
 
     @Override
+    public Set<String> getGroupNames() {
+        return Collections.EMPTY_SET;
+    }
+
+    @Override
     public boolean checkOrganizationalUnitCreationPermissions(OrganizationalUnitEntity parent) {
         return hasRealmAdminRole(getPrincipal());
     }

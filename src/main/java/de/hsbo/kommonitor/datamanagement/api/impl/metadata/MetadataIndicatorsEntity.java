@@ -12,7 +12,6 @@ import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
-import org.checkerframework.checker.units.qual.N;
 
 @Entity(name = "MetadataIndicators")
 public class MetadataIndicatorsEntity extends AbstractMetadata implements RestrictedEntity {

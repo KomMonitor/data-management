@@ -24,7 +24,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorR
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;

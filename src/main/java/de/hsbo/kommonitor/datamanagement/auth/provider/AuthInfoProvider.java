@@ -7,6 +7,7 @@ import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Interface that provides authentication and authorization information
@@ -59,4 +60,12 @@ public interface AuthInfoProvider {
     boolean checkOrganizationalUnitCreationPermissions(OrganizationalUnitEntity parent);
 
     List<AdminRoleType> getOrganizationalUnitCreationPermissions(OrganizationalUnitEntity entity);
+
+    /**
+     * Returns a list of all groups the current user is member of. Only includes actual group names and not hierarchy
+     * of group
+     *
+     * @return Set of group names
+     */
+    Set<String> getGroupNames();
 }

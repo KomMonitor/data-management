@@ -247,8 +247,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
                         String[] split = roleExtractorRegex.split(r, 2);
                         return Pair.of(split[0], split[1]);
                     })
-                    .anyMatch(r -> hasClientUsersAdminPermissionForParentGroup(r.getFirst(), r.getSecond(), finalEntity))
-                    ;
+                    .anyMatch(r -> hasClientUsersAdminPermissionForParentGroup(r.getFirst(), r.getSecond(), finalEntity));
             if (allowed) {
                 return Collections.singletonList(CLIENT_USERS_CREATOR);
             }
@@ -277,11 +276,16 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
                 .filter(r -> roleExtractorRegex.split(r, 2).length == 2)
                 .map(r -> {
                     String[] split = roleExtractorRegex.split(r, 2);
-                    return  Pair.of(split[0], split[1]);
+                    return Pair.of(split[0], split[1]);
                 })
                 .filter(r -> hasAdminPermissionForResourceType(r.getSecond(), PermissionResourceType.RESOURCES))
                 .map(r -> new Group(r.getFirst()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Set<String> getGroupNames() {
+        return tokenParser.getGroupMemberships(getPrincipal()).stream().map(Group::getName).collect(Collectors.toSet());
     }
 
     private boolean hasResourceAdministrationPermission(RestrictedEntity entity) {
@@ -307,7 +311,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         };
     }
 
-    private boolean hasUnitResourceAdminPermissionForOwningGroup (String kcGroup, String kcRole, RestrictedEntity entity) {
+    private boolean hasUnitResourceAdminPermissionForOwningGroup(String kcGroup, String kcRole, RestrictedEntity entity) {
         return kcGroup.equals(entity.getOwner().getName())
                 && hasAdminPermissionForResourceType(kcRole, PermissionResourceType.RESOURCES);
     }
@@ -316,8 +320,8 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
      * Check if owning group is a subgroup of a group with *.client-resource-creator permission
      *
      * @param kcGroup Keycloak group
-     * @param kcRole Keycloak role for group
-     * @param entity Resource to check
+     * @param kcRole  Keycloak role for group
+     * @param entity  Resource to check
      * @return true if the Keycloak group has admin permission for resources of the owning group
      */
     private boolean hasClientResourceAdminPermissionForOwningGroup(String kcGroup, String kcRole, RestrictedEntity entity) {
@@ -353,7 +357,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
      * Checks if a Keycloak group is parent of an OrganizationalUnit
      *
      * @param kcGroup Keycloak Group
-     * @param entity OrganizationalUnit
+     * @param entity  OrganizationalUnit
      * @return true if the OrganizationalUnit has a parent, which has the same name as the Keycloak group
      */
     private boolean roleGroupIsParent(String kcGroup, OrganizationalUnitEntity entity) {
@@ -366,8 +370,5 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         }
         return false;
     }
-
-
-
 
 }

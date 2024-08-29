@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AccessControlMapper {
+public class OrganizationalUnitMapper {
 
     public static OrganizationalUnitOverviewType mapToSwaggerOrganizationalUnit(OrganizationalUnitEntity ouEntity) {
         OrganizationalUnitOverviewType ou = new OrganizationalUnitOverviewType();

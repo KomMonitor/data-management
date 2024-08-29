@@ -25,9 +25,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 @Controller
-public class AccessControlController extends BasePathController implements AccessControlApi {
+public class OrganizationalUnitController extends BasePathController implements AccessControlApi {
 
-    private static Logger logger = LoggerFactory.getLogger(AccessControlController.class);
+    private static Logger logger = LoggerFactory.getLogger(OrganizationalUnitController.class);
 
     private final ObjectMapper objectMapper;
 
@@ -46,21 +46,21 @@ public class AccessControlController extends BasePathController implements Acces
     AuthInfoProviderFactory authInfoProviderFactory;
 
     @Autowired
-    public AccessControlController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public OrganizationalUnitController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
     @Override
-    @PreAuthorize("hasRequiredPermissionLevel('viewer')")
+    // @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<List<OrganizationalUnitOverviewType>> getOrganizationalUnits() {
         logger.debug("Received request to get all organizationalUnits");
 
-        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+        AuthInfoProvider authInfo = authInfoProviderFactory.createAuthInfoProvider();
         String accept = request.getHeader("Accept");
 
         if (accept != null && accept.contains("application/json")) {
-            List<OrganizationalUnitOverviewType> roles = organizationalUnitManager.getOrganizationalUnits(provider);
+            List<OrganizationalUnitOverviewType> roles = organizationalUnitManager.getOrganizationalUnits(authInfo);
             return new ResponseEntity<>(roles, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -68,16 +68,16 @@ public class AccessControlController extends BasePathController implements Acces
     }
 
     @Override
-    @PreAuthorize("hasRequiredPermissionLevel('viewer')")
+    @PreAuthorize("hasRequiredPermissionLevel('editor')")
     public ResponseEntity<OrganizationalUnitOverviewType> getOrganizationalUnitById(String organizationalUnitId) {
         logger.debug("Received request to get organizationalUnit with id '{}'", organizationalUnitId);
 
-        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+        AuthInfoProvider authInfo = authInfoProviderFactory.createAuthInfoProvider();
         String accept = request.getHeader("Accept");
         try {
             if (accept != null && accept.contains("application/json")) {
                 OrganizationalUnitOverviewType unit =
-                        organizationalUnitManager.getOrganizationalUnitById(organizationalUnitId, provider);
+                        organizationalUnitManager.getOrganizationalUnitById(organizationalUnitId, authInfo);
                 return new ResponseEntity<>(unit, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -239,7 +239,7 @@ public class AccessControlController extends BasePathController implements Acces
 
     @PreAuthorize("isAuthorizedForAdminOperations()")
     @Override
-    public ResponseEntity<Void> snycAllOrganizationalUnits() {
+    public ResponseEntity<Void> syncAllOrganizationalUnits() {
         logger.debug("Received request to synchronize all organizationalUnits");
         organizationalUnitManager.syncAllOrganizationalUnits();
         return new ResponseEntity<>(HttpStatus.OK);

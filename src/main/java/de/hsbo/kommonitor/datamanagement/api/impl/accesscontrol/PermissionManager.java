@@ -55,7 +55,7 @@ public class PermissionManager {
 
         List<PermissionEntity> roleEntities = permissionRepository.findAll();
 
-        return AccessControlMapper.mapToSwaggerPermissions(roleEntities);
+        return OrganizationalUnitMapper.mapToSwaggerPermissions(roleEntities);
     }
 
 }

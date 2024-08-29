@@ -5,6 +5,7 @@ import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +34,10 @@ public class OrganizationalUnitEntity {
 
     @OneToMany(mappedBy = "organizationalUnit", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     public List<PermissionEntity> permissions;
+
+    @ManyToOne
+    @JoinColumn(name = "mandant", nullable = true)
+    public OrganizationalUnitEntity mandant;
 
     @ManyToOne
     @JoinColumn(name = "parent")
@@ -67,8 +72,16 @@ public class OrganizationalUnitEntity {
         return isMandant;
     }
 
-    public void setMandant(boolean mandant) {
+    public void setIsMandant(boolean mandant) {
         isMandant = mandant;
+    }
+
+    public OrganizationalUnitEntity getMandant() {
+        return mandant;
+    }
+
+    public void setMandant(OrganizationalUnitEntity mandant) {
+        this.mandant = mandant;
     }
 
     public String getContact() {
@@ -113,6 +126,16 @@ public class OrganizationalUnitEntity {
 
     public List<OrganizationalUnitEntity> getChildren() {
         return children;
+    }
+
+    // Gets all descendants (children, grandchildren, grandgrandchildren, etc.)
+    public List<OrganizationalUnitEntity> getDescendants() {
+        List<OrganizationalUnitEntity> collect = new LinkedList<>();
+        collect.add(this);
+        collect.addAll(children.stream()
+                .flatMap(child -> child.getDescendants().stream())
+                .toList());
+        return collect;
     }
 
     public void setChildren(List<OrganizationalUnitEntity> children) {
