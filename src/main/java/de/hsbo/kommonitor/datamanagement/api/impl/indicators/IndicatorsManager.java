@@ -1,38 +1,8 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
-import jakarta.transaction.Transactional;
-
-import de.hsbo.kommonitor.datamanagement.model.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.geotools.data.DataStore;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.filter.text.cql2.CQLException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
@@ -50,6 +20,27 @@ import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.*;
+import de.hsbo.kommonitor.datamanagement.msg.MessageResolver;
+import jakarta.transaction.Transactional;
+import org.apache.commons.collections.CollectionUtils;
+import org.geotools.data.DataStore;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.filter.text.cql2.CQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional
 @Repository
@@ -57,6 +48,8 @@ import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 public class IndicatorsManager {
 
     private static Logger logger = LoggerFactory.getLogger(IndicatorsManager.class);
+
+    private static final String MSG_INDICATOR_EXISTS_ERROR = "indicator-exists-error";
 
     @Autowired
     private IndicatorsMetadataRepository indicatorsMetadataRepo;
@@ -83,6 +76,9 @@ public class IndicatorsManager {
     IndicatorsMapper indicatorsMapper;
 
     @Autowired
+    MessageResolver messageResolver;
+
+    @Autowired
     private LastModificationManager lastModManager;
 
     @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
@@ -107,10 +103,12 @@ public class IndicatorsManager {
              */
             if (keyPropertiesHaveChanged(metadataEntity, indicatorName, characteristicValue, indicatorType)) {
                 if (indicatorsMetadataRepo.existsByDatasetNameAndCharacteristicValueAndIndicatorType(indicatorName, characteristicValue, indicatorType)) {
+                    MetadataIndicatorsEntity existingIndicator = indicatorsMetadataRepo.findByDatasetName(indicatorName);
                     logger.error(
                             "The indicator metadataset with datasetName '{}', characteristicValue '{}' and indicatorType '{}' already exists. Thus aborting update indicator request.",
                             indicatorName, characteristicValue, indicatorType);
-                    throw new Exception("Indicator for indicatorName, characteristicValue and indicatorType already exists. Aborting update indicator request.");
+                    String errMsg = messageResolver.getMessage(MSG_INDICATOR_EXISTS_ERROR);
+                    throw new Exception(String.format(errMsg, indicatorName, existingIndicator.getOwner().getMandant().getName()));
                 }
             }
 
@@ -1017,10 +1015,13 @@ public class IndicatorsManager {
              */
 
             if (indicatorsMetadataRepo.existsByDatasetNameAndCharacteristicValueAndIndicatorType(indicatorName, characteristicValue, indicatorType)) {
+                MetadataIndicatorsEntity existingIndicator = indicatorsMetadataRepo.findByDatasetName(indicatorName);
                 logger.error(
                         "The indicator metadataset with datasetName '{}', characteristicValue '{}' and indicatorType '{}' already exists. Thus aborting add indicator request.",
                         indicatorName, characteristicValue, indicatorType);
-                throw new Exception("Indicator for indicatorName, characteristicValue and indicatorType already exists. Aborting add indicator request.");
+
+                String errMsg = messageResolver.getMessage(MSG_INDICATOR_EXISTS_ERROR);
+                throw new Exception(String.format(errMsg, indicatorName, existingIndicator.getOwner().getMandant().getName()));
             }
 
             indicatorMetadataEntity = createMetadata(indicatorData);
