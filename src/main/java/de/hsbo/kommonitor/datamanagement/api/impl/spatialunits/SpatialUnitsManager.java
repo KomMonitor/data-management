@@ -22,6 +22,7 @@ import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPUTInputType;
+import de.hsbo.kommonitor.datamanagement.msg.MessageResolver;
 import jakarta.transaction.Transactional;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
@@ -48,6 +49,8 @@ public class SpatialUnitsManager {
 
     private static Logger logger = LoggerFactory.getLogger(SpatialUnitsManager.class);
 
+    private static final String MSG_SPATIAL_UNIT_EXISTS_ERROR = "spatialunit-exists-error";
+
 
     @Autowired
     SpatialUnitsMetadataRepository spatialUnitsMetadataRepo;
@@ -63,6 +66,9 @@ public class SpatialUnitsManager {
 
     @Autowired
     OGCWebServiceManager ogcServiceManager;
+
+    @Autowired
+    MessageResolver messageResolver;
 
     public SpatialUnitOverviewType addSpatialUnit(SpatialUnitPOSTInputType featureData) throws Exception {
         String metadataId = null;
@@ -84,8 +90,10 @@ public class SpatialUnitsManager {
              */
 
             if (spatialUnitsMetadataRepo.existsByDatasetName(datasetName)) {
+                MetadataSpatialUnitsEntity existingSpatialUnit = spatialUnitsMetadataRepo.findByDatasetName(datasetName);
                 logger.error("The spatialUnit metadataset with datasetName '{}' already exists. Thus aborting add spatial unit request.", datasetName);
-                throw new Exception("SpatialUnit already exists. Aborting add spatialUnit request.");
+                String errMsg = messageResolver.getMessage(MSG_SPATIAL_UNIT_EXISTS_ERROR);
+                throw new Exception(String.format(errMsg, datasetName, existingSpatialUnit.getOwner().getMandant().getName()));
             }
 
             metadataEntity = createMetadata(featureData);

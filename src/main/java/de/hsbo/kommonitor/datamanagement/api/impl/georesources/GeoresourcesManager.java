@@ -25,12 +25,14 @@ import de.hsbo.kommonitor.datamanagement.model.OwnerInputType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelInputType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.msg.MessageResolver;
 import jakarta.transaction.Transactional;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.repository.Meta;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -55,6 +57,7 @@ public class GeoresourcesManager {
 
 	private static Logger logger = LoggerFactory.getLogger(GeoresourcesManager.class);
 
+	private static final String MSG_GEORESOURCE_EXISTS_ERROR = "georesource-exists-error";
 	/**
 	 *
 	 */
@@ -78,6 +81,9 @@ public class GeoresourcesManager {
 
 	@Autowired
 	private ScriptManager scriptManager;
+
+	@Autowired
+	private MessageResolver messageResolver;
 
     @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
     private String publicRole;
@@ -103,10 +109,12 @@ public class GeoresourcesManager {
 			 */
 
 			if (georesourcesMetadataRepo.existsByDatasetName(datasetName)) {
+				MetadataGeoresourcesEntity existingGeoresource = georesourcesMetadataRepo.findByDatasetName(datasetName);
 				logger.error(
 						"The georesource metadataset with datasetName '{}' already exists. Thus aborting add georesource request.",
 						datasetName);
-				throw new Exception("Georesource already exists. Aborting add georesource request.");
+				String errMsg = messageResolver.getMessage(MSG_GEORESOURCE_EXISTS_ERROR);
+				throw new Exception(String.format(errMsg, datasetName, existingGeoresource.getOwner().getMandant().getName()));
 			}
 
 			MetadataGeoresourcesEntity georesourceMetadataEntity = createMetadata(featureData);
