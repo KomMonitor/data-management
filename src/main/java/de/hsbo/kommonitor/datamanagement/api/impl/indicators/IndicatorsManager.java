@@ -89,12 +89,13 @@ public class IndicatorsManager {
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
             MetadataIndicatorsEntity metadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
 
+
             String indicatorName = metadata.getDatasetName();
             String characteristicValue = metadata.getCharacteristicValue();
             IndicatorTypeEnum indicatorType = metadata.getIndicatorType();
             CreationTypeEnum creationType = metadata.getCreationType();
 
-            logger.info("Trying to update indicator using follwing parameters: name '{}', characteristicValue '{}', indicatorType '{}', creationType '{}'", indicatorName, characteristicValue, indicatorType, creationType.toString());
+            logger.info("Trying to update indicator using following parameters: name '{}', characteristicValue '{}', indicatorType '{}', creationType '{}'", indicatorName, characteristicValue, indicatorType, creationType.toString());
 
             /*
              * check if there are changes to key-properties
