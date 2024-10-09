@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -504,6 +505,36 @@ public class IndicatorsManager {
     public List<IndicatorOverviewType> getAllIndicatorsMetadata(AuthInfoProvider provider) throws Exception {
         logger.info("Retrieving all indicators metadata from db");
 
+        List<MetadataIndicatorsEntity> indicatorsMeatadataEntities = fetchIndicatorMetadataEntities(provider);
+
+        List<IndicatorOverviewType> swaggerIndicatorsMetadata = indicatorsMapper.mapToSwaggerIndicators(indicatorsMeatadataEntities);
+
+        swaggerIndicatorsMetadata.sort(Comparator.comparing(IndicatorOverviewType::getIndicatorName));
+
+        return swaggerIndicatorsMetadata;
+    }
+
+    public List<IndicatorOverviewType> filterIndicatorsMetadata(AuthInfoProvider provider, ResourceFilterType resourceFilterType) throws Exception {
+        List<MetadataIndicatorsEntity> indicatorsMeatadataEntities = fetchIndicatorMetadataEntities(provider);
+
+        List<MetadataIndicatorsEntity> idFilteredList = indicatorsMeatadataEntities.stream()
+                .filter(i -> resourceFilterType.getIds().stream()
+                        .anyMatch(r -> r.equals(i.getDatasetId()))).toList();
+
+        List<MetadataIndicatorsEntity> topicFilteredList = indicatorsMeatadataEntities.stream()
+                .filter(i -> resourceFilterType.getTopicIds().stream()
+                        .anyMatch(r -> r.equals(i.getTopicReference()))).toList();
+
+        List<MetadataIndicatorsEntity> filterResults = Stream.concat(idFilteredList.stream(), topicFilteredList.stream()).distinct().toList();
+
+        List<IndicatorOverviewType> swaggerIndicatorsMetadata = indicatorsMapper.mapToSwaggerIndicators(filterResults);
+
+        swaggerIndicatorsMetadata.sort(Comparator.comparing(IndicatorOverviewType::getIndicatorName));
+
+        return swaggerIndicatorsMetadata;
+    }
+
+    private List<MetadataIndicatorsEntity> fetchIndicatorMetadataEntities(AuthInfoProvider provider) {
         List<MetadataIndicatorsEntity> indicatorsMeatadataEntities;
 
         if (provider == null) {
@@ -513,8 +544,8 @@ public class IndicatorsManager {
                     .collect(Collectors.toList());
         } else {
             indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll().stream()
-                .filter(entity -> provider.checkPermissions(entity, PermissionLevelType.VIEWER))
-                .collect(Collectors.toList());
+                    .filter(entity -> provider.checkPermissions(entity, PermissionLevelType.VIEWER))
+                    .collect(Collectors.toList());
 
             // Iterate over the indicators and add the current user permissions. Iterator is used here in order to
             // safely remove an entity form the collection if no permissions have been found. Actually, this should
@@ -531,15 +562,7 @@ public class IndicatorsManager {
                 }
             }
         }
-
-        List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray = spatialUnitsMetadataRepo.findAll();
-
-        List<IndicatorOverviewType> swaggerIndicatorsMetadata = indicatorsMapper
-                .mapToSwaggerIndicators(indicatorsMeatadataEntities, spatialUnitsMetadataArray);
-
-        swaggerIndicatorsMetadata.sort(Comparator.comparing(IndicatorOverviewType::getIndicatorName));
-
-        return swaggerIndicatorsMetadata;
+        return indicatorsMeatadataEntities;
     }
 
     public String getValidIndicatorFeatures(String indicatorId, String spatialUnitId, BigDecimal year,

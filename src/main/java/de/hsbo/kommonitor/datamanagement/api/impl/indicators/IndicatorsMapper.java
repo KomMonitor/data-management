@@ -57,7 +57,7 @@ public class IndicatorsMapper {
 	}
 
 	public List<IndicatorOverviewType> mapToSwaggerIndicators(
-			List<MetadataIndicatorsEntity> indicatorsMetadataEntity, List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray) throws Exception {
+			List<MetadataIndicatorsEntity> indicatorsMetadataEntity) throws Exception {
 		List<IndicatorOverviewType> indicatorOverviews = new ArrayList<IndicatorOverviewType>(
 				indicatorsMetadataEntity.size());
 		

@@ -168,7 +168,6 @@ public class IndicatorsController extends BasePathController implements Indicato
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('publisher')")
     public ResponseEntity<IndicatorOverviewType> addIndicatorAsBody(IndicatorPOSTInputType indicatorData) {
@@ -311,6 +310,26 @@ public class IndicatorsController extends BasePathController implements Indicato
 
                 return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
 
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<IndicatorOverviewType>> filterIndicators(ResourceFilterType resourceFilterType) {
+        logger.info("Received request to get all indicators metadata");
+        String accept = request.getHeader("Accept");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                List<IndicatorOverviewType> spatialunitsMetadata = indicatorsManager.filterIndicatorsMetadata(provider, resourceFilterType);
+                return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }

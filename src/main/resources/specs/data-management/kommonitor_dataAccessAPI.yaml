@@ -990,6 +990,42 @@ paths:
       security:
         - kommonitor-data-access_oauth: []
       x-codegen-request-body-name: indicatorData
+  /indicators/filter:
+    post:
+      tags:
+        - indicators
+      summary: Filter indicators
+      description: Filter indicators datasets according to the specified filter
+      operationId: filterIndicators
+      requestBody:
+        description: filter data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceFilterType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IndicatorOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
   /indicators/display-order:
     patch:
       tags:
@@ -6361,6 +6397,23 @@ components:
             a main topic - only topics of type 'sub' shall be subTopics of topics
             with type 'main'
           $ref: '#/components/schemas/TopicTypeEnum'
+    ResourceFilterType:
+      title: ResourceFilterType
+      required:
+        - topicIds
+        - ids
+      type: object
+      properties:
+        topicIds:
+          type: array
+          description: list of topics for which all resources should be filtered
+          items:
+            type: string
+        ids:
+          type: array
+          description: list of resources that should be filtered
+          items:
+            type: string
     ColorType:
       type: string
       description: Defines assignable colors for different feature styles, such as POI, LOI and AOI colors.
