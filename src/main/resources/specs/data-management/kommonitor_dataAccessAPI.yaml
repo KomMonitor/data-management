@@ -110,6 +110,42 @@ paths:
           description: Invalid input
           content: {}
       deprecated: false
+  /georesources/filter:
+    post:
+      tags:
+        - georesources
+      summary: Filter georesources
+      description: Filter georesource datasets according to the specified filter
+      operationId: filterGeoresources
+      requestBody:
+        description: filter data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceFilterType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GeoresourceOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
   /georesources/{georesourceId}:
     get:
       tags:

@@ -12,11 +12,14 @@ import java.util.NoSuchElementException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import jakarta.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.geotools.filter.text.cql2.CQLException;
+import org.keycloak.adapters.jaas.AbstractKeycloakLoginModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -812,26 +815,50 @@ public class GeoresourcesManager {
 	public List<GeoresourceOverviewType> getAllGeoresourcesMetadata(AuthInfoProvider provider) throws Exception {
 		logger.info("Retrieving secured georesources metadata from db");
 
-        List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll().stream()
-                .filter(g -> provider.checkPermissions(g, PermissionLevelType.VIEWER))
-                .collect(Collectors.toList());
-
-        // Iterate over the georesources and add the current user permissions. Iterator is used here in order to safely
-        // remove an entity form the collection if no permissions have been found. Actually, this should never happen,
-        // however, it is meant as an additional security check.
-        Iterator<MetadataGeoresourcesEntity> iter = georesourcesMeatadataEntities.iterator();
-        while(iter.hasNext()) {
-            MetadataGeoresourcesEntity g = iter.next();
-            try {
-                g.setUserPermissions(provider.getPermissions(g));
-            } catch(NoSuchElementException ex) {
-                logger.error("No permissions found for georesource '{}'. Entity will be removed from resulting list.",
-                        g.getDatasetId());
-                iter.remove();
-            }
-        }
+		List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities =  fetchGeoresourceMetadataEntities(provider);
 
 		return generateSwaggerGeoresourcesMetadata(georesourcesMeatadataEntities);
+	}
+
+	public List<GeoresourceOverviewType> filterGeoresourcesMetadata(AuthInfoProvider provider, ResourceFilterType resourceFilterType) throws Exception {
+		logger.info("Retrieving filtered georesources metadata from db");
+
+		List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities =  fetchGeoresourceMetadataEntities(provider);
+
+		List<MetadataGeoresourcesEntity> idFilteredList = georesourcesMeatadataEntities.stream()
+				.filter(g -> resourceFilterType.getIds().stream()
+						.anyMatch(r -> r.equals(g.getDatasetId()))).toList();
+
+		List<MetadataGeoresourcesEntity> topicFilteredList = georesourcesMeatadataEntities.stream()
+				.filter(g -> resourceFilterType.getTopicIds().stream()
+						.anyMatch(r -> r.equals(g.getTopicReference()))).toList();
+
+		List<MetadataGeoresourcesEntity> filterResults = Stream.concat(idFilteredList.stream(), topicFilteredList.stream()).distinct().toList();
+
+		return generateSwaggerGeoresourcesMetadata(filterResults);
+
+	}
+
+	private List<MetadataGeoresourcesEntity> fetchGeoresourceMetadataEntities(AuthInfoProvider provider) {
+		List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll().stream()
+				.filter(g -> provider.checkPermissions(g, PermissionLevelType.VIEWER))
+				.collect(Collectors.toList());
+
+		// Iterate over the georesources and add the current user permissions. Iterator is used here in order to safely
+		// remove an entity form the collection if no permissions have been found. Actually, this should never happen,
+		// however, it is meant as an additional security check.
+		Iterator<MetadataGeoresourcesEntity> iter = georesourcesMeatadataEntities.iterator();
+		while(iter.hasNext()) {
+			MetadataGeoresourcesEntity g = iter.next();
+			try {
+				g.setUserPermissions(provider.getPermissions(g));
+			} catch(NoSuchElementException ex) {
+				logger.error("No permissions found for georesource '{}'. Entity will be removed from resulting list.",
+						g.getDatasetId());
+				iter.remove();
+			}
+		}
+		return georesourcesMeatadataEntities;
 	}
 
 	private List<GeoresourceOverviewType> generateSwaggerGeoresourcesMetadata(
