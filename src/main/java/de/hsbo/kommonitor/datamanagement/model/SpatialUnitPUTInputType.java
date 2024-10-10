@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitPUTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
 public class SpatialUnitPUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;

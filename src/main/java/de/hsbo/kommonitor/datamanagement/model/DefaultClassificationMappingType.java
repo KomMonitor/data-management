@@ -1,35 +1,38 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
+import java.net.URI;
+import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-
-import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-import io.swagger.v3.oas.annotations.media.Schema;
+import org.openapitools.jackson.nullable.JsonNullable;
+import java.io.Serializable;
+import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+
+import java.util.*;
+import jakarta.annotation.Generated;
 
 /**
  * DefaultClassificationMappingType
  */
-@Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-04-09T13:07:45.192171293Z[GMT]")
 
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+public class DefaultClassificationMappingType implements Serializable {
 
-public class DefaultClassificationMappingType   {
-  @JsonProperty("colorBrewerSchemeName")
-  private String colorBrewerSchemeName = null;
+  private static final long serialVersionUID = 1L;
 
-  @JsonProperty("numClasses")
-  private BigDecimal numClasses = null;
+  private String colorBrewerSchemeName;
+
+  private BigDecimal numClasses;
 
   /**
    * the classification method as enumeration
@@ -49,28 +52,45 @@ public class DefaultClassificationMappingType   {
       this.value = value;
     }
 
-    @Override
     @JsonValue
+    public String getValue() {
+      return value;
+    }
+
+    @Override
     public String toString() {
       return String.valueOf(value);
     }
 
     @JsonCreator
-    public static ClassificationMethodEnum fromValue(String text) {
+    public static ClassificationMethodEnum fromValue(String value) {
       for (ClassificationMethodEnum b : ClassificationMethodEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
+        if (b.value.equals(value)) {
           return b;
         }
       }
-      return null;
+      throw new IllegalArgumentException("Unexpected value '" + value + "'");
     }
   }
-  @JsonProperty("classificationMethod")
-  private ClassificationMethodEnum classificationMethod = null;
 
-  @JsonProperty("items")
+  private ClassificationMethodEnum classificationMethod;
+
   @Valid
-  private List<DefaultClassificationMappingItemType> items = new ArrayList<DefaultClassificationMappingItemType>();
+  private List<@Valid DefaultClassificationMappingItemType> items = new ArrayList<>();
+
+  public DefaultClassificationMappingType() {
+    super();
+  }
+
+  /**
+   * Constructor with only required parameters
+   */
+  public DefaultClassificationMappingType(String colorBrewerSchemeName, BigDecimal numClasses, ClassificationMethodEnum classificationMethod, List<@Valid DefaultClassificationMappingItemType> items) {
+    this.colorBrewerSchemeName = colorBrewerSchemeName;
+    this.numClasses = numClasses;
+    this.classificationMethod = classificationMethod;
+    this.items = items;
+  }
 
   public DefaultClassificationMappingType colorBrewerSchemeName(String colorBrewerSchemeName) {
     this.colorBrewerSchemeName = colorBrewerSchemeName;
@@ -80,11 +100,11 @@ public class DefaultClassificationMappingType   {
   /**
    * the name of the colorBrewer color scheme used to define the colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.
    * @return colorBrewerSchemeName
-   **/
-  @Schema(required = true, description = "the name of the colorBrewer color scheme used to define the colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.")
-      @NotNull
-
-    public String getColorBrewerSchemeName() {
+  */
+  @NotNull 
+  @Schema(name = "colorBrewerSchemeName", description = "the name of the colorBrewer color scheme used to define the colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("colorBrewerSchemeName")
+  public String getColorBrewerSchemeName() {
     return colorBrewerSchemeName;
   }
 
@@ -102,12 +122,11 @@ public class DefaultClassificationMappingType   {
    * minimum: 1
    * maximum: 9
    * @return numClasses
-   **/
-  @Schema(required = true, description = "the number of classes")
-      @NotNull
-
-    @Valid
-  @DecimalMin("1") @DecimalMax("9")   public BigDecimal getNumClasses() {
+  */
+  @NotNull @Valid @DecimalMin("1") @DecimalMax("9") 
+  @Schema(name = "numClasses", description = "the number of classes", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("numClasses")
+  public BigDecimal getNumClasses() {
     return numClasses;
   }
 
@@ -123,11 +142,11 @@ public class DefaultClassificationMappingType   {
   /**
    * the classification method as enumeration
    * @return classificationMethod
-   **/
-  @Schema(required = true, description = "the classification method as enumeration")
-      @NotNull
-
-    public ClassificationMethodEnum getClassificationMethod() {
+  */
+  @NotNull 
+  @Schema(name = "classificationMethod", description = "the classification method as enumeration", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("classificationMethod")
+  public ClassificationMethodEnum getClassificationMethod() {
     return classificationMethod;
   }
 
@@ -135,12 +154,15 @@ public class DefaultClassificationMappingType   {
     this.classificationMethod = classificationMethod;
   }
 
-  public DefaultClassificationMappingType items(List<DefaultClassificationMappingItemType> items) {
+  public DefaultClassificationMappingType items(List<@Valid DefaultClassificationMappingItemType> items) {
     this.items = items;
     return this;
   }
 
   public DefaultClassificationMappingType addItemsItem(DefaultClassificationMappingItemType itemsItem) {
+    if (this.items == null) {
+      this.items = new ArrayList<>();
+    }
     this.items.add(itemsItem);
     return this;
   }
@@ -148,21 +170,20 @@ public class DefaultClassificationMappingType   {
   /**
    * array of classification mapping items. each item holds the break values for a certain spatial unit. not all spatial units of a certain indicator must be set.
    * @return items
-   **/
-  @Schema(required = true, description = "array of classification mapping items. each item holds the break values for a certain spatial unit. not all spatial units of a certain indicator must be set.")
-      @NotNull
-    @Valid
-    public List<DefaultClassificationMappingItemType> getItems() {
+  */
+  @NotNull @Valid 
+  @Schema(name = "items", description = "array of classification mapping items. each item holds the break values for a certain spatial unit. not all spatial units of a certain indicator must be set.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("items")
+  public List<@Valid DefaultClassificationMappingItemType> getItems() {
     return items;
   }
 
-  public void setItems(List<DefaultClassificationMappingItemType> items) {
+  public void setItems(List<@Valid DefaultClassificationMappingItemType> items) {
     this.items = items;
   }
 
-
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -185,7 +206,6 @@ public class DefaultClassificationMappingType   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class DefaultClassificationMappingType {\n");
-    
     sb.append("    colorBrewerSchemeName: ").append(toIndentedString(colorBrewerSchemeName)).append("\n");
     sb.append("    numClasses: ").append(toIndentedString(numClasses)).append("\n");
     sb.append("    classificationMethod: ").append(toIndentedString(classificationMethod)).append("\n");
@@ -198,10 +218,11 @@ public class DefaultClassificationMappingType   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
   }
 }
+

@@ -285,7 +285,7 @@ public class IndicatorsManager {
         entity.setTopicReference(metadata.getTopicReference());
 
         entity.setAbbreviation(metadata.getAbbreviation());
-        entity.setHeadlineIndicator(metadata.isIsHeadlineIndicator());
+        entity.setHeadlineIndicator(metadata.getIsHeadlineIndicator());
         entity.setInterpretation(metadata.getInterpretation());
         entity.setTags(new HashSet<String>(metadata.getTags()));
         
@@ -341,12 +341,9 @@ public class IndicatorsManager {
                 // handle OGC web service
                 String styleName;
 
-                if (indicatorData.getDefaultClassificationMapping() != null && indicatorData.getDefaultClassificationMapping().getItems() != null && indicatorData.getDefaultClassificationMapping().getItems().size() > 0) {
-                    styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorViewTableName);
-                } else {
-                    DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
-                    styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
-                }
+                DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+                styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
+
 
                 ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 
@@ -370,12 +367,9 @@ public class IndicatorsManager {
                     // handle OGC web service
                     String styleName;
 
-                    if (indicatorData.getDefaultClassificationMapping() != null && indicatorData.getDefaultClassificationMapping().getItems() != null && indicatorData.getDefaultClassificationMapping().getItems().size() > 0) {
-                        styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorViewTableName);
-                    } else {
-                        DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
-                        styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
-                    }
+                    DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+                    styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
+                
                     publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 
                     persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName, indicatorData.getAllowedRoles());

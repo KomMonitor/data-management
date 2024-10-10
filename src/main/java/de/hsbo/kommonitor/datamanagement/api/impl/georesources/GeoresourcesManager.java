@@ -245,9 +245,9 @@ public class GeoresourcesManager {
 		entity.setLastUpdate(lastUpdate);
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
-		entity.setPOI(featureData.isIsPOI());
-		entity.setLOI(featureData.isIsLOI());
-		entity.setAOI(featureData.isIsAOI());
+		entity.setPOI(featureData.getIsPOI());
+		entity.setLOI(featureData.getIsLOI());
+		entity.setAOI(featureData.getIsAOI());
 		entity.setPoiMarkerStyle(featureData.getPoiMarkerStyle());
 		entity.setPoiMarkerText(featureData.getPoiMarkerText());
 		entity.setPoiSymbolBootstrap3Name(featureData.getPoiSymbolBootstrap3Name());
@@ -774,9 +774,9 @@ public class GeoresourcesManager {
 		entity.setLastUpdate(lastUpdate);
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
-		entity.setPOI(metadata.isIsPOI());
-		entity.setLOI(metadata.isIsLOI());
-		entity.setAOI(metadata.isIsAOI());
+		entity.setPOI(metadata.getIsPOI());
+		entity.setLOI(metadata.getIsLOI());
+		entity.setAOI(metadata.getIsAOI());
 		entity.setPoiMarkerStyle(metadata.getPoiMarkerStyle());
 		entity.setPoiMarkerText(metadata.getPoiMarkerText());
 		entity.setPoiSymbolBootstrap3Name(metadata.getPoiSymbolBootstrap3Name());
