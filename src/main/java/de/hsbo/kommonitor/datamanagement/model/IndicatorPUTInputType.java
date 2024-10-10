@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeIndicatorValues;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +23,7 @@ import jakarta.annotation.Generated;
  * IndicatorPUTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
 public class IndicatorPUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -33,8 +32,6 @@ public class IndicatorPUTInputType implements Serializable {
   private List<String> allowedRoles = new ArrayList<>();
 
   private String applicableSpatialUnit;
-
-  private DefaultClassificationMappingType defaultClassificationMapping;
 
   @Valid
   private List<@Valid IndicatorPOSTInputTypeIndicatorValues> indicatorValues = new ArrayList<>();
@@ -100,26 +97,6 @@ public class IndicatorPUTInputType implements Serializable {
     this.applicableSpatialUnit = applicableSpatialUnit;
   }
 
-  public IndicatorPUTInputType defaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
-    this.defaultClassificationMapping = defaultClassificationMapping;
-    return this;
-  }
-
-  /**
-   * Get defaultClassificationMapping
-   * @return defaultClassificationMapping
-  */
-  @Valid 
-  @Schema(name = "defaultClassificationMapping", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("defaultClassificationMapping")
-  public DefaultClassificationMappingType getDefaultClassificationMapping() {
-    return defaultClassificationMapping;
-  }
-
-  public void setDefaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
-    this.defaultClassificationMapping = defaultClassificationMapping;
-  }
-
   public IndicatorPUTInputType indicatorValues(List<@Valid IndicatorPOSTInputTypeIndicatorValues> indicatorValues) {
     this.indicatorValues = indicatorValues;
     return this;
@@ -159,13 +136,12 @@ public class IndicatorPUTInputType implements Serializable {
     IndicatorPUTInputType indicatorPUTInputType = (IndicatorPUTInputType) o;
     return Objects.equals(this.allowedRoles, indicatorPUTInputType.allowedRoles) &&
         Objects.equals(this.applicableSpatialUnit, indicatorPUTInputType.applicableSpatialUnit) &&
-        Objects.equals(this.defaultClassificationMapping, indicatorPUTInputType.defaultClassificationMapping) &&
         Objects.equals(this.indicatorValues, indicatorPUTInputType.indicatorValues);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, applicableSpatialUnit, defaultClassificationMapping, indicatorValues);
+    return Objects.hash(allowedRoles, applicableSpatialUnit, indicatorValues);
   }
 
   @Override
@@ -174,7 +150,6 @@ public class IndicatorPUTInputType implements Serializable {
     sb.append("class IndicatorPUTInputType {\n");
     sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    applicableSpatialUnit: ").append(toIndentedString(applicableSpatialUnit)).append("\n");
-    sb.append("    defaultClassificationMapping: ").append(toIndentedString(defaultClassificationMapping)).append("\n");
     sb.append("    indicatorValues: ").append(toIndentedString(indicatorValues)).append("\n");
     sb.append("}");
     return sb.toString();

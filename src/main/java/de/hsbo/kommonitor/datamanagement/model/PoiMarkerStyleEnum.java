@@ -1,35 +1,57 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
+import java.net.URI;
+import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonValue;
+import org.openapitools.jackson.nullable.JsonNullable;
+import java.io.Serializable;
+import java.time.OffsetDateTime;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+
+import java.util.*;
+import jakarta.annotation.Generated;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
-   * the poi marker type, either text or symbol
-   */
-  public enum PoiMarkerStyleEnum {
-    TEXT("text"),
-    
-    SYMBOL("symbol");
+ * the poi marker type, either text or symbol
+ */
 
-    private String value;
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+public enum PoiMarkerStyleEnum {
+  
+  TEXT("text"),
+  
+  SYMBOL("symbol");
 
-    PoiMarkerStyleEnum(String value) {
-      this.value = value;
-    }
+  private String value;
 
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static PoiMarkerStyleEnum fromValue(String text) {
-      for (PoiMarkerStyleEnum b : PoiMarkerStyleEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
+  PoiMarkerStyleEnum(String value) {
+    this.value = value;
   }
+
+  @JsonValue
+  public String getValue() {
+    return value;
+  }
+
+  @Override
+  public String toString() {
+    return String.valueOf(value);
+  }
+
+  @JsonCreator
+  public static PoiMarkerStyleEnum fromValue(String value) {
+    for (PoiMarkerStyleEnum b : PoiMarkerStyleEnum.values()) {
+      if (b.value.equals(value)) {
+        return b;
+      }
+    }
+    throw new IllegalArgumentException("Unexpected value '" + value + "'");
+  }
+}
+
