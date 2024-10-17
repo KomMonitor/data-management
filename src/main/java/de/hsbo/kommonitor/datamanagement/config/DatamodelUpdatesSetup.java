@@ -74,8 +74,8 @@ public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefresh
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"roles_privileges\" CASCADE");
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"users\" CASCADE");			
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"privileges\" CASCADE");
-			alterTableStmt.addBatch("DELETE FROM \"metadataindicators_defaultclassificationmapping\"");
-			alterTableStmt.addBatch("DELETE FROM \"defaultclassificationmappingitems\"");
+//			alterTableStmt.addBatch("DELETE FROM \"metadataindicators_defaultclassificationmapping\"");
+//			alterTableStmt.addBatch("DELETE FROM \"defaultclassificationmappingitems\"");
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"metadataindicators_defaultclassificationmapping\" CASCADE");
 			alterTableStmt.addBatch("DROP TABLE IF EXISTS \"defaultclassificationmappingitems\" CASCADE");
 			

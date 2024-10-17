@@ -839,6 +839,25 @@ public class GeoresourcesManager {
 
 	}
 
+	public List<GeoresourceOverviewType> filterGeoresourcesMetadata(ResourceFilterType resourceFilterType) throws Exception {
+		logger.info("Retrieving all public georesources metadata from db");
+
+		List<MetadataGeoresourcesEntity> georesourcesMetadataEntities = georesourcesMetadataRepo.findAll().stream()
+				.filter(g -> g.getRoles().stream().anyMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))).toList();
+
+		List<MetadataGeoresourcesEntity> idFilteredList = georesourcesMetadataEntities.stream()
+				.filter(g -> resourceFilterType.getIds().stream()
+						.anyMatch(r -> r.equals(g.getDatasetId()))).toList();
+
+		List<MetadataGeoresourcesEntity> topicFilteredList = georesourcesMetadataEntities.stream()
+				.filter(g -> resourceFilterType.getTopicIds().stream()
+						.anyMatch(r -> r.equals(g.getTopicReference()))).toList();
+
+		List<MetadataGeoresourcesEntity> filterResults = Stream.concat(idFilteredList.stream(), topicFilteredList.stream()).distinct().toList();
+
+		return generateSwaggerGeoresourcesMetadata(filterResults);
+	}
+
 	private List<MetadataGeoresourcesEntity> fetchGeoresourceMetadataEntities(AuthInfoProvider provider) {
 		List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll().stream()
 				.filter(g -> provider.checkPermissions(g, PermissionLevelType.VIEWER))
@@ -1069,5 +1088,6 @@ public class GeoresourcesManager {
 					"Tried to update georesource features, but no dataset existes with datasetId " + georesourceId);
 		}
 	}
+
 
 }

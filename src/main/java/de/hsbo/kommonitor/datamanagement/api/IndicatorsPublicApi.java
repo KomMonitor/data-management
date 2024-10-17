@@ -8,6 +8,7 @@ package de.hsbo.kommonitor.datamanagement.api;
 import java.math.BigDecimal;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
+import de.hsbo.kommonitor.datamanagement.model.ResourceFilterType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,10 +35,48 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-01-30T09:21:25.827354100+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T15:25:06.709590100+02:00[Europe/Berlin]")
 @Validated
 @Tag(name = "indicators-public", description = "the Indicators API")
 public interface IndicatorsPublicApi {
+
+    /**
+     * POST /public/indicators/filter : Filter public indicators
+     * Filter public indicators datasets according to the specified filter
+     *
+     * @param resourceFilterType filter data (required)
+     * @return OK (status code 200)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "filterPublicIndicators",
+        summary = "Filter public indicators",
+        description = "Filter public indicators datasets according to the specified filter",
+        tags = { "indicators-public" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IndicatorOverviewType.class)))
+            }),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/public/indicators/filter",
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<List<IndicatorOverviewType>> filterPublicIndicators(
+        @Parameter(name = "ResourceFilterType", description = "filter data", required = true) @Valid @RequestBody ResourceFilterType resourceFilterType
+    );
+
 
     /**
      * GET /public/indicators/{indicatorId} : retrieve information about the selected public indicator
