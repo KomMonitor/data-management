@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -15,12 +16,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-import de.hsbo.kommonitor.datamanagement.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.geotools.data.DataStore;
 import org.geotools.feature.FeatureCollection;
@@ -33,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
@@ -40,6 +36,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.In
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.RegionalReferenceValueEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
@@ -49,7 +46,28 @@ import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourceReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorMetadataPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHDisplayOrderInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeIndicatorValues;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeValueMapping;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.RegionalReferenceValueType;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 
 @Transactional
 @Repository
@@ -288,7 +306,20 @@ public class IndicatorsManager {
         entity.setInterpretation(metadata.getInterpretation());
         entity.setTags(new HashSet<String>(metadata.getTags()));
         
-        entity.setRegionalReferenceValues(metadata.getRegionalReferenceValues());
+        Collection<RegionalReferenceValueEntity> regRefValues = new ArrayList<RegionalReferenceValueEntity>();
+        
+        for (RegionalReferenceValueType regionalReferenceValueType : metadata.getRegionalReferenceValues()) {
+        	RegionalReferenceValueEntity regRefEntity = new RegionalReferenceValueEntity();
+        	
+        	regRefEntity.setReferenceDate(regionalReferenceValueType.getReferenceDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        	regRefEntity.setRegionalAverage(regionalReferenceValueType.getRegionalAverage().get());
+        	regRefEntity.setRegionalSum(regionalReferenceValueType.getRegionalSum().get());
+        	regRefEntity.setSpatiallyUnassignable(regionalReferenceValueType.getSpatiallyUnassignable().get());
+        	
+        	regRefValues.add(regRefEntity);
+		}
+        
+        entity.setRegionalReferenceValues(regRefValues);
 
         // persist in db
         indicatorsMetadataRepo.saveAndFlush(entity);
@@ -1266,7 +1297,9 @@ public class IndicatorsManager {
 
         entity.setRoles(retrieveRoles(indicatorData.getAllowedRoles()));
         
-        entity.setRegionalReferenceValues(new ArrayList<RegionalReferenceValueType>());
+        
+        
+        entity.setRegionalReferenceValues(new ArrayList<RegionalReferenceValueEntity>());
 
         /*
          * process availableTimestamps property for indicator metadata entity

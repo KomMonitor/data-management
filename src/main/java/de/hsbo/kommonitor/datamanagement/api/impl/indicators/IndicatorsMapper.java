@@ -1,6 +1,8 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -10,20 +12,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
+import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.RegionalReferenceValueEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
@@ -34,7 +39,6 @@ import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorSpatialUnitJoinItem;
 import de.hsbo.kommonitor.datamanagement.model.OgcServicesType;
 import de.hsbo.kommonitor.datamanagement.model.RegionalReferenceValueType;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 @Component
 public class IndicatorsMapper {
@@ -236,8 +240,18 @@ public class IndicatorsMapper {
 		indicatorOverviewType.setUserPermissions(indicatorsMetadataEntity.getUserPermissions());
 		
 		List<RegionalReferenceValueType> refValues = new ArrayList<RegionalReferenceValueType>();
-		for (RegionalReferenceValueType regionalReferenceValueItem : indicatorsMetadataEntity.getRegionalReferenceValues()) {
-			refValues.add(regionalReferenceValueItem);
+		for (RegionalReferenceValueEntity regionalReferenceValueEntity : indicatorsMetadataEntity.getRegionalReferenceValues()) {
+			RegionalReferenceValueType regRefValueType = new RegionalReferenceValueType();
+			
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//			formatter = formatter.withLocale( putAppropriateLocaleHere );  // Locale specifies human language for translating, and cultural norms for lowercase/uppercase and abbreviations and such. Example: Locale.US or Locale.CANADA_FRENCH
+			LocalDate date = LocalDate.parse(regionalReferenceValueEntity.getReferenceDate(), formatter);
+			
+			regRefValueType.setReferenceDate(date);
+			regRefValueType.setRegionalAverage(JsonNullable.of(regionalReferenceValueEntity.getRegionalAverage()));
+			regRefValueType.setRegionalSum(JsonNullable.of(regionalReferenceValueEntity.getRegionalSum()));
+			regRefValueType.setSpatiallyUnassignable(JsonNullable.of(regionalReferenceValueEntity.getSpatiallyUnassignable()));
+			refValues.add(regRefValueType);
 		}
 		indicatorOverviewType.setRegionalReferenceValues(refValues);
 
