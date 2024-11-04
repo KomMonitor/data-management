@@ -34,7 +34,7 @@ import jakarta.annotation.Generated;
  * IndicatorOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
 public class IndicatorOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -311,7 +311,7 @@ public class IndicatorOverviewType implements Serializable {
    * list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)
    * @return regionalReferenceValues
   */
-  @NotNull @Valid
+  @NotNull @Valid 
   @Schema(name = "regionalReferenceValues", description = "list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("regionalReferenceValues")
   public List<@Valid RegionalReferenceValueType> getRegionalReferenceValues() {
@@ -519,7 +519,7 @@ public class IndicatorOverviewType implements Serializable {
    * identifier of the owning group
    * @return ownerId
   */
-  @NotNull
+  @NotNull 
   @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("ownerId")
   public String getOwnerId() {
@@ -731,7 +731,7 @@ public class IndicatorOverviewType implements Serializable {
    * flag whether the resource is publicly accessible
    * @return isPublic
   */
-  @NotNull
+  @NotNull 
   @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isPublic")
   public Boolean getIsPublic() {

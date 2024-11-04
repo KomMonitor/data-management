@@ -1,19 +1,26 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Generated;
-import jakarta.validation.constraints.NotNull;
-
-import java.io.Serializable;
+import java.net.URI;
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import org.openapitools.jackson.nullable.JsonNullable;
+import java.io.Serializable;
+import java.time.OffsetDateTime;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+
+import java.util.*;
+import jakarta.annotation.Generated;
 
 /**
  * organizational unit (group)
  */
 
 @Schema(name = "OrganizationalUnitInputType", description = "organizational unit (group)")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
 public class OrganizationalUnitInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -55,7 +62,7 @@ public class OrganizationalUnitInputType implements Serializable {
    * unique id of this organizational Unit
    * @return organizationalUnitId
   */
-
+  
   @Schema(name = "organizationalUnitId", description = "unique id of this organizational Unit", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("organizationalUnitId")
   public String getOrganizationalUnitId() {
@@ -75,7 +82,7 @@ public class OrganizationalUnitInputType implements Serializable {
    * name of this organizational Unit
    * @return name
   */
-  @NotNull
+  @NotNull 
   @Schema(name = "name", description = "name of this organizational Unit", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("name")
   public String getName() {
@@ -95,7 +102,7 @@ public class OrganizationalUnitInputType implements Serializable {
    * flag whether this unit is an autonomous mandant
    * @return mandant
   */
-  @NotNull
+  @NotNull 
   @Schema(name = "mandant", description = "flag whether this unit is an autonomous mandant", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("mandant")
   public Boolean getMandant() {
@@ -115,7 +122,7 @@ public class OrganizationalUnitInputType implements Serializable {
    * uuid of the corresponding Keycloak group
    * @return keycloakId
   */
-  @NotNull
+  @NotNull 
   @Schema(name = "keycloakId", description = "uuid of the corresponding Keycloak group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("keycloakId")
   public String getKeycloakId() {
@@ -175,7 +182,7 @@ public class OrganizationalUnitInputType implements Serializable {
    * uuid of the parent group
    * @return parentId
   */
-
+  
   @Schema(name = "parentId", description = "uuid of the parent group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("parentId")
   public String getParentId() {

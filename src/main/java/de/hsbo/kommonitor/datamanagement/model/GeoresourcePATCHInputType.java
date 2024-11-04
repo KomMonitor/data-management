@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * GeoresourcePATCHInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
 public class GeoresourcePATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -259,7 +259,7 @@ public class GeoresourcePATCHInputType implements Serializable {
    * Get poiMarkerStyle
    * @return poiMarkerStyle
   */
-  @Valid
+  @Valid 
   @Schema(name = "poiMarkerStyle", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiMarkerStyle")
   public PoiMarkerStyleEnum getPoiMarkerStyle() {
@@ -279,7 +279,7 @@ public class GeoresourcePATCHInputType implements Serializable {
    * the poi marker text string to be used if poiMarkerStyle is set to text
    * @return poiMarkerText
   */
-  @Size(max = 3)
+  @Size(max = 3) 
   @Schema(name = "poiMarkerText", description = "the poi marker text string to be used if poiMarkerStyle is set to text", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiMarkerText")
   public String getPoiMarkerText() {
