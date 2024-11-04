@@ -9,10 +9,11 @@ import java.math.BigDecimal;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorMetadataPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHDisplayOrderInputType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPUTInputType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
+import de.hsbo.kommonitor.datamanagement.model.OwnerInputType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelInputType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,7 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-01-30T09:21:25.827354100+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:10.685766091+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "indicators", description = "the Indicators API")
 public interface IndicatorsApi {
@@ -897,7 +898,43 @@ public interface IndicatorsApi {
 
 
     /**
-     * PATCH /indicators/{indicatorId}/{spatialUnitId} : Modify/Update the selected indicator dataset
+     * PUT /indicators/{indicatorId}/ownership : Modify/Update the selected indicator dataset ownership
+     *
+     * @param indicatorId unique identifier of the selected indicator dataset (required)
+     * @param indicatorData Indicator parameters input (required)
+     * @return No Content (status code 204)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "updateIndicatorOwnership",
+        summary = "Modify/Update the selected indicator dataset ownership",
+        tags = { "indicators" },
+        responses = {
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PUT,
+        value = "/indicators/{indicatorId}/ownership",
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<Void> updateIndicatorOwnership(
+        @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
+        @Parameter(name = "indicatorData", description = "Indicator parameters input", required = true) @Valid @RequestBody OwnerInputType indicatorData
+    );
+
+
+    /**
+     * PUT /indicators/{indicatorId}/{spatialUnitId}/ownership : Modify/Update the selected indicator dataset ownership
      *
      * @param indicatorId unique identifier of the selected indicator dataset (required)
      * @param spatialUnitId the unique identifier of the spatial level (required)
@@ -909,8 +946,8 @@ public interface IndicatorsApi {
      *         or Invalid input (status code 405)
      */
     @Operation(
-        operationId = "updateIndicatorRoles",
-        summary = "Modify/Update the selected indicator dataset",
+        operationId = "updateIndicatorOwnershipBySpatialUnit",
+        summary = "Modify/Update the selected indicator dataset ownership",
         tags = { "indicators" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
@@ -924,15 +961,91 @@ public interface IndicatorsApi {
         }
     )
     @RequestMapping(
-        method = RequestMethod.PATCH,
-        value = "/indicators/{indicatorId}/{spatialUnitId}",
+        method = RequestMethod.PUT,
+        value = "/indicators/{indicatorId}/{spatialUnitId}/ownership",
         consumes = { "application/json" }
     )
     
-    ResponseEntity<Void> updateIndicatorRoles(
+    ResponseEntity<Void> updateIndicatorOwnershipBySpatialUnit(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
-        @Parameter(name = "indicatorData", description = "Indicator parameters input", required = true) @Valid @RequestBody IndicatorPATCHInputType indicatorData
+        @Parameter(name = "indicatorData", description = "Indicator parameters input", required = true) @Valid @RequestBody OwnerInputType indicatorData
+    );
+
+
+    /**
+     * PUT /indicators/{indicatorId}/permissions : Modify/Update the selected indicator dataset permissions
+     *
+     * @param indicatorId unique identifier of the selected indicator dataset (required)
+     * @param indicatorData Indicator parameters input (required)
+     * @return No Content (status code 204)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "updateIndicatorPermissions",
+        summary = "Modify/Update the selected indicator dataset permissions",
+        tags = { "indicators" },
+        responses = {
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PUT,
+        value = "/indicators/{indicatorId}/permissions",
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<Void> updateIndicatorPermissions(
+        @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
+        @Parameter(name = "indicatorData", description = "Indicator parameters input", required = true) @Valid @RequestBody PermissionLevelInputType indicatorData
+    );
+
+
+    /**
+     * PUT /indicators/{indicatorId}/{spatialUnitId}/permissions : Modify/Update the selected indicator dataset permissions
+     *
+     * @param indicatorId unique identifier of the selected indicator dataset (required)
+     * @param spatialUnitId the unique identifier of the spatial level (required)
+     * @param indicatorData Indicator parameters input (required)
+     * @return OK (status code 200)
+     *         or No Content (status code 204)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "updateIndicatorPermissionsBySpatialUnit",
+        summary = "Modify/Update the selected indicator dataset permissions",
+        tags = { "indicators" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PUT,
+        value = "/indicators/{indicatorId}/{spatialUnitId}/permissions",
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<Void> updateIndicatorPermissionsBySpatialUnit(
+        @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
+        @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
+        @Parameter(name = "indicatorData", description = "Indicator parameters input", required = true) @Valid @RequestBody PermissionLevelInputType indicatorData
     );
 
 }

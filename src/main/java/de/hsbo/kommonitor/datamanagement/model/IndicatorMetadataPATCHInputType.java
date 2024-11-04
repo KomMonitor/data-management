@@ -1,31 +1,16 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
-import java.net.URI;
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeRefrencesToGeoresources;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.RegionalReferenceValueType;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.io.Serializable;
-import java.time.OffsetDateTime;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
+import java.util.Objects;
 
 /**
  * IndicatorMetadataPATCHInputType
@@ -37,9 +22,6 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private String abbreviation;
-
-  @Valid
-  private List<String> allowedRoles = new ArrayList<>();
 
   private String characteristicValue;
 
@@ -88,9 +70,8 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorMetadataPATCHInputType(String abbreviation, List<String> allowedRoles, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String processDescription, List<String> tags, String topicReference, String unit) {
+  public IndicatorMetadataPATCHInputType(String abbreviation, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String processDescription, List<String> tags, String topicReference, String unit) {
     this.abbreviation = abbreviation;
-    this.allowedRoles = allowedRoles;
     this.interpretation = interpretation;
     this.isHeadlineIndicator = isHeadlineIndicator;
     this.metadata = metadata;
@@ -118,34 +99,6 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
 
   public void setAbbreviation(String abbreviation) {
     this.abbreviation = abbreviation;
-  }
-
-  public IndicatorMetadataPATCHInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
-    return this;
-  }
-
-  public IndicatorMetadataPATCHInputType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
-    }
-    this.allowedRoles.add(allowedRolesItem);
-    return this;
-  }
-
-  /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
-  */
-  @NotNull 
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
-  }
-
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
   }
 
   public IndicatorMetadataPATCHInputType characteristicValue(String characteristicValue) {
@@ -245,7 +198,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
    * list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)
    * @return regionalReferenceValues
   */
-  @Valid 
+  @Valid
   @Schema(name = "regionalReferenceValues", description = "list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("regionalReferenceValues")
   public List<@Valid RegionalReferenceValueType> getRegionalReferenceValues() {
@@ -550,7 +503,6 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
     }
     IndicatorMetadataPATCHInputType indicatorMetadataPATCHInputType = (IndicatorMetadataPATCHInputType) o;
     return Objects.equals(this.abbreviation, indicatorMetadataPATCHInputType.abbreviation) &&
-        Objects.equals(this.allowedRoles, indicatorMetadataPATCHInputType.allowedRoles) &&
         Objects.equals(this.characteristicValue, indicatorMetadataPATCHInputType.characteristicValue) &&
         Objects.equals(this.creationType, indicatorMetadataPATCHInputType.creationType) &&
         Objects.equals(this.datasetName, indicatorMetadataPATCHInputType.datasetName) &&
@@ -573,7 +525,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, allowedRoles, characteristicValue, creationType, datasetName, defaultClassificationMapping, regionalReferenceValues, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit);
+    return Objects.hash(abbreviation, characteristicValue, creationType, datasetName, defaultClassificationMapping, regionalReferenceValues, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit);
   }
 
   @Override
@@ -581,7 +533,6 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorMetadataPATCHInputType {\n");
     sb.append("    abbreviation: ").append(toIndentedString(abbreviation)).append("\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");
     sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");

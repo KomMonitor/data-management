@@ -1,44 +1,25 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.openapitools.jackson.nullable.JsonNullable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.RegionalReferenceValueEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceMapper;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.IndicatorReferenceMapper;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.*;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
-import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
-import de.hsbo.kommonitor.datamanagement.model.GeoresourceReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorSpatialUnitJoinItem;
-import de.hsbo.kommonitor.datamanagement.model.OgcServicesType;
-import de.hsbo.kommonitor.datamanagement.model.RegionalReferenceValueType;
+import de.hsbo.kommonitor.datamanagement.model.*;
+import org.openapitools.jackson.nullable.JsonNullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class IndicatorsMapper {
@@ -89,7 +70,7 @@ public class IndicatorsMapper {
 		Map<String, List<IndicatorSpatialUnitJoinEntity>> indicatorSpatialUnitsMap = new HashMap<String, List<IndicatorSpatialUnitJoinEntity>>();
 		
 		List<IndicatorSpatialUnitJoinEntity> allEntities = indicatorSpatialUnitsRepo.findAll();
-		
+
 		for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitEntity : allEntities) {
 			if(indicatorSpatialUnitEntity == null) {
 				continue;
@@ -236,17 +217,16 @@ public class IndicatorsMapper {
 		;
 		indicatorOverviewType.setInterpretation(indicatorsMetadataEntity.getInterpretation());
 		indicatorOverviewType.setTags(new ArrayList<String>(indicatorsMetadataEntity.getTags()));
-		indicatorOverviewType.setAllowedRoles(getAllowedRoleIds(indicatorsMetadataEntity.getRoles()));
 		indicatorOverviewType.setUserPermissions(indicatorsMetadataEntity.getUserPermissions());
-		
+
 		List<RegionalReferenceValueType> refValues = new ArrayList<RegionalReferenceValueType>();
 		for (RegionalReferenceValueEntity regionalReferenceValueEntity : indicatorsMetadataEntity.getRegionalReferenceValues()) {
 			RegionalReferenceValueType regRefValueType = new RegionalReferenceValueType();
-			
+
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 //			formatter = formatter.withLocale( putAppropriateLocaleHere );  // Locale specifies human language for translating, and cultural norms for lowercase/uppercase and abbreviations and such. Example: Locale.US or Locale.CANADA_FRENCH
 			LocalDate date = LocalDate.parse(regionalReferenceValueEntity.getReferenceDate(), formatter);
-			
+
 			regRefValueType.setReferenceDate(date);
 			regRefValueType.setRegionalAverage(JsonNullable.of(regionalReferenceValueEntity.getRegionalAverage()));
 			regRefValueType.setRegionalSum(JsonNullable.of(regionalReferenceValueEntity.getRegionalSum()));
@@ -255,13 +235,20 @@ public class IndicatorsMapper {
 		}
 		indicatorOverviewType.setRegionalReferenceValues(refValues);
 
+
+		indicatorOverviewType.setPermissions(getAllowedRoleIds(indicatorsMetadataEntity.getPermissions()));
+		if (indicatorsMetadataEntity.getOwner() != null) {
+			indicatorOverviewType.setOwnerId(indicatorsMetadataEntity.getOwner().getOrganizationalUnitId());
+		}
+		indicatorOverviewType.setIsPublic(indicatorsMetadataEntity.isPublic());
+
 		return indicatorOverviewType;
 	}
 
-	private List<String> getAllowedRoleIds(HashSet<RolesEntity> roles) {
+	private List<String> getAllowedRoleIds(HashSet<PermissionEntity> roles) {
 		return roles
 				.stream()
-				.map(r -> r.getRoleId())
+				.map(r -> r.getPermissionId())
 				.collect(Collectors.toList());
 	}
 
@@ -312,11 +299,15 @@ public class IndicatorsMapper {
 			item.setSpatialUnitId(indicatorSpatialUnitJoinEntity.getSpatialUnitId());
 			item.setSpatialUnitName(indicatorSpatialUnitJoinEntity.getSpatialUnitName());
 
-			List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getRoles().stream()
-					.map(r -> r.getRoleId())
+			List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getPermissions().stream()
+					.map(PermissionEntity::getPermissionId)
 					.collect(Collectors.toList());
-			item.setAllowedRoles(allowedRoles);
+			item.setPermissions(allowedRoles);
 			item.setUserPermissions(indicatorSpatialUnitJoinEntity.getUserPermissions());
+			if (indicatorSpatialUnitJoinEntity.getOwner() != null) {
+				item.setOwnerId(indicatorSpatialUnitJoinEntity.getOwner().getOrganizationalUnitId());
+			}
+			item.setIsPublic(indicatorSpatialUnitJoinEntity.isPublic());
 
 			indicatorSpatialUnitJoinItems.add(item);
 			// This is a QAD to prevent shared collection references for spatial unit roles

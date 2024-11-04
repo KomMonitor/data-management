@@ -2,11 +2,10 @@ package de.hsbo.kommonitor.datamanagement.api.impl.scripts;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.Principal;
 import java.util.List;
 
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,7 +54,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('publisher')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity<ProcessScriptOverviewType> addProcessScriptAsBody(ProcessScriptPOSTInputType processScriptData) {
 		logger.info("Received request to insert new process script");
 
@@ -92,7 +90,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity deleteProcessScript(String indicatorId) {
 		logger.info("Received request to delete process scripts for indicatorId '{}'", indicatorId);
 		
@@ -172,7 +170,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('editor')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity updateProcessScriptAsBody(
 			String indicatorId,
 			ProcessScriptPUTInputType processScriptData) {
@@ -232,7 +230,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity deleteProcessScriptByScriptId(String scriptId) {
 		logger.info("Received request to delete process scripts for scriptId '{}'", scriptId);
 		
@@ -307,7 +305,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('editor')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity updateProcessScriptAsBodyByScriptId(String scriptId,
 			@RequestBody ProcessScriptPUTInputType processScriptData) {
 		logger.info("Received request to update process script with scriptId '{}'", scriptId);

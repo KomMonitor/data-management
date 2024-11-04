@@ -5,7 +5,7 @@ import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;

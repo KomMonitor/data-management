@@ -5,11 +5,15 @@
  */
 package de.hsbo.kommonitor.datamanagement.auth;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import javax.annotation.PostConstruct;
+
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.auth.token.TokenParserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +37,15 @@ public final class AuthHelperService {
     
     @Autowired
     private IndicatorSpatialUnitsRepository indicatorspatialUnitsRepository;
+
+    @Autowired
+    private OrganizationalUnitRepository organizationalUnitRepository;
     
     @Autowired
     private AuthInfoProviderFactory authInfoProviderFactory;
+
+    @Autowired
+    private TokenParserFactory tokenParserFactory;
     
     @PostConstruct
     private void init(){
@@ -46,6 +56,10 @@ public final class AuthHelperService {
     
     public AuthInfoProviderFactory getAuthInfoProviderFactory(){
         return this.authInfoProviderFactory;
+    }
+
+    public TokenParserFactory getTokenParserFactory(){
+        return this.tokenParserFactory;
     }
     
     public GeoresourcesMetadataRepository getGeoresourceRepository(){
@@ -62,6 +76,10 @@ public final class AuthHelperService {
     
     public IndicatorSpatialUnitsRepository getIndicatorSpatialunitsRepository(){
         return this.indicatorspatialUnitsRepository;
+    }
+
+    public OrganizationalUnitRepository getOrganizationalUnitRepository(){
+        return this.organizationalUnitRepository;
     }
     
     /**

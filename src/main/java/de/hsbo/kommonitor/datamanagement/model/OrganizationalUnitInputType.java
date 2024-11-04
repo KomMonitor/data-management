@@ -1,19 +1,12 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
-import java.net.URI;
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.io.Serializable;
-import java.time.OffsetDateTime;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
-import java.util.*;
 import jakarta.annotation.Generated;
+import jakarta.validation.constraints.NotNull;
+
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * organizational unit (group)
@@ -25,11 +18,19 @@ public class OrganizationalUnitInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
+  private String organizationalUnitId;
+
+  private String name;
+
+  private Boolean mandant;
+
+  private String keycloakId;
+
   private String contact;
 
   private String description;
 
-  private String name;
+  private String parentId;
 
   public OrganizationalUnitInputType() {
     super();
@@ -38,9 +39,91 @@ public class OrganizationalUnitInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public OrganizationalUnitInputType(String contact, String name) {
-    this.contact = contact;
+  public OrganizationalUnitInputType(String name, Boolean mandant, String keycloakId, String contact) {
     this.name = name;
+    this.mandant = mandant;
+    this.keycloakId = keycloakId;
+    this.contact = contact;
+  }
+
+  public OrganizationalUnitInputType organizationalUnitId(String organizationalUnitId) {
+    this.organizationalUnitId = organizationalUnitId;
+    return this;
+  }
+
+  /**
+   * unique id of this organizational Unit
+   * @return organizationalUnitId
+  */
+
+  @Schema(name = "organizationalUnitId", description = "unique id of this organizational Unit", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("organizationalUnitId")
+  public String getOrganizationalUnitId() {
+    return organizationalUnitId;
+  }
+
+  public void setOrganizationalUnitId(String organizationalUnitId) {
+    this.organizationalUnitId = organizationalUnitId;
+  }
+
+  public OrganizationalUnitInputType name(String name) {
+    this.name = name;
+    return this;
+  }
+
+  /**
+   * name of this organizational Unit
+   * @return name
+  */
+  @NotNull
+  @Schema(name = "name", description = "name of this organizational Unit", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("name")
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public OrganizationalUnitInputType mandant(Boolean mandant) {
+    this.mandant = mandant;
+    return this;
+  }
+
+  /**
+   * flag whether this unit is an autonomous mandant
+   * @return mandant
+  */
+  @NotNull
+  @Schema(name = "mandant", description = "flag whether this unit is an autonomous mandant", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("mandant")
+  public Boolean getMandant() {
+    return mandant;
+  }
+
+  public void setMandant(Boolean mandant) {
+    this.mandant = mandant;
+  }
+
+  public OrganizationalUnitInputType keycloakId(String keycloakId) {
+    this.keycloakId = keycloakId;
+    return this;
+  }
+
+  /**
+   * uuid of the corresponding Keycloak group
+   * @return keycloakId
+  */
+  @NotNull
+  @Schema(name = "keycloakId", description = "uuid of the corresponding Keycloak group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("keycloakId")
+  public String getKeycloakId() {
+    return keycloakId;
+  }
+
+  public void setKeycloakId(String keycloakId) {
+    this.keycloakId = keycloakId;
   }
 
   public OrganizationalUnitInputType contact(String contact) {
@@ -83,24 +166,24 @@ public class OrganizationalUnitInputType implements Serializable {
     this.description = description;
   }
 
-  public OrganizationalUnitInputType name(String name) {
-    this.name = name;
+  public OrganizationalUnitInputType parentId(String parentId) {
+    this.parentId = parentId;
     return this;
   }
 
   /**
-   * name of this organizational Unit
-   * @return name
+   * uuid of the parent group
+   * @return parentId
   */
-  @NotNull 
-  @Schema(name = "name", description = "name of this organizational Unit", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("name")
-  public String getName() {
-    return name;
+
+  @Schema(name = "parentId", description = "uuid of the parent group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("parentId")
+  public String getParentId() {
+    return parentId;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setParentId(String parentId) {
+    this.parentId = parentId;
   }
 
   @Override
@@ -112,23 +195,31 @@ public class OrganizationalUnitInputType implements Serializable {
       return false;
     }
     OrganizationalUnitInputType organizationalUnitInputType = (OrganizationalUnitInputType) o;
-    return Objects.equals(this.contact, organizationalUnitInputType.contact) &&
+    return Objects.equals(this.organizationalUnitId, organizationalUnitInputType.organizationalUnitId) &&
+        Objects.equals(this.name, organizationalUnitInputType.name) &&
+        Objects.equals(this.mandant, organizationalUnitInputType.mandant) &&
+        Objects.equals(this.keycloakId, organizationalUnitInputType.keycloakId) &&
+        Objects.equals(this.contact, organizationalUnitInputType.contact) &&
         Objects.equals(this.description, organizationalUnitInputType.description) &&
-        Objects.equals(this.name, organizationalUnitInputType.name);
+        Objects.equals(this.parentId, organizationalUnitInputType.parentId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(contact, description, name);
+    return Objects.hash(organizationalUnitId, name, mandant, keycloakId, contact, description, parentId);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class OrganizationalUnitInputType {\n");
+    sb.append("    organizationalUnitId: ").append(toIndentedString(organizationalUnitId)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    mandant: ").append(toIndentedString(mandant)).append("\n");
+    sb.append("    keycloakId: ").append(toIndentedString(keycloakId)).append("\n");
     sb.append("    contact: ").append(toIndentedString(contact)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    parentId: ").append(toIndentedString(parentId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

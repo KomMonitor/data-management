@@ -10,6 +10,8 @@ import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourcePATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourcePOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourcePUTInputType;
+import de.hsbo.kommonitor.datamanagement.model.OwnerInputType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelInputType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-14T08:36:20.041405+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:10.685766091+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "georesources", description = "the Georesources API")
 public interface GeoresourcesApi {
@@ -821,6 +823,86 @@ public interface GeoresourcesApi {
     ResponseEntity<Void> updateGeoresourceMetadataAsBody(
         @Parameter(name = "georesourceId", description = "identifier of the geo-resource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
         @Parameter(name = "metadata", description = "metadata input", required = true) @Valid @RequestBody GeoresourcePATCHInputType metadata
+    );
+
+
+    /**
+     * PUT /georesources/{georesourceId}/ownership : update the ownership for the selected geo-resource dataset
+     * update the ownership for the selected geo-resource dataset
+     *
+     * @param georesourceId identifier of the geo-resource dataset (required)
+     * @param ownerInputType GeoResource ownership input (optional)
+     * @return No Content (status code 204)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "updateGeoresourceOwnership",
+        summary = "update the ownership for the selected geo-resource dataset",
+        description = "update the ownership for the selected geo-resource dataset",
+        tags = { "georesources" },
+        responses = {
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PUT,
+        value = "/georesources/{georesourceId}/ownership",
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<Void> updateGeoresourceOwnership(
+        @Parameter(name = "georesourceId", description = "identifier of the geo-resource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
+        @Parameter(name = "OwnerInputType", description = "GeoResource ownership input") @Valid @RequestBody(required = false) OwnerInputType ownerInputType
+    );
+
+
+    /**
+     * PUT /georesources/{georesourceId}/permissions : update the permissions for the selected geo-resource dataset
+     * update the permissions for the selected geo-resource dataset
+     *
+     * @param georesourceId identifier of the geo-resource dataset (required)
+     * @param permissionLevelInputType GeoResource permission level input (optional)
+     * @return No Content (status code 204)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "updateGeoresourcePermissions",
+        summary = "update the permissions for the selected geo-resource dataset",
+        description = "update the permissions for the selected geo-resource dataset",
+        tags = { "georesources" },
+        responses = {
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PUT,
+        value = "/georesources/{georesourceId}/permissions",
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<Void> updateGeoresourcePermissions(
+        @Parameter(name = "georesourceId", description = "identifier of the geo-resource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
+        @Parameter(name = "PermissionLevelInputType", description = "GeoResource permission level input") @Valid @RequestBody(required = false) PermissionLevelInputType permissionLevelInputType
     );
 
 }

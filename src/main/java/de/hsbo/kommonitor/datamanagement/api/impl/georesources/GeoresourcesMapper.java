@@ -1,5 +1,14 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,15 +17,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.PeriodOfValidityEntity_georesources;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
-import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 
 public class GeoresourcesMapper {
 	
@@ -131,16 +131,20 @@ private static GeoresourcesMetadataRepository georesourceMetadataRepo;
 		dataset.setWmsUrl(georesourceMetadataEntity.getWmsUrl());
 		dataset.setWfsUrl(georesourceMetadataEntity.getWfsUrl());
 
-		dataset.setAllowedRoles(getAllowedRoleIds(georesourceMetadataEntity.getRoles()));
+		dataset.setPermissions(getPermissions(georesourceMetadataEntity.getPermissions()));
 		dataset.setUserPermissions(georesourceMetadataEntity.getUserPermissions());
+		if (georesourceMetadataEntity.getOwner() != null) {
+			dataset.setOwnerId(georesourceMetadataEntity.getOwner().getOrganizationalUnitId());
+		}
+		dataset.setIsPublic(georesourceMetadataEntity.isPublic());
 
 		return dataset;
 	}
 
-	private static List<String> getAllowedRoleIds(HashSet<RolesEntity> roles) {
+	private static List<String> getPermissions(HashSet<PermissionEntity> roles) {
 		return roles
 				.stream()
-				.map(r -> r.getRoleId())
+				.map(PermissionEntity::getPermissionId)
 				.collect(Collectors.toList());
 	}
 }

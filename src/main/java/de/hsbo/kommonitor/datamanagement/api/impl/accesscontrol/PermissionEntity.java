@@ -12,16 +12,13 @@ import jakarta.persistence.ManyToOne;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import org.hibernate.annotations.GenericGenerator;
 
-@Entity(name = "Roles")
-public class RolesEntity {
+@Entity(name = "Permissions")
+public class PermissionEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    private String roleId = null;
-    
-    @Column(nullable = true)
-    private String roleName = null;
+    private String permissionId = null;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "organizationalUnit")
@@ -29,27 +26,38 @@ public class RolesEntity {
 
     // We default to no permissions just in case
     @Enumerated(EnumType.ORDINAL)
-    @Column(nullable = true)
-//    private PermissionLevelType permissionLevel = PermissionLevelType.NONE();
+    @Column()
     private PermissionLevelType permissionLevel = null;
+
+    private String name;
+
+    private String permissionType;
 
     /*
      * default constructor is required by hibernate / jpa
      */
-    public RolesEntity() {
+
+    public PermissionEntity() {
 
     }
-
     public OrganizationalUnitEntity getOrganizationalUnit() {
         return organizationalUnit;
     }
 
-    public String getRoleId() {
-        return roleId;
+    public String getPermissionId() {
+        return permissionId;
     }
 
     public void setOrganizationalUnit(OrganizationalUnitEntity unit) {
         this.organizationalUnit = unit;
+    }
+
+    public String getPermissionType() {
+        return permissionType;
+    }
+
+    public void setPermissionType(String permissionType) {
+        this.permissionType = permissionType;
     }
 
     public PermissionLevelType getPermissionLevel() {
@@ -60,12 +68,11 @@ public class RolesEntity {
         this.permissionLevel = permissionLevel;
     }
 
-	public String getRoleName() {
-		return roleName;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
-	}
-
+    public void setName(String name) {
+        this.name = name;
+    }
 }

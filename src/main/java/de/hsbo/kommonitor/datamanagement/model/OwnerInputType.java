@@ -16,45 +16,45 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * RoleInputType
+ * OwnerInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-06T14:41:06.171227400+01:00[Europe/Berlin]")
-public class RoleInputType implements Serializable {
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
+public class OwnerInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String roleName;
+  private String ownerId;
 
-  public RoleInputType() {
+  public OwnerInputType() {
     super();
   }
 
   /**
    * Constructor with only required parameters
    */
-  public RoleInputType(String roleName) {
-    this.roleName = roleName;
+  public OwnerInputType(String ownerId) {
+    this.ownerId = ownerId;
   }
 
-  public RoleInputType roleName(String roleName) {
-    this.roleName = roleName;
+  public OwnerInputType ownerId(String ownerId) {
+    this.ownerId = ownerId;
     return this;
   }
 
   /**
-   * the role name
-   * @return roleName
+   * ID of the owning group
+   * @return ownerId
   */
   @NotNull 
-  @Schema(name = "roleName", description = "the role name", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("roleName")
-  public String getRoleName() {
-    return roleName;
+  @Schema(name = "ownerId", description = "ID of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
   }
 
-  public void setRoleName(String roleName) {
-    this.roleName = roleName;
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
   }
 
   @Override
@@ -65,20 +65,20 @@ public class RoleInputType implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    RoleInputType roleInputType = (RoleInputType) o;
-    return Objects.equals(this.roleName, roleInputType.roleName);
+    OwnerInputType ownerInputType = (OwnerInputType) o;
+    return Objects.equals(this.ownerId, ownerInputType.ownerId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(roleName);
+    return Objects.hash(ownerId);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class RoleInputType {\n");
-    sb.append("    roleName: ").append(toIndentedString(roleName)).append("\n");
+    sb.append("class OwnerInputType {\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

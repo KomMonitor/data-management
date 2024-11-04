@@ -38,7 +38,7 @@ public class IndicatorPOSTInputType implements Serializable {
   private String abbreviation;
 
   @Valid
-  private List<String> allowedRoles = new ArrayList<>();
+  private List<String> permissions = new ArrayList<>();
 
   private String characteristicValue;
 
@@ -60,6 +60,8 @@ public class IndicatorPOSTInputType implements Serializable {
 
   private CommonMetadataType metadata;
 
+  private String ownerId;
+
   private String processDescription;
 
   private String referenceDateNote;
@@ -77,6 +79,8 @@ public class IndicatorPOSTInputType implements Serializable {
 
   private String unit;
 
+  private Boolean isPublic;
+
   public IndicatorPOSTInputType() {
     super();
   }
@@ -84,9 +88,9 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorPOSTInputType(String abbreviation, List<String> allowedRoles, String characteristicValue, CreationTypeEnum creationType, String datasetName, DefaultClassificationMappingType defaultClassificationMapping, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String processDescription, List<String> tags, String topicReference, String unit) {
+  public IndicatorPOSTInputType(String abbreviation, List<String> permissions, String characteristicValue, CreationTypeEnum creationType, String datasetName, DefaultClassificationMappingType defaultClassificationMapping, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String ownerId, String processDescription, List<String> tags, String topicReference, String unit, Boolean isPublic) {
     this.abbreviation = abbreviation;
-    this.allowedRoles = allowedRoles;
+    this.permissions = permissions;
     this.characteristicValue = characteristicValue;
     this.creationType = creationType;
     this.datasetName = datasetName;
@@ -94,10 +98,12 @@ public class IndicatorPOSTInputType implements Serializable {
     this.interpretation = interpretation;
     this.isHeadlineIndicator = isHeadlineIndicator;
     this.metadata = metadata;
+    this.ownerId = ownerId;
     this.processDescription = processDescription;
     this.tags = tags;
     this.topicReference = topicReference;
     this.unit = unit;
+    this.isPublic = isPublic;
   }
 
   public IndicatorPOSTInputType abbreviation(String abbreviation) {
@@ -120,32 +126,32 @@ public class IndicatorPOSTInputType implements Serializable {
     this.abbreviation = abbreviation;
   }
 
-  public IndicatorPOSTInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public IndicatorPOSTInputType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public IndicatorPOSTInputType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+  public IndicatorPOSTInputType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
+   * list of permissions on this entity
+   * @return permissions
   */
   @NotNull 
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 
   public IndicatorPOSTInputType characteristicValue(String characteristicValue) {
@@ -348,6 +354,26 @@ public class IndicatorPOSTInputType implements Serializable {
     this.metadata = metadata;
   }
 
+  public IndicatorPOSTInputType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+  @NotNull
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
   public IndicatorPOSTInputType processDescription(String processDescription) {
     this.processDescription = processDescription;
     return this;
@@ -512,6 +538,26 @@ public class IndicatorPOSTInputType implements Serializable {
     this.unit = unit;
   }
 
+  public IndicatorPOSTInputType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+  @NotNull
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -522,7 +568,7 @@ public class IndicatorPOSTInputType implements Serializable {
     }
     IndicatorPOSTInputType indicatorPOSTInputType = (IndicatorPOSTInputType) o;
     return Objects.equals(this.abbreviation, indicatorPOSTInputType.abbreviation) &&
-        Objects.equals(this.allowedRoles, indicatorPOSTInputType.allowedRoles) &&
+        Objects.equals(this.permissions, indicatorPOSTInputType.permissions) &&
         Objects.equals(this.characteristicValue, indicatorPOSTInputType.characteristicValue) &&
         Objects.equals(this.creationType, indicatorPOSTInputType.creationType) &&
         Objects.equals(this.datasetName, indicatorPOSTInputType.datasetName) &&
@@ -533,18 +579,20 @@ public class IndicatorPOSTInputType implements Serializable {
         Objects.equals(this.isHeadlineIndicator, indicatorPOSTInputType.isHeadlineIndicator) &&
         Objects.equals(this.lowestSpatialUnitForComputation, indicatorPOSTInputType.lowestSpatialUnitForComputation) &&
         Objects.equals(this.metadata, indicatorPOSTInputType.metadata) &&
+        Objects.equals(this.ownerId, indicatorPOSTInputType.ownerId) &&
         Objects.equals(this.processDescription, indicatorPOSTInputType.processDescription) &&
         Objects.equals(this.referenceDateNote, indicatorPOSTInputType.referenceDateNote) &&
         Objects.equals(this.refrencesToGeoresources, indicatorPOSTInputType.refrencesToGeoresources) &&
         Objects.equals(this.refrencesToOtherIndicators, indicatorPOSTInputType.refrencesToOtherIndicators) &&
         Objects.equals(this.tags, indicatorPOSTInputType.tags) &&
         Objects.equals(this.topicReference, indicatorPOSTInputType.topicReference) &&
-        Objects.equals(this.unit, indicatorPOSTInputType.unit);
+        Objects.equals(this.unit, indicatorPOSTInputType.unit) &&
+        Objects.equals(this.isPublic, indicatorPOSTInputType.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, allowedRoles, characteristicValue, creationType, datasetName, defaultClassificationMapping, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit);
+    return Objects.hash(abbreviation, permissions, characteristicValue, creationType, datasetName, defaultClassificationMapping, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ownerId, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit, isPublic);
   }
 
   @Override
@@ -552,7 +600,7 @@ public class IndicatorPOSTInputType implements Serializable {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorPOSTInputType {\n");
     sb.append("    abbreviation: ").append(toIndentedString(abbreviation)).append("\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");
     sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
@@ -563,6 +611,7 @@ public class IndicatorPOSTInputType implements Serializable {
     sb.append("    isHeadlineIndicator: ").append(toIndentedString(isHeadlineIndicator)).append("\n");
     sb.append("    lowestSpatialUnitForComputation: ").append(toIndentedString(lowestSpatialUnitForComputation)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    referenceDateNote: ").append(toIndentedString(referenceDateNote)).append("\n");
     sb.append("    refrencesToGeoresources: ").append(toIndentedString(refrencesToGeoresources)).append("\n");
@@ -570,6 +619,7 @@ public class IndicatorPOSTInputType implements Serializable {
     sb.append("    tags: ").append(toIndentedString(tags)).append("\n");
     sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
     sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -1,25 +1,20 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.io.Serializable;
-import java.time.OffsetDateTime;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
+import java.util.Objects;
 
 /**
  * DefaultClassificationMappingType
@@ -39,11 +34,11 @@ public class DefaultClassificationMappingType implements Serializable {
    */
   public enum ClassificationMethodEnum {
     REGIONAL_DEFAULT("REGIONAL_DEFAULT"),
-    
+
     JENKS("JENKS"),
-    
+
     EQUAL_INTERVAL("EQUAL_INTERVAL"),
-    
+
     QUANTILE("QUANTILE");
 
     private String value;
@@ -123,7 +118,7 @@ public class DefaultClassificationMappingType implements Serializable {
    * maximum: 9
    * @return numClasses
   */
-  @NotNull @Valid @DecimalMin("1") @DecimalMax("9") 
+  @NotNull @Valid @DecimalMin("1") @DecimalMax("9")
   @Schema(name = "numClasses", description = "the number of classes", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("numClasses")
   public BigDecimal getNumClasses() {
@@ -143,7 +138,7 @@ public class DefaultClassificationMappingType implements Serializable {
    * the classification method as enumeration
    * @return classificationMethod
   */
-  @NotNull 
+  @NotNull
   @Schema(name = "classificationMethod", description = "the classification method as enumeration", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("classificationMethod")
   public ClassificationMethodEnum getClassificationMethod() {

@@ -9,9 +9,6 @@ import de.hsbo.kommonitor.datamanagement.model.ColorType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PoiMarkerStyleEnum;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -31,9 +28,6 @@ import jakarta.annotation.Generated;
 public class GeoresourcePATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
-
-  @Valid
-  private List<String> allowedRoles;
 
   private String aoiColor;
 
@@ -74,34 +68,6 @@ public class GeoresourcePATCHInputType implements Serializable {
    */
   public GeoresourcePATCHInputType(CommonMetadataType metadata) {
     this.metadata = metadata;
-  }
-
-  public GeoresourcePATCHInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
-    return this;
-  }
-
-  public GeoresourcePATCHInputType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
-    }
-    this.allowedRoles.add(allowedRolesItem);
-    return this;
-  }
-
-  /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
-  */
-  
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
-  }
-
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
   }
 
   public GeoresourcePATCHInputType aoiColor(String aoiColor) {
@@ -293,7 +259,7 @@ public class GeoresourcePATCHInputType implements Serializable {
    * Get poiMarkerStyle
    * @return poiMarkerStyle
   */
-  @Valid 
+  @Valid
   @Schema(name = "poiMarkerStyle", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiMarkerStyle")
   public PoiMarkerStyleEnum getPoiMarkerStyle() {
@@ -313,7 +279,7 @@ public class GeoresourcePATCHInputType implements Serializable {
    * the poi marker text string to be used if poiMarkerStyle is set to text
    * @return poiMarkerText
   */
-  @Size(max = 3) 
+  @Size(max = 3)
   @Schema(name = "poiMarkerText", description = "the poi marker text string to be used if poiMarkerStyle is set to text", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiMarkerText")
   public String getPoiMarkerText() {
@@ -413,8 +379,7 @@ public class GeoresourcePATCHInputType implements Serializable {
       return false;
     }
     GeoresourcePATCHInputType georesourcePATCHInputType = (GeoresourcePATCHInputType) o;
-    return Objects.equals(this.allowedRoles, georesourcePATCHInputType.allowedRoles) &&
-        Objects.equals(this.aoiColor, georesourcePATCHInputType.aoiColor) &&
+    return Objects.equals(this.aoiColor, georesourcePATCHInputType.aoiColor) &&
         Objects.equals(this.datasetName, georesourcePATCHInputType.datasetName) &&
         Objects.equals(this.isAOI, georesourcePATCHInputType.isAOI) &&
         Objects.equals(this.isLOI, georesourcePATCHInputType.isLOI) &&
@@ -433,14 +398,13 @@ public class GeoresourcePATCHInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, aoiColor, datasetName, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, poiMarkerStyle, poiMarkerText, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
+    return Objects.hash(aoiColor, datasetName, isAOI, isLOI, isPOI, loiColor, loiDashArrayString, loiWidth, metadata, poiMarkerStyle, poiMarkerText, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class GeoresourcePATCHInputType {\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    aoiColor: ").append(toIndentedString(aoiColor)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
     sb.append("    isAOI: ").append(toIndentedString(isAOI)).append("\n");
