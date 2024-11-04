@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:10.685766091+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:23:19.921001600+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "georesources", description = "the Georesources API")
 public interface GeoresourcesApi {
@@ -490,8 +490,8 @@ public interface GeoresourcesApi {
 
 
     /**
-     * GET /georesources/{georesourceId}/permissions : retrieve information about the permissions for the selected geo-resource dataset
-     * retrieve information about the permissions for the selected geo-resource dataset
+     * GET /georesources/{georesourceId}/permissions : retrieve information about the permissions for the selected geo-resource
+     * retrieve information about the permissions for the selected geo-resource
      *
      * @param georesourceId identifier of the geo-resource dataset (required)
      * @return OK (status code 200)
@@ -502,8 +502,8 @@ public interface GeoresourcesApi {
      */
     @Operation(
         operationId = "getGeoresourcePermissionsById",
-        summary = "retrieve information about the permissions for the selected geo-resource dataset",
-        description = "retrieve information about the permissions for the selected geo-resource dataset",
+        summary = "retrieve information about the permissions for the selected geo-resource",
+        description = "retrieve information about the permissions for the selected geo-resource",
         tags = { "georesources" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {

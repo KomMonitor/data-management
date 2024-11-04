@@ -2467,7 +2467,7 @@ paths:
       summary: Synchronize the all OrganizationalUnits and Keycloak entities
       description: Synchronize the all OrganizationalUnis and Keycloak entities (group, roles and role policies)
         with each other.
-      operationId: snycAllOrganizationalUnits
+      operationId: syncAllOrganizationalUnits
       responses:
         "200":
           description: OK
@@ -2495,7 +2495,7 @@ paths:
       summary: Synchronize the specified OrganizationalUnit and Keycloak entities
       description: Synchronize the specified OrganizationalUnit and Keycloak entities (group, roles and role policies)
         with each other.
-      operationId: snycOrganizationalUnit
+      operationId: syncOrganizationalUnit
       parameters:
         - name: organizationalUnitId
           in: path
