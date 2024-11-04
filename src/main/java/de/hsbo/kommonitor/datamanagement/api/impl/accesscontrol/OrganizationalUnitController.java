@@ -247,7 +247,7 @@ public class OrganizationalUnitController extends BasePathController implements 
 
     @PreAuthorize("isAuthorizedForAdminOperations()")
     @Override
-    public ResponseEntity<Void> snycOrganizationalUnit(String organizationalUnitId) {
+    public ResponseEntity<Void> syncOrganizationalUnit(String organizationalUnitId) {
         logger.debug("Received request to synchronize organizationalUnit with ID '{}'.", organizationalUnitId);
         try {
             organizationalUnitManager.syncOrganizationalUnit(organizationalUnitId);
