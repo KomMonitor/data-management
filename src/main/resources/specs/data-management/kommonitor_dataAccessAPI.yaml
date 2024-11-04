@@ -2648,6 +2648,42 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /public/georesources/filter:
+    post:
+      tags:
+        - georesources-public
+      summary: Filter public georesources
+      description: Filter public georesource datasets according to the specified filter
+      operationId: filterPublicGeoresources
+      requestBody:
+        description: filter data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceFilterType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GeoresourceOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
   /public/georesources/{georesourceId}:
     get:
       tags:
@@ -3114,6 +3150,42 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /public/indicators/filter:
+    post:
+      tags:
+        - indicators-public
+      summary: Filter public indicators
+      description: Filter public indicators datasets according to the specified filter
+      operationId: filterPublicIndicators
+      requestBody:
+        description: filter data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceFilterType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IndicatorOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
   /public/indicators/{indicatorId}:
     get:
       tags:
