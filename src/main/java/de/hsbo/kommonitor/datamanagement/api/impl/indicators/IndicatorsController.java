@@ -5,8 +5,8 @@ import de.hsbo.kommonitor.datamanagement.api.IndicatorsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -170,7 +170,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
 
     @Override
-    @PreAuthorize("hasRequiredPermissionLevel('publisher')")
+    @PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
     public ResponseEntity<IndicatorOverviewType> addIndicatorAsBody(IndicatorPOSTInputType indicatorData) {
         logger.info("Received request to insert new indicator");
 
@@ -492,17 +492,98 @@ public class IndicatorsController extends BasePathController implements Indicato
     }
 
     @Override
-    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'editor')")
-    public ResponseEntity updateIndicatorRoles(
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'creator')")
+    public ResponseEntity updateIndicatorPermissionsBySpatialUnit(
             @P("indicatorId") String indicatorId,
-            String spatialUnitId,
-            IndicatorPATCHInputType indicatorData) {
+            @P("spatialUnitId") String spatialUnitId,
+            PermissionLevelInputType indicatorData) {
         logger.info("Received request to update indicator roles for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
-
-        String accept = request.getHeader("Accept");
-
         try {
-            indicatorId = indicatorsManager.updateIndicatorRoles(indicatorData, indicatorId, spatialUnitId);
+            indicatorId = indicatorsManager.updateIndicatorPermissions(indicatorData, indicatorId, spatialUnitId);
+            lastModManager.updateLastDatabaseModification_indicators();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+
+        if (indicatorId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = indicatorId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'creator')")
+    public ResponseEntity updateIndicatorPermissions(
+            @P("indicatorId") String indicatorId,
+            PermissionLevelInputType indicatorData) {
+        logger.info("Received request to update indicator roles for indicatorId '{}'", indicatorId);
+        try {
+            indicatorId = indicatorsManager.updateIndicatorPermissions(indicatorData, indicatorId);
+            lastModManager.updateLastDatabaseModification_indicators();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+
+        if (indicatorId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = indicatorId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'creator')")
+    public ResponseEntity<Void> updateIndicatorOwnership(
+            @P("indicatorId")String indicatorId,
+            OwnerInputType indicatorData) {
+        try {
+            indicatorId = indicatorsManager.updateOwnership(indicatorData, indicatorId);
+            lastModManager.updateLastDatabaseModification_indicators();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+
+        if (indicatorId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = indicatorId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'creator')")
+    public ResponseEntity<Void> updateIndicatorOwnershipBySpatialUnit(
+            @P("indicatorId") String indicatorId,
+            @P("spatialUnitId") String spatialUnitId,
+            OwnerInputType indicatorData) {
+        logger.info("Received request to update indicator ownership for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
+        try {
+            indicatorId = indicatorsManager.updateOwnership(indicatorData, indicatorId, spatialUnitId);
             lastModManager.updateLastDatabaseModification_indicators();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);

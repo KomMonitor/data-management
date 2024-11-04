@@ -5,18 +5,25 @@
  */
 package de.hsbo.kommonitor.datamanagement.auth;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
+import de.hsbo.kommonitor.datamanagement.auth.token.TokenParserFactory;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHDisplayOrderInputType;
 
 import java.security.Principal;
 import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
@@ -37,12 +44,18 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
     private Object returnObject;
     private AuthInfoProvider authInfoProvider;
 
+    private TokenParser tokenParser;
+
     private final AuthHelperService authHelperService;
     private final GeoresourcesMetadataRepository georesourceRepository;
     private final IndicatorsMetadataRepository indicatorRepository;
     private final SpatialUnitsMetadataRepository spatialunitsRepository;
     private final IndicatorSpatialUnitsRepository indicatorspatialunitsRepository;
+
+    private final OrganizationalUnitRepository organizationalUnitRepository;
     private final AuthInfoProviderFactory authInfoProviderFactory;
+
+    private final TokenParserFactory tokenParserFactory;
 
     public EntitySecurityExpressionRoot(Authentication authentication) {
         super(authentication);
@@ -52,14 +65,29 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         this.indicatorRepository = this.authHelperService.getIndicatorRepository();
         this.spatialunitsRepository = this.authHelperService.getSpatialunitsRepository();
         this.indicatorspatialunitsRepository = this.authHelperService.getIndicatorSpatialunitsRepository();
+        this.organizationalUnitRepository = this.authHelperService.getOrganizationalUnitRepository();
         this.authInfoProviderFactory = this.authHelperService.getAuthInfoProviderFactory();
+        this.tokenParserFactory = this.authHelperService.getTokenParserFactory();
 
         if (Principal.class.isAssignableFrom(this.getAuthentication().getPrincipal().getClass())) {
-            this.authInfoProvider = (this.authInfoProviderFactory.createAuthInfoProvider(((Principal) this.getAuthentication().getPrincipal())));
+            Principal principal = ((Principal) this.getAuthentication().getPrincipal());
+            this.tokenParser = (this.tokenParserFactory.createTokenParser(principal));
+            this.authInfoProvider = this.authInfoProviderFactory.createAuthInfoProvider(principal, tokenParser);
         }
         else {
-            this.authInfoProvider = (this.authInfoProviderFactory.createAuthInfoProvider(this.getAuthentication()));
+            this.tokenParser = (this.tokenParserFactory.createTokenParser(this.getAuthentication()));
+            this.authInfoProvider = this.authInfoProviderFactory.createAuthInfoProvider(this.getAuthentication(), tokenParser);
         }
+
+    }
+
+    /**
+     * Checks whether the user has admin permissions to perform admin operations or not.
+     *
+     * @return true if the user has global admin permissions
+     */
+    public boolean isAuthorizedForAdminOperations() {
+        return this.authInfoProvider.hasGlobalAdminPermissions();
     }
 
     /**
@@ -72,13 +100,13 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
      */
     public boolean isAuthorizedForEntity(String entityID, String entityType, String permissionLevel) {
         logger.debug("called isAuthorizedForEntity with entity id " + entityID);
-        // Fail fast if user has not the required permission, with no need to request an entity
-        if (!hasRequiredPermissionLevel(permissionLevel)){
+        // Fail fast if user has not the required role for managing resources, with no need to request an entity
+        if (!hasRequiredPermissionLevel(permissionLevel, PermissionResourceType.RESOURCES.getValue())){
             return false;
         }
 
         try {
-            RestrictedByRole entity = this.retrieveEntity(entityID, EntityType.fromValue(entityType));
+            RestrictedEntity entity = this.retrieveEntity(entityID, EntityType.fromValue(entityType));
             if (entity == null) {
                 throw new ResourceNotFoundException(NOTFOUNDCODE, "could not find entity " + entityID + " of type " + entityType);
             }
@@ -87,6 +115,34 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
             return isAuthorized;
         } catch (Exception ex) {
             logger.error("unable to evaluate permissions for entity with id " + entityID + " of type " + entityType + "; return not authorized", ex);
+            return false;
+        }
+    }
+
+    /**
+     * custom security method to check if a user has permissions to manage an OrganizationalUnit,
+     * to be used with @PreAuthorize and @PostAuthorize annotations
+     * @param organizationalUnitId
+
+     * @return
+     */
+    public boolean isAuthorizedForOrganization(String organizationalUnitId) {
+        logger.debug("called isAuthorizedForOrganization with OrganizationalUnit id " + organizationalUnitId);
+        // Fail fast if user has not the required role for managing users, with no need to request an entity
+        if (!this.authInfoProvider.hasRequiredPermissionLevel(PermissionLevelType.CREATOR, PermissionResourceType.USERS)) {
+            return false;
+        }
+
+        try {
+            OrganizationalUnitEntity ouEntity = this.organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
+            if (ouEntity == null) {
+                throw new ResourceNotFoundException(NOTFOUNDCODE, "could not find OrganizationalUnit " + organizationalUnitId);
+            }
+            boolean isAuthorized = this.authInfoProvider.checkOrganizationalUnitPermissions(ouEntity);
+            logger.info("access for " + this.getAuthentication().getName() + " to OrganizationalUnit " + organizationalUnitId + " authorized? " + isAuthorized);
+            return isAuthorized;
+        } catch (Exception ex) {
+            logger.error("unable to evaluate permissions for OrganizationalUnit with id " + organizationalUnitId, ex);
             return false;
         }
     }
@@ -128,7 +184,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         logger.debug("called isAuthorizedForJoinedEntity with entity id " + entityID1 + " and " + entityID2);
 
         try {
-            RestrictedByRole entity = this.retrieveJoinedEntity(entityID1, entityID2, JoinedEntityType.fromValue(joinedEntityType));
+            RestrictedEntity entity = this.retrieveJoinedEntity(entityID1, entityID2, JoinedEntityType.fromValue(joinedEntityType));
             if (entity == null) {
                 throw new ResourceNotFoundException(NOTFOUNDCODE, "could not find entity for id " + entityID1 + " and " + entityID2 + " of type " + joinedEntityType);
             }
@@ -156,6 +212,16 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         }
     }
 
+    public boolean hasRequiredPermissionLevel(String requiredPermissionLevel, String permissionResourceType){
+        logger.debug("called haRequiredPermissionLevel with required permission level " + requiredPermissionLevel + " and permission resource type " + permissionResourceType);
+        try{
+            return this.authInfoProvider.hasRequiredPermissionLevel(PermissionLevelType.fromValue(requiredPermissionLevel), PermissionResourceType.fromValue(permissionResourceType));
+        }catch (Exception ex){
+            logger.error("unable to evaluate if required permission level " + requiredPermissionLevel + " is met; return not authorized", ex);
+            return false;
+        }
+    }
+
     /**
      * retrieve the entity from the corresponding repository
      * @param entityID
@@ -163,7 +229,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
      * @return
      * @throws Exception 
      */
-    private RestrictedByRole retrieveEntity(String entityID, EntityType entityType) throws Exception {
+    private RestrictedEntity retrieveEntity(String entityID, EntityType entityType) throws Exception {
         switch (entityType) {
             case GEORESOURCE:
                 return this.georesourceRepository.findByDatasetId(entityID);
@@ -176,7 +242,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         }
     }
     
-    private RestrictedByRole retrieveJoinedEntity(String entityID1, String entityID2, JoinedEntityType joinedEntityType){
+    private RestrictedEntity retrieveJoinedEntity(String entityID1, String entityID2, JoinedEntityType joinedEntityType){
         switch(joinedEntityType){
             case INDICATOR_SPATIALUNIT:
                 return this.indicatorspatialunitsRepository.findByIndicatorMetadataIdAndSpatialUnitId(entityID1, entityID2);

@@ -1,18 +1,21 @@
-package de.hsbo.kommonitor.datamanagement.auth;
+package de.hsbo.kommonitor.datamanagement.auth.provider;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
+import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
+import de.hsbo.kommonitor.datamanagement.model.AdminRoleType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
-import org.keycloak.KeycloakPrincipal;
+import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 
-import java.lang.reflect.ParameterizedType;
 import java.security.Principal;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static de.hsbo.kommonitor.datamanagement.model.AdminRoleType.CLIENT_USERS_CREATOR;
 
 /**
  * Interface that provides authentication and authorization information
@@ -20,12 +23,11 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  * @author <a href="mailto:j.speckamp@52north.org">Jan Speckamp</a>
  */
-public abstract class AuthInfoProvider<T extends Principal> {
+public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
 
-    private Class<T> type = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())
-        .getActualTypeArguments()[0];
+    private Principal principal;
 
-    private T principal;
+    private TokenParser tokenParser;
 
     @Value("${kommonitor.access-control.authenticated-users.organizationalUnit:kommonitor}")
     private String adminRolePrefix;
@@ -33,37 +35,25 @@ public abstract class AuthInfoProvider<T extends Principal> {
     @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
     private String publicRole;
 
-    private SortedSet permissionSet;
+    private SortedSet<PermissionLevelType> permissionSet;
 
     private static final Pattern roleExtractorRegex = Pattern.compile("-(?=(creator)|(publisher)|(editor)|(viewer)$)");
 
-    public AuthInfoProvider() {
+    public RoleBasedAuthInfoProvider() {
     }
 
-    public AuthInfoProvider(T principal, String adminRolePrefix, String publicRole) {
+    public RoleBasedAuthInfoProvider(Principal principal, TokenParser<?> tokenParser, String adminRolePrefix, String publicRole) {
         this.principal = principal;
+        this.tokenParser = tokenParser;
         this.adminRolePrefix = adminRolePrefix;
         this.publicRole = publicRole;
-        permissionSet = new TreeSet();
+        permissionSet = new TreeSet<>();
         permissionSet.add(PermissionLevelType.CREATOR);
-        permissionSet.add(PermissionLevelType.PUBLISHER);
         permissionSet.add(PermissionLevelType.EDITOR);
         permissionSet.add(PermissionLevelType.VIEWER);
     }
 
-    public AuthInfoProvider(T principal) {
-        this.principal = principal;
-    }
-
-    public void setPrincipal(T principal) {
-        this.principal = principal;
-    }
-
-    public boolean supportsPrincipal(Principal principal) {
-        return type.isInstance(principal);
-    }
-
-    public T getPrincipal() {
+    public Principal getPrincipal() {
         return principal;
     }
 
@@ -75,15 +65,20 @@ public abstract class AuthInfoProvider<T extends Principal> {
         return adminRolePrefix;
     }
 
+    @Override
+    public boolean hasGlobalAdminPermissions() {
+        return hasRealmAdminRole(getPrincipal());
+    }
+
     /**
      * checks whether the current principal allows access to an entity with
      * restricted access
      *
      * @param entity entity that has access rights defined by a role
-     * @return
+     * @return true if access is allowed
      */
-    public boolean checkPermissions(final RestrictedByRole entity, final PermissionLevelType neededLevel) {
-        Set<RolesEntity> allowedRoleEntities = entity.getRoles();
+    public boolean checkPermissions(final RestrictedEntity entity, final PermissionLevelType neededLevel) {
+        Set<PermissionEntity> allowedRoleEntities = entity.getPermissions();
 
         // User is global administrator
         if (hasRealmAdminRole(getPrincipal())) {
@@ -91,7 +86,6 @@ public abstract class AuthInfoProvider<T extends Principal> {
         }
 
         // disallow access by default
-        // TODO: should this be allow all by default?
         if (allowedRoleEntities == null || allowedRoleEntities.isEmpty()) {
             return false;
         }
@@ -120,17 +114,21 @@ public abstract class AuthInfoProvider<T extends Principal> {
                                 && ar.getSecond().compareTo(neededLevel) <= 0)));
     }
 
-    public List<PermissionLevelType> getPermissions(RestrictedByRole entity) {
+    @Override
+    public boolean checkOrganizationalUnitPermissions(OrganizationalUnitEntity entity) {
+        return hasRealmAdminRole(getPrincipal());
+    }
+
+    public List<PermissionLevelType> getPermissions(RestrictedEntity entity) {
         // User is global administrator
         if (hasRealmAdminRole(getPrincipal())) {
             return Arrays.asList(
                     PermissionLevelType.CREATOR,
-                    PermissionLevelType.PUBLISHER,
                     PermissionLevelType.EDITOR,
                     PermissionLevelType.VIEWER);
         }
 
-        Set<RolesEntity> allowedRoleEntities = entity.getRoles();
+        Set<PermissionEntity> allowedRoleEntities = entity.getPermissions();
 
         if (allowedRoleEntities == null || allowedRoleEntities.isEmpty()) {
             return Collections.emptyList();
@@ -182,8 +180,35 @@ public abstract class AuthInfoProvider<T extends Principal> {
                 .anyMatch(r -> r.getSecond().compareTo(neededLevel) <= 0);
     }
 
-    public abstract Set<String> getOwnedRoles(T principal);
+    @Override
+    public boolean hasRequiredPermissionLevel(PermissionLevelType neededLevel, PermissionResourceType permissionResourceType) {
+        return false;
+    }
 
-    public abstract boolean hasRealmAdminRole(T principal);
+    @Override
+    public Set<String> getGroupNames() {
+        return Collections.EMPTY_SET;
+    }
+
+    @Override
+    public boolean checkOrganizationalUnitCreationPermissions(OrganizationalUnitEntity parent) {
+        return hasRealmAdminRole(getPrincipal());
+    }
+
+    @Override
+    public List<AdminRoleType> getOrganizationalUnitCreationPermissions(OrganizationalUnitEntity entity) {
+        if (hasRealmAdminRole(getPrincipal())) {
+            return Collections.singletonList(CLIENT_USERS_CREATOR);
+        }
+        return Collections.emptyList();
+    }
+
+    public Set<String> getOwnedRoles(Principal principal) {
+        return tokenParser.getOwnedRoles(principal);
+    }
+
+    public boolean hasRealmAdminRole(Principal principal) {
+        return tokenParser.hasRealmAdminRole(principal, adminRolePrefix);
+    }
 
 }

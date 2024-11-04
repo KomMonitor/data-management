@@ -1,111 +1,114 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 /**
  * GeoresourcePOSTInputType
  */
-@Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-04-24T20:35:27.161908166Z[GMT]")
 
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+public class GeoresourcePOSTInputType implements Serializable {
 
-public class GeoresourcePOSTInputType   {
-  @JsonProperty("allowedRoles")
+  private static final long serialVersionUID = 1L;
+
   @Valid
-  private List<String> allowedRoles = null;
+  private List<String> permissions;
 
-  @JsonProperty("aoiColor")
-  private String aoiColor = null;
+  private String aoiColor;
 
-  @JsonProperty("datasetName")
-  private String datasetName = null;
+  private String datasetName;
 
-  @JsonProperty("geoJsonString")
-  private String geoJsonString = null;
+  private String geoJsonString;
 
-  @JsonProperty("isAOI")
-  private Boolean isAOI = null;
+  private Boolean isAOI;
 
-  @JsonProperty("isLOI")
-  private Boolean isLOI = null;
+  private Boolean isLOI;
 
-  @JsonProperty("isPOI")
-  private Boolean isPOI = null;
+  private Boolean isPOI;
 
-  @JsonProperty("jsonSchema")
-  private String jsonSchema = null;
+  private String jsonSchema;
 
-  @JsonProperty("loiColor")
-  private String loiColor = null;
+  private String loiColor;
 
-  @JsonProperty("loiDashArrayString")
-  private String loiDashArrayString = null;
+  private String loiDashArrayString;
 
-  @JsonProperty("loiWidth")
-  private BigDecimal loiWidth = null;
+  private BigDecimal loiWidth;
 
-  @JsonProperty("metadata")
-  private CommonMetadataType metadata = null;
+  private CommonMetadataType metadata;
 
-  @JsonProperty("periodOfValidity")
-  private PeriodOfValidityType periodOfValidity = null;
+  private String ownerId;
 
-  
-  @JsonProperty("poiMarkerStyle")
-  private PoiMarkerStyleEnum poiMarkerStyle = null;
+  private PeriodOfValidityType periodOfValidity;
 
-  @JsonProperty("poiMarkerText")
-  private String poiMarkerText = null;
+  private PoiMarkerStyleEnum poiMarkerStyle;
 
-  @JsonProperty("poiMarkerColor")
-  private ColorType poiMarkerColor = null;
+  private String poiMarkerText;
 
-  @JsonProperty("poiSymbolBootstrap3Name")
-  private String poiSymbolBootstrap3Name = null;
+  private ColorType poiMarkerColor;
 
-  @JsonProperty("poiSymbolColor")
-  private ColorType poiSymbolColor = null;
+  private String poiSymbolBootstrap3Name;
 
-  @JsonProperty("topicReference")
-  private String topicReference = null;
+  private ColorType poiSymbolColor;
 
-  public GeoresourcePOSTInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  private String topicReference;
+
+  private Boolean isPublic;
+
+  public GeoresourcePOSTInputType() {
+    super();
+  }
+
+  /**
+   * Constructor with only required parameters
+   */
+  public GeoresourcePOSTInputType(String datasetName, Boolean isAOI, Boolean isLOI, Boolean isPOI, CommonMetadataType metadata, String ownerId, PeriodOfValidityType periodOfValidity, Boolean isPublic) {
+    this.datasetName = datasetName;
+    this.isAOI = isAOI;
+    this.isLOI = isLOI;
+    this.isPOI = isPOI;
+    this.metadata = metadata;
+    this.ownerId = ownerId;
+    this.periodOfValidity = periodOfValidity;
+    this.isPublic = isPublic;
+  }
+
+  public GeoresourcePOSTInputType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public GeoresourcePOSTInputType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<String>();
+  public GeoresourcePOSTInputType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
-   **/
-  @Schema(description = "list of role identifiers that have read access rights for this dataset")
+   * list of permissions on this entity
+   * @return permissions
+  */
   
-    public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 
   public GeoresourcePOSTInputType aoiColor(String aoiColor) {
@@ -116,10 +119,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * color name or color code (i.e. hex number) for areas of interest
    * @return aoiColor
-   **/
-  @Schema(description = "color name or color code (i.e. hex number) for areas of interest")
+  */
   
-    public String getAoiColor() {
+  @Schema(name = "aoiColor", description = "color name or color code (i.e. hex number) for areas of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("aoiColor")
+  public String getAoiColor() {
     return aoiColor;
   }
 
@@ -135,11 +139,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * the meaningful name of the dataset
    * @return datasetName
-   **/
-  @Schema(required = true, description = "the meaningful name of the dataset")
-      @NotNull
-
-    public String getDatasetName() {
+  */
+  @NotNull 
+  @Schema(name = "datasetName", description = "the meaningful name of the dataset", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("datasetName")
+  public String getDatasetName() {
     return datasetName;
   }
 
@@ -155,10 +159,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset
    * @return geoJsonString
-   **/
-  @Schema(description = "a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset")
+  */
   
-    public String getGeoJsonString() {
+  @Schema(name = "geoJsonString", description = "a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("geoJsonString")
+  public String getGeoJsonString() {
     return geoJsonString;
   }
 
@@ -174,11 +179,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * boolean value indicating if the dataset contains areas of interest
    * @return isAOI
-   **/
-  @Schema(required = true, description = "boolean value indicating if the dataset contains areas of interest")
-      @NotNull
-
-    public Boolean isIsAOI() {
+  */
+  @NotNull 
+  @Schema(name = "isAOI", description = "boolean value indicating if the dataset contains areas of interest", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isAOI")
+  public Boolean getIsAOI() {
     return isAOI;
   }
 
@@ -194,11 +199,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * boolean value indicating if the dataset contains lines of interest
    * @return isLOI
-   **/
-  @Schema(required = true, description = "boolean value indicating if the dataset contains lines of interest")
-      @NotNull
-
-    public Boolean isIsLOI() {
+  */
+  @NotNull 
+  @Schema(name = "isLOI", description = "boolean value indicating if the dataset contains lines of interest", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isLOI")
+  public Boolean getIsLOI() {
     return isLOI;
   }
 
@@ -214,11 +219,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * boolean value indicating if the dataset contains points of interest
    * @return isPOI
-   **/
-  @Schema(required = true, description = "boolean value indicating if the dataset contains points of interest")
-      @NotNull
-
-    public Boolean isIsPOI() {
+  */
+  @NotNull 
+  @Schema(name = "isPOI", description = "boolean value indicating if the dataset contains points of interest", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPOI")
+  public Boolean getIsPOI() {
     return isPOI;
   }
 
@@ -234,10 +239,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.
    * @return jsonSchema
-   **/
-  @Schema(description = "a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.")
+  */
   
-    public String getJsonSchema() {
+  @Schema(name = "jsonSchema", description = "a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("jsonSchema")
+  public String getJsonSchema() {
     return jsonSchema;
   }
 
@@ -253,10 +259,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * color name or color code (i.e. hex number) for lines of interest
    * @return loiColor
-   **/
-  @Schema(description = "color name or color code (i.e. hex number) for lines of interest")
+  */
   
-    public String getLoiColor() {
+  @Schema(name = "loiColor", description = "color name or color code (i.e. hex number) for lines of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("loiColor")
+  public String getLoiColor() {
     return loiColor;
   }
 
@@ -272,10 +279,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * sring of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)
    * @return loiDashArrayString
-   **/
-  @Schema(description = "sring of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)")
+  */
   
-    public String getLoiDashArrayString() {
+  @Schema(name = "loiDashArrayString", description = "sring of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("loiDashArrayString")
+  public String getLoiDashArrayString() {
     return loiDashArrayString;
   }
 
@@ -291,11 +299,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * display width for lines of interest (number of pixels in leaflet)
    * @return loiWidth
-   **/
-  @Schema(example = "0", description = "display width for lines of interest (number of pixels in leaflet)")
-  
-    @Valid
-    public BigDecimal getLoiWidth() {
+  */
+  @Valid 
+  @Schema(name = "loiWidth", example = "0.0", description = "display width for lines of interest (number of pixels in leaflet)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("loiWidth")
+  public BigDecimal getLoiWidth() {
     return loiWidth;
   }
 
@@ -311,17 +319,36 @@ public class GeoresourcePOSTInputType   {
   /**
    * Get metadata
    * @return metadata
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
-
-    @Valid
-    public CommonMetadataType getMetadata() {
+  */
+  @NotNull @Valid 
+  @Schema(name = "metadata", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("metadata")
+  public CommonMetadataType getMetadata() {
     return metadata;
   }
 
   public void setMetadata(CommonMetadataType metadata) {
     this.metadata = metadata;
+  }
+
+  public GeoresourcePOSTInputType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+  @NotNull
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
   }
 
   public GeoresourcePOSTInputType periodOfValidity(PeriodOfValidityType periodOfValidity) {
@@ -332,12 +359,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * Get periodOfValidity
    * @return periodOfValidity
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
-
-    @Valid
-    public PeriodOfValidityType getPeriodOfValidity() {
+  */
+  @NotNull @Valid 
+  @Schema(name = "periodOfValidity", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("periodOfValidity")
+  public PeriodOfValidityType getPeriodOfValidity() {
     return periodOfValidity;
   }
 
@@ -351,12 +377,13 @@ public class GeoresourcePOSTInputType   {
   }
 
   /**
-   * the poi marker type, either text or symbol
+   * Get poiMarkerStyle
    * @return poiMarkerStyle
-   **/
-  @Schema(description = "the poi marker type, either text or symbol")
-  
-    public PoiMarkerStyleEnum getPoiMarkerStyle() {
+  */
+  @Valid
+  @Schema(name = "poiMarkerStyle", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("poiMarkerStyle")
+  public PoiMarkerStyleEnum getPoiMarkerStyle() {
     return poiMarkerStyle;
   }
 
@@ -372,10 +399,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * the poi marker text string to be used if poiMarkerStyle is set to text
    * @return poiMarkerText
-   **/
-  @Schema(description = "the poi marker text string to be used if poiMarkerStyle is set to text")
-  
-  @Size(max=3)   public String getPoiMarkerText() {
+  */
+  @Size(max = 3)
+  @Schema(name = "poiMarkerText", description = "the poi marker text string to be used if poiMarkerStyle is set to text", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("poiMarkerText")
+  public String getPoiMarkerText() {
     return poiMarkerText;
   }
 
@@ -391,11 +419,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * Get poiMarkerColor
    * @return poiMarkerColor
-   **/
-  @Schema(description = "")
-  
-    @Valid
-    public ColorType getPoiMarkerColor() {
+  */
+  @Valid 
+  @Schema(name = "poiMarkerColor", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("poiMarkerColor")
+  public ColorType getPoiMarkerColor() {
     return poiMarkerColor;
   }
 
@@ -411,10 +439,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)
    * @return poiSymbolBootstrap3Name
-   **/
-  @Schema(description = "If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)")
+  */
   
-    public String getPoiSymbolBootstrap3Name() {
+  @Schema(name = "poiSymbolBootstrap3Name", description = "If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("poiSymbolBootstrap3Name")
+  public String getPoiSymbolBootstrap3Name() {
     return poiSymbolBootstrap3Name;
   }
 
@@ -430,11 +459,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * Get poiSymbolColor
    * @return poiSymbolColor
-   **/
-  @Schema(description = "")
-  
-    @Valid
-    public ColorType getPoiSymbolColor() {
+  */
+  @Valid 
+  @Schema(name = "poiSymbolColor", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("poiSymbolColor")
+  public ColorType getPoiSymbolColor() {
     return poiSymbolColor;
   }
 
@@ -450,10 +479,11 @@ public class GeoresourcePOSTInputType   {
   /**
    * id of the last topic hierarchy entity
    * @return topicReference
-   **/
-  @Schema(description = "id of the last topic hierarchy entity")
+  */
   
-    public String getTopicReference() {
+  @Schema(name = "topicReference", description = "id of the last topic hierarchy entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("topicReference")
+  public String getTopicReference() {
     return topicReference;
   }
 
@@ -461,9 +491,28 @@ public class GeoresourcePOSTInputType   {
     this.topicReference = topicReference;
   }
 
+  public GeoresourcePOSTInputType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+  @NotNull
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -471,7 +520,7 @@ public class GeoresourcePOSTInputType   {
       return false;
     }
     GeoresourcePOSTInputType georesourcePOSTInputType = (GeoresourcePOSTInputType) o;
-    return Objects.equals(this.allowedRoles, georesourcePOSTInputType.allowedRoles) &&
+    return Objects.equals(this.permissions, georesourcePOSTInputType.permissions) &&
         Objects.equals(this.aoiColor, georesourcePOSTInputType.aoiColor) &&
         Objects.equals(this.datasetName, georesourcePOSTInputType.datasetName) &&
         Objects.equals(this.geoJsonString, georesourcePOSTInputType.geoJsonString) &&
@@ -483,26 +532,27 @@ public class GeoresourcePOSTInputType   {
         Objects.equals(this.loiDashArrayString, georesourcePOSTInputType.loiDashArrayString) &&
         Objects.equals(this.loiWidth, georesourcePOSTInputType.loiWidth) &&
         Objects.equals(this.metadata, georesourcePOSTInputType.metadata) &&
+        Objects.equals(this.ownerId, georesourcePOSTInputType.ownerId) &&
         Objects.equals(this.periodOfValidity, georesourcePOSTInputType.periodOfValidity) &&
         Objects.equals(this.poiMarkerStyle, georesourcePOSTInputType.poiMarkerStyle) &&
         Objects.equals(this.poiMarkerText, georesourcePOSTInputType.poiMarkerText) &&
         Objects.equals(this.poiMarkerColor, georesourcePOSTInputType.poiMarkerColor) &&
         Objects.equals(this.poiSymbolBootstrap3Name, georesourcePOSTInputType.poiSymbolBootstrap3Name) &&
         Objects.equals(this.poiSymbolColor, georesourcePOSTInputType.poiSymbolColor) &&
-        Objects.equals(this.topicReference, georesourcePOSTInputType.topicReference);
+        Objects.equals(this.topicReference, georesourcePOSTInputType.topicReference) &&
+        Objects.equals(this.isPublic, georesourcePOSTInputType.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, aoiColor, datasetName, geoJsonString, isAOI, isLOI, isPOI, jsonSchema, loiColor, loiDashArrayString, loiWidth, metadata, periodOfValidity, poiMarkerStyle, poiMarkerText, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference);
+    return Objects.hash(permissions, aoiColor, datasetName, geoJsonString, isAOI, isLOI, isPOI, jsonSchema, loiColor, loiDashArrayString, loiWidth, metadata, ownerId, periodOfValidity, poiMarkerStyle, poiMarkerText, poiMarkerColor, poiSymbolBootstrap3Name, poiSymbolColor, topicReference, isPublic);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class GeoresourcePOSTInputType {\n");
-    
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    aoiColor: ").append(toIndentedString(aoiColor)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
     sb.append("    geoJsonString: ").append(toIndentedString(geoJsonString)).append("\n");
@@ -514,6 +564,7 @@ public class GeoresourcePOSTInputType   {
     sb.append("    loiDashArrayString: ").append(toIndentedString(loiDashArrayString)).append("\n");
     sb.append("    loiWidth: ").append(toIndentedString(loiWidth)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    periodOfValidity: ").append(toIndentedString(periodOfValidity)).append("\n");
     sb.append("    poiMarkerStyle: ").append(toIndentedString(poiMarkerStyle)).append("\n");
     sb.append("    poiMarkerText: ").append(toIndentedString(poiMarkerText)).append("\n");
@@ -521,6 +572,7 @@ public class GeoresourcePOSTInputType   {
     sb.append("    poiSymbolBootstrap3Name: ").append(toIndentedString(poiSymbolBootstrap3Name)).append("\n");
     sb.append("    poiSymbolColor: ").append(toIndentedString(poiSymbolColor)).append("\n");
     sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -529,10 +581,11 @@ public class GeoresourcePOSTInputType   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
   }
 }
+

@@ -1,90 +1,85 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-
 /**
  * IndicatorMetadataPATCHInputType
  */
-@Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-04-23T11:43:09.197508532Z[GMT]")
 
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+public class IndicatorMetadataPATCHInputType implements Serializable {
 
-public class IndicatorMetadataPATCHInputType   {
-  @JsonProperty("abbreviation")
-  private String abbreviation = null;
+  private static final long serialVersionUID = 1L;
 
-  @JsonProperty("allowedRoles")
+  private String abbreviation;
+
+  private String characteristicValue;
+
+  private CreationTypeEnum creationType;
+
+  private String datasetName;
+
+  private DefaultClassificationMappingType defaultClassificationMapping;
+
   @Valid
-  private List<String> allowedRoles = new ArrayList<String>();
+  private List<@Valid RegionalReferenceValueType> regionalReferenceValues;
 
-  @JsonProperty("characteristicValue")
-  private String characteristicValue = null;
+  private BigDecimal displayOrder;
 
-  @JsonProperty("creationType")
-  private CreationTypeEnum creationType = null;
+  private IndicatorTypeEnum indicatorType;
 
-  @JsonProperty("datasetName")
-  private String datasetName = null;
+  private String interpretation;
 
-  @JsonProperty("defaultClassificationMapping")
-  private DefaultClassificationMappingType defaultClassificationMapping = null;
+  private Boolean isHeadlineIndicator;
 
-  @JsonProperty("regionalReferenceValues")
+  private String lowestSpatialUnitForComputation;
+
+  private CommonMetadataType metadata;
+
+  private String processDescription;
+
+  private String referenceDateNote;
+
   @Valid
-  private List<RegionalReferenceValueType> regionalReferenceValues = null;
+  private List<@Valid IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources;
 
-  @JsonProperty("displayOrder")
-  private BigDecimal displayOrder = null;
-
-  @JsonProperty("indicatorType")
-  private IndicatorTypeEnum indicatorType = null;
-
-  @JsonProperty("interpretation")
-  private String interpretation = null;
-
-  @JsonProperty("isHeadlineIndicator")
-  private Boolean isHeadlineIndicator = null;
-
-  @JsonProperty("lowestSpatialUnitForComputation")
-  private String lowestSpatialUnitForComputation = null;
-
-  @JsonProperty("metadata")
-  private CommonMetadataType metadata = null;
-
-  @JsonProperty("processDescription")
-  private String processDescription = null;
-
-  @JsonProperty("referenceDateNote")
-  private String referenceDateNote = null;
-
-  @JsonProperty("refrencesToGeoresources")
   @Valid
-  private List<IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources = null;
+  private List<@Valid IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators;
 
-  @JsonProperty("refrencesToOtherIndicators")
   @Valid
-  private List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators = null;
+  private List<String> tags = new ArrayList<>();
 
-  @JsonProperty("tags")
-  @Valid
-  private List<String> tags = new ArrayList<String>();
+  private String topicReference;
 
-  @JsonProperty("topicReference")
-  private String topicReference = null;
+  private String unit;
 
-  @JsonProperty("unit")
-  private String unit = null;
+  public IndicatorMetadataPATCHInputType() {
+    super();
+  }
+
+  /**
+   * Constructor with only required parameters
+   */
+  public IndicatorMetadataPATCHInputType(String abbreviation, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String processDescription, List<String> tags, String topicReference, String unit) {
+    this.abbreviation = abbreviation;
+    this.interpretation = interpretation;
+    this.isHeadlineIndicator = isHeadlineIndicator;
+    this.metadata = metadata;
+    this.processDescription = processDescription;
+    this.tags = tags;
+    this.topicReference = topicReference;
+    this.unit = unit;
+  }
 
   public IndicatorMetadataPATCHInputType abbreviation(String abbreviation) {
     this.abbreviation = abbreviation;
@@ -94,41 +89,16 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * abbreviated mark of the indicator
    * @return abbreviation
-   **/
-  @Schema(required = true, description = "abbreviated mark of the indicator")
-      @NotNull
-
-    public String getAbbreviation() {
+  */
+  @NotNull 
+  @Schema(name = "abbreviation", description = "abbreviated mark of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("abbreviation")
+  public String getAbbreviation() {
     return abbreviation;
   }
 
   public void setAbbreviation(String abbreviation) {
     this.abbreviation = abbreviation;
-  }
-
-  public IndicatorMetadataPATCHInputType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
-    return this;
-  }
-
-  public IndicatorMetadataPATCHInputType addAllowedRolesItem(String allowedRolesItem) {
-    this.allowedRoles.add(allowedRolesItem);
-    return this;
-  }
-
-  /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
-   **/
-  @Schema(required = true, description = "list of role identifiers that have read access rights for this dataset")
-      @NotNull
-
-    public List<String> getAllowedRoles() {
-    return allowedRoles;
-  }
-
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
   }
 
   public IndicatorMetadataPATCHInputType characteristicValue(String characteristicValue) {
@@ -139,10 +109,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * the distuingishing characteristic value of the indicator
    * @return characteristicValue
-   **/
-  @Schema(description = "the distuingishing characteristic value of the indicator")
+  */
   
-    public String getCharacteristicValue() {
+  @Schema(name = "characteristicValue", description = "the distuingishing characteristic value of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("characteristicValue")
+  public String getCharacteristicValue() {
     return characteristicValue;
   }
 
@@ -158,11 +129,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * Get creationType
    * @return creationType
-   **/
-  @Schema(description = "")
-  
-    @Valid
-    public CreationTypeEnum getCreationType() {
+  */
+  @Valid 
+  @Schema(name = "creationType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("creationType")
+  public CreationTypeEnum getCreationType() {
     return creationType;
   }
 
@@ -178,10 +149,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * the meaningful name of the indicator
    * @return datasetName
-   **/
-  @Schema(description = "the meaningful name of the indicator")
+  */
   
-    public String getDatasetName() {
+  @Schema(name = "datasetName", description = "the meaningful name of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("datasetName")
+  public String getDatasetName() {
     return datasetName;
   }
 
@@ -197,11 +169,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * Get defaultClassificationMapping
    * @return defaultClassificationMapping
-   **/
-  @Schema(description = "")
-  
-    @Valid
-    public DefaultClassificationMappingType getDefaultClassificationMapping() {
+  */
+  @Valid 
+  @Schema(name = "defaultClassificationMapping", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("defaultClassificationMapping")
+  public DefaultClassificationMappingType getDefaultClassificationMapping() {
     return defaultClassificationMapping;
   }
 
@@ -209,14 +181,14 @@ public class IndicatorMetadataPATCHInputType   {
     this.defaultClassificationMapping = defaultClassificationMapping;
   }
 
-  public IndicatorMetadataPATCHInputType regionalReferenceValues(List<RegionalReferenceValueType> regionalReferenceValues) {
+  public IndicatorMetadataPATCHInputType regionalReferenceValues(List<@Valid RegionalReferenceValueType> regionalReferenceValues) {
     this.regionalReferenceValues = regionalReferenceValues;
     return this;
   }
 
   public IndicatorMetadataPATCHInputType addRegionalReferenceValuesItem(RegionalReferenceValueType regionalReferenceValuesItem) {
     if (this.regionalReferenceValues == null) {
-      this.regionalReferenceValues = new ArrayList<RegionalReferenceValueType>();
+      this.regionalReferenceValues = new ArrayList<>();
     }
     this.regionalReferenceValues.add(regionalReferenceValuesItem);
     return this;
@@ -225,14 +197,15 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)
    * @return regionalReferenceValues
-   **/
-  @Schema(description = "list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)")
-      @Valid
-    public List<RegionalReferenceValueType> getRegionalReferenceValues() {
+  */
+  @Valid
+  @Schema(name = "regionalReferenceValues", description = "list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("regionalReferenceValues")
+  public List<@Valid RegionalReferenceValueType> getRegionalReferenceValues() {
     return regionalReferenceValues;
   }
 
-  public void setRegionalReferenceValues(List<RegionalReferenceValueType> regionalReferenceValues) {
+  public void setRegionalReferenceValues(List<@Valid RegionalReferenceValueType> regionalReferenceValues) {
     this.regionalReferenceValues = regionalReferenceValues;
   }
 
@@ -244,11 +217,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * an order number to control display order in clients
    * @return displayOrder
-   **/
-  @Schema(example = "0", description = "an order number to control display order in clients")
-  
-    @Valid
-    public BigDecimal getDisplayOrder() {
+  */
+  @Valid 
+  @Schema(name = "displayOrder", example = "0.0", description = "an order number to control display order in clients", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("displayOrder")
+  public BigDecimal getDisplayOrder() {
     return displayOrder;
   }
 
@@ -264,11 +237,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * Get indicatorType
    * @return indicatorType
-   **/
-  @Schema(description = "")
-  
-    @Valid
-    public IndicatorTypeEnum getIndicatorType() {
+  */
+  @Valid 
+  @Schema(name = "indicatorType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("indicatorType")
+  public IndicatorTypeEnum getIndicatorType() {
     return indicatorType;
   }
 
@@ -284,11 +257,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * interpretation of the indicator values
    * @return interpretation
-   **/
-  @Schema(required = true, description = "interpretation of the indicator values")
-      @NotNull
-
-    public String getInterpretation() {
+  */
+  @NotNull 
+  @Schema(name = "interpretation", description = "interpretation of the indicator values", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("interpretation")
+  public String getInterpretation() {
     return interpretation;
   }
 
@@ -304,11 +277,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * boolean value indicating if the indicator is a headline indicator
    * @return isHeadlineIndicator
-   **/
-  @Schema(required = true, description = "boolean value indicating if the indicator is a headline indicator")
-      @NotNull
-
-    public Boolean isIsHeadlineIndicator() {
+  */
+  @NotNull 
+  @Schema(name = "isHeadlineIndicator", description = "boolean value indicating if the indicator is a headline indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isHeadlineIndicator")
+  public Boolean getIsHeadlineIndicator() {
     return isHeadlineIndicator;
   }
 
@@ -324,10 +297,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)
    * @return lowestSpatialUnitForComputation
-   **/
-  @Schema(description = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)")
+  */
   
-    public String getLowestSpatialUnitForComputation() {
+  @Schema(name = "lowestSpatialUnitForComputation", description = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("lowestSpatialUnitForComputation")
+  public String getLowestSpatialUnitForComputation() {
     return lowestSpatialUnitForComputation;
   }
 
@@ -343,12 +317,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * Get metadata
    * @return metadata
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
-
-    @Valid
-    public CommonMetadataType getMetadata() {
+  */
+  @NotNull @Valid 
+  @Schema(name = "metadata", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("metadata")
+  public CommonMetadataType getMetadata() {
     return metadata;
   }
 
@@ -364,11 +337,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * description about how the indicator was computed
    * @return processDescription
-   **/
-  @Schema(required = true, description = "description about how the indicator was computed")
-      @NotNull
-
-    public String getProcessDescription() {
+  */
+  @NotNull 
+  @Schema(name = "processDescription", description = "description about how the indicator was computed", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("processDescription")
+  public String getProcessDescription() {
     return processDescription;
   }
 
@@ -384,10 +357,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * an optional note on the reference date of the indicator
    * @return referenceDateNote
-   **/
-  @Schema(description = "an optional note on the reference date of the indicator")
+  */
   
-    public String getReferenceDateNote() {
+  @Schema(name = "referenceDateNote", description = "an optional note on the reference date of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("referenceDateNote")
+  public String getReferenceDateNote() {
     return referenceDateNote;
   }
 
@@ -395,14 +369,14 @@ public class IndicatorMetadataPATCHInputType   {
     this.referenceDateNote = referenceDateNote;
   }
 
-  public IndicatorMetadataPATCHInputType refrencesToGeoresources(List<IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources) {
+  public IndicatorMetadataPATCHInputType refrencesToGeoresources(List<@Valid IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources) {
     this.refrencesToGeoresources = refrencesToGeoresources;
     return this;
   }
 
   public IndicatorMetadataPATCHInputType addRefrencesToGeoresourcesItem(IndicatorPOSTInputTypeRefrencesToGeoresources refrencesToGeoresourcesItem) {
     if (this.refrencesToGeoresources == null) {
-      this.refrencesToGeoresources = new ArrayList<IndicatorPOSTInputTypeRefrencesToGeoresources>();
+      this.refrencesToGeoresources = new ArrayList<>();
     }
     this.refrencesToGeoresources.add(refrencesToGeoresourcesItem);
     return this;
@@ -411,25 +385,26 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * array of references to other georesource datasets. E.g., if an indicator is defined by performing geometric-topological operations, then the identifiers of those required georesources can be referenced here
    * @return refrencesToGeoresources
-   **/
-  @Schema(description = "array of references to other georesource datasets. E.g., if an indicator is defined by performing geometric-topological operations, then the identifiers of those required georesources can be referenced here")
-      @Valid
-    public List<IndicatorPOSTInputTypeRefrencesToGeoresources> getRefrencesToGeoresources() {
+  */
+  @Valid 
+  @Schema(name = "refrencesToGeoresources", description = "array of references to other georesource datasets. E.g., if an indicator is defined by performing geometric-topological operations, then the identifiers of those required georesources can be referenced here", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("refrencesToGeoresources")
+  public List<@Valid IndicatorPOSTInputTypeRefrencesToGeoresources> getRefrencesToGeoresources() {
     return refrencesToGeoresources;
   }
 
-  public void setRefrencesToGeoresources(List<IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources) {
+  public void setRefrencesToGeoresources(List<@Valid IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources) {
     this.refrencesToGeoresources = refrencesToGeoresources;
   }
 
-  public IndicatorMetadataPATCHInputType refrencesToOtherIndicators(List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators) {
+  public IndicatorMetadataPATCHInputType refrencesToOtherIndicators(List<@Valid IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators) {
     this.refrencesToOtherIndicators = refrencesToOtherIndicators;
     return this;
   }
 
   public IndicatorMetadataPATCHInputType addRefrencesToOtherIndicatorsItem(IndicatorPOSTInputTypeRefrencesToOtherIndicators refrencesToOtherIndicatorsItem) {
     if (this.refrencesToOtherIndicators == null) {
-      this.refrencesToOtherIndicators = new ArrayList<IndicatorPOSTInputTypeRefrencesToOtherIndicators>();
+      this.refrencesToOtherIndicators = new ArrayList<>();
     }
     this.refrencesToOtherIndicators.add(refrencesToOtherIndicatorsItem);
     return this;
@@ -438,14 +413,15 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * array of references to other indicators. E.g., if an indicator is defined by combining four other indicators, then the identifiers of those four indicators can be referenced here
    * @return refrencesToOtherIndicators
-   **/
-  @Schema(description = "array of references to other indicators. E.g., if an indicator is defined by combining four other indicators, then the identifiers of those four indicators can be referenced here")
-      @Valid
-    public List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> getRefrencesToOtherIndicators() {
+  */
+  @Valid 
+  @Schema(name = "refrencesToOtherIndicators", description = "array of references to other indicators. E.g., if an indicator is defined by combining four other indicators, then the identifiers of those four indicators can be referenced here", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("refrencesToOtherIndicators")
+  public List<@Valid IndicatorPOSTInputTypeRefrencesToOtherIndicators> getRefrencesToOtherIndicators() {
     return refrencesToOtherIndicators;
   }
 
-  public void setRefrencesToOtherIndicators(List<IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators) {
+  public void setRefrencesToOtherIndicators(List<@Valid IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators) {
     this.refrencesToOtherIndicators = refrencesToOtherIndicators;
   }
 
@@ -455,6 +431,9 @@ public class IndicatorMetadataPATCHInputType   {
   }
 
   public IndicatorMetadataPATCHInputType addTagsItem(String tagsItem) {
+    if (this.tags == null) {
+      this.tags = new ArrayList<>();
+    }
     this.tags.add(tagsItem);
     return this;
   }
@@ -462,11 +441,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * list of tag labels for the indicator
    * @return tags
-   **/
-  @Schema(required = true, description = "list of tag labels for the indicator")
-      @NotNull
-
-    public List<String> getTags() {
+  */
+  @NotNull 
+  @Schema(name = "tags", description = "list of tag labels for the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("tags")
+  public List<String> getTags() {
     return tags;
   }
 
@@ -482,11 +461,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * id of the last topic hierarchy entity 
    * @return topicReference
-   **/
-  @Schema(required = true, description = "id of the last topic hierarchy entity ")
-      @NotNull
-
-    public String getTopicReference() {
+  */
+  @NotNull 
+  @Schema(name = "topicReference", description = "id of the last topic hierarchy entity ", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("topicReference")
+  public String getTopicReference() {
     return topicReference;
   }
 
@@ -502,11 +481,11 @@ public class IndicatorMetadataPATCHInputType   {
   /**
    * unit of the indicator values
    * @return unit
-   **/
-  @Schema(required = true, description = "unit of the indicator values")
-      @NotNull
-
-    public String getUnit() {
+  */
+  @NotNull 
+  @Schema(name = "unit", description = "unit of the indicator values", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("unit")
+  public String getUnit() {
     return unit;
   }
 
@@ -514,9 +493,8 @@ public class IndicatorMetadataPATCHInputType   {
     this.unit = unit;
   }
 
-
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -525,7 +503,6 @@ public class IndicatorMetadataPATCHInputType   {
     }
     IndicatorMetadataPATCHInputType indicatorMetadataPATCHInputType = (IndicatorMetadataPATCHInputType) o;
     return Objects.equals(this.abbreviation, indicatorMetadataPATCHInputType.abbreviation) &&
-        Objects.equals(this.allowedRoles, indicatorMetadataPATCHInputType.allowedRoles) &&
         Objects.equals(this.characteristicValue, indicatorMetadataPATCHInputType.characteristicValue) &&
         Objects.equals(this.creationType, indicatorMetadataPATCHInputType.creationType) &&
         Objects.equals(this.datasetName, indicatorMetadataPATCHInputType.datasetName) &&
@@ -548,16 +525,14 @@ public class IndicatorMetadataPATCHInputType   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, allowedRoles, characteristicValue, creationType, datasetName, defaultClassificationMapping, regionalReferenceValues, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit);
+    return Objects.hash(abbreviation, characteristicValue, creationType, datasetName, defaultClassificationMapping, regionalReferenceValues, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorMetadataPATCHInputType {\n");
-    
     sb.append("    abbreviation: ").append(toIndentedString(abbreviation)).append("\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
     sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");
     sb.append("    creationType: ").append(toIndentedString(creationType)).append("\n");
     sb.append("    datasetName: ").append(toIndentedString(datasetName)).append("\n");
@@ -584,10 +559,11 @@ public class IndicatorMetadataPATCHInputType   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
   }
 }
+

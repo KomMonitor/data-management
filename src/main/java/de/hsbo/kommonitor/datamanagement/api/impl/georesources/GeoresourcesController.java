@@ -5,10 +5,14 @@ import de.hsbo.kommonitor.datamanagement.api.GeoresourcesApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
 import de.hsbo.kommonitor.datamanagement.model.*;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -50,10 +55,9 @@ public class GeoresourcesController extends BasePathController implements Geores
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('publisher')")
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity<GeoresourceOverviewType> addGeoresourceAsBody(GeoresourcePOSTInputType featureData) {
 		logger.info("Received request to insert new georesource");
-		String accept = request.getHeader("Accept");
 
 		/*
 		 * analyse input data and save it within database
@@ -296,6 +300,61 @@ public class GeoresourcesController extends BasePathController implements Geores
 			}
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
+	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'creator')")
+	public ResponseEntity updateGeoresourcePermissions(
+			@P("georesourceId") String georesourceId,
+	 		PermissionLevelInputType permissionLevelInputType) {
+		logger.info("Received request to update georesource roles for georesourceId '{}'.", georesourceId);
+		try {   
+			georesourceId = georesourcesManager.updatePermissions(permissionLevelInputType, georesourceId);
+			lastModManager.updateLastDatabaseModification_georesources();
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+		}
+		if (georesourceId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String location = georesourceId;
+            try {
+                responseHeaders.setLocation(new URI(location));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+	}
+
+	@Override
+	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'creator')")
+	public ResponseEntity<Void> updateGeoresourceOwnership(
+			@P("georesourceId") String georesourceId,
+			OwnerInputType ownerInputType) {
+		logger.info("Received request to update georesource ownership for georesourceId '{}'.", georesourceId);
+		try {
+			georesourceId = georesourcesManager.updateOwnership(ownerInputType, georesourceId);
+			lastModManager.updateLastDatabaseModification_georesources();
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+		}
+		if (georesourceId != null) {
+			HttpHeaders responseHeaders = new HttpHeaders();
+
+			String location = georesourceId;
+			try {
+				responseHeaders.setLocation(new URI(location));
+			} catch (URISyntaxException e) {
+				return ApiUtils.createResponseEntityFromException(e);
+			}
+			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

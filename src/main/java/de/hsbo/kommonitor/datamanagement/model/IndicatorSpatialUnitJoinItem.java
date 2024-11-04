@@ -1,35 +1,29 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
-import java.net.URI;
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.io.Serializable;
-import java.time.OffsetDateTime;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
-import java.util.*;
 import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * IndicatorSpatialUnitJoinItem
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
 public class IndicatorSpatialUnitJoinItem implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Valid
-  private List<String> allowedRoles;
+  private List<String> permissions;
+
+  private String ownerId;
 
   private String spatialUnitId;
 
@@ -37,6 +31,8 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
 
   @Valid
   private List<PermissionLevelType> userPermissions;
+
+  private Boolean isPublic;
 
   public IndicatorSpatialUnitJoinItem() {
     super();
@@ -50,32 +46,52 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     this.spatialUnitName = spatialUnitName;
   }
 
-  public IndicatorSpatialUnitJoinItem allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public IndicatorSpatialUnitJoinItem permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public IndicatorSpatialUnitJoinItem addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<>();
+  public IndicatorSpatialUnitJoinItem addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
+   * list of permissions on this entity
+   * @return permissions
   */
-  
-  @Schema(name = "allowedRoles", description = "list of role identifiers that have read access rights for this dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("allowedRoles")
-  public List<String> getAllowedRoles() {
-    return allowedRoles;
+
+  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
+  }
+
+  public IndicatorSpatialUnitJoinItem ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+  
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
   }
 
   public IndicatorSpatialUnitJoinItem spatialUnitId(String spatialUnitId) {
@@ -146,6 +162,26 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     this.userPermissions = userPermissions;
   }
 
+  public IndicatorSpatialUnitJoinItem isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -155,25 +191,29 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
       return false;
     }
     IndicatorSpatialUnitJoinItem indicatorSpatialUnitJoinItem = (IndicatorSpatialUnitJoinItem) o;
-    return Objects.equals(this.allowedRoles, indicatorSpatialUnitJoinItem.allowedRoles) &&
+    return Objects.equals(this.permissions, indicatorSpatialUnitJoinItem.permissions) &&
+        Objects.equals(this.ownerId, indicatorSpatialUnitJoinItem.ownerId) &&
         Objects.equals(this.spatialUnitId, indicatorSpatialUnitJoinItem.spatialUnitId) &&
         Objects.equals(this.spatialUnitName, indicatorSpatialUnitJoinItem.spatialUnitName) &&
-        Objects.equals(this.userPermissions, indicatorSpatialUnitJoinItem.userPermissions);
+        Objects.equals(this.userPermissions, indicatorSpatialUnitJoinItem.userPermissions) &&
+        Objects.equals(this.isPublic, indicatorSpatialUnitJoinItem.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(allowedRoles, spatialUnitId, spatialUnitName, userPermissions);
+    return Objects.hash(permissions, ownerId, spatialUnitId, spatialUnitName, userPermissions, isPublic);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorSpatialUnitJoinItem {\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    spatialUnitId: ").append(toIndentedString(spatialUnitId)).append("\n");
     sb.append("    spatialUnitName: ").append(toIndentedString(spatialUnitName)).append("\n");
     sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");
     return sb.toString();
   }

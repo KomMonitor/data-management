@@ -1,11 +1,13 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -15,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @Entity(name = "IndicatorSpatialUnits")
-public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedByRole {
+public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,8 +40,6 @@ public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedB
 
     public IndicatorSpatialUnitJoinEntity() {
     }
-
-    ;
 
     public String getIndicatorMetadataId() {
         return indicatorMetadataId;
@@ -143,16 +143,40 @@ public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedB
 
     @ManyToMany()
     @JoinTable(name = "indicatorSpatialUnits_roles",
-            joinColumns = @JoinColumn(name = "indicatorspatialunit_id", referencedColumnName = "entryid"),
-            inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "roleid"))
-    private Collection<RolesEntity> roles;
+            joinColumns = @JoinColumn(name = "indicatorspatialunit_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    private Collection<PermissionEntity> permissions;
 
-    public HashSet<RolesEntity> getRoles() {
-        return new HashSet<RolesEntity>(roles);
+    @ManyToOne
+    private OrganizationalUnitEntity owner;
+
+    @Column
+    @Nullable
+    private Boolean isPublic;
+
+    public HashSet<PermissionEntity> getPermissions() {
+        return new HashSet<>(permissions);
     }
 
-    public void setRoles(Collection<RolesEntity> roles) {
-        this.roles = new HashSet<RolesEntity>(roles);
+    public void setPermissions(Collection<PermissionEntity> permissions) {
+        this.permissions = new HashSet<>(permissions);
+    }
+
+    public OrganizationalUnitEntity getOwner() {
+        return owner;
+    }
+
+    public void setOwner(OrganizationalUnitEntity owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public Boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 
 //    @ManyToMany()

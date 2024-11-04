@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Defines assignable colors for different feature styles, such as POI, LOI and AOI colors.
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:18:57.441387500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
 public enum ColorType {
   
   WHITE("white"),

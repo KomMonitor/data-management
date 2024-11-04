@@ -1,47 +1,55 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
+import java.net.URI;
 import java.util.Objects;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.springframework.validation.annotation.Validated;
-import org.threeten.bp.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.openapitools.jackson.nullable.JsonNullable;
+import java.io.Serializable;
+import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+
+import java.util.*;
+import jakarta.annotation.Generated;
 
 /**
  * RegionalReferenceValueType
  */
-@Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-04-23T11:43:09.197508532Z[GMT]")
 
-@Entity(name = "RegionalReferenceValueType")
-public class RegionalReferenceValueType   {
-	
-  @Id
-  @GeneratedValue(generator = "UUID")
-  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-  private String mappingId; 
-	
-  @JsonProperty("referenceDate")
-  private String referenceDate = null;
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+public class RegionalReferenceValueType implements Serializable {
 
-  @JsonProperty("regionalSum")
-  private Float regionalSum = null;
+  private static final long serialVersionUID = 1L;
 
-  @JsonProperty("regionalAverage")
-  private Float regionalAverage = null;
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+  private LocalDate referenceDate;
 
-  @JsonProperty("spatiallyUnassignable")
-  private Float spatiallyUnassignable = null;
+  private JsonNullable<Float> regionalSum = JsonNullable.<Float>undefined();
 
-  public RegionalReferenceValueType referenceDate(String referenceDate) {
+  private JsonNullable<Float> regionalAverage = JsonNullable.<Float>undefined();
+
+  private JsonNullable<Float> spatiallyUnassignable = JsonNullable.<Float>undefined();
+
+  public RegionalReferenceValueType() {
+    super();
+  }
+
+  /**
+   * Constructor with only required parameters
+   */
+  public RegionalReferenceValueType(LocalDate referenceDate, Float regionalSum, Float regionalAverage, Float spatiallyUnassignable) {
+    this.referenceDate = referenceDate;
+    this.regionalSum = JsonNullable.of(regionalSum);
+    this.regionalAverage = JsonNullable.of(regionalAverage);
+    this.spatiallyUnassignable = JsonNullable.of(spatiallyUnassignable);
+  }
+
+  public RegionalReferenceValueType referenceDate(LocalDate referenceDate) {
     this.referenceDate = referenceDate;
     return this;
   }
@@ -49,82 +57,80 @@ public class RegionalReferenceValueType   {
   /**
    * reference date according to ISO 8601 (e.g. 2018-01-30)
    * @return referenceDate
-   **/
-  @Schema(required = true, description = "reference date according to ISO 8601 (e.g. 2018-01-30)")
-      @NotNull
-
-    @Valid
-    public String getReferenceDate() {
+  */
+  @NotNull @Valid 
+  @Schema(name = "referenceDate", description = "reference date according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("referenceDate")
+  public LocalDate getReferenceDate() {
     return referenceDate;
   }
 
-  public void setReferenceDate(String referenceDate) {
+  public void setReferenceDate(LocalDate referenceDate) {
     this.referenceDate = referenceDate;
   }
 
   public RegionalReferenceValueType regionalSum(Float regionalSum) {
-    this.regionalSum = regionalSum;
+    this.regionalSum = JsonNullable.of(regionalSum);
     return this;
   }
 
   /**
    * regional sum value
    * @return regionalSum
-   **/
-  @Schema(required = true, description = "regional sum value")
-      @NotNull
-
-    public Float getRegionalSum() {
+  */
+  @NotNull 
+  @Schema(name = "regionalSum", description = "regional sum value", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("regionalSum")
+  public JsonNullable<Float> getRegionalSum() {
     return regionalSum;
   }
 
-  public void setRegionalSum(Float regionalSum) {
+  public void setRegionalSum(JsonNullable<Float> regionalSum) {
     this.regionalSum = regionalSum;
   }
 
   public RegionalReferenceValueType regionalAverage(Float regionalAverage) {
-    this.regionalAverage = regionalAverage;
+    this.regionalAverage = JsonNullable.of(regionalAverage);
     return this;
   }
 
   /**
    * regional average value
    * @return regionalAverage
-   **/
-  @Schema(required = true, description = "regional average value")
-      @NotNull
-
-    public Float getRegionalAverage() {
+  */
+  @NotNull 
+  @Schema(name = "regionalAverage", description = "regional average value", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("regionalAverage")
+  public JsonNullable<Float> getRegionalAverage() {
     return regionalAverage;
   }
 
-  public void setRegionalAverage(Float regionalAverage) {
+  public void setRegionalAverage(JsonNullable<Float> regionalAverage) {
     this.regionalAverage = regionalAverage;
   }
 
   public RegionalReferenceValueType spatiallyUnassignable(Float spatiallyUnassignable) {
-    this.spatiallyUnassignable = spatiallyUnassignable;
+    this.spatiallyUnassignable = JsonNullable.of(spatiallyUnassignable);
     return this;
   }
 
   /**
    * number of items that cannot be spatially assigned to any spatial unit
    * @return spatiallyUnassignable
-   **/
-  @Schema(required = true, description = "number of items that cannot be spatially assigned to any spatial unit")
-      @NotNull
-
-    public Float getSpatiallyUnassignable() {
+  */
+  @NotNull 
+  @Schema(name = "spatiallyUnassignable", description = "number of items that cannot be spatially assigned to any spatial unit", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("spatiallyUnassignable")
+  public JsonNullable<Float> getSpatiallyUnassignable() {
     return spatiallyUnassignable;
   }
 
-  public void setSpatiallyUnassignable(Float spatiallyUnassignable) {
+  public void setSpatiallyUnassignable(JsonNullable<Float> spatiallyUnassignable) {
     this.spatiallyUnassignable = spatiallyUnassignable;
   }
 
-
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -147,7 +153,6 @@ public class RegionalReferenceValueType   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class RegionalReferenceValueType {\n");
-    
     sb.append("    referenceDate: ").append(toIndentedString(referenceDate)).append("\n");
     sb.append("    regionalSum: ").append(toIndentedString(regionalSum)).append("\n");
     sb.append("    regionalAverage: ").append(toIndentedString(regionalAverage)).append("\n");
@@ -160,10 +165,11 @@ public class RegionalReferenceValueType   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
   }
 }
+

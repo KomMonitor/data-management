@@ -1,26 +1,33 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-
+import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.RegionalReferenceValueEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
+import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
+import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.*;
+import de.hsbo.kommonitor.datamanagement.msg.MessageResolver;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import de.hsbo.kommonitor.datamanagement.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.geotools.data.DataStore;
 import org.geotools.feature.FeatureCollection;
@@ -33,23 +40,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.scripts.ScriptManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
-import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
-import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
-import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional
 @Repository
@@ -58,20 +55,19 @@ public class IndicatorsManager {
 
     private static Logger logger = LoggerFactory.getLogger(IndicatorsManager.class);
 
-    /**
-     *
-     */
-//	@PersistenceContext
-//	EntityManager em;
+    private static final String MSG_INDICATOR_EXISTS_ERROR = "indicator-exists-error";
 
     @Autowired
     private IndicatorsMetadataRepository indicatorsMetadataRepo;
 
     @Autowired
+    private OrganizationalUnitRepository organizationalUnitRepository;
+
+    @Autowired
     private IndicatorSpatialUnitsRepository indicatorsSpatialUnitsRepo;
 
     @Autowired
-    private RolesRepository rolesRepository;
+    private PermissionRepository permissionRepository;
 
     @Autowired
     OGCWebServiceManager ogcServiceManager;
@@ -84,7 +80,10 @@ public class IndicatorsManager {
 
     @Autowired
     IndicatorsMapper indicatorsMapper;
-    
+
+    @Autowired
+    MessageResolver messageResolver;
+
     @Autowired
     private LastModificationManager lastModManager;
 
@@ -101,7 +100,7 @@ public class IndicatorsManager {
             IndicatorTypeEnum indicatorType = metadata.getIndicatorType();
             CreationTypeEnum creationType = metadata.getCreationType();
 
-            logger.info("Trying to update indicator using follwing parameters: name '{}', characteristicValue '{}', indicatorType '{}', creationType '{}'", indicatorName, characteristicValue, indicatorType, creationType.toString());
+            logger.info("Trying to update indicator using following parameters: name '{}', characteristicValue '{}', indicatorType '{}', creationType '{}'", indicatorName, characteristicValue, indicatorType, creationType.toString());
 
             /*
              * check if there are changes to key-properties
@@ -110,10 +109,12 @@ public class IndicatorsManager {
              */
             if (keyPropertiesHaveChanged(metadataEntity, indicatorName, characteristicValue, indicatorType)) {
                 if (indicatorsMetadataRepo.existsByDatasetNameAndCharacteristicValueAndIndicatorType(indicatorName, characteristicValue, indicatorType)) {
+                    MetadataIndicatorsEntity existingIndicator = indicatorsMetadataRepo.findByDatasetName(indicatorName);
                     logger.error(
                             "The indicator metadataset with datasetName '{}', characteristicValue '{}' and indicatorType '{}' already exists. Thus aborting update indicator request.",
                             indicatorName, characteristicValue, indicatorType);
-                    throw new Exception("Indicator for indicatorName, characteristicValue and indicatorType already exists. Aborting update indicator request.");
+                    String errMsg = messageResolver.getMessage(MSG_INDICATOR_EXISTS_ERROR);
+                    throw new Exception(String.format(errMsg, indicatorName, existingIndicator.getOwner().getMandant().getName()));
                 }
             }
 
@@ -131,8 +132,8 @@ public class IndicatorsManager {
 
             for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
 
-            	try {
-            		String datasetTitle = createTitleForWebService(indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
+                try {
+                    String datasetTitle = createTitleForWebService(indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
                             indicatorSpatialUnitJoinEntity.getIndicatorName());
 
                     String styleName;
@@ -152,18 +153,22 @@ public class IndicatorsManager {
                             indicatorSpatialUnitJoinEntity.getIndicatorViewTableName(), datasetTitle, styleName,
                             ResourceTypeEnum.INDICATOR);
 
-                    List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getRoles().stream()
-                            .map(r -> r.getRoleId()).collect(Collectors.toList());
+                    List<String> allowedRoles = indicatorSpatialUnitJoinEntity.getPermissions().stream()
+                            .map(r -> r.getPermissionId()).collect(Collectors.toList());
 
                     persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId,
                             indicatorSpatialUnitJoinEntity.getIndicatorName(),
                             indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
-                            indicatorSpatialUnitJoinEntity.getIndicatorViewTableName(), styleName, allowedRoles);
-				} catch (Exception e) {
-					logger.error("An error ocurred while trying to publish data layer for indicator with id {} and spatial unit with id {}.", indicatorId, indicatorSpatialUnitJoinEntity.getSpatialUnitId());
-					logger.error("Error was: {}", e.getMessage());
-					e.printStackTrace();
-				}
+                            indicatorSpatialUnitJoinEntity.getIndicatorViewTableName(),
+                            styleName,
+                            allowedRoles,
+                            indicatorSpatialUnitJoinEntity.getOwner().getOrganizationalUnitId(),
+                            indicatorSpatialUnitJoinEntity.isPublic());
+                } catch (Exception e) {
+                    logger.error("An error ocurred while trying to publish data layer for indicator with id {} and spatial unit with id {}.", indicatorId, indicatorSpatialUnitJoinEntity.getSpatialUnitId());
+                    logger.error("Error was: {}", e.getMessage());
+                    e.printStackTrace();
+                }
 
             }
 
@@ -177,19 +182,21 @@ public class IndicatorsManager {
         }
     }
 
-    public String updateIndicatorRoles(IndicatorPATCHInputType indicatorData, String indicatorId, String spatialUnitId) throws Exception {
+    public String updateIndicatorPermissions(PermissionLevelInputType indicatorData, String indicatorId, String spatialUnitId) throws Exception {
         logger.info("Trying to update indicator roles for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
         if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)) {
             IndicatorSpatialUnitJoinEntity indicatorEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
 
-            if(keyPropertiesHaveChanged(indicatorEntity, indicatorData)) {
-                indicatorEntity.setRoles(retrieveRoles(indicatorData.getAllowedRoles()));
+            if (keyPropertiesHaveChanged(indicatorEntity, indicatorData)) {
+                indicatorEntity.setPermissions(retrievePermissions(indicatorData.getPermissions()));
+                indicatorEntity.setPublic(indicatorData.getIsPublic());
+
                 indicatorsSpatialUnitsRepo.saveAndFlush(indicatorEntity);
                 logger.info(
                         "Succesfully updated the roles for indicator dataset with indicatorId '{}' and spatialUnitId '{}'.",
                         indicatorId, spatialUnitId);
                 return indicatorEntity.getEntryId();
-            }else{
+            } else {
                 logger.info(
                         "The roles for indicator dataset with indicatorId '{}' and spatialUnitId '{}' have not changed. Update has no effect.",
                         indicatorId, spatialUnitId);
@@ -206,10 +213,77 @@ public class IndicatorsManager {
         }
     }
 
-    private boolean keyPropertiesHaveChanged(IndicatorSpatialUnitJoinEntity indicatorEntity, IndicatorPATCHInputType indicatorData) {
-        List<String> oldRoleIds = indicatorEntity.getRoles().stream().map(r -> r.getRoleId()).collect(Collectors.toList());
-        HashSet<String> newRoleIds = new HashSet<String>(indicatorData.getAllowedRoles());
-        return !CollectionUtils.isEqualCollection(oldRoleIds, newRoleIds);
+    public String updateIndicatorPermissions(PermissionLevelInputType indicatorData, String indicatorId) throws Exception {
+        logger.info("Trying to update indicator roles for indicatorId '{}'", indicatorId);
+        if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+            var indicatorEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+
+            if (keyPropertiesHaveChanged(indicatorEntity, indicatorData)) {
+                indicatorEntity.setPermissions(retrievePermissions(indicatorData.getPermissions()));
+                indicatorEntity.setPublic(indicatorData.getIsPublic());
+                indicatorsMetadataRepo.saveAndFlush(indicatorEntity);
+                logger.info(
+                        "Successfully updated the roles for indicator dataset with indicatorId '{}'.",
+                        indicatorId);
+                return indicatorEntity.getDatasetId();
+            } else {
+                logger.info(
+                        "The roles for indicator dataset with indicatorId '{}' have not changed. Update has no effect.",
+                        indicatorId);
+                return "";
+            }
+
+
+        } else {
+            logger.error(
+                    "No indicator dataset with indicatorId '{}' was found in database. Update request has no effect.",
+                    indicatorId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update indicator permissions, but no dataset exists with datasetId " + indicatorId);
+        }
+    }
+
+    public String updateOwnership(OwnerInputType owner, String indicatorId, String spatialUnitId) throws Exception {
+        logger.info("Trying to update indicator ownership for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
+        if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)) {
+            IndicatorSpatialUnitJoinEntity indicatorEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+            indicatorEntity.setOwner(getOrganizationalUnitEntity(owner.getOwnerId()));
+
+            indicatorsSpatialUnitsRepo.saveAndFlush(indicatorEntity);
+            logger.info("Succesfully updated the ownership for indicator dataset with indicatorId '{}' and spatialUnitId '{}'.",
+                        indicatorId, spatialUnitId);
+            return indicatorEntity.getEntryId();
+
+        } else {
+            logger.error(
+                    "No indicator dataset with indicatorId '{}' and spatialUnitId '{}' was found in database. Update request has no effect.",
+                    indicatorId, spatialUnitId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update indicator permissions, but no dataset exists with datasetId " + indicatorId);
+        }
+    }
+
+    public String updateOwnership(OwnerInputType owner, String indicatorId) throws Exception {
+        logger.info("Trying to update indicator metadata ownership for datasetId '{}'", indicatorId);
+        if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+            MetadataIndicatorsEntity metadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+            metadataEntity.setOwner(getOrganizationalUnitEntity(owner.getOwnerId()));
+
+            indicatorsMetadataRepo.saveAndFlush(metadataEntity);
+            logger.info("Successfully updated the ownership for indicator dataset with indicatorId '{}'.", indicatorId);
+            return indicatorId;
+        } else {
+            logger.error("No indicator dataset with datasetId '{}' was found in database. Update request has no effect.", indicatorId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update indicator ownership, but no dataset exists with datasetId " + indicatorId);
+        }
+    }
+
+    private boolean keyPropertiesHaveChanged(RestrictedEntity indicatorEntity, PermissionLevelInputType indicatorData) {
+        List<String> oldRoleIds = indicatorEntity.getPermissions().stream().map(PermissionEntity::getPermissionId).collect(Collectors.toList());
+        HashSet<String> newRoleIds = new HashSet<String>(indicatorData.getPermissions());
+
+        return !CollectionUtils.isEqualCollection(oldRoleIds, newRoleIds) || indicatorEntity.isPublic() != indicatorData.getIsPublic();
     }
 
     private boolean keyPropertiesHaveChanged(MetadataIndicatorsEntity metadataEntity, String indicatorName,
@@ -238,8 +312,8 @@ public class IndicatorsManager {
         entity.setIndicatorType(metadata.getIndicatorType());
         entity.setCreationType(metadata.getCreationType());
 
-        if(metadata.getDisplayOrder() != null) {
-        	entity.setDisplayOrder(metadata.getDisplayOrder().intValue());
+        if (metadata.getDisplayOrder() != null) {
+            entity.setDisplayOrder(metadata.getDisplayOrder().intValue());
         }
         entity.setReferenceDateNote(metadata.getReferenceDateNote());
 
@@ -259,7 +333,6 @@ public class IndicatorsManager {
         entity.setProcessDescription(metadata.getProcessDescription());
         entity.setUnit(metadata.getUnit());
         entity.setLowestSpatialUnitForComputation(metadata.getLowestSpatialUnitForComputation());
-        entity.setRoles(retrieveRoles(metadata.getAllowedRoles()));
 
         if (metadata.getDefaultClassificationMapping() != null) {
             entity.setDefaultClassificationMappingItems(metadata.getDefaultClassificationMapping().getItems());
@@ -284,33 +357,46 @@ public class IndicatorsManager {
         entity.setTopicReference(metadata.getTopicReference());
 
         entity.setAbbreviation(metadata.getAbbreviation());
-        entity.setHeadlineIndicator(metadata.isIsHeadlineIndicator());
+        entity.setHeadlineIndicator(metadata.getIsHeadlineIndicator());
         entity.setInterpretation(metadata.getInterpretation());
         entity.setTags(new HashSet<String>(metadata.getTags()));
-        
-        entity.setRegionalReferenceValues(metadata.getRegionalReferenceValues());
+
+        Collection<RegionalReferenceValueEntity> regRefValues = new ArrayList<RegionalReferenceValueEntity>();
+
+        for (RegionalReferenceValueType regionalReferenceValueType : metadata.getRegionalReferenceValues()) {
+        	RegionalReferenceValueEntity regRefEntity = new RegionalReferenceValueEntity();
+
+        	regRefEntity.setReferenceDate(regionalReferenceValueType.getReferenceDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        	regRefEntity.setRegionalAverage(regionalReferenceValueType.getRegionalAverage().get());
+        	regRefEntity.setRegionalSum(regionalReferenceValueType.getRegionalSum().get());
+        	regRefEntity.setSpatiallyUnassignable(regionalReferenceValueType.getSpatiallyUnassignable().get());
+
+        	regRefValues.add(regRefEntity);
+		}
+
+        entity.setRegionalReferenceValues(regRefValues);
 
         // persist in db
         indicatorsMetadataRepo.saveAndFlush(entity);
     }
-    
+
     public void updateJoinedSpatialUnitName(String spatialUnitId, String oldName, String newName) throws Exception {
-    	List<IndicatorSpatialUnitJoinEntity> affectedIndicatorEntries = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
+        List<IndicatorSpatialUnitJoinEntity> affectedIndicatorEntries = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
 
-		for (IndicatorSpatialUnitJoinEntity affectedIndicatorEntry : affectedIndicatorEntries) {
-			affectedIndicatorEntry.setSpatialUnitName(newName);
+        for (IndicatorSpatialUnitJoinEntity affectedIndicatorEntry : affectedIndicatorEntries) {
+            affectedIndicatorEntry.setSpatialUnitName(newName);
 
-		}
-		
-		// flush all changes to database
-		indicatorsSpatialUnitsRepo.saveAllAndFlush(affectedIndicatorEntries);
-		
-		// recreate all views due to changes for spatialUnit
-		recreateAllViewsForSpatialUnitById(spatialUnitId);
-		
-		lastModManager.updateLastDatabaseModification_indicators();
-		
-	}
+        }
+
+        // flush all changes to database
+        indicatorsSpatialUnitsRepo.saveAllAndFlush(affectedIndicatorEntries);
+
+        // recreate all views due to changes for spatialUnit
+        recreateAllViewsForSpatialUnitById(spatialUnitId);
+
+        lastModManager.updateLastDatabaseModification_indicators();
+
+    }
 
     public String updateFeatures(IndicatorPUTInputType indicatorData, String indicatorId) throws Exception {
         logger.info("Trying to update indicator features for datasetId '{}'", indicatorId);
@@ -340,19 +426,18 @@ public class IndicatorsManager {
                 // handle OGC web service
                 String styleName;
 
-                if (indicatorData.getDefaultClassificationMapping() != null && indicatorData.getDefaultClassificationMapping().getItems() != null && indicatorData.getDefaultClassificationMapping().getItems().size() > 0) {
-                    styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorViewTableName);
-                } else {
-                    DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
-                    styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
-                }
+                DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+                styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
+
 
                 ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 
                 /*
                  * set wms and wfs urls within metadata
                  */
-                persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName, indicatorData.getAllowedRoles());
+                persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(),
+                        spatialUnitName, indicatorViewTableName, styleName,
+                        indicatorData.getPermissions(), indicatorData.getOwnerId(), indicatorData.getIsPublic());
 
             } else {
                 logger.info(
@@ -369,15 +454,14 @@ public class IndicatorsManager {
                     // handle OGC web service
                     String styleName;
 
-                    if (indicatorData.getDefaultClassificationMapping() != null && indicatorData.getDefaultClassificationMapping().getItems() != null && indicatorData.getDefaultClassificationMapping().getItems().size() > 0) {
-                        styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), datasetTitle, indicatorViewTableName);
-                    } else {
-                        DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
-                        styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
-                    }
+                    DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+                    styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
+
                     publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 
-                    persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(), spatialUnitName, indicatorViewTableName, styleName, indicatorData.getAllowedRoles());
+                    persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId, indicatorMetadataEntry.getDatasetName(),
+                            spatialUnitName, indicatorViewTableName, styleName,
+                            indicatorData.getPermissions(), indicatorData.getOwnerId(), indicatorData.getIsPublic());
                 } catch (Exception e) {
                     /*
                      * remove partially created resources and thrwo error
@@ -488,7 +572,7 @@ public class IndicatorsManager {
 
         List<IndicatorReferenceType> indicatorReferences = ReferenceManager.getIndicatorReferences(indicatorsMetadataEntity.getDatasetId());
         List<GeoresourceReferenceType> georesourcesReferences = ReferenceManager.getGeoresourcesReferences(indicatorsMetadataEntity.getDatasetId());
-        
+
         List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo.findByIndicatorMetadataId(indicatorId);
 
         IndicatorOverviewType swaggerIndicatorMetadata = indicatorsMapper
@@ -508,23 +592,22 @@ public class IndicatorsManager {
 
         if (provider == null) {
             indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll().stream()
-                    .filter(i -> i.getRoles().stream()
-                            .anyMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole)))
+                    .filter(MetadataIndicatorsEntity::isPublic)
                     .collect(Collectors.toList());
         } else {
             indicatorsMeatadataEntities = indicatorsMetadataRepo.findAll().stream()
-                .filter(entity -> provider.checkPermissions(entity, PermissionLevelType.VIEWER))
-                .collect(Collectors.toList());
+                    .filter(entity -> provider.checkPermissions(entity, PermissionLevelType.VIEWER))
+                    .collect(Collectors.toList());
 
             // Iterate over the indicators and add the current user permissions. Iterator is used here in order to
             // safely remove an entity form the collection if no permissions have been found. Actually, this should
             // never happen, however, it is meant as an additional security check.
             Iterator<MetadataIndicatorsEntity> iter = indicatorsMeatadataEntities.iterator();
-            while(iter.hasNext()) {
+            while (iter.hasNext()) {
                 MetadataIndicatorsEntity i = iter.next();
                 try {
                     i.setUserPermissions(provider.getPermissions(i));
-                } catch(NoSuchElementException ex) {
+                } catch (NoSuchElementException ex) {
                     logger.error("No permissions found for indicator '{}'. Entity will be removed" +
                             " from resulting list.", i.getDatasetId());
                     iter.remove();
@@ -614,320 +697,319 @@ public class IndicatorsManager {
     }
 
     public boolean deleteIndicatorDatasetById(String indicatorId) throws Exception {
-		logger.info("Trying to delete indicator dataset with datasetId '{}'", indicatorId);
-		boolean success = true;
-		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+        logger.info("Trying to delete indicator dataset with datasetId '{}'", indicatorId);
+        boolean success = true;
+        if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
 
-			ReferenceManager.removeReferences(indicatorId);
+            ReferenceManager.removeReferences(indicatorId);
 
-			try {
-				boolean deleteScriptsForIndicators = scriptManager.deleteScriptsByIndicatorsId(indicatorId);
-			} catch (Exception e) {
-				logger.error("Error while deleting scripts for indicator with id {}", indicatorId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}
+            try {
+                boolean deleteScriptsForIndicators = scriptManager.deleteScriptsByIndicatorsId(indicatorId);
+            } catch (Exception e) {
+                logger.error("Error while deleting scripts for indicator with id {}", indicatorId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
 
-			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo.findByIndicatorMetadataId(indicatorId);
+            List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo.findByIndicatorMetadataId(indicatorId);
 
 
 
-			/*
-			 * delete featureTables and views for each spatial unit
-			 */
-			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
-				String indicatorViewTableName = indicatorSpatialUnitJoinEntity.getIndicatorViewTableName();
-				// delete any linked roles first
-				try {
-					indicatorSpatialUnitJoinEntity = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorSpatialUnitJoinEntity);
-				} catch (Exception e) {
-					logger.error("Error while deleting roles for indicator spatial unit");
-					logger.error("Error was: {}", e.getMessage());
-					e.printStackTrace();
-				}
+            /*
+             * delete featureTables and views for each spatial unit
+             */
+            for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
+                String indicatorViewTableName = indicatorSpatialUnitJoinEntity.getIndicatorViewTableName();
+                // delete any linked roles first
+                try {
+                    indicatorSpatialUnitJoinEntity = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorSpatialUnitJoinEntity);
+                } catch (Exception e) {
+                    logger.error("Error while deleting roles for indicator spatial unit");
+                    logger.error("Error was: {}", e.getMessage());
+                    e.printStackTrace();
+                }
 
-				try {
+                try {
 //					IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
-					
-					IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
-				} catch (Exception e) {
-					logger.error("Error while deleting spatialUnitLayers for indicator with id {}", indicatorId);
-					logger.error("Error was: {}", e.getMessage());
-					e.printStackTrace();
-				}
 
-				try {
-					// handle OGC web service
-					ogcServiceManager.unpublishDbLayer(indicatorViewTableName, ResourceTypeEnum.INDICATOR);
-				} catch (Exception e) {
-					logger.error("Error while unpublishing spatialUnitLayers in OGSService for indicator with id {}", indicatorId);
-					logger.error("Error was: {}", e.getMessage());
-					e.printStackTrace();
-				}
-			}
+                    IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
+                } catch (Exception e) {
+                    logger.error("Error while deleting spatialUnitLayers for indicator with id {}", indicatorId);
+                    logger.error("Error was: {}", e.getMessage());
+                    e.printStackTrace();
+                }
 
-			try {
-				/*
-				 * delete entries from indicatorsMetadataRepo
-				 */
-				indicatorsSpatialUnitsRepo.deleteByIndicatorMetadataId(indicatorId);
-			} catch (Exception e) {
-				logger.error("Error while deleting entries from indicatorSpatialUnitsRepo for indicator with id {}", indicatorId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-				success = false;
-			}
+                try {
+                    // handle OGC web service
+                    ogcServiceManager.unpublishDbLayer(indicatorViewTableName, ResourceTypeEnum.INDICATOR);
+                } catch (Exception e) {
+                    logger.error("Error while unpublishing spatialUnitLayers in OGSService for indicator with id {}", indicatorId);
+                    logger.error("Error was: {}", e.getMessage());
+                    e.printStackTrace();
+                }
+            }
 
-			// delete any linked roles first
-			try {
-				removeAnyLinkedRoles_indicator(indicatorsMetadataRepo.findByDatasetId(indicatorId));
-			} catch (Exception e) {
-				logger.error("Error while deleting roles for indicator spatial unit");
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}
+            try {
+                /*
+                 * delete entries from indicatorsMetadataRepo
+                 */
+                indicatorsSpatialUnitsRepo.deleteByIndicatorMetadataId(indicatorId);
+            } catch (Exception e) {
+                logger.error("Error while deleting entries from indicatorSpatialUnitsRepo for indicator with id {}", indicatorId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+                success = false;
+            }
 
-			try {
-				/*
-				 * delete metadata entry
-				 */
-				indicatorsMetadataRepo.deleteByDatasetId(indicatorId);
-			} catch (Exception e) {
-				logger.error("Error while deleting metadata entry for indicator with id {}", indicatorId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-				success = false;
-			}
+            // delete any linked roles first
+            try {
+                removeAnyLinkedRoles_indicator(indicatorsMetadataRepo.findByDatasetId(indicatorId));
+            } catch (Exception e) {
+                logger.error("Error while deleting roles for indicator spatial unit");
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
 
-			return success;
-		} else {
-			logger.error(
-					"No indicator dataset with datasetName '{}' was found in database. Delete request has no effect.",
-					indicatorId);
-			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
-		}
-	}
+            try {
+                /*
+                 * delete metadata entry
+                 */
+                indicatorsMetadataRepo.deleteByDatasetId(indicatorId);
+            } catch (Exception e) {
+                logger.error("Error while deleting metadata entry for indicator with id {}", indicatorId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+                success = false;
+            }
+
+            return success;
+        } else {
+            logger.error(
+                    "No indicator dataset with datasetName '{}' was found in database. Delete request has no effect.",
+                    indicatorId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
+        }
+    }
 
     private void removeAnyLinkedRoles_indicator(MetadataIndicatorsEntity indicatorEntity) {
-    	indicatorEntity.setRoles(new ArrayList<>());
+        indicatorEntity.setPermissions(new ArrayList<>());
 
-		indicatorsMetadataRepo.saveAndFlush(indicatorEntity);
+        indicatorsMetadataRepo.saveAndFlush(indicatorEntity);
 
-	}
+    }
 
-	private IndicatorSpatialUnitJoinEntity removeAnyLinkedRoles_indicatorSpatialUnit(
-			IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity) {
-    	indicatorSpatialUnitJoinEntity.setRoles(new ArrayList<>());
+    private IndicatorSpatialUnitJoinEntity removeAnyLinkedRoles_indicatorSpatialUnit(
+            IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity) {
 
-		indicatorsSpatialUnitsRepo.saveAndFlush(indicatorSpatialUnitJoinEntity);
+        indicatorSpatialUnitJoinEntity.setPermissions(new ArrayList<>());
 
-		return indicatorSpatialUnitJoinEntity;
-	}
+        indicatorsSpatialUnitsRepo.saveAndFlush(indicatorSpatialUnitJoinEntity);
 
-	public boolean deleteIndicatorDatasetByIdAndSpatialUnitId(String indicatorId, String spatialUnitId) throws Exception {
-		logger.info("Trying to delete indicator dataset with datasetId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
-		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
-			boolean success = true;
-			IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
-			String indicatorViewTableName = indicatorForSpatialUnit.getIndicatorViewTableName();
+        return indicatorSpatialUnitJoinEntity;
+    }
 
-			// delete any linked roles first
-			try {
-				indicatorForSpatialUnit = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorForSpatialUnit);
-			} catch (Exception e) {
-				logger.error("Error while deleting roles for indicator spatial unit");
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}
+    public boolean deleteIndicatorDatasetByIdAndSpatialUnitId(String indicatorId, String spatialUnitId) throws Exception {
+        logger.info("Trying to delete indicator dataset with datasetId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
+        if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+            boolean success = true;
+            IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+            String indicatorViewTableName = indicatorForSpatialUnit.getIndicatorViewTableName();
 
-			try {
+            // delete any linked roles first
+            try {
+                indicatorForSpatialUnit = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorForSpatialUnit);
+            } catch (Exception e) {
+                logger.error("Error while deleting roles for indicator spatial unit");
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
+
+            try {
 				/*
 				 * delete featureTable and views for each spatial unit
-<<<<<<< HEAD
 				 */
-						
-				IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorForSpatialUnit.getIndicatorViewTableName());
 
-			} catch (Exception e) {
-				logger.error("Error while deleting spatialUnitLayer for indicator with id {}", indicatorId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}
+                IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorForSpatialUnit.getIndicatorViewTableName());
 
-			try {
-				// handle OGC web service
-				ogcServiceManager.unpublishDbLayer(indicatorViewTableName, ResourceTypeEnum.INDICATOR);
-			} catch (Exception e) {
-				logger.error("Error while unpublishing spatialUnitLayer as OGC service for indicator with id {}", indicatorId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}
+            } catch (Exception e) {
+                logger.error("Error while deleting spatialUnitLayer for indicator with id {}", indicatorId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
 
-			try {
-				/*
-				 * delete entry from indicatorsMetadataRepo
-				 */
-				indicatorsSpatialUnitsRepo.deleteByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
-			} catch (Exception e) {
-				logger.error("Error while deleting entry from indicatorSpatialUnitsRepo for indicator with id {} and spatialUnit with id {}" , indicatorId, spatialUnitId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-				success = false;
-			}
+            try {
+                // handle OGC web service
+                ogcServiceManager.unpublishDbLayer(indicatorViewTableName, ResourceTypeEnum.INDICATOR);
+            } catch (Exception e) {
+                logger.error("Error while unpublishing spatialUnitLayer as OGC service for indicator with id {}", indicatorId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
 
-			return success;
-		} else {
-			logger.error(
-					"No indicator dataset with datasetId '{}' was found in database. Delete request has no effect.",
-					indicatorId);
-			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
-		}
-	}
+            try {
+                /*
+                 * delete entry from indicatorsMetadataRepo
+                 */
+                indicatorsSpatialUnitsRepo.deleteByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+            } catch (Exception e) {
+                logger.error("Error while deleting entry from indicatorSpatialUnitsRepo for indicator with id {} and spatialUnit with id {}", indicatorId, spatialUnitId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+                success = false;
+            }
 
-    public boolean deleteIndicatorLayersForSpatialUnitId(String spatialUnitId) throws Exception{
-		logger.info("Trying to delete all indicator layers associated with the spatialUnitId '{}'", spatialUnitId);
-		if (indicatorsSpatialUnitsRepo.existsBySpatialUnitId(spatialUnitId)) {
-			List<IndicatorSpatialUnitJoinEntity> indicatorDatasetsForSpatialUnit = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
-			int numberOfIndicatorLayersToDelete = indicatorDatasetsForSpatialUnit.size();
+            return success;
+        } else {
+            logger.error(
+                    "No indicator dataset with datasetId '{}' was found in database. Delete request has no effect.",
+                    indicatorId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
+        }
+    }
 
-			List<String> indicatorNames = new ArrayList<String>();
+    public boolean deleteIndicatorLayersForSpatialUnitId(String spatialUnitId) throws Exception {
+        logger.info("Trying to delete all indicator layers associated with the spatialUnitId '{}'", spatialUnitId);
+        if (indicatorsSpatialUnitsRepo.existsBySpatialUnitId(spatialUnitId)) {
+            List<IndicatorSpatialUnitJoinEntity> indicatorDatasetsForSpatialUnit = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
+            int numberOfIndicatorLayersToDelete = indicatorDatasetsForSpatialUnit.size();
 
-			/*
-			 * delete featureTables and views for each indicator dataset
-			 */
-			for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorDatasetsForSpatialUnit) {
-				String indicatorViewTableName = indicatorSpatialUnitJoinEntity.getIndicatorViewTableName();
+            List<String> indicatorNames = new ArrayList<String>();
+
+            /*
+             * delete featureTables and views for each indicator dataset
+             */
+            for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorDatasetsForSpatialUnit) {
+                String indicatorViewTableName = indicatorSpatialUnitJoinEntity.getIndicatorViewTableName();
 //				IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
 
-				// delete any linked roles first
-				try {
-					indicatorSpatialUnitJoinEntity = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorSpatialUnitJoinEntity);
-				} catch (Exception e) {
-					logger.error("Error while deleting roles for indicator spatial unit");
-					logger.error("Error was: {}", e.getMessage());
-					e.printStackTrace();
-				}
+                // delete any linked roles first
+                try {
+                    indicatorSpatialUnitJoinEntity = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorSpatialUnitJoinEntity);
+                } catch (Exception e) {
+                    logger.error("Error while deleting roles for indicator spatial unit");
+                    logger.error("Error was: {}", e.getMessage());
+                    e.printStackTrace();
+                }
 
-				try {
+                try {
 					/*
 					 * delete featureTable and views for each spatial unit
-<<<<<<< HEAD
-					 */			
-					
-					IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
-				} catch (Exception e) {
-					logger.error("Error while deleting spatialUnitLayer for indicator with id {}", indicatorSpatialUnitJoinEntity.getIndicatorMetadataId());
-					logger.error("Error was: {}", e.getMessage());
-					e.printStackTrace();
-				}
-
-				try {
-					// handle OGC web service
-					ogcServiceManager.unpublishDbLayer(indicatorViewTableName, ResourceTypeEnum.INDICATOR);
-				} catch (Exception e) {
-					logger.error("Error while unpublishing spatialUnitLayer as OGC service for indicator with id {}", indicatorSpatialUnitJoinEntity.getIndicatorMetadataId());
-					logger.error("Error was: {}", e.getMessage());
-					e.printStackTrace();
-				}
-
-				try {
-					/*
-					 * delete entry from indicatorsMetadataRepo
 					 */
-					indicatorsSpatialUnitsRepo.deleteByIndicatorMetadataIdAndSpatialUnitId(indicatorSpatialUnitJoinEntity.getIndicatorMetadataId(), spatialUnitId);
 
-				} catch (Exception e) {
-					logger.error("Error while deleting entry from indicatorSpatialUnitsRepo for indicator with id {} and spatialUnit with id {}" , indicatorSpatialUnitJoinEntity.getIndicatorMetadataId(), spatialUnitId);
-					logger.error("Error was: {}", e.getMessage());
-					e.printStackTrace();
-				}
+                    IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
+                } catch (Exception e) {
+                    logger.error("Error while deleting spatialUnitLayer for indicator with id {}", indicatorSpatialUnitJoinEntity.getIndicatorMetadataId());
+                    logger.error("Error was: {}", e.getMessage());
+                    e.printStackTrace();
+                }
 
-				indicatorNames.add(indicatorSpatialUnitJoinEntity.getIndicatorName());
-			}
+                try {
+                    // handle OGC web service
+                    ogcServiceManager.unpublishDbLayer(indicatorViewTableName, ResourceTypeEnum.INDICATOR);
+                } catch (Exception e) {
+                    logger.error("Error while unpublishing spatialUnitLayer as OGC service for indicator with id {}", indicatorSpatialUnitJoinEntity.getIndicatorMetadataId());
+                    logger.error("Error was: {}", e.getMessage());
+                    e.printStackTrace();
+                }
 
-			logger.info("Deleted indicator layers associated to spatialUnitId '{}' for a total number of {} indicator datasets", spatialUnitId, numberOfIndicatorLayersToDelete);
-			logger.info("The names of the affected indicators are: {}", indicatorNames);
+                try {
+                    /*
+                     * delete entry from indicatorsMetadataRepo
+                     */
+                    indicatorsSpatialUnitsRepo.deleteByIndicatorMetadataIdAndSpatialUnitId(indicatorSpatialUnitJoinEntity.getIndicatorMetadataId(), spatialUnitId);
 
-			return true;
-		} else {
-			logger.error(
-					"No indicator dataset associated to a spatial unit with id '{}' was found in database. Delete request has no effect.",
-					spatialUnitId);
+                } catch (Exception e) {
+                    logger.error("Error while deleting entry from indicatorSpatialUnitsRepo for indicator with id {} and spatialUnit with id {}", indicatorSpatialUnitJoinEntity.getIndicatorMetadataId(), spatialUnitId);
+                    logger.error("Error was: {}", e.getMessage());
+                    e.printStackTrace();
+                }
+
+                indicatorNames.add(indicatorSpatialUnitJoinEntity.getIndicatorName());
+            }
+
+            logger.info("Deleted indicator layers associated to spatialUnitId '{}' for a total number of {} indicator datasets", spatialUnitId, numberOfIndicatorLayersToDelete);
+            logger.info("The names of the affected indicators are: {}", indicatorNames);
+
+            return true;
+        } else {
+            logger.error(
+                    "No indicator dataset associated to a spatial unit with id '{}' was found in database. Delete request has no effect.",
+                    spatialUnitId);
 //			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 //					"Tried to delete indicator layers for spatial unit, but no dataset exists that is associated to a spatial unit with id " + spatialUnitId);
-			return false;
-		}
+            return false;
+        }
 
-	}
+    }
 
     public boolean deleteIndicatorDatasetByIdAndDate(String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month,
-			BigDecimal day) throws Exception {
-		logger.info("Trying to delete indicator dataset with datasetId '{}' and spatialUnitId '{}' and date '{}-{}-{}'", indicatorId, spatialUnitId, year, month, day);
-		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
-			MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
-			IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+                                                     BigDecimal day) throws Exception {
+        logger.info("Trying to delete indicator dataset with datasetId '{}' and spatialUnitId '{}' and date '{}-{}-{}'", indicatorId, spatialUnitId, year, month, day);
+        if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+            MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+            IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
 
-			boolean success = true;
-			/*
-			 * delete featureTable and views for each spatial unit
-			 */
-			String indicatorViewTableName = indicatorForSpatialUnit.getIndicatorViewTableName();
+            boolean success = true;
+            /*
+             * delete featureTable and views for each spatial unit
+             */
+            String indicatorViewTableName = indicatorForSpatialUnit.getIndicatorViewTableName();
 //			IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
 
 
-			try {
-				/*
-				 * delete timestamp for indicator and spatial unit
-				 */
-				IndicatorDatabaseHandler.deleteIndicatorTimeStamp(indicatorForSpatialUnit.getIndicatorViewTableName(), year, month, day);
+            try {
+                /*
+                 * delete timestamp for indicator and spatial unit
+                 */
+                IndicatorDatabaseHandler.deleteIndicatorTimeStamp(indicatorForSpatialUnit.getIndicatorViewTableName(), year, month, day);
 
-			} catch (Exception e) {
-				logger.error("Error while deleting timestamp in value table for indicator with id {}", indicatorId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}
+            } catch (Exception e) {
+                logger.error("Error while deleting timestamp in value table for indicator with id {}", indicatorId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
 
-			try {
-				indicatorMetadataEntry = deleteTimestampInMetadataEntry(year, month, day, indicatorMetadataEntry);
-				indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
-			} catch (Exception e) {
-				logger.error("Error while deleting timestamp in metadata entry for indicator with id {}", indicatorId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-				success = false;
-			}
+            try {
+                indicatorMetadataEntry = deleteTimestampInMetadataEntry(year, month, day, indicatorMetadataEntry);
+                indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
+            } catch (Exception e) {
+                logger.error("Error while deleting timestamp in metadata entry for indicator with id {}", indicatorId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+                success = false;
+            }
 
-			indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName());
+            indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName());
 
-			/*
-			 * republish indicator layer as OGC service
-			 */
-			String spatialUnitName = indicatorForSpatialUnit.getSpatialUnitName();
+            /*
+             * republish indicator layer as OGC service
+             */
+            String spatialUnitName = indicatorForSpatialUnit.getSpatialUnitName();
 
-			String datasetTitle = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
+            String datasetTitle = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
 
-			String styleName;
+            String styleName;
 
-			try {
-				DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
-				styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
+            try {
+                DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+                styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
 
-				// handle OGC web service
-				ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
-			} catch (Exception e) {
-				logger.error("Error while publishing as OGC service. Error is: \n{}", e);
-			}
-			return success;
-		} else {
-			logger.error(
-					"No indicator dataset with datasetId '{}' was found in database. Delete request has no effect.",
-					indicatorId);
-			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
-		}
-	}
+                // handle OGC web service
+                ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
+            } catch (Exception e) {
+                logger.error("Error while publishing as OGC service. Error is: \n{}", e);
+            }
+            return success;
+        } else {
+            logger.error(
+                    "No indicator dataset with datasetId '{}' was found in database. Delete request has no effect.",
+                    indicatorId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
+        }
+    }
 
     public IndicatorOverviewType addIndicator(IndicatorPOSTInputType indicatorData) throws Exception {
         String spatialUnitName = null;
@@ -958,16 +1040,19 @@ public class IndicatorsManager {
              */
 
             if (indicatorsMetadataRepo.existsByDatasetNameAndCharacteristicValueAndIndicatorType(indicatorName, characteristicValue, indicatorType)) {
+                MetadataIndicatorsEntity existingIndicator = indicatorsMetadataRepo.findByDatasetName(indicatorName);
                 logger.error(
                         "The indicator metadataset with datasetName '{}', characteristicValue '{}' and indicatorType '{}' already exists. Thus aborting add indicator request.",
                         indicatorName, characteristicValue, indicatorType);
-                throw new Exception("Indicator for indicatorName, characteristicValue and indicatorType already exists. Aborting add indicator request.");
+
+                String errMsg = messageResolver.getMessage(MSG_INDICATOR_EXISTS_ERROR);
+                throw new Exception(String.format(errMsg, indicatorName, existingIndicator.getOwner().getMandant().getName()));
             }
 
             indicatorMetadataEntity = createMetadata(indicatorData);
 
             metadataId = indicatorMetadataEntity.getDatasetId();
-			ReferenceManager.createReferences(indicatorData.getRefrencesToGeoresources(),
+            ReferenceManager.createReferences(indicatorData.getRefrencesToGeoresources(),
                     indicatorData.getRefrencesToOtherIndicators(), metadataId);
 
             /*
@@ -985,7 +1070,7 @@ public class IndicatorsManager {
 //                String styleName = publishDefaultStyleForWebServices(indicatorData.getDefaultClassificationMapping(), createTitleForWebService(spatialUnitName, indicatorName), indicatorViewTableName);
 //                publishedAsService = ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, createTitleForWebService(spatialUnitName, indicatorName), styleName, ResourceTypeEnum.INDICATOR);
 //
-//                persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorViewTableName, styleName, indicatorData.getAllowedRoles());
+//                persistNamesOfIndicatorTablesAndServicesInJoinTable(metadataId, indicatorName, spatialUnitName, indicatorViewTableName, styleName, indicatorData.getPermissions());
 //
 //            } else {
 //                logger.info("As creationType is set to '{}', Only the metadata entry was created. No featureTable and view have been created..", creationType.toString());
@@ -1042,10 +1127,10 @@ public class IndicatorsManager {
 
     }
 
-    private Collection<RolesEntity> retrieveRoles(List<String> roleIds) throws ResourceNotFoundException {
-        Collection<RolesEntity> allowedRoles = new ArrayList<>();
-        for (String id : roleIds) {
-            RolesEntity role = rolesRepository.findByRoleId(id);
+    private Collection<PermissionEntity> retrievePermissions(List<String> permissionIds) throws ResourceNotFoundException {
+        Collection<PermissionEntity> allowedRoles = new ArrayList<>();
+        for (String id : permissionIds) {
+            PermissionEntity role = permissionRepository.findByPermissionId(id);
             if (role == null) {
                 throw new ResourceNotFoundException(400, String.format("The requested role %s does not exist.", id));
             }
@@ -1054,6 +1139,14 @@ public class IndicatorsManager {
             }
         }
         return allowedRoles;
+    }
+
+    private OrganizationalUnitEntity getOrganizationalUnitEntity(String id) throws ResourceNotFoundException {
+        OrganizationalUnitEntity entity = organizationalUnitRepository.findByOrganizationalUnitId(id);
+        if (entity == null) {
+            throw new ResourceNotFoundException(400, String.format("The requested organizationalUnit does not exist.", id));
+        }
+        return entity;
     }
 
 //	private void handleInitialIndicatorPersistanceAndPublishing(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, String indicatorName,
@@ -1170,8 +1263,10 @@ public class IndicatorsManager {
         return dbTableName;
     }
 
-    private void persistNamesOfIndicatorTablesAndServicesInJoinTable(String indicatorMetadataId, String indicatorName, String spatialUnitName,
-                                                                     String indicatorViewTableName, String styleName, List<String> allowedRoles) throws ResourceNotFoundException {
+    private void persistNamesOfIndicatorTablesAndServicesInJoinTable(String indicatorMetadataId, String indicatorName,
+                                                                     String spatialUnitName, String indicatorViewTableName,
+                                                                     String styleName, List<String> permissions, String ownerId,
+                                                                     boolean istPublic) throws ResourceNotFoundException {
         logger.info(
                 "Create or modify entry in indicator spatial units join table for indicatorId '{}', and spatialUnitName '{}'. Set indicatorValueTable with name '{}'.",
                 indicatorMetadataId, spatialUnitName, indicatorViewTableName);
@@ -1195,7 +1290,10 @@ public class IndicatorsManager {
         entity.setWmsUrl(ogcServiceManager.getWmsUrl(indicatorViewTableName));
         entity.setWfsUrl(ogcServiceManager.getWfsUrl(indicatorViewTableName));
         entity.setDefaultStyleName(styleName);
-        entity.setRoles(retrieveRoles(allowedRoles));
+
+        entity.setPermissions(retrievePermissions(permissions));
+        entity.setOwner(getOrganizationalUnitEntity(ownerId));
+        entity.setPublic(istPublic);
 
         indicatorsSpatialUnitsRepo.saveAndFlush(entity);
 
@@ -1228,8 +1326,8 @@ public class IndicatorsManager {
         entity.setLastUpdate(lastUpdate);
         entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 
-        if(indicatorData.getDisplayOrder() != null) {
-        	entity.setDisplayOrder(indicatorData.getDisplayOrder().intValue());
+        if (indicatorData.getDisplayOrder() != null) {
+            entity.setDisplayOrder(indicatorData.getDisplayOrder().intValue());
         }
         entity.setReferenceDateNote(indicatorData.getReferenceDateNote());
 
@@ -1270,9 +1368,11 @@ public class IndicatorsManager {
         entity.setWfsUrl(null);
         entity.setWmsUrl(null);
 
-        entity.setRoles(retrieveRoles(indicatorData.getAllowedRoles()));
-        
-        entity.setRegionalReferenceValues(new ArrayList<RegionalReferenceValueType>());
+        entity.setPermissions(retrievePermissions(indicatorData.getPermissions()));
+        entity.setOwner(getOrganizationalUnitEntity(indicatorData.getOwnerId()));
+        entity.setPublic(indicatorData.getIsPublic());
+
+        entity.setRegionalReferenceValues(new ArrayList<RegionalReferenceValueEntity>());
 
         /*
          * process availableTimestamps property for indicator metadata entity
@@ -1369,8 +1469,7 @@ public class IndicatorsManager {
     private MetadataIndicatorsEntity fetchMetadataIndicatorsEntity(AuthInfoProvider provider, String indicatorsId) throws ResourceNotFoundException {
         MetadataIndicatorsEntity metadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorsId);
         if (provider == null) {
-            if (metadataEntity == null || metadataEntity.getRoles().stream()
-                    .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
+            if (metadataEntity == null || !metadataEntity.isPublic()) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' " +
                         "was not found.", indicatorsId));
             }
@@ -1391,8 +1490,7 @@ public class IndicatorsManager {
     private IndicatorSpatialUnitJoinEntity fetchIndicatorSpatialUnitJoinEntity(AuthInfoProvider provider, String indicatorId, String spatialUnitId) throws ResourceNotFoundException {
         IndicatorSpatialUnitJoinEntity entity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
         if (provider == null) {
-            if (entity == null || entity.getRoles().stream()
-                    .noneMatch(r -> r.getOrganizationalUnit().getName().equals(publicRole))) {
+            if (entity == null || !entity.isPublic()) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource " +
                         "for indicator '%s' and spatial unit '%s' was not found.", indicatorId, spatialUnitId));
             }
@@ -1456,76 +1554,76 @@ public class IndicatorsManager {
     }
     */
 
-	public boolean updateIndicatorOrder( List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray) {
-		for (IndicatorPATCHDisplayOrderInputType indicatorPATCHDisplayOrderInputType : indicatorOrderArray) {
-			if(this.indicatorsMetadataRepo.existsByDatasetId(indicatorPATCHDisplayOrderInputType.getIndicatorId())) {
-				MetadataIndicatorsEntity indicatorMetadataEntity = this.indicatorsMetadataRepo.findByDatasetId(indicatorPATCHDisplayOrderInputType.getIndicatorId());
-				indicatorMetadataEntity.setDisplayOrder(indicatorPATCHDisplayOrderInputType.getDisplayOrder().intValue());
+    public boolean updateIndicatorOrder(List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray) {
+        for (IndicatorPATCHDisplayOrderInputType indicatorPATCHDisplayOrderInputType : indicatorOrderArray) {
+            if (this.indicatorsMetadataRepo.existsByDatasetId(indicatorPATCHDisplayOrderInputType.getIndicatorId())) {
+                MetadataIndicatorsEntity indicatorMetadataEntity = this.indicatorsMetadataRepo.findByDatasetId(indicatorPATCHDisplayOrderInputType.getIndicatorId());
+                indicatorMetadataEntity.setDisplayOrder(indicatorPATCHDisplayOrderInputType.getDisplayOrder().intValue());
 
-				this.indicatorsMetadataRepo.save(indicatorMetadataEntity);
-			}
-		}
-		this.indicatorsMetadataRepo.flush();
-		return true;
-	}
+                this.indicatorsMetadataRepo.save(indicatorMetadataEntity);
+            }
+        }
+        this.indicatorsMetadataRepo.flush();
+        return true;
+    }
 
-	public void recreateAllViewsForSpatialUnitById(String spatialUnitId) {
+    public void recreateAllViewsForSpatialUnitById(String spatialUnitId) {
 
-		List<IndicatorSpatialUnitJoinEntity> affectedIndicatorEntries = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
+        List<IndicatorSpatialUnitJoinEntity> affectedIndicatorEntries = indicatorsSpatialUnitsRepo.findBySpatialUnitId(spatialUnitId);
 
-		for (IndicatorSpatialUnitJoinEntity affectedIndicatorEntry : affectedIndicatorEntries) {
-			String indicatorViewTableName = affectedIndicatorEntry.getIndicatorViewTableName();
+        for (IndicatorSpatialUnitJoinEntity affectedIndicatorEntry : affectedIndicatorEntries) {
+            String indicatorViewTableName = affectedIndicatorEntry.getIndicatorViewTableName();
 
-	        try {
-				indicatorViewTableName = createOrReplaceIndicatorView_fromViewName(indicatorViewTableName, affectedIndicatorEntry.getSpatialUnitName(), affectedIndicatorEntry.getIndicatorMetadataId());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+            try {
+                indicatorViewTableName = createOrReplaceIndicatorView_fromViewName(indicatorViewTableName, affectedIndicatorEntry.getSpatialUnitName(), affectedIndicatorEntry.getIndicatorMetadataId());
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
-		}
+        }
 
-	}
-	
-	public void recreateAllViews() {
-		
-		List<IndicatorSpatialUnitJoinEntity> affectedIndicatorEntries = indicatorsSpatialUnitsRepo.findAll();
-		
-		for (IndicatorSpatialUnitJoinEntity affectedIndicatorEntry : affectedIndicatorEntries) {
-			String indicatorViewTableName = affectedIndicatorEntry.getIndicatorViewTableName();
+    }
 
-	        try {
-				indicatorViewTableName = createOrReplaceIndicatorView_fromViewName(indicatorViewTableName, affectedIndicatorEntry.getSpatialUnitName(), affectedIndicatorEntry.getIndicatorMetadataId());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    public void recreateAllViews() {
 
-		}		        
-		
-	}
+        List<IndicatorSpatialUnitJoinEntity> affectedIndicatorEntries = indicatorsSpatialUnitsRepo.findAll();
 
-	public List<IndicatorPropertiesWithoutGeomType> getSingleIndicatorFeatureRecords(String indicatorId,
-			String spatialUnitId, String featureId) throws Exception{
-		return getSingleIndicatorFeatureRecords(indicatorId,
-				spatialUnitId, featureId, null);
-	}
+        for (IndicatorSpatialUnitJoinEntity affectedIndicatorEntry : affectedIndicatorEntries) {
+            String indicatorViewTableName = affectedIndicatorEntry.getIndicatorViewTableName();
 
-	public List<IndicatorPropertiesWithoutGeomType> getSingleIndicatorFeatureRecord(String indicatorId,
-			String spatialUnitId, String featureId, String featureRecordId) throws Exception{
-		// TODO Auto-generated method stub
-		return getSingleIndicatorFeatureRecord(indicatorId, spatialUnitId, featureId, featureRecordId, null);
-	}
-	
-	public List<IndicatorPropertiesWithoutGeomType> getSingleIndicatorFeatureRecords(String indicatorId,
-			String spatialUnitId, String featureId, AuthInfoProvider provider) throws Exception{
-		logger.info("Retrieving single indicator feature database records for dataset with id '{}' and spatialUnitId '{}' and featureId '{}'", indicatorId, spatialUnitId,
+            try {
+                indicatorViewTableName = createOrReplaceIndicatorView_fromViewName(indicatorViewTableName, affectedIndicatorEntry.getSpatialUnitName(), affectedIndicatorEntry.getIndicatorMetadataId());
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+    public List<IndicatorPropertiesWithoutGeomType> getSingleIndicatorFeatureRecords(String indicatorId,
+                                                                                     String spatialUnitId, String featureId) throws Exception {
+        return getSingleIndicatorFeatureRecords(indicatorId,
+                spatialUnitId, featureId, null);
+    }
+
+    public List<IndicatorPropertiesWithoutGeomType> getSingleIndicatorFeatureRecord(String indicatorId,
+                                                                                    String spatialUnitId, String featureId, String featureRecordId) throws Exception {
+        // TODO Auto-generated method stub
+        return getSingleIndicatorFeatureRecord(indicatorId, spatialUnitId, featureId, featureRecordId, null);
+    }
+
+    public List<IndicatorPropertiesWithoutGeomType> getSingleIndicatorFeatureRecords(String indicatorId,
+                                                                                     String spatialUnitId, String featureId, AuthInfoProvider provider) throws Exception {
+        logger.info("Retrieving single indicator feature database records for dataset with id '{}' and spatialUnitId '{}' and featureId '{}'", indicatorId, spatialUnitId,
                 featureId);
 
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
@@ -1554,11 +1652,11 @@ public class IndicatorsManager {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to get indicator features, but no dataset existes with datasetId " + indicatorId);
         }
-	}
+    }
 
-	public List<IndicatorPropertiesWithoutGeomType> getSingleIndicatorFeatureRecord(String indicatorId,
-			String spatialUnitId, String featureId, String featureRecordId, AuthInfoProvider provider) throws Exception {
-		logger.info("Retrieving single indicator feature database record for dataset with id '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId,
+    public List<IndicatorPropertiesWithoutGeomType> getSingleIndicatorFeatureRecord(String indicatorId,
+                                                                                    String spatialUnitId, String featureId, String featureRecordId, AuthInfoProvider provider) throws Exception {
+        logger.info("Retrieving single indicator feature database record for dataset with id '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId,
                 featureId, featureRecordId);
 
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
@@ -1587,129 +1685,129 @@ public class IndicatorsManager {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to get indicator features, but no dataset existes with datasetId " + indicatorId);
         }
-	}
+    }
 
-	public boolean deleteSingleIndicatorFeatureRecordsByFeatureId(String indicatorId, String spatialUnitId,
-			String featureId) throws Exception {
-		logger.info("Trying to delete single indicator feature records for dataset with indicatorId '{}' and spatialUnitId '{}' and featureId '{}'", indicatorId, spatialUnitId, featureId);
-		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
-			MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
-			IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
-		
-			boolean success = true;
-			/*
-			 * delete featureTable and views for each spatial unit
-			 */
-			String indicatorViewTableName = indicatorForSpatialUnit.getIndicatorViewTableName();
+    public boolean deleteSingleIndicatorFeatureRecordsByFeatureId(String indicatorId, String spatialUnitId,
+                                                                  String featureId) throws Exception {
+        logger.info("Trying to delete single indicator feature records for dataset with indicatorId '{}' and spatialUnitId '{}' and featureId '{}'", indicatorId, spatialUnitId, featureId);
+        if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+            MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+            IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+
+            boolean success = true;
+            /*
+             * delete featureTable and views for each spatial unit
+             */
+            String indicatorViewTableName = indicatorForSpatialUnit.getIndicatorViewTableName();
 //			IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
-			
 
-			try {
-				/*
-				 * delete timestamp for indicator and spatial unit
-				 */
-				IndicatorDatabaseHandler.deleteSingleFeatureRecordsForFeatureId(indicatorViewTableName, featureId);
-				indicatorMetadataEntry.setLastUpdate(java.util.Calendar.getInstance().getTime());	
-				indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
-				
-			} catch (Exception e) {
-				logger.error("Error while deleting features in value table for indicator with id {}", indicatorId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}		
-			
-			indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName());
-			
-			/*
-			 * republish indicator layer as OGC service
-			 */
-			String spatialUnitName = indicatorForSpatialUnit.getSpatialUnitName();			
-			
-			String datasetTitle = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
-			
-			String styleName;
-			
-			try {
-				DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
-				styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
-				
-				// handle OGC web service
-				ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
-			} catch (Exception e) {
-				logger.error("Error while publishing as OGC service. Error is: \n{}", e);
-			}			
-			return success;
-		} else {
-			logger.error(
-					"No indicator dataset with datasetId '{}' was found in database. Delete request has no effect.",
-					indicatorId);
-			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
-		}
-	}
 
-	public boolean deleteSingleIndicatorFeatureRecordByFeatureId(String indicatorId, String spatialUnitId,
-			String featureId, String featureRecordId) throws Exception {
-		logger.info("Trying to delete single indicator feature record for dataset with indicatorId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId, featureId, featureRecordId);
-		if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
-			MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
-			IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
-		
-			boolean success = true;
-			/*
-			 * delete featureTable and views for each spatial unit
-			 */
-			String indicatorViewTableName = indicatorForSpatialUnit.getIndicatorViewTableName();
+            try {
+                /*
+                 * delete timestamp for indicator and spatial unit
+                 */
+                IndicatorDatabaseHandler.deleteSingleFeatureRecordsForFeatureId(indicatorViewTableName, featureId);
+                indicatorMetadataEntry.setLastUpdate(java.util.Calendar.getInstance().getTime());
+                indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
+
+            } catch (Exception e) {
+                logger.error("Error while deleting features in value table for indicator with id {}", indicatorId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
+
+            indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName());
+
+            /*
+             * republish indicator layer as OGC service
+             */
+            String spatialUnitName = indicatorForSpatialUnit.getSpatialUnitName();
+
+            String datasetTitle = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
+
+            String styleName;
+
+            try {
+                DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+                styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
+
+                // handle OGC web service
+                ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
+            } catch (Exception e) {
+                logger.error("Error while publishing as OGC service. Error is: \n{}", e);
+            }
+            return success;
+        } else {
+            logger.error(
+                    "No indicator dataset with datasetId '{}' was found in database. Delete request has no effect.",
+                    indicatorId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
+        }
+    }
+
+    public boolean deleteSingleIndicatorFeatureRecordByFeatureId(String indicatorId, String spatialUnitId,
+                                                                 String featureId, String featureRecordId) throws Exception {
+        logger.info("Trying to delete single indicator feature record for dataset with indicatorId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId, featureId, featureRecordId);
+        if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
+            MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+            IndicatorSpatialUnitJoinEntity indicatorForSpatialUnit = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+
+            boolean success = true;
+            /*
+             * delete featureTable and views for each spatial unit
+             */
+            String indicatorViewTableName = indicatorForSpatialUnit.getIndicatorViewTableName();
 //			IndicatorDatabaseHandler.deleteIndicatorFeatureView(featureViewTableName);
-			
 
-			try {
-				/*
-				 * delete timestamp for indicator and spatial unit
-				 */
-				IndicatorDatabaseHandler.deleteSingleFeatureRecordForFeatureId(indicatorViewTableName, featureId, featureRecordId);
-				indicatorMetadataEntry.setLastUpdate(java.util.Calendar.getInstance().getTime());	
-				indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
-				
-			} catch (Exception e) {
-				logger.error("Error while deleting features in value table for indicator with id {}", indicatorId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
-			}		
-			
-			indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName());
-			
-			/*
-			 * republish indicator layer as OGC service
-			 */
-			String spatialUnitName = indicatorForSpatialUnit.getSpatialUnitName();			
-			
-			String datasetTitle = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
-			
-			String styleName;
-			
-			try {
-				DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
-				styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
-				
-				// handle OGC web service
-				ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
-			} catch (Exception e) {
-				logger.error("Error while publishing as OGC service. Error is: \n{}", e);
-			}			
-			return success;
-		} else {
-			logger.error(
-					"No indicator dataset with datasetId '{}' was found in database. Delete request has no effect.",
-					indicatorId);
-			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
-		}
-	}
 
-	public String updateFeatureRecordByRecordId(IndicatorPropertiesWithoutGeomType indicatorFeatureRecordData,
-			String indicatorId, String spatialUnitId, String featureId, String featureRecordId) throws Exception {
-		logger.info("Trying to update indicator single feature record for indicatorId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId, featureId, featureRecordId);
+            try {
+                /*
+                 * delete timestamp for indicator and spatial unit
+                 */
+                IndicatorDatabaseHandler.deleteSingleFeatureRecordForFeatureId(indicatorViewTableName, featureId, featureRecordId);
+                indicatorMetadataEntry.setLastUpdate(java.util.Calendar.getInstance().getTime());
+                indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
+
+            } catch (Exception e) {
+                logger.error("Error while deleting features in value table for indicator with id {}", indicatorId);
+                logger.error("Error was: {}", e.getMessage());
+                e.printStackTrace();
+            }
+
+            indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName());
+
+            /*
+             * republish indicator layer as OGC service
+             */
+            String spatialUnitName = indicatorForSpatialUnit.getSpatialUnitName();
+
+            String datasetTitle = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
+
+            String styleName;
+
+            try {
+                DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+                styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
+
+                // handle OGC web service
+                ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
+            } catch (Exception e) {
+                logger.error("Error while publishing as OGC service. Error is: \n{}", e);
+            }
+            return success;
+        } else {
+            logger.error(
+                    "No indicator dataset with datasetId '{}' was found in database. Delete request has no effect.",
+                    indicatorId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to delete indicator dataset, but no dataset existes with datasetId " + indicatorId);
+        }
+    }
+
+    public String updateFeatureRecordByRecordId(IndicatorPropertiesWithoutGeomType indicatorFeatureRecordData,
+                                                String indicatorId, String spatialUnitId, String featureId, String featureRecordId) throws Exception {
+        logger.info("Trying to update indicator single feature record for indicatorId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId, featureId, featureRecordId);
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
             MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
 
@@ -1724,25 +1822,25 @@ public class IndicatorsManager {
             indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
 
             indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorSpatialsUnitsEntity.getSpatialUnitName());
-			
-			/*
-			 * republish indicator layer as OGC service
-			 */
-			String spatialUnitName = indicatorSpatialsUnitsEntity.getSpatialUnitName();			
-			
-			String datasetTitle = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
-			
-			String styleName;
-			
-			try {
-				DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
-				styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
-				
-				// handle OGC web service
-				ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
-			} catch (Exception e) {
-				logger.error("Error while publishing as OGC service. Error is: \n{}", e);
-			}	           
+
+            /*
+             * republish indicator layer as OGC service
+             */
+            String spatialUnitName = indicatorSpatialsUnitsEntity.getSpatialUnitName();
+
+            String datasetTitle = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
+
+            String styleName;
+
+            try {
+                DefaultClassificationMappingType defaultClassificationMapping = IndicatorsMapper.extractDefaultClassificationMappingFromMetadata(indicatorMetadataEntry);
+                styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle, indicatorViewTableName);
+
+                // handle OGC web service
+                ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
+            } catch (Exception e) {
+                logger.error("Error while publishing as OGC service. Error is: \n{}", e);
+            }
 
             return indicatorId;
 
@@ -1753,5 +1851,5 @@ public class IndicatorsManager {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to update indicator feature record, but no dataset existes with datasetId " + indicatorId);
         }
-	}
+    }
 }

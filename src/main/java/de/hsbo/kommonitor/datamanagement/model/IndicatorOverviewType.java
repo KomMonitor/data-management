@@ -1,109 +1,134 @@
 package de.hsbo.kommonitor.datamanagement.model;
 
+import java.net.URI;
+import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
+import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.GeoresourceReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorSpatialUnitJoinItem;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.OgcServicesType;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.RegionalReferenceValueType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-
-import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import io.swagger.v3.oas.annotations.media.Schema;
+import org.openapitools.jackson.nullable.JsonNullable;
+import java.io.Serializable;
+import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+
+import java.util.*;
+import jakarta.annotation.Generated;
 
 /**
  * IndicatorOverviewType
  */
-@Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-04-23T11:43:09.197508532Z[GMT]")
 
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+public class IndicatorOverviewType implements Serializable {
 
-public class IndicatorOverviewType   {
-  @JsonProperty("abbreviation")
-  private String abbreviation = null;
+  private static final long serialVersionUID = 1L;
 
-  @JsonProperty("allowedRoles")
+  private String abbreviation;
+
   @Valid
-  private List<String> allowedRoles = null;
+  private List<String> permissions;
 
-  @JsonProperty("applicableDates")
   @Valid
-  private List<String> applicableDates = new ArrayList<String>();
+  private List<String> applicableDates = new ArrayList<>();
 
-  @JsonProperty("applicableSpatialUnits")
   @Valid
-  private List<IndicatorSpatialUnitJoinItem> applicableSpatialUnits = new ArrayList<IndicatorSpatialUnitJoinItem>();
+  private List<@Valid IndicatorSpatialUnitJoinItem> applicableSpatialUnits = new ArrayList<>();
 
-  @JsonProperty("characteristicValue")
-  private String characteristicValue = null;
+  private String characteristicValue;
 
-  @JsonProperty("creationType")
-  private CreationTypeEnum creationType = null;
+  private CreationTypeEnum creationType;
 
-  @JsonProperty("defaultClassificationMapping")
-  private DefaultClassificationMappingType defaultClassificationMapping = null;
+  private DefaultClassificationMappingType defaultClassificationMapping;
 
-  @JsonProperty("regionalReferenceValues")
   @Valid
-  private List<RegionalReferenceValueType> regionalReferenceValues = new ArrayList<RegionalReferenceValueType>();
+  private List<@Valid RegionalReferenceValueType> regionalReferenceValues = new ArrayList<>();
 
-  @JsonProperty("displayOrder")
-  private BigDecimal displayOrder = null;
+  private BigDecimal displayOrder;
 
-  @JsonProperty("indicatorId")
-  private String indicatorId = null;
+  private String indicatorId;
 
-  @JsonProperty("indicatorName")
-  private String indicatorName = null;
+  private String indicatorName;
 
-  @JsonProperty("indicatorType")
-  private IndicatorTypeEnum indicatorType = null;
+  private IndicatorTypeEnum indicatorType;
 
-  @JsonProperty("interpretation")
-  private String interpretation = null;
+  private String interpretation;
 
-  @JsonProperty("isHeadlineIndicator")
-  private Boolean isHeadlineIndicator = null;
+  private Boolean isHeadlineIndicator;
 
-  @JsonProperty("lowestSpatialUnitForComputation")
-  private String lowestSpatialUnitForComputation = null;
+  private String lowestSpatialUnitForComputation;
 
-  @JsonProperty("metadata")
-  private CommonMetadataType metadata = null;
+  private CommonMetadataType metadata;
 
-  @JsonProperty("ogcServices")
   @Valid
-  private List<OgcServicesType> ogcServices = new ArrayList<OgcServicesType>();
+  private List<@Valid OgcServicesType> ogcServices = new ArrayList<>();
 
-  @JsonProperty("processDescription")
-  private String processDescription = null;
+  private String ownerId;
 
-  @JsonProperty("referenceDateNote")
-  private String referenceDateNote = null;
+  private String processDescription;
 
-  @JsonProperty("referencedGeoresources")
+  private String referenceDateNote;
+
   @Valid
-  private List<GeoresourceReferenceType> referencedGeoresources = null;
+  private List<@Valid GeoresourceReferenceType> referencedGeoresources;
 
-  @JsonProperty("referencedIndicators")
   @Valid
-  private List<IndicatorReferenceType> referencedIndicators = null;
+  private List<@Valid IndicatorReferenceType> referencedIndicators;
 
-  @JsonProperty("tags")
   @Valid
-  private List<String> tags = new ArrayList<String>();
+  private List<String> tags = new ArrayList<>();
 
-  @JsonProperty("topicReference")
-  private String topicReference = null;
+  private String topicReference;
 
-  @JsonProperty("unit")
-  private String unit = null;
+  private String unit;
 
-  @JsonProperty("userPermissions")
   @Valid
-  private List<PermissionLevelType> userPermissions = null;
+  private List<PermissionLevelType> userPermissions;
+
+  private Boolean isPublic;
+
+  public IndicatorOverviewType() {
+    super();
+  }
+
+  /**
+   * Constructor with only required parameters
+   */
+  public IndicatorOverviewType(String abbreviation, List<String> applicableDates, List<@Valid IndicatorSpatialUnitJoinItem> applicableSpatialUnits, String characteristicValue, CreationTypeEnum creationType, List<@Valid RegionalReferenceValueType> regionalReferenceValues, String indicatorId, String indicatorName, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, List<@Valid OgcServicesType> ogcServices, String ownerId, String processDescription, List<String> tags, String topicReference, String unit, Boolean isPublic) {
+    this.abbreviation = abbreviation;
+    this.applicableDates = applicableDates;
+    this.applicableSpatialUnits = applicableSpatialUnits;
+    this.characteristicValue = characteristicValue;
+    this.creationType = creationType;
+    this.regionalReferenceValues = regionalReferenceValues;
+    this.indicatorId = indicatorId;
+    this.indicatorName = indicatorName;
+    this.interpretation = interpretation;
+    this.isHeadlineIndicator = isHeadlineIndicator;
+    this.metadata = metadata;
+    this.ogcServices = ogcServices;
+    this.ownerId = ownerId;
+    this.processDescription = processDescription;
+    this.tags = tags;
+    this.topicReference = topicReference;
+    this.unit = unit;
+    this.isPublic = isPublic;
+  }
 
   public IndicatorOverviewType abbreviation(String abbreviation) {
     this.abbreviation = abbreviation;
@@ -113,11 +138,11 @@ public class IndicatorOverviewType   {
   /**
    * abbreviated mark of the indicator
    * @return abbreviation
-   **/
-  @Schema(required = true, description = "abbreviated mark of the indicator")
-      @NotNull
-
-    public String getAbbreviation() {
+  */
+  @NotNull 
+  @Schema(name = "abbreviation", description = "abbreviated mark of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("abbreviation")
+  public String getAbbreviation() {
     return abbreviation;
   }
 
@@ -125,31 +150,32 @@ public class IndicatorOverviewType   {
     this.abbreviation = abbreviation;
   }
 
-  public IndicatorOverviewType allowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public IndicatorOverviewType permissions(List<String> permissions) {
+    this.permissions = permissions;
     return this;
   }
 
-  public IndicatorOverviewType addAllowedRolesItem(String allowedRolesItem) {
-    if (this.allowedRoles == null) {
-      this.allowedRoles = new ArrayList<String>();
+  public IndicatorOverviewType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
     }
-    this.allowedRoles.add(allowedRolesItem);
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
-   * list of role identifiers that have read access rights for this dataset
-   * @return allowedRoles
-   **/
-  @Schema(description = "list of role identifiers that have read access rights for this dataset")
+   * list of permissions on this entity
+   * @return permissions
+  */
   
-    public List<String> getAllowedRoles() {
-    return allowedRoles;
+  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
   }
 
-  public void setAllowedRoles(List<String> allowedRoles) {
-    this.allowedRoles = allowedRoles;
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 
   public IndicatorOverviewType applicableDates(List<String> applicableDates) {
@@ -158,6 +184,9 @@ public class IndicatorOverviewType   {
   }
 
   public IndicatorOverviewType addApplicableDatesItem(String applicableDatesItem) {
+    if (this.applicableDates == null) {
+      this.applicableDates = new ArrayList<>();
+    }
     this.applicableDates.add(applicableDatesItem);
     return this;
   }
@@ -165,11 +194,11 @@ public class IndicatorOverviewType   {
   /**
    * array of applicable dates (year and month and day as YEAR-MONTH-DAY) according to ISO 8601 (e.g. 2018-01-30)
    * @return applicableDates
-   **/
-  @Schema(required = true, description = "array of applicable dates (year and month and day as YEAR-MONTH-DAY) according to ISO 8601 (e.g. 2018-01-30)")
-      @NotNull
-
-    public List<String> getApplicableDates() {
+  */
+  @NotNull 
+  @Schema(name = "applicableDates", description = "array of applicable dates (year and month and day as YEAR-MONTH-DAY) according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("applicableDates")
+  public List<String> getApplicableDates() {
     return applicableDates;
   }
 
@@ -177,12 +206,15 @@ public class IndicatorOverviewType   {
     this.applicableDates = applicableDates;
   }
 
-  public IndicatorOverviewType applicableSpatialUnits(List<IndicatorSpatialUnitJoinItem> applicableSpatialUnits) {
+  public IndicatorOverviewType applicableSpatialUnits(List<@Valid IndicatorSpatialUnitJoinItem> applicableSpatialUnits) {
     this.applicableSpatialUnits = applicableSpatialUnits;
     return this;
   }
 
   public IndicatorOverviewType addApplicableSpatialUnitsItem(IndicatorSpatialUnitJoinItem applicableSpatialUnitsItem) {
+    if (this.applicableSpatialUnits == null) {
+      this.applicableSpatialUnits = new ArrayList<>();
+    }
     this.applicableSpatialUnits.add(applicableSpatialUnitsItem);
     return this;
   }
@@ -190,15 +222,15 @@ public class IndicatorOverviewType   {
   /**
    * array of spatial unit levels for which the dataset is applicable
    * @return applicableSpatialUnits
-   **/
-  @Schema(required = true, description = "array of spatial unit levels for which the dataset is applicable")
-      @NotNull
-    @Valid
-    public List<IndicatorSpatialUnitJoinItem> getApplicableSpatialUnits() {
+  */
+  @NotNull @Valid 
+  @Schema(name = "applicableSpatialUnits", description = "array of spatial unit levels for which the dataset is applicable", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("applicableSpatialUnits")
+  public List<@Valid IndicatorSpatialUnitJoinItem> getApplicableSpatialUnits() {
     return applicableSpatialUnits;
   }
 
-  public void setApplicableSpatialUnits(List<IndicatorSpatialUnitJoinItem> applicableSpatialUnits) {
+  public void setApplicableSpatialUnits(List<@Valid IndicatorSpatialUnitJoinItem> applicableSpatialUnits) {
     this.applicableSpatialUnits = applicableSpatialUnits;
   }
 
@@ -210,11 +242,11 @@ public class IndicatorOverviewType   {
   /**
    * the distuingishing characteristic value of the indicator
    * @return characteristicValue
-   **/
-  @Schema(required = true, description = "the distuingishing characteristic value of the indicator")
-      @NotNull
-
-    public String getCharacteristicValue() {
+  */
+  @NotNull 
+  @Schema(name = "characteristicValue", description = "the distuingishing characteristic value of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("characteristicValue")
+  public String getCharacteristicValue() {
     return characteristicValue;
   }
 
@@ -230,12 +262,11 @@ public class IndicatorOverviewType   {
   /**
    * Get creationType
    * @return creationType
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
-
-    @Valid
-    public CreationTypeEnum getCreationType() {
+  */
+  @NotNull @Valid 
+  @Schema(name = "creationType", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("creationType")
+  public CreationTypeEnum getCreationType() {
     return creationType;
   }
 
@@ -251,11 +282,11 @@ public class IndicatorOverviewType   {
   /**
    * Get defaultClassificationMapping
    * @return defaultClassificationMapping
-   **/
-  @Schema(description = "")
-  
-    @Valid
-    public DefaultClassificationMappingType getDefaultClassificationMapping() {
+  */
+  @Valid 
+  @Schema(name = "defaultClassificationMapping", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("defaultClassificationMapping")
+  public DefaultClassificationMappingType getDefaultClassificationMapping() {
     return defaultClassificationMapping;
   }
 
@@ -263,12 +294,15 @@ public class IndicatorOverviewType   {
     this.defaultClassificationMapping = defaultClassificationMapping;
   }
 
-  public IndicatorOverviewType regionalReferenceValues(List<RegionalReferenceValueType> regionalReferenceValues) {
+  public IndicatorOverviewType regionalReferenceValues(List<@Valid RegionalReferenceValueType> regionalReferenceValues) {
     this.regionalReferenceValues = regionalReferenceValues;
     return this;
   }
 
   public IndicatorOverviewType addRegionalReferenceValuesItem(RegionalReferenceValueType regionalReferenceValuesItem) {
+    if (this.regionalReferenceValues == null) {
+      this.regionalReferenceValues = new ArrayList<>();
+    }
     this.regionalReferenceValues.add(regionalReferenceValuesItem);
     return this;
   }
@@ -276,15 +310,15 @@ public class IndicatorOverviewType   {
   /**
    * list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)
    * @return regionalReferenceValues
-   **/
-  @Schema(required = true, description = "list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)")
-      @NotNull
-    @Valid
-    public List<RegionalReferenceValueType> getRegionalReferenceValues() {
+  */
+  @NotNull @Valid
+  @Schema(name = "regionalReferenceValues", description = "list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("regionalReferenceValues")
+  public List<@Valid RegionalReferenceValueType> getRegionalReferenceValues() {
     return regionalReferenceValues;
   }
 
-  public void setRegionalReferenceValues(List<RegionalReferenceValueType> regionalReferenceValues) {
+  public void setRegionalReferenceValues(List<@Valid RegionalReferenceValueType> regionalReferenceValues) {
     this.regionalReferenceValues = regionalReferenceValues;
   }
 
@@ -296,11 +330,11 @@ public class IndicatorOverviewType   {
   /**
    * an order number to control display order in clients
    * @return displayOrder
-   **/
-  @Schema(example = "0", description = "an order number to control display order in clients")
-  
-    @Valid
-    public BigDecimal getDisplayOrder() {
+  */
+  @Valid 
+  @Schema(name = "displayOrder", example = "0.0", description = "an order number to control display order in clients", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("displayOrder")
+  public BigDecimal getDisplayOrder() {
     return displayOrder;
   }
 
@@ -316,11 +350,11 @@ public class IndicatorOverviewType   {
   /**
    * unique identifier of this resource
    * @return indicatorId
-   **/
-  @Schema(required = true, description = "unique identifier of this resource")
-      @NotNull
-
-    public String getIndicatorId() {
+  */
+  @NotNull 
+  @Schema(name = "indicatorId", description = "unique identifier of this resource", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("indicatorId")
+  public String getIndicatorId() {
     return indicatorId;
   }
 
@@ -336,11 +370,11 @@ public class IndicatorOverviewType   {
   /**
    * name of the indicator
    * @return indicatorName
-   **/
-  @Schema(required = true, description = "name of the indicator")
-      @NotNull
-
-    public String getIndicatorName() {
+  */
+  @NotNull 
+  @Schema(name = "indicatorName", description = "name of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("indicatorName")
+  public String getIndicatorName() {
     return indicatorName;
   }
 
@@ -356,11 +390,11 @@ public class IndicatorOverviewType   {
   /**
    * Get indicatorType
    * @return indicatorType
-   **/
-  @Schema(description = "")
-  
-    @Valid
-    public IndicatorTypeEnum getIndicatorType() {
+  */
+  @Valid 
+  @Schema(name = "indicatorType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("indicatorType")
+  public IndicatorTypeEnum getIndicatorType() {
     return indicatorType;
   }
 
@@ -376,11 +410,11 @@ public class IndicatorOverviewType   {
   /**
    * interpretation of the indicator values
    * @return interpretation
-   **/
-  @Schema(required = true, description = "interpretation of the indicator values")
-      @NotNull
-
-    public String getInterpretation() {
+  */
+  @NotNull 
+  @Schema(name = "interpretation", description = "interpretation of the indicator values", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("interpretation")
+  public String getInterpretation() {
     return interpretation;
   }
 
@@ -396,11 +430,11 @@ public class IndicatorOverviewType   {
   /**
    * boolean value indicating if the indicator is a headline indicator
    * @return isHeadlineIndicator
-   **/
-  @Schema(required = true, description = "boolean value indicating if the indicator is a headline indicator")
-      @NotNull
-
-    public Boolean isIsHeadlineIndicator() {
+  */
+  @NotNull 
+  @Schema(name = "isHeadlineIndicator", description = "boolean value indicating if the indicator is a headline indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isHeadlineIndicator")
+  public Boolean getIsHeadlineIndicator() {
     return isHeadlineIndicator;
   }
 
@@ -416,10 +450,11 @@ public class IndicatorOverviewType   {
   /**
    * identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)
    * @return lowestSpatialUnitForComputation
-   **/
-  @Schema(description = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)")
+  */
   
-    public String getLowestSpatialUnitForComputation() {
+  @Schema(name = "lowestSpatialUnitForComputation", description = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("lowestSpatialUnitForComputation")
+  public String getLowestSpatialUnitForComputation() {
     return lowestSpatialUnitForComputation;
   }
 
@@ -435,12 +470,11 @@ public class IndicatorOverviewType   {
   /**
    * Get metadata
    * @return metadata
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
-
-    @Valid
-    public CommonMetadataType getMetadata() {
+  */
+  @NotNull @Valid 
+  @Schema(name = "metadata", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("metadata")
+  public CommonMetadataType getMetadata() {
     return metadata;
   }
 
@@ -448,12 +482,15 @@ public class IndicatorOverviewType   {
     this.metadata = metadata;
   }
 
-  public IndicatorOverviewType ogcServices(List<OgcServicesType> ogcServices) {
+  public IndicatorOverviewType ogcServices(List<@Valid OgcServicesType> ogcServices) {
     this.ogcServices = ogcServices;
     return this;
   }
 
   public IndicatorOverviewType addOgcServicesItem(OgcServicesType ogcServicesItem) {
+    if (this.ogcServices == null) {
+      this.ogcServices = new ArrayList<>();
+    }
     this.ogcServices.add(ogcServicesItem);
     return this;
   }
@@ -461,16 +498,36 @@ public class IndicatorOverviewType   {
   /**
    * list of available OGC services for that indicator for different spatial units
    * @return ogcServices
-   **/
-  @Schema(required = true, description = "list of available OGC services for that indicator for different spatial units")
-      @NotNull
-    @Valid
-    public List<OgcServicesType> getOgcServices() {
+  */
+  @NotNull @Valid 
+  @Schema(name = "ogcServices", description = "list of available OGC services for that indicator for different spatial units", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("ogcServices")
+  public List<@Valid OgcServicesType> getOgcServices() {
     return ogcServices;
   }
 
-  public void setOgcServices(List<OgcServicesType> ogcServices) {
+  public void setOgcServices(List<@Valid OgcServicesType> ogcServices) {
     this.ogcServices = ogcServices;
+  }
+
+  public IndicatorOverviewType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+  */
+  @NotNull
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
   }
 
   public IndicatorOverviewType processDescription(String processDescription) {
@@ -481,11 +538,11 @@ public class IndicatorOverviewType   {
   /**
    * description about how the indicator was computed
    * @return processDescription
-   **/
-  @Schema(required = true, description = "description about how the indicator was computed")
-      @NotNull
-
-    public String getProcessDescription() {
+  */
+  @NotNull 
+  @Schema(name = "processDescription", description = "description about how the indicator was computed", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("processDescription")
+  public String getProcessDescription() {
     return processDescription;
   }
 
@@ -501,10 +558,11 @@ public class IndicatorOverviewType   {
   /**
    * an optional note on the reference date of the indicator
    * @return referenceDateNote
-   **/
-  @Schema(description = "an optional note on the reference date of the indicator")
+  */
   
-    public String getReferenceDateNote() {
+  @Schema(name = "referenceDateNote", description = "an optional note on the reference date of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("referenceDateNote")
+  public String getReferenceDateNote() {
     return referenceDateNote;
   }
 
@@ -512,14 +570,14 @@ public class IndicatorOverviewType   {
     this.referenceDateNote = referenceDateNote;
   }
 
-  public IndicatorOverviewType referencedGeoresources(List<GeoresourceReferenceType> referencedGeoresources) {
+  public IndicatorOverviewType referencedGeoresources(List<@Valid GeoresourceReferenceType> referencedGeoresources) {
     this.referencedGeoresources = referencedGeoresources;
     return this;
   }
 
   public IndicatorOverviewType addReferencedGeoresourcesItem(GeoresourceReferenceType referencedGeoresourcesItem) {
     if (this.referencedGeoresources == null) {
-      this.referencedGeoresources = new ArrayList<GeoresourceReferenceType>();
+      this.referencedGeoresources = new ArrayList<>();
     }
     this.referencedGeoresources.add(referencedGeoresourcesItem);
     return this;
@@ -528,25 +586,26 @@ public class IndicatorOverviewType   {
   /**
    * list of references to georesources
    * @return referencedGeoresources
-   **/
-  @Schema(description = "list of references to georesources")
-      @Valid
-    public List<GeoresourceReferenceType> getReferencedGeoresources() {
+  */
+  @Valid 
+  @Schema(name = "referencedGeoresources", description = "list of references to georesources", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("referencedGeoresources")
+  public List<@Valid GeoresourceReferenceType> getReferencedGeoresources() {
     return referencedGeoresources;
   }
 
-  public void setReferencedGeoresources(List<GeoresourceReferenceType> referencedGeoresources) {
+  public void setReferencedGeoresources(List<@Valid GeoresourceReferenceType> referencedGeoresources) {
     this.referencedGeoresources = referencedGeoresources;
   }
 
-  public IndicatorOverviewType referencedIndicators(List<IndicatorReferenceType> referencedIndicators) {
+  public IndicatorOverviewType referencedIndicators(List<@Valid IndicatorReferenceType> referencedIndicators) {
     this.referencedIndicators = referencedIndicators;
     return this;
   }
 
   public IndicatorOverviewType addReferencedIndicatorsItem(IndicatorReferenceType referencedIndicatorsItem) {
     if (this.referencedIndicators == null) {
-      this.referencedIndicators = new ArrayList<IndicatorReferenceType>();
+      this.referencedIndicators = new ArrayList<>();
     }
     this.referencedIndicators.add(referencedIndicatorsItem);
     return this;
@@ -555,14 +614,15 @@ public class IndicatorOverviewType   {
   /**
    * list of references to other indicators
    * @return referencedIndicators
-   **/
-  @Schema(description = "list of references to other indicators")
-      @Valid
-    public List<IndicatorReferenceType> getReferencedIndicators() {
+  */
+  @Valid 
+  @Schema(name = "referencedIndicators", description = "list of references to other indicators", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("referencedIndicators")
+  public List<@Valid IndicatorReferenceType> getReferencedIndicators() {
     return referencedIndicators;
   }
 
-  public void setReferencedIndicators(List<IndicatorReferenceType> referencedIndicators) {
+  public void setReferencedIndicators(List<@Valid IndicatorReferenceType> referencedIndicators) {
     this.referencedIndicators = referencedIndicators;
   }
 
@@ -572,6 +632,9 @@ public class IndicatorOverviewType   {
   }
 
   public IndicatorOverviewType addTagsItem(String tagsItem) {
+    if (this.tags == null) {
+      this.tags = new ArrayList<>();
+    }
     this.tags.add(tagsItem);
     return this;
   }
@@ -579,11 +642,11 @@ public class IndicatorOverviewType   {
   /**
    * list of tag labels for the indicator
    * @return tags
-   **/
-  @Schema(required = true, description = "list of tag labels for the indicator")
-      @NotNull
-
-    public List<String> getTags() {
+  */
+  @NotNull 
+  @Schema(name = "tags", description = "list of tag labels for the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("tags")
+  public List<String> getTags() {
     return tags;
   }
 
@@ -599,11 +662,11 @@ public class IndicatorOverviewType   {
   /**
    * id of the last topic hierarchy entity 
    * @return topicReference
-   **/
-  @Schema(required = true, description = "id of the last topic hierarchy entity ")
-      @NotNull
-
-    public String getTopicReference() {
+  */
+  @NotNull 
+  @Schema(name = "topicReference", description = "id of the last topic hierarchy entity ", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("topicReference")
+  public String getTopicReference() {
     return topicReference;
   }
 
@@ -619,11 +682,11 @@ public class IndicatorOverviewType   {
   /**
    * unit of the indicator values
    * @return unit
-   **/
-  @Schema(required = true, description = "unit of the indicator values")
-      @NotNull
-
-    public String getUnit() {
+  */
+  @NotNull 
+  @Schema(name = "unit", description = "unit of the indicator values", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("unit")
+  public String getUnit() {
     return unit;
   }
 
@@ -638,7 +701,7 @@ public class IndicatorOverviewType   {
 
   public IndicatorOverviewType addUserPermissionsItem(PermissionLevelType userPermissionsItem) {
     if (this.userPermissions == null) {
-      this.userPermissions = new ArrayList<PermissionLevelType>();
+      this.userPermissions = new ArrayList<>();
     }
     this.userPermissions.add(userPermissionsItem);
     return this;
@@ -647,10 +710,11 @@ public class IndicatorOverviewType   {
   /**
    * list of permissions that are effective on this dataset for the current user
    * @return userPermissions
-   **/
-  @Schema(description = "list of permissions that are effective on this dataset for the current user")
-      @Valid
-    public List<PermissionLevelType> getUserPermissions() {
+  */
+  @Valid 
+  @Schema(name = "userPermissions", description = "list of permissions that are effective on this dataset for the current user", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("userPermissions")
+  public List<PermissionLevelType> getUserPermissions() {
     return userPermissions;
   }
 
@@ -658,9 +722,28 @@ public class IndicatorOverviewType   {
     this.userPermissions = userPermissions;
   }
 
+  public IndicatorOverviewType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+  */
+  @NotNull
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -669,7 +752,7 @@ public class IndicatorOverviewType   {
     }
     IndicatorOverviewType indicatorOverviewType = (IndicatorOverviewType) o;
     return Objects.equals(this.abbreviation, indicatorOverviewType.abbreviation) &&
-        Objects.equals(this.allowedRoles, indicatorOverviewType.allowedRoles) &&
+        Objects.equals(this.permissions, indicatorOverviewType.permissions) &&
         Objects.equals(this.applicableDates, indicatorOverviewType.applicableDates) &&
         Objects.equals(this.applicableSpatialUnits, indicatorOverviewType.applicableSpatialUnits) &&
         Objects.equals(this.characteristicValue, indicatorOverviewType.characteristicValue) &&
@@ -685,6 +768,7 @@ public class IndicatorOverviewType   {
         Objects.equals(this.lowestSpatialUnitForComputation, indicatorOverviewType.lowestSpatialUnitForComputation) &&
         Objects.equals(this.metadata, indicatorOverviewType.metadata) &&
         Objects.equals(this.ogcServices, indicatorOverviewType.ogcServices) &&
+        Objects.equals(this.ownerId, indicatorOverviewType.ownerId) &&
         Objects.equals(this.processDescription, indicatorOverviewType.processDescription) &&
         Objects.equals(this.referenceDateNote, indicatorOverviewType.referenceDateNote) &&
         Objects.equals(this.referencedGeoresources, indicatorOverviewType.referencedGeoresources) &&
@@ -692,21 +776,21 @@ public class IndicatorOverviewType   {
         Objects.equals(this.tags, indicatorOverviewType.tags) &&
         Objects.equals(this.topicReference, indicatorOverviewType.topicReference) &&
         Objects.equals(this.unit, indicatorOverviewType.unit) &&
-        Objects.equals(this.userPermissions, indicatorOverviewType.userPermissions);
+        Objects.equals(this.userPermissions, indicatorOverviewType.userPermissions) &&
+        Objects.equals(this.isPublic, indicatorOverviewType.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, allowedRoles, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, regionalReferenceValues, displayOrder, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, processDescription, referenceDateNote, referencedGeoresources, referencedIndicators, tags, topicReference, unit, userPermissions);
+    return Objects.hash(abbreviation, permissions, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, regionalReferenceValues, displayOrder, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, ownerId, processDescription, referenceDateNote, referencedGeoresources, referencedIndicators, tags, topicReference, unit, userPermissions, isPublic);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorOverviewType {\n");
-    
     sb.append("    abbreviation: ").append(toIndentedString(abbreviation)).append("\n");
-    sb.append("    allowedRoles: ").append(toIndentedString(allowedRoles)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    applicableDates: ").append(toIndentedString(applicableDates)).append("\n");
     sb.append("    applicableSpatialUnits: ").append(toIndentedString(applicableSpatialUnits)).append("\n");
     sb.append("    characteristicValue: ").append(toIndentedString(characteristicValue)).append("\n");
@@ -722,6 +806,7 @@ public class IndicatorOverviewType   {
     sb.append("    lowestSpatialUnitForComputation: ").append(toIndentedString(lowestSpatialUnitForComputation)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    ogcServices: ").append(toIndentedString(ogcServices)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    referenceDateNote: ").append(toIndentedString(referenceDateNote)).append("\n");
     sb.append("    referencedGeoresources: ").append(toIndentedString(referencedGeoresources)).append("\n");
@@ -730,6 +815,7 @@ public class IndicatorOverviewType   {
     sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
     sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
     sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -738,10 +824,11 @@ public class IndicatorOverviewType   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
   }
 }
+
