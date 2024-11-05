@@ -472,6 +472,37 @@ public class OrganizationalUnitManager {
         }
     }
 
+    public void initializeKeycloakGroup(OrganizationalUnitEntity entity) throws KeycloakException, ApiException {
+        String keycloakId;
+        if (entity.getParent() != null) {
+            keycloakId = keycloakAdminService.addSubGroup(entity, entity.getParent());
+        } else {
+            keycloakId = keycloakAdminService.addGroup(entity);
+        }
+
+        try {
+            keycloakAdminService.createRolesForGroup(entity);
+            keycloakAdminService.createRolePolicies(entity, entity.getParent());
+
+            entity.setKeycloakId(UUID.fromString(keycloakId));
+            organizationalUnitRepository.saveAndFlush(entity);
+
+            // Reference roles
+            keycloakAdminService.referenceOrganizationalUnitWithGroup(entity);
+            // Reference groups
+            keycloakAdminService.referenceOrganizationalUnitWithRoles(entity);
+
+        } catch (ClientErrorException | KeycloakException ex) {
+            LOG.error(String.format("Creating roles and policies for OrganizationalUnit %s and Keycloak ID %s failed." +
+                    "Group creation aborted.", entity.getName(), keycloakId));
+            keycloakAdminService.deleteGroup(keycloakId);
+            keycloakAdminService.deleteRolesForGroupName(entity.getName());
+
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Creating group and roles in Keycloak failed " +
+                    "due to internal Keycloak conflicts.");
+        }
+    }
+    
     protected void syncAllOrganizationalUnits() {
         organizationalUnitRepository.findAll().forEach(this::syncOrganizationalUnit);
     }

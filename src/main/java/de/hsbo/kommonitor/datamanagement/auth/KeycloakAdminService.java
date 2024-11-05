@@ -60,32 +60,56 @@ public class KeycloakAdminService {
         this.keycloak = keycloak;
     }
 
-    public String addGroup(OrganizationalUnitInputType inputOrganizationalUnit) throws KeycloakException {
-        LOG.info("Trying to create Keycloak group for OrganizationalUnit '{}'.", inputOrganizationalUnit.getName());
+    public String addGroup(String orgaName, Boolean isMandant) throws KeycloakException {
+        LOG.info("Trying to create Keycloak group for OrganizationalUnit '{}'.", orgaName);
         GroupsResource groupsResource = getRealmResource().groups();
 
-        Response response = groupsResource.add(createGroupRepresentation(inputOrganizationalUnit));
+        Response response = groupsResource.add(createGroupRepresentation(orgaName, isMandant));
+        String keycloakGroupId = handleGroupCreationResponse(response);
+        LOG.info("Successfully created Keycloak group with ID '{}'.", keycloakGroupId);
+        return keycloakGroupId;
+    }
+
+    public String addGroup(OrganizationalUnitInputType inputOrganizationalUnit) throws KeycloakException {
+        return addGroup(inputOrganizationalUnit.getName(), inputOrganizationalUnit.getMandant());
+    }
+
+    public String addGroup(OrganizationalUnitEntity organizationalUnit) throws KeycloakException {
+        return addGroup(organizationalUnit.getName(), organizationalUnit.isMandant());
+    }
+
+    public String addSubGroup(String orgaName, Boolean isMandant, OrganizationalUnitEntity parent) throws KeycloakException {
+        LOG.info("Trying to create Keycloak group for OrganizationalUnit '{}' as child of Keycloak group '{}'.", orgaName, parent.getKeycloakId().toString());
+        GroupsResource groupsResource = getRealmResource().groups();
+        GroupResource parentGroup = groupsResource.group(parent.getKeycloakId().toString());
+
+        Response response = parentGroup.subGroup(createGroupRepresentation(orgaName, isMandant));
         String keycloakGroupId = handleGroupCreationResponse(response);
         LOG.info("Successfully created Keycloak group with ID '{}'.", keycloakGroupId);
         return keycloakGroupId;
     }
 
     public String addSubGroup(OrganizationalUnitInputType inputOrganizationalUnit, OrganizationalUnitEntity parent) throws KeycloakException {
-        LOG.info("Trying to create Keycloak group for OrganizationalUnit '{}' as child of Keycloak group '{}'.", inputOrganizationalUnit.getName(), parent.getKeycloakId().toString());
-        GroupsResource groupsResource = getRealmResource().groups();
-        GroupResource parentGroup = groupsResource.group(parent.getKeycloakId().toString());
+        return addSubGroup(inputOrganizationalUnit.getName(), inputOrganizationalUnit.getMandant(), parent);
+    }
 
-        Response response = parentGroup.subGroup(createGroupRepresentation(inputOrganizationalUnit));
-        String keycloakGroupId = handleGroupCreationResponse(response);
-        LOG.info("Successfully created Keycloak group with ID '{}'.", keycloakGroupId);
-        return keycloakGroupId;
+    public String addSubGroup(OrganizationalUnitEntity organizationalUnit, OrganizationalUnitEntity parent) throws KeycloakException {
+        return addSubGroup(organizationalUnit.getName(), organizationalUnit.isMandant(), parent);
+    }
+
+    public GroupRepresentation createGroupRepresentation(String orgaName, Boolean isMandant) {
+        GroupRepresentation group = new GroupRepresentation();
+        group.setName(orgaName);
+        group.singleAttribute(KOMMONITOR_MANDANT_ATTRIBUTE, isMandant.toString());
+        return group;
     }
 
     public GroupRepresentation createGroupRepresentation(OrganizationalUnitInputType inputOrganizationalUnit) {
-        GroupRepresentation group = new GroupRepresentation();
-        group.setName(inputOrganizationalUnit.getName());
-        group.singleAttribute(KOMMONITOR_MANDANT_ATTRIBUTE, inputOrganizationalUnit.getMandant().toString());
-        return group;
+        return createGroupRepresentation(inputOrganizationalUnit.getName(), inputOrganizationalUnit.getMandant());
+    }
+
+    public GroupRepresentation createGroupRepresentation(OrganizationalUnitEntity organizationalUnit) {
+        return createGroupRepresentation(organizationalUnit.getName(), organizationalUnit.isMandant());
     }
 
     public void addRole(RoleRepresentation roleRep) {
@@ -169,7 +193,11 @@ public class KeycloakAdminService {
     }
 
     public ManagementPermissionReference enablePermissions(OrganizationalUnitInputType inputOrganizationalUnit) {
-        GroupResource groupResource = getRealmResource().groups().group(inputOrganizationalUnit.getKeycloakId());
+        return enablePermissions(inputOrganizationalUnit.getKeycloakId());
+    }
+
+    public ManagementPermissionReference enablePermissions(String keycloakId) {
+        GroupResource groupResource = getRealmResource().groups().group(keycloakId);
         ManagementPermissionRepresentation managementPermission = new ManagementPermissionRepresentation(true);
         return groupResource.setPermissions(managementPermission);
     }
@@ -290,14 +318,18 @@ public class KeycloakAdminService {
         return policySet;
     }
 
-    private RoleRepresentation mapToRoleRepresentation(OrganizationalUnitInputType organizationalUnitInputType, String roleName) {
+    private RoleRepresentation mapToRoleRepresentation(String orgaName, String orgaId, String roleName) {
         RoleRepresentation role = new RoleRepresentation();
-        String name = String.join(".", organizationalUnitInputType.getName(), roleName);
+        String name = String.join(".", orgaName, roleName);
         role.setName(name);
         Map<String, List<String>> attributes = new HashMap<>();
-        attributes.put(KOMMONITOR_ID_ATTRIBUTE, Collections.singletonList(organizationalUnitInputType.getOrganizationalUnitId()));
+        attributes.put(KOMMONITOR_ID_ATTRIBUTE, Collections.singletonList(orgaId));
         role.setAttributes(attributes);
         return role;
+    }
+
+    private RoleRepresentation mapToRoleRepresentation(OrganizationalUnitInputType organizationalUnitInputType, String roleName) {
+        return mapToRoleRepresentation(organizationalUnitInputType.getName(), organizationalUnitInputType.getOrganizationalUnitId(), roleName);
     }
 
     private RoleRepresentation mapToRoleRepresentation(String orgaName, String roleName) {
@@ -307,9 +339,18 @@ public class KeycloakAdminService {
         return role;
     }
 
-    public void createRolesForGroup(OrganizationalUnitInputType inputOrganizationalUnit) throws KeycloakException {
-        LOG.info("Trying to create roles for OrganizationalUnit '{}' and Keycloak group ID '{}'.",
-                inputOrganizationalUnit.getName(), inputOrganizationalUnit.getKeycloakId());
+    private RoleRepresentation mapToRoleRepresentation(OrganizationalUnitEntity organizationalUnit, String roleName) {
+        RoleRepresentation role = new RoleRepresentation();
+        String name = String.join(".", organizationalUnit.getName(), roleName);
+        role.setName(name);
+        Map<String, List<String>> attributes = new HashMap<>();
+        attributes.put(KOMMONITOR_ID_ATTRIBUTE, Collections.singletonList(organizationalUnit.getOrganizationalUnitId()));
+        role.setAttributes(attributes);
+        return role;
+    }
+
+    public void createRolesForGroup(String orgaName, String orgaId, String keycloakId) throws KeycloakException {
+        LOG.info("Trying to create roles for OrganizationalUnit '{}' and Keycloak group ID '{}'.", orgaName, keycloakId);
         // Fetch 'realm-admin' client
         ClientRepresentation realmAdminClient = getClientByName(REALM_MANAGEMENT_CLIENT_NAME);
         RoleRepresentation queryUsersRole = getClientRoleByName(realmAdminClient.getId(), QUERY_USERS_ROLE_NAME);
@@ -317,42 +358,48 @@ public class KeycloakAdminService {
 
         // Create all admin roles for group
         ADMIN_ROLES.stream()
-                .map(r -> mapToRoleRepresentation(inputOrganizationalUnit, r))
+                .map(r -> mapToRoleRepresentation(orgaName, orgaId, r))
                 .forEach(this::addRole);
 
         // Associate user admin roles with query-users and query-group roles
-        String unitUserRoleName = String.join(".", inputOrganizationalUnit.getName(), UNIT_USERS_ADMIN_ROLE_NAME);
+        String unitUserRoleName = String.join(".", orgaName, UNIT_USERS_ADMIN_ROLE_NAME);
         getRealmResource().roles().get(unitUserRoleName).addComposites(List.of(queryUsersRole, queryGroupsRole));
 
-        String clientUserRoleName = String.join(".", inputOrganizationalUnit.getName(), CLIENT_USERS_ADMIN_ROLE_NAME);
+        String clientUserRoleName = String.join(".", orgaName, CLIENT_USERS_ADMIN_ROLE_NAME);
         getRealmResource().roles().get(clientUserRoleName).addComposites(List.of(queryUsersRole, queryGroupsRole));
 
-        LOG.info("Successfully created roles for OrganizationalUnit '{}' and Keycloak group ID '{}'.",
-                inputOrganizationalUnit.getOrganizationalUnitId(), inputOrganizationalUnit.getKeycloakId());
+        LOG.info("Successfully created roles for OrganizationalUnit '{}' and Keycloak group ID '{}'.", orgaName, keycloakId);
     }
 
-    public void createRolePolicies(OrganizationalUnitInputType inputOrganizationalUnit, OrganizationalUnitEntity parent) throws KeycloakException {
-        LOG.info("Trying to create policies for OrganizationalUnit '{}' and Keycloak group ID '{}'.",
-                inputOrganizationalUnit.getName(), inputOrganizationalUnit.getKeycloakId());
+    public void createRolesForGroup(OrganizationalUnitInputType inputOrganizationalUnit) throws KeycloakException {
+        createRolesForGroup(inputOrganizationalUnit.getName(), inputOrganizationalUnit.getOrganizationalUnitId(), inputOrganizationalUnit.getKeycloakId());
+    }
+
+    public void createRolesForGroup(OrganizationalUnitEntity organizationalUnit) throws KeycloakException {
+        createRolesForGroup(organizationalUnit.getName(), organizationalUnit.getOrganizationalUnitId(), organizationalUnit.getKeycloakId().toString());
+    }
+
+    public void createRolePolicies(String orgaName, String keycloakId, OrganizationalUnitEntity parent) throws KeycloakException {
+        LOG.info("Trying to create policies for OrganizationalUnit '{}' and Keycloak group ID '{}'.", orgaName, keycloakId);
         ManagementPermissionRepresentation managementPermission = new ManagementPermissionRepresentation(true);
 
         // 1. enable fine grain permissions on new group
         // Enable scope permissions for group
-        ManagementPermissionReference groupManagementPermissionRef = enablePermissions(inputOrganizationalUnit);
+        ManagementPermissionReference groupManagementPermissionRef = enablePermissions(keycloakId);
 
         // 2. create policies for new associated group (unit-users-creator and client-users-creator)
 
         // Enable Permissions for *.unit-users-creator role
-        getRealmResource().roles().get(inputOrganizationalUnit.getName() + "." + UNIT_USERS_ADMIN_ROLE_NAME).setPermissions(managementPermission);
+        getRealmResource().roles().get(orgaName + "." + UNIT_USERS_ADMIN_ROLE_NAME).setPermissions(managementPermission);
 
         // Create Role Policy for *.unit-users-creator role
-        RolePolicyRepresentation unitRolePolicyRepresentation = createRolePolicyRepresentation(inputOrganizationalUnit.getKeycloakId(), UNIT_USERS_ADMIN_ROLE_NAME, inputOrganizationalUnit.getName());
+        RolePolicyRepresentation unitRolePolicyRepresentation = createRolePolicyRepresentation(keycloakId, UNIT_USERS_ADMIN_ROLE_NAME, orgaName);
 
         // Enable Permissions for *.client-users-creator role
-        getRealmResource().roles().get(inputOrganizationalUnit.getName() + "." + CLIENT_USERS_ADMIN_ROLE_NAME).setPermissions(managementPermission);
+        getRealmResource().roles().get(orgaName + "." + CLIENT_USERS_ADMIN_ROLE_NAME).setPermissions(managementPermission);
 
         // Create Role Policy for *.client-users-creator role
-        RolePolicyRepresentation clientRolePolicyRepresentation = createRolePolicyRepresentation(inputOrganizationalUnit.getKeycloakId(), CLIENT_USERS_ADMIN_ROLE_NAME, inputOrganizationalUnit.getName());
+        RolePolicyRepresentation clientRolePolicyRepresentation = createRolePolicyRepresentation(keycloakId, CLIENT_USERS_ADMIN_ROLE_NAME, orgaName);
 
         // Fetch 'realm-admin' client
         ClientRepresentation realmAdminClient = getClientByName(REALM_MANAGEMENT_CLIENT_NAME);
@@ -376,7 +423,7 @@ public class KeycloakAdminService {
         scopePermissions.forEach((k, v) -> {
             try {
                 ScopeRepresentation policyScope = getPolicyScope(realmAdminClient, v);
-                String name = policyScope.getName().replace("-", ".") + ".permission.group." + inputOrganizationalUnit.getKeycloakId();
+                String name = policyScope.getName().replace("-", ".") + ".permission.group." + keycloakId;
                 putRolePolicyForKeycloakGroupResourceScope(realmAdminClient, name, policyScope.getId(), groupManagementPermissionRef.getResource(), v, policies);
 
             } catch (KeycloakException e) {
@@ -386,7 +433,7 @@ public class KeycloakAdminService {
 
         // 4. set same policies for associated user-creator roles for scope map-role
         ADMIN_ROLES.forEach(r -> {
-            String roleName = inputOrganizationalUnit.getName() + "." + r;
+            String roleName = orgaName + "." + r;
             RoleResource roleResource = getRealmResource().roles().get(roleName);
             try {
                 RoleRepresentation roleRepresentation = roleResource.toRepresentation();
@@ -411,8 +458,15 @@ public class KeycloakAdminService {
             associateViewPermissionWithUpperGroup(parent, Set.of(unitRolePolicyId, clientRolePolicyId));
             parent = parent.getParent();
         }
-        LOG.info("Successfully created policies for OrganizationalUnit '{}' and Keycloak group ID '{}'.",
-                inputOrganizationalUnit.getName(), inputOrganizationalUnit.getKeycloakId());
+        LOG.info("Successfully created policies for OrganizationalUnit '{}' and Keycloak group ID '{}'.", orgaName, keycloakId);
+    }
+
+    public void createRolePolicies(OrganizationalUnitInputType inputOrganizationalUnit, OrganizationalUnitEntity parent) throws KeycloakException {
+        createRolePolicies(inputOrganizationalUnit.getName(), inputOrganizationalUnit.getKeycloakId(), parent);
+    }
+
+    public void createRolePolicies(OrganizationalUnitEntity organizationalUnit, OrganizationalUnitEntity parent) throws KeycloakException {
+        createRolePolicies(organizationalUnit.getName(), organizationalUnit.getKeycloakId().toString(), parent);
     }
 
     public void associateViewPermissionWithUpperGroup(OrganizationalUnitEntity parent, Set<String> policies) throws KeycloakException {
