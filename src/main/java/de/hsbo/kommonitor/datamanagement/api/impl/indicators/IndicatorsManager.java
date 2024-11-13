@@ -86,10 +86,7 @@ public class IndicatorsManager {
 
     @Autowired
     private LastModificationManager lastModManager;
-
-    @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
-    private String publicRole;
-
+    
     public String updateMetadata(IndicatorMetadataPATCHInputType metadata, String indicatorId) throws Exception {
         logger.info("Trying to update indicator metadata for datasetId '{}'", indicatorId);
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {

@@ -15,13 +15,6 @@ import java.security.Principal;
 @Component
 public class TokenParserFactory {
 
-    @Value("${kommonitor.access-control.authenticated-users.organizationalUnit:kommonitor}")
-    private String adminRolePrefix;
-
-    @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
-    private String publicRole;
-
-
     public TokenParser<?> createTokenParser() {
         return createTokenParser(SecurityContextHolder.getContext().getAuthentication());
     }
