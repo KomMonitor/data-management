@@ -367,9 +367,9 @@ public class IndicatorsManager {
         	RegionalReferenceValueEntity regRefEntity = new RegionalReferenceValueEntity();
 
         	regRefEntity.setReferenceDate(regionalReferenceValueType.getReferenceDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        	regRefEntity.setRegionalAverage(regionalReferenceValueType.getRegionalAverage().get());
-        	regRefEntity.setRegionalSum(regionalReferenceValueType.getRegionalSum().get());
-        	regRefEntity.setSpatiallyUnassignable(regionalReferenceValueType.getSpatiallyUnassignable().get());
+        	regRefEntity.setRegionalAverage(regionalReferenceValueType.getRegionalAverage());
+        	regRefEntity.setRegionalSum(regionalReferenceValueType.getRegionalSum());
+        	regRefEntity.setSpatiallyUnassignable(regionalReferenceValueType.getSpatiallyUnassignable());
 
         	regRefValues.add(regRefEntity);
 		}
