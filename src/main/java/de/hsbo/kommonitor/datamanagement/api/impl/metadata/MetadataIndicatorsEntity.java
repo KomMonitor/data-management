@@ -38,7 +38,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	
 	private String topicReference = null;
 
-	private int precision;
+	private Integer precision;
 	
 	@ElementCollection
     @CollectionTable(name = "indicator_timestamps", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"))
@@ -294,11 +294,11 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 		this.regionalReferenceValues = regionalReferenceValues;
 	}
 
-	public int getPrecision() {
+	public Integer getPrecision() {
 		return precision;
 	}
 
-	public void setPrecision(int precision) {
+	public void setPrecision(Integer precision) {
 		this.precision = precision;
 	}
 }
