@@ -85,9 +85,6 @@ public class GeoresourcesManager {
 	@Autowired
 	private MessageResolver messageResolver;
 
-    @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
-    private String publicRole;
-
 	public GeoresourceOverviewType addGeoresource(GeoresourcePOSTInputType featureData) throws Exception {
 		String metadataId = null;
 		String dbTableName = null;

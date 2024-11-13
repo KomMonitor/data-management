@@ -249,7 +249,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	}
 
 	@ManyToMany()
-    @JoinTable(name = "metadataIndicators_roles",
+    @JoinTable(name = "metadataIndicators_permissions",
             joinColumns = @JoinColumn(name = "metadataindicators_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
 	private Collection<PermissionEntity> permissions;

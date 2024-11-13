@@ -142,7 +142,7 @@ public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedE
     }
 
     @ManyToMany()
-    @JoinTable(name = "indicatorSpatialUnits_roles",
+    @JoinTable(name = "indicatorSpatialUnits_permissions",
             joinColumns = @JoinColumn(name = "indicatorspatialunit_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private Collection<PermissionEntity> permissions;
