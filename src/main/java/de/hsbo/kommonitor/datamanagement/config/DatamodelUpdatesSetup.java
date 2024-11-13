@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 
-@Component
+@Deprecated
 public class DatamodelUpdatesSetup implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 
 	Logger logger = LoggerFactory.getLogger(DatamodelUpdatesSetup.class);
