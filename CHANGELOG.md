@@ -1,6 +1,8 @@
 # Change Log
 
-## 5.0.0-beta.1
+## 5.0.0-beta.2
+* Update docker compose setup [0aac1ba](0aac1badbb49e4a748245c82bd5a7fa890c3e99d)
+* Add Liquibase base changelog for latest version [f7b472a](f7b472a4ea08f57f0fbf367ac6c5f5335669f102)
 * Add missing properties for Docker setup [8d8a08f](8d8a08f6c6f2ba41a44b3872f3a20d726eef7b9e)
 * Merge branch &#39;develop&#39; of https://github.com/KomMonitor/data-management into develop [c9828a7](c9828a75374e6bfd260b79c4ded1904c70e0ac89)
     * fix API definition of regionalReferenceValues (NULLABLE items were causing problems) [3777fa5](3777fa5587251555430419e49532e03e98237cd3)
