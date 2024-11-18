@@ -55,3 +55,16 @@ services:
     networks:
       - kommonitor
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: unless-stopped
+    ports:
+      - 8083:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@kommonitor.de
+      - PGADMIN_DEFAULT_PASSWORD=kommonitor
+    volumes:
+      - ./storage/pgadmin:/var/lib/pgadmin
+    networks:
+      - kommonitor
