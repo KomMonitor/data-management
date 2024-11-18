@@ -1,0 +1,520 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-1">
+        <createTable tableName="metadatageoresources">
+            <column name="isaoi" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="isloi" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ispoi" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ispublic" type="BOOLEAN"/>
+            <column name="loiwidth" type="INTEGER"/>
+            <column name="poimarkercolor" type="SMALLINT"/>
+            <column defaultValueNumeric="1" name="poimarkerstyle" type="INTEGER"/>
+            <column name="poisymbolcolor" type="SMALLINT"/>
+            <column name="sridepsg" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastupdate" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="aoicolor" type="VARCHAR(255)"/>
+            <column name="contact" type="TEXT"/>
+            <column name="databasis" type="TEXT"/>
+            <column name="datasource" type="TEXT"/>
+            <column name="datasetid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="metadatageoresources_pkey"/>
+            </column>
+            <column name="datasetname" type="VARCHAR(255)"/>
+            <column name="dbtablename" type="VARCHAR(255)"/>
+            <column name="description" type="TEXT"/>
+            <column name="jsonschema" type="TEXT"/>
+            <column name="literature" type="TEXT"/>
+            <column name="loicolor" type="VARCHAR(255)"/>
+            <column name="loidasharraystring" type="VARCHAR(255)"/>
+            <column name="note" type="TEXT"/>
+            <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
+            <column name="poimarkertext" type="VARCHAR(255)"/>
+            <column name="poisymbolbootstrap3name" type="VARCHAR(255)"/>
+            <column name="topicreference" type="VARCHAR(255)"/>
+            <column name="updateintervall" type="VARCHAR(255)"/>
+            <column name="wfsurl" type="VARCHAR(255)"/>
+            <column name="wmsurl" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-2">
+        <createTable tableName="metadataindicators">
+            <column defaultValueNumeric="2" name="classificationmethod" type="INTEGER"/>
+            <column name="creationtype" type="SMALLINT"/>
+            <column name="displayorder" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="indicatortype" type="SMALLINT"/>
+            <column name="isheadlineindicator" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ispublic" type="BOOLEAN"/>
+            <column defaultValueNumeric="5" name="numclasses" type="INTEGER"/>
+            <column name="lastupdate" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="abbreviation" type="VARCHAR(255)"/>
+            <column name="characteristicvalue" type="VARCHAR(255)"/>
+            <column name="colorbrewerschemename" type="VARCHAR(255)"/>
+            <column name="contact" type="TEXT"/>
+            <column name="databasis" type="TEXT"/>
+            <column name="datasource" type="TEXT"/>
+            <column name="datasetid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="metadataindicators_pkey"/>
+            </column>
+            <column name="datasetname" type="VARCHAR(255)"/>
+            <column name="dbtablename" type="VARCHAR(255)"/>
+            <column name="description" type="TEXT"/>
+            <column name="interpretation" type="VARCHAR(255)"/>
+            <column name="jsonschema" type="TEXT"/>
+            <column name="literature" type="TEXT"/>
+            <column name="lowestspatialunitforcomputation" type="VARCHAR(255)"/>
+            <column name="note" type="TEXT"/>
+            <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
+            <column name="processdescription" type="TEXT"/>
+            <column name="referencedatenote" type="VARCHAR(255)"/>
+            <column name="topicreference" type="VARCHAR(255)"/>
+            <column name="unit" type="VARCHAR(255)"/>
+            <column name="updateintervall" type="VARCHAR(255)"/>
+            <column name="wfsurl" type="VARCHAR(255)"/>
+            <column name="wmsurl" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-3">
+        <createTable tableName="gt_pk_metadata">
+            <column name="table_schema" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="table_name" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pk_column" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pk_column_idx" type="INTEGER"/>
+            <column name="pk_policy" type="VARCHAR(32)"/>
+            <column name="pk_sequence" type="VARCHAR(64)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-4">
+        <createTable tableName="metadataspatialunits">
+            <column name="isoutlinelayer" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ispublic" type="BOOLEAN"/>
+            <column name="outlinewidth" type="INTEGER"/>
+            <column name="sridepsg" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastupdate" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="contact" type="TEXT"/>
+            <column name="databasis" type="TEXT"/>
+            <column name="datasource" type="TEXT"/>
+            <column name="datasetid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="metadataspatialunits_pkey"/>
+            </column>
+            <column name="datasetname" type="VARCHAR(255)"/>
+            <column name="dbtablename" type="VARCHAR(255)"/>
+            <column name="description" type="TEXT"/>
+            <column name="jsonschema" type="TEXT"/>
+            <column name="literature" type="TEXT"/>
+            <column name="nextlowerhierarchylevel" type="VARCHAR(255)"/>
+            <column name="nextupperhierarchylevel" type="VARCHAR(255)"/>
+            <column name="note" type="TEXT"/>
+            <column name="outlinecolor" type="VARCHAR(255)"/>
+            <column name="outlinedasharraystring" type="VARCHAR(255)"/>
+            <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
+            <column name="updateintervall" type="VARCHAR(255)"/>
+            <column name="wfsurl" type="VARCHAR(255)"/>
+            <column name="wmsurl" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-5">
+        <createTable tableName="permissions">
+            <column name="permissionlevel" type="SMALLINT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="organizationalunit" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permissionid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="permissions_pkey"/>
+            </column>
+            <column name="permissiontype" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-6">
+        <createTable tableName="scriptinputparameters">
+            <column name="datatype" type="SMALLINT"/>
+            <column name="maxparametervaluefornumericinputs" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="minparametervaluefornumericinputs" type="FLOAT8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="defaultvalue" type="TEXT"/>
+            <column name="description" type="TEXT"/>
+            <column name="inputparameterid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="scriptinputparameters_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-8">
+        <createTable tableName="topics">
+            <column name="topicresource" type="SMALLINT"/>
+            <column name="topictype" type="SMALLINT"/>
+            <column name="topicdescription" type="TEXT"/>
+            <column name="topicid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="topics_pkey"/>
+            </column>
+            <column name="topicname" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-9">
+        <createTable tableName="metadataindicators_defaultclassification">
+            <column name="dataset_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mapping_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-10">
+        <createTable tableName="metadataindicators_regionalreferencevalues">
+            <column name="dataset_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mapping_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-11">
+        <createTable tableName="organizationalunits">
+            <column name="ismandant" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="keycloakid" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="contact" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="mandant" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organizationalunitid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="organizationalunits_pkey"/>
+            </column>
+            <column name="parent" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-12">
+        <createTable tableName="topics_subtopics">
+            <column name="main_topic_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subtopics_topicid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-15">
+        <addUniqueConstraint columnNames="table_schema, table_name, pk_column" constraintName="gt_pk_metadata_table_schema_table_name_pk_column_key" tableName="gt_pk_metadata"/>
+    </changeSet>
+
+    <changeSet  author="liquibase (generated)"  id="kommonitor-5.0.0-69">
+        <sql dbms="postgresql">alter table gt_pk_metadata add constraint check_positive check (pk_policy in ('sequence', 'assigned', 'autogenerated'));
+        </sql>
+    </changeSet>
+
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-16">
+        <addUniqueConstraint columnNames="mapping_id" constraintName="metadataindicators_defaultclassification_mapping_id_key" tableName="metadataindicators_defaultclassification"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-17">
+        <addUniqueConstraint columnNames="mapping_id" constraintName="metadataindicators_regionalreferencevalues_mapping_id_key" tableName="metadataindicators_regionalreferencevalues"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-18">
+        <addUniqueConstraint columnNames="keycloakid" constraintName="organizationalunits_keycloakid_key" tableName="organizationalunits"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-19">
+        <addUniqueConstraint columnNames="name" constraintName="organizationalunits_name_key" tableName="organizationalunits"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-20">
+        <addUniqueConstraint columnNames="subtopics_topicid" constraintName="topics_subtopics_subtopics_topicid_key" tableName="topics_subtopics"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-21">
+        <createTable tableName="defaultclassificationmappingitemtype">
+            <column name="mappingid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="defaultclassificationmappingitemtype_pkey"/>
+            </column>
+            <column name="spatialunitid" type="VARCHAR(255)"/>
+            <column name="breaks" type="FLOAT4[]"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-22">
+        <createTable tableName="georesourcereference">
+            <column name="entryid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="georesourcereference_pkey"/>
+            </column>
+            <column name="mainindicatorid" type="VARCHAR(255)"/>
+            <column name="referencedescription" type="TEXT"/>
+            <column name="referencedgeoresourceid" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-23">
+        <createTable tableName="indicator_tags">
+            <column name="dataset_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-24">
+        <createTable tableName="indicator_timestamps">
+            <column name="dataset_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-25">
+        <createTable tableName="indicatorreference">
+            <column name="entryid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="indicatorreference_pkey"/>
+            </column>
+            <column name="indicatorid" type="VARCHAR(255)"/>
+            <column name="referencedescription" type="TEXT"/>
+            <column name="referencedindicatorid" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-26">
+        <createTable tableName="indicatorspatialunits">
+            <column name="ispublic" type="BOOLEAN"/>
+            <column name="defaultstylename" type="VARCHAR(255)"/>
+            <column name="entryid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="indicatorspatialunits_pkey"/>
+            </column>
+            <column name="indicatormetadataid" type="VARCHAR(255)"/>
+            <column name="indicatorname" type="VARCHAR(255)"/>
+            <column name="indicatorvaluetablename" type="VARCHAR(255)"/>
+            <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
+            <column name="spatialunitid" type="VARCHAR(255)"/>
+            <column name="spatialunitname" type="VARCHAR(255)"/>
+            <column name="wfsurl" type="VARCHAR(255)"/>
+            <column name="wmsurl" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-27">
+        <createTable tableName="indicatorspatialunits_permissions">
+            <column name="indicatorspatialunit_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-28">
+        <createTable tableName="lastmodification">
+            <column name="accesscontrol" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="georesources" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="indicators" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="processscripts" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="spatialunits" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="topics" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="lastmodification_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-29">
+        <createTable tableName="metadatageoresources_permissions">
+            <column name="metadatageoresources_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-30">
+        <createTable tableName="metadataindicators_permissions">
+            <column name="metadataindicators_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-31">
+        <createTable tableName="metadataspatialunits_permissions">
+            <column name="metadataspatialunits_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-32">
+        <createTable tableName="regionalreferencevaluetype">
+            <column name="regionalaverage" type="FLOAT4"/>
+            <column name="regionalsum" type="FLOAT4"/>
+            <column name="spatiallyunassignable" type="FLOAT4"/>
+            <column name="mappingid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="regionalreferencevaluetype_pkey"/>
+            </column>
+            <column name="referencedate" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-33">
+        <createTable tableName="scriptmetadata">
+            <column name="lastupdate" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="description" type="TEXT"/>
+            <column name="indicatorid" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="scriptid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="scriptmetadata_pkey"/>
+            </column>
+            <column name="scripttype" type="VARCHAR(255)"/>
+            <column name="scriptcode" type="BYTEA"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-34">
+        <createTable tableName="scripts_inputparameters">
+            <column name="inputparameter_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="script_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-35">
+        <createTable tableName="scripts_requiredgeoresources">
+            <column name="dataset_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="script_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-36">
+        <createTable tableName="scripts_requiredindicators">
+            <column name="dataset_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="script_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-37">
+        <addForeignKeyConstraint baseColumnNames="script_id" baseTableName="scripts_requiredindicators" constraintName="fk1i8b0onfvo84rvlcsk9ct2qgy" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="scriptid" referencedTableName="scriptmetadata" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-38">
+        <addForeignKeyConstraint baseColumnNames="indicatormetadataid" baseTableName="indicatorspatialunits" constraintName="fk2ku1ipstuan4pp16i4h2qip0p" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadataindicators" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-39">
+        <addForeignKeyConstraint baseColumnNames="indicatorspatialunit_id" baseTableName="indicatorspatialunits_permissions" constraintName="fk2l0fpfwnn8u4k9dk5a8pixc89" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="entryid" referencedTableName="indicatorspatialunits" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-40">
+        <addForeignKeyConstraint baseColumnNames="parent" baseTableName="organizationalunits" constraintName="fk3bm4ecg8sr4fyce8gpgcoifc2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-41">
+        <addForeignKeyConstraint baseColumnNames="owner_organizationalunitid" baseTableName="metadataspatialunits" constraintName="fk3j5hwqpw067o40i0pc5n7y81w" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-42">
+        <addForeignKeyConstraint baseColumnNames="dataset_id" baseTableName="scripts_requiredgeoresources" constraintName="fk5ml1rn4axdld687al3cwy915o" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadatageoresources" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-43">
+        <addForeignKeyConstraint baseColumnNames="owner_organizationalunitid" baseTableName="indicatorspatialunits" constraintName="fk5qiyu7wg29c5u5gne280ha0h5" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-44">
+        <addForeignKeyConstraint baseColumnNames="script_id" baseTableName="scripts_inputparameters" constraintName="fk76tojnk9a13moulj92abwtoie" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="scriptid" referencedTableName="scriptmetadata" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-45">
+        <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="metadataspatialunits_permissions" constraintName="fk7ls7o1jla5e9dldak6yrrqxdq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="permissionid" referencedTableName="permissions" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-46">
+        <addForeignKeyConstraint baseColumnNames="mandant" baseTableName="organizationalunits" constraintName="fk7mscc9wm82n23nmirr394h0ne" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-47">
+        <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="metadatageoresources_permissions" constraintName="fk87qg1sgxo3pcmo3189tlas2cu" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="permissionid" referencedTableName="permissions" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-48">
+        <addForeignKeyConstraint baseColumnNames="metadataspatialunits_id" baseTableName="metadataspatialunits_permissions" constraintName="fk9d89b761lh3m7dn612cw06888" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadataspatialunits" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-49">
+        <addForeignKeyConstraint baseColumnNames="dataset_id" baseTableName="scripts_requiredindicators" constraintName="fka5k490rs0ck8ba60311vcw2ff" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadataindicators" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-50">
+        <addForeignKeyConstraint baseColumnNames="mapping_id" baseTableName="metadataindicators_defaultclassification" constraintName="fkaht0q849jrsr22wqslthqnvfu" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="mappingid" referencedTableName="defaultclassificationmappingitemtype" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-51">
+        <addForeignKeyConstraint baseColumnNames="dataset_id" baseTableName="indicator_tags" constraintName="fkapilr4sy9fst78wiee6iy0oh2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadataindicators" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-52">
+        <addForeignKeyConstraint baseColumnNames="main_topic_id" baseTableName="topics_subtopics" constraintName="fkb49kmbcprv7266rvy6qhhuh3h" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="topicid" referencedTableName="topics" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-53">
+        <addForeignKeyConstraint baseColumnNames="indicatorid" baseTableName="scriptmetadata" constraintName="fkbnaoo122y2j9g0m9ymywf5rf2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadataindicators" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-54">
+        <addForeignKeyConstraint baseColumnNames="mapping_id" baseTableName="metadataindicators_regionalreferencevalues" constraintName="fkdot0sxkbo9b643qps9bjkbp36" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="mappingid" referencedTableName="regionalreferencevaluetype" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-55">
+        <addForeignKeyConstraint baseColumnNames="owner_organizationalunitid" baseTableName="metadataindicators" constraintName="fkf7wi42jyhwx6yvdxgjwr84dam" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-56">
+        <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="metadataindicators_permissions" constraintName="fkgm5resvbkqcle93avd0bhts8h" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="permissionid" referencedTableName="permissions" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-57">
+        <addForeignKeyConstraint baseColumnNames="owner_organizationalunitid" baseTableName="metadatageoresources" constraintName="fkhgfrv0npwlxkfadhhanw1e0dh" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-58">
+        <addForeignKeyConstraint baseColumnNames="dataset_id" baseTableName="indicator_timestamps" constraintName="fkhuntisly758v07f1s0e0xjav0" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadataindicators" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-59">
+        <addForeignKeyConstraint baseColumnNames="inputparameter_id" baseTableName="scripts_inputparameters" constraintName="fkhvw7wqyhrcb6y2ymf6do9yquv" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="inputparameterid" referencedTableName="scriptinputparameters" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-60">
+        <addForeignKeyConstraint baseColumnNames="metadatageoresources_id" baseTableName="metadatageoresources_permissions" constraintName="fkis8vhkd37va7ltxydm5y5weyi" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadatageoresources" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-61">
+        <addForeignKeyConstraint baseColumnNames="metadataindicators_id" baseTableName="metadataindicators_permissions" constraintName="fkklghgtx2rtav334soqdo8as31" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadataindicators" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-62">
+        <addForeignKeyConstraint baseColumnNames="dataset_id" baseTableName="metadataindicators_regionalreferencevalues" constraintName="fklt1s456rj49ceb4ugy4wt48nh" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadataindicators" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-63">
+        <addForeignKeyConstraint baseColumnNames="script_id" baseTableName="scripts_requiredgeoresources" constraintName="fkm2lpv28s8utghc3079dobulhk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="scriptid" referencedTableName="scriptmetadata" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-64">
+        <addForeignKeyConstraint baseColumnNames="spatialunitid" baseTableName="indicatorspatialunits" constraintName="fkmphrkhhdqhmxomq0iji7euwtl" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadataspatialunits" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-65">
+        <addForeignKeyConstraint baseColumnNames="subtopics_topicid" baseTableName="topics_subtopics" constraintName="fkppmweumhynwtfu7dv304o8oto" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="topicid" referencedTableName="topics" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-66">
+        <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="indicatorspatialunits_permissions" constraintName="fkpu4dye5vlufhimkqtyn5368eb" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="permissionid" referencedTableName="permissions" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-67">
+        <addForeignKeyConstraint baseColumnNames="dataset_id" baseTableName="metadataindicators_defaultclassification" constraintName="fkq0us248wnb2j151csjtrkfa8n" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="datasetid" referencedTableName="metadataindicators" validate="true"/>
+    </changeSet>
+    <changeSet author="liquibase (generated)" id="kommonitor-5.0.0-68">
+        <addForeignKeyConstraint baseColumnNames="organizationalunit" baseTableName="permissions" constraintName="fkrf83pb1ulbpvgjq14ndhy15nx" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="organizationalunitid" referencedTableName="organizationalunits" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

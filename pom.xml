@@ -44,6 +44,7 @@
         <log4j2.version>2.20.0</log4j2.version>
         <openapi-codegen.version>7.1.0</openapi-codegen.version>
         <kommonitor-oas.version>latest</kommonitor-oas.version>
+        <liquibase.version>4.30.0</liquibase.version>
     </properties>
 
 
@@ -102,7 +103,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
-        
+
+        <!-- Liquibase -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
+
         <!-- define as runtime scope -->
         <dependency>
             <groupId>org.aspectj</groupId>

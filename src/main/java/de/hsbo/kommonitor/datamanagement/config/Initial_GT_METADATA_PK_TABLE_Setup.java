@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 
-@Component
+@Deprecated
 public class Initial_GT_METADATA_PK_TABLE_Setup implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 
 	Logger logger = LoggerFactory.getLogger(Initial_GT_METADATA_PK_TABLE_Setup.class);
