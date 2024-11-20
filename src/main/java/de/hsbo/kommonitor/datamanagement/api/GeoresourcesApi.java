@@ -11,6 +11,7 @@ import de.hsbo.kommonitor.datamanagement.model.GeoresourcePATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourcePOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourcePUTInputType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.ResourceFilterType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,7 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-14T08:36:20.041405+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-09T15:35:20.729992100+02:00[Europe/Berlin]")
 @Validated
 @Tag(name = "georesources", description = "the Georesources API")
 public interface GeoresourcesApi {
@@ -268,6 +269,44 @@ public interface GeoresourcesApi {
         @Parameter(name = "georesourceId", description = "the identifier of the geo-resource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
         @Parameter(name = "featureId", description = "the identifier of the geo-resource dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
         @Parameter(name = "featureRecordId", description = "the unique database record identifier of the geo-resource dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true, in = ParameterIn.PATH) @PathVariable("featureRecordId") String featureRecordId
+    );
+
+
+    /**
+     * POST /georesources/filter : Filter georesources
+     * Filter georesource datasets according to the specified filter
+     *
+     * @param resourceFilterType filter data (required)
+     * @return OK (status code 200)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "filterGeoresources",
+        summary = "Filter georesources",
+        description = "Filter georesource datasets according to the specified filter",
+        tags = { "georesources" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = GeoresourceOverviewType.class)))
+            }),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/georesources/filter",
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<List<GeoresourceOverviewType>> filterGeoresources(
+        @Parameter(name = "ResourceFilterType", description = "filter data", required = true) @Valid @RequestBody ResourceFilterType resourceFilterType
     );
 
 

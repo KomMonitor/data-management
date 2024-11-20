@@ -243,7 +243,12 @@ public class IndicatorDatabaseHandler {
 				for (IndicatorPOSTInputTypeValueMapping mappingEntry : valueMapping) {
 					// String dateString =
 					// createDateStringForDbProperty(java.sql.Date.valueOf(timestamp));
-					builder.add(mappingEntry.getIndicatorValue());
+					try {
+						builder.add(mappingEntry.getIndicatorValue());
+					} catch (Exception ex) {
+						logger.error("Error while building feature.", ex);
+					}
+
 				}
 
 				features.add(builder.buildFeature(spatialReferenceKey));

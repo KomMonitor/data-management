@@ -6,6 +6,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
+import de.hsbo.kommonitor.datamanagement.model.ResourceFilterType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,8 +103,25 @@ public class IndicatorsPublicController extends BasePathController implements In
 
         try {
             if (accept != null && accept.contains("application/json")) {
-                List<IndicatorOverviewType> spatialunitsMetadata = indicatorsManager.getAllIndicatorsMetadata();
-                return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
+                List<IndicatorOverviewType> indicatorsMetadata = indicatorsManager.getAllIndicatorsMetadata();
+                return new ResponseEntity<>(indicatorsMetadata, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<IndicatorOverviewType>> filterPublicIndicators(ResourceFilterType resourceFilterType) {
+        logger.info("Received request to get filtered public indicators metadata");
+        String accept = request.getHeader("Accept");
+
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                List<IndicatorOverviewType> indicatorsMetadata = indicatorsManager.filterIndicatorsMetadata(null, resourceFilterType);
+                return new ResponseEntity<>(indicatorsMetadata, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }

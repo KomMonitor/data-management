@@ -5,6 +5,7 @@ import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.ResourceFilterType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,23 @@ public class GeorecourcesPublicController extends BasePathController implements 
 				GeoresourceOverviewType georesourceMetadata = georesourcesManager
 						.getGeoresourceByDatasetId(georesourceId);
 				return new ResponseEntity<>(georesourceMetadata, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
+	public ResponseEntity<List<GeoresourceOverviewType>> filterPublicGeoresources(ResourceFilterType resourceFilterType) {
+		logger.info("Received request to get filtered public georesources metadata");
+
+		String accept = request.getHeader("Accept");
+		try {
+			if (accept != null && accept.contains("application/json")) {
+				List<GeoresourceOverviewType> georesourcesMetadata = georesourcesManager.filterGeoresourcesMetadata(resourceFilterType);
+				return new ResponseEntity<>(georesourcesMetadata, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}

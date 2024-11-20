@@ -7,6 +7,7 @@ package de.hsbo.kommonitor.datamanagement.api;
 
 import java.math.BigDecimal;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.ResourceFilterType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,10 +34,48 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2023-12-13T09:36:13.690775700+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T15:25:06.709590100+02:00[Europe/Berlin]")
 @Validated
 @Tag(name = "georesources-public", description = "the public Georesources API")
 public interface GeoresourcesPublicApi {
+
+    /**
+     * POST /public/georesources/filter : Filter public georesources
+     * Filter public georesource datasets according to the specified filter
+     *
+     * @param resourceFilterType filter data (required)
+     * @return OK (status code 200)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "filterPublicGeoresources",
+        summary = "Filter public georesources",
+        description = "Filter public georesource datasets according to the specified filter",
+        tags = { "georesources-public" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = GeoresourceOverviewType.class)))
+            }),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/public/georesources/filter",
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<List<GeoresourceOverviewType>> filterPublicGeoresources(
+        @Parameter(name = "ResourceFilterType", description = "filter data", required = true) @Valid @RequestBody ResourceFilterType resourceFilterType
+    );
+
 
     /**
      * GET /public/georesources/{georesourceId}/allFeatures : retrieve all feature entries for all applicable periods of validity for the selected public geo-resource dataset (hence might contain each feature multiple times if they exist for different periods of validity)
