@@ -1,6 +1,18 @@
 # Change Log
 
-## 4.0.1
+## 4.1.0-beta.1
+* Set next beta version [42a2059](42a2059dd892489848155291b85941394072897a)
+* Merge branch &#39;fix/global-filter&#39; [95e3485](95e348577910484e0721222c5badad130bee4793)
+    * Add filter endpoints to OAS [7467ef6](7467ef615f00ff3b7884811dae322d4783e6d3c9)
+    * Implement public filter endpoints [ae69261](ae6926168c6d99288f2467a4fac85c2228165af4)
+    * Add missing model class [8949bc1](8949bc1fc0096a644274f885699000722628cd34)
+    * Add filter endpoint for georesources [c5ab632](c5ab632f8a89403fd45f84dcc4c3b45fc4eb6892)
+    * Add filter endpoint for indicators [8cdc52a](8cdc52ab38b8c287147c1bea29dfdb294be4b8b4)
+    * Pin Eclipse Temurin image [1c594b1](1c594b1d5c86e5f9f2df57306567a22eef5864e1)
+    * Log error for feature building [340b7d5](340b7d5b1fc796ef0e06f2371b1d2fbe4c251a27)
+    * Update Keycloak version [907ab2e](907ab2e282bfa0f8eb77a5fe6017b39a0c0dcbd8)
+* introduce new fix RegionalReferenceValueEntity database entity class in order to allow automatic model generation without manual adjustments to generated classes [d64c3d6](d64c3d6e68d546d35884dc695207cd8dbe411c15)
+* fix automatic model regeneration from api spec (some methods seemed to be renamed manually causing failing compilation after model regeneration) [fe420d5](fe420d568101d28c603b9d558142ff92b694353d)
 * fix erroneous data model updates and deletion of old relic tables [a0cd3a6](a0cd3a6aea8f0267a1c77b142e92ee39f1ea36a8)
 * Fix missing AnnotationParameter [df30096](df30096299d7a731a57939bfcad5f2cb8aee8169)
 * implement poi marker text functionality [7989b1d](7989b1d6fe0f72e8b6d7dad848633a02e3f9e56f)
