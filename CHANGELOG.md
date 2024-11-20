@@ -1,6 +1,7 @@
 # Change Log
 
 ## 4.1.0-beta.1-SNAPSHOT
+* Fix import [3fbcd94](3fbcd942ecb8dd0594559ead80eb4af776ad5b5e)
 * Set next beta version [42a2059](42a2059dd892489848155291b85941394072897a)
 * Merge branch &#39;fix/global-filter&#39; [95e3485](95e348577910484e0721222c5badad130bee4793)
     * Add filter endpoints to OAS [7467ef6](7467ef615f00ff3b7884811dae322d4783e6d3c9)
