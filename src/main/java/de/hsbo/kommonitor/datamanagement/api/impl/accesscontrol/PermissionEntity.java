@@ -29,6 +29,7 @@ public class PermissionEntity {
     @Column()
     private PermissionLevelType permissionLevel = null;
 
+    @Deprecated
     private String name;
 
     private String permissionType;
@@ -68,10 +69,12 @@ public class PermissionEntity {
         this.permissionLevel = permissionLevel;
     }
 
+    @Deprecated
     public String getName() {
         return name;
     }
 
+    @Deprecated
     public void setName(String name) {
         this.name = name;
     }

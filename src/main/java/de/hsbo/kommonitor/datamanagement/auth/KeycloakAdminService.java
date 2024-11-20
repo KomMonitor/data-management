@@ -211,11 +211,17 @@ public class KeycloakAdminService {
         }
     }
 
+    public boolean groupExists(String name) throws KeycloakException {
+        List<GroupRepresentation> groupList = getRealmResource().groups().groups(name, true, 0, 2, true);
+
+        return groupList.size() == 0;
+    }
+
     public GroupRepresentation getGroupByName(String name) throws KeycloakException {
         List<GroupRepresentation> groupList = getRealmResource().groups().groups(name, true, 0, 2, true);
 
         if (groupList.size() == 0) {
-            throw new KeycloakException(String.format("No client exists with name %s.", name));
+            throw new KeycloakException(String.format("No group exists with name %s.", name));
         }
         if (groupList.size() > 1) {
             LOG.warn("More than one group matched the search: '{}'. Only first group will be returned.", name);

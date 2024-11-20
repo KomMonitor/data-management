@@ -25,7 +25,7 @@ public class PermissionManager {
 
     public PermissionEntity addPermission(OrganizationalUnitEntity organizationalUnit,
                                           PermissionLevelType level,
-                                          PermissionResourceType type) throws Exception {
+                                          PermissionResourceType type) {
         logger.info("Trying to persist permission for organizationalUnit '{}' and permissionLevel '{}' with type '{}'",
                 organizationalUnit.getName(),
                 level.getValue(),
