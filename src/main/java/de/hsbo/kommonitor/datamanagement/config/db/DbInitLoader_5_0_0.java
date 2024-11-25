@@ -4,12 +4,16 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUn
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.KeycloakException;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Stream;
@@ -20,6 +24,12 @@ public class DbInitLoader_5_0_0 implements DbInitLoader{
     private static final Logger LOG = LoggerFactory.getLogger(DbInitLoader_5_0_0.class);
 
     private static final String DB_VERSION = "5.0.0";
+
+    @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
+    private String defaultAnonymousOUname;
+
+    @Value("${kommonitor.access-control.authenticated-users.organizationalUnit:kommonitor}")
+    private String defaultAuthenticatedOUname;
 
     @Autowired
     PermissionManager permissionManager;
@@ -34,6 +44,10 @@ public class DbInitLoader_5_0_0 implements DbInitLoader{
 
     @Override
     public void load() {
+        // Delete special 'public' and 'kommonitor' OrganizationalUnit
+        deleteOrganizationalUnitAndRolesByName(defaultAnonymousOUname);
+        deleteOrganizationalUnitAndRolesByName(defaultAuthenticatedOUname);
+        // Initialize Keycloak groups for all other OrganizationalUnits
         setupOrganizationalUnits();
     }
 
@@ -50,5 +64,17 @@ public class DbInitLoader_5_0_0 implements DbInitLoader{
                 LOG.error("Initializing Keycloak group failed for OrganizationalUnit '{}'.", ou.getName(), ex);
             }
         });
+    }
+
+    public void deleteOrganizationalUnitAndRolesByName(String organizationalUnitName) {
+        LOG.info("Trying to delete default OrganizationalUnit with name '{}'", organizationalUnitName);
+        OrganizationalUnitEntity unit = organizationalUnitRepository.findByName(organizationalUnitName);
+        if (unit != null) {
+            // This should automatically propagate to associated roles via @CascadeType.REMOVE
+            organizationalUnitRepository.deleteByOrganizationalUnitId(unit.getOrganizationalUnitId());
+        } else {
+            LOG.warn("No OrganizationalUnit with name '{}' was found in database. Delete request has no effect.",
+                    organizationalUnitName);
+        }
     }
 }

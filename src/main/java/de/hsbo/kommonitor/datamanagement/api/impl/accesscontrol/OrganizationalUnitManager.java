@@ -169,9 +169,8 @@ public class OrganizationalUnitManager {
         if (unit != null) {
             // Prevent deletion of default units.
             if (unit.getName().equals(defaultAnonymousOUname) || unit.getName().equals(defaultAuthenticatedOUname)) {
-                LOG.error("Trying to delete default OrganizationalUnits.");
-                throw new ApiException(HttpStatus.FORBIDDEN.value(),
-                        "Tried to delete default OrganizationalUnits");
+                LOG.error("Deletion of default OrganizationalUnits is not allowed.");
+                throw new ApiException(HttpStatus.FORBIDDEN.value(), "Deletion of default OrganizationalUnits is not allowed.");
             }
             keycloakAdminService.deleteGroupAndRoles(unit);
             // This should automatically propagate to associated roles via @CascadeType.REMOVE
@@ -181,9 +180,7 @@ public class OrganizationalUnitManager {
             LOG.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
                     organizationalUnitId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                    "Tried to delete OrganizationalUnit, but no OrganizationalUnit " +
-                            "existes with id " +
-                            organizationalUnitId);
+                    "Tried to delete OrganizationalUnit, but no OrganizationalUnit exists with id " + organizationalUnitId);
         }
     }
 
