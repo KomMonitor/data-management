@@ -1,10 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.users;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.AccessControlMapper;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
@@ -12,7 +8,9 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEnt
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
 import de.hsbo.kommonitor.datamanagement.auth.AuthInfoProvider;
-import de.hsbo.kommonitor.datamanagement.model.*;
+import de.hsbo.kommonitor.datamanagement.model.TopicResourceEnum;
+import de.hsbo.kommonitor.datamanagement.model.UserInfoInputType;
+import de.hsbo.kommonitor.datamanagement.model.UserInfoOverviewType;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Transactional
@@ -55,13 +55,14 @@ public class UserInfoManager {
         }
 
         userInfoEntity = createUserInfoEntity(keycloakUserId, inputUserInfo);
+        userInfoRepository.saveAndFlush(userInfoEntity);
 
-        return UserInfoMapper.mapToSwaggerOrganizationalUnit(userInfoEntity);
+        return UserInfoMapper.mapToSwaggerUserInfo(userInfoEntity);
     }
 
     public UserInfoOverviewType getUserInfoByUserInfoId(String userInfoId, AuthInfoProvider authInfoProvider)
-            throws Exception {
-        LOG.info("Retrieving user info USer Info ID '{}'", userInfoId);
+            throws ResourceNotFoundException {
+        LOG.info("Retrieving user info for user info ID '{}'", userInfoId);
 
         UserInfoEntity userInfoEntity = userInfoRepository.findByUserInfoId(userInfoId);
 
@@ -69,7 +70,7 @@ public class UserInfoManager {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested user info '%s' was not found.", userInfoId));
         }
 
-        return UserInfoMapper.mapToSwaggerOrganizationalUnit(userInfoEntity);
+        return UserInfoMapper.mapToSwaggerUserInfo(userInfoEntity);
     }
 
     public UserInfoOverviewType getUserInfoByKeycloakId(String keycloakId, AuthInfoProvider authInfoProvider)
@@ -82,7 +83,31 @@ public class UserInfoManager {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested user info '%s' was not found.", keycloakId));
         }
 
-        return UserInfoMapper.mapToSwaggerOrganizationalUnit(userInfoEntity);
+        return UserInfoMapper.mapToSwaggerUserInfo(userInfoEntity);
+    }
+
+    public UserInfoOverviewType updateUserInfoByUserInfoId(String userInfoId, UserInfoInputType userInfoData, AuthInfoProvider authInfoProvider) throws Exception {
+        LOG.info("Retrieving user info for user info ID '{}'", userInfoId);
+
+        UserInfoEntity userInfoEntity = userInfoRepository.findByUserInfoId(userInfoId);
+
+        if (userInfoEntity == null || authInfoProvider == null || !userInfoEntity.getKeycloakId().equals(authInfoProvider.getUserId())) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested user info '%s' was not found.", userInfoId));
+        }
+
+        updateUserInfoEntity(userInfoEntity, userInfoData);
+        userInfoRepository.saveAndFlush(userInfoEntity);
+
+        return UserInfoMapper.mapToSwaggerUserInfo(userInfoEntity);
+
+    }
+
+    public List<UserInfoOverviewType> getAllUserInfos() {
+        LOG.info("Retrieving additional information for all users");
+
+        List<UserInfoEntity> userInfoEntityList = userInfoRepository.findAll();
+
+        return UserInfoMapper.mapToSwaggerUserInfo(userInfoEntityList);
     }
 
     private UserInfoEntity createUserInfoEntity(String keycloakUserId, UserInfoInputType inputUserInfo) throws Exception{
@@ -114,8 +139,36 @@ public class UserInfoManager {
         }
         List<TopicsEntity> topicsList = Stream.concat(indicatorTopicsList.stream(), georesourceTopicsList.stream()).toList();
         userInfoEntity.setTopicFavourites(topicsList);
-        userInfoRepository.saveAndFlush(userInfoEntity);
         return userInfoEntity;
+    }
+
+    private void updateUserInfoEntity(UserInfoEntity userInfoEntity, UserInfoInputType inputUserInfo) throws Exception{
+        if(inputUserInfo.getGeoresourceFavourites() != null) {
+            userInfoEntity.setGeoresourceFavourites(retrieveGeoresources(inputUserInfo.getGeoresourceFavourites()));
+        }
+
+        if(inputUserInfo.getIndicatorFavourites() != null) {
+            userInfoEntity.setIndicatorFavourites(retrieveIndicators(inputUserInfo.getIndicatorFavourites()));
+        }
+
+        if(inputUserInfo.getIndicatorFavourites() != null) {
+            Collection<TopicsEntity> indicatorTopicsList = retrieveTopics(inputUserInfo.getIndicatorTopicFavourites(), TopicResourceEnum.INDICATOR);
+            userInfoEntity.setTopicFavourites(
+                    Stream.concat(
+                            userInfoEntity.getTopicFavourites().stream().filter(t -> t.getTopicResource() != TopicResourceEnum.INDICATOR),
+                            indicatorTopicsList.stream()
+                    ).toList()
+            );
+        }
+        if(inputUserInfo.getGeoresourceTopicFavourites() != null) {
+            Collection<TopicsEntity> georesourceTopicsList = retrieveTopics(inputUserInfo.getIndicatorTopicFavourites(), TopicResourceEnum.GEORESOURCE);
+            userInfoEntity.setTopicFavourites(
+                    Stream.concat(
+                            userInfoEntity.getTopicFavourites().stream().filter(t -> t.getTopicResource() != TopicResourceEnum.GEORESOURCE),
+                            georesourceTopicsList.stream()
+                    ).toList()
+            );
+        }
     }
 
     private Collection<MetadataGeoresourcesEntity> retrieveGeoresources(List<String> georesourceIds)

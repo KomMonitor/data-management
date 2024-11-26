@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class UserInfoMapper {
-    public static UserInfoOverviewType mapToSwaggerOrganizationalUnit(UserInfoEntity userInfoEntity) {
+    public static UserInfoOverviewType mapToSwaggerUserInfo(UserInfoEntity userInfoEntity) {
         UserInfoOverviewType userInfo = new UserInfoOverviewType();
         userInfo.setUserInfoId(userInfoEntity.getUserInfoId());
         userInfo.setKeycloakId(userInfoEntity.getKeycloakId());
@@ -42,4 +42,7 @@ public class UserInfoMapper {
                 .map(TopicsEntity::getTopicId).toList();
     }
 
+    public static List<UserInfoOverviewType> mapToSwaggerUserInfo(List<UserInfoEntity> userInfoEntityList) {
+        return userInfoEntityList.stream().map(UserInfoMapper::mapToSwaggerUserInfo).toList();
+    }
 }

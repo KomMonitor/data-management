@@ -25,7 +25,7 @@ import java.util.List;
 @Controller
 public class UserInfoController extends BasePathController implements UserInfoApi {
 
-    private static Logger LOG = LoggerFactory.getLogger(UserInfoController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserInfoController.class);
 
     private final ObjectMapper objectMapper;
 
@@ -75,7 +75,7 @@ public class UserInfoController extends BasePathController implements UserInfoAp
     @Override
     @PreAuthorize("isAuthorizedForUserInfo(#userInfoId)")
     public ResponseEntity<UserInfoOverviewType> getUserInfoById(String userInfoId) {
-        LOG.debug("Received request to get user info for id '{}'", userInfoId);
+        LOG.info("Received request to get user info for id '{}'", userInfoId);
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
         String accept = request.getHeader("Accept");
 
@@ -94,18 +94,61 @@ public class UserInfoController extends BasePathController implements UserInfoAp
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<UserInfoOverviewType> getUserInfoForUser() {
-        return null;
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+        String userId = provider.getUserId();
+        LOG.info("Received request to get user info for current user with Keycloak ID '{}'", userId);
+
+        String accept = request.getHeader("Accept");
+
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                UserInfoOverviewType userInfo = userInfoManager.getUserInfoByKeycloakId(userId, provider);
+                return new ResponseEntity<>(userInfo, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception ex) {
+            return ApiUtils.createResponseEntityFromException(ex);
+        }
     }
 
     @Override
     @PreAuthorize("isAuthorizedForAdminOperations()")
     public ResponseEntity<List<UserInfoOverviewType>> getUserInfos() {
-        return null;
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+        String userId = provider.getUserId();
+        LOG.info("Received request to get user info for current user with Keycloak ID '{}'", userId);
+
+        String accept = request.getHeader("Accept");
+
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                List<UserInfoOverviewType> userInfoList = userInfoManager.getAllUserInfos();
+                return new ResponseEntity<>(userInfoList, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception ex) {
+            return ApiUtils.createResponseEntityFromException(ex);
+        }
     }
 
     @Override
     @PreAuthorize("isAuthorizedForUserInfo(#userInfoId)")
     public ResponseEntity<UserInfoOverviewType> updateUserInfo(String userInfoId, UserInfoInputType userInfoData) {
-        return null;
+        LOG.info("Received request to get user info for id '{}'", userInfoId);
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+        String accept = request.getHeader("Accept");
+
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                UserInfoOverviewType userInfo = userInfoManager.updateUserInfoByUserInfoId(userInfoId, userInfoData, provider);
+                return new ResponseEntity<>(userInfo, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception ex) {
+            return ApiUtils.createResponseEntityFromException(ex);
+        }
     }
 }

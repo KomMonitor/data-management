@@ -36,7 +36,7 @@ public final class AuthHelperService {
     @Autowired
     private IndicatorSpatialUnitsRepository indicatorspatialUnitsRepository;
 
-    Autowired
+    @Autowired
     private UserInfoRepository userInfoRepository;
     
     @Autowired
@@ -47,7 +47,7 @@ public final class AuthHelperService {
         AuthHelperService.Instance = this;
     }
     
-    private AuthHelperService(){};
+    private AuthHelperService(){}
     
     public AuthInfoProviderFactory getAuthInfoProviderFactory(){
         return this.authInfoProviderFactory;
@@ -74,7 +74,7 @@ public final class AuthHelperService {
     }
     
     /**
-     * @return singelton instance of AuthHelperService
+     * @return singleton instance of AuthHelperService
      */
     public static AuthHelperService GetInstance(){
         if(AuthHelperService.Instance != null){
