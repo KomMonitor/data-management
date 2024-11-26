@@ -24,4 +24,14 @@ public class JwtTokenAuthInfoProvider extends AuthInfoProvider<JwtAuthentication
         return getOwnedRoles(getPrincipal()).stream().anyMatch(r -> r.equals(getAdminRolePrefix() + "-creator"));
     }
 
+    @Override
+    public String getUserId(JwtAuthenticationToken principal) {
+        return (String) principal.getTokenAttributes().get("sub");
+    }
+
+    @Override
+    public boolean hasGlobalAdminPermissions() {
+        return hasRealmAdminRole(getPrincipal());
+    }
+
 }

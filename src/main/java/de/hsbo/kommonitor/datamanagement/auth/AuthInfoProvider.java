@@ -182,8 +182,15 @@ public abstract class AuthInfoProvider<T extends Principal> {
                 .anyMatch(r -> r.getSecond().compareTo(neededLevel) <= 0);
     }
 
+    public String getUserId() {
+        return getUserId(getPrincipal());
+    }
+
     public abstract Set<String> getOwnedRoles(T principal);
 
     public abstract boolean hasRealmAdminRole(T principal);
 
+    public abstract String getUserId(T principal);
+
+    public abstract boolean hasGlobalAdminPermissions();
 }

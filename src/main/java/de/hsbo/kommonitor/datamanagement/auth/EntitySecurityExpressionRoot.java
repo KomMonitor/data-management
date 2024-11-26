@@ -11,6 +11,8 @@ import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetad
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoRepository;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHDisplayOrderInputType;
 
 import java.security.Principal;
@@ -42,6 +44,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
     private final IndicatorsMetadataRepository indicatorRepository;
     private final SpatialUnitsMetadataRepository spatialunitsRepository;
     private final IndicatorSpatialUnitsRepository indicatorspatialunitsRepository;
+    private final UserInfoRepository userInfoRepository;
     private final AuthInfoProviderFactory authInfoProviderFactory;
 
     public EntitySecurityExpressionRoot(Authentication authentication) {
@@ -52,6 +55,8 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         this.indicatorRepository = this.authHelperService.getIndicatorRepository();
         this.spatialunitsRepository = this.authHelperService.getSpatialunitsRepository();
         this.indicatorspatialunitsRepository = this.authHelperService.getIndicatorSpatialunitsRepository();
+        this.userInfoRepository = this.authHelperService.getUserInfoRepository();
+
         this.authInfoProviderFactory = this.authHelperService.getAuthInfoProviderFactory();
 
         if (Principal.class.isAssignableFrom(this.getAuthentication().getPrincipal().getClass())) {
@@ -63,7 +68,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
     }
 
     /**
-     * custom security method to check if a user has permissions to access a entity,
+     * custom security method to check if a user has permissions to access an entity,
      * to be used with @PreAuthorize and @PostAuthorize annotations
      * @param entityID
      * @param entityType
@@ -155,6 +160,46 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
             return false;
         }
     }
+
+    /**
+     * Checks whether the user has admin permissions to perform admin operations or not.
+     *
+     * @return true if the user has global admin permissions
+     */
+    public boolean isAuthorizedForAdminOperations() {
+        return this.authInfoProvider.hasGlobalAdminPermissions();
+    }
+
+    /**
+     * custom security method to check if a user has permissions to view and manage user info, to be used
+     * with @PreAuthorize and @PostAuthorize annotations
+     *
+     * @param userInfoId ID for the user info
+
+     * @return true for global admins and if a user owns the requested information
+     */
+    public boolean isAuthorizedForUserInfo(String userInfoId) {
+        logger.debug("called isAuthorizedForUserInfo with user info id " + userInfoId);
+        // Fast success for global admins
+        if (this.authInfoProvider.hasGlobalAdminPermissions()) {
+            return true;
+        }
+
+        try {
+            UserInfoEntity userInfoEntity = this.userInfoRepository.findByUserInfoId(userInfoId);
+            if(userInfoEntity == null) {
+                throw new ResourceNotFoundException(NOTFOUNDCODE, "could not find user info for user id " + userInfoId);
+            }
+
+            boolean isAuthorized = userInfoEntity.getKeycloakId().equals(this.authInfoProvider.getUserId());
+            logger.info("access for " + this.getAuthentication().getName() + " to user info " + userInfoId + " authorized? " + isAuthorized);
+            return isAuthorized;
+        } catch (Exception ex) {
+            logger.error("unable to evaluate permissions for user info with id " + userInfoId, ex);
+            return false;
+        }
+    }
+
 
     /**
      * retrieve the entity from the corresponding repository

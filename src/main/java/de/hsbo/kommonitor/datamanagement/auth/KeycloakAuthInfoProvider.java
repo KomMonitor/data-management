@@ -37,4 +37,16 @@ public class KeycloakAuthInfoProvider extends AuthInfoProvider<KeycloakPrincipal
                 .isUserInRole(getAdminRolePrefix() + "-creator");
     }
 
+    @Override
+    public String getUserId(KeycloakPrincipal principal) {
+        return principal.getKeycloakSecurityContext()
+                .getToken()
+                .getSubject();
+    }
+
+    @Override
+    public boolean hasGlobalAdminPermissions() {
+        return hasRealmAdminRole(getPrincipal());
+    }
+
 }
