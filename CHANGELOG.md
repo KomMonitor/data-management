@@ -1,6 +1,14 @@
 # Change Log
 
-## 4.1.0-beta.1-SNAPSHOT
+## 4.1.0-beta.2
+* Add pgAdmin Docker setup [dacabdf](dacabdf0c951a44079918b045068fa3968edf915)
+* Fix favourite update [de330e7](de330e7f506e804f2fcc5ad3594d5c0ef25ba5ee)
+* Add PUT endpoint to update user infos and apply fixes [421c0db](421c0dbe01ca8724d963077769bbe4aec75c5c60)
+* Updaet OAS spec [5b12958](5b1295852c6c65c470b0d028df07ac25ff3a0484)
+* Add endpoints for requesting infos for all users and updating a set of user information [a656bd6](a656bd6d26dbf639eb97ac9b199b87eb16fdd515)
+* Add endpoints to create and fetch additional user infos [1eb0a69](1eb0a69fd3074bad077dc634bfe15f0f6b0a3011)
+* Add user info entity [8a8671b](8a8671b53e97501cb1193da6878f2feba4ab2cd3)
+* Add use info model types [1aaa786](1aaa786a750f5daeb8e5d63208facdc94679fac4)
 * Fix import [3fbcd94](3fbcd942ecb8dd0594559ead80eb4af776ad5b5e)
 * Set next beta version [42a2059](42a2059dd892489848155291b85941394072897a)
 * Merge branch &#39;fix/global-filter&#39; [95e3485](95e348577910484e0721222c5badad130bee4793)
