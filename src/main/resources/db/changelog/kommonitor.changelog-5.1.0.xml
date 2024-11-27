@@ -1,0 +1,121 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-1">
+        <createTable tableName="userinfo">
+            <column name="userinfoid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="userinfo_pkey"/>
+            </column>
+            <column name="keycloakid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="userinfo_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-2">
+        <createTable tableName="georesources_favourites">
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dataset_id" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-3">
+        <createTable tableName="indicators_favourites">
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dataset_id" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-4">
+        <createTable tableName="topics_favourites">
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="topic_id" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-5">
+        <addForeignKeyConstraint
+                baseColumnNames="user_id"
+                baseTableName="georesources_favourites"
+                constraintName="fk_georesource_favourites_userinfo"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="userinfoid"
+                referencedTableName="userinfo"
+                validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-6">
+        <addForeignKeyConstraint
+                baseColumnNames="dataset_id"
+                baseTableName="georesources_favourites"
+                constraintName="fk_georesource_favourites_dataset"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="datasetid"
+                referencedTableName="metadatageoresources"
+                validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-7">
+        <addForeignKeyConstraint
+                baseColumnNames="user_id"
+                baseTableName="indicators_favourites"
+                constraintName="fk_indicator_favourites_userinfo"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="userinfoid"
+                referencedTableName="userinfo"
+                validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-8">
+        <addForeignKeyConstraint
+                baseColumnNames="dataset_id"
+                baseTableName="indicators_favourites"
+                constraintName="fk_indicator_favourites_dataset"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="datasetid"
+                referencedTableName="metadataindicators"
+                validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-9">
+        <addForeignKeyConstraint
+                baseColumnNames="user_id"
+                baseTableName="topics_favourites"
+                constraintName="fk_topics_favourites_userinfo"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="userinfoid"
+                referencedTableName="userinfo"
+                validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-10">
+        <addForeignKeyConstraint
+                baseColumnNames="topic_id"
+                baseTableName="topics_favourites"
+                constraintName="fk_topics_favourites_topic"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="topicid"
+                referencedTableName="topics"
+                validate="true"/>
+    </changeSet>
+</databaseChangeLog>
