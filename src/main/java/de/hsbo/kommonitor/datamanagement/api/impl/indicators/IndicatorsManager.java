@@ -47,6 +47,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Transactional
 @Repository
@@ -585,6 +586,36 @@ public class IndicatorsManager {
     public List<IndicatorOverviewType> getAllIndicatorsMetadata(AuthInfoProvider provider) throws Exception {
         logger.info("Retrieving all indicators metadata from db");
 
+        List<MetadataIndicatorsEntity> indicatorsMeatadataEntities = fetchIndicatorMetadataEntities(provider);
+
+        List<IndicatorOverviewType> swaggerIndicatorsMetadata = indicatorsMapper.mapToSwaggerIndicators(indicatorsMeatadataEntities);
+
+        swaggerIndicatorsMetadata.sort(Comparator.comparing(IndicatorOverviewType::getIndicatorName));
+
+        return swaggerIndicatorsMetadata;
+    }
+
+    public List<IndicatorOverviewType> filterIndicatorsMetadata(AuthInfoProvider provider, ResourceFilterType resourceFilterType) throws Exception {
+        List<MetadataIndicatorsEntity> indicatorsMeatadataEntities = fetchIndicatorMetadataEntities(provider);
+
+        List<MetadataIndicatorsEntity> idFilteredList = indicatorsMeatadataEntities.stream()
+                .filter(i -> resourceFilterType.getIds().stream()
+                        .anyMatch(r -> r.equals(i.getDatasetId()))).toList();
+
+        List<MetadataIndicatorsEntity> topicFilteredList = indicatorsMeatadataEntities.stream()
+                .filter(i -> resourceFilterType.getTopicIds().stream()
+                        .anyMatch(r -> r.equals(i.getTopicReference()))).toList();
+
+        List<MetadataIndicatorsEntity> filterResults = Stream.concat(idFilteredList.stream(), topicFilteredList.stream()).distinct().toList();
+
+        List<IndicatorOverviewType> swaggerIndicatorsMetadata = indicatorsMapper.mapToSwaggerIndicators(filterResults);
+
+        swaggerIndicatorsMetadata.sort(Comparator.comparing(IndicatorOverviewType::getIndicatorName));
+
+        return swaggerIndicatorsMetadata;
+    }
+
+    private List<MetadataIndicatorsEntity> fetchIndicatorMetadataEntities(AuthInfoProvider provider) {
         List<MetadataIndicatorsEntity> indicatorsMeatadataEntities;
 
         if (provider == null) {
@@ -611,15 +642,7 @@ public class IndicatorsManager {
                 }
             }
         }
-
-        List<MetadataSpatialUnitsEntity> spatialUnitsMetadataArray = spatialUnitsMetadataRepo.findAll();
-
-        List<IndicatorOverviewType> swaggerIndicatorsMetadata = indicatorsMapper
-                .mapToSwaggerIndicators(indicatorsMeatadataEntities, spatialUnitsMetadataArray);
-
-        swaggerIndicatorsMetadata.sort(Comparator.comparing(IndicatorOverviewType::getIndicatorName));
-
-        return swaggerIndicatorsMetadata;
+        return indicatorsMeatadataEntities;
     }
 
     public String getValidIndicatorFeatures(String indicatorId, String spatialUnitId, BigDecimal year,

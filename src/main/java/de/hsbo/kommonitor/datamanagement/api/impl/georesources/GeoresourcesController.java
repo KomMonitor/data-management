@@ -257,6 +257,25 @@ public class GeoresourcesController extends BasePathController implements Geores
 	}
 
 	@Override
+	public ResponseEntity<List<GeoresourceOverviewType>> filterGeoresources(ResourceFilterType resourceFilterType) {
+		logger.info("Received request to get filtered georesources metadata");
+
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+		String accept = request.getHeader("Accept");
+		try {
+			if (accept != null && accept.contains("application/json")) {
+				List<GeoresourceOverviewType> georesourcesMetadata = georesourcesManager
+						.filterGeoresourcesMetadata(provider, resourceFilterType);
+				return new ResponseEntity<>(georesourcesMetadata, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
 	public ResponseEntity<GeoresourceOverviewType> getGeoresourceById(@P("georesourceId") String georesourceId) {
 		logger.info("Received request to get georesource metadata for datasetId '{}' test", georesourceId);

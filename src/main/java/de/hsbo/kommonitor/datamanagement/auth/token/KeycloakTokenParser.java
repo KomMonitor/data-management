@@ -53,4 +53,11 @@ public class KeycloakTokenParser extends TokenParser<KeycloakPrincipal> {
             return group;
         }).collect(Collectors.toSet());
     }
+
+    @Override
+    public String getUserId(KeycloakPrincipal principal) {
+        return principal.getKeycloakSecurityContext()
+                .getToken()
+                .getSubject();
+    }
 }

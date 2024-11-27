@@ -1,6 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.auth.token;
 
 import de.hsbo.kommonitor.datamanagement.auth.Group;
+import org.keycloak.KeycloakPrincipal;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.lang.reflect.ParameterizedType;
@@ -19,4 +20,6 @@ public abstract class TokenParser<T extends Principal> {
     public abstract Set<String> getGroupsClaim(T principal);
 
     public abstract Set<Group> getGroupMemberships(T principal);
+
+    public abstract String getUserId(T principal);
 }

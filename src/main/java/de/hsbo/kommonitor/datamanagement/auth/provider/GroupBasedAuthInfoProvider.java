@@ -288,6 +288,11 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         return tokenParser.getGroupMemberships(getPrincipal()).stream().map(Group::getName).collect(Collectors.toSet());
     }
 
+    @Override
+    public String getUserId() {
+        return tokenParser.getUserId(getPrincipal());
+    }
+
     private boolean hasResourceAdministrationPermission(RestrictedEntity entity) {
         Set<String> ownedRoles = tokenParser.getOwnedRoles(getPrincipal());
         return ownedRoles.stream()

@@ -110,6 +110,42 @@ paths:
           description: Invalid input
           content: {}
       deprecated: false
+  /georesources/filter:
+    post:
+      tags:
+        - georesources
+      summary: Filter georesources
+      description: Filter georesource datasets according to the specified filter
+      operationId: filterGeoresources
+      requestBody:
+        description: filter data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceFilterType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GeoresourceOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
   /georesources/{georesourceId}:
     get:
       tags:
@@ -1063,6 +1099,42 @@ paths:
       security:
         - kommonitor-data-access_oauth: []
       x-codegen-request-body-name: indicatorData
+  /indicators/filter:
+    post:
+      tags:
+        - indicators
+      summary: Filter indicators
+      description: Filter indicators datasets according to the specified filter
+      operationId: filterIndicators
+      requestBody:
+        description: filter data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceFilterType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IndicatorOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
   /indicators/display-order:
     patch:
       tags:
@@ -2927,6 +2999,242 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /userInfos:
+    get:
+      tags:
+        - user-info
+      summary: Retrieve additional information about registered users such as favourite lists
+      description: Retrieve additional information about registered users such as favourite lists
+      operationId: getUserInfos
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserInfoOverviewType'
+        "400":
+          description: Invalid status value
+          content: {}
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+    post:
+      tags:
+        - user-info
+      summary: Register new additional information about a user
+      description: Register new additional information about a user
+      operationId: addUserInfo
+      requestBody:
+        description: user info data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfoInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserInfoOverviewType'
+        "201":
+          description: Created
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserInfoOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "405":
+          description: Invalid input
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+          x-codegen-request-body-name: userInfoData
+  /userInfos/{userId}:
+    get:
+      tags:
+        - user-info
+      summary: Retrieve additional information about a user
+      description: Retrieve additional information about a user
+      operationId: getUserInfoById
+      parameters:
+        - name: userId
+          in: path
+          description: User info ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoOverviewType'
+        "400":
+          description: Invalid status value
+          content: {}
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+    patch:
+      tags:
+        - user-info
+      summary: Modify/Update additional information of a user in parts
+      description: Modify/Update additional information of a user in parts
+      operationId: updateUserInfoPartially
+      parameters:
+        - name: userId
+          in: path
+          description: identifier of the user information
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: user info data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfoInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserInfoOverviewType'
+        "201":
+          description: Created
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserInfoOverviewType'
+        "204":
+          description: No Content
+          content: {}
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "405":
+          description: Invalid input
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+      x-codegen-request-body-name: userInfoData
+    put:
+      tags:
+        - user-info
+      summary: Modify/Update additional information of a user
+      description: Modify/Update additional information of a user
+      operationId: updateUserInfo
+      parameters:
+        - name: userId
+          in: path
+          description: identifier of the user information
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: user info data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfoInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserInfoOverviewType'
+        "201":
+          description: Created
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserInfoOverviewType'
+        "204":
+          description: No Content
+          content: { }
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+      x-codegen-request-body-name: userInfoData
+  /userInfos/user:
+    get:
+      tags:
+        - user-info
+      summary: Retrieve additional information about the current user
+      description: Retrieve additional information about the current user
+      operationId: getUserInfoForUser
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoOverviewType'
+        "400":
+          description: Invalid status value
+          content: {}
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
   /public/database/last-modification:
     get:
       tags:
@@ -2989,6 +3297,42 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /public/georesources/filter:
+    post:
+      tags:
+        - georesources-public
+      summary: Filter public georesources
+      description: Filter public georesource datasets according to the specified filter
+      operationId: filterPublicGeoresources
+      requestBody:
+        description: filter data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceFilterType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GeoresourceOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
   /public/georesources/{georesourceId}:
     get:
       tags:
@@ -3455,6 +3799,42 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /public/indicators/filter:
+    post:
+      tags:
+        - indicators-public
+      summary: Filter public indicators
+      description: Filter public indicators datasets according to the specified filter
+      operationId: filterPublicIndicators
+      requestBody:
+        description: filter data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceFilterType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IndicatorOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
   /public/indicators/{indicatorId}:
     get:
       tags:
@@ -5518,7 +5898,7 @@ components:
           items:
             type: number
             format: float
-            
+
     DefaultClassificationMappingType:
       title: DefaultClassificationMappingType
       required:
@@ -5567,17 +5947,17 @@ components:
           type: number
           format: float
           description: regional sum value
-          
+
         regionalAverage:
           type: number
           format: float
           description: regional average value
-          
+
         spatiallyUnassignable:
           type: number
           format: float
           description: number of items that cannot be spatially assigned to any spatial unit
-          
+
     GeoresourceOverviewType:
       title: GeoresourceOverviewType
       required:
@@ -7017,6 +7397,84 @@ components:
             a main topic - only topics of type 'sub' shall be subTopics of topics
             with type 'main'
           $ref: '#/components/schemas/TopicTypeEnum'
+    ResourceFilterType:
+      title: ResourceFilterType
+      required:
+        - topicIds
+        - ids
+      type: object
+      properties:
+        topicIds:
+          type: array
+          description: list of topics for which all resources should be filtered
+          items:
+            type: string
+        ids:
+          type: array
+          description: list of resources that should be filtered
+          items:
+            type: string
+    UserInfoOverviewType:
+      title: UserInfoOverviewType
+      required:
+        - userInfoId
+        - keycloakId
+        - georesourceFavourites
+        - indicatorFavourites
+        - georesourceTopicFavourites
+        - indicatorTopicFavourites
+      type: object
+      properties:
+        userInfoId:
+          type: string
+          description: the identifier of the user info
+        keycloakId:
+          type: string
+          description: the Keycloak user ID
+        georesourceFavourites:
+          type: array
+          description: list of georesource user favourites
+          items:
+            type: string
+        indicatorFavourites:
+          type: array
+          description: list of indicator user favourites
+          items:
+            type: string
+        georesourceTopicFavourites:
+          type: array
+          description: list of georesource topic user favourites
+          items:
+            type: string
+        indicatorTopicFavourites:
+          type: array
+          description: list of indicator topic user favourites
+          items:
+            type: string
+    UserInfoInputType:
+      title: UserInfoInputType
+      type: object
+      properties:
+        georesourceFavourites:
+          type: array
+          description: list of georesource user favourites
+          items:
+            type: string
+        indicatorFavourites:
+          type: array
+          description: list of indicator user favourites
+          items:
+            type: string
+        georesourceTopicFavourites:
+          type: array
+          description: list of georesource topic user favourites
+          items:
+            type: string
+        indicatorTopicFavourites:
+          type: array
+          description: list of indicator topic user favourites
+          items:
+            type: string
     OrganizationalUnitRoleAuthorityType:
       title: OrganizationalUnitRoleAuthorityType
       required:

@@ -12,6 +12,8 @@ import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.In
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import javax.annotation.PostConstruct;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoRepository;
+
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
 import de.hsbo.kommonitor.datamanagement.auth.token.TokenParserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,20 +41,23 @@ public final class AuthHelperService {
     private IndicatorSpatialUnitsRepository indicatorspatialUnitsRepository;
 
     @Autowired
+    private UserInfoRepository userInfoRepository;
+
+    @Autowired
     private OrganizationalUnitRepository organizationalUnitRepository;
-    
+
     @Autowired
     private AuthInfoProviderFactory authInfoProviderFactory;
 
     @Autowired
     private TokenParserFactory tokenParserFactory;
-    
+
     @PostConstruct
     private void init(){
         AuthHelperService.Instance = this;
     }
     
-    private AuthHelperService(){};
+    private AuthHelperService(){}
     
     public AuthInfoProviderFactory getAuthInfoProviderFactory(){
         return this.authInfoProviderFactory;
@@ -61,7 +66,7 @@ public final class AuthHelperService {
     public TokenParserFactory getTokenParserFactory(){
         return this.tokenParserFactory;
     }
-    
+
     public GeoresourcesMetadataRepository getGeoresourceRepository(){
         return this.georesourceRepository;
     } 
@@ -78,12 +83,16 @@ public final class AuthHelperService {
         return this.indicatorspatialUnitsRepository;
     }
 
+    public UserInfoRepository getUserInfoRepository(){
+        return this.userInfoRepository;
+    }
+
     public OrganizationalUnitRepository getOrganizationalUnitRepository(){
         return this.organizationalUnitRepository;
     }
-    
+
     /**
-     * @return singelton instance of AuthHelperService
+     * @return singleton instance of AuthHelperService
      */
     public static AuthHelperService GetInstance(){
         if(AuthHelperService.Instance != null){

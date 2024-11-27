@@ -52,4 +52,9 @@ public class JwtTokenParser extends TokenParser<JwtAuthenticationToken> {
         List<String> groups = (List<String>) groupsClaim;
         return new HashSet<>(groups);
     }
+
+    @Override
+    public String getUserId(JwtAuthenticationToken principal) {
+        return (String) principal.getTokenAttributes().get("sub");
+    }
 }

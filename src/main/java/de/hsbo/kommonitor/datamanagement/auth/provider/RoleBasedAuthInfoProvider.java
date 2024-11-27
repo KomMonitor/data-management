@@ -202,6 +202,10 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
         }
         return Collections.emptyList();
     }
+    public String getUserId() {
+        return tokenParser.getUserId(getPrincipal());
+    }
+
 
     public Set<String> getOwnedRoles(Principal principal) {
         return tokenParser.getOwnedRoles(principal);
@@ -210,5 +214,6 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
     public boolean hasRealmAdminRole(Principal principal) {
         return tokenParser.hasRealmAdminRole(principal, adminRolePrefix);
     }
+
 
 }

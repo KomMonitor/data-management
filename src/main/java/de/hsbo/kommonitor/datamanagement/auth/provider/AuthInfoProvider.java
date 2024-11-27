@@ -68,4 +68,7 @@ public interface AuthInfoProvider {
      * @return Set of group names
      */
     Set<String> getGroupNames();
+
+    String getUserId();
+
 }

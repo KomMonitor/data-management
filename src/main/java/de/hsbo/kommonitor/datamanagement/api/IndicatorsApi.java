@@ -15,6 +15,7 @@ import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomTyp
 import de.hsbo.kommonitor.datamanagement.model.OwnerInputType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelInputType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.ResourceFilterType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -41,7 +42,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:10.685766091+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-09T15:35:20.729992100+02:00[Europe/Berlin]")
 @Validated
 @Tag(name = "indicators", description = "the Indicators API")
 public interface IndicatorsApi {
@@ -283,6 +284,44 @@ public interface IndicatorsApi {
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "featureId", description = "the identifier of the indicator dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
         @Parameter(name = "featureRecordId", description = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true, in = ParameterIn.PATH) @PathVariable("featureRecordId") String featureRecordId
+    );
+
+
+    /**
+     * POST /indicators/filter : Filter indicators
+     * Filter indicators datasets according to the specified filter
+     *
+     * @param resourceFilterType filter data (required)
+     * @return OK (status code 200)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "filterIndicators",
+        summary = "Filter indicators",
+        description = "Filter indicators datasets according to the specified filter",
+        tags = { "indicators" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = IndicatorOverviewType.class)))
+            }),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/indicators/filter",
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+
+    ResponseEntity<List<IndicatorOverviewType>> filterIndicators(
+        @Parameter(name = "ResourceFilterType", description = "filter data", required = true) @Valid @RequestBody ResourceFilterType resourceFilterType
     );
 
 
@@ -926,7 +965,7 @@ public interface IndicatorsApi {
         value = "/indicators/{indicatorId}/ownership",
         consumes = { "application/json" }
     )
-    
+
     ResponseEntity<Void> updateIndicatorOwnership(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "indicatorData", description = "Indicator parameters input", required = true) @Valid @RequestBody OwnerInputType indicatorData
@@ -965,7 +1004,7 @@ public interface IndicatorsApi {
         value = "/indicators/{indicatorId}/{spatialUnitId}/ownership",
         consumes = { "application/json" }
     )
-    
+
     ResponseEntity<Void> updateIndicatorOwnershipBySpatialUnit(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
@@ -1002,7 +1041,7 @@ public interface IndicatorsApi {
         value = "/indicators/{indicatorId}/permissions",
         consumes = { "application/json" }
     )
-    
+
     ResponseEntity<Void> updateIndicatorPermissions(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "indicatorData", description = "Indicator parameters input", required = true) @Valid @RequestBody PermissionLevelInputType indicatorData
