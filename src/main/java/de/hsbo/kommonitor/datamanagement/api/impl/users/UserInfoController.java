@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 
 import java.net.URI;
@@ -74,7 +75,7 @@ public class UserInfoController extends BasePathController implements UserInfoAp
 
     @Override
     @PreAuthorize("isAuthorizedForUserInfo(#userInfoId)")
-    public ResponseEntity<UserInfoOverviewType> getUserInfoById(String userInfoId) {
+    public ResponseEntity<UserInfoOverviewType> getUserInfoById(@P("userInfoId") String userInfoId) {
         LOG.info("Received request to get user info for id '{}'", userInfoId);
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
         String accept = request.getHeader("Accept");
@@ -135,7 +136,7 @@ public class UserInfoController extends BasePathController implements UserInfoAp
 
     @Override
     @PreAuthorize("isAuthorizedForUserInfo(#userInfoId)")
-    public ResponseEntity<UserInfoOverviewType> updateUserInfo(String userInfoId, UserInfoInputType userInfoData) {
+    public ResponseEntity<UserInfoOverviewType> updateUserInfo(@P("userInfoId")String userInfoId, UserInfoInputType userInfoData) {
         LOG.info("Received request to get user info for id '{}'", userInfoId);
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
         String accept = request.getHeader("Accept");
@@ -143,6 +144,25 @@ public class UserInfoController extends BasePathController implements UserInfoAp
         try {
             if (accept != null && accept.contains("application/json")) {
                 UserInfoOverviewType userInfo = userInfoManager.updateUserInfoByUserInfoId(userInfoId, userInfoData, provider);
+                return new ResponseEntity<>(userInfo, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception ex) {
+            return ApiUtils.createResponseEntityFromException(ex);
+        }
+    }
+
+    @Override
+    @PreAuthorize("isAuthorizedForUserInfo(#userInfoId)")
+    public ResponseEntity<UserInfoOverviewType> updateUserInfoPartially(@P("userInfoId") String userInfoId, UserInfoInputType userInfoData) {
+        LOG.info("Received request to get user info for id '{}'", userInfoId);
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+        String accept = request.getHeader("Accept");
+
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                UserInfoOverviewType userInfo = userInfoManager.updateUserPartiallyInfoByUserInfoId(userInfoId, userInfoData, provider);
                 return new ResponseEntity<>(userInfo, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

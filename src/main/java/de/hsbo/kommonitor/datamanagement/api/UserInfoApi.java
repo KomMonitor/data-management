@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-26T09:44:13.410550500+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-27T09:55:50.580203700+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "user-info", description = "the user-info API")
 public interface UserInfoApi {
@@ -202,11 +202,11 @@ public interface UserInfoApi {
 
 
     /**
-     * PATCH /userInfos/{userId} : Modify/Update additional information of a user
+     * PUT /userInfos/{userId} : Modify/Update additional information of a user
      * Modify/Update additional information of a user
      *
      * @param userId identifier of the user information (required)
-     * @param userInfoData metadauser info (required)
+     * @param userInfoData user info data (required)
      * @return OK (status code 200)
      *         or Created (status code 201)
      *         or No Content (status code 204)
@@ -236,7 +236,7 @@ public interface UserInfoApi {
         }
     )
     @RequestMapping(
-        method = RequestMethod.PATCH,
+        method = RequestMethod.PUT,
         value = "/userInfos/{userId}",
         produces = { "application/json" },
         consumes = { "application/json" }
@@ -244,7 +244,54 @@ public interface UserInfoApi {
     
     ResponseEntity<UserInfoOverviewType> updateUserInfo(
         @Parameter(name = "userId", description = "identifier of the user information", required = true, in = ParameterIn.PATH) @PathVariable("userId") String userId,
-        @Parameter(name = "userInfoData", description = "metadauser info", required = true) @Valid @RequestBody UserInfoInputType userInfoData
+        @Parameter(name = "userInfoData", description = "user info data", required = true) @Valid @RequestBody UserInfoInputType userInfoData
+    );
+
+
+    /**
+     * PATCH /userInfos/{userId} : Modify/Update additional information of a user in parts
+     * Modify/Update additional information of a user in parts
+     *
+     * @param userId identifier of the user information (required)
+     * @param userInfoData user info data (required)
+     * @return OK (status code 200)
+     *         or Created (status code 201)
+     *         or No Content (status code 204)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "updateUserInfoPartially",
+        summary = "Modify/Update additional information of a user in parts",
+        description = "Modify/Update additional information of a user in parts",
+        tags = { "user-info" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoOverviewType.class))
+            }),
+            @ApiResponse(responseCode = "201", description = "Created", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = UserInfoOverviewType.class))
+            }),
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PATCH,
+        value = "/userInfos/{userId}",
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<UserInfoOverviewType> updateUserInfoPartially(
+        @Parameter(name = "userId", description = "identifier of the user information", required = true, in = ParameterIn.PATH) @PathVariable("userId") String userId,
+        @Parameter(name = "userInfoData", description = "user info data", required = true) @Valid @RequestBody UserInfoInputType userInfoData
     );
 
 }

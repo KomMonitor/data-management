@@ -53,8 +53,9 @@ public class UserInfoManager {
             LOG.error("User infos for user with ID '{}' already exists. Thus aborting add UserInfo request.", keycloakUserId);
             throw new Exception("User info already exists. Aborting addUserInfo request.");
         }
-
-        userInfoEntity = createUserInfoEntity(keycloakUserId, inputUserInfo);
+        userInfoEntity = new UserInfoEntity();
+        userInfoEntity.setKeycloakId(keycloakUserId);
+        populateUserInfoEntity(userInfoEntity, inputUserInfo);
         userInfoRepository.saveAndFlush(userInfoEntity);
 
         return UserInfoMapper.mapToSwaggerUserInfo(userInfoEntity);
@@ -86,8 +87,8 @@ public class UserInfoManager {
         return UserInfoMapper.mapToSwaggerUserInfo(userInfoEntity);
     }
 
-    public UserInfoOverviewType updateUserInfoByUserInfoId(String userInfoId, UserInfoInputType userInfoData, AuthInfoProvider authInfoProvider) throws Exception {
-        LOG.info("Retrieving user info for user info ID '{}'", userInfoId);
+    public UserInfoOverviewType updateUserPartiallyInfoByUserInfoId(String userInfoId, UserInfoInputType userInfoData, AuthInfoProvider authInfoProvider) throws Exception {
+        LOG.info("Updating user info for user info ID '{}'", userInfoId);
 
         UserInfoEntity userInfoEntity = userInfoRepository.findByUserInfoId(userInfoId);
 
@@ -99,7 +100,21 @@ public class UserInfoManager {
         userInfoRepository.saveAndFlush(userInfoEntity);
 
         return UserInfoMapper.mapToSwaggerUserInfo(userInfoEntity);
+    }
 
+    public UserInfoOverviewType updateUserInfoByUserInfoId(String userInfoId, UserInfoInputType userInfoData, AuthInfoProvider authInfoProvider) throws Exception {
+        LOG.info("Updating user info for user info ID '{}'", userInfoId);
+
+        UserInfoEntity userInfoEntity = userInfoRepository.findByUserInfoId(userInfoId);
+
+        if (userInfoEntity == null || authInfoProvider == null || !userInfoEntity.getKeycloakId().equals(authInfoProvider.getUserId())) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested user info '%s' was not found.", userInfoId));
+        }
+
+        populateUserInfoEntity(userInfoEntity, userInfoData);
+        userInfoRepository.saveAndFlush(userInfoEntity);
+
+        return UserInfoMapper.mapToSwaggerUserInfo(userInfoEntity);
     }
 
     public List<UserInfoOverviewType> getAllUserInfos() {
@@ -110,9 +125,7 @@ public class UserInfoManager {
         return UserInfoMapper.mapToSwaggerUserInfo(userInfoEntityList);
     }
 
-    private UserInfoEntity createUserInfoEntity(String keycloakUserId, UserInfoInputType inputUserInfo) throws Exception{
-        UserInfoEntity userInfoEntity = new UserInfoEntity();
-        userInfoEntity.setKeycloakId(keycloakUserId);
+    private void populateUserInfoEntity(UserInfoEntity userInfoEntity, UserInfoInputType inputUserInfo) throws Exception{
         if(inputUserInfo.getGeoresourceFavourites() != null) {
             userInfoEntity.setGeoresourceFavourites(retrieveGeoresources(inputUserInfo.getGeoresourceFavourites()));
         } else {
@@ -122,12 +135,12 @@ public class UserInfoManager {
         if(inputUserInfo.getIndicatorFavourites() != null) {
             userInfoEntity.setIndicatorFavourites(retrieveIndicators(inputUserInfo.getIndicatorFavourites()));
         } else {
-            userInfoEntity.setGeoresourceFavourites(Collections.emptyList());
+            userInfoEntity.setIndicatorFavourites(Collections.emptyList());
         }
 
         Collection<TopicsEntity> indicatorTopicsList;
         Collection<TopicsEntity> georesourceTopicsList;
-        if(inputUserInfo.getIndicatorFavourites() != null) {
+        if(inputUserInfo.getIndicatorTopicFavourites() != null) {
             indicatorTopicsList = retrieveTopics(inputUserInfo.getIndicatorTopicFavourites(), TopicResourceEnum.INDICATOR);
         } else {
             indicatorTopicsList = Collections.emptyList();
@@ -137,9 +150,8 @@ public class UserInfoManager {
         } else {
             georesourceTopicsList = Collections.emptyList();
         }
-        List<TopicsEntity> topicsList = Stream.concat(indicatorTopicsList.stream(), georesourceTopicsList.stream()).toList();
+        List<TopicsEntity> topicsList = new ArrayList<>(Stream.concat(indicatorTopicsList.stream(), georesourceTopicsList.stream()).toList());
         userInfoEntity.setTopicFavourites(topicsList);
-        return userInfoEntity;
     }
 
     private void updateUserInfoEntity(UserInfoEntity userInfoEntity, UserInfoInputType inputUserInfo) throws Exception{
@@ -153,20 +165,20 @@ public class UserInfoManager {
 
         if(inputUserInfo.getIndicatorFavourites() != null) {
             Collection<TopicsEntity> indicatorTopicsList = retrieveTopics(inputUserInfo.getIndicatorTopicFavourites(), TopicResourceEnum.INDICATOR);
-            userInfoEntity.setTopicFavourites(
+            userInfoEntity.setTopicFavourites(new ArrayList<>(
                     Stream.concat(
                             userInfoEntity.getTopicFavourites().stream().filter(t -> t.getTopicResource() != TopicResourceEnum.INDICATOR),
                             indicatorTopicsList.stream()
-                    ).toList()
+                    ).toList())
             );
         }
         if(inputUserInfo.getGeoresourceTopicFavourites() != null) {
-            Collection<TopicsEntity> georesourceTopicsList = retrieveTopics(inputUserInfo.getIndicatorTopicFavourites(), TopicResourceEnum.GEORESOURCE);
-            userInfoEntity.setTopicFavourites(
+            Collection<TopicsEntity> georesourceTopicsList = retrieveTopics(inputUserInfo.getGeoresourceTopicFavourites(), TopicResourceEnum.GEORESOURCE);
+            userInfoEntity.setTopicFavourites(new ArrayList<>(
                     Stream.concat(
                             userInfoEntity.getTopicFavourites().stream().filter(t -> t.getTopicResource() != TopicResourceEnum.GEORESOURCE),
                             georesourceTopicsList.stream()
-                    ).toList()
+                    ).toList())
             );
         }
     }

@@ -18,7 +18,7 @@ public class UserInfoMapper {
         userInfo.setGeoresourceFavourites(mapGeoresourceFavourites(userInfoEntity.getGeoresourceFavourites()));
         userInfo.setIndicatorFavourites(mapIndicatorFavourites(userInfoEntity.getIndicatorFavourites()));
         userInfo.setGeoresourceTopicFavourites(mapGeoresourceTopicFavourites(userInfoEntity.getTopicFavourites()));
-        userInfo.setIndicatorFavourites(mapIndicatorTopicFavourites(userInfoEntity.getTopicFavourites()));
+        userInfo.setIndicatorTopicFavourites(mapIndicatorTopicFavourites(userInfoEntity.getTopicFavourites()));
         return userInfo;
     }
 
