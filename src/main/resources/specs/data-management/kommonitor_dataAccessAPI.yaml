@@ -2698,9 +2698,9 @@ paths:
     patch:
       tags:
         - user-info
-      summary: Modify/Update additional information of a user
-      description: Modify/Update additional information of a user
-      operationId: updateUserInfo
+      summary: Modify/Update additional information of a user in parts
+      description: Modify/Update additional information of a user in parts
+      operationId: updateUserInfoPartially
       parameters:
         - name: userId
           in: path
@@ -2709,7 +2709,7 @@ paths:
           schema:
             type: string
       requestBody:
-        description: metadauser info
+        description: user info data
         content:
           application/json:
             schema:
@@ -2743,6 +2743,55 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+      x-codegen-request-body-name: userInfoData
+    put:
+      tags:
+        - user-info
+      summary: Modify/Update additional information of a user
+      description: Modify/Update additional information of a user
+      operationId: updateUserInfo
+      parameters:
+        - name: userId
+          in: path
+          description: identifier of the user information
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: user info data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfoInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserInfoOverviewType'
+        "201":
+          description: Created
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UserInfoOverviewType'
+        "204":
+          description: No Content
+          content: { }
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
       x-codegen-request-body-name: userInfoData
   /userInfos/user:
     get:

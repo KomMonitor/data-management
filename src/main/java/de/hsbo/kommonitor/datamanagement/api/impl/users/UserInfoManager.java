@@ -163,7 +163,7 @@ public class UserInfoManager {
             userInfoEntity.setIndicatorFavourites(retrieveIndicators(inputUserInfo.getIndicatorFavourites()));
         }
 
-        if(inputUserInfo.getIndicatorFavourites() != null) {
+        if(inputUserInfo.getIndicatorTopicFavourites() != null) {
             Collection<TopicsEntity> indicatorTopicsList = retrieveTopics(inputUserInfo.getIndicatorTopicFavourites(), TopicResourceEnum.INDICATOR);
             userInfoEntity.setTopicFavourites(new ArrayList<>(
                     Stream.concat(
