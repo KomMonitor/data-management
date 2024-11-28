@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.Role;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -217,11 +218,44 @@ public class KeycloakAdminService {
         return groupList.size() == 0;
     }
 
+    /**
+     * Fetches a Keycloak group by name. If more than one group exist, only the first result will be returned. If no
+     * group exists, fetching the group will fail.
+     *
+     * @param name Name of the Keycloak group
+     * @return Keycloak group
+     * @throws KeycloakException if no Keycloak group exists with the specified name
+     */
     public GroupRepresentation getGroupByName(String name) throws KeycloakException {
         List<GroupRepresentation> groupList = getRealmResource().groups().groups(name, true, 0, 2, true);
 
         if (groupList.size() == 0) {
             throw new KeycloakException(String.format("No group exists with name %s.", name));
+        }
+        if (groupList.size() > 1) {
+            LOG.warn("More than one group matched the search: '{}'. Only first group will be returned.", name);
+        }
+
+        // 'populateHierarchy' parameter is not accessible in the keycloak library so we need to descend manually
+        GroupRepresentation current = groupList.get(0);
+        while (!current.getSubGroups().isEmpty()) {
+            current = current.getSubGroups().get(0);
+        }
+        return current;
+    }
+
+    /**
+     * Fetches a Keycloak group by name. If more than one group exist, only the first result will be returned. If no
+     * group exists the method returns null.
+     *
+     * @param name Name of the Keycloak group
+     * @return Keycloak group or null
+     */
+    public GroupRepresentation findGroupByName(String name) {
+        List<GroupRepresentation> groupList = getRealmResource().groups().groups(name, true, 0, 2, true);
+
+        if (groupList.size() == 0) {
+            return null;
         }
         if (groupList.size() > 1) {
             LOG.warn("More than one group matched the search: '{}'. Only first group will be returned.", name);
@@ -266,6 +300,17 @@ public class KeycloakAdminService {
         List<RoleRepresentation> roleList = getRealmResource().roles().list(name, true);
         if (roleList.size() == 0) {
             throw new KeycloakException(String.format("No role exists with name %s.", name));
+        }
+        if (roleList.size() > 1) {
+            LOG.warn("More than one role with name {} exists. Only first role will be returned.", name);
+        }
+        return roleList.get(0);
+    }
+
+    public RoleRepresentation findRoleByName(String name) {
+        List<RoleRepresentation> roleList = getRealmResource().roles().list(name, true);
+        if (roleList.size() == 0) {
+            return null;
         }
         if (roleList.size() > 1) {
             LOG.warn("More than one role with name {} exists. Only first role will be returned.", name);
@@ -365,14 +410,36 @@ public class KeycloakAdminService {
         // Create all admin roles for group
         ADMIN_ROLES.stream()
                 .map(r -> mapToRoleRepresentation(orgaName, orgaId, r))
-                .forEach(this::addRole);
+                .forEach(r -> {
+                    if (this.findRoleByName(r.getName()) == null) {
+                        addRole(r);
+                    }
+                    else {
+                        LOG.warn("Role '{}' already exists. Role creation will be skipped.", r);
+                    }
+                });
 
-        // Associate user admin roles with query-users and query-group roles
+        // Associate unit user admin roles with query-users and query-group roles
         String unitUserRoleName = String.join(".", orgaName, UNIT_USERS_ADMIN_ROLE_NAME);
-        getRealmResource().roles().get(unitUserRoleName).addComposites(List.of(queryUsersRole, queryGroupsRole));
+        List<RoleRepresentation> unitUserComposites = new ArrayList<>();
+        RoleResource unitUserRole = getRealmResource().roles().get(unitUserRoleName);
+        List.of(queryUsersRole, queryGroupsRole).forEach(qr -> {
+            if (unitUserRole.getRoleComposites().stream().noneMatch(r -> r.getName().equals(qr.getName()))) {
+                unitUserComposites.add(qr);
+            }
+        });
+        getRealmResource().roles().get(unitUserRoleName).addComposites(unitUserComposites);
 
+        // Associate client user admin roles with query-users and query-group roles
         String clientUserRoleName = String.join(".", orgaName, CLIENT_USERS_ADMIN_ROLE_NAME);
-        getRealmResource().roles().get(clientUserRoleName).addComposites(List.of(queryUsersRole, queryGroupsRole));
+        List<RoleRepresentation> clientUserComposites = new ArrayList<>();
+        RoleResource clientUserRole = getRealmResource().roles().get(clientUserRoleName);
+        List.of(queryUsersRole, queryGroupsRole).forEach(qr -> {
+            if (clientUserRole.getRoleComposites().stream().noneMatch(r -> r.getName().equals(qr.getName()))) {
+                clientUserComposites.add(qr);
+            }
+        });
+        getRealmResource().roles().get(unitUserRoleName).addComposites(clientUserComposites);
 
         LOG.info("Successfully created roles for OrganizationalUnit '{}' and Keycloak group ID '{}'.", orgaName, keycloakId);
     }
