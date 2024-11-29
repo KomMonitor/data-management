@@ -19,8 +19,8 @@ public class MigrationSetup implements ApplicationListener<ContextRefreshedEvent
 
     private static final Logger LOG = LoggerFactory.getLogger(MigrationSetup.class);
 
-    @Value("${kommonitor.migrations}")
-    private String[] versionMigrationList;
+    @Value("${kommonitor.migrations:}")
+    private String[] versionMigrationList = new String[0];
 
     @Autowired
     DbInitLoadRepository dbInitLoadRepository;
