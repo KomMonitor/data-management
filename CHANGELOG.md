@@ -1,6 +1,7 @@
 # Change Log
 
-## 4.1.0-beta.2
+## 4.1.0-beta.3
+* Add delete operation for user info [068c0b2](068c0b2463cd19ece14d9194c7e0899b6d605c25)
 * Add pgAdmin Docker setup [dacabdf](dacabdf0c951a44079918b045068fa3968edf915)
 * Fix favourite update [de330e7](de330e7f506e804f2fcc5ad3594d5c0ef25ba5ee)
 * Add PUT endpoint to update user infos and apply fixes [421c0db](421c0dbe01ca8724d963077769bbe4aec75c5c60)
