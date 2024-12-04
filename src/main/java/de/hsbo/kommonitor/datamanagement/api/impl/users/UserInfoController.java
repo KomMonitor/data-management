@@ -75,6 +75,26 @@ public class UserInfoController extends BasePathController implements UserInfoAp
 
     @Override
     @PreAuthorize("isAuthorizedForUserInfo(#userInfoId)")
+    public ResponseEntity deleteUserInfo(@P("userInfoId") String userInfoId) {
+        LOG.info("Received request to delete user info for id '{}'", userInfoId);
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+
+        try {
+            boolean isDeleted = userInfoManager.deleteUserInfosById(userInfoId, provider);
+
+            if (isDeleted) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("isAuthorizedForUserInfo(#userInfoId)")
     public ResponseEntity<UserInfoOverviewType> getUserInfoById(@P("userInfoId") String userInfoId) {
         LOG.info("Received request to get user info for id '{}'", userInfoId);
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
