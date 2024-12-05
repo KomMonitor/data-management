@@ -1,6 +1,14 @@
 # Change Log
 
-## 5.0.0-beta.2
+## 5.0.0-beta.3
+* Restructure properties [8dee2a3](8dee2a3e65799528c5cef2dbad3b25b4af3a64ae)
+* Refine liquibase changelogs [0e0bf61](0e0bf6122457b3cee9d7d1b1cc59e1e21aa093b8)
+* Add Keycloak group initialization for startup migration [80c8afe](80c8afe7554e291ee7f0b12ee1a4c31ff667569d)
+* Change Liquibase changeset authors [fd2fdd0](fd2fdd0d673906d4f58b9d682136c2d2af8291c9)
+* Add unnecessary special role deletion [6562155](65621559249be3f823d210e6b35e2f9dd16cf311)
+* Add migration setup classes [0d897d9](0d897d9b2858a1e03bac9a8c1f10ae4cc4a1726e)
+* Add migration strategy property [b507ae3](b507ae3994231803df6d0cce71845d1b62aa43be)
+* Add Keycloak group initialization [a9b06c8](a9b06c8efe4c506a01291b40d81accb359a81812)
 * Update docker compose setup [0aac1ba](0aac1badbb49e4a748245c82bd5a7fa890c3e99d)
 * Add Liquibase base changelog for latest version [f7b472a](f7b472a4ea08f57f0fbf367ac6c5f5335669f102)
 * Add missing properties for Docker setup [8d8a08f](8d8a08f6c6f2ba41a44b3872f3a20d726eef7b9e)
