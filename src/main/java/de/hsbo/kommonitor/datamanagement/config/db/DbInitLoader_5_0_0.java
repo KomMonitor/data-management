@@ -1,25 +1,31 @@
 package de.hsbo.kommonitor.datamanagement.config.db;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.*;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.KeycloakException;
-import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 
+@Transactional
+@Repository
 @Component
-public class DbInitLoader_5_0_0 implements DbInitLoader{
+public class DbInitLoader_5_0_0 implements DbInitLoader {
 
     private static final Logger LOG = LoggerFactory.getLogger(DbInitLoader_5_0_0.class);
 
@@ -37,6 +43,15 @@ public class DbInitLoader_5_0_0 implements DbInitLoader{
     OrganizationalUnitManager organizationalUnitManager;
     @Autowired
     OrganizationalUnitRepository organizationalUnitRepository;
+    @Autowired
+    GeoresourcesMetadataRepository georesourceRepository;
+    @Autowired
+    SpatialUnitsMetadataRepository spatialUnitsRepository;
+    @Autowired
+    IndicatorsMetadataRepository indicatorsRepository;
+    @Autowired
+    IndicatorSpatialUnitsRepository indicatorSpatialUnitsRepository;
+
 
     public String getDbVersion() {
         return DB_VERSION;
@@ -44,6 +59,7 @@ public class DbInitLoader_5_0_0 implements DbInitLoader{
 
     @Override
     public void load() {
+        LOG.info("Initia");
         // Delete special 'public' and 'kommonitor' OrganizationalUnit
         deleteOrganizationalUnitAndRolesByName(defaultAnonymousOUname);
         deleteOrganizationalUnitAndRolesByName(defaultAuthenticatedOUname);
@@ -53,23 +69,46 @@ public class DbInitLoader_5_0_0 implements DbInitLoader{
 
     private void setupOrganizationalUnits() {
         LOG.info("Load additional permissions if missing and create Keycloak groups for OrganizationalUnits.");
-        Stream<OrganizationalUnitEntity> units = organizationalUnitRepository.findAll().stream();
-        units.forEach(ou -> {
-            permissionManager.addPermission(ou, PermissionLevelType.CREATOR, PermissionResourceType.USERS);
-            permissionManager.addPermission(ou, PermissionLevelType.CREATOR, PermissionResourceType.THEMES);
-
-            try {
-                organizationalUnitManager.initializeKeycloakGroup(ou);
-            } catch (KeycloakException ex) {
-                LOG.error("Initializing Keycloak group failed for OrganizationalUnit '{}'.", ou.getName(), ex);
+        List<OrganizationalUnitEntity> unitList = organizationalUnitRepository.findAll();
+        // We must ensure that parent Keycloak groups will be created first. Otherwise, creating a group will fail
+        // if its parent group does not exist
+        Iterator<OrganizationalUnitEntity> iterator = unitList.iterator();
+        while (iterator.hasNext()) {
+            OrganizationalUnitEntity orga = iterator.next();
+            if (orga.getParent() == null || orga.getParent().getKeycloakId() != null) {
+                setupGroup(orga);
+                iterator.remove();
             }
-        });
+            if (!iterator.hasNext()) {
+                iterator = unitList.iterator();
+            }
+        }
+    }
+
+    private void setupGroup(OrganizationalUnitEntity ou) {
+
+        permissionManager.addPermission(ou, PermissionLevelType.CREATOR, PermissionResourceType.USERS);
+        permissionManager.addPermission(ou, PermissionLevelType.CREATOR, PermissionResourceType.THEMES);
+
+        try {
+            organizationalUnitManager.initializeKeycloakGroup(ou);
+        } catch (KeycloakException ex) {
+            LOG.error("Initializing Keycloak group failed for OrganizationalUnit '{}'.", ou.getName(), ex);
+        }
+
     }
 
     public void deleteOrganizationalUnitAndRolesByName(String organizationalUnitName) {
-        LOG.info("Trying to delete default OrganizationalUnit with name '{}'", organizationalUnitName);
+        LOG.info("Deleting default OrganizationalUnit with name '{}'", organizationalUnitName);
         OrganizationalUnitEntity unit = organizationalUnitRepository.findByName(organizationalUnitName);
         if (unit != null) {
+            // First, remove all associations of single permissions from datasets
+            unit.getPermissions().forEach(p -> {
+                removeGeoresourcePermissions(p);
+                removeSpatialUnitsPermissions(p);
+                removeIndicatorsPermission(p);
+                removeIndicatorsSpatialUnitsPermission(p);
+            });
             // This should automatically propagate to associated roles via @CascadeType.REMOVE
             organizationalUnitRepository.deleteByOrganizationalUnitId(unit.getOrganizationalUnitId());
         } else {
@@ -77,4 +116,53 @@ public class DbInitLoader_5_0_0 implements DbInitLoader{
                     organizationalUnitName);
         }
     }
+
+    private void removeIndicatorsSpatialUnitsPermission(PermissionEntity p) {
+        indicatorSpatialUnitsRepository.findAll()
+                .stream()
+                .filter(e -> e.getPermissions().contains(p))
+                .forEach(e -> {
+                    HashSet<PermissionEntity> currentPermissions = e.getPermissions();
+                    currentPermissions.remove(p);
+                    e.setPermissions(currentPermissions);
+                    indicatorSpatialUnitsRepository.saveAndFlush(e);
+                });
+    }
+
+    private void removeIndicatorsPermission(PermissionEntity p) {
+        indicatorsRepository.findAll()
+                .stream()
+                .filter(e -> e.getPermissions().contains(p))
+                .forEach(e -> {
+                    HashSet<PermissionEntity> currentPermissions = e.getPermissions();
+                    currentPermissions.remove(p);
+                    e.setPermissions(currentPermissions);
+                    indicatorsRepository.saveAndFlush(e);
+                });
+    }
+
+    private void removeSpatialUnitsPermissions(PermissionEntity p) {
+        spatialUnitsRepository.findAll()
+                .stream()
+                .filter(e -> e.getPermissions().contains(p))
+                .forEach(e -> {
+                    HashSet<PermissionEntity> currentPermissions = e.getPermissions();
+                    currentPermissions.remove(p);
+                    e.setPermissions(currentPermissions);
+                    spatialUnitsRepository.saveAndFlush(e);
+                });
+    }
+
+    private void removeGeoresourcePermissions(PermissionEntity p) {
+        georesourceRepository.findAll()
+                .stream()
+                .filter(e -> e.getPermissions().contains(p))
+                .forEach(e -> {
+                    HashSet<PermissionEntity> currentPermissions = e.getPermissions();
+                    currentPermissions.remove(p);
+                    e.setPermissions(currentPermissions);
+                    georesourceRepository.saveAndFlush(e);
+                });
+    }
+
 }

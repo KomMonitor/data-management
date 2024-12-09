@@ -4,6 +4,7 @@ import de.hsbo.kommonitor.datamanagement.model.AdminRoleType;
 import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -13,14 +14,12 @@ import java.util.UUID;
 public class OrganizationalUnitEntity {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @UuidGenerator
     private String organizationalUnitId = null;
 
     @Column(nullable = false, unique = true)
     public String name;
 
-    @Column(nullable = false, unique = true)
     public UUID keycloakId;
 
     @Column(nullable = false)

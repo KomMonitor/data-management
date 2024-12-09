@@ -470,22 +470,33 @@ public class OrganizationalUnitManager {
     }
 
     public void initializeKeycloakGroup(OrganizationalUnitEntity entity) throws KeycloakException{
+        LOG.info("Start initialization for organizational unit '{}'.", entity.getName());
         String keycloakId;
+        boolean initialized = false;
 
-        try {
-            GroupRepresentation groupRep = keycloakAdminService.getGroupByName(entity.getName());
-            keycloakId = groupRep.getId();
-        } catch (KeycloakException ex) {
+        GroupRepresentation groupRep = keycloakAdminService.findGroupByName(entity.getName());
+        if(groupRep == null) {
             if (entity.getParent() != null) {
                 keycloakId = keycloakAdminService.addSubGroup(entity, entity.getParent());
             } else {
                 keycloakId = keycloakAdminService.addGroup(entity);
             }
+            initialized = true;
+        } else {
+            keycloakId = groupRep.getId();
         }
 
+        entity.setKeycloakId(UUID.fromString(keycloakId));
+
         try {
-            keycloakAdminService.createRolesForGroup(entity);
-            keycloakAdminService.createRolePolicies(entity, entity.getParent());
+            if (initialized) {
+                LOG.info("Keycloak group '{}' has been newly initialized.", entity.getName());
+                keycloakAdminService.createRolesForGroup(entity);
+                keycloakAdminService.createRolePolicies(entity, entity.getParent());
+            } else {
+                LOG.warn("Keycloak group '{}' has been already initialized. Assume that roles and policies also exist. " +
+                        "Therefore initialization for roles and policies will be skipped.", entity.getName());
+            }
 
             entity.setKeycloakId(UUID.fromString(keycloakId));
             organizationalUnitRepository.saveAndFlush(entity);
@@ -498,8 +509,6 @@ public class OrganizationalUnitManager {
         } catch (ClientErrorException | KeycloakException ex) {
             LOG.error(String.format("Creating roles and policies for OrganizationalUnit %s and Keycloak ID %s failed." +
                     "Group creation aborted.", entity.getName(), keycloakId));
-            keycloakAdminService.deleteGroup(keycloakId);
-            keycloakAdminService.deleteRolesForGroupName(entity.getName());
 
             throw new KeycloakException("Creating group and roles in Keycloak failed due to internal Keycloak conflicts.");
         }
