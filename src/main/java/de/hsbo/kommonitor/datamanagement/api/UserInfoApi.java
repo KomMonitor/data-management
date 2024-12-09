@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-27T09:55:50.580203700+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-12-04T14:06:35.881164700+01:00[Europe/Berlin]")
 @Validated
 @Tag(name = "user-info", description = "the user-info API")
 public interface UserInfoApi {
@@ -80,6 +80,41 @@ public interface UserInfoApi {
     
     ResponseEntity<UserInfoOverviewType> addUserInfo(
         @Parameter(name = "UserInfoInputType", description = "user info data", required = true) @Valid @RequestBody UserInfoInputType userInfoInputType
+    );
+
+
+    /**
+     * DELETE /userInfos/{userId} : Delete additional information of a user
+     * Delete additional information of a user
+     *
+     * @param userId identifier of the user information (required)
+     * @return OK (status code 200)
+     *         or No Content (status code 204)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     */
+    @Operation(
+        operationId = "deleteUserInfo",
+        summary = "Delete additional information of a user",
+        description = "Delete additional information of a user",
+        tags = { "user-info" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth", scopes={  })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.DELETE,
+        value = "/userInfos/{userId}"
+    )
+    
+    ResponseEntity<Void> deleteUserInfo(
+        @Parameter(name = "userId", description = "identifier of the user information", required = true, in = ParameterIn.PATH) @PathVariable("userId") String userId
     );
 
 

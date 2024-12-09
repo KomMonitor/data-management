@@ -14,7 +14,7 @@
 	    <url>https://github.com/KomMonitor/data-management</url>
         <connection>scm:git:https://github.com/KomMonitor/data-management.git</connection>
         <developerConnection>scm:git:https://github.com/KomMonitor/data-management.git</developerConnection>
-	    <tag>v5.0.0-beta.1</tag>
+	    <tag>v5.0.0-beta.3</tag>
   </scm>
 
     <licenses>

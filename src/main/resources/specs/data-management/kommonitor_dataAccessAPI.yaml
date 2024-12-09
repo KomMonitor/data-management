@@ -3206,6 +3206,34 @@ paths:
       security:
         - kommonitor-data-access_oauth: [ ]
       x-codegen-request-body-name: userInfoData
+    delete:
+      tags:
+        - user-info
+      summary: Delete additional information of a user
+      description: Delete additional information of a user
+      operationId: deleteUserInfo
+      parameters:
+        - name: userId
+          in: path
+          description: identifier of the user information
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "204":
+          description: No Content
+          content: { }
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /userInfos/user:
     get:
       tags:

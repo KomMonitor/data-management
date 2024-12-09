@@ -1,5 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.users;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
@@ -67,7 +69,7 @@ public class UserInfoManager {
 
         UserInfoEntity userInfoEntity = userInfoRepository.findByUserInfoId(userInfoId);
 
-        if (userInfoEntity == null || authInfoProvider == null || !userInfoEntity.getKeycloakId().equals(authInfoProvider.getUserId())) {
+        if (operationNotAllowed(userInfoEntity, authInfoProvider)) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested user info '%s' was not found.", userInfoId));
         }
 
@@ -80,7 +82,7 @@ public class UserInfoManager {
 
         UserInfoEntity userInfoEntity = userInfoRepository.findByKeycloakId(keycloakId);
 
-        if (userInfoEntity == null || authInfoProvider == null || !keycloakId.equals(authInfoProvider.getUserId())) {
+        if (operationNotAllowed(userInfoEntity, authInfoProvider)) {
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested user info '%s' was not found.", keycloakId));
         }
 
@@ -92,7 +94,7 @@ public class UserInfoManager {
 
         UserInfoEntity userInfoEntity = userInfoRepository.findByUserInfoId(userInfoId);
 
-        if (userInfoEntity == null || authInfoProvider == null || !userInfoEntity.getKeycloakId().equals(authInfoProvider.getUserId())) {
+        if (operationNotAllowed(userInfoEntity, authInfoProvider)) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested user info '%s' was not found.", userInfoId));
         }
 
@@ -107,7 +109,7 @@ public class UserInfoManager {
 
         UserInfoEntity userInfoEntity = userInfoRepository.findByUserInfoId(userInfoId);
 
-        if (userInfoEntity == null || authInfoProvider == null || !userInfoEntity.getKeycloakId().equals(authInfoProvider.getUserId())) {
+        if (operationNotAllowed(userInfoEntity, authInfoProvider)) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested user info '%s' was not found.", userInfoId));
         }
 
@@ -123,6 +125,23 @@ public class UserInfoManager {
         List<UserInfoEntity> userInfoEntityList = userInfoRepository.findAll();
 
         return UserInfoMapper.mapToSwaggerUserInfo(userInfoEntityList);
+    }
+
+    public boolean deleteUserInfosById(String userInfoId, AuthInfoProvider authInfoProvider) throws ApiException {
+        UserInfoEntity userInfoEntity = userInfoRepository.findByUserInfoId(userInfoId);
+
+        if (operationNotAllowed(userInfoEntity, authInfoProvider)) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested user info '%s' was not found.", userInfoId));
+        }
+
+        userInfoRepository.deleteByUserInfoId(userInfoId);
+        return true;
+    }
+
+    private boolean operationNotAllowed(UserInfoEntity userInfoEntity, AuthInfoProvider authInfoProvider) {
+        return userInfoEntity == null
+                || authInfoProvider == null
+                || (!authInfoProvider.hasGlobalAdminPermissions() && !userInfoEntity.getKeycloakId().equals(authInfoProvider.getUserId()));
     }
 
     private void populateUserInfoEntity(UserInfoEntity userInfoEntity, UserInfoInputType inputUserInfo) throws Exception{
