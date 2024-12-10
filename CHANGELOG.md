@@ -1,6 +1,10 @@
 # Change Log
 
-## 4.1.0-beta.3
+## 4.1.0-beta.4
+* Add regional reference value fix [936c41c](936c41c449c2245d9dcf70d24e86595872f03b9f)
+* Fix precision type to be nullable [3ec1726](3ec1726a126d3d4dffdcccbf2f8949cc761a9888)
+* Add setup for new precision column [18d991a](18d991a4a67d77edad70caeccd001a1785d54ed3)
+* Add precision property for indicators [c013242](c0132427e039a92a464dbb3c2306c4d4fdba139b)
 * Add delete operation for user info [068c0b2](068c0b2463cd19ece14d9194c7e0899b6d605c25)
 * Add pgAdmin Docker setup [dacabdf](dacabdf0c951a44079918b045068fa3968edf915)
 * Fix favourite update [de330e7](de330e7f506e804f2fcc5ad3594d5c0ef25ba5ee)
