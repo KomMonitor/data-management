@@ -250,9 +250,9 @@ public class IndicatorsMapper {
 			LocalDate date = LocalDate.parse(regionalReferenceValueEntity.getReferenceDate(), formatter);
 			
 			regRefValueType.setReferenceDate(date);
-			regRefValueType.setRegionalAverage(JsonNullable.of(regionalReferenceValueEntity.getRegionalAverage()));
-			regRefValueType.setRegionalSum(JsonNullable.of(regionalReferenceValueEntity.getRegionalSum()));
-			regRefValueType.setSpatiallyUnassignable(JsonNullable.of(regionalReferenceValueEntity.getSpatiallyUnassignable()));
+			regRefValueType.setRegionalAverage(regionalReferenceValueEntity.getRegionalAverage());
+			regRefValueType.setRegionalSum(regionalReferenceValueEntity.getRegionalSum());
+			regRefValueType.setSpatiallyUnassignable(regionalReferenceValueEntity.getSpatiallyUnassignable());
 			refValues.add(regRefValueType);
 		}
 		indicatorOverviewType.setRegionalReferenceValues(refValues);

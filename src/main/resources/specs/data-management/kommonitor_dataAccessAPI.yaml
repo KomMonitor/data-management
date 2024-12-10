@@ -5423,7 +5423,7 @@ components:
           items:
             type: number
             format: float
-            nullable: true
+
     DefaultClassificationMappingType:
       title: DefaultClassificationMappingType
       required:
@@ -5461,9 +5461,6 @@ components:
       title: RegionalReferenceValueType
       required:
         - referenceDate
-        - regionalSum
-        - regionalAverage
-        - spatiallyUnassignable
       type: object
       properties:
         referenceDate:
@@ -5475,17 +5472,14 @@ components:
           type: number
           format: float
           description: regional sum value
-          nullable: true
         regionalAverage:
           type: number
           format: float
           description: regional average value
-          nullable: true
         spatiallyUnassignable:
           type: number
           format: float
-          description: number of items that cannot be spatially assigned to any spatial unit 
-          nullable: true
+          description: number of items that cannot be spatially assigned to any spatial unit
     GeoresourceOverviewType:
       title: GeoresourceOverviewType
       required:
@@ -5795,7 +5789,7 @@ components:
           type: array
           description: list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)
           items:
-            $ref: '#/components/schemas/RegionalReferenceValueType'  
+            $ref: '#/components/schemas/RegionalReferenceValueType'
         displayOrder:
           type: number
           description: an order number to control display order in clients
@@ -6617,7 +6611,7 @@ components:
             dataset
           items:
             type: string
-        datasetName: 
+        datasetName:
           type: string
           description: the name of the spatial unit - its "spatialUnitLevel"
         metadata:
