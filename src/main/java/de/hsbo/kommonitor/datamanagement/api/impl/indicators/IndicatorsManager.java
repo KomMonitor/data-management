@@ -290,6 +290,13 @@ public class IndicatorsManager {
         entity.setHeadlineIndicator(metadata.getIsHeadlineIndicator());
         entity.setInterpretation(metadata.getInterpretation());
         entity.setTags(new HashSet<String>(metadata.getTags()));
+
+        if(entity.getPrecision() != metadata.getPrecision()) {
+            logger.warn("Precision changed for existing indicator from {} to {}. This may affect the representation of " +
+                            "indicator values.",
+                    entity.getPrecision(), metadata.getPrecision());
+        }
+        entity.setPrecision(metadata.getPrecision());
         
         Collection<RegionalReferenceValueEntity> regRefValues = new ArrayList<RegionalReferenceValueEntity>();
         
@@ -1293,6 +1300,7 @@ public class IndicatorsManager {
         entity.setHeadlineIndicator(indicatorData.getIsHeadlineIndicator());
         entity.setInterpretation(indicatorData.getInterpretation());
         entity.setTags(new HashSet<String>(indicatorData.getTags()));
+        entity.setPrecision(indicatorData.getPrecision());
 
 
         /*
@@ -1775,7 +1783,7 @@ public class IndicatorsManager {
 				// handle OGC web service
 				ogcServiceManager.publishDbLayerAsOgcService(indicatorViewTableName, datasetTitle, styleName, ResourceTypeEnum.INDICATOR);
 			} catch (Exception e) {
-				logger.error("Error while publishing as OGC service. Error is: \n{}", e);
+				logger.error("Error while publishing as OGC service. Error is: \n{}", e.getMessage());
 			}	           
 
             return indicatorId;
@@ -1785,7 +1793,7 @@ public class IndicatorsManager {
                     "No indicator dataset with datasetId '{}' was found in database. Update request has no effect.",
                     indicatorId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                    "Tried to update indicator feature record, but no dataset existes with datasetId " + indicatorId);
+                    "Tried to update indicator feature record, but no dataset exists with datasetId " + indicatorId);
         }
 	}
 }

@@ -5818,6 +5818,10 @@ components:
             can be computed and thus is available (only necessary for computable indicators)
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
+        precision:
+          type: integer
+          description: Defines the number of decimal places for indicator values. If null, there is no predefined
+            precision for this indicator.
         processDescription:
           type: string
           description: description about how the indicator was computed
@@ -5943,6 +5947,10 @@ components:
         processDescription:
           type: string
           description: description about how the indicator was computed
+        precision:
+          type: integer
+          description: Defines the number of decimal places for indicator values. If null, there is no predefined
+            precision for this indicator.
         referenceDateNote:
           type: string
           description: an optional note on the reference date of the indicator
@@ -6061,6 +6069,10 @@ components:
             can be computed and thus is available (only necessary for computable indicators)
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
+        precision:
+          type: integer
+          description: Defines the number of decimal places for indicator values. If null, there is no predefined
+            precision for this indicator.
         processDescription:
           type: string
           description: description about how the indicator was computed

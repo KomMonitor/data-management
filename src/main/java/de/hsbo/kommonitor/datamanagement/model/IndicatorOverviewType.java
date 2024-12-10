@@ -34,7 +34,7 @@ import jakarta.annotation.Generated;
  * IndicatorOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-12-10T08:27:46.243076200+01:00[Europe/Berlin]")
 public class IndicatorOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -79,6 +79,8 @@ public class IndicatorOverviewType implements Serializable {
   private List<@Valid OgcServicesType> ogcServices = new ArrayList<>();
 
   private String processDescription;
+
+  private Integer precision;
 
   private String referenceDateNote;
 
@@ -524,6 +526,26 @@ public class IndicatorOverviewType implements Serializable {
     this.processDescription = processDescription;
   }
 
+  public IndicatorOverviewType precision(Integer precision) {
+    this.precision = precision;
+    return this;
+  }
+
+  /**
+   * Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.
+   * @return precision
+  */
+  
+  @Schema(name = "precision", description = "Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("precision")
+  public Integer getPrecision() {
+    return precision;
+  }
+
+  public void setPrecision(Integer precision) {
+    this.precision = precision;
+  }
+
   public IndicatorOverviewType referenceDateNote(String referenceDateNote) {
     this.referenceDateNote = referenceDateNote;
     return this;
@@ -723,6 +745,7 @@ public class IndicatorOverviewType implements Serializable {
         Objects.equals(this.metadata, indicatorOverviewType.metadata) &&
         Objects.equals(this.ogcServices, indicatorOverviewType.ogcServices) &&
         Objects.equals(this.processDescription, indicatorOverviewType.processDescription) &&
+        Objects.equals(this.precision, indicatorOverviewType.precision) &&
         Objects.equals(this.referenceDateNote, indicatorOverviewType.referenceDateNote) &&
         Objects.equals(this.referencedGeoresources, indicatorOverviewType.referencedGeoresources) &&
         Objects.equals(this.referencedIndicators, indicatorOverviewType.referencedIndicators) &&
@@ -734,7 +757,7 @@ public class IndicatorOverviewType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, allowedRoles, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, regionalReferenceValues, displayOrder, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, processDescription, referenceDateNote, referencedGeoresources, referencedIndicators, tags, topicReference, unit, userPermissions);
+    return Objects.hash(abbreviation, allowedRoles, applicableDates, applicableSpatialUnits, characteristicValue, creationType, defaultClassificationMapping, regionalReferenceValues, displayOrder, indicatorId, indicatorName, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ogcServices, processDescription, precision, referenceDateNote, referencedGeoresources, referencedIndicators, tags, topicReference, unit, userPermissions);
   }
 
   @Override
@@ -759,6 +782,7 @@ public class IndicatorOverviewType implements Serializable {
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    ogcServices: ").append(toIndentedString(ogcServices)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
+    sb.append("    precision: ").append(toIndentedString(precision)).append("\n");
     sb.append("    referenceDateNote: ").append(toIndentedString(referenceDateNote)).append("\n");
     sb.append("    referencedGeoresources: ").append(toIndentedString(referencedGeoresources)).append("\n");
     sb.append("    referencedIndicators: ").append(toIndentedString(referencedIndicators)).append("\n");

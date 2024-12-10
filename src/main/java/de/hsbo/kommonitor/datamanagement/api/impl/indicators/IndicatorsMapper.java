@@ -236,6 +236,8 @@ public class IndicatorsMapper {
 		;
 		indicatorOverviewType.setInterpretation(indicatorsMetadataEntity.getInterpretation());
 		indicatorOverviewType.setTags(new ArrayList<String>(indicatorsMetadataEntity.getTags()));
+		indicatorOverviewType.setPrecision(indicatorsMetadataEntity.getPrecision());
+
 		indicatorOverviewType.setAllowedRoles(getAllowedRoleIds(indicatorsMetadataEntity.getRoles()));
 		indicatorOverviewType.setUserPermissions(indicatorsMetadataEntity.getUserPermissions());
 		

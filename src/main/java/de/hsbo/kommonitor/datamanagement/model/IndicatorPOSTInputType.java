@@ -30,7 +30,7 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-12-10T08:27:46.243076200+01:00[Europe/Berlin]")
 public class IndicatorPOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -59,6 +59,8 @@ public class IndicatorPOSTInputType implements Serializable {
   private String lowestSpatialUnitForComputation;
 
   private CommonMetadataType metadata;
+
+  private Integer precision;
 
   private String processDescription;
 
@@ -348,6 +350,26 @@ public class IndicatorPOSTInputType implements Serializable {
     this.metadata = metadata;
   }
 
+  public IndicatorPOSTInputType precision(Integer precision) {
+    this.precision = precision;
+    return this;
+  }
+
+  /**
+   * Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.
+   * @return precision
+  */
+  
+  @Schema(name = "precision", description = "Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("precision")
+  public Integer getPrecision() {
+    return precision;
+  }
+
+  public void setPrecision(Integer precision) {
+    this.precision = precision;
+  }
+
   public IndicatorPOSTInputType processDescription(String processDescription) {
     this.processDescription = processDescription;
     return this;
@@ -533,6 +555,7 @@ public class IndicatorPOSTInputType implements Serializable {
         Objects.equals(this.isHeadlineIndicator, indicatorPOSTInputType.isHeadlineIndicator) &&
         Objects.equals(this.lowestSpatialUnitForComputation, indicatorPOSTInputType.lowestSpatialUnitForComputation) &&
         Objects.equals(this.metadata, indicatorPOSTInputType.metadata) &&
+        Objects.equals(this.precision, indicatorPOSTInputType.precision) &&
         Objects.equals(this.processDescription, indicatorPOSTInputType.processDescription) &&
         Objects.equals(this.referenceDateNote, indicatorPOSTInputType.referenceDateNote) &&
         Objects.equals(this.refrencesToGeoresources, indicatorPOSTInputType.refrencesToGeoresources) &&
@@ -544,7 +567,7 @@ public class IndicatorPOSTInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, allowedRoles, characteristicValue, creationType, datasetName, defaultClassificationMapping, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit);
+    return Objects.hash(abbreviation, allowedRoles, characteristicValue, creationType, datasetName, defaultClassificationMapping, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, precision, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit);
   }
 
   @Override
@@ -563,6 +586,7 @@ public class IndicatorPOSTInputType implements Serializable {
     sb.append("    isHeadlineIndicator: ").append(toIndentedString(isHeadlineIndicator)).append("\n");
     sb.append("    lowestSpatialUnitForComputation: ").append(toIndentedString(lowestSpatialUnitForComputation)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
+    sb.append("    precision: ").append(toIndentedString(precision)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    referenceDateNote: ").append(toIndentedString(referenceDateNote)).append("\n");
     sb.append("    refrencesToGeoresources: ").append(toIndentedString(refrencesToGeoresources)).append("\n");
