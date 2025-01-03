@@ -19,7 +19,10 @@ public class MigrationSetup implements ApplicationListener<ContextRefreshedEvent
 
     private static final Logger LOG = LoggerFactory.getLogger(MigrationSetup.class);
 
-    @Value("${kommonitor.migrations:}")
+    @Value("${kommonitor.migration.enabled:false}")
+    private boolean migrationEnabled;
+
+    @Value("${kommonitor.migration.versions:}")
     private String[] versionMigrationList = new String[0];
 
     @Autowired
@@ -28,14 +31,16 @@ public class MigrationSetup implements ApplicationListener<ContextRefreshedEvent
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        Arrays.stream(versionMigrationList).forEach(v -> {
-            Optional<DbInitLoader> initLoaderOpt = dbInitLoadRepository.getDbInitLoader(v);
-            if(initLoaderOpt.isPresent()) {
-                initLoaderOpt.get().load();
-            } else {
-                LOG.error("No DbInitLoader exists for version {}. Initial setup will be skipped.", v);
-            }
-        });
+        if (migrationEnabled) {
+            Arrays.stream(versionMigrationList).forEach(v -> {
+                Optional<DbInitLoader> initLoaderOpt = dbInitLoadRepository.getDbInitLoader(v);
+                if (initLoaderOpt.isPresent()) {
+                    initLoaderOpt.get().load();
+                } else {
+                    LOG.error("No DbInitLoader exists for version {}. Initial setup will be skipped.", v);
+                }
+            });
+        }
     }
 
     @Override
