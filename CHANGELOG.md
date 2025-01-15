@@ -1,6 +1,7 @@
 # Change Log
 
-## 4.1.0-beta.4
+## 4.1.0
+* Raise cache actions version [7357716](7357716b1425ca8aaa2c6073969bf7f3d488eeb4)
 * Add regional reference value fix [936c41c](936c41c449c2245d9dcf70d24e86595872f03b9f)
 * Fix precision type to be nullable [3ec1726](3ec1726a126d3d4dffdcccbf2f8949cc761a9888)
 * Add setup for new precision column [18d991a](18d991a4a67d77edad70caeccd001a1785d54ed3)
