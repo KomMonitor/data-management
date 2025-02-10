@@ -1,6 +1,7 @@
 # Change Log
 
-## 5.0.0-beta.3
+## 5.0.0-beta.4
+* Improve initial data migration setup [668241e](668241e311331243ac390edc62a3d39f805f0f22)
 * Restructure properties [8dee2a3](8dee2a3e65799528c5cef2dbad3b25b4af3a64ae)
 * Refine liquibase changelogs [0e0bf61](0e0bf6122457b3cee9d7d1b1cc59e1e21aa093b8)
 * Add Keycloak group initialization for startup migration [80c8afe](80c8afe7554e291ee7f0b12ee1a4c31ff667569d)

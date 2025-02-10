@@ -9,6 +9,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetad
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.ProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,12 @@ public class DbInitLoader_5_0_0 implements DbInitLoader {
     @Value("${kommonitor.access-control.authenticated-users.organizationalUnit:kommonitor}")
     private String defaultAuthenticatedOUname;
 
+    @Value("${kommonitor.migration.delete-legacy-admin-organizationalUnit:true}")
+    private boolean deleteAdminOu;
+
+    @Value("${kommonitor.migration.delete-legacy-public-organizationalUnit:true}")
+    private boolean deletePublicOu;
+
     @Autowired
     PermissionManager permissionManager;
     @Autowired
@@ -59,10 +66,14 @@ public class DbInitLoader_5_0_0 implements DbInitLoader {
 
     @Override
     public void load() {
-        LOG.info("Initia");
+        LOG.info("Run initial data migration tasks for KomMonitor DB schema version {}.", DB_VERSION);
         // Delete special 'public' and 'kommonitor' OrganizationalUnit
-        deleteOrganizationalUnitAndRolesByName(defaultAnonymousOUname);
-        deleteOrganizationalUnitAndRolesByName(defaultAuthenticatedOUname);
+        if (deletePublicOu) {
+            deleteOrganizationalUnitAndRolesByName(defaultAnonymousOUname);
+        }
+        if (deleteAdminOu) {
+            deleteOrganizationalUnitAndRolesByName(defaultAuthenticatedOUname);
+        }
         // Initialize Keycloak groups for all other OrganizationalUnits
         setupOrganizationalUnits();
     }
@@ -92,7 +103,7 @@ public class DbInitLoader_5_0_0 implements DbInitLoader {
 
         try {
             organizationalUnitManager.initializeKeycloakGroup(ou);
-        } catch (KeycloakException ex) {
+        } catch (KeycloakException | ProcessingException ex) {
             LOG.error("Initializing Keycloak group failed for OrganizationalUnit '{}'.", ou.getName(), ex);
         }
 
@@ -104,13 +115,19 @@ public class DbInitLoader_5_0_0 implements DbInitLoader {
         if (unit != null) {
             // First, remove all associations of single permissions from datasets
             unit.getPermissions().forEach(p -> {
+                LOG.info("Remove {} permissions for OrganizationalUnit '{}'.", p.getPermissionLevel().getValue(), organizationalUnitName);
                 removeGeoresourcePermissions(p);
                 removeSpatialUnitsPermissions(p);
                 removeIndicatorsPermission(p);
                 removeIndicatorsSpatialUnitsPermission(p);
             });
             // This should automatically propagate to associated roles via @CascadeType.REMOVE
-            organizationalUnitRepository.deleteByOrganizationalUnitId(unit.getOrganizationalUnitId());
+            LOG.info("Remove OrganizationalUnit '{}'.", organizationalUnitName);
+            try {
+                organizationalUnitRepository.deleteByOrganizationalUnitId(unit.getOrganizationalUnitId());
+            } catch (Exception ex) {
+                LOG.error("Error while trying to delete OrganizationalUnit '{}'", organizationalUnitName);
+            }
         } else {
             LOG.warn("No OrganizationalUnit with name '{}' was found in database. Delete request has no effect.",
                     organizationalUnitName);
@@ -122,6 +139,7 @@ public class DbInitLoader_5_0_0 implements DbInitLoader {
                 .stream()
                 .filter(e -> e.getPermissions().contains(p))
                 .forEach(e -> {
+                    LOG.debug("Remove permission '{}-{}' from Indicator timeseries '{}'", p.getOrganizationalUnit().getName(), p.getPermissionLevel().getValue(), e.getEntryId());
                     HashSet<PermissionEntity> currentPermissions = e.getPermissions();
                     currentPermissions.remove(p);
                     e.setPermissions(currentPermissions);
@@ -134,6 +152,7 @@ public class DbInitLoader_5_0_0 implements DbInitLoader {
                 .stream()
                 .filter(e -> e.getPermissions().contains(p))
                 .forEach(e -> {
+                    LOG.debug("Remove permission '{}-{}' from Indicator metadata '{}'", p.getOrganizationalUnit().getName(), p.getPermissionLevel().getValue(), e.getDatasetId());
                     HashSet<PermissionEntity> currentPermissions = e.getPermissions();
                     currentPermissions.remove(p);
                     e.setPermissions(currentPermissions);
@@ -146,6 +165,7 @@ public class DbInitLoader_5_0_0 implements DbInitLoader {
                 .stream()
                 .filter(e -> e.getPermissions().contains(p))
                 .forEach(e -> {
+                    LOG.debug("Remove permission '{}-{}' from SpatialUnit '{}'", p.getOrganizationalUnit().getName(), p.getPermissionLevel().getValue(), e.getDatasetId());
                     HashSet<PermissionEntity> currentPermissions = e.getPermissions();
                     currentPermissions.remove(p);
                     e.setPermissions(currentPermissions);
@@ -158,6 +178,7 @@ public class DbInitLoader_5_0_0 implements DbInitLoader {
                 .stream()
                 .filter(e -> e.getPermissions().contains(p))
                 .forEach(e -> {
+                    LOG.debug("Remove permission '{}-{}' from Georesource '{}'", p.getOrganizationalUnit().getName(), p.getPermissionLevel().getValue(), e.getDatasetId());
                     HashSet<PermissionEntity> currentPermissions = e.getPermissions();
                     currentPermissions.remove(p);
                     e.setPermissions(currentPermissions);
