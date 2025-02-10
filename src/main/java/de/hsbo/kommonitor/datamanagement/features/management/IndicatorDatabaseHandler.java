@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import org.geotools.data.DataAccess;
 import org.geotools.data.DataStore;
 import org.geotools.data.DefaultTransaction;
@@ -366,11 +367,11 @@ public class IndicatorDatabaseHandler {
 
 	public static void updateIndicatorFeatures(IndicatorPUTInputType indicatorData, String indicatorDbViewName) throws Exception {
 		/*
-		 * update indicator featue table with the submitted values
+		 * update indicator feature table with the submitted values
 		 * 
 		 * if column for date already exists, then overwrite values
 		 * 
-		 * else if column name for date does not exists
+		 * else if column name for date does not exist
 		 * 	--> then add new column and insert values
 		 * 
 		 */

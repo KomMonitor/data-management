@@ -5926,7 +5926,6 @@ components:
           items:
             type: number
             format: float
-
     DefaultClassificationMappingType:
       title: DefaultClassificationMappingType
       required:
@@ -5975,17 +5974,14 @@ components:
           type: number
           format: float
           description: regional sum value
-
         regionalAverage:
           type: number
           format: float
           description: regional average value
-
         spatiallyUnassignable:
           type: number
           format: float
           description: number of items that cannot be spatially assigned to any spatial unit
-
     GeoresourceOverviewType:
       title: GeoresourceOverviewType
       required:
@@ -6319,6 +6315,10 @@ components:
             can be computed and thus is available (only necessary for computable indicators)
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
+        precision:
+          type: integer
+          description: Defines the number of decimal places for indicator values. If null, there is no predefined
+            precision for this indicator.
         processDescription:
           type: string
           description: description about how the indicator was computed
@@ -6448,6 +6448,10 @@ components:
         processDescription:
           type: string
           description: description about how the indicator was computed
+        precision:
+          type: integer
+          description: Defines the number of decimal places for indicator values. If null, there is no predefined
+            precision for this indicator.
         referenceDateNote:
           type: string
           description: an optional note on the reference date of the indicator
@@ -6576,6 +6580,10 @@ components:
         ownerId:
           type: string
           description: identifier of the owning group
+        precision:
+          type: integer
+          description: Defines the number of decimal places for indicator values. If null, there is no predefined
+            precision for this indicator.
         processDescription:
           type: string
           description: description about how the indicator was computed
@@ -7255,7 +7263,7 @@ components:
         - nextUpperHierarchyLevel
       type: object
       properties:
-        datasetName: 
+        datasetName:
           type: string
           description: the name of the spatial unit - its "spatialUnitLevel"
         metadata:

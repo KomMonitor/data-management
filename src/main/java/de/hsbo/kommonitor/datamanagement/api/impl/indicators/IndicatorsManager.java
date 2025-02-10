@@ -87,7 +87,7 @@ public class IndicatorsManager {
 
     @Autowired
     private LastModificationManager lastModManager;
-    
+
     public String updateMetadata(IndicatorMetadataPATCHInputType metadata, String indicatorId) throws Exception {
         logger.info("Trying to update indicator metadata for datasetId '{}'", indicatorId);
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
@@ -358,6 +358,14 @@ public class IndicatorsManager {
         entity.setHeadlineIndicator(metadata.getIsHeadlineIndicator());
         entity.setInterpretation(metadata.getInterpretation());
         entity.setTags(new HashSet<String>(metadata.getTags()));
+
+
+        if(entity.getPrecision() != metadata.getPrecision()) {
+            logger.warn("Precision changed for existing indicator from {} to {}. This may affect the representation of " +
+                            "indicator values.",
+                    entity.getPrecision(), metadata.getPrecision());
+        }
+        entity.setPrecision(metadata.getPrecision());
 
         Collection<RegionalReferenceValueEntity> regRefValues = new ArrayList<RegionalReferenceValueEntity>();
 
@@ -1379,6 +1387,7 @@ public class IndicatorsManager {
         entity.setHeadlineIndicator(indicatorData.getIsHeadlineIndicator());
         entity.setInterpretation(indicatorData.getInterpretation());
         entity.setTags(new HashSet<String>(indicatorData.getTags()));
+        entity.setPrecision(indicatorData.getPrecision());
 
 
         /*
@@ -1869,7 +1878,7 @@ public class IndicatorsManager {
                     "No indicator dataset with datasetId '{}' was found in database. Update request has no effect.",
                     indicatorId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                    "Tried to update indicator feature record, but no dataset existes with datasetId " + indicatorId);
+                    "Tried to update indicator feature record, but no dataset exists with datasetId " + indicatorId);
         }
     }
 }

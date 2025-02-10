@@ -30,7 +30,7 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-12-10T08:27:46.243076200+01:00[Europe/Berlin]")
 public class IndicatorPOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -59,6 +59,8 @@ public class IndicatorPOSTInputType implements Serializable {
   private String lowestSpatialUnitForComputation;
 
   private CommonMetadataType metadata;
+
+  private Integer precision;
 
   private String ownerId;
 
@@ -363,7 +365,7 @@ public class IndicatorPOSTInputType implements Serializable {
    * identifier of the owning group
    * @return ownerId
   */
-  @NotNull 
+  @NotNull
   @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("ownerId")
   public String getOwnerId() {
@@ -372,6 +374,26 @@ public class IndicatorPOSTInputType implements Serializable {
 
   public void setOwnerId(String ownerId) {
     this.ownerId = ownerId;
+  }
+
+  public IndicatorPOSTInputType precision(Integer precision) {
+    this.precision = precision;
+    return this;
+  }
+
+  /**
+   * Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.
+   * @return precision
+  */
+
+  @Schema(name = "precision", description = "Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("precision")
+  public Integer getPrecision() {
+    return precision;
+  }
+
+  public void setPrecision(Integer precision) {
+    this.precision = precision;
   }
 
   public IndicatorPOSTInputType processDescription(String processDescription) {
@@ -547,7 +569,7 @@ public class IndicatorPOSTInputType implements Serializable {
    * flag whether the resource is publicly accessible
    * @return isPublic
   */
-  @NotNull 
+  @NotNull
   @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isPublic")
   public Boolean getIsPublic() {
@@ -580,6 +602,7 @@ public class IndicatorPOSTInputType implements Serializable {
         Objects.equals(this.lowestSpatialUnitForComputation, indicatorPOSTInputType.lowestSpatialUnitForComputation) &&
         Objects.equals(this.metadata, indicatorPOSTInputType.metadata) &&
         Objects.equals(this.ownerId, indicatorPOSTInputType.ownerId) &&
+        Objects.equals(this.precision, indicatorPOSTInputType.precision) &&
         Objects.equals(this.processDescription, indicatorPOSTInputType.processDescription) &&
         Objects.equals(this.referenceDateNote, indicatorPOSTInputType.referenceDateNote) &&
         Objects.equals(this.refrencesToGeoresources, indicatorPOSTInputType.refrencesToGeoresources) &&
@@ -592,7 +615,7 @@ public class IndicatorPOSTInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, permissions, characteristicValue, creationType, datasetName, defaultClassificationMapping, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ownerId, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit, isPublic);
+    return Objects.hash(abbreviation, permissions, characteristicValue, creationType, datasetName, defaultClassificationMapping, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ownerId, precision, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit, isPublic);
   }
 
   @Override
@@ -612,6 +635,7 @@ public class IndicatorPOSTInputType implements Serializable {
     sb.append("    lowestSpatialUnitForComputation: ").append(toIndentedString(lowestSpatialUnitForComputation)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
+    sb.append("    precision: ").append(toIndentedString(precision)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    referenceDateNote: ").append(toIndentedString(referenceDateNote)).append("\n");
     sb.append("    refrencesToGeoresources: ").append(toIndentedString(refrencesToGeoresources)).append("\n");
