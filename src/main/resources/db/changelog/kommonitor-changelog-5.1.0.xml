@@ -118,4 +118,9 @@
                 referencedTableName="topics"
                 validate="true"/>
     </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-11">
+        <addColumn schemaName= "public" tableName="metadataindicators">
+            <column name="precision" type="INTEGER"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
