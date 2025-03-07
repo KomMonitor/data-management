@@ -48,7 +48,12 @@ public class GeometrySimplifierUtil {
 			Geometry defaultGeometry = (Geometry) feature.getDefaultGeometry();
 			Geometry simplifiedGeometry = DouglasPeuckerSimplifier.simplify(defaultGeometry, Double.parseDouble(simplificationType.getValue()));
 
-			feature.setDefaultGeometry(simplifiedGeometry);
+			// only set simplified geometry if it's not empty
+			if (simplifyGeometries.isEmpty()) {
+				feature.setDefaultGeometry(simplifiedGeometry);
+			} else {
+				feature.setDefaultGeometry(defaultGeometry);
+			}
 
 			collection.add(feature);
 		}
