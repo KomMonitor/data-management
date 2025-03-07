@@ -1,6 +1,8 @@
 # Change Log
 
-## 5.0.0-beta.4
+## 5.0.0-beta.5
+* Fix null geometries for siplification process [f9540c0](f9540c0f7133c907c18efae9111af7a95c92d97c)
+* Make comments for auth clearer [8d3f24d](8d3f24d981b7d9f5b830439fc0d720ef4c1879b4)
 * Improve initial data migration setup [668241e](668241e311331243ac390edc62a3d39f805f0f22)
 * Restructure properties [8dee2a3](8dee2a3e65799528c5cef2dbad3b25b4af3a64ae)
 * Refine liquibase changelogs [0e0bf61](0e0bf6122457b3cee9d7d1b1cc59e1e21aa093b8)
