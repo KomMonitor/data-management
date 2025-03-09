@@ -50,9 +50,9 @@ public class GeometrySimplifierUtil {
 
 			// only set simplified geometry if it's not empty
 			if (simplifiedGeometry == null || simplifiedGeometry.isEmpty()) {
-				feature.setDefaultGeometry(simplifiedGeometry);
-			} else {
 				feature.setDefaultGeometry(defaultGeometry);
+			} else {
+				feature.setDefaultGeometry(simplifiedGeometry);
 			}
 
 			collection.add(feature);
