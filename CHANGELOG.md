@@ -1,6 +1,7 @@
 # Change Log
 
-## 4.1.1
+## 4.1.2
+* fix check for empty simplified geometry [2ab1dab](2ab1dab5dbbd0a603596a57b0727e5c6eaa77335)
 * Fix null geometries for siplification process [611aa16](611aa16ae6cef783470a9ec5a1dd07b9a0c24bd0)
 * Raise cache actions version [7357716](7357716b1425ca8aaa2c6073969bf7f3d488eeb4)
 * Add regional reference value fix [936c41c](936c41c449c2245d9dcf70d24e86595872f03b9f)
