@@ -49,7 +49,7 @@ public class GeometrySimplifierUtil {
 			Geometry simplifiedGeometry = DouglasPeuckerSimplifier.simplify(defaultGeometry, Double.parseDouble(simplificationType.getValue()));
 
 			// only set simplified geometry if it's not empty
-			if (simplifyGeometries.isEmpty()) {
+			if (simplifiedGeometry == null || simplifiedGeometry.isEmpty()) {
 				feature.setDefaultGeometry(simplifiedGeometry);
 			} else {
 				feature.setDefaultGeometry(defaultGeometry);
