@@ -1,6 +1,7 @@
 # Change Log
 
-## 5.0.0-beta.5
+## 5.0.0-beta.6
+* fix check for simplified geometry [a92f13e](a92f13efb7224c1ae93adef42e004271485d0223)
 * Fix null geometries for siplification process [f9540c0](f9540c0f7133c907c18efae9111af7a95c92d97c)
 * Make comments for auth clearer [8d3f24d](8d3f24d981b7d9f5b830439fc0d720ef4c1879b4)
 * Improve initial data migration setup [668241e](668241e311331243ac390edc62a3d39f805f0f22)
