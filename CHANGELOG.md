@@ -1,6 +1,7 @@
 # Change Log
 
-## 5.0.0-beta.6
+## 5.0.0-beta.7
+* use TopologyPreservingSimplifier and reduce coordinate precision depending on simplifyGeometries parameter [05a2c5c](05a2c5ce2a96483a82bad412268c44a4acc57d89)
 * fix simplified geometry check [4c17326](4c173264d5e6b16eb095508ade4a1e8680500478)
 * fix check for simplified geometry [a92f13e](a92f13efb7224c1ae93adef42e004271485d0223)
 * Fix null geometries for siplification process [f9540c0](f9540c0f7133c907c18efae9111af7a95c92d97c)
