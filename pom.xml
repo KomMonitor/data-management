@@ -4,7 +4,7 @@
 
     <groupId>de.hsbo.kommonitor</groupId>
     <artifactId>kommonitor-data-management-app</artifactId>
-    <version>5.0.0-beta.7-SNAPSHOT</version>
+    <version>5.0.0-beta.7</version>
     <packaging>jar</packaging>
 
     <name>KomMonitor Data Management</name>
@@ -14,7 +14,7 @@
 	    <url>https://github.com/KomMonitor/data-management</url>
         <connection>scm:git:https://github.com/KomMonitor/data-management.git</connection>
         <developerConnection>scm:git:https://github.com/KomMonitor/data-management.git</developerConnection>
-	    <tag>v5.0.0-beta.1</tag>
+	    <tag>v5.0.0-beta.7</tag>
   </scm>
 
     <licenses>
