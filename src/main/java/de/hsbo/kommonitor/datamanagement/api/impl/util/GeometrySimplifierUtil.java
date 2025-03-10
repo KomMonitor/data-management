@@ -8,7 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.precision.SimpleGeometryPrecisionReducer;
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
+
 
 public class GeometrySimplifierUtil {
 
@@ -46,14 +49,21 @@ public class GeometrySimplifierUtil {
 			SimpleFeature feature = (SimpleFeature) featureIterator.next();
 
 			Geometry defaultGeometry = (Geometry) feature.getDefaultGeometry();
-			Geometry simplifiedGeometry = DouglasPeuckerSimplifier.simplify(defaultGeometry, Double.parseDouble(simplificationType.getValue()));
+			// while TopologyPreservingSimplifier  preserves Topology, it may cause rectangles as simplified geometries, which is totally unacceptable.
+			// Hence we still use DouglasPeucker 
+//			Geometry simplifiedGeometry = DouglasPeuckerSimplifier.simplify(defaultGeometry, Double.parseDouble(simplificationType.getValue()));
+			Geometry simplifiedGeometry = TopologyPreservingSimplifier.simplify(defaultGeometry, Double.parseDouble(simplificationType.getValue()));
 
 			// only set simplified geometry if it's not empty
 			if (simplifiedGeometry == null || simplifiedGeometry.isEmpty()) {
 				feature.setDefaultGeometry(defaultGeometry);
-			} else {
+			} else {				
 				feature.setDefaultGeometry(simplifiedGeometry);
 			}
+			
+			// in addition we want to reduce coordinate precision depending on simplificationType
+			// i.e. 5 decimals ~ meter-precision for latitude and longitude
+			feature = roundCoordinates(feature, simplificationType);
 
 			collection.add(feature);
 		}
@@ -61,6 +71,38 @@ public class GeometrySimplifierUtil {
 		featureIterator.close();
 
 		return collection;
+	}
+
+	private static SimpleFeature roundCoordinates(SimpleFeature feature, SimplifyGeometriesEnum simplificationType) {
+		
+		if(simplificationType.equals(SimplifyGeometriesEnum.ORIGINAL)) {
+			// no reduction
+			return feature;
+		}
+		
+		PrecisionModel precisionModel = null;
+		
+		if(simplificationType.equals(SimplifyGeometriesEnum.WEAK)) {
+			precisionModel = new PrecisionModel(Math.pow(10, 6));
+		}
+		else if(simplificationType.equals(SimplifyGeometriesEnum.STRONG)) {
+			precisionModel = new PrecisionModel(Math.pow(10, 4));
+		}
+		else {
+			precisionModel = new PrecisionModel(Math.pow(10, 5));
+		}
+		
+		SimpleGeometryPrecisionReducer precisionReducer = new SimpleGeometryPrecisionReducer(precisionModel);
+		
+		Geometry reducedGeom = precisionReducer.reduce((Geometry) feature.getDefaultGeometry());
+		
+		if (reducedGeom == null || reducedGeom.isEmpty()) {
+			return feature;
+		} else {				
+			feature.setDefaultGeometry(reducedGeom);
+		}
+		
+		return feature;
 	}
 
 }
