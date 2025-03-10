@@ -49,8 +49,10 @@ public class GeometrySimplifierUtil {
 			SimpleFeature feature = (SimpleFeature) featureIterator.next();
 
 			Geometry defaultGeometry = (Geometry) feature.getDefaultGeometry();
-//			Geometry simplifiedGeometry = DouglasPeuckerSimplifier.simplify(defaultGeometry, Double.parseDouble(simplificationType.getValue()));
-			Geometry simplifiedGeometry = TopologyPreservingSimplifier.simplify(defaultGeometry, Double.parseDouble(simplificationType.getValue()));
+			// while TopologyPreservingSimplifier  preserves Topology, it may cause rectangles as simplified geometries, which is totally unacceptable.
+			// Hence we still use DouglasPeucker 
+			Geometry simplifiedGeometry = DouglasPeuckerSimplifier.simplify(defaultGeometry, Double.parseDouble(simplificationType.getValue()));
+//			Geometry simplifiedGeometry = TopologyPreservingSimplifier.simplify(defaultGeometry, Double.parseDouble(simplificationType.getValue()));
 
 			// only set simplified geometry if it's not empty
 			if (simplifiedGeometry == null || simplifiedGeometry.isEmpty()) {
