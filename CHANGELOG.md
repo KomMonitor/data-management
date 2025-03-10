@@ -1,6 +1,7 @@
 # Change Log
 
 ## 5.0.0-beta.7
+* fix implementation of coordinate precision and geometry simplification process - tested with Essen geometries [5fb5917](5fb591724be5fe479c083eae6673e996ff1ce0e8)
 * go back to DouglasPeucker, as TopologyPreservingSimplifier may generate rectangular geometries and prepare for rerelease 5.0.0-beta.7 [ddaf9e1](ddaf9e1694edd1663629133bd89c2dcd7f98fbca)
 * use TopologyPreservingSimplifier and reduce coordinate precision depending on simplifyGeometries parameter [05a2c5c](05a2c5ce2a96483a82bad412268c44a4acc57d89)
 * fix simplified geometry check [4c17326](4c173264d5e6b16eb095508ade4a1e8680500478)
