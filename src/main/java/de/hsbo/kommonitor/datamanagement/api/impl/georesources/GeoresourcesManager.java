@@ -19,7 +19,6 @@ import jakarta.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.geotools.filter.text.cql2.CQLException;
-import org.keycloak.adapters.jaas.AbstractKeycloakLoginModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

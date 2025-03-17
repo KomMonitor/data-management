@@ -9,7 +9,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetad
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4,9 +4,9 @@ import java.net.MalformedURLException;
 
 import javax.xml.transform.TransformerException;
 
-import org.geotools.factory.FactoryRegistryException;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.IllegalFilterException;
+import org.geotools.util.factory.FactoryRegistryException;
 import org.springframework.stereotype.Component;
 
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
