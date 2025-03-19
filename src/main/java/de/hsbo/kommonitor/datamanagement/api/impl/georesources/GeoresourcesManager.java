@@ -366,17 +366,13 @@ public class GeoresourcesManager {
 			try {
 				boolean deletedReferences = indicatorsManager.deleteIndicatorReferencesByGeoresource(georesourceId);
 			} catch (Exception e) {
-				logger.error("Error while deleting indicator references for georesource with id {}", georesourceId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				logger.error("Error while deleting indicator references for georesource with id {}", georesourceId, e);
 			}
 
 			try {
 				boolean deleteScriptsForGeoresource = scriptManager.deleteScriptsByGeoresourceId(georesourceId);
 			} catch (Exception e) {
-				logger.error("Error while deleting scripts for georesource with id {}", georesourceId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				logger.error("Error while deleting scripts for georesource with id {}", georesourceId, e);
 			}
 
 			MetadataGeoresourcesEntity georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
@@ -385,9 +381,7 @@ public class GeoresourcesManager {
 			try {
 				georesourceEntity = removeAnyLinkedRoles(georesourceEntity);
 			} catch (Exception e) {
-				logger.error("Error while deleting roles for georesource with id {}", georesourceId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				logger.error("Error while deleting roles for georesource with id {}", georesourceId, e);
 			}
 			// now remove feature data and remaining
 
@@ -399,9 +393,16 @@ public class GeoresourcesManager {
 				 */
 				SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.GEORESOURCE, dbTableName);
 			} catch (Exception e) {
-				logger.error("Error while deleting feature table for georesource with id {}", georesourceId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				logger.error("Error while deleting feature table for georesource with id {}", georesourceId, e);
+			}
+
+			// remove user favorites
+			try {
+				MetadataGeoresourcesEntity georesourceMetadata = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+				georesourceMetadata.getUserFavorites().forEach(u -> u.removeGeoresourceFavourite(georesourceMetadata));
+				georesourcesMetadataRepo.saveAndFlush(georesourceMetadata);
+			} catch (Exception e) {
+				logger.error("Error while deleting user favorites for georesource", e);
 			}
 
 			try {
@@ -410,9 +411,7 @@ public class GeoresourcesManager {
 				 */
 				georesourcesMetadataRepo.deleteByDatasetId(georesourceId);
 			} catch (Exception e) {
-				logger.error("Error while deleting metadata entry for georesource with id {}", georesourceId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				logger.error("Error while deleting metadata entry for georesource with id {}", georesourceId, e);
 				success = false;
 			}
 
@@ -420,9 +419,8 @@ public class GeoresourcesManager {
 				// handle OGC web service
 				ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.GEORESOURCE);
 			} catch (Exception e) {
-				logger.error("Error while unbublishing OGC service layer for georesource with id {}", georesourceId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				logger.error("Error while unbublishing OGC service layer for georesource with id {}", georesourceId, e);
+
 			}
 
 			return success;

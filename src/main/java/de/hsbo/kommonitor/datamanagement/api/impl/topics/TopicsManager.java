@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import jakarta.transaction.Transactional;
 
 import org.slf4j.Logger;
@@ -188,13 +189,24 @@ public class TopicsManager {
 				deleteSubTopicEntriesFromParentTopics(topicId);
 			}			
 			
-			deleteAllSubTopicsAndRelations(topic);					
-			
+			deleteAllSubTopicsAndRelations(topic);
+			deleteTopicFavourites(topic);
+
 			topicsRepo.delete(topic);
 			return true;
 		}else{
 			logger.error("No topic with id '{}' was found in database. Delete request has no effect.", topicId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Tried to delete topic, but no topic existes with id " + topicId);
+		}
+	}
+
+	private void deleteTopicFavourites(TopicsEntity topic) {
+		// remove user favorites
+		try {
+			topic.getUserFavorites().forEach(u -> u.removeTopicFavourite(topic));
+			topicsRepo.saveAndFlush(topic);
+		} catch (Exception e) {
+			logger.error("Error while deleting user favorites for topic", e);
 		}
 	}
 

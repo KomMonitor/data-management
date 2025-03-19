@@ -664,12 +664,9 @@ public class IndicatorsManager {
 			} catch (Exception e) {
 				logger.error("Error while deleting scripts for indicator with id {}", indicatorId);
 				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
 			}
 
 			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits = indicatorsSpatialUnitsRepo.findByIndicatorMetadataId(indicatorId);
-
-
 
 			/*
 			 * delete featureTables and views for each spatial unit
@@ -680,9 +677,7 @@ public class IndicatorsManager {
 				try {
 					indicatorSpatialUnitJoinEntity = removeAnyLinkedRoles_indicatorSpatialUnit(indicatorSpatialUnitJoinEntity);
 				} catch (Exception e) {
-					logger.error("Error while deleting roles for indicator spatial unit");
-					logger.error("Error was: {}", e.getMessage());
-					e.printStackTrace();
+					logger.error("Error while deleting roles for indicator spatial unit", e);
 				}
 
 				try {
@@ -690,18 +685,14 @@ public class IndicatorsManager {
 					
 					IndicatorDatabaseHandler.deleteIndicatorValueTable(indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
 				} catch (Exception e) {
-					logger.error("Error while deleting spatialUnitLayers for indicator with id {}", indicatorId);
-					logger.error("Error was: {}", e.getMessage());
-					e.printStackTrace();
+					logger.error(String.format("Error while deleting spatialUnitLayers for indicator with id %s", indicatorId), e);
 				}
 
 				try {
 					// handle OGC web service
 					ogcServiceManager.unpublishDbLayer(indicatorViewTableName, ResourceTypeEnum.INDICATOR);
 				} catch (Exception e) {
-					logger.error("Error while unpublishing spatialUnitLayers in OGSService for indicator with id {}", indicatorId);
-					logger.error("Error was: {}", e.getMessage());
-					e.printStackTrace();
+					logger.error("Error while unpublishing spatialUnitLayers in OGSService for indicator with id {}", indicatorId, e);
 				}
 			}
 
@@ -711,9 +702,7 @@ public class IndicatorsManager {
 				 */
 				indicatorsSpatialUnitsRepo.deleteByIndicatorMetadataId(indicatorId);
 			} catch (Exception e) {
-				logger.error("Error while deleting entries from indicatorSpatialUnitsRepo for indicator with id {}", indicatorId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				logger.error("Error while deleting entries from indicatorSpatialUnitsRepo for indicator with id {}", indicatorId, e);
 				success = false;
 			}
 
@@ -721,10 +710,17 @@ public class IndicatorsManager {
 			try {
 				removeAnyLinkedRoles_indicator(indicatorsMetadataRepo.findByDatasetId(indicatorId));
 			} catch (Exception e) {
-				logger.error("Error while deleting roles for indicator spatial unit");
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				logger.error("Error while deleting roles for indicator spatial unit", e);
 			}
+
+            // remove user favorites
+            try {
+               MetadataIndicatorsEntity indicatorMetadata = indicatorsMetadataRepo.findByDatasetId(indicatorId);
+               indicatorMetadata.getUserFavorites().forEach(u -> u.removeIndicatorFavourite(indicatorMetadata));
+               indicatorsMetadataRepo.saveAndFlush(indicatorMetadata);
+            } catch (Exception e) {
+                logger.error("Error while deleting user favorites for indicator", e);
+            }
 
 			try {
 				/*
@@ -732,9 +728,7 @@ public class IndicatorsManager {
 				 */
 				indicatorsMetadataRepo.deleteByDatasetId(indicatorId);
 			} catch (Exception e) {
-				logger.error("Error while deleting metadata entry for indicator with id {}", indicatorId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				logger.error("Error while deleting metadata entry for indicator with id {}", indicatorId, e);
 				success = false;
 			}
 

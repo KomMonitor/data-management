@@ -2,9 +2,11 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
 import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType.ClassificationMethodEnum;
@@ -60,6 +62,7 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	
 	@Column(columnDefinition = "integer default 5")
 	private int numClasses;
+
 	@Column(columnDefinition = "integer default 2")
 	private ClassificationMethodEnum classificationMethod;
 	
@@ -85,12 +88,18 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 
 	public void setDefaultClassificationMappingItems(
 			Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems) {
-		
-//		List<DefaultClassificationMappingItemType> list = new ArrayList<>(defaultClassificationMappingItems);
-//		
-//		Collections.sort(list);
-		
 		this.defaultClassificationMappingItems = new HashSet<DefaultClassificationMappingItemType>(defaultClassificationMappingItems);
+	}
+
+	@ManyToMany(mappedBy = "indicatorFavourites")
+	private Set<UserInfoEntity> userFavorites = new HashSet<>();
+
+	public Set<UserInfoEntity> getUserFavorites() {
+		return userFavorites;
+	}
+
+	public void setUserFavorites(Set<UserInfoEntity> userFavorites) {
+		this.userFavorites = userFavorites;
 	}
 
 	public String getProcessDescription() {

@@ -1,11 +1,14 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
 import de.hsbo.kommonitor.datamanagement.model.TopicResourceEnum;
 import de.hsbo.kommonitor.datamanagement.model.TopicTypeEnum;
 import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "Topics")
 public class TopicsEntity {
@@ -30,6 +33,17 @@ public class TopicsEntity {
 	  @CollectionTable(name = "topics_subtopics", joinColumns = @JoinColumn(name = "main_topic_id", referencedColumnName = "topicId"))
 	  @Column(name = "sub_topic")
 	  private Collection<TopicsEntity> subTopics;
+
+	@ManyToMany(mappedBy = "topicFavourites")
+	private Set<UserInfoEntity> userFavorites = new HashSet<>();
+
+	public Set<UserInfoEntity> getUserFavorites() {
+		return userFavorites;
+	}
+
+	public void setUserFavorites(Set<UserInfoEntity> userFavorites) {
+		this.userFavorites = userFavorites;
+	}
 	  
 	  /*
 	   * default constructor is required by hibernate / jpa
