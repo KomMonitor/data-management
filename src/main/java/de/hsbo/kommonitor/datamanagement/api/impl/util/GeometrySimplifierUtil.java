@@ -1,9 +1,9 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.util;
 
+import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.opengis.feature.simple.SimpleFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

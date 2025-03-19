@@ -7,21 +7,17 @@ import java.util.List;
 
 import javax.xml.transform.TransformerException;
 
+import org.geotools.api.filter.FilterFactory;
+import org.geotools.api.filter.expression.Function;
+import org.geotools.api.filter.expression.PropertyName;
+import org.geotools.api.style.*;
 import org.geotools.brewer.color.StyleGenerator;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.FactoryRegistryException;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.IllegalFilterException;
 import org.geotools.filter.function.Classifier;
-import org.geotools.styling.FeatureTypeStyle;
-import org.geotools.styling.SLDTransformer;
-import org.geotools.styling.Style;
-import org.geotools.styling.StyleFactory;
-import org.geotools.styling.StyledLayerDescriptor;
-import org.geotools.styling.UserLayer;
-import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.PropertyName;
+import org.geotools.util.factory.FactoryRegistryException;
+import org.geotools.xml.styling.SLDTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -344,7 +340,7 @@ public class GeoserverManager implements OGCWebServiceManager {
 //	        ColorBrewer brewer = ColorBrewer.instance();
 
 	        // STEP 1 - call a classifier function to summarise your content
-	        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+	        FilterFactory ff = CommonFactoryFinder.getFilterFactory();
 	        PropertyName propertyExpression = ff.property(targetPropertyName);
 
 	        // classify into five categories using natural breaks (jenks)
