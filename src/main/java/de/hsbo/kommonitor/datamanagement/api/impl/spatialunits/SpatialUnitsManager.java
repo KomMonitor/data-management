@@ -570,7 +570,7 @@ public class SpatialUnitsManager {
         	// update datasetName
         	entity.setDatasetName(newName);
         	updateSpatialUnitHierarchy_onUpdate(entity.getDatasetId(), oldName, newName);
-        	indicatorsManager.updateJoinedSpatialUnitName(entity.getDatasetId(), oldName, newName);
+        	indicatorsManager.updateJoinedSpatialUnitName(entity.getDatasetId(), newName);
         }
 
         /*
