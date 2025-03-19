@@ -154,21 +154,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>openapi-generator-maven-plugin</artifactId>
-            <version>${openapi-codegen.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.swagger.core.v3</groupId>
-                    <artifactId>swagger-annotations</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
@@ -288,7 +273,7 @@
         <dependency>
             <groupId>de.grundid.opendatalab</groupId>
             <artifactId>geojson-jackson</artifactId>
-            <version>1.8.1</version>
+            <version>1.14</version>
         </dependency>
 
          <!-- required for Java 9 + -->
@@ -537,6 +522,23 @@
     <profiles>
         <profile>
             <id>generate-models</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openapi-codegen.version}</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>io.swagger.core.v3</groupId>
+                            <artifactId>swagger-annotations</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-simple</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
@@ -605,6 +607,23 @@
         </profile>
         <profile>
             <id>generate-api</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openapi-codegen.version}</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>io.swagger.core.v3</groupId>
+                            <artifactId>swagger-annotations</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-simple</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
