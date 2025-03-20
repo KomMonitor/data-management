@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.hsbo.kommonitor.datamanagement.model.*;
-import org.apache.commons.collections4.CollectionUtils;
-import org.geotools.api.data.DataStore;
+import org.apache.commons.collections.CollectionUtils;
+import org.geotools.data.DataStore;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;

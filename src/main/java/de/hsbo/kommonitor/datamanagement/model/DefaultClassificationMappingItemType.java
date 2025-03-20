@@ -20,7 +20,7 @@ import jakarta.validation.constraints.NotNull;
  * DefaultClassificationMappingItemType
  */
 @Validated
-@jakarta.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-04-09T13:07:45.192171293Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-04-09T13:07:45.192171293Z[GMT]")
 
 @Entity(name = "DefaultClassificationMappingItemType")
 public class DefaultClassificationMappingItemType   {
