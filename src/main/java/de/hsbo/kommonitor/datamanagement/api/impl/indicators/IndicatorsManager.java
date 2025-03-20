@@ -284,7 +284,7 @@ public class IndicatorsManager {
         entity.setInterpretation(metadata.getInterpretation());
         entity.setTags(new HashSet<>(metadata.getTags()));
 
-        if(!entity.getPrecision().equals(metadata.getPrecision())) {
+        if(entity.getPrecision() != null && metadata.getPrecision() != null && !entity.getPrecision().equals(metadata.getPrecision())) {
             LOG.warn("Precision changed for existing indicator from {} to {}. This may affect the representation of " +
                             "indicator values.",
                     entity.getPrecision(), metadata.getPrecision());
