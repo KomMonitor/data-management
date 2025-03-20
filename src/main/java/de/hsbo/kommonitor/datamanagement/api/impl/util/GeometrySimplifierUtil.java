@@ -7,10 +7,10 @@ import org.geotools.feature.FeatureIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.PrecisionModel;
-import com.vividsolutions.jts.precision.SimpleGeometryPrecisionReducer;
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.precision.SimpleGeometryPrecisionReducer;
+import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 
 
 public class GeometrySimplifierUtil {
