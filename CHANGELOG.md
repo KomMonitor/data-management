@@ -1,6 +1,24 @@
 # Change Log
 
-## 4.1.3
+## 4.1.4
+* Fix precision updating [a4381a4](a4381a4c0cab402415b4b5d5a81f5805491d1e1b)
+* Update deps and base Docker image [852755d](852755d47d78743b827f53bcf1a9b32f544bd450)
+* Revert &quot;Merge branch &#39;feature/geotools-update&#39;&quot; [edd452f](edd452f1ed3b002d3b4794577db8a86f82b07d16)
+* Revert &quot;Rearrange plugin deps&quot; [6e1f935](6e1f93541a68f722307524da053f53a29189f9d1)
+* Revert &quot;Fix JTS imports&quot; [7a59124](7a59124d9ac72436db9d19076d1e597d5e7d05fc)
+* Revert &quot;Adapt JTS Jackson module to latest LTS version&quot; [a0e9bef](a0e9beffebdfc899fc35084cd283da3d44a715ba)
+* Revert &quot;[maven-release-plugin] Update CHANGELOG.md&quot; [b06c18c](b06c18cf96f681566aa4dab93ff1aadd3723b9ae)
+* Revert &quot;[maven-release-plugin] prepare release v4.1.4&quot; [31d0528](31d052825857ef5f4054cf2f7bc72d3f36c4f49e)
+* Revert &quot;[maven-release-plugin] prepare for next development iteration&quot; [2f54a29](2f54a2915a330c1ce2193e1ecff75c2d5174523d)
+* Revert &quot;Fix schema incompatibilities&quot; [cdf1ebf](cdf1ebfa81fb0d51e304d7b1910be90eb6fe4bca)
+* Fix schema incompatibilities [405621b](405621b0f0f8c77843fd6e3f6ef8a723773db058)
+* Adapt JTS Jackson module to latest LTS version [cded322](cded322d8a8a604dbe04bf18b3543f79a467a682)
+* Fix JTS imports [f9fd3f7](f9fd3f7bdc91cf056d4328c5eeeecd01acec4802)
+* Rearrange plugin deps [3fc3071](3fc30712204395d5822818a1eb7c317132558fda)
+* Merge branch &#39;feature/geotools-update&#39; [efff568](efff56801acc3af50b2253e18e58173b3456c3d0)
+    * Adapt classes to dependency changes [e35a5f8](e35a5f8d647c5898aa87e6c03d3c499f6377d27f)
+* Refine code [bf8d778](bf8d778ce1d4678c5b97e890195d9d058bafba66)
+* Fix deleting of user favourites when deleting datasets [fd3743c](fd3743ca106feb5dad05911707d789f9cb019c2b)
 * reduce coordinate precision and use TopologyPreservingSimplifier while simplifying geometries [c1cfc59](c1cfc59abd7f809c53464d96c03797ba369ccaaa)
 * fix simplified geometry check [d3aace0](d3aace0a7576f280a9f5be6a244febdaf34695cd)
 * fix check for empty simplified geometry [2ab1dab](2ab1dab5dbbd0a603596a57b0727e5c6eaa77335)
