@@ -59,7 +59,7 @@ public abstract class AbstractMetadata {
 		this.datasetName = datasetName;
 	}
 	public String getDbTableName() {
-		return dbTableName;
+		return getFqTableName(dbTableName);
 	}
 	public void setDbTableName(String dbTableName) {
 		this.dbTableName = dbTableName;
@@ -132,5 +132,14 @@ public abstract class AbstractMetadata {
 	}
 	public void setUserPermissions(List<PermissionLevelType> userPermissions) {
 		this.userPermissions = userPermissions;
+	}
+
+	private String getFqTableName(String tableName) {
+		String [] parts = tableName.split("\\.");
+		if(parts.length == 2 && parts[0].equals("public"))
+			return tableName;
+		else {
+			return "public." + tableName;
+		}
 	}
 }
