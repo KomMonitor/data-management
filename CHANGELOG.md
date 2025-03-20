@@ -1,6 +1,13 @@
 # Change Log
 
-## 4.1.3
+## 4.1.4
+* Adapt JTS Jackson module to latest LTS version [cded322](cded322d8a8a604dbe04bf18b3543f79a467a682)
+* Fix JTS imports [f9fd3f7](f9fd3f7bdc91cf056d4328c5eeeecd01acec4802)
+* Rearrange plugin deps [3fc3071](3fc30712204395d5822818a1eb7c317132558fda)
+* Merge branch &#39;feature/geotools-update&#39; [efff568](efff56801acc3af50b2253e18e58173b3456c3d0)
+    * Adapt classes to dependency changes [e35a5f8](e35a5f8d647c5898aa87e6c03d3c499f6377d27f)
+* Refine code [bf8d778](bf8d778ce1d4678c5b97e890195d9d058bafba66)
+* Fix deleting of user favourites when deleting datasets [fd3743c](fd3743ca106feb5dad05911707d789f9cb019c2b)
 * reduce coordinate precision and use TopologyPreservingSimplifier while simplifying geometries [c1cfc59](c1cfc59abd7f809c53464d96c03797ba369ccaaa)
 * fix simplified geometry check [d3aace0](d3aace0a7576f280a9f5be6a244febdaf34695cd)
 * fix check for empty simplified geometry [2ab1dab](2ab1dab5dbbd0a603596a57b0727e5c6eaa77335)
