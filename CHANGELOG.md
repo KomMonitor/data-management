@@ -1,6 +1,11 @@
 # Change Log
 
-## 4.1.4
+## 4.1.5
+* Raise jackson-datatype-jts version [e45cfa2](e45cfa29e2d8cafff07dfdde8254c142f893dce9)
+* Adapt JTS Jackson module to latest LTS version [cd69520](cd695209e20bbc9d768227f9d6b274fa7adc470f)
+* Fix JTS imports [c6953f4](c6953f4f7b0428071af4dfa12f0e56b5b8329da2)
+* Rearrange plugin deps [700dd95](700dd95b98d85523f02b8957923b47aee5a40ef4)
+* Update dependencies and remove deprecated Keycloak config [e749b65](e749b659a1b2420b21ffe16d85a59a239d2bca0a)
 * Fix precision updating [a4381a4](a4381a4c0cab402415b4b5d5a81f5805491d1e1b)
 * Update deps and base Docker image [852755d](852755d47d78743b827f53bcf1a9b32f544bd450)
 * Revert &quot;Merge branch &#39;feature/geotools-update&#39;&quot; [edd452f](edd452f1ed3b002d3b4794577db8a86f82b07d16)
