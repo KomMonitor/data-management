@@ -66,7 +66,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
     public boolean checkPermissions(RestrictedEntity entity, PermissionLevelType neededLevel) {
         Set<PermissionEntity> permissionEntities = entity.getPermissions();
 
-        // Entity is public
+        // For VIEWER access (needed level) it is sufficient that the Entity is public
         if (neededLevel.equals(PermissionLevelType.VIEWER) && (entity.isPublic() != null && entity.isPublic())) {
             return true;
         }
@@ -81,6 +81,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
             return false;
         }
 
+        // Check ownership
         if (entity.getOwner() != null) {
             // User is in owning group and has all permissions
             if (groups.stream().anyMatch(group -> entity.getOwner().getName().equals(group.getName()))) {
@@ -92,7 +93,9 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
             }
         }
 
-        // For non-owning groups, check resource permissions
+        // For non-owning groups, check resource permissions.
+        // Note: CREATOR access is not possible for non-owning groups, because there is no CREATOR permission
+        // on resources. Thus, the following check will fail in all cases where needed level is 'CREATOR'
         Set<Pair<OrganizationalUnitEntity, PermissionLevelType>> permissions = permissionEntities.stream()
                 .map(e -> Pair.of(e.getOrganizationalUnit(), e.getPermissionLevel()))
                 .collect(Collectors.toSet());
