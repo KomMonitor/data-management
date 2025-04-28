@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
-import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.api.data.DataStore;
+import org.geotools.api.data.DataStoreFinder;
+import org.geotools.api.data.SimpleFeatureSource;
 import org.springframework.core.env.Environment;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
@@ -67,7 +67,7 @@ public class DatabaseHelperUtil {
 
 	}
 
-	public static String createUniqueTableNameForResourceType(ResourceTypeEnum resourceType, DataStore dataStore,  String indicator_value_suffix)
+	public static String createUniqueTableNameForResourceType(ResourceTypeEnum resourceType, DataStore dataStore, String indicator_value_suffix)
 			throws IOException {
 		int numberSuffix = 0;
 		String resourceTypeName = resourceType.name();

@@ -61,6 +61,10 @@ public class UserInfoEntity {
         this.georesourceFavourites = georesourceFavourites;
     }
 
+    public void removeGeoresourceFavourite(MetadataGeoresourcesEntity entity) {
+        this.georesourceFavourites.remove(entity);
+    }
+
     public Collection<MetadataIndicatorsEntity> getIndicatorFavourites() {
         return indicatorFavourites;
     }
@@ -69,11 +73,19 @@ public class UserInfoEntity {
         this.indicatorFavourites = indicatorFavourites;
     }
 
+    public void removeIndicatorFavourite(MetadataIndicatorsEntity entity) {
+        this.indicatorFavourites.remove(entity);
+    }
+
     public Collection<TopicsEntity> getTopicFavourites() {
         return topicFavourites;
     }
 
     public void setTopicFavourites(Collection<TopicsEntity> topicFavourites) {
         this.topicFavourites = topicFavourites;
+    }
+
+    public void removeTopicFavourite(TopicsEntity entity) {
+        this.topicFavourites.remove(entity);
     }
 }

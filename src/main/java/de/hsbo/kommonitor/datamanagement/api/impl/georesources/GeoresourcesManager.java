@@ -1,6 +1,29 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.SortedMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import jakarta.transaction.Transactional;
+
+import de.hsbo.kommonitor.datamanagement.model.*;
+import org.geotools.filter.text.cql2.CQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
@@ -16,37 +39,19 @@ import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebSe
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
-import de.hsbo.kommonitor.datamanagement.model.*;
 import de.hsbo.kommonitor.datamanagement.msg.MessageResolver;
-import jakarta.transaction.Transactional;
-import org.geotools.filter.text.cql2.CQLException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Transactional
 @Repository
 @Component
 public class GeoresourcesManager {
 
-	private static Logger logger = LoggerFactory.getLogger(GeoresourcesManager.class);
+	private static final Logger LOG = LoggerFactory.getLogger(GeoresourcesManager.class);
 
 	private static final String MSG_GEORESOURCE_EXISTS_ERROR = "georesource-exists-error";
 	/**
 	 *
 	 */
-	// @PersistenceContext
-	// EntityManager em;
-
 	@Autowired
 	GeoresourcesMetadataRepository georesourcesMetadataRepo;
 
@@ -74,7 +79,7 @@ public class GeoresourcesManager {
 		boolean publishedAsService = false;
 		try {
 			String datasetName = featureData.getDatasetName();
-			logger.info("Trying to persist georesource with name '{}'", datasetName);
+			LOG.info("Trying to persist georesource with name '{}'", datasetName);
 
 			/*
 			 * analyse input type
@@ -90,7 +95,7 @@ public class GeoresourcesManager {
 
 			if (georesourcesMetadataRepo.existsByDatasetName(datasetName)) {
 				MetadataGeoresourcesEntity existingGeoresource = georesourcesMetadataRepo.findByDatasetName(datasetName);
-				logger.error(
+                LOG.error(
 						"The georesource metadataset with datasetName '{}' already exists. Thus aborting add georesource request.",
 						datasetName);
 				String errMsg = messageResolver.getMessage(MSG_GEORESOURCE_EXISTS_ERROR);
@@ -117,31 +122,28 @@ public class GeoresourcesManager {
 			/*
 			 * remove partially created resources and thrwo error
 			 */
-			logger.error("Error while creating georesource. Error message: " + e.getMessage());
-			e.printStackTrace();
+			LOG.error("Error while creating georesource.", e);
 
-			logger.info("Deleting partially created resources");
+			LOG.info("Deleting partially created resources");
 
 			try {
-				logger.info("Delete metadata entry if exists for id '{}'" + metadataId);
+				LOG.info("Delete metadata entry if exists for id '{}'", metadataId);
 				if (metadataId != null) {
 					if (georesourcesMetadataRepo.existsByDatasetId(metadataId))
 						georesourcesMetadataRepo.deleteByDatasetId(metadataId);
 				}
 
-				logger.info("Delete feature table if exists for tableName '{}'" + dbTableName);
+				LOG.info("Delete feature table if exists for tableName '{}'", dbTableName);
 				if (dbTableName != null) {
 					SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.GEORESOURCE, dbTableName);
-					;
 				}
 
-				logger.info("Unpublish OGC services if exists");
+				LOG.info("Unpublish OGC services if exists");
 				if (publishedAsService) {
 					ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.GEORESOURCE);
 				}
 			} catch (Exception e2) {
-				logger.error("Error while deleting partially created georesource. Error message: " + e.getMessage());
-				e.printStackTrace();
+				LOG.error("Error while deleting partially created georesource.", e2);
 				throw e;
 			}
 			throw e;
@@ -187,7 +189,7 @@ public class GeoresourcesManager {
 		 *
 		 * and update metadata entry with the name of that table
 		 */
-		logger.info("Trying to create unique table for georesource features.");
+		LOG.info("Trying to create unique table for georesource features.");
 
 		/*
 		 * PERIOD OF VALIDITY: all features will be enriched with this global setting
@@ -200,7 +202,7 @@ public class GeoresourcesManager {
 		String dbTableName = SpatialFeatureDatabaseHandler.writeGeoJSONFeaturesToDatabase(ResourceTypeEnum.GEORESOURCE,
 				geoJsonString, periodOfValidity, metadataId);
 
-		logger.info("Completed creation of georesource feature table corresponding to datasetId {}. Table name is {}.",
+		LOG.info("Completed creation of georesource feature table corresponding to datasetId {}. Table name is {}.",
 				metadataId, dbTableName);
 
 		updateMetadataWithAssociatedFeatureTable(metadataId, dbTableName);
@@ -209,7 +211,7 @@ public class GeoresourcesManager {
 	}
 
 	private void updateMetadataWithAssociatedFeatureTable(String metadataId, String dbTableName) {
-		logger.info(
+		LOG.info(
 				"Updating georesource metadataset with datasetId {}. set dbTableName of associated feature table with name {}.",
 				metadataId, dbTableName);
 
@@ -219,7 +221,7 @@ public class GeoresourcesManager {
 
 		georesourcesMetadataRepo.saveAndFlush(metadataset);
 
-		logger.info("Updating successful");
+		LOG.info("Updating successful");
 
 	}
 
@@ -229,7 +231,7 @@ public class GeoresourcesManager {
 		 *
 		 * persist in db
 		 */
-		logger.info("Trying to add georesource metadata entry.");
+		LOG.info("Trying to add georesource metadata entry.");
 
 		MetadataGeoresourcesEntity entity = new MetadataGeoresourcesEntity();
 
@@ -281,14 +283,14 @@ public class GeoresourcesManager {
 
 		// persist in db
 		georesourcesMetadataRepo.saveAndFlush(entity);
-		logger.info("Completed to add georesource metadata entry for georesource dataset with id {}.",
+		LOG.info("Completed to add georesource metadata entry for georesource dataset with id {}.",
 				entity.getDatasetId());
 
 		return entity;
 	}
 
 	public boolean deleteAllGeoresourceFeaturesById(String georesourceId) throws Exception {
-		logger.info("Trying to delete all georesource features for dataset with datasetId '{}'", georesourceId);
+		LOG.info("Trying to delete all georesource features for dataset with datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 
 			MetadataGeoresourcesEntity georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
@@ -314,7 +316,7 @@ public class GeoresourcesManager {
 
 			return true;
 		} else {
-			logger.error(
+			LOG.error(
 					"No georesource dataset with datasetName '{}' was found in database. Delete request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -364,25 +366,21 @@ public class GeoresourcesManager {
 	}
 
 	public boolean deleteGeoresourceDatasetById(String georesourceId) throws Exception {
-		logger.info("Trying to delete georesource dataset with datasetId '{}'", georesourceId);
+		LOG.info("Trying to delete georesource dataset with datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 
 			boolean success = true;
 
 			try {
-				boolean deletedReferences = indicatorsManager.deleteIndicatorReferencesByGeoresource(georesourceId);
+				indicatorsManager.deleteIndicatorReferencesByGeoresource(georesourceId);
 			} catch (Exception e) {
-				logger.error("Error while deleting indicator references for georesource with id {}", georesourceId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				LOG.error("Error while deleting indicator references for georesource with id {}", georesourceId, e);
 			}
 
 			try {
-				boolean deleteScriptsForGeoresource = scriptManager.deleteScriptsByGeoresourceId(georesourceId);
+				scriptManager.deleteScriptsByGeoresourceId(georesourceId);
 			} catch (Exception e) {
-				logger.error("Error while deleting scripts for georesource with id {}", georesourceId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				LOG.error("Error while deleting scripts for georesource with id {}", georesourceId, e);
 			}
 
 			MetadataGeoresourcesEntity georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
@@ -391,9 +389,7 @@ public class GeoresourcesManager {
 			try {
 				georesourceEntity = removeAnyLinkedRoles(georesourceEntity);
 			} catch (Exception e) {
-				logger.error("Error while deleting roles for georesource with id {}", georesourceId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				LOG.error("Error while deleting roles for georesource with id {}", georesourceId, e);
 			}
 			// now remove feature data and remaining
 
@@ -405,9 +401,16 @@ public class GeoresourcesManager {
 				 */
 				SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.GEORESOURCE, dbTableName);
 			} catch (Exception e) {
-				logger.error("Error while deleting feature table for georesource with id {}", georesourceId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				LOG.error("Error while deleting feature table for georesource with id {}", georesourceId, e);
+			}
+
+			// remove user favorites
+			try {
+				MetadataGeoresourcesEntity georesourceMetadata = georesourcesMetadataRepo.findByDatasetId(georesourceId);
+				georesourceMetadata.getUserFavorites().forEach(u -> u.removeGeoresourceFavourite(georesourceMetadata));
+				georesourcesMetadataRepo.saveAndFlush(georesourceMetadata);
+			} catch (Exception e) {
+				LOG.error("Error while deleting user favorites for georesource", e);
 			}
 
 			try {
@@ -416,9 +419,7 @@ public class GeoresourcesManager {
 				 */
 				georesourcesMetadataRepo.deleteByDatasetId(georesourceId);
 			} catch (Exception e) {
-				logger.error("Error while deleting metadata entry for georesource with id {}", georesourceId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				LOG.error("Error while deleting metadata entry for georesource with id {}", georesourceId, e);
 				success = false;
 			}
 
@@ -426,14 +427,13 @@ public class GeoresourcesManager {
 				// handle OGC web service
 				ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.GEORESOURCE);
 			} catch (Exception e) {
-				logger.error("Error while unbublishing OGC service layer for georesource with id {}", georesourceId);
-				logger.error("Error was: {}", e.getMessage());
-				e.printStackTrace();
+				LOG.error("Error while unbublishing OGC service layer for georesource with id {}", georesourceId, e);
+
 			}
 
 			return success;
 		} else {
-			logger.error(
+			LOG.error(
 					"No georesource dataset with datasetName '{}' was found in database. Delete request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -457,7 +457,7 @@ public class GeoresourcesManager {
 
 	public GeoresourceOverviewType getGeoresourceByDatasetId(String georesourceId, AuthInfoProvider authInfoProvider)
 			throws Exception {
-		logger.info("Retrieving georesources metadata for datasetId '{}'", georesourceId);
+		LOG.info("Retrieving georesources metadata for datasetId '{}'", georesourceId);
 
 		MetadataGeoresourcesEntity georesourceMetadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
@@ -472,14 +472,12 @@ public class GeoresourcesManager {
             try {
                 georesourceMetadataEntity.setUserPermissions(authInfoProvider.getPermissions(georesourceMetadataEntity));
             } catch (NoSuchElementException ex) {
-                logger.error("No permissions found for georesource '{}'", georesourceMetadataEntity.getDatasetId());
+                LOG.error("No permissions found for georesource '{}'", georesourceMetadataEntity.getDatasetId());
             }
 
         }
-        GeoresourceOverviewType swaggerGeoresourceMetadata = GeoresourcesMapper
-                .mapToSwaggerGeoresource(georesourceMetadataEntity);
 
-		return swaggerGeoresourceMetadata;
+        return GeoresourcesMapper.mapToSwaggerGeoresource(georesourceMetadataEntity);
 	}
 
 	public String getAllGeoresourceFeatures(String georesourceId, String simplifyGeometries) throws Exception {
@@ -504,11 +502,10 @@ public class GeoresourcesManager {
 
 			String dbTableName = metadataEntity.getDbTableName();
 
-			String geoJson = SpatialFeatureDatabaseHandler.getAllFeatures(dbTableName, simplifyGeometries);
-			return geoJson;
+            return SpatialFeatureDatabaseHandler.getAllFeatures(dbTableName, simplifyGeometries);
 
         } else {
-            logger.error(
+            LOG.error(
                     "No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
                     georesourceId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -538,10 +535,9 @@ public class GeoresourcesManager {
 
 			String dbTableName = metadataEntity.getDbTableName();
 
-			String json = SpatialFeatureDatabaseHandler.getAllFeatures_withoutGeometry(dbTableName);
-			return json;
+            return SpatialFeatureDatabaseHandler.getAllFeatures_withoutGeometry(dbTableName);
 		} else {
-			logger.error(
+			LOG.error(
 					"No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -559,7 +555,7 @@ public class GeoresourcesManager {
         Calendar calender = Calendar.getInstance();
         calender.set(year.intValue(), month.intValueExact() - 1, day.intValue());
         java.util.Date date = calender.getTime();
-        logger.info("Retrieving valid georesource features from Dataset with id '{}' for date '{}'", georesourceId,
+        LOG.info("Retrieving valid georesource features from Dataset with id '{}' for date '{}'", georesourceId,
                 date);
 
         if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
@@ -577,11 +573,10 @@ public class GeoresourcesManager {
 
             String dbTableName = metadataEntity.getDbTableName();
 
-            String geoJson = SpatialFeatureDatabaseHandler.getValidFeatures(date, dbTableName, simplifyGeometries);
-            return geoJson;
+            return SpatialFeatureDatabaseHandler.getValidFeatures(date, dbTableName, simplifyGeometries);
 
         } else {
-            logger.error(
+            LOG.error(
                     "No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
                     georesourceId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -594,7 +589,7 @@ public class GeoresourcesManager {
     	Calendar calender = Calendar.getInstance();
         calender.set(year.intValue(), month.intValueExact() - 1, day.intValue());
         java.util.Date date = calender.getTime();
-        logger.info("Retrieving valid georesource features from Dataset with id '{}' for date '{}'", georesourceId,
+        LOG.info("Retrieving valid georesource features from Dataset with id '{}' for date '{}'", georesourceId,
                 date);
 
         if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
@@ -612,11 +607,10 @@ public class GeoresourcesManager {
 
             String dbTableName = metadataEntity.getDbTableName();
 
-            String json = SpatialFeatureDatabaseHandler.getValidFeatures_withoutGeometry(date, dbTableName);
-            return json;
+            return SpatialFeatureDatabaseHandler.getValidFeatures_withoutGeometry(date, dbTableName);
 
         } else {
-            logger.error(
+            LOG.error(
                     "No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
                     georesourceId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -630,7 +624,7 @@ public class GeoresourcesManager {
 	}
 
 	public String getJsonSchemaForDatasetName(String georesourceId) throws Exception {
-		logger.info("Retrieving georesource jsonSchema for datasetId '{}'", georesourceId);
+		LOG.info("Retrieving georesource jsonSchema for datasetId '{}'", georesourceId);
 
 		MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
@@ -643,7 +637,7 @@ public class GeoresourcesManager {
 
 	public String getJsonSchemaForDatasetName(String georesourceId, AuthInfoProvider authInfoProvider)
 			throws Exception {
-		logger.info("Retrieving georesource jsonSchema for datasetId '{}'", georesourceId);
+		LOG.info("Retrieving georesource jsonSchema for datasetId '{}'", georesourceId);
 
 		MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
@@ -656,14 +650,14 @@ public class GeoresourcesManager {
 
 	private String retrieveJsonSchema_georesource(String georesourceId, MetadataGeoresourcesEntity metadataEntity)
 			throws Exception {
-		String jsonSchema = metadataEntity.getJsonSchema();
+//		String jsonSchema = metadataEntity.getJsonSchema();
 //		if(jsonSchema == null) {
 //        	jsonSchema = parseSchemaFromGeoresource(georesourceId);
 //        	metadataEntity.setJsonSchema(jsonSchema);
 //        	georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 //        }
 
-		jsonSchema = parseSchemaFromGeoresource(georesourceId);
+		String jsonSchema = parseSchemaFromGeoresource(georesourceId);
 		metadataEntity.setJsonSchema(jsonSchema);
 		georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 
@@ -678,8 +672,6 @@ public class GeoresourcesManager {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
         }
 
-        SortedMap<String, String> elements = new TreeMap();
-        
         String dbTableName = metadataEntity.getDbTableName();
 
 		String allGeoresourceFeatures = SpatialFeatureDatabaseHandler.getAllFeatures(dbTableName, SimplifyGeometriesEnum.ORIGINAL.toString());
@@ -689,19 +681,11 @@ public class GeoresourcesManager {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 
-		try {
-			String json = objectMapper.writeValueAsString(properties);
-			System.out.println(json);
-
-			return json;
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			throw e;
-		}
+        return objectMapper.writeValueAsString(properties);
 	}
 
 	public String updateFeatures(GeoresourcePUTInputType featureData, String georesourceId) throws Exception {
-		logger.info("Trying to update georesource features for datasetId '{}'", georesourceId);
+		LOG.info("Trying to update georesource features for datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 			String datasetName = metadataEntity.getDatasetName();
@@ -726,7 +710,7 @@ public class GeoresourcesManager {
 
 			return georesourceId;
 		} else {
-			logger.error(
+			LOG.error(
 					"No georesource dataset with datasetId '{}' was found in database. Update request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -735,7 +719,7 @@ public class GeoresourcesManager {
 	}
 
 	public String updateMetadata(GeoresourcePATCHInputType metadata, String georesourceId) throws Exception {
-		logger.info("Trying to update georesource metadata for datasetId '{}'", georesourceId);
+		LOG.info("Trying to update georesource metadata for datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
@@ -747,7 +731,7 @@ public class GeoresourcesManager {
 			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 			return georesourceId;
 		} else {
-			logger.error(
+			LOG.error(
 					"No georesource dataset with datasetId '{}' was found in database. Update request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -756,7 +740,7 @@ public class GeoresourcesManager {
 	}
 
 	public String updatePermissions(PermissionLevelInputType permissionLevelInput, String georesourceId) throws Exception {
-		logger.info("Trying to update georesource permissions for datasetId '{}'", georesourceId);
+		LOG.info("Trying to update georesource permissions for datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
@@ -766,7 +750,7 @@ public class GeoresourcesManager {
 			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 			return georesourceId;
 		} else {
-			logger.error(
+            LOG.error(
 					"No georesource dataset with datasetId '{}' was found in database. Update request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -775,7 +759,7 @@ public class GeoresourcesManager {
 	}
 
 	public String updateOwnership(OwnerInputType owner, String georesourceId) throws Exception {
-		logger.info("Trying to update georesource ownership for datasetId '{}'", georesourceId);
+		LOG.info("Trying to update georesource ownership for datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 			metadataEntity.setOwner(getOrganizationalUnitEntity(owner.getOwnerId()));
@@ -783,7 +767,7 @@ public class GeoresourcesManager {
 			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 			return georesourceId;
 		} else {
-			logger.error("No spatialUnit dataset with datasetId '{}' was found in database. Update request has no effect.", georesourceId);
+			LOG.error("No spatialUnit dataset with datasetId '{}' was found in database. Update request has no effect.", georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to update spatialUnit metadata, but no dataset existes with datasetId " + georesourceId);
 		}
@@ -802,9 +786,7 @@ public class GeoresourcesManager {
 		entity.setLiterature(genericMetadata.getLiterature());
 
 		java.util.Date lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
-		if (lastUpdate == null)
-			lastUpdate = java.util.Calendar.getInstance().getTime();
-		entity.setLastUpdate(lastUpdate);
+        entity.setLastUpdate(lastUpdate);
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 		entity.setPOI(metadata.getIsPOI());
@@ -835,7 +817,7 @@ public class GeoresourcesManager {
 		/*
 		 * topic is an optional parameter and thus might be null! then get all datasets!
 		 */
-		logger.info("Retrieving all public georesources metadata from db");
+		LOG.info("Retrieving all public georesources metadata from db");
 
         List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities = georesourcesMetadataRepo.findAll().stream()
                 .filter(MetadataGeoresourcesEntity::isPublic)
@@ -845,7 +827,7 @@ public class GeoresourcesManager {
 	}
 
 	public List<GeoresourceOverviewType> getAllGeoresourcesMetadata(AuthInfoProvider provider) throws Exception {
-		logger.info("Retrieving secured georesources metadata from db");
+		LOG.info("Retrieving secured georesources metadata from db");
 
 		List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities =  fetchGeoresourceMetadataEntities(provider);
 
@@ -853,7 +835,7 @@ public class GeoresourcesManager {
 	}
 
 	public List<GeoresourceOverviewType> filterGeoresourcesMetadata(AuthInfoProvider provider, ResourceFilterType resourceFilterType) throws Exception {
-		logger.info("Retrieving filtered georesources metadata from db");
+		LOG.info("Retrieving filtered georesources metadata from db");
 
 		List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities =  fetchGeoresourceMetadataEntities(provider);
 
@@ -872,7 +854,7 @@ public class GeoresourcesManager {
 	}
 
 	public List<GeoresourceOverviewType> filterGeoresourcesMetadata(ResourceFilterType resourceFilterType) throws Exception {
-		logger.info("Retrieving all public georesources metadata from db");
+		LOG.info("Retrieving all public georesources metadata from db");
 
 		List<MetadataGeoresourcesEntity> georesourcesMetadataEntities = georesourcesMetadataRepo.findAll().stream()
 				.filter(MetadataGeoresourcesEntity::isPublic)
@@ -905,7 +887,7 @@ public class GeoresourcesManager {
 			try {
 				g.setUserPermissions(provider.getPermissions(g));
 			} catch(NoSuchElementException ex) {
-				logger.error("No permissions found for georesource '{}'. Entity will be removed from resulting list.",
+				LOG.error("No permissions found for georesource '{}'. Entity will be removed from resulting list.",
 						g.getDatasetId());
 				iter.remove();
 			}
@@ -925,7 +907,7 @@ public class GeoresourcesManager {
 	}
 
     public List<PermissionLevelType> getGeoresourcePermissionsByDatasetId(String georesourceId, AuthInfoProvider provider) throws Exception {
-        logger.info("Retrieving georesources permissions for datasetId '{}'", georesourceId);
+        LOG.info("Retrieving georesources permissions for datasetId '{}'", georesourceId);
 
         MetadataGeoresourcesEntity georesourceMetadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
@@ -933,8 +915,7 @@ public class GeoresourcesManager {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
         }
 
-        List<PermissionLevelType> permissions = provider.getPermissions(georesourceMetadataEntity);
-        return permissions;
+        return provider.getPermissions(georesourceMetadataEntity);
     }
 
 //	private boolean hasAllowedRole(AuthInfoProvider authInfoProvider,
@@ -971,12 +952,11 @@ public class GeoresourcesManager {
 
 			String dbTableName = metadataEntity.getDbTableName();
 
-			String geoJson = SpatialFeatureDatabaseHandler.getSingleFeatureRecordByRecordId(dbTableName, featureId,
-					featureRecordId, simplifyGeometries);
-			return geoJson;
+            return SpatialFeatureDatabaseHandler.getSingleFeatureRecordByRecordId(dbTableName, featureId,
+                    featureRecordId, simplifyGeometries);
 
 		} else {
-			logger.error(
+			LOG.error(
 					"No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -1001,12 +981,11 @@ public class GeoresourcesManager {
 
 			String dbTableName = metadataEntity.getDbTableName();
 
-			String geoJson = SpatialFeatureDatabaseHandler.getSingleFeatureRecordsByFeatureId(dbTableName, featureId,
-					simplifyGeometries);
-			return geoJson;
+            return SpatialFeatureDatabaseHandler.getSingleFeatureRecordsByFeatureId(dbTableName, featureId,
+                    simplifyGeometries);
 
 		} else {
-			logger.error(
+			LOG.error(
 					"No georesource dataset with datasetName '{}' was found in database. Get request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -1015,7 +994,7 @@ public class GeoresourcesManager {
 	}
 
 	public boolean deleteSingleGeoresourceFeatureRecordsByFeatureId(String georesourceId, String featureId) throws Exception {
-		logger.info("Trying to delete single georesource feature records for dataset with datasetId '{}' and featureId '{}'", georesourceId, featureId);
+		LOG.info("Trying to delete single georesource feature records for dataset with datasetId '{}' and featureId '{}'", georesourceId, featureId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 
 			MetadataGeoresourcesEntity georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
@@ -1041,7 +1020,7 @@ public class GeoresourcesManager {
 
 			return true;
 		} else {
-			logger.error(
+			LOG.error(
 					"No georesource dataset with datasetName '{}' was found in database. Delete request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -1051,7 +1030,7 @@ public class GeoresourcesManager {
 
 	public boolean deleteSingleGeoresourceFeatureRecordByRecordId(String georesourceId, String featureId,
 			String featureRecordId) throws Exception {
-		logger.info("Trying to delete single georesource feature record for dataset with datasetId '{}' and featureId '{}' and recordId '{}'", georesourceId, featureId, featureRecordId);
+		LOG.info("Trying to delete single georesource feature record for dataset with datasetId '{}' and featureId '{}' and recordId '{}'", georesourceId, featureId, featureRecordId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 
 			MetadataGeoresourcesEntity georesourceEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
@@ -1077,7 +1056,7 @@ public class GeoresourcesManager {
 
 			return true;
 		} else {
-			logger.error(
+			LOG.error(
 					"No georesource dataset with datasetName '{}' was found in database. Delete request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
@@ -1086,8 +1065,8 @@ public class GeoresourcesManager {
 	}
 
 	public String updateFeatureRecordByRecordId(String georesourceFeatureRecordData, String georesourceId,
-			String featureId, String featureRecordId) throws IOException, Exception {
-		logger.info("Trying to update georesource single feature record for datasetId '{}' and featureId '{}' and recordId '{}'", georesourceId, featureId, featureRecordId);
+			String featureId, String featureRecordId) throws Exception {
+		LOG.info("Trying to update georesource single feature record for datasetId '{}' and featureId '{}' and recordId '{}'", georesourceId, featureId, featureRecordId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 			String datasetName = metadataEntity.getDatasetName();
@@ -1112,7 +1091,7 @@ public class GeoresourcesManager {
 
 			return georesourceId;
 		} else {
-			logger.error(
+			LOG.error(
 					"No georesource dataset with datasetId '{}' was found in database. Update request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),

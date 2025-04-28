@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -144,6 +146,17 @@ public class MetadataGeoresourcesEntity extends AbstractMetadata implements Rest
 
 	public void setPublic(boolean aPublic) {
 		isPublic = aPublic;
+	}
+
+	@ManyToMany(mappedBy = "georesourceFavourites")
+	private Set<UserInfoEntity> userFavorites = new HashSet<>();
+
+	public Set<UserInfoEntity> getUserFavorites() {
+		return userFavorites;
+	}
+
+	public void setUserFavorites(Set<UserInfoEntity> userFavorites) {
+		this.userFavorites = userFavorites;
 	}
 
 	public boolean isLOI() {

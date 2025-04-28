@@ -548,7 +548,7 @@ public class SpatialUnitsManager {
         logger.info("Trying to update spatialUnit permissions for datasetId '{}'", spatialUnitId);
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
-            
+
             metadataEntity.setPermissions(getPermissionEntities(permissionLevels.getPermissions()));
             metadataEntity.setPublic(permissionLevels.getIsPublic());
 
@@ -616,7 +616,7 @@ public class SpatialUnitsManager {
             // update datasetName
             entity.setDatasetName(newName);
             updateSpatialUnitHierarchy_onUpdate(entity.getDatasetId(), oldName, newName);
-            indicatorsManager.updateJoinedSpatialUnitName(entity.getDatasetId(), oldName, newName);
+            indicatorsManager.updateJoinedSpatialUnitName(entity.getDatasetId(), newName);
         }
 
         /*
@@ -936,8 +936,7 @@ public class SpatialUnitsManager {
             /*
              * call DB tool to delete features
              */
-            SpatialFeatureDatabaseHandler.deleteSingleFeatureRecordForRecordId(ResourceTypeEnum.SPATIAL_UNIT, dbTableName, featureId, featureRecordId);
-            ;
+            SpatialFeatureDatabaseHandler.deleteSingleFeatureRecordForRecordId(ResourceTypeEnum.SPATIAL_UNIT, dbTableName, featureId, featureRecordId);;
 
             // set lastUpdate in metadata in case of successful update
             metadataEntity.setLastUpdate(java.util.Calendar.getInstance().getTime());

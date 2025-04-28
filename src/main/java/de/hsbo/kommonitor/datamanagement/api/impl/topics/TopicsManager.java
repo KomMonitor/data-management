@@ -29,7 +29,7 @@ public class TopicsManager {
 	/**
 	*
 	*/
-	private static Logger logger = LoggerFactory.getLogger(TopicsManager.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TopicsManager.class);
 
 	/**
 	*
@@ -45,7 +45,7 @@ public class TopicsManager {
 		TopicResourceEnum topicResource = topicData.getTopicResource();
 		TopicTypeEnum topicType = topicData.getTopicType();
 		if(topicsRepo.existsByTopicNameAndTopicTypeAndTopicResource(topicName, topicType, topicResource)){
-			logger.error("The topic with topicName '{}' and topicType '{}' and topicResource '{}' already exists. Thus aborting add topic request.", topicName, topicType, topicResource);
+			LOG.error("The topic with topicName '{}' and topicType '{}' and topicResource '{}' already exists. Thus aborting add topic request.", topicName, topicType, topicResource);
 			throw new Exception("Topic with the combination of topicType, topicResource and topicName already exists. Aborting add topic request.");
 		}
 		
@@ -58,7 +58,7 @@ public class TopicsManager {
 		return getTopicById(topic.getTopicId());
 	}
 
-	private TopicsEntity handleSubTopics(TopicsEntity topicEntity, List<TopicInputType> subTopics) throws Exception {
+	private TopicsEntity handleSubTopics(TopicsEntity topicEntity, List<TopicInputType> subTopics) {
 		/*
 		 * for each subtopic we must check if it already exists as topic entity
 		 * 
@@ -76,11 +76,11 @@ public class TopicsManager {
 		Collection<TopicsEntity> currentSubTopics = topicEntity.getSubTopics();
 		
 		
-		topicEntity.setSubTopics(new ArrayList<TopicsEntity>());
+		topicEntity.setSubTopics(new ArrayList<>());
 		
 		for (TopicInputType subTopic : subTopics) {
 			
-			TopicsEntity subTopicEntity = null;
+			TopicsEntity subTopicEntity;
 			
 //			if (! topicsRepo.existsByTopicName(subTopic.getTopicName())){
 //				subTopicEntity = tryPersistTopicWithoutSubtopics(subTopic);
@@ -123,11 +123,11 @@ public class TopicsManager {
 		return false;
 	}
 
-	private TopicsEntity tryPersistTopicWithoutSubtopics(TopicInputType topicData) throws Exception {
+	private TopicsEntity tryPersistTopicWithoutSubtopics(TopicInputType topicData) {
 		String topicName = topicData.getTopicName();
 		TopicResourceEnum topicResource = topicData.getTopicResource();
 		TopicTypeEnum topicType = topicData.getTopicType();
-		logger.info("Trying to persist topic with topicName '{}' and topicType '{}' and topicResource '{}'", topicName, topicType, topicResource);
+		LOG.info("Trying to persist topic with topicName '{}' and topicType '{}' and topicResource '{}'", topicName, topicType, topicResource);
 
 		/*
 		 * analyse input type
@@ -155,7 +155,7 @@ public class TopicsManager {
 	}
 
 	public List<TopicOverviewType> getTopics() {
-		logger.info("Retrieving all topics from db");
+		LOG.info("Retrieving all topics from db");
 		
 		// only return main topics as they include the sub topics in use!!!
 		// hence, do not show sub topics on first tier of returned JSON structure but only as subTopics of the respective main topics
@@ -168,16 +168,15 @@ public class TopicsManager {
 	}
 
 	public TopicOverviewType getTopicById(String topicId) {
-		logger.info("Retrieving topic for topicId '{}'", topicId);
+		LOG.info("Retrieving topic for topicId '{}'", topicId);
 		
 		TopicsEntity topicEntity = topicsRepo.findByTopicId(topicId);
-		TopicOverviewType topic = TopicsMapper.mapToSwaggerTopic(topicEntity);
-		
-		return topic;
+
+        return TopicsMapper.mapToSwaggerTopic(topicEntity);
 	}
 
 	public boolean deleteTopicById(String topicId) throws ResourceNotFoundException {
-		logger.info("Trying to delete topic with topicId '{}'", topicId);
+		LOG.info("Trying to delete topic with topicId '{}'", topicId);
 		
 		if (topicsRepo.existsByTopicId(topicId)){
 			TopicsEntity topic = topicsRepo.findByTopicId(topicId);
@@ -188,13 +187,24 @@ public class TopicsManager {
 				deleteSubTopicEntriesFromParentTopics(topicId);
 			}			
 			
-			deleteAllSubTopicsAndRelations(topic);					
-			
+			deleteAllSubTopicsAndRelations(topic);
+			deleteTopicFavourites(topic);
+
 			topicsRepo.delete(topic);
 			return true;
 		}else{
-			logger.error("No topic with id '{}' was found in database. Delete request has no effect.", topicId);
+			LOG.error("No topic with id '{}' was found in database. Delete request has no effect.", topicId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Tried to delete topic, but no topic existes with id " + topicId);
+		}
+	}
+
+	private void deleteTopicFavourites(TopicsEntity topic) {
+		// remove user favorites
+		try {
+			topic.getUserFavorites().forEach(u -> u.removeTopicFavourite(topic));
+			topicsRepo.saveAndFlush(topic);
+		} catch (Exception e) {
+			LOG.error("Error while deleting user favorites for topic", e);
 		}
 	}
 
@@ -207,7 +217,7 @@ public class TopicsManager {
 				
 				Collection<TopicsEntity> subTopics = topicsEntity.getSubTopics();
 				
-				for (Iterator i = subTopics.iterator(); i.hasNext();) {
+				for (Iterator<?> i = subTopics.iterator(); i.hasNext();) {
 					TopicsEntity nextSubTopic = (TopicsEntity)i.next();
 					if(nextSubTopic.getTopicId().equals(subTopicId)){
 					    i.remove();
@@ -227,7 +237,7 @@ public class TopicsManager {
 		Collection<TopicsEntity> subTopics = topic.getSubTopics();
 		
 		// delete subTopic relation
-		for (Iterator i = subTopics.iterator(); i.hasNext();) {
+		for (Iterator<?> i = subTopics.iterator(); i.hasNext();) {
 			TopicsEntity topicEntity = (TopicsEntity)i.next();
 			deleteAllSubTopicsAndRelations(topicEntity);
 			
@@ -243,7 +253,7 @@ public class TopicsManager {
 	}
 
 	public String updateTopic(TopicInputType topicData, String topicId) throws Exception {
-		logger.info("Trying to update topic with topicId '{}'", topicId);
+		LOG.info("Trying to update topic with topicId '{}'", topicId);
 		
 		if(topicsRepo.existsByTopicId(topicId)){
 			
@@ -272,7 +282,7 @@ public class TopicsManager {
 			return topic.getTopicId();
 		}
 		else{
-			logger.error("No topic with topicId '{}' was found. Thus aborting update topic request.", topicId);
+			LOG.error("No topic with topicId '{}' was found. Thus aborting update topic request.", topicId);
 			throw new ResourceNotFoundException(404, "No topic was found for specified topicId. Aborting update topic request.");
 		}		
 	}
