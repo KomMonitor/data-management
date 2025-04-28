@@ -1,8 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.auth.token;
 
 import org.keycloak.KeycloakPrincipal;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
@@ -20,11 +18,6 @@ public class TokenParserFactory {
     }
 
     public TokenParser<?> createTokenParser(Principal principal) {
-        if (principal instanceof KeycloakAuthenticationToken && Principal.class.isAssignableFrom(((KeycloakAuthenticationToken) principal).getPrincipal().getClass())) { //get real principal instance
-            KeycloakAuthenticationToken token = ((KeycloakAuthenticationToken) principal);
-            principal = (Principal) token.getPrincipal();
-        }
-
         if (principal instanceof KeycloakPrincipal) {
             return new KeycloakTokenParser();
         } else if (principal instanceof JwtAuthenticationToken) {

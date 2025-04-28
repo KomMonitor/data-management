@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedByRole;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.RolesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
 import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
