@@ -11,6 +11,9 @@
         </createTable>
     </changeSet>
     <changeSet author="kommonitor" id="kommonitor-5.1.0-2">
+        <addUniqueConstraint columnNames="userinfoid" constraintName="userinfoid_key" tableName="userinfo"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-3">
         <createTable tableName="georesources_favourites">
             <column name="user_id" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -20,7 +23,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="kommonitor" id="kommonitor-5.1.0-3">
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-4">
         <createTable tableName="indicators_favourites">
             <column name="user_id" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -30,7 +33,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="kommonitor" id="kommonitor-5.1.0-4">
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-5">
         <createTable tableName="topics_favourites">
             <column name="user_id" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -40,7 +43,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="kommonitor" id="kommonitor-5.1.0-5">
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-6">
         <addForeignKeyConstraint
                 baseColumnNames="user_id"
                 baseTableName="georesources_favourites"
@@ -53,7 +56,7 @@
                 referencedTableName="userinfo"
                 validate="true"/>
     </changeSet>
-    <changeSet author="kommonitor" id="kommonitor-5.1.0-6">
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-7">
         <addForeignKeyConstraint
                 baseColumnNames="dataset_id"
                 baseTableName="georesources_favourites"
@@ -66,7 +69,7 @@
                 referencedTableName="metadatageoresources"
                 validate="true"/>
     </changeSet>
-    <changeSet author="kommonitor" id="kommonitor-5.1.0-7">
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-8">
         <addForeignKeyConstraint
                 baseColumnNames="user_id"
                 baseTableName="indicators_favourites"
@@ -79,7 +82,7 @@
                 referencedTableName="userinfo"
                 validate="true"/>
     </changeSet>
-    <changeSet author="kommonitor" id="kommonitor-5.1.0-8">
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-9">
         <addForeignKeyConstraint
                 baseColumnNames="dataset_id"
                 baseTableName="indicators_favourites"
@@ -92,7 +95,7 @@
                 referencedTableName="metadataindicators"
                 validate="true"/>
     </changeSet>
-    <changeSet author="kommonitor" id="kommonitor-5.1.0-9">
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-10">
         <addForeignKeyConstraint
                 baseColumnNames="user_id"
                 baseTableName="topics_favourites"
@@ -105,7 +108,7 @@
                 referencedTableName="userinfo"
                 validate="true"/>
     </changeSet>
-    <changeSet author="kommonitor" id="kommonitor-5.1.0-10">
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-11">
         <addForeignKeyConstraint
                 baseColumnNames="topic_id"
                 baseTableName="topics_favourites"
@@ -118,7 +121,7 @@
                 referencedTableName="topics"
                 validate="true"/>
     </changeSet>
-    <changeSet author="kommonitor" id="kommonitor-5.1.0-11">
+    <changeSet author="kommonitor" id="kommonitor-5.1.0-12">
         <addColumn schemaName= "public" tableName="metadataindicators">
             <column name="precision" type="INTEGER"/>
         </addColumn>
