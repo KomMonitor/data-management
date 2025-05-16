@@ -1,6 +1,7 @@
 # Change Log
 
-## 4.1.5
+## 4.1.6
+* Fix filtering for subtopics [0511fea](0511fea57098e1ae1462539e3da25278e0101572)
 * Raise jackson-datatype-jts version [e45cfa2](e45cfa29e2d8cafff07dfdde8254c142f893dce9)
 * Adapt JTS Jackson module to latest LTS version [cd69520](cd695209e20bbc9d768227f9d6b274fa7adc470f)
 * Fix JTS imports [c6953f4](c6953f4f7b0428071af4dfa12f0e56b5b8329da2)
