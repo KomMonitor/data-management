@@ -1,6 +1,7 @@
 # Change Log
 
-## 5.1.0-beta.1
+## 5.1.0
+* Fix filtering for subtopics [d000603](d0006031b7b15970a0103905e651b159931308b5)
 * Add userinfoid unique constraint [eea90a9](eea90a94e9d982fbbaef1083c053617ea9ddf296)
 * Fix compiation issues [d6675f4](d6675f4391765912d08b9fa48cf7772959bbe05a)
 * Merge branch &#39;master&#39; into feature/v5/filters-and-favourites [7fa1aa0](7fa1aa06fd1dade78e992148d028ec00d1204a1c)
