@@ -22,6 +22,8 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.geotools.api.data.DataStore;
@@ -77,6 +79,9 @@ public class IndicatorsManager {
 
     @Autowired
     private IndicatorSpatialUnitsRepository indicatorsSpatialUnitsRepo;
+
+    @Autowired
+    private TopicsRepository topicsRepository;
 
     @Autowired
     private PermissionRepository permissionRepository;
@@ -605,13 +610,14 @@ public class IndicatorsManager {
 
     public List<IndicatorOverviewType> filterIndicatorsMetadata(AuthInfoProvider provider, ResourceFilterType resourceFilterType) throws Exception {
         List<MetadataIndicatorsEntity> indicatorsMeatadataEntities = fetchIndicatorMetadataEntities(provider);
+        List<String> topicFilterList = gatherTopics(resourceFilterType.getTopicIds());
 
         List<MetadataIndicatorsEntity> idFilteredList = indicatorsMeatadataEntities.stream()
                 .filter(i -> resourceFilterType.getIds().stream()
                         .anyMatch(r -> r.equals(i.getDatasetId()))).toList();
 
         List<MetadataIndicatorsEntity> topicFilteredList = indicatorsMeatadataEntities.stream()
-                .filter(i -> resourceFilterType.getTopicIds().stream()
+                .filter(i -> topicFilterList.stream()
                         .anyMatch(r -> r.equals(i.getTopicReference()))).toList();
 
         List<MetadataIndicatorsEntity> filterResults = Stream.concat(idFilteredList.stream(), topicFilteredList.stream()).distinct().toList();
@@ -621,6 +627,16 @@ public class IndicatorsManager {
         swaggerIndicatorsMetadata.sort(Comparator.comparing(IndicatorOverviewType::getIndicatorName));
 
         return swaggerIndicatorsMetadata;
+    }
+
+    private List<String> gatherTopics(List<String> georesourceIds) {
+        List<String> result = new ArrayList<>();
+        georesourceIds.forEach(t -> {
+            TopicsEntity topic = topicsRepository.findByTopicId(t);
+            result.add(t);
+            result.addAll(topic.getSubTopics().stream().map(TopicsEntity::getTopicId).toList());
+        });
+        return result.stream().distinct().toList();
     }
 
     private List<MetadataIndicatorsEntity> fetchIndicatorMetadataEntities(AuthInfoProvider provider) {
