@@ -13,6 +13,8 @@ import java.util.SortedMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
 import jakarta.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -55,6 +57,9 @@ public class GeoresourcesManager {
 
 	@Autowired
 	private RolesRepository rolesRepository;
+
+	@Autowired
+	private TopicsRepository topicsRepository;
 
 	@Autowired
 	OGCWebServiceManager ogcServiceManager;
@@ -794,19 +799,30 @@ public class GeoresourcesManager {
 		LOG.info("Retrieving filtered georesources metadata from db");
 
 		List<MetadataGeoresourcesEntity> georesourcesMeatadataEntities =  fetchGeoresourceMetadataEntities(provider);
+		List<String> topicFilterList = gatherTopics(provider, resourceFilterType.getTopicIds());
 
 		List<MetadataGeoresourcesEntity> idFilteredList = georesourcesMeatadataEntities.stream()
 				.filter(g -> resourceFilterType.getIds().stream()
 						.anyMatch(r -> r.equals(g.getDatasetId()))).toList();
 
 		List<MetadataGeoresourcesEntity> topicFilteredList = georesourcesMeatadataEntities.stream()
-				.filter(g -> resourceFilterType.getTopicIds().stream()
+				.filter(g -> topicFilterList.stream()
 						.anyMatch(r -> r.equals(g.getTopicReference()))).toList();
 
 		List<MetadataGeoresourcesEntity> filterResults = Stream.concat(idFilteredList.stream(), topicFilteredList.stream()).distinct().toList();
 
 		return generateSwaggerGeoresourcesMetadata(filterResults);
 
+	}
+
+	private List<String> gatherTopics(AuthInfoProvider<?> provider, List<String> georesourceIds) {
+		List<String> result = new ArrayList<>();
+		georesourceIds.forEach(t -> {
+			TopicsEntity topic = topicsRepository.findByTopicId(t);
+			result.add(t);
+			result.addAll(topic.getSubTopics().stream().map(TopicsEntity::getTopicId).toList());
+		});
+		return result.stream().distinct().toList();
 	}
 
 	public List<GeoresourceOverviewType> filterGeoresourcesMetadata(ResourceFilterType resourceFilterType) throws Exception {
