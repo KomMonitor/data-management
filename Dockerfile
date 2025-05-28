@@ -13,7 +13,7 @@ COPY . /app/kommonitor-management/
 RUN mvn -f ./kommonitor-management/pom.xml clean install -Dapp.finalName=kommonitor-data-management-app -DskipTests
 
 # ---- Run the application ----
-FROM eclipse-temurin:17.0.14_7-jdk-alpine
+FROM eclipse-temurin:17.0.11_9-jdk-alpine
 WORKDIR /app
 
 # Copy from the base build image
