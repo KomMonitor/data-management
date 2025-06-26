@@ -1,6 +1,8 @@
 # Change Log
 
-## 5.1.1-beta.1
+## 5.1.1-beta.2
+* Regenerate models [2c6057e](2c6057ed9714afc97f8bb36957f6407328a5bbae)
+* Fix dependecy issues [a61f391](a61f39137b4845154cb592e2408cdec617c39509)
 * Raise deps [9aa0af3](9aa0af311dea959428efbc5488acbcfc04943577)
 * Enhance ignore files [9c40b7d](9c40b7d10c3a9df4db55b0d740028e85f7fdc4ab)
 * Add unique key constraint for userinfo Keycloak ID [a78b62e](a78b62eea856fc1e716507bd14e1ca371e0e228b)
