@@ -1,6 +1,6 @@
 # Change Log
 
-## 5.1.1-beta.2
+## 5.1.1
 * Regenerate models [2c6057e](2c6057ed9714afc97f8bb36957f6407328a5bbae)
 * Fix dependecy issues [a61f391](a61f39137b4845154cb592e2408cdec617c39509)
 * Raise deps [9aa0af3](9aa0af311dea959428efbc5488acbcfc04943577)
