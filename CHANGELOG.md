@@ -1,6 +1,11 @@
 # Change Log
 
-## 5.1.0
+## 5.1.1-beta.1
+* Raise deps [9aa0af3](9aa0af311dea959428efbc5488acbcfc04943577)
+* Enhance ignore files [9c40b7d](9c40b7d10c3a9df4db55b0d740028e85f7fdc4ab)
+* Add unique key constraint for userinfo Keycloak ID [a78b62e](a78b62eea856fc1e716507bd14e1ca371e0e228b)
+* Merge branch &#39;master&#39; into develop [5ad9052](5ad90524a661822a843a23566baa62e1d653d103)
+    * Revert Docker base image version [0c0d87e](0c0d87e785e3314b368050326025672bbf0e8518)
 * Fix filtering for subtopics [d000603](d0006031b7b15970a0103905e651b159931308b5)
 * Add userinfoid unique constraint [eea90a9](eea90a94e9d982fbbaef1083c053617ea9ddf296)
 * Fix compiation issues [d6675f4](d6675f4391765912d08b9fa48cf7772959bbe05a)
