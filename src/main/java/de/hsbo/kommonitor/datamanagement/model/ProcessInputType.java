@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.math.BigDecimal;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -21,7 +22,7 @@ import jakarta.annotation.Generated;
  * ProcessInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class ProcessInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -38,7 +39,7 @@ public class ProcessInputType implements Serializable {
     
     DOUBLE("double");
 
-    private String value;
+    private final String value;
 
     DataTypeEnum(String value) {
       this.value = value;
@@ -71,9 +72,9 @@ public class ProcessInputType implements Serializable {
 
   private String description;
 
-  private BigDecimal maxParameterValueForNumericInputs;
+  private @Nullable BigDecimal maxParameterValueForNumericInputs;
 
-  private BigDecimal minParameterValueForNumericInputs;
+  private @Nullable BigDecimal minParameterValueForNumericInputs;
 
   private String name;
 
@@ -99,7 +100,7 @@ public class ProcessInputType implements Serializable {
   /**
    * the data type of the process input
    * @return dataType
-  */
+   */
   @NotNull 
   @Schema(name = "dataType", description = "the data type of the process input", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("dataType")
@@ -119,7 +120,7 @@ public class ProcessInputType implements Serializable {
   /**
    * the default value of the process parameter
    * @return defaultValue
-  */
+   */
   @NotNull 
   @Schema(name = "defaultValue", description = "the default value of the process parameter", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("defaultValue")
@@ -139,7 +140,7 @@ public class ProcessInputType implements Serializable {
   /**
    * a short description of the process input
    * @return description
-  */
+   */
   @NotNull 
   @Schema(name = "description", description = "a short description of the process input", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("description")
@@ -159,7 +160,7 @@ public class ProcessInputType implements Serializable {
   /**
    * the maximum value that is allowed for the process parameter
    * @return maxParameterValueForNumericInputs
-  */
+   */
   @Valid 
   @Schema(name = "maxParameterValueForNumericInputs", example = "0.0", description = "the maximum value that is allowed for the process parameter", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("maxParameterValueForNumericInputs")
@@ -179,7 +180,7 @@ public class ProcessInputType implements Serializable {
   /**
    * the minimum value that is allowed for the process parameter
    * @return minParameterValueForNumericInputs
-  */
+   */
   @Valid 
   @Schema(name = "minParameterValueForNumericInputs", example = "0.0", description = "the minimum value that is allowed for the process parameter", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("minParameterValueForNumericInputs")
@@ -199,7 +200,7 @@ public class ProcessInputType implements Serializable {
   /**
    * the name of the process input parameter
    * @return name
-  */
+   */
   @NotNull 
   @Schema(name = "name", description = "the name of the process input parameter", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("name")

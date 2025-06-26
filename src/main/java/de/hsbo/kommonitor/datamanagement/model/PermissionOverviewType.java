@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -23,14 +24,14 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "PermissionOverviewType", description = "Metadata of a permission")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class PermissionOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private PermissionLevelType permissionLevel;
 
-  private PermissionResourceType permissioneType;
+  private @Nullable PermissionResourceType permissioneType;
 
   private String permissionId;
 
@@ -54,7 +55,7 @@ public class PermissionOverviewType implements Serializable {
   /**
    * Get permissionLevel
    * @return permissionLevel
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "permissionLevel", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissionLevel")
@@ -74,7 +75,7 @@ public class PermissionOverviewType implements Serializable {
   /**
    * Get permissioneType
    * @return permissioneType
-  */
+   */
   @Valid 
   @Schema(name = "permissioneType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("permissioneType")
@@ -94,7 +95,7 @@ public class PermissionOverviewType implements Serializable {
   /**
    * the unique identifier of the permission
    * @return permissionId
-  */
+   */
   @NotNull 
   @Schema(name = "permissionId", description = "the unique identifier of the permission", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissionId")

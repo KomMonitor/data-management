@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.time.OffsetDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -21,28 +22,28 @@ import jakarta.annotation.Generated;
  * LastModificationOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class LastModificationOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime accessControl;
+  private @Nullable OffsetDateTime accessControl;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime georesources;
+  private @Nullable OffsetDateTime georesources;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime indicators;
+  private @Nullable OffsetDateTime indicators;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime processScripts;
+  private @Nullable OffsetDateTime processScripts;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime spatialUnits;
+  private @Nullable OffsetDateTime spatialUnits;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime topics;
+  private @Nullable OffsetDateTime topics;
 
   public LastModificationOverviewType accessControl(OffsetDateTime accessControl) {
     this.accessControl = accessControl;
@@ -52,7 +53,7 @@ public class LastModificationOverviewType implements Serializable {
   /**
    * Get accessControl
    * @return accessControl
-  */
+   */
   @Valid 
   @Schema(name = "access-control", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("access-control")
@@ -72,7 +73,7 @@ public class LastModificationOverviewType implements Serializable {
   /**
    * Get georesources
    * @return georesources
-  */
+   */
   @Valid 
   @Schema(name = "georesources", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("georesources")
@@ -92,7 +93,7 @@ public class LastModificationOverviewType implements Serializable {
   /**
    * Get indicators
    * @return indicators
-  */
+   */
   @Valid 
   @Schema(name = "indicators", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicators")
@@ -112,7 +113,7 @@ public class LastModificationOverviewType implements Serializable {
   /**
    * Get processScripts
    * @return processScripts
-  */
+   */
   @Valid 
   @Schema(name = "process-scripts", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("process-scripts")
@@ -132,7 +133,7 @@ public class LastModificationOverviewType implements Serializable {
   /**
    * Get spatialUnits
    * @return spatialUnits
-  */
+   */
   @Valid 
   @Schema(name = "spatial-units", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("spatial-units")
@@ -152,7 +153,7 @@ public class LastModificationOverviewType implements Serializable {
   /**
    * Get topics
    * @return topics
-  */
+   */
   @Valid 
   @Schema(name = "topics", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("topics")

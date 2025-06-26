@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -22,7 +23,7 @@ import jakarta.annotation.Generated;
  * PermissionLevelInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class PermissionLevelInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -60,7 +61,7 @@ public class PermissionLevelInputType implements Serializable {
   /**
    * list of permissions on this entity
    * @return permissions
-  */
+   */
   @NotNull 
   @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissions")
@@ -80,7 +81,7 @@ public class PermissionLevelInputType implements Serializable {
   /**
    * flag whether this resource is publicly viewable
    * @return isPublic
-  */
+   */
   @NotNull 
   @Schema(name = "isPublic", description = "flag whether this resource is publicly viewable", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isPublic")

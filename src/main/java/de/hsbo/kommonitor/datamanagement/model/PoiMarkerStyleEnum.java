@@ -21,14 +21,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * the poi marker type, either text or symbol
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
-public enum PoiMarkerStyleEnum {
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+public enum PoiMarkerStyleEnum implements Serializable {
   
   TEXT("text"),
   
   SYMBOL("symbol");
 
-  private String value;
+  private final String value;
 
   PoiMarkerStyleEnum(String value) {
     this.value = value;

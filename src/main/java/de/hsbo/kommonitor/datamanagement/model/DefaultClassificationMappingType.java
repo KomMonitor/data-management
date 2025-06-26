@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -25,7 +26,7 @@ import jakarta.annotation.Generated;
  * DefaultClassificationMappingType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class DefaultClassificationMappingType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -46,7 +47,7 @@ public class DefaultClassificationMappingType implements Serializable {
     
     QUANTILE("QUANTILE");
 
-    private String value;
+    private final String value;
 
     ClassificationMethodEnum(String value) {
       this.value = value;
@@ -100,7 +101,7 @@ public class DefaultClassificationMappingType implements Serializable {
   /**
    * the name of the colorBrewer color scheme used to define the colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.
    * @return colorBrewerSchemeName
-  */
+   */
   @NotNull 
   @Schema(name = "colorBrewerSchemeName", description = "the name of the colorBrewer color scheme used to define the colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("colorBrewerSchemeName")
@@ -122,7 +123,7 @@ public class DefaultClassificationMappingType implements Serializable {
    * minimum: 1
    * maximum: 9
    * @return numClasses
-  */
+   */
   @NotNull @Valid @DecimalMin("1") @DecimalMax("9") 
   @Schema(name = "numClasses", description = "the number of classes", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("numClasses")
@@ -142,7 +143,7 @@ public class DefaultClassificationMappingType implements Serializable {
   /**
    * the classification method as enumeration
    * @return classificationMethod
-  */
+   */
   @NotNull 
   @Schema(name = "classificationMethod", description = "the classification method as enumeration", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("classificationMethod")
@@ -170,7 +171,7 @@ public class DefaultClassificationMappingType implements Serializable {
   /**
    * array of classification mapping items. each item holds the break values for a certain spatial unit. not all spatial units of a certain indicator must be set.
    * @return items
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "items", description = "array of classification mapping items. each item holds the break values for a certain spatial unit. not all spatial units of a certain indicator must be set.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("items")

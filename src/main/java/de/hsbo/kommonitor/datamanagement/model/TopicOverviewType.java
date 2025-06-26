@@ -10,6 +10,7 @@ import de.hsbo.kommonitor.datamanagement.model.TopicTypeEnum;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -25,13 +26,13 @@ import jakarta.annotation.Generated;
  * TopicOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class TopicOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Valid
-  private List<@Valid TopicOverviewType> subTopics;
+  private List<@Valid TopicOverviewType> subTopics = new ArrayList<>();
 
   private String topicDescription;
 
@@ -39,7 +40,7 @@ public class TopicOverviewType implements Serializable {
 
   private String topicName;
 
-  private TopicResourceEnum topicResource;
+  private @Nullable TopicResourceEnum topicResource;
 
   private TopicTypeEnum topicType;
 
@@ -73,7 +74,7 @@ public class TopicOverviewType implements Serializable {
   /**
    * optional list of subTopics
    * @return subTopics
-  */
+   */
   @Valid 
   @Schema(name = "subTopics", description = "optional list of subTopics", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("subTopics")
@@ -93,7 +94,7 @@ public class TopicOverviewType implements Serializable {
   /**
    * short description of the topic
    * @return topicDescription
-  */
+   */
   @NotNull 
   @Schema(name = "topicDescription", description = "short description of the topic", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("topicDescription")
@@ -113,7 +114,7 @@ public class TopicOverviewType implements Serializable {
   /**
    * the identifier of the topic
    * @return topicId
-  */
+   */
   @NotNull 
   @Schema(name = "topicId", description = "the identifier of the topic", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("topicId")
@@ -133,7 +134,7 @@ public class TopicOverviewType implements Serializable {
   /**
    * the topic name
    * @return topicName
-  */
+   */
   @NotNull 
   @Schema(name = "topicName", description = "the topic name", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("topicName")
@@ -153,7 +154,7 @@ public class TopicOverviewType implements Serializable {
   /**
    * Get topicResource
    * @return topicResource
-  */
+   */
   @Valid 
   @Schema(name = "topicResource", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("topicResource")
@@ -173,7 +174,7 @@ public class TopicOverviewType implements Serializable {
   /**
    * Get topicType
    * @return topicType
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "topicType", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("topicType")

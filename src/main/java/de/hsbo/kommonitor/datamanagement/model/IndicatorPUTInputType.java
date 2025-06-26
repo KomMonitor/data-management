@@ -8,6 +8,7 @@ import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeIndicatorVa
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -23,7 +24,7 @@ import jakarta.annotation.Generated;
  * IndicatorPUTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class IndicatorPUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -71,7 +72,7 @@ public class IndicatorPUTInputType implements Serializable {
   /**
    * list of permissions on this entity
    * @return permissions
-  */
+   */
   @NotNull 
   @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissions")
@@ -91,7 +92,7 @@ public class IndicatorPUTInputType implements Serializable {
   /**
    * Get applicableSpatialUnit
    * @return applicableSpatialUnit
-  */
+   */
   @NotNull 
   @Schema(name = "applicableSpatialUnit", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("applicableSpatialUnit")
@@ -119,7 +120,7 @@ public class IndicatorPUTInputType implements Serializable {
   /**
    * an array of entries containing indicator values and mapping to spatial features via identifiers
    * @return indicatorValues
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "indicatorValues", description = "an array of entries containing indicator values and mapping to spatial features via identifiers", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("indicatorValues")
@@ -139,7 +140,7 @@ public class IndicatorPUTInputType implements Serializable {
   /**
    * flag whether the resource is publicly accessible
    * @return isPublic
-  */
+   */
   @NotNull 
   @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isPublic")
@@ -159,7 +160,7 @@ public class IndicatorPUTInputType implements Serializable {
   /**
    * identifier of the owning group
    * @return ownerId
-  */
+   */
   @NotNull 
   @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("ownerId")

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -21,7 +22,7 @@ import jakarta.annotation.Generated;
  * RegionalReferenceValueType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-13T21:51:43.406939+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class RegionalReferenceValueType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -29,11 +30,11 @@ public class RegionalReferenceValueType implements Serializable {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate referenceDate;
 
-  private Float regionalSum;
+  private @Nullable Float regionalSum;
 
-  private Float regionalAverage;
+  private @Nullable Float regionalAverage;
 
-  private Float spatiallyUnassignable;
+  private @Nullable Float spatiallyUnassignable;
 
   public RegionalReferenceValueType() {
     super();
@@ -54,7 +55,7 @@ public class RegionalReferenceValueType implements Serializable {
   /**
    * reference date according to ISO 8601 (e.g. 2018-01-30)
    * @return referenceDate
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "referenceDate", description = "reference date according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("referenceDate")
@@ -74,7 +75,7 @@ public class RegionalReferenceValueType implements Serializable {
   /**
    * regional sum value
    * @return regionalSum
-  */
+   */
   
   @Schema(name = "regionalSum", description = "regional sum value", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("regionalSum")
@@ -94,7 +95,7 @@ public class RegionalReferenceValueType implements Serializable {
   /**
    * regional average value
    * @return regionalAverage
-  */
+   */
   
   @Schema(name = "regionalAverage", description = "regional average value", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("regionalAverage")
@@ -114,7 +115,7 @@ public class RegionalReferenceValueType implements Serializable {
   /**
    * number of items that cannot be spatially assigned to any spatial unit
    * @return spatiallyUnassignable
-  */
+   */
   
   @Schema(name = "spatiallyUnassignable", description = "number of items that cannot be spatially assigned to any spatial unit", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("spatiallyUnassignable")

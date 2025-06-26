@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -19,7 +20,7 @@ import jakarta.annotation.Generated;
  * OgcServicesType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class OgcServicesType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -54,7 +55,7 @@ public class OgcServicesType implements Serializable {
   /**
    * the name of the default style (SLD) that is published and applied to the associated dataset
    * @return defaultStyleName
-  */
+   */
   @NotNull 
   @Schema(name = "defaultStyleName", description = "the name of the default style (SLD) that is published and applied to the associated dataset", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("defaultStyleName")
@@ -74,7 +75,7 @@ public class OgcServicesType implements Serializable {
   /**
    * the name of the spatial unit
    * @return spatialUnit
-  */
+   */
   @NotNull 
   @Schema(name = "spatialUnit", description = "the name of the spatial unit", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("spatialUnit")
@@ -94,7 +95,7 @@ public class OgcServicesType implements Serializable {
   /**
    * the URL of a running WFS instance serving the spatial features of the associated dataset
    * @return wfsUrl
-  */
+   */
   @NotNull 
   @Schema(name = "wfsUrl", description = "the URL of a running WFS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("wfsUrl")
@@ -114,7 +115,7 @@ public class OgcServicesType implements Serializable {
   /**
    * the URL of a running WMS instance serving the spatial features of the associated dataset
    * @return wmsUrl
-  */
+   */
   @NotNull 
   @Schema(name = "wmsUrl", description = "the URL of a running WMS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("wmsUrl")

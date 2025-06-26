@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -23,25 +24,25 @@ import jakarta.annotation.Generated;
  * CommonMetadataType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class CommonMetadataType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private String contact;
 
-  private String databasis;
+  private @Nullable String databasis;
 
   private String datasource;
 
   private String description;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-  private LocalDate lastUpdate;
+  private @Nullable LocalDate lastUpdate;
 
-  private String literature;
+  private @Nullable String literature;
 
-  private String note;
+  private @Nullable String note;
 
   private BigDecimal sridEPSG;
 
@@ -63,7 +64,7 @@ public class CommonMetadataType implements Serializable {
     
     WEEKLY("WEEKLY");
 
-    private String value;
+    private final String value;
 
     UpdateIntervalEnum(String value) {
       this.value = value;
@@ -115,7 +116,7 @@ public class CommonMetadataType implements Serializable {
   /**
    * contact details where additional information can be achieved
    * @return contact
-  */
+   */
   @NotNull 
   @Schema(name = "contact", description = "contact details where additional information can be achieved", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("contact")
@@ -135,7 +136,7 @@ public class CommonMetadataType implements Serializable {
   /**
    * information about data used as a basis to generate the dataset
    * @return databasis
-  */
+   */
   
   @Schema(name = "databasis", description = "information about data used as a basis to generate the dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("databasis")
@@ -155,7 +156,7 @@ public class CommonMetadataType implements Serializable {
   /**
    * information about the origin/source of the dataset
    * @return datasource
-  */
+   */
   @NotNull 
   @Schema(name = "datasource", description = "information about the origin/source of the dataset", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("datasource")
@@ -175,7 +176,7 @@ public class CommonMetadataType implements Serializable {
   /**
    * description of the dataset
    * @return description
-  */
+   */
   @NotNull 
   @Schema(name = "description", description = "description of the dataset", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("description")
@@ -195,7 +196,7 @@ public class CommonMetadataType implements Serializable {
   /**
    * a timestamp representing the lastUpdate according to ISO 8601 (e.g. 2018-01-30)
    * @return lastUpdate
-  */
+   */
   @Valid 
   @Schema(name = "lastUpdate", description = "a timestamp representing the lastUpdate according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("lastUpdate")
@@ -215,7 +216,7 @@ public class CommonMetadataType implements Serializable {
   /**
    * an optional hint to literature about the dataset (e.g. URL or book/article name)
    * @return literature
-  */
+   */
   
   @Schema(name = "literature", description = "an optional hint to literature about the dataset (e.g. URL or book/article name)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("literature")
@@ -235,7 +236,7 @@ public class CommonMetadataType implements Serializable {
   /**
    * an optional note with background information about the dataset
    * @return note
-  */
+   */
   
   @Schema(name = "note", description = "an optional note with background information about the dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("note")
@@ -255,7 +256,7 @@ public class CommonMetadataType implements Serializable {
   /**
    * the coordinate reference system of the dataset as EPSG code
    * @return sridEPSG
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "sridEPSG", example = "0.0", description = "the coordinate reference system of the dataset as EPSG code", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("sridEPSG")
@@ -275,7 +276,7 @@ public class CommonMetadataType implements Serializable {
   /**
    * Get updateInterval
    * @return updateInterval
-  */
+   */
   @NotNull 
   @Schema(name = "updateInterval", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("updateInterval")

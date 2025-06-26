@@ -5926,6 +5926,7 @@ components:
           items:
             type: number
             format: float
+            
     DefaultClassificationMappingType:
       title: DefaultClassificationMappingType
       required:
@@ -5974,10 +5975,12 @@ components:
           type: number
           format: float
           description: regional sum value
+          
         regionalAverage:
           type: number
           format: float
           description: regional average value
+          
         spatiallyUnassignable:
           type: number
           format: float
@@ -6577,13 +6580,13 @@ components:
             can be computed and thus is available (only necessary for computable indicators)
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
-        ownerId:
-          type: string
-          description: identifier of the owning group
         precision:
           type: integer
           description: Defines the number of decimal places for indicator values. If null, there is no predefined
             precision for this indicator.
+        ownerId:
+          type: string
+          description: identifier of the owning group
         processDescription:
           type: string
           description: description about how the indicator was computed
@@ -6820,7 +6823,6 @@ components:
       required:
         - name
         - mandant
-        - keycloakId
         - contact
       type: object
       properties:
@@ -7263,7 +7265,7 @@ components:
         - nextUpperHierarchyLevel
       type: object
       properties:
-        datasetName:
+        datasetName: 
           type: string
           description: the name of the spatial unit - its "spatialUnitLevel"
         metadata:

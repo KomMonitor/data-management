@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -25,7 +26,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitPOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class SpatialUnitPOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -49,13 +50,13 @@ public class SpatialUnitPOSTInputType implements Serializable {
 
   private Boolean isOutlineLayer = false;
 
-  private String outlineColor;
+  private @Nullable String outlineColor;
 
-  private BigDecimal outlineWidth;
+  private @Nullable BigDecimal outlineWidth;
 
-  private String outlineDashArrayString;
+  private @Nullable String outlineDashArrayString;
 
-  private String ownerId;
+  private @Nullable String ownerId;
 
   private Boolean isPublic;
 
@@ -94,7 +95,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * list of permissions on this entity
    * @return permissions
-  */
+   */
   @NotNull 
   @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissions")
@@ -114,7 +115,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'
    * @return geoJsonString
-  */
+   */
   @NotNull 
   @Schema(name = "geoJsonString", description = "a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("geoJsonString")
@@ -134,7 +135,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.
    * @return jsonSchema
-  */
+   */
   @NotNull 
   @Schema(name = "jsonSchema", description = "a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("jsonSchema")
@@ -154,7 +155,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * Get metadata
    * @return metadata
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "metadata", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("metadata")
@@ -174,7 +175,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level
    * @return nextLowerHierarchyLevel
-  */
+   */
   @NotNull 
   @Schema(name = "nextLowerHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("nextLowerHierarchyLevel")
@@ -194,7 +195,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level
    * @return nextUpperHierarchyLevel
-  */
+   */
   @NotNull 
   @Schema(name = "nextUpperHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("nextUpperHierarchyLevel")
@@ -214,7 +215,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * Get periodOfValidity
    * @return periodOfValidity
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "periodOfValidity", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("periodOfValidity")
@@ -234,7 +235,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * the name and identifier of the spatial unit level the features apply to
    * @return spatialUnitLevel
-  */
+   */
   @NotNull 
   @Schema(name = "spatialUnitLevel", description = "the name and identifier of the spatial unit level the features apply to", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("spatialUnitLevel")
@@ -254,7 +255,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control
    * @return isOutlineLayer
-  */
+   */
   
   @Schema(name = "isOutlineLayer", description = "if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("isOutlineLayer")
@@ -274,7 +275,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * outline color for this layer as hex code
    * @return outlineColor
-  */
+   */
   
   @Schema(name = "outlineColor", description = "outline color for this layer as hex code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineColor")
@@ -294,7 +295,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * outline width as stroke width for outline geometry
    * @return outlineWidth
-  */
+   */
   @Valid 
   @Schema(name = "outlineWidth", description = "outline width as stroke width for outline geometry", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineWidth")
@@ -314,7 +315,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)
    * @return outlineDashArrayString
-  */
+   */
   
   @Schema(name = "outlineDashArrayString", description = "string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineDashArrayString")
@@ -334,7 +335,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * identifier of the owning group
    * @return ownerId
-  */
+   */
   
   @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("ownerId")
@@ -354,7 +355,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * flag whether the resource is publicly accessible
    * @return isPublic
-  */
+   */
   @NotNull 
   @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isPublic")

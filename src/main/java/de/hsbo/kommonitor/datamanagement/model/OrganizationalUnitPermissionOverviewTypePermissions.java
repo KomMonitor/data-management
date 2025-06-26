@@ -10,6 +10,7 @@ import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverv
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -26,22 +27,22 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("OrganizationalUnitPermissionOverviewType_permissions")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class OrganizationalUnitPermissionOverviewTypePermissions implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   @Valid
-  private List<@Valid OrganizationalUnitPermissionOverviewElementType> georesources;
+  private List<@Valid OrganizationalUnitPermissionOverviewElementType> georesources = new ArrayList<>();
 
   @Valid
-  private List<@Valid OrganizationalUnitPermissionOverviewElementType> spatialunits;
+  private List<@Valid OrganizationalUnitPermissionOverviewElementType> spatialunits = new ArrayList<>();
 
   @Valid
-  private List<@Valid OrganizationalUnitPermissionOverviewElementType> indicators;
+  private List<@Valid OrganizationalUnitPermissionOverviewElementType> indicators = new ArrayList<>();
 
   @Valid
-  private List<@Valid OrganizationalUnitPermissionOverviewSpatialUnitElementType> indicatorspatialunits;
+  private List<OrganizationalUnitPermissionOverviewSpatialUnitElementType> indicatorspatialunits = new ArrayList<>();
 
   public OrganizationalUnitPermissionOverviewTypePermissions georesources(List<@Valid OrganizationalUnitPermissionOverviewElementType> georesources) {
     this.georesources = georesources;
@@ -59,7 +60,7 @@ public class OrganizationalUnitPermissionOverviewTypePermissions implements Seri
   /**
    * Get georesources
    * @return georesources
-  */
+   */
   @Valid 
   @Schema(name = "georesources", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("georesources")
@@ -87,7 +88,7 @@ public class OrganizationalUnitPermissionOverviewTypePermissions implements Seri
   /**
    * Get spatialunits
    * @return spatialunits
-  */
+   */
   @Valid 
   @Schema(name = "spatialunits", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("spatialunits")
@@ -115,7 +116,7 @@ public class OrganizationalUnitPermissionOverviewTypePermissions implements Seri
   /**
    * Get indicators
    * @return indicators
-  */
+   */
   @Valid 
   @Schema(name = "indicators", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicators")
@@ -127,7 +128,7 @@ public class OrganizationalUnitPermissionOverviewTypePermissions implements Seri
     this.indicators = indicators;
   }
 
-  public OrganizationalUnitPermissionOverviewTypePermissions indicatorspatialunits(List<@Valid OrganizationalUnitPermissionOverviewSpatialUnitElementType> indicatorspatialunits) {
+  public OrganizationalUnitPermissionOverviewTypePermissions indicatorspatialunits(List<OrganizationalUnitPermissionOverviewSpatialUnitElementType> indicatorspatialunits) {
     this.indicatorspatialunits = indicatorspatialunits;
     return this;
   }
@@ -143,15 +144,15 @@ public class OrganizationalUnitPermissionOverviewTypePermissions implements Seri
   /**
    * Get indicatorspatialunits
    * @return indicatorspatialunits
-  */
+   */
   @Valid 
   @Schema(name = "indicatorspatialunits", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicatorspatialunits")
-  public List<@Valid OrganizationalUnitPermissionOverviewSpatialUnitElementType> getIndicatorspatialunits() {
+  public List<OrganizationalUnitPermissionOverviewSpatialUnitElementType> getIndicatorspatialunits() {
     return indicatorspatialunits;
   }
 
-  public void setIndicatorspatialunits(List<@Valid OrganizationalUnitPermissionOverviewSpatialUnitElementType> indicatorspatialunits) {
+  public void setIndicatorspatialunits(List<OrganizationalUnitPermissionOverviewSpatialUnitElementType> indicatorspatialunits) {
     this.indicatorspatialunits = indicatorspatialunits;
   }
 

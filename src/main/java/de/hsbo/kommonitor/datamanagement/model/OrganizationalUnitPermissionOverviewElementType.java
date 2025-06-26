@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.UUID;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -20,7 +21,7 @@ import jakarta.annotation.Generated;
  * OrganizationalUnitPermissionOverviewElementType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class OrganizationalUnitPermissionOverviewElementType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -52,7 +53,7 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
   /**
    * Get id
    * @return id
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("id")
@@ -72,7 +73,7 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
   /**
    * Get permissionLevel
    * @return permissionLevel
-  */
+   */
   @NotNull 
   @Schema(name = "permissionLevel", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissionLevel")
@@ -92,7 +93,7 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
   /**
    * Get roleId
    * @return roleId
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "roleId", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("roleId")

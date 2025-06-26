@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.math.BigDecimal;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -20,7 +21,7 @@ import jakarta.annotation.Generated;
  * IndicatorPATCHDisplayOrderInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class IndicatorPATCHDisplayOrderInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -49,7 +50,7 @@ public class IndicatorPATCHDisplayOrderInputType implements Serializable {
   /**
    * the new displayOrder value
    * @return displayOrder
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "displayOrder", example = "0.0", description = "the new displayOrder value", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("displayOrder")
@@ -69,7 +70,7 @@ public class IndicatorPATCHDisplayOrderInputType implements Serializable {
   /**
    * unique ID of the associated indicator
    * @return indicatorId
-  */
+   */
   @NotNull 
   @Schema(name = "indicatorId", description = "unique ID of the associated indicator", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("indicatorId")

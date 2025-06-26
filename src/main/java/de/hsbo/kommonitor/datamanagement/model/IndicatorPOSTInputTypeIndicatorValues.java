@@ -8,6 +8,7 @@ import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeValueMappin
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -23,15 +24,15 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputTypeIndicatorValues
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String spatialReferenceKey;
+  private @Nullable String spatialReferenceKey;
 
   @Valid
-  private List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping;
+  private List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping = new ArrayList<>();
 
   public IndicatorPOSTInputTypeIndicatorValues spatialReferenceKey(String spatialReferenceKey) {
     this.spatialReferenceKey = spatialReferenceKey;
@@ -41,7 +42,7 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
   /**
    * identifier (uuid) of the spatial feature to which the values shall be applied
    * @return spatialReferenceKey
-  */
+   */
   
   @Schema(name = "spatialReferenceKey", description = "identifier (uuid) of the spatial feature to which the values shall be applied", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("spatialReferenceKey")
@@ -69,7 +70,7 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
   /**
    * an array of entries mapping an indicator value to a timestamp as mapping key
    * @return valueMapping
-  */
+   */
   @Valid 
   @Schema(name = "valueMapping", description = "an array of entries mapping an indicator value to a timestamp as mapping key", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("valueMapping")

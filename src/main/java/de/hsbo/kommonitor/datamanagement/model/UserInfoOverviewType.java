@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -22,7 +23,7 @@ import jakarta.annotation.Generated;
  * UserInfoOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-25T11:39:57.130709600+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class UserInfoOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -67,7 +68,7 @@ public class UserInfoOverviewType implements Serializable {
   /**
    * the identifier of the user info
    * @return userInfoId
-  */
+   */
   @NotNull 
   @Schema(name = "userInfoId", description = "the identifier of the user info", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("userInfoId")
@@ -87,7 +88,7 @@ public class UserInfoOverviewType implements Serializable {
   /**
    * the Keycloak user ID
    * @return keycloakId
-  */
+   */
   @NotNull 
   @Schema(name = "keycloakId", description = "the Keycloak user ID", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("keycloakId")
@@ -115,7 +116,7 @@ public class UserInfoOverviewType implements Serializable {
   /**
    * list of georesource user favourites
    * @return georesourceFavourites
-  */
+   */
   @NotNull 
   @Schema(name = "georesourceFavourites", description = "list of georesource user favourites", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("georesourceFavourites")
@@ -143,7 +144,7 @@ public class UserInfoOverviewType implements Serializable {
   /**
    * list of indicator user favourites
    * @return indicatorFavourites
-  */
+   */
   @NotNull 
   @Schema(name = "indicatorFavourites", description = "list of indicator user favourites", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("indicatorFavourites")
@@ -171,7 +172,7 @@ public class UserInfoOverviewType implements Serializable {
   /**
    * list of georesource topic user favourites
    * @return georesourceTopicFavourites
-  */
+   */
   @NotNull 
   @Schema(name = "georesourceTopicFavourites", description = "list of georesource topic user favourites", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("georesourceTopicFavourites")
@@ -199,7 +200,7 @@ public class UserInfoOverviewType implements Serializable {
   /**
    * list of indicator topic user favourites
    * @return indicatorTopicFavourites
-  */
+   */
   @NotNull 
   @Schema(name = "indicatorTopicFavourites", description = "list of indicator topic user favourites", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("indicatorTopicFavourites")

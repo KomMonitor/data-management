@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -20,24 +21,24 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "OrganizationalUnitInputType", description = "organizational unit (group)")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class OrganizationalUnitInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String organizationalUnitId;
+  private @Nullable String organizationalUnitId;
 
   private String name;
 
   private Boolean mandant;
 
-  private String keycloakId;
+  private @Nullable String keycloakId;
 
   private String contact;
 
-  private String description;
+  private @Nullable String description;
 
-  private String parentId;
+  private @Nullable String parentId;
 
   public OrganizationalUnitInputType() {
     super();
@@ -46,10 +47,9 @@ public class OrganizationalUnitInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public OrganizationalUnitInputType(String name, Boolean mandant, String keycloakId, String contact) {
+  public OrganizationalUnitInputType(String name, Boolean mandant, String contact) {
     this.name = name;
     this.mandant = mandant;
-    this.keycloakId = keycloakId;
     this.contact = contact;
   }
 
@@ -61,7 +61,7 @@ public class OrganizationalUnitInputType implements Serializable {
   /**
    * unique id of this organizational Unit
    * @return organizationalUnitId
-  */
+   */
   
   @Schema(name = "organizationalUnitId", description = "unique id of this organizational Unit", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("organizationalUnitId")
@@ -81,7 +81,7 @@ public class OrganizationalUnitInputType implements Serializable {
   /**
    * name of this organizational Unit
    * @return name
-  */
+   */
   @NotNull 
   @Schema(name = "name", description = "name of this organizational Unit", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("name")
@@ -101,7 +101,7 @@ public class OrganizationalUnitInputType implements Serializable {
   /**
    * flag whether this unit is an autonomous mandant
    * @return mandant
-  */
+   */
   @NotNull 
   @Schema(name = "mandant", description = "flag whether this unit is an autonomous mandant", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("mandant")
@@ -121,9 +121,9 @@ public class OrganizationalUnitInputType implements Serializable {
   /**
    * uuid of the corresponding Keycloak group
    * @return keycloakId
-  */
-  @NotNull 
-  @Schema(name = "keycloakId", description = "uuid of the corresponding Keycloak group", requiredMode = Schema.RequiredMode.REQUIRED)
+   */
+  
+  @Schema(name = "keycloakId", description = "uuid of the corresponding Keycloak group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("keycloakId")
   public String getKeycloakId() {
     return keycloakId;
@@ -141,7 +141,7 @@ public class OrganizationalUnitInputType implements Serializable {
   /**
    * contact information of the person responsible for this group
    * @return contact
-  */
+   */
   @NotNull 
   @Schema(name = "contact", description = "contact information of the person responsible for this group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("contact")
@@ -161,7 +161,7 @@ public class OrganizationalUnitInputType implements Serializable {
   /**
    * additional information
    * @return description
-  */
+   */
   
   @Schema(name = "description", description = "additional information", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("description")
@@ -181,7 +181,7 @@ public class OrganizationalUnitInputType implements Serializable {
   /**
    * uuid of the parent group
    * @return parentId
-  */
+   */
   
   @Schema(name = "parentId", description = "uuid of the parent group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("parentId")

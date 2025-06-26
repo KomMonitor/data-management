@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.UUID;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -20,7 +21,7 @@ import jakarta.annotation.Generated;
  * OrganizationalUnitPermissionOverviewSpatialUnitElementType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class OrganizationalUnitPermissionOverviewSpatialUnitElementType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -55,7 +56,7 @@ public class OrganizationalUnitPermissionOverviewSpatialUnitElementType implemen
   /**
    * Get id
    * @return id
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("id")
@@ -75,7 +76,7 @@ public class OrganizationalUnitPermissionOverviewSpatialUnitElementType implemen
   /**
    * Get permissionLevel
    * @return permissionLevel
-  */
+   */
   @NotNull 
   @Schema(name = "permissionLevel", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissionLevel")
@@ -95,7 +96,7 @@ public class OrganizationalUnitPermissionOverviewSpatialUnitElementType implemen
   /**
    * Get roleId
    * @return roleId
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "roleId", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("roleId")
@@ -115,7 +116,7 @@ public class OrganizationalUnitPermissionOverviewSpatialUnitElementType implemen
   /**
    * Get spatialUnitId
    * @return spatialUnitId
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "spatialUnitId", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("spatialUnitId")

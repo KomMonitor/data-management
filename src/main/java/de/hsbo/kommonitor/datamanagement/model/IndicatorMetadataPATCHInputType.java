@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -31,47 +32,47 @@ import jakarta.annotation.Generated;
  * IndicatorMetadataPATCHInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-12-10T08:27:46.243076200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class IndicatorMetadataPATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private String abbreviation;
 
-  private String characteristicValue;
+  private @Nullable String characteristicValue;
 
-  private CreationTypeEnum creationType;
+  private @Nullable CreationTypeEnum creationType;
 
-  private String datasetName;
+  private @Nullable String datasetName;
 
-  private DefaultClassificationMappingType defaultClassificationMapping;
+  private @Nullable DefaultClassificationMappingType defaultClassificationMapping;
 
   @Valid
-  private List<@Valid RegionalReferenceValueType> regionalReferenceValues;
+  private List<@Valid RegionalReferenceValueType> regionalReferenceValues = new ArrayList<>();
 
-  private BigDecimal displayOrder;
+  private @Nullable BigDecimal displayOrder;
 
-  private IndicatorTypeEnum indicatorType;
+  private @Nullable IndicatorTypeEnum indicatorType;
 
   private String interpretation;
 
   private Boolean isHeadlineIndicator;
 
-  private String lowestSpatialUnitForComputation;
+  private @Nullable String lowestSpatialUnitForComputation;
 
   private CommonMetadataType metadata;
 
-  private Integer precision;
+  private @Nullable Integer precision;
 
   private String processDescription;
 
-  private String referenceDateNote;
+  private @Nullable String referenceDateNote;
 
   @Valid
-  private List<@Valid IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources;
+  private List<@Valid IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources = new ArrayList<>();
 
   @Valid
-  private List<@Valid IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators;
+  private List<@Valid IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators = new ArrayList<>();
 
   @Valid
   private List<String> tags = new ArrayList<>();
@@ -106,7 +107,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * abbreviated mark of the indicator
    * @return abbreviation
-  */
+   */
   @NotNull 
   @Schema(name = "abbreviation", description = "abbreviated mark of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("abbreviation")
@@ -126,7 +127,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * the distuingishing characteristic value of the indicator
    * @return characteristicValue
-  */
+   */
   
   @Schema(name = "characteristicValue", description = "the distuingishing characteristic value of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("characteristicValue")
@@ -146,7 +147,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * Get creationType
    * @return creationType
-  */
+   */
   @Valid 
   @Schema(name = "creationType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("creationType")
@@ -166,7 +167,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * the meaningful name of the indicator
    * @return datasetName
-  */
+   */
   
   @Schema(name = "datasetName", description = "the meaningful name of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("datasetName")
@@ -186,7 +187,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * Get defaultClassificationMapping
    * @return defaultClassificationMapping
-  */
+   */
   @Valid 
   @Schema(name = "defaultClassificationMapping", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("defaultClassificationMapping")
@@ -214,7 +215,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)
    * @return regionalReferenceValues
-  */
+   */
   @Valid 
   @Schema(name = "regionalReferenceValues", description = "list of optional regional reference values (i.e. regional sum, average, spatiallyUnassignable)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("regionalReferenceValues")
@@ -234,7 +235,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * an order number to control display order in clients
    * @return displayOrder
-  */
+   */
   @Valid 
   @Schema(name = "displayOrder", example = "0.0", description = "an order number to control display order in clients", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("displayOrder")
@@ -254,7 +255,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * Get indicatorType
    * @return indicatorType
-  */
+   */
   @Valid 
   @Schema(name = "indicatorType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicatorType")
@@ -274,7 +275,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * interpretation of the indicator values
    * @return interpretation
-  */
+   */
   @NotNull 
   @Schema(name = "interpretation", description = "interpretation of the indicator values", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("interpretation")
@@ -294,7 +295,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * boolean value indicating if the indicator is a headline indicator
    * @return isHeadlineIndicator
-  */
+   */
   @NotNull 
   @Schema(name = "isHeadlineIndicator", description = "boolean value indicating if the indicator is a headline indicator", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isHeadlineIndicator")
@@ -314,7 +315,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)
    * @return lowestSpatialUnitForComputation
-  */
+   */
   
   @Schema(name = "lowestSpatialUnitForComputation", description = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("lowestSpatialUnitForComputation")
@@ -334,7 +335,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * Get metadata
    * @return metadata
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "metadata", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("metadata")
@@ -354,8 +355,8 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.
    * @return precision
-  */
-
+   */
+  
   @Schema(name = "precision", description = "Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("precision")
   public Integer getPrecision() {
@@ -374,7 +375,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * description about how the indicator was computed
    * @return processDescription
-  */
+   */
   @NotNull 
   @Schema(name = "processDescription", description = "description about how the indicator was computed", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("processDescription")
@@ -394,7 +395,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * an optional note on the reference date of the indicator
    * @return referenceDateNote
-  */
+   */
   
   @Schema(name = "referenceDateNote", description = "an optional note on the reference date of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("referenceDateNote")
@@ -422,7 +423,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * array of references to other georesource datasets. E.g., if an indicator is defined by performing geometric-topological operations, then the identifiers of those required georesources can be referenced here
    * @return refrencesToGeoresources
-  */
+   */
   @Valid 
   @Schema(name = "refrencesToGeoresources", description = "array of references to other georesource datasets. E.g., if an indicator is defined by performing geometric-topological operations, then the identifiers of those required georesources can be referenced here", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("refrencesToGeoresources")
@@ -450,7 +451,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * array of references to other indicators. E.g., if an indicator is defined by combining four other indicators, then the identifiers of those four indicators can be referenced here
    * @return refrencesToOtherIndicators
-  */
+   */
   @Valid 
   @Schema(name = "refrencesToOtherIndicators", description = "array of references to other indicators. E.g., if an indicator is defined by combining four other indicators, then the identifiers of those four indicators can be referenced here", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("refrencesToOtherIndicators")
@@ -478,7 +479,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * list of tag labels for the indicator
    * @return tags
-  */
+   */
   @NotNull 
   @Schema(name = "tags", description = "list of tag labels for the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("tags")
@@ -498,7 +499,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * id of the last topic hierarchy entity 
    * @return topicReference
-  */
+   */
   @NotNull 
   @Schema(name = "topicReference", description = "id of the last topic hierarchy entity ", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("topicReference")
@@ -518,7 +519,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * unit of the indicator values
    * @return unit
-  */
+   */
   @NotNull 
   @Schema(name = "unit", description = "unit of the indicator values", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("unit")

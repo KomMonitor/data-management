@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -20,7 +21,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "GeoresourceReferenceType", description = "a reference to georesource, e.g. a resource that is used to compute the main indicator")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T08:34:59.565131300+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class GeoresourceReferenceType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -52,7 +53,7 @@ public class GeoresourceReferenceType implements Serializable {
   /**
    * a meaningful description of how the referenced georesource is related to the main indicator
    * @return referencedGeoresourceDescription
-  */
+   */
   @NotNull 
   @Schema(name = "referencedGeoresourceDescription", description = "a meaningful description of how the referenced georesource is related to the main indicator", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("referencedGeoresourceDescription")
@@ -72,7 +73,7 @@ public class GeoresourceReferenceType implements Serializable {
   /**
    * unique identifier of the referenced georesource
    * @return referencedGeoresourceId
-  */
+   */
   @NotNull 
   @Schema(name = "referencedGeoresourceId", description = "unique identifier of the referenced georesource", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("referencedGeoresourceId")
@@ -92,7 +93,7 @@ public class GeoresourceReferenceType implements Serializable {
   /**
    * the meaningful name of the referenced georesource
    * @return referencedGeoresourceName
-  */
+   */
   @NotNull 
   @Schema(name = "referencedGeoresourceName", description = "the meaningful name of the referenced georesource", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("referencedGeoresourceName")

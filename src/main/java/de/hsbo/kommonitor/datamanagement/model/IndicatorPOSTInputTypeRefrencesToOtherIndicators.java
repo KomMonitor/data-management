@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -19,14 +20,14 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputTypeRefrencesToOtherIndicators
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class IndicatorPOSTInputTypeRefrencesToOtherIndicators implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String indicatorId;
+  private @Nullable String indicatorId;
 
-  private String referenceDescription;
+  private @Nullable String referenceDescription;
 
   public IndicatorPOSTInputTypeRefrencesToOtherIndicators indicatorId(String indicatorId) {
     this.indicatorId = indicatorId;
@@ -36,7 +37,7 @@ public class IndicatorPOSTInputTypeRefrencesToOtherIndicators implements Seriali
   /**
    * identifier of the referenced indicator
    * @return indicatorId
-  */
+   */
   
   @Schema(name = "indicatorId", description = "identifier of the referenced indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicatorId")
@@ -56,7 +57,7 @@ public class IndicatorPOSTInputTypeRefrencesToOtherIndicators implements Seriali
   /**
    * short description of how the indicator is referenced to the superior one
    * @return referenceDescription
-  */
+   */
   
   @Schema(name = "referenceDescription", description = "short description of how the indicator is referenced to the superior one", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("referenceDescription")

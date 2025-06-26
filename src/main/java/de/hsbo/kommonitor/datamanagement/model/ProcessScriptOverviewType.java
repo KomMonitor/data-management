@@ -8,6 +8,7 @@ import de.hsbo.kommonitor.datamanagement.model.ProcessInputType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -23,7 +24,7 @@ import jakarta.annotation.Generated;
  * ProcessScriptOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class ProcessScriptOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -42,7 +43,7 @@ public class ProcessScriptOverviewType implements Serializable {
 
   private String scriptId;
 
-  private String scriptType;
+  private @Nullable String scriptType;
 
   @Valid
   private List<@Valid ProcessInputType> variableProcessParameters = new ArrayList<>();
@@ -72,7 +73,7 @@ public class ProcessScriptOverviewType implements Serializable {
   /**
    * short description of the scripts content (what does it do)
    * @return description
-  */
+   */
   @NotNull 
   @Schema(name = "description", description = "short description of the scripts content (what does it do)", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("description")
@@ -92,7 +93,7 @@ public class ProcessScriptOverviewType implements Serializable {
   /**
    * unique identifier of the associated indicator (e.g. the indicator that is computed by a script or for which the values shall be aggregated to another spatial unit)
    * @return indicatorId
-  */
+   */
   @NotNull 
   @Schema(name = "indicatorId", description = "unique identifier of the associated indicator (e.g. the indicator that is computed by a script or for which the values shall be aggregated to another spatial unit)", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("indicatorId")
@@ -112,7 +113,7 @@ public class ProcessScriptOverviewType implements Serializable {
   /**
    * name of the process script
    * @return name
-  */
+   */
   @NotNull 
   @Schema(name = "name", description = "name of the process script", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("name")
@@ -140,7 +141,7 @@ public class ProcessScriptOverviewType implements Serializable {
   /**
    * identifiers of georesources that are used within the script.
    * @return requiredGeoresourceIds
-  */
+   */
   @NotNull 
   @Schema(name = "requiredGeoresourceIds", description = "identifiers of georesources that are used within the script.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("requiredGeoresourceIds")
@@ -168,7 +169,7 @@ public class ProcessScriptOverviewType implements Serializable {
   /**
    * identifiers of indicators that are used within the script.
    * @return requiredIndicatorIds
-  */
+   */
   @NotNull 
   @Schema(name = "requiredIndicatorIds", description = "identifiers of indicators that are used within the script.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("requiredIndicatorIds")
@@ -188,7 +189,7 @@ public class ProcessScriptOverviewType implements Serializable {
   /**
    * unique identifier of the process script
    * @return scriptId
-  */
+   */
   @NotNull 
   @Schema(name = "scriptId", description = "unique identifier of the process script", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("scriptId")
@@ -208,7 +209,7 @@ public class ProcessScriptOverviewType implements Serializable {
   /**
    * a script type reference name used to distuingish process scripts from a client perspective, i.e. setup admin pages due to knowledge about type-specific script parameters and required indicators/georesources
    * @return scriptType
-  */
+   */
   
   @Schema(name = "scriptType", description = "a script type reference name used to distuingish process scripts from a client perspective, i.e. setup admin pages due to knowledge about type-specific script parameters and required indicators/georesources", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("scriptType")
@@ -236,7 +237,7 @@ public class ProcessScriptOverviewType implements Serializable {
   /**
    * list of process parameters that can be set by an expert user. They are used within the script to parameterize the indicator computation
    * @return variableProcessParameters
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "variableProcessParameters", description = "list of process parameters that can be set by an expert user. They are used within the script to parameterize the indicator computation", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("variableProcessParameters")

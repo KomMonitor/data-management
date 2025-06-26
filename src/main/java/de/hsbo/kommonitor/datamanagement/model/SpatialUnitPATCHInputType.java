@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import java.math.BigDecimal;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -21,7 +22,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitPATCHInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class SpatialUnitPATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -36,11 +37,11 @@ public class SpatialUnitPATCHInputType implements Serializable {
 
   private Boolean isOutlineLayer = false;
 
-  private String outlineColor;
+  private @Nullable String outlineColor;
 
-  private BigDecimal outlineWidth;
+  private @Nullable BigDecimal outlineWidth;
 
-  private String outlineDashArrayString;
+  private @Nullable String outlineDashArrayString;
 
   public SpatialUnitPATCHInputType() {
     super();
@@ -64,7 +65,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
   /**
    * the name of the spatial unit - its \"spatialUnitLevel\"
    * @return datasetName
-  */
+   */
   @NotNull 
   @Schema(name = "datasetName", description = "the name of the spatial unit - its \"spatialUnitLevel\"", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("datasetName")
@@ -84,7 +85,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
   /**
    * Get metadata
    * @return metadata
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "metadata", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("metadata")
@@ -104,7 +105,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
   /**
    * the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level
    * @return nextLowerHierarchyLevel
-  */
+   */
   @NotNull 
   @Schema(name = "nextLowerHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("nextLowerHierarchyLevel")
@@ -124,7 +125,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
   /**
    * the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level
    * @return nextUpperHierarchyLevel
-  */
+   */
   @NotNull 
   @Schema(name = "nextUpperHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("nextUpperHierarchyLevel")
@@ -144,7 +145,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
   /**
    * if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control
    * @return isOutlineLayer
-  */
+   */
   
   @Schema(name = "isOutlineLayer", description = "if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("isOutlineLayer")
@@ -164,7 +165,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
   /**
    * outline color for this layer as hex code
    * @return outlineColor
-  */
+   */
   
   @Schema(name = "outlineColor", description = "outline color for this layer as hex code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineColor")
@@ -184,7 +185,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
   /**
    * outline width as stroke width for outline geometry
    * @return outlineWidth
-  */
+   */
   @Valid 
   @Schema(name = "outlineWidth", description = "outline width as stroke width for outline geometry", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineWidth")
@@ -204,7 +205,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
   /**
    * string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)
    * @return outlineDashArrayString
-  */
+   */
   
   @Schema(name = "outlineDashArrayString", description = "string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineDashArrayString")

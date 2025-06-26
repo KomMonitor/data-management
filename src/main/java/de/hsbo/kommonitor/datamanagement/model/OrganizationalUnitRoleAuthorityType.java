@@ -8,6 +8,7 @@ import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -23,7 +24,7 @@ import jakarta.annotation.Generated;
  * OrganizationalUnitRoleAuthorityType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-06-10T13:40:31.582152900+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class OrganizationalUnitRoleAuthorityType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -58,7 +59,7 @@ public class OrganizationalUnitRoleAuthorityType implements Serializable {
   /**
    * list of Keycloak group based admin roles that have been assigned to this organizational unit
    * @return authorityRoles
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "authorityRoles", description = "list of Keycloak group based admin roles that have been assigned to this organizational unit", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("authorityRoles")

@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -19,14 +20,14 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputTypeRefrencesToGeoresources
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class IndicatorPOSTInputTypeRefrencesToGeoresources implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String georesourceId;
+  private @Nullable String georesourceId;
 
-  private String referenceDescription;
+  private @Nullable String referenceDescription;
 
   public IndicatorPOSTInputTypeRefrencesToGeoresources georesourceId(String georesourceId) {
     this.georesourceId = georesourceId;
@@ -36,7 +37,7 @@ public class IndicatorPOSTInputTypeRefrencesToGeoresources implements Serializab
   /**
    * identifier of the referenced georesource
    * @return georesourceId
-  */
+   */
   
   @Schema(name = "georesourceId", description = "identifier of the referenced georesource", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("georesourceId")
@@ -56,7 +57,7 @@ public class IndicatorPOSTInputTypeRefrencesToGeoresources implements Serializab
   /**
    * short description of how the georesource is referenced to the indicator
    * @return referenceDescription
-  */
+   */
   
   @Schema(name = "referenceDescription", description = "short description of how the georesource is referenced to the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("referenceDescription")

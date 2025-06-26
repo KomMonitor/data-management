@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -30,7 +31,7 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-12-10T08:27:46.243076200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class IndicatorPOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -48,31 +49,31 @@ public class IndicatorPOSTInputType implements Serializable {
 
   private DefaultClassificationMappingType defaultClassificationMapping;
 
-  private BigDecimal displayOrder;
+  private @Nullable BigDecimal displayOrder;
 
-  private IndicatorTypeEnum indicatorType;
+  private @Nullable IndicatorTypeEnum indicatorType;
 
   private String interpretation;
 
   private Boolean isHeadlineIndicator;
 
-  private String lowestSpatialUnitForComputation;
+  private @Nullable String lowestSpatialUnitForComputation;
 
   private CommonMetadataType metadata;
 
-  private Integer precision;
+  private @Nullable Integer precision;
 
   private String ownerId;
 
   private String processDescription;
 
-  private String referenceDateNote;
+  private @Nullable String referenceDateNote;
 
   @Valid
-  private List<@Valid IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources;
+  private List<@Valid IndicatorPOSTInputTypeRefrencesToGeoresources> refrencesToGeoresources = new ArrayList<>();
 
   @Valid
-  private List<@Valid IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators;
+  private List<@Valid IndicatorPOSTInputTypeRefrencesToOtherIndicators> refrencesToOtherIndicators = new ArrayList<>();
 
   @Valid
   private List<String> tags = new ArrayList<>();
@@ -116,7 +117,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * abbreviated mark of the indicator
    * @return abbreviation
-  */
+   */
   @NotNull 
   @Schema(name = "abbreviation", description = "abbreviated mark of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("abbreviation")
@@ -144,7 +145,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * list of permissions on this entity
    * @return permissions
-  */
+   */
   @NotNull 
   @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissions")
@@ -164,7 +165,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * the distuingishing characteristic value of the indicator
    * @return characteristicValue
-  */
+   */
   @NotNull 
   @Schema(name = "characteristicValue", description = "the distuingishing characteristic value of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("characteristicValue")
@@ -184,7 +185,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * Get creationType
    * @return creationType
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "creationType", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("creationType")
@@ -204,7 +205,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * the meaningful name of the indicator
    * @return datasetName
-  */
+   */
   @NotNull 
   @Schema(name = "datasetName", description = "the meaningful name of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("datasetName")
@@ -224,7 +225,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * Get defaultClassificationMapping
    * @return defaultClassificationMapping
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "defaultClassificationMapping", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("defaultClassificationMapping")
@@ -244,7 +245,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * an order number to control display order in clients
    * @return displayOrder
-  */
+   */
   @Valid 
   @Schema(name = "displayOrder", example = "0.0", description = "an order number to control display order in clients", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("displayOrder")
@@ -264,7 +265,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * Get indicatorType
    * @return indicatorType
-  */
+   */
   @Valid 
   @Schema(name = "indicatorType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicatorType")
@@ -284,7 +285,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * interpretation of the indicator values
    * @return interpretation
-  */
+   */
   @NotNull 
   @Schema(name = "interpretation", description = "interpretation of the indicator values", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("interpretation")
@@ -304,7 +305,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * boolean value indicating if the indicator is a headline indicator
    * @return isHeadlineIndicator
-  */
+   */
   @NotNull 
   @Schema(name = "isHeadlineIndicator", description = "boolean value indicating if the indicator is a headline indicator", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isHeadlineIndicator")
@@ -324,7 +325,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)
    * @return lowestSpatialUnitForComputation
-  */
+   */
   
   @Schema(name = "lowestSpatialUnitForComputation", description = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("lowestSpatialUnitForComputation")
@@ -344,7 +345,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * Get metadata
    * @return metadata
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "metadata", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("metadata")
@@ -356,26 +357,6 @@ public class IndicatorPOSTInputType implements Serializable {
     this.metadata = metadata;
   }
 
-  public IndicatorPOSTInputType ownerId(String ownerId) {
-    this.ownerId = ownerId;
-    return this;
-  }
-
-  /**
-   * identifier of the owning group
-   * @return ownerId
-  */
-  @NotNull
-  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("ownerId")
-  public String getOwnerId() {
-    return ownerId;
-  }
-
-  public void setOwnerId(String ownerId) {
-    this.ownerId = ownerId;
-  }
-
   public IndicatorPOSTInputType precision(Integer precision) {
     this.precision = precision;
     return this;
@@ -384,8 +365,8 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.
    * @return precision
-  */
-
+   */
+  
   @Schema(name = "precision", description = "Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("precision")
   public Integer getPrecision() {
@@ -396,6 +377,26 @@ public class IndicatorPOSTInputType implements Serializable {
     this.precision = precision;
   }
 
+  public IndicatorPOSTInputType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+   */
+  @NotNull 
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
   public IndicatorPOSTInputType processDescription(String processDescription) {
     this.processDescription = processDescription;
     return this;
@@ -404,7 +405,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * description about how the indicator was computed
    * @return processDescription
-  */
+   */
   @NotNull 
   @Schema(name = "processDescription", description = "description about how the indicator was computed", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("processDescription")
@@ -424,7 +425,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * an optional note on the reference date of the indicator
    * @return referenceDateNote
-  */
+   */
   
   @Schema(name = "referenceDateNote", description = "an optional note on the reference date of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("referenceDateNote")
@@ -452,7 +453,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * array of references to other georesource datasets. E.g., if an indicator is defined by performing geometric-topological operations, then the identifiers of those required georesources can be referenced here
    * @return refrencesToGeoresources
-  */
+   */
   @Valid 
   @Schema(name = "refrencesToGeoresources", description = "array of references to other georesource datasets. E.g., if an indicator is defined by performing geometric-topological operations, then the identifiers of those required georesources can be referenced here", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("refrencesToGeoresources")
@@ -480,7 +481,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * array of references to other indicators. E.g., if an indicator is defined by combining four other indicators, then the identifiers of those other indicators can be referenced here
    * @return refrencesToOtherIndicators
-  */
+   */
   @Valid 
   @Schema(name = "refrencesToOtherIndicators", description = "array of references to other indicators. E.g., if an indicator is defined by combining four other indicators, then the identifiers of those other indicators can be referenced here", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("refrencesToOtherIndicators")
@@ -508,7 +509,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * list of tag labels for the indicator
    * @return tags
-  */
+   */
   @NotNull 
   @Schema(name = "tags", description = "list of tag labels for the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("tags")
@@ -528,7 +529,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * id of the last topic hierarchy entity 
    * @return topicReference
-  */
+   */
   @NotNull 
   @Schema(name = "topicReference", description = "id of the last topic hierarchy entity ", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("topicReference")
@@ -548,7 +549,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * unit of the indicator values
    * @return unit
-  */
+   */
   @NotNull 
   @Schema(name = "unit", description = "unit of the indicator values", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("unit")
@@ -568,8 +569,8 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * flag whether the resource is publicly accessible
    * @return isPublic
-  */
-  @NotNull
+   */
+  @NotNull 
   @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isPublic")
   public Boolean getIsPublic() {
@@ -601,8 +602,8 @@ public class IndicatorPOSTInputType implements Serializable {
         Objects.equals(this.isHeadlineIndicator, indicatorPOSTInputType.isHeadlineIndicator) &&
         Objects.equals(this.lowestSpatialUnitForComputation, indicatorPOSTInputType.lowestSpatialUnitForComputation) &&
         Objects.equals(this.metadata, indicatorPOSTInputType.metadata) &&
-        Objects.equals(this.ownerId, indicatorPOSTInputType.ownerId) &&
         Objects.equals(this.precision, indicatorPOSTInputType.precision) &&
+        Objects.equals(this.ownerId, indicatorPOSTInputType.ownerId) &&
         Objects.equals(this.processDescription, indicatorPOSTInputType.processDescription) &&
         Objects.equals(this.referenceDateNote, indicatorPOSTInputType.referenceDateNote) &&
         Objects.equals(this.refrencesToGeoresources, indicatorPOSTInputType.refrencesToGeoresources) &&
@@ -615,7 +616,7 @@ public class IndicatorPOSTInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(abbreviation, permissions, characteristicValue, creationType, datasetName, defaultClassificationMapping, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, ownerId, precision, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit, isPublic);
+    return Objects.hash(abbreviation, permissions, characteristicValue, creationType, datasetName, defaultClassificationMapping, displayOrder, indicatorType, interpretation, isHeadlineIndicator, lowestSpatialUnitForComputation, metadata, precision, ownerId, processDescription, referenceDateNote, refrencesToGeoresources, refrencesToOtherIndicators, tags, topicReference, unit, isPublic);
   }
 
   @Override
@@ -634,8 +635,8 @@ public class IndicatorPOSTInputType implements Serializable {
     sb.append("    isHeadlineIndicator: ").append(toIndentedString(isHeadlineIndicator)).append("\n");
     sb.append("    lowestSpatialUnitForComputation: ").append(toIndentedString(lowestSpatialUnitForComputation)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
-    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    precision: ").append(toIndentedString(precision)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
     sb.append("    processDescription: ").append(toIndentedString(processDescription)).append("\n");
     sb.append("    referenceDateNote: ").append(toIndentedString(referenceDateNote)).append("\n");
     sb.append("    refrencesToGeoresources: ").append(toIndentedString(refrencesToGeoresources)).append("\n");

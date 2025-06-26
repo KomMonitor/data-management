@@ -21,14 +21,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TopicTypeEnum
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
-public enum TopicTypeEnum {
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+public enum TopicTypeEnum implements Serializable {
   
   MAIN("main"),
   
   SUB("sub");
 
-  private String value;
+  private final String value;
 
   TopicTypeEnum(String value) {
     this.value = value;

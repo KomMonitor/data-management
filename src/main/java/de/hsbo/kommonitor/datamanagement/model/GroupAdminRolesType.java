@@ -8,6 +8,7 @@ import de.hsbo.kommonitor.datamanagement.model.AdminRoleType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -23,7 +24,7 @@ import jakarta.annotation.Generated;
  * GroupAdminRolesType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-07-03T15:11:35.751137300+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class GroupAdminRolesType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -53,7 +54,7 @@ public class GroupAdminRolesType implements Serializable {
   /**
    * unique id of the organizational Unit
    * @return organizationalUnitId
-  */
+   */
   @NotNull 
   @Schema(name = "organizationalUnitId", description = "unique id of the organizational Unit", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("organizationalUnitId")
@@ -81,7 +82,7 @@ public class GroupAdminRolesType implements Serializable {
   /**
    * Admin roles that refer to the organizational unit
    * @return adminRoles
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "adminRoles", description = "Admin roles that refer to the organizational unit", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("adminRoles")

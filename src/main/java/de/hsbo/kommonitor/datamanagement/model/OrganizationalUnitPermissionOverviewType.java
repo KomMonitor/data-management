@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewTypePermissions;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -20,14 +21,14 @@ import jakarta.annotation.Generated;
  * OrganizationalUnitPermissionOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-21T01:22:09.865691461+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class OrganizationalUnitPermissionOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private String contact;
 
-  private String description;
+  private @Nullable String description;
 
   private String name;
 
@@ -57,7 +58,7 @@ public class OrganizationalUnitPermissionOverviewType implements Serializable {
   /**
    * contact information of the person responsible for this group
    * @return contact
-  */
+   */
   @NotNull 
   @Schema(name = "contact", description = "contact information of the person responsible for this group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("contact")
@@ -77,7 +78,7 @@ public class OrganizationalUnitPermissionOverviewType implements Serializable {
   /**
    * additional information
    * @return description
-  */
+   */
   
   @Schema(name = "description", description = "additional information", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("description")
@@ -97,7 +98,7 @@ public class OrganizationalUnitPermissionOverviewType implements Serializable {
   /**
    * name of this organizational Unit
    * @return name
-  */
+   */
   @NotNull 
   @Schema(name = "name", description = "name of this organizational Unit", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("name")
@@ -117,7 +118,7 @@ public class OrganizationalUnitPermissionOverviewType implements Serializable {
   /**
    * unique id of this organizational Unit
    * @return organizationalUnitId
-  */
+   */
   @NotNull 
   @Schema(name = "organizationalUnitId", description = "unique id of this organizational Unit", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("organizationalUnitId")
@@ -137,7 +138,7 @@ public class OrganizationalUnitPermissionOverviewType implements Serializable {
   /**
    * Get permissions
    * @return permissions
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "permissions", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissions")

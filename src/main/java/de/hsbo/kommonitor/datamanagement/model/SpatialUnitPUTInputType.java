@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -20,14 +21,14 @@ import jakarta.annotation.Generated;
  * SpatialUnitPUTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-11-04T15:13:26.315379200+01:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class SpatialUnitPUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private String geoJsonString;
 
-  private Boolean isPartialUpdate;
+  private @Nullable Boolean isPartialUpdate;
 
   private PeriodOfValidityType periodOfValidity;
 
@@ -51,7 +52,7 @@ public class SpatialUnitPUTInputType implements Serializable {
   /**
    * a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'
    * @return geoJsonString
-  */
+   */
   @NotNull 
   @Schema(name = "geoJsonString", description = "a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("geoJsonString")
@@ -71,7 +72,7 @@ public class SpatialUnitPUTInputType implements Serializable {
   /**
    * if set to TRUE, then a partial upload of geometries is possible. Missing features that are already in the database will then not be deleted
    * @return isPartialUpdate
-  */
+   */
   
   @Schema(name = "isPartialUpdate", description = "if set to TRUE, then a partial upload of geometries is possible. Missing features that are already in the database will then not be deleted", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("isPartialUpdate")
@@ -91,7 +92,7 @@ public class SpatialUnitPUTInputType implements Serializable {
   /**
    * Get periodOfValidity
    * @return periodOfValidity
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "periodOfValidity", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("periodOfValidity")

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -22,7 +23,7 @@ import jakarta.annotation.Generated;
  * ResourceFilterType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-10-10T15:09:28.580458400+02:00[Europe/Berlin]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class ResourceFilterType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -61,7 +62,7 @@ public class ResourceFilterType implements Serializable {
   /**
    * list of topics for which all resources should be filtered
    * @return topicIds
-  */
+   */
   @NotNull 
   @Schema(name = "topicIds", description = "list of topics for which all resources should be filtered", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("topicIds")
@@ -89,7 +90,7 @@ public class ResourceFilterType implements Serializable {
   /**
    * list of resources that should be filtered
    * @return ids
-  */
+   */
   @NotNull 
   @Schema(name = "ids", description = "list of resources that should be filtered", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("ids")
