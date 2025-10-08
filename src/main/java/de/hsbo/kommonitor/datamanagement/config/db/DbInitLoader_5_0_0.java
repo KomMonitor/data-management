@@ -105,7 +105,7 @@ public class DbInitLoader_5_0_0 implements DbInitLoader {
 
         try {
             organizationalUnitManager.initializeKeycloakGroup(ou);
-        } catch (KeycloakException | ProcessingException ex) {
+        } catch (Exception ex) {
             LOG.error("Initializing Keycloak group failed for OrganizationalUnit '{}'.", ou.getName(), ex);
         }
 
