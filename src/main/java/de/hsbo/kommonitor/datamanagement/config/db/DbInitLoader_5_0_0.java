@@ -76,6 +76,7 @@ public class DbInitLoader_5_0_0 implements DbInitLoader {
         }
         // Initialize Keycloak groups for all other OrganizationalUnits
         setupOrganizationalUnits();
+        LOG.info("Successfully migrated KomMonitor DB.");
     }
 
     private void setupOrganizationalUnits() {
@@ -94,6 +95,7 @@ public class DbInitLoader_5_0_0 implements DbInitLoader {
                 iterator = unitList.iterator();
             }
         }
+        LOG.info("Successfully created permissions and Keycloak groups.");
     }
 
     private void setupGroup(OrganizationalUnitEntity ou) {
