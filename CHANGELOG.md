@@ -1,6 +1,7 @@
 # Change Log
 
-## 5.1.1
+## 5.1.2
+* Add logs and update base run image [fb31ad6](fb31ad697044d38945a82aeb2d347c8412db141f)
 * Regenerate models [2c6057e](2c6057ed9714afc97f8bb36957f6407328a5bbae)
 * Fix dependecy issues [a61f391](a61f39137b4845154cb592e2408cdec617c39509)
 * Raise deps [9aa0af3](9aa0af311dea959428efbc5488acbcfc04943577)
