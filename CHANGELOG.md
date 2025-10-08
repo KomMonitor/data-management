@@ -1,6 +1,7 @@
 # Change Log
 
-## 5.1.2
+## 5.1.3
+* Refine exception handling [378a542](378a542cb94b0e4985cde70d61ac2a8f70d4704b)
 * Add logs and update base run image [fb31ad6](fb31ad697044d38945a82aeb2d347c8412db141f)
 * Regenerate models [2c6057e](2c6057ed9714afc97f8bb36957f6407328a5bbae)
 * Fix dependecy issues [a61f391](a61f39137b4845154cb592e2408cdec617c39509)
