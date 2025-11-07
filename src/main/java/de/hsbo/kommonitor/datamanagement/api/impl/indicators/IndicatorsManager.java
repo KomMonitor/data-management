@@ -164,7 +164,7 @@ public class IndicatorsManager {
                             .map(RolesEntity::getRoleId).collect(Collectors.toList());
 
                     persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId,
-                            indicatorSpatialUnitJoinEntity.getIndicatorName(),
+                            metadataEntity.getDatasetName(),
                             indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
                             indicatorSpatialUnitJoinEntity.getIndicatorViewTableName(), styleName, allowedRoles);
 				} catch (Exception e) {
