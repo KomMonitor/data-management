@@ -1,6 +1,7 @@
 # Change Log
 
-## 4.1.7
+## 4.1.8
+* Fix indicator name updating for joined table [b249381](b24938186e16b4fedb060a10948fc7753f88e80e)
 * Downgrade base run image regarding certificate issues [4f639e7](4f639e7d55c8c2b03f19ccf78cf879acd97f688c)
 * Fix filtering for subtopics [0511fea](0511fea57098e1ae1462539e3da25278e0101572)
 * Raise jackson-datatype-jts version [e45cfa2](e45cfa29e2d8cafff07dfdde8254c142f893dce9)
