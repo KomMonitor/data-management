@@ -171,7 +171,7 @@ public class IndicatorsManager {
                             .map(r -> r.getPermissionId()).collect(Collectors.toList());
 
                     persistNamesOfIndicatorTablesAndServicesInJoinTable(indicatorId,
-                            indicatorSpatialUnitJoinEntity.getIndicatorName(),
+                            metadataEntity.getDatasetName(),
                             indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
                             indicatorSpatialUnitJoinEntity.getIndicatorViewTableName(),
                             styleName,
