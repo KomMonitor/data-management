@@ -5860,6 +5860,53 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /topics/{topicId}/display-order:
+    patch:
+      tags:
+        - topics
+      summary: Update displayOrder for submitted subtopics
+      description: Update displayOrder for submitted subtopics
+      operationId: updateSubtopicDisplayOrder
+      parameters:
+        - name: topicId
+          in: path
+          description: unique identifier of the topic
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: array of subtopic id and displayOrder items
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TopicPATCHDisplayOrderInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "201":
+          description: Created
+        "204":
+          description: No Content
+          content: { }
+        "401":
+          description: Unauthorized
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+      x-codegen-request-body-name: subtopicOrderArray
 components:
   schemas:
     CommonMetadataType:
@@ -6299,7 +6346,7 @@ components:
         displayOrder:
           type: number
           description: an order number to control display order in clients
-          example: 0.0
+          example: 0
         indicatorType:
           description: indicates whether the indicator is a status indicator (values
             represent the extent of the watched phenomenon for a certain point in
@@ -6502,6 +6549,20 @@ components:
         indicatorId:
           type: string
           description: unique ID of the associated indicator
+    TopicPATCHDisplayOrderInputType:
+      title: IndicatorPATCHDisplayOrderInputType
+      required:
+        - displayOrder
+        - topicId
+      type: object
+      properties:
+        displayOrder:
+          type: integer
+          description: the new displayOrder value
+          example: 0
+        indicatorId:
+          type: string
+          description: unique ID of the associated sub topic
     PermissionLevelInputType:
       title: PermissionLevelInputType
       required:
@@ -6561,7 +6622,7 @@ components:
         displayOrder:
           type: number
           description: an order number to control display order in clients
-          example: 0.0
+          example: 0
         indicatorType:
           description: indicates whether the indicator is a status indicator (values
             represent the extent of the watched phenomenon for a certain point in
@@ -7297,10 +7358,7 @@ components:
       required:
         - permissions
         - geoJsonString
-        - jsonSchema
         - metadata
-        - nextLowerHierarchyLevel
-        - nextUpperHierarchyLevel
         - periodOfValidity
         - spatialUnitLevel
         - isPublic
@@ -7435,6 +7493,10 @@ components:
             a main topic - only topics of type 'sub' shall be subTopics of topics
             with type 'main'
           $ref: '#/components/schemas/TopicTypeEnum'
+        displayOrder:
+          type: number
+          description: an order number to control display order in clients
+          example: 0
     ResourceFilterType:
       title: ResourceFilterType
       required:
