@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitPOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-13T11:45:45.252135300+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class SpatialUnitPOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -36,13 +36,13 @@ public class SpatialUnitPOSTInputType implements Serializable {
 
   private String geoJsonString;
 
-  private String jsonSchema;
+  private @Nullable String jsonSchema;
 
   private CommonMetadataType metadata;
 
-  private String nextLowerHierarchyLevel;
+  private @Nullable String nextLowerHierarchyLevel;
 
-  private String nextUpperHierarchyLevel;
+  private @Nullable String nextUpperHierarchyLevel;
 
   private PeriodOfValidityType periodOfValidity;
 
@@ -67,13 +67,10 @@ public class SpatialUnitPOSTInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public SpatialUnitPOSTInputType(List<String> permissions, String geoJsonString, String jsonSchema, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel, PeriodOfValidityType periodOfValidity, String spatialUnitLevel, Boolean isPublic) {
+  public SpatialUnitPOSTInputType(List<String> permissions, String geoJsonString, CommonMetadataType metadata, PeriodOfValidityType periodOfValidity, String spatialUnitLevel, Boolean isPublic) {
     this.permissions = permissions;
     this.geoJsonString = geoJsonString;
-    this.jsonSchema = jsonSchema;
     this.metadata = metadata;
-    this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
-    this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
     this.periodOfValidity = periodOfValidity;
     this.spatialUnitLevel = spatialUnitLevel;
     this.isPublic = isPublic;
@@ -136,8 +133,8 @@ public class SpatialUnitPOSTInputType implements Serializable {
    * a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.
    * @return jsonSchema
    */
-  @NotNull 
-  @Schema(name = "jsonSchema", description = "a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "jsonSchema", description = "a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("jsonSchema")
   public String getJsonSchema() {
     return jsonSchema;
@@ -176,8 +173,8 @@ public class SpatialUnitPOSTInputType implements Serializable {
    * the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level
    * @return nextLowerHierarchyLevel
    */
-  @NotNull 
-  @Schema(name = "nextLowerHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "nextLowerHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("nextLowerHierarchyLevel")
   public String getNextLowerHierarchyLevel() {
     return nextLowerHierarchyLevel;
@@ -196,8 +193,8 @@ public class SpatialUnitPOSTInputType implements Serializable {
    * the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level
    * @return nextUpperHierarchyLevel
    */
-  @NotNull 
-  @Schema(name = "nextUpperHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "nextUpperHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("nextUpperHierarchyLevel")
   public String getNextUpperHierarchyLevel() {
     return nextUpperHierarchyLevel;

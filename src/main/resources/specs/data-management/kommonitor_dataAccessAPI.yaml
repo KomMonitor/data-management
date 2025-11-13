@@ -7468,6 +7468,7 @@ components:
         - topicId
         - topicName
         - topicType
+        - displayOrder
       type: object
       properties:
         subTopics:
