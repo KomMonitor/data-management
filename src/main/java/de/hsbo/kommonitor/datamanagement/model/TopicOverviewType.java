@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.TopicResourceEnum;
 import de.hsbo.kommonitor.datamanagement.model.TopicTypeEnum;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +26,7 @@ import jakarta.annotation.Generated;
  * TopicOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-13T11:45:45.252135300+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-13T11:55:10.717478800+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class TopicOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -45,7 +44,7 @@ public class TopicOverviewType implements Serializable {
 
   private TopicTypeEnum topicType;
 
-  private BigDecimal displayOrder;
+  private Integer displayOrder;
 
   public TopicOverviewType() {
     super();
@@ -54,7 +53,7 @@ public class TopicOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public TopicOverviewType(String topicDescription, String topicId, String topicName, TopicTypeEnum topicType, BigDecimal displayOrder) {
+  public TopicOverviewType(String topicDescription, String topicId, String topicName, TopicTypeEnum topicType, Integer displayOrder) {
     this.topicDescription = topicDescription;
     this.topicId = topicId;
     this.topicName = topicName;
@@ -190,7 +189,7 @@ public class TopicOverviewType implements Serializable {
     this.topicType = topicType;
   }
 
-  public TopicOverviewType displayOrder(BigDecimal displayOrder) {
+  public TopicOverviewType displayOrder(Integer displayOrder) {
     this.displayOrder = displayOrder;
     return this;
   }
@@ -199,14 +198,14 @@ public class TopicOverviewType implements Serializable {
    * an order number to control display order in clients
    * @return displayOrder
    */
-  @NotNull @Valid 
+  @NotNull 
   @Schema(name = "displayOrder", example = "0", description = "an order number to control display order in clients", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("displayOrder")
-  public BigDecimal getDisplayOrder() {
+  public Integer getDisplayOrder() {
     return displayOrder;
   }
 
-  public void setDisplayOrder(BigDecimal displayOrder) {
+  public void setDisplayOrder(Integer displayOrder) {
     this.displayOrder = displayOrder;
   }
 
