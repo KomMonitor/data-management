@@ -24,8 +24,8 @@ public class TopicsEntity {
 	  private String topicDescription = null;
 	  
 	  private TopicTypeEnum topicType = null;
-	  
 	  private TopicResourceEnum topicResource = null;
+	  private int displayOrder = 0;
 	  
 	  @ElementCollection()
 //	  @OnDelete(action= OnDeleteAction.CASCADE)
@@ -94,6 +94,13 @@ public class TopicsEntity {
 		this.topicType = topicType;
 	}
 
+	public int getDisplayOrder() {
+		return displayOrder;
+	}
+
+	public void setDisplayOrder(int displayOrder) {
+		this.displayOrder = displayOrder;
+	}
 
 	public TopicResourceEnum getTopicResource() {
 		return topicResource;
