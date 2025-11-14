@@ -6550,7 +6550,7 @@ components:
           type: string
           description: unique ID of the associated indicator
     TopicPATCHDisplayOrderInputType:
-      title: IndicatorPATCHDisplayOrderInputType
+      title: TopicPATCHDisplayOrderInputType
       required:
         - displayOrder
         - topicId
@@ -6558,9 +6558,9 @@ components:
       properties:
         displayOrder:
           type: integer
-          description: the new displayOrder value
+          description: the new display order value
           example: 0
-        indicatorId:
+        topicId:
           type: string
           description: unique ID of the associated sub topic
     PermissionLevelInputType:
@@ -7495,7 +7495,7 @@ components:
             with type 'main'
           $ref: '#/components/schemas/TopicTypeEnum'
         displayOrder:
-          type: number
+          type: integer
           description: an order number to control display order in clients
           example: 0
     ResourceFilterType:

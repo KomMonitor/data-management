@@ -20,14 +20,14 @@ import jakarta.annotation.Generated;
  * TopicPATCHDisplayOrderInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-12T17:40:10.146905100+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-14T13:40:25.807350800+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class TopicPATCHDisplayOrderInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private Integer displayOrder;
 
-  private @Nullable String indicatorId;
+  private String topicId;
 
   public TopicPATCHDisplayOrderInputType() {
     super();
@@ -36,8 +36,9 @@ public class TopicPATCHDisplayOrderInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public TopicPATCHDisplayOrderInputType(Integer displayOrder) {
+  public TopicPATCHDisplayOrderInputType(Integer displayOrder, String topicId) {
     this.displayOrder = displayOrder;
+    this.topicId = topicId;
   }
 
   public TopicPATCHDisplayOrderInputType displayOrder(Integer displayOrder) {
@@ -46,11 +47,11 @@ public class TopicPATCHDisplayOrderInputType implements Serializable {
   }
 
   /**
-   * the new displayOrder value
+   * the new display order value
    * @return displayOrder
    */
   @NotNull 
-  @Schema(name = "displayOrder", example = "0", description = "the new displayOrder value", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "displayOrder", example = "0", description = "the new display order value", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("displayOrder")
   public Integer getDisplayOrder() {
     return displayOrder;
@@ -60,24 +61,24 @@ public class TopicPATCHDisplayOrderInputType implements Serializable {
     this.displayOrder = displayOrder;
   }
 
-  public TopicPATCHDisplayOrderInputType indicatorId(String indicatorId) {
-    this.indicatorId = indicatorId;
+  public TopicPATCHDisplayOrderInputType topicId(String topicId) {
+    this.topicId = topicId;
     return this;
   }
 
   /**
    * unique ID of the associated sub topic
-   * @return indicatorId
+   * @return topicId
    */
-  
-  @Schema(name = "indicatorId", description = "unique ID of the associated sub topic", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("indicatorId")
-  public String getIndicatorId() {
-    return indicatorId;
+  @NotNull 
+  @Schema(name = "topicId", description = "unique ID of the associated sub topic", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("topicId")
+  public String getTopicId() {
+    return topicId;
   }
 
-  public void setIndicatorId(String indicatorId) {
-    this.indicatorId = indicatorId;
+  public void setTopicId(String topicId) {
+    this.topicId = topicId;
   }
 
   @Override
@@ -90,12 +91,12 @@ public class TopicPATCHDisplayOrderInputType implements Serializable {
     }
     TopicPATCHDisplayOrderInputType topicPATCHDisplayOrderInputType = (TopicPATCHDisplayOrderInputType) o;
     return Objects.equals(this.displayOrder, topicPATCHDisplayOrderInputType.displayOrder) &&
-        Objects.equals(this.indicatorId, topicPATCHDisplayOrderInputType.indicatorId);
+        Objects.equals(this.topicId, topicPATCHDisplayOrderInputType.topicId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(displayOrder, indicatorId);
+    return Objects.hash(displayOrder, topicId);
   }
 
   @Override
@@ -103,7 +104,7 @@ public class TopicPATCHDisplayOrderInputType implements Serializable {
     StringBuilder sb = new StringBuilder();
     sb.append("class TopicPATCHDisplayOrderInputType {\n");
     sb.append("    displayOrder: ").append(toIndentedString(displayOrder)).append("\n");
-    sb.append("    indicatorId: ").append(toIndentedString(indicatorId)).append("\n");
+    sb.append("    topicId: ").append(toIndentedString(topicId)).append("\n");
     sb.append("}");
     return sb.toString();
   }
