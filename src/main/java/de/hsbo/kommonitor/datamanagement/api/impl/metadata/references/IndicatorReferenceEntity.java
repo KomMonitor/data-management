@@ -5,14 +5,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity(name = "IndicatorReference")
 public class IndicatorReferenceEntity {
 
 	@Id
 	@GeneratedValue(generator = "UUID")
-	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+	@UuidGenerator
 	private String entryId = null;
 
 	private String indicatorId = null;

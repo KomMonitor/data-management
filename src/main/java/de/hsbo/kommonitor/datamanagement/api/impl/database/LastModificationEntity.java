@@ -9,14 +9,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity(name = "LastModification")
 public class LastModificationEntity {
 
 	@Id
 	@GeneratedValue(generator = "UUID")
-	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+	@UuidGenerator
 	private String id = null;
 
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")

@@ -10,14 +10,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity(name = "Permissions")
 public class PermissionEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @UuidGenerator
     private String permissionId = null;
 
     @ManyToOne(optional = false)

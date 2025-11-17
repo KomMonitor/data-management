@@ -1,14 +1,11 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
 import de.hsbo.kommonitor.datamanagement.model.TopicResourceEnum;
 import de.hsbo.kommonitor.datamanagement.model.TopicTypeEnum;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,7 +16,7 @@ public class TopicsEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @UuidGenerator
     private String topicId = null;
 
     private String topicName = null;

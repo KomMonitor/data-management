@@ -9,7 +9,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEnt
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -23,7 +23,7 @@ public class IndicatorSpatialUnitJoinEntity implements Serializable, RestrictedE
 
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @UuidGenerator
     private String entryId;
 
     private String indicatorMetadataId = null;

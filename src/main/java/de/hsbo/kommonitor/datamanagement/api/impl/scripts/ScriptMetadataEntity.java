@@ -2,9 +2,10 @@ package de.hsbo.kommonitor.datamanagement.api.impl.scripts;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
-import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -14,7 +15,7 @@ public class ScriptMetadataEntity {
 
 	@Id
 	@GeneratedValue(generator = "UUID")
-	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+	@UuidGenerator
 	private String scriptId = null;
 
 	private String name = null;

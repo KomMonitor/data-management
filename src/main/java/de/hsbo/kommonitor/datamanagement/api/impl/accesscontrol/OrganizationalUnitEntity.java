@@ -3,7 +3,6 @@ package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 import de.hsbo.kommonitor.datamanagement.model.AdminRoleType;
 import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesType;
 import jakarta.persistence.*;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.LinkedList;

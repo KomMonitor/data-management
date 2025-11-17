@@ -1,19 +1,19 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.scripts;
 
 import de.hsbo.kommonitor.datamanagement.model.ProcessInputType.DataTypeEnum;
-import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity(name = "ScriptInputParameters")
 public class ScriptInputParameterEntity {
 	
 	@Id
 	@GeneratedValue(generator = "UUID")
-	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+	@UuidGenerator
 	private String inputParameterId = null;
 	
 	private String name = null;

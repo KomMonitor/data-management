@@ -1,18 +1,17 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.metadata.references;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity(name = "GeoresourceReference")
 public class GeoresourceReferenceEntity {
 
 	@Id
 	@GeneratedValue(generator = "UUID")
-	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+	@UuidGenerator
 	private String entryId = null;
 
 	private String mainIndicatorId = null;

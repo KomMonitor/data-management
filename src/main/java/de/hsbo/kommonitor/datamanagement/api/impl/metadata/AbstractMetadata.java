@@ -6,9 +6,9 @@ import java.util.List;
 import jakarta.persistence.*;
 
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
-import org.hibernate.annotations.GenericGenerator;
 
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType.UpdateIntervalEnum;
+import org.hibernate.annotations.UuidGenerator;
 
 @MappedSuperclass
 public abstract class AbstractMetadata {
@@ -16,7 +16,7 @@ public abstract class AbstractMetadata {
 	
 	@Id
 	@GeneratedValue(generator = "UUID")
-	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+	@UuidGenerator
 	private String datasetId = null;
 	private String datasetName = null;
 	private String dbTableName = null;
