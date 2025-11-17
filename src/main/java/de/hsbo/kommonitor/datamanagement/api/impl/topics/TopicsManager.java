@@ -187,7 +187,7 @@ public class TopicsManager {
 		List<TopicsEntity> topicEntities = topicsRepo.findByTopicType(TopicTypeEnum.MAIN);
 		List<TopicOverviewType> topics = TopicsMapper.mapToSwaggerTopics(topicEntities);
 		
-		topics.sort(Comparator.comparing(TopicOverviewType::getTopicName));
+		topics.sort(Comparator.comparing(TopicOverviewType::getDisplayOrder));
 		
 		return topics;
 	}
