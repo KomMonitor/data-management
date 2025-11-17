@@ -5,9 +5,7 @@ import de.hsbo.kommonitor.datamanagement.api.TopicsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
-import de.hsbo.kommonitor.datamanagement.model.TopicInputType;
-import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.TopicPATCHDisplayOrderInputType;
+import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -104,12 +102,12 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
-	public ResponseEntity<Void> updateMainTopicDisplayOrder(List<@Valid TopicPATCHDisplayOrderInputType> mainTopicOrderArray) {
-		LOG.info("Received request to update main topic display order ");
+	public ResponseEntity<Void> updateGeoresourceMainTopicDisplayOrder(List<@Valid TopicPATCHDisplayOrderInputType> mainGeoresourceTopicOrderArray) {
+		LOG.info("Received request to update georesource main topic display order ");
 		boolean update;
 
 		try {
-			update = topicsManager.updateMainTopicOrder(mainTopicOrderArray);
+			update = topicsManager.updateMainTopicOrder(mainGeoresourceTopicOrderArray, TopicResourceEnum.GEORESOURCE);
 			lastModManager.updateLastDatabaseModification_topics();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
@@ -120,7 +118,25 @@ public class TopicsController extends BasePathController implements TopicsApi {
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
 
+	@Override
+	public ResponseEntity<Void> updateIndicatorsMainTopicDisplayOrder(List<@Valid TopicPATCHDisplayOrderInputType> indicatorMainTopicOrderArray) {
+		LOG.info("Received request to update indicator main topic display order ");
+		boolean update;
+
+		try {
+			update = topicsManager.updateMainTopicOrder(indicatorMainTopicOrderArray, TopicResourceEnum.INDICATOR);
+			lastModManager.updateLastDatabaseModification_topics();
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+		}
+
+		if (update) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@Override

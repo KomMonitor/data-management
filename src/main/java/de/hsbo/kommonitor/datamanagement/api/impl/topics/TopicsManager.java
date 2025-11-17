@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.transaction.Transactional;
@@ -342,10 +343,13 @@ public class TopicsManager {
 		}
 	}
 
-	public boolean updateMainTopicOrder(List<@Valid TopicPATCHDisplayOrderInputType> mainTopicOrderArray) {
+	public boolean updateMainTopicOrder(List<@Valid TopicPATCHDisplayOrderInputType> mainTopicOrderArray, TopicResourceEnum topicResource) {
 		LOG.info("Ordering main topics.");
 
-		List<TopicsEntity> mainTopics = topicsRepo.findByTopicType(TopicTypeEnum.MAIN);
+		List<TopicsEntity> mainTopics = topicsRepo.findByTopicType(TopicTypeEnum.MAIN)
+				.stream()
+				.filter(t -> t.getTopicResource().equals(topicResource))
+				.collect(Collectors.toList());
 
 		mainTopicOrderArray.forEach(i -> {
 			TopicsEntity mainTopicEntity = mainTopics

@@ -5789,6 +5789,86 @@ paths:
       security:
         - kommonitor-data-access_oauth: []
       x-codegen-request-body-name: topicData
+  /topics/indicators/displayOrder:
+    patch:
+      tags:
+        - topics
+      summary: Update display order for submitted indicators main topics
+      description: Update display order for submitted indicators main topics
+      operationId: updateIndicatorsMainTopicDisplayOrder
+      requestBody:
+        description: array of indicator main topic id and display order
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TopicPATCHDisplayOrderInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "201":
+          description: Created
+        "204":
+          description: No Content
+          content: { }
+        "401":
+          description: Unauthorized
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+      x-codegen-request-body-name: indicatorMainTopicOrderArray
+  /topics/georesources/displayOrder:
+    patch:
+      tags:
+        - topics
+      summary: Update display order for submitted georesources main topics
+      description: Update displayOrder for submitted georesources main topics
+      operationId: updateGeoresourceMainTopicDisplayOrder
+      requestBody:
+        description: array of georesource main topic id and display order
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TopicPATCHDisplayOrderInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "201":
+          description: Created
+        "204":
+          description: No Content
+          content: { }
+        "401":
+          description: Unauthorized
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+      x-codegen-request-body-name: mainGeoresourceTopicOrderArray
   /topics/{topicId}:
     put:
       tags:

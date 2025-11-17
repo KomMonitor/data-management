@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-17T15:03:08.637632200+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-17T16:00:34.852409600+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 @Validated
 @Tag(name = "topics", description = "the Topics API")
 public interface TopicsApi {
@@ -121,10 +121,10 @@ public interface TopicsApi {
 
 
     /**
-     * PATCH /topics : Update displayOrder for submitted main topics
-     * Update displayOrder for submitted main topics
+     * PATCH /topics/georesources/displayOrder : Update display order for submitted georesources main topics
+     * Update displayOrder for submitted georesources main topics
      *
-     * @param mainTopicOrderArray array of main topic id and display order (required)
+     * @param mainGeoresourceTopicOrderArray array of georesource main topic id and display order (required)
      * @return OK (status code 200)
      *         or Created (status code 201)
      *         or No Content (status code 204)
@@ -134,9 +134,9 @@ public interface TopicsApi {
      *         or Invalid input (status code 405)
      */
     @Operation(
-        operationId = "updateMainTopicDisplayOrder",
-        summary = "Update displayOrder for submitted main topics",
-        description = "Update displayOrder for submitted main topics",
+        operationId = "updateGeoresourceMainTopicDisplayOrder",
+        summary = "Update display order for submitted georesources main topics",
+        description = "Update displayOrder for submitted georesources main topics",
         tags = { "topics" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
@@ -153,12 +153,54 @@ public interface TopicsApi {
     )
     @RequestMapping(
         method = RequestMethod.PATCH,
-        value = "/topics",
+        value = "/topics/georesources/displayOrder",
         consumes = { "application/json" }
     )
     
-    ResponseEntity<Void> updateMainTopicDisplayOrder(
-        @Parameter(name = "mainTopicOrderArray", description = "array of main topic id and display order", required = true) @Valid @RequestBody List<@Valid TopicPATCHDisplayOrderInputType> mainTopicOrderArray
+    ResponseEntity<Void> updateGeoresourceMainTopicDisplayOrder(
+        @Parameter(name = "mainGeoresourceTopicOrderArray", description = "array of georesource main topic id and display order", required = true) @Valid @RequestBody List<@Valid TopicPATCHDisplayOrderInputType> mainGeoresourceTopicOrderArray
+    );
+
+
+    /**
+     * PATCH /topics/indicators/displayOrder : Update display order for submitted indicators main topics
+     * Update display order for submitted indicators main topics
+     *
+     * @param indicatorMainTopicOrderArray array of indicator main topic id and display order (required)
+     * @return OK (status code 200)
+     *         or Created (status code 201)
+     *         or No Content (status code 204)
+     *         or Unauthorized (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "updateIndicatorsMainTopicDisplayOrder",
+        summary = "Update display order for submitted indicators main topics",
+        description = "Update display order for submitted indicators main topics",
+        tags = { "topics" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PATCH,
+        value = "/topics/indicators/displayOrder",
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<Void> updateIndicatorsMainTopicDisplayOrder(
+        @Parameter(name = "indicatorMainTopicOrderArray", description = "array of indicator main topic id and display order", required = true) @Valid @RequestBody List<@Valid TopicPATCHDisplayOrderInputType> indicatorMainTopicOrderArray
     );
 
 
