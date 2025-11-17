@@ -485,12 +485,6 @@ public class IndicatorsController extends BasePathController implements Indicato
     public ResponseEntity<Void> updateIndicatorDisplayOrder(@P("indicatorOrderArray") List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray) {
     	logger.info("Received request to update indicator display order ");
 
-        String accept = request.getHeader("Accept");
-
-        /*
-         * analyse input data and save it within database
-         */
-        
         boolean update = false;
 
         try {

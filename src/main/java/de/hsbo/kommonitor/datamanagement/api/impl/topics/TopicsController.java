@@ -7,7 +7,9 @@ import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManag
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.TopicInputType;
 import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.TopicPATCHDisplayOrderInputType;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,12 @@ import org.springframework.stereotype.Controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @Controller
 public class TopicsController extends BasePathController implements TopicsApi {
 	
-	private static Logger logger = LoggerFactory.getLogger(TopicsController.class);
+	private final static Logger LOG = LoggerFactory.getLogger(TopicsController.class);
 
 	private final ObjectMapper objectMapper;
 
@@ -45,9 +48,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
 	public ResponseEntity<TopicOverviewType> addTopic(TopicInputType topicData) {
 		
-		logger.info("Received request to insert new topic");
-		
-		String accept = request.getHeader("Accept");
+		LOG.info("Received request to insert new topic");
 
 		/*
 		 * analyse input data and save it within database
@@ -68,10 +69,10 @@ public class TopicsController extends BasePathController implements TopicsApi {
 			try {
 				responseHeaders.setLocation(new URI(location));
 			} catch (URISyntaxException e) {
-//				return ApiResponseUtil.createResponseEntityFromException(e);
+				return ApiUtils.createResponseEntityFromException(e);
 			}
 
-			return new ResponseEntity<TopicOverviewType>(topic, responseHeaders, HttpStatus.CREATED);
+			return new ResponseEntity<>(topic, responseHeaders, HttpStatus.CREATED);
 		}else{
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -81,9 +82,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
 	public ResponseEntity deleteTopic(String topicId) {
-		logger.info("Received request to delete topic for topicId '{}'", topicId);
-		
-		String accept = request.getHeader("Accept");
+		LOG.info("Received request to delete topic for topicId '{}'", topicId);
 
 		/*
 		 * delete topic with the specified id
@@ -106,10 +105,24 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
-	public ResponseEntity<Void> updateTopic(String topicId, TopicInputType topicData) {
-		logger.info("Received request to update topic with topicId '{}'", topicId);
+	public ResponseEntity updateSubtopicDisplayOrder(String topicId, List<@Valid TopicPATCHDisplayOrderInputType> subtopicOrderArray) {
+		LOG.info("Received request to update subtopic display order ");
 
-		String accept = request.getHeader("Accept");
+		try {
+			topicId = topicsManager.updateSubtopicsOrder(topicId, subtopicOrderArray);
+			lastModManager.updateLastDatabaseModification_topics();
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+		}
+
+		return createResponseEntityWithLocationHeader(topicId);
+
+	}
+
+	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
+	public ResponseEntity<Void> updateTopic(String topicId, TopicInputType topicData) {
+		LOG.info("Received request to update topic with topicId '{}'", topicId);
 
 		/*
 		 * analyse input data and save it within database
@@ -123,14 +136,17 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 		}
 
+		return createResponseEntityWithLocationHeader(topicId);
+	}
+
+	private ResponseEntity<Void> createResponseEntityWithLocationHeader(String topicId) {
 		if (topicId != null) {
 			HttpHeaders responseHeaders = new HttpHeaders();
 
-			String location = topicId;
 			try {
-				responseHeaders.setLocation(new URI(location));
+				responseHeaders.setLocation(new URI(topicId));
 			} catch (URISyntaxException e) {
-				// return ApiResponseUtil.createResponseEntityFromException(e);
+				return ApiUtils.createResponseEntityFromException(e);
 			}
 
 			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);

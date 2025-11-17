@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +26,7 @@ public class TopicsMapper {
 		topic.setTopicType(topicEntity.getTopicType());
 		topic.setTopicResource(topicEntity.getTopicResource());
 		topic.setSubTopics(mapToSwaggerSubTopics(topicEntity.getSubTopics()));
+		topic.setDisplayOrder(topicEntity.getDisplayOrder());
 		
 		return topic;
 	}
@@ -40,6 +42,7 @@ public class TopicsMapper {
 			swaggerSubTopic.setTopicType(topicEntityType.getTopicType());
 			swaggerSubTopic.setTopicResource(topicEntityType.getTopicResource());
 			swaggerSubTopic.setSubTopics(mapToSwaggerSubTopics(topicEntityType.getSubTopics()));
+			swaggerSubTopic.setDisplayOrder(topicEntityType.getDisplayOrder());
 			
 			swaggerSubTopics.add(swaggerSubTopic);
 		}

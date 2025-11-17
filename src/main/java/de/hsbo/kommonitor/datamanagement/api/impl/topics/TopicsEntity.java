@@ -1,8 +1,11 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
 import de.hsbo.kommonitor.datamanagement.model.TopicResourceEnum;
 import de.hsbo.kommonitor.datamanagement.model.TopicTypeEnum;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.*;
@@ -29,8 +32,6 @@ public class TopicsEntity {
     private int displayOrder = 0;
 
     @ElementCollection()
-//	  @OnDelete(action= OnDeleteAction.CASCADE)
-//	  @JoinColumn(name = "main_topic_id", referencedColumnName = "topicId")
     @CollectionTable(name = "topics_subtopics", joinColumns = @JoinColumn(name = "main_topic_id", referencedColumnName = "topicId"))
     @Column(name = "sub_topic")
     private Collection<TopicsEntity> subTopics;
