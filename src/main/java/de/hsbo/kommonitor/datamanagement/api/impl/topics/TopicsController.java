@@ -104,6 +104,26 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
+	public ResponseEntity<Void> updateMainTopicDisplayOrder(List<@Valid TopicPATCHDisplayOrderInputType> mainTopicOrderArray) {
+		LOG.info("Received request to update main topic display order ");
+		boolean update;
+
+		try {
+			update = topicsManager.updateMainTopicOrder(mainTopicOrderArray);
+			lastModManager.updateLastDatabaseModification_topics();
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+		}
+
+		if (update) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+
+	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
 	public ResponseEntity updateSubtopicDisplayOrder(String topicId, List<@Valid TopicPATCHDisplayOrderInputType> subtopicOrderArray) {
 		LOG.info("Received request to update subtopic display order ");

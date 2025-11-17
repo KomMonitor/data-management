@@ -341,4 +341,26 @@ public class TopicsManager {
 			throw new ResourceNotFoundException(404, "No topic was found for specified topicId. Aborting update topic request.");
 		}
 	}
+
+	public boolean updateMainTopicOrder(List<@Valid TopicPATCHDisplayOrderInputType> mainTopicOrderArray) {
+		LOG.info("Ordering main topics.");
+
+		List<TopicsEntity> mainTopics = topicsRepo.findByTopicType(TopicTypeEnum.MAIN);
+
+		mainTopicOrderArray.forEach(i -> {
+			TopicsEntity mainTopicEntity = mainTopics
+					.stream()
+					.filter(m -> m.getTopicId().equals(i.getTopicId()))
+					.findFirst()
+					.orElse(null);
+			if (mainTopicEntity != null) {
+				mainTopicEntity.setDisplayOrder(i.getDisplayOrder());
+			} else {
+				LOG.warn("No main topic with ID '{}' found.", i.getTopicId());
+			}
+		});
+
+		topicsRepo.saveAllAndFlush(mainTopics);
+		return true;
+	}
 }
