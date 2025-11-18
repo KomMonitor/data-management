@@ -17,7 +17,7 @@ import java.util.List;
 @Controller
 public class TopicsPublicController extends BasePathController implements TopicsPublicApi {
 
-    private static Logger logger = LoggerFactory.getLogger(TopicsPublicController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TopicsPublicController.class);
 
     private final ObjectMapper objectMapper;
 
@@ -34,7 +34,7 @@ public class TopicsPublicController extends BasePathController implements Topics
 
     @Override
     public ResponseEntity<TopicOverviewType> getTopicById(String topicId) {
-        logger.info("Received request to get topic for topicId '{}'", topicId);
+        LOG.info("Received request to get topic for topicId '{}'", topicId);
         String accept = request.getHeader("Accept");
 
         if (accept != null && accept.contains("application/json")) {
@@ -45,13 +45,12 @@ public class TopicsPublicController extends BasePathController implements Topics
         }
     }
 
-    @Override
-    public ResponseEntity<List<TopicOverviewType>> getTopics() {
-        logger.info("Received request to get all topics");
+    public ResponseEntity<List<TopicOverviewType>> getTopics(String topicType) {
+        LOG.info("Received request to get all topics");
         String accept = request.getHeader("Accept");
 
         if (accept != null && accept.contains("application/json")) {
-            List<TopicOverviewType> topics = topicsManager.getTopics();
+            List<TopicOverviewType> topics = topicsManager.getTopics(topicType);
             return new ResponseEntity<>(topics, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

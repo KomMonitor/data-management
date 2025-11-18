@@ -4822,6 +4822,19 @@ paths:
       summary: retrieve information about available topics
       description: retrieve information about available topics
       operationId: getTopics
+      parameters:
+        - name: topicType
+          in: query
+          description: Controls whether only topics for indicators or georesources should be returned.
+            Supported values are ['georesource', 'indicator']
+          allowEmptyValue: true
+          schema:
+            type: string
+            enum:
+              - indicator
+              - georesource
+#          schema:
+#            $ref: '#/components/schemas/TopicResourceEnum'
       responses:
         "200":
           description: OK

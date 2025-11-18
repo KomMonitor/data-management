@@ -180,12 +180,17 @@ public class TopicsManager {
 				.orElse(-1);
 	}
 
-	public List<TopicOverviewType> getTopics() {
+	public List<TopicOverviewType> getTopics(String topicResourceType) {
 		LOG.info("Retrieving all topics from db");
 		
 		// only return main topics as they include the sub topics in use!!!
 		// hence, do not show sub topics on first tier of returned JSON structure but only as subTopics of the respective main topics
 		List<TopicsEntity> topicEntities = topicsRepo.findByTopicType(TopicTypeEnum.MAIN);
+		if(topicResourceType != null) {
+			topicEntities = topicEntities.stream()
+					.filter(t -> t.getTopicResource().equals(TopicResourceEnum.fromValue(topicResourceType)))
+					.toList();
+		}
 		List<TopicOverviewType> topics = TopicsMapper.mapToSwaggerTopics(topicEntities);
 		
 		topics.sort(Comparator.comparing(TopicOverviewType::getDisplayOrder));
@@ -338,7 +343,7 @@ public class TopicsManager {
 			return topic.getTopicId();
 		}
 		else{
-			LOG.error("No topic with topicId '{}' was found. Thus aborting update topic request.", topicId);
+			LOG.error("No topic with topicId '{}' was found. Thus aborting updating subtopic order request.", topicId);
 			throw new ResourceNotFoundException(404, "No topic was found for specified topicId. Aborting update topic request.");
 		}
 	}

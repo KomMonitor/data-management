@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-12T17:42:53.200483800+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-18T09:35:53.425413900+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 @Validated
 @Tag(name = "topics-public", description = "the public Topics API")
 public interface TopicsPublicApi {
@@ -82,6 +82,7 @@ public interface TopicsPublicApi {
      * GET /public/topics : retrieve information about available topics
      * retrieve information about available topics
      *
+     * @param topicType Controls whether only topics for indicators or georesources should be returned. Supported values are [&#39;georesource&#39;, &#39;indicator&#39;] (optional)
      * @return OK (status code 200)
      *         or Invalid status value (status code 400)
      *         or API key is missing or invalid (status code 401)
@@ -113,7 +114,7 @@ public interface TopicsPublicApi {
     )
     
     ResponseEntity<List<TopicOverviewType>> getTopics(
-        
+        @Parameter(name = "topicType", description = "Controls whether only topics for indicators or georesources should be returned. Supported values are ['georesource', 'indicator']", schema = @Schema(allowableValues = {"georesource", "indicator"}), in = ParameterIn.QUERY) @Valid @RequestParam(value = "topicType", required = false) String topicType
     );
 
 }
