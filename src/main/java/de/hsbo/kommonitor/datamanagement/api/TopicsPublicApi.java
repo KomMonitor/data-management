@@ -5,6 +5,7 @@
  */
 package de.hsbo.kommonitor.datamanagement.api;
 
+import de.hsbo.kommonitor.datamanagement.model.TopicDisplayOrderModeOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-18T09:35:53.425413900+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-18T13:19:55.590426900+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 @Validated
 @Tag(name = "topics-public", description = "the public Topics API")
 public interface TopicsPublicApi {
@@ -115,6 +116,45 @@ public interface TopicsPublicApi {
     
     ResponseEntity<List<TopicOverviewType>> getTopics(
         @Parameter(name = "topicType", description = "Controls whether only topics for indicators or georesources should be returned. Supported values are ['georesource', 'indicator']", schema = @Schema(allowableValues = {"georesource", "indicator"}), in = ParameterIn.QUERY) @Valid @RequestParam(value = "topicType", required = false) String topicType
+    );
+
+
+    /**
+     * GET /public/topics/displayOrder/mode : the topics display order mode for georesources and indicators
+     * the topics display order mode for georesources and indicators
+     *
+     * @return OK (status code 200)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "getTopicsDisplayOrderMode",
+        summary = "the topics display order mode for georesources and indicators",
+        description = "the topics display order mode for georesources and indicators",
+        tags = { "topics-public" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TopicDisplayOrderModeOverviewType.class)))
+            }),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/public/topics/displayOrder/mode",
+        produces = { "application/json" }
+    )
+    
+    ResponseEntity<List<TopicDisplayOrderModeOverviewType>> getTopicsDisplayOrderMode(
+        
     );
 
 }

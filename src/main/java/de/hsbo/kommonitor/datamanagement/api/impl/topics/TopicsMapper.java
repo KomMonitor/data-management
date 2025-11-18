@@ -1,10 +1,11 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import de.hsbo.kommonitor.datamanagement.model.TopicDisplayOrderModeOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
 
 public class TopicsMapper {
@@ -49,4 +50,16 @@ public class TopicsMapper {
 		return swaggerSubTopics;
 	}
 
+	public static List<TopicDisplayOrderModeOverviewType> mapToSwaggerTopicOrderModes(List<TopicsOrderModeEntity> topicOrderModeEntities) {
+		return topicOrderModeEntities.stream()
+				.map(t -> mapToSwaggerTopicOrderMode(t))
+				.collect(Collectors.toList());
+	}
+
+	private static TopicDisplayOrderModeOverviewType mapToSwaggerTopicOrderMode(TopicsOrderModeEntity t) {
+		TopicDisplayOrderModeOverviewType v = new TopicDisplayOrderModeOverviewType();
+		v.setOrderMode(t.getOrderMode());
+		v.setTopicResource(t.getTopicResource());
+		return v;
+	}
 }

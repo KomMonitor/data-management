@@ -102,7 +102,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
-	public ResponseEntity<Void> updateGeoresourceMainTopicDisplayOrder(List<@Valid TopicPATCHDisplayOrderInputType> mainGeoresourceTopicOrderArray) {
+	public ResponseEntity<Void> updateGeoresourceMainTopicDisplayOrder(List<@Valid TopicDisplayOrderInputType> mainGeoresourceTopicOrderArray) {
 		LOG.info("Received request to update georesource main topic display order ");
 		boolean update;
 
@@ -121,7 +121,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
-	public ResponseEntity<Void> updateIndicatorsMainTopicDisplayOrder(List<@Valid TopicPATCHDisplayOrderInputType> indicatorMainTopicOrderArray) {
+	public ResponseEntity<Void> updateIndicatorsMainTopicDisplayOrder(List<@Valid TopicDisplayOrderInputType> indicatorMainTopicOrderArray) {
 		LOG.info("Received request to update indicator main topic display order ");
 		boolean update;
 
@@ -140,8 +140,46 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
+	public ResponseEntity<Void> updateGeoresourcesTopicDisplayOrderMode(TopicDisplayOrderModeInputType georesourceTopicOrderMode) {
+		LOG.info("Received request to update indicator topic display order mode.");
+		boolean update;
+
+		try {
+			update = topicsManager.updateTopicOrderMode(georesourceTopicOrderMode, TopicResourceEnum.GEORESOURCE);
+			lastModManager.updateLastDatabaseModification_topics();
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+		}
+
+		if (update) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Override
+	public ResponseEntity<Void> updateIndicatorsTopicDisplayOrderMode(TopicDisplayOrderModeInputType indicatorTopicOrderMode) {
+		LOG.info("Received request to update georesouce topic display order mode.");
+		boolean update;
+
+		try {
+			update = topicsManager.updateTopicOrderMode(indicatorTopicOrderMode, TopicResourceEnum.INDICATOR);
+			lastModManager.updateLastDatabaseModification_topics();
+		} catch (Exception e1) {
+			return ApiUtils.createResponseEntityFromException(e1);
+		}
+
+		if (update) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
-	public ResponseEntity updateSubtopicDisplayOrder(String topicId, List<@Valid TopicPATCHDisplayOrderInputType> subtopicOrderArray) {
+	public ResponseEntity updateSubtopicDisplayOrder(String topicId, List<@Valid TopicDisplayOrderInputType> subtopicOrderArray) {
 		LOG.info("Received request to update subtopic display order ");
 
 		try {

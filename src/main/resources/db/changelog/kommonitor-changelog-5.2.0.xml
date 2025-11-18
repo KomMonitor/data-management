@@ -7,4 +7,25 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-2">
+        <createTable tableName="topicordermode">
+            <column name="topicresource" type="SMALLINT"/>
+            <column name="ordermode" type="SMALLINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-3">
+        <addUniqueConstraint columnNames="topicresource" constraintName="topicresource_unique" tableName="topicordermode"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-4">
+        <insert tableName="topicordermode">
+            <column name="topicresource" value="0" />
+            <column name="ordermode" value="0" />
+        </insert>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-5">
+        <insert tableName="topicordermode">
+            <column name="topicresource" value="1" />
+            <column name="ordermode" value="0" />
+        </insert>
+    </changeSet>
 </databaseChangeLog>

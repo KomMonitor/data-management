@@ -4833,8 +4833,6 @@ paths:
             enum:
               - indicator
               - georesource
-#          schema:
-#            $ref: '#/components/schemas/TopicResourceEnum'
       responses:
         "200":
           description: OK
@@ -4859,6 +4857,37 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /public/topics/displayOrder/mode:
+    get:
+      tags:
+        - topics-public
+      summary: the topics display order mode for georesources and indicators
+      description: the topics display order mode for georesources and indicators
+      operationId: getTopicsDisplayOrderMode
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicDisplayOrderModeOverviewType'
+        "400":
+          description: Invalid status value
+          content: { }
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /public/topics/{topicId}:
     get:
       tags:
@@ -5803,7 +5832,7 @@ paths:
         - kommonitor-data-access_oauth: []
       x-codegen-request-body-name: topicData
   /topics/indicators/displayOrder:
-    patch:
+    post:
       tags:
         - topics
       summary: Update display order for submitted indicators main topics
@@ -5816,7 +5845,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/TopicPATCHDisplayOrderInputType'
+                $ref: '#/components/schemas/TopicDisplayOrderInputType'
         required: true
       responses:
         "200":
@@ -5842,8 +5871,46 @@ paths:
       security:
         - kommonitor-data-access_oauth: [ ]
       x-codegen-request-body-name: indicatorMainTopicOrderArray
+  /topics/indicators/displayOrder/mode:
+    post:
+      tags:
+        - topics
+      summary: Update the display order mode for indicator topics
+      description: Update the display order mode for indicator topics
+      operationId: updateIndicatorsTopicDisplayOrderMode
+      requestBody:
+        description: display order mode for indicators
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopicDisplayOrderModeInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "201":
+          description: Created
+        "204":
+          description: No Content
+          content: { }
+        "401":
+          description: Unauthorized
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+      x-codegen-request-body-name: indicatorTopicOrderMode
   /topics/georesources/displayOrder:
-    patch:
+    post:
       tags:
         - topics
       summary: Update display order for submitted georesources main topics
@@ -5856,7 +5923,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/TopicPATCHDisplayOrderInputType'
+                $ref: '#/components/schemas/TopicDisplayOrderInputType'
         required: true
       responses:
         "200":
@@ -5882,6 +5949,44 @@ paths:
       security:
         - kommonitor-data-access_oauth: [ ]
       x-codegen-request-body-name: mainGeoresourceTopicOrderArray
+  /topics/georesources/displayOrder/mode:
+    post:
+      tags:
+        - topics
+      summary: Update the display order mode for georesource topics
+      description: Update the display order mode for georesource topics
+      operationId: updateGeoresourcesTopicDisplayOrderMode
+      requestBody:
+        description: display order mode for georesource
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopicDisplayOrderModeInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "201":
+          description: Created
+        "204":
+          description: No Content
+          content: { }
+        "401":
+          description: Unauthorized
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+      x-codegen-request-body-name: georesourceTopicOrderMode
   /topics/{topicId}:
     put:
       tags:
@@ -5974,7 +6079,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/TopicPATCHDisplayOrderInputType'
+                $ref: '#/components/schemas/TopicDisplayOrderInputType'
         required: true
       responses:
         "200":
@@ -6642,8 +6747,8 @@ components:
         indicatorId:
           type: string
           description: unique ID of the associated indicator
-    TopicPATCHDisplayOrderInputType:
-      title: TopicPATCHDisplayOrderInputType
+    TopicDisplayOrderInputType:
+      title: TopicDisplayOrderInputType
       required:
         - displayOrder
         - topicId
@@ -6656,6 +6761,32 @@ components:
         topicId:
           type: string
           description: unique ID of the associated sub topic
+    TopicDisplayOrderModeOverviewType:
+      title: TopicDisplayOrderModeInputType
+      required:
+        - topicResource
+        - orderMode
+      type: object
+      properties:
+        topicResource:
+          description: topic resource indicating if the topic object corresponds to an indicator or to a georesource
+          $ref: '#/components/schemas/TopicResourceEnum'
+        orderMode:
+          description: the mode which should be used for ordering topics
+          $ref: '#/components/schemas/TopicOrderModeEnum'
+    TopicDisplayOrderModeInputType:
+      title: TopicDisplayOrderModeInputType
+      required:
+#        - topicResource
+        - orderMode
+      type: object
+      properties:
+#        topicResource:
+#          description: topic resource indicating if the topic object corresponds to an indicator or to a georesource
+#          $ref: '#/components/schemas/TopicResourceEnum'
+        orderMode:
+          description: the mode which should be used for ordering topics
+          $ref: '#/components/schemas/TopicOrderModeEnum'
     PermissionLevelInputType:
       title: PermissionLevelInputType
       required:
@@ -7794,6 +7925,11 @@ components:
       enum:
         - main
         - sub
+    TopicOrderModeEnum:
+      type: string
+      enum:
+        - alphabetical
+        - custom
     PoiMarkerStyleEnum:
       type: string
       description: the poi marker type, either text or symbol

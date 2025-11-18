@@ -30,6 +30,9 @@ public class TopicsManager {
 	@Autowired
 	TopicsRepository topicsRepo;
 
+	@Autowired
+	TopicsOrderModeRepository topicsOrderModeRepo;
+
 	public TopicOverviewType addTopic(TopicInputType topicData) throws Exception {
 		String topicName = topicData.getTopicName();
 		TopicResourceEnum topicResource = topicData.getTopicResource();
@@ -318,7 +321,7 @@ public class TopicsManager {
 		}		
 	}
 
-	public String updateSubtopicsOrder(String topicId, List<@Valid TopicPATCHDisplayOrderInputType> subtopicOrderArray) throws Exception {
+	public String updateSubtopicsOrder(String topicId, List<@Valid TopicDisplayOrderInputType> subtopicOrderArray) throws Exception {
 		LOG.info("Ordering subtopics for topic with topicId '{}'", topicId);
 
 		if(topicsRepo.existsByTopicId(topicId)){
@@ -348,7 +351,7 @@ public class TopicsManager {
 		}
 	}
 
-	public boolean updateMainTopicOrder(List<@Valid TopicPATCHDisplayOrderInputType> mainTopicOrderArray, TopicResourceEnum topicResource) {
+	public boolean updateMainTopicOrder(List<@Valid TopicDisplayOrderInputType> mainTopicOrderArray, TopicResourceEnum topicResource) {
 		LOG.info("Ordering main topics.");
 
 		List<TopicsEntity> mainTopics = topicsRepo.findByTopicType(TopicTypeEnum.MAIN)
@@ -371,5 +374,30 @@ public class TopicsManager {
 
 		topicsRepo.saveAllAndFlush(mainTopics);
 		return true;
+	}
+
+	public boolean updateTopicOrderMode(TopicDisplayOrderModeInputType topicOrderMode, TopicResourceEnum topicResourceEnum) throws Exception {
+		LOG.info("Trying to update topic display order for '{}' topics", topicResourceEnum.getValue());
+
+		if(topicsOrderModeRepo.existsByTopicResource(topicResourceEnum)){
+			TopicsOrderModeEntity orderModeEntity = topicsOrderModeRepo.findByTopicResource(topicResourceEnum);
+			if (!orderModeEntity.getOrderMode().equals(topicOrderMode.getOrderMode())) {
+				orderModeEntity.setOrderMode(topicOrderMode.getOrderMode());
+				topicsOrderModeRepo.saveAndFlush(orderModeEntity);
+			}
+			return true;
+		}
+		else{
+			LOG.error("No topic order entry with resource type '{}' was found.", topicResourceEnum.getValue());
+			throw new ResourceNotFoundException(404, "No topic order entry with specified resource type was found.");
+		}
+	}
+
+	public List<TopicDisplayOrderModeOverviewType> getTopicDisplayOrderModes() {
+		LOG.info("Retrieving topic display order modes from DB");
+
+		List<TopicsOrderModeEntity> topicOrderModeEntities = topicsOrderModeRepo.findAll();
+
+		return TopicsMapper.mapToSwaggerTopicOrderModes(topicOrderModeEntities);
 	}
 }

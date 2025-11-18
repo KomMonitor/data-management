@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.TopicsPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
+import de.hsbo.kommonitor.datamanagement.model.TopicDisplayOrderModeOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -51,6 +52,19 @@ public class TopicsPublicController extends BasePathController implements Topics
 
         if (accept != null && accept.contains("application/json")) {
             List<TopicOverviewType> topics = topicsManager.getTopics(topicType);
+            return new ResponseEntity<>(topics, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<TopicDisplayOrderModeOverviewType>> getTopicsDisplayOrderMode() {
+        LOG.info("Received request to get topic display order modes.");
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json")) {
+            List<TopicDisplayOrderModeOverviewType> topics = topicsManager.getTopicDisplayOrderModes();
             return new ResponseEntity<>(topics, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
