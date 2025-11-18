@@ -5,9 +5,10 @@
  */
 package de.hsbo.kommonitor.datamanagement.api;
 
+import de.hsbo.kommonitor.datamanagement.model.TopicDisplayOrderInputType;
+import de.hsbo.kommonitor.datamanagement.model.TopicDisplayOrderModeInputType;
 import de.hsbo.kommonitor.datamanagement.model.TopicInputType;
 import de.hsbo.kommonitor.datamanagement.model.TopicOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.TopicPATCHDisplayOrderInputType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-17T16:00:34.852409600+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-18T12:06:32.945320800+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 @Validated
 @Tag(name = "topics", description = "the Topics API")
 public interface TopicsApi {
@@ -121,7 +122,7 @@ public interface TopicsApi {
 
 
     /**
-     * PATCH /topics/georesources/displayOrder : Update display order for submitted georesources main topics
+     * POST /topics/georesources/displayOrder : Update display order for submitted georesources main topics
      * Update displayOrder for submitted georesources main topics
      *
      * @param mainGeoresourceTopicOrderArray array of georesource main topic id and display order (required)
@@ -152,18 +153,60 @@ public interface TopicsApi {
         }
     )
     @RequestMapping(
-        method = RequestMethod.PATCH,
+        method = RequestMethod.POST,
         value = "/topics/georesources/displayOrder",
         consumes = { "application/json" }
     )
     
     ResponseEntity<Void> updateGeoresourceMainTopicDisplayOrder(
-        @Parameter(name = "mainGeoresourceTopicOrderArray", description = "array of georesource main topic id and display order", required = true) @Valid @RequestBody List<@Valid TopicPATCHDisplayOrderInputType> mainGeoresourceTopicOrderArray
+        @Parameter(name = "mainGeoresourceTopicOrderArray", description = "array of georesource main topic id and display order", required = true) @Valid @RequestBody List<@Valid TopicDisplayOrderInputType> mainGeoresourceTopicOrderArray
     );
 
 
     /**
-     * PATCH /topics/indicators/displayOrder : Update display order for submitted indicators main topics
+     * POST /topics/georesources/displayOrder/mode : Update the display order mode for georesource topics
+     * Update the display order mode for georesource topics
+     *
+     * @param georesourceTopicOrderMode display order mode for georesource (required)
+     * @return OK (status code 200)
+     *         or Created (status code 201)
+     *         or No Content (status code 204)
+     *         or Unauthorized (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "updateGeoresourcesTopicDisplayOrderMode",
+        summary = "Update the display order mode for georesource topics",
+        description = "Update the display order mode for georesource topics",
+        tags = { "topics" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/topics/georesources/displayOrder/mode",
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<Void> updateGeoresourcesTopicDisplayOrderMode(
+        @Parameter(name = "georesourceTopicOrderMode", description = "display order mode for georesource", required = true) @Valid @RequestBody TopicDisplayOrderModeInputType georesourceTopicOrderMode
+    );
+
+
+    /**
+     * POST /topics/indicators/displayOrder : Update display order for submitted indicators main topics
      * Update display order for submitted indicators main topics
      *
      * @param indicatorMainTopicOrderArray array of indicator main topic id and display order (required)
@@ -194,13 +237,55 @@ public interface TopicsApi {
         }
     )
     @RequestMapping(
-        method = RequestMethod.PATCH,
+        method = RequestMethod.POST,
         value = "/topics/indicators/displayOrder",
         consumes = { "application/json" }
     )
     
     ResponseEntity<Void> updateIndicatorsMainTopicDisplayOrder(
-        @Parameter(name = "indicatorMainTopicOrderArray", description = "array of indicator main topic id and display order", required = true) @Valid @RequestBody List<@Valid TopicPATCHDisplayOrderInputType> indicatorMainTopicOrderArray
+        @Parameter(name = "indicatorMainTopicOrderArray", description = "array of indicator main topic id and display order", required = true) @Valid @RequestBody List<@Valid TopicDisplayOrderInputType> indicatorMainTopicOrderArray
+    );
+
+
+    /**
+     * POST /topics/indicators/displayOrder/mode : Update the display order mode for indicator topics
+     * Update the display order mode for indicator topics
+     *
+     * @param indicatorTopicOrderMode display order mode for indicators (required)
+     * @return OK (status code 200)
+     *         or Created (status code 201)
+     *         or No Content (status code 204)
+     *         or Unauthorized (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "updateIndicatorsTopicDisplayOrderMode",
+        summary = "Update the display order mode for indicator topics",
+        description = "Update the display order mode for indicator topics",
+        tags = { "topics" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/topics/indicators/displayOrder/mode",
+        consumes = { "application/json" }
+    )
+    
+    ResponseEntity<Void> updateIndicatorsTopicDisplayOrderMode(
+        @Parameter(name = "indicatorTopicOrderMode", description = "display order mode for indicators", required = true) @Valid @RequestBody TopicDisplayOrderModeInputType indicatorTopicOrderMode
     );
 
 
@@ -244,7 +329,7 @@ public interface TopicsApi {
     
     ResponseEntity<Void> updateSubtopicDisplayOrder(
         @Parameter(name = "topicId", description = "unique identifier of the topic", required = true, in = ParameterIn.PATH) @PathVariable("topicId") String topicId,
-        @Parameter(name = "subtopicOrderArray", description = "array of subtopic id and displayOrder items", required = true) @Valid @RequestBody List<@Valid TopicPATCHDisplayOrderInputType> subtopicOrderArray
+        @Parameter(name = "subtopicOrderArray", description = "array of subtopic id and displayOrder items", required = true) @Valid @RequestBody List<@Valid TopicDisplayOrderInputType> subtopicOrderArray
     );
 
 

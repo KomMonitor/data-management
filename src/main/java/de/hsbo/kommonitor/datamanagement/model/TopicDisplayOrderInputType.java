@@ -17,11 +17,11 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * TopicPATCHDisplayOrderInputType
+ * TopicDisplayOrderInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-14T13:40:25.807350800+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
-public class TopicPATCHDisplayOrderInputType implements Serializable {
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-18T12:07:10.385885300+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+public class TopicDisplayOrderInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -29,19 +29,19 @@ public class TopicPATCHDisplayOrderInputType implements Serializable {
 
   private String topicId;
 
-  public TopicPATCHDisplayOrderInputType() {
+  public TopicDisplayOrderInputType() {
     super();
   }
 
   /**
    * Constructor with only required parameters
    */
-  public TopicPATCHDisplayOrderInputType(Integer displayOrder, String topicId) {
+  public TopicDisplayOrderInputType(Integer displayOrder, String topicId) {
     this.displayOrder = displayOrder;
     this.topicId = topicId;
   }
 
-  public TopicPATCHDisplayOrderInputType displayOrder(Integer displayOrder) {
+  public TopicDisplayOrderInputType displayOrder(Integer displayOrder) {
     this.displayOrder = displayOrder;
     return this;
   }
@@ -61,7 +61,7 @@ public class TopicPATCHDisplayOrderInputType implements Serializable {
     this.displayOrder = displayOrder;
   }
 
-  public TopicPATCHDisplayOrderInputType topicId(String topicId) {
+  public TopicDisplayOrderInputType topicId(String topicId) {
     this.topicId = topicId;
     return this;
   }
@@ -89,9 +89,9 @@ public class TopicPATCHDisplayOrderInputType implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    TopicPATCHDisplayOrderInputType topicPATCHDisplayOrderInputType = (TopicPATCHDisplayOrderInputType) o;
-    return Objects.equals(this.displayOrder, topicPATCHDisplayOrderInputType.displayOrder) &&
-        Objects.equals(this.topicId, topicPATCHDisplayOrderInputType.topicId);
+    TopicDisplayOrderInputType topicDisplayOrderInputType = (TopicDisplayOrderInputType) o;
+    return Objects.equals(this.displayOrder, topicDisplayOrderInputType.displayOrder) &&
+        Objects.equals(this.topicId, topicDisplayOrderInputType.topicId);
   }
 
   @Override
@@ -102,7 +102,7 @@ public class TopicPATCHDisplayOrderInputType implements Serializable {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class TopicPATCHDisplayOrderInputType {\n");
+    sb.append("class TopicDisplayOrderInputType {\n");
     sb.append("    displayOrder: ").append(toIndentedString(displayOrder)).append("\n");
     sb.append("    topicId: ").append(toIndentedString(topicId)).append("\n");
     sb.append("}");
