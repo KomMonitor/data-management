@@ -4857,7 +4857,7 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
-  /public/topics/displayOrder/mode:
+  /public/topics/display-order/mode:
     get:
       tags:
         - topics-public
@@ -5831,7 +5831,7 @@ paths:
       security:
         - kommonitor-data-access_oauth: []
       x-codegen-request-body-name: topicData
-  /topics/indicators/displayOrder:
+  /topics/indicators/display-order:
     post:
       tags:
         - topics
@@ -5871,7 +5871,7 @@ paths:
       security:
         - kommonitor-data-access_oauth: [ ]
       x-codegen-request-body-name: indicatorMainTopicOrderArray
-  /topics/indicators/displayOrder/mode:
+  /topics/indicators/display-order/mode:
     post:
       tags:
         - topics
@@ -5909,7 +5909,7 @@ paths:
       security:
         - kommonitor-data-access_oauth: [ ]
       x-codegen-request-body-name: indicatorTopicOrderMode
-  /topics/georesources/displayOrder:
+  /topics/georesources/display-order:
     post:
       tags:
         - topics
@@ -5949,7 +5949,7 @@ paths:
       security:
         - kommonitor-data-access_oauth: [ ]
       x-codegen-request-body-name: mainGeoresourceTopicOrderArray
-  /topics/georesources/displayOrder/mode:
+  /topics/georesources/display-order/mode:
     post:
       tags:
         - topics
@@ -6062,8 +6062,8 @@ paths:
     patch:
       tags:
         - topics
-      summary: Update displayOrder for submitted subtopics
-      description: Update displayOrder for submitted subtopics
+      summary: Update display order for submitted subtopics
+      description: Update display order for submitted subtopics
       operationId: updateSubtopicDisplayOrder
       parameters:
         - name: topicId
@@ -6073,7 +6073,7 @@ paths:
           schema:
             type: string
       requestBody:
-        description: array of subtopic id and displayOrder items
+        description: array of subtopic id and display order items
         content:
           application/json:
             schema:
@@ -6742,7 +6742,7 @@ components:
       properties:
         displayOrder:
           type: number
-          description: the new displayOrder value
+          description: the new display order value
           example: 0.0
         indicatorId:
           type: string

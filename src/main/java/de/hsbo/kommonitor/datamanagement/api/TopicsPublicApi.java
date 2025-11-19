@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-18T13:19:55.590426900+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-19T08:43:15.995964500+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 @Validated
 @Tag(name = "topics-public", description = "the public Topics API")
 public interface TopicsPublicApi {
@@ -115,12 +115,12 @@ public interface TopicsPublicApi {
     )
     
     ResponseEntity<List<TopicOverviewType>> getTopics(
-        @Parameter(name = "topicType", description = "Controls whether only topics for indicators or georesources should be returned. Supported values are ['georesource', 'indicator']", schema = @Schema(allowableValues = {"georesource", "indicator"}), in = ParameterIn.QUERY) @Valid @RequestParam(value = "topicType", required = false) String topicType
+        @Parameter(name = "topicType", description = "Controls whether only topics for indicators or georesources should be returned. Supported values are ['georesource', 'indicator']", in = ParameterIn.QUERY) @Valid @RequestParam(value = "topicType", required = false) String topicType
     );
 
 
     /**
-     * GET /public/topics/displayOrder/mode : the topics display order mode for georesources and indicators
+     * GET /public/topics/display-order/mode : the topics display order mode for georesources and indicators
      * the topics display order mode for georesources and indicators
      *
      * @return OK (status code 200)
@@ -149,7 +149,7 @@ public interface TopicsPublicApi {
     )
     @RequestMapping(
         method = RequestMethod.GET,
-        value = "/public/topics/displayOrder/mode",
+        value = "/public/topics/display-order/mode",
         produces = { "application/json" }
     )
     

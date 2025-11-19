@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-18T12:06:32.945320800+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-19T08:43:15.995964500+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 @Validated
 @Tag(name = "topics", description = "the Topics API")
 public interface TopicsApi {
@@ -122,7 +122,7 @@ public interface TopicsApi {
 
 
     /**
-     * POST /topics/georesources/displayOrder : Update display order for submitted georesources main topics
+     * POST /topics/georesources/display-order : Update display order for submitted georesources main topics
      * Update displayOrder for submitted georesources main topics
      *
      * @param mainGeoresourceTopicOrderArray array of georesource main topic id and display order (required)
@@ -154,7 +154,7 @@ public interface TopicsApi {
     )
     @RequestMapping(
         method = RequestMethod.POST,
-        value = "/topics/georesources/displayOrder",
+        value = "/topics/georesources/display-order",
         consumes = { "application/json" }
     )
     
@@ -164,7 +164,7 @@ public interface TopicsApi {
 
 
     /**
-     * POST /topics/georesources/displayOrder/mode : Update the display order mode for georesource topics
+     * POST /topics/georesources/display-order/mode : Update the display order mode for georesource topics
      * Update the display order mode for georesource topics
      *
      * @param georesourceTopicOrderMode display order mode for georesource (required)
@@ -196,7 +196,7 @@ public interface TopicsApi {
     )
     @RequestMapping(
         method = RequestMethod.POST,
-        value = "/topics/georesources/displayOrder/mode",
+        value = "/topics/georesources/display-order/mode",
         consumes = { "application/json" }
     )
     
@@ -206,7 +206,7 @@ public interface TopicsApi {
 
 
     /**
-     * POST /topics/indicators/displayOrder : Update display order for submitted indicators main topics
+     * POST /topics/indicators/display-order : Update display order for submitted indicators main topics
      * Update display order for submitted indicators main topics
      *
      * @param indicatorMainTopicOrderArray array of indicator main topic id and display order (required)
@@ -238,7 +238,7 @@ public interface TopicsApi {
     )
     @RequestMapping(
         method = RequestMethod.POST,
-        value = "/topics/indicators/displayOrder",
+        value = "/topics/indicators/display-order",
         consumes = { "application/json" }
     )
     
@@ -248,7 +248,7 @@ public interface TopicsApi {
 
 
     /**
-     * POST /topics/indicators/displayOrder/mode : Update the display order mode for indicator topics
+     * POST /topics/indicators/display-order/mode : Update the display order mode for indicator topics
      * Update the display order mode for indicator topics
      *
      * @param indicatorTopicOrderMode display order mode for indicators (required)
@@ -280,7 +280,7 @@ public interface TopicsApi {
     )
     @RequestMapping(
         method = RequestMethod.POST,
-        value = "/topics/indicators/displayOrder/mode",
+        value = "/topics/indicators/display-order/mode",
         consumes = { "application/json" }
     )
     
@@ -290,11 +290,11 @@ public interface TopicsApi {
 
 
     /**
-     * PATCH /topics/{topicId}/display-order : Update displayOrder for submitted subtopics
-     * Update displayOrder for submitted subtopics
+     * PATCH /topics/{topicId}/display-order : Update display order for submitted subtopics
+     * Update display order for submitted subtopics
      *
      * @param topicId unique identifier of the topic (required)
-     * @param subtopicOrderArray array of subtopic id and displayOrder items (required)
+     * @param subtopicOrderArray array of subtopic id and display order items (required)
      * @return OK (status code 200)
      *         or Created (status code 201)
      *         or No Content (status code 204)
@@ -305,8 +305,8 @@ public interface TopicsApi {
      */
     @Operation(
         operationId = "updateSubtopicDisplayOrder",
-        summary = "Update displayOrder for submitted subtopics",
-        description = "Update displayOrder for submitted subtopics",
+        summary = "Update display order for submitted subtopics",
+        description = "Update display order for submitted subtopics",
         tags = { "topics" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
@@ -329,7 +329,7 @@ public interface TopicsApi {
     
     ResponseEntity<Void> updateSubtopicDisplayOrder(
         @Parameter(name = "topicId", description = "unique identifier of the topic", required = true, in = ParameterIn.PATH) @PathVariable("topicId") String topicId,
-        @Parameter(name = "subtopicOrderArray", description = "array of subtopic id and displayOrder items", required = true) @Valid @RequestBody List<@Valid TopicDisplayOrderInputType> subtopicOrderArray
+        @Parameter(name = "subtopicOrderArray", description = "array of subtopic id and display order items", required = true) @Valid @RequestBody List<@Valid TopicDisplayOrderInputType> subtopicOrderArray
     );
 
 

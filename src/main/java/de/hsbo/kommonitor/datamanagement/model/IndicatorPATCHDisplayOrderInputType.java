@@ -48,11 +48,11 @@ public class IndicatorPATCHDisplayOrderInputType implements Serializable {
   }
 
   /**
-   * the new displayOrder value
+   * the new display order value
    * @return displayOrder
    */
   @NotNull @Valid 
-  @Schema(name = "displayOrder", example = "0.0", description = "the new displayOrder value", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "displayOrder", example = "0.0", description = "the new display order value", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("displayOrder")
   public BigDecimal getDisplayOrder() {
     return displayOrder;
