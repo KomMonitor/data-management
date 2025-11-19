@@ -46,6 +46,7 @@ public class TopicsPublicController extends BasePathController implements Topics
         }
     }
 
+    @Override
     public ResponseEntity<List<TopicOverviewType>> getTopics(String topicType) {
         LOG.info("Received request to get all topics");
         String accept = request.getHeader("Accept");

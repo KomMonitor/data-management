@@ -102,6 +102,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
 	public ResponseEntity<Void> updateGeoresourceMainTopicDisplayOrder(List<@Valid TopicDisplayOrderInputType> mainGeoresourceTopicOrderArray) {
 		LOG.info("Received request to update georesource main topic display order ");
 		boolean update;
@@ -121,6 +122,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
 	public ResponseEntity<Void> updateIndicatorsMainTopicDisplayOrder(List<@Valid TopicDisplayOrderInputType> indicatorMainTopicOrderArray) {
 		LOG.info("Received request to update indicator main topic display order ");
 		boolean update;
@@ -140,6 +142,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
 	public ResponseEntity<Void> updateGeoresourcesTopicDisplayOrderMode(TopicDisplayOrderModeInputType georesourceTopicOrderMode) {
 		LOG.info("Received request to update indicator topic display order mode.");
 		boolean update;
@@ -159,6 +162,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 	}
 
 	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
 	public ResponseEntity<Void> updateIndicatorsTopicDisplayOrderMode(TopicDisplayOrderModeInputType indicatorTopicOrderMode) {
 		LOG.info("Received request to update georesouce topic display order mode.");
 		boolean update;
