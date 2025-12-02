@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,7 +29,7 @@ import java.util.List;
 @Controller
 public class IndicatorsController extends BasePathController implements IndicatorsApi {
 
-    private static Logger logger = LoggerFactory.getLogger(IndicatorsController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IndicatorsController.class);
 
     private final ObjectMapper objectMapper;
 
@@ -54,13 +55,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     public ResponseEntity deleteIndicatorByIdAndSpatialUnitId(
             @P("indicatorId") String indicatorId,
             @P("spatialUnitId") String spatialUnitId) {
-        logger.info("Received request to delete indicator for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
-
-        String accept = request.getHeader("Accept");
-
-        /*
-         * delete topic with the specified id
-         */
+        LOG.info("Received request to delete indicator for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
 
         boolean isDeleted;
         try {
@@ -86,13 +81,7 @@ public class IndicatorsController extends BasePathController implements Indicato
             BigDecimal year,
             BigDecimal month,
             BigDecimal day) {
-        logger.info("Received request to delete indicator for indicatorId '{}' and Date '{}-{}-{}'", indicatorId, year, month, day);
-
-        String accept = request.getHeader("Accept");
-
-        /*
-         * delete topic with the specified id
-         */
+        LOG.info("Received request to delete indicator for indicatorId '{}' and Date '{}-{}-{}'", indicatorId, year, month, day);
 
         boolean isDeleted;
         try {
@@ -115,13 +104,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 			@P("indicatorId") String indicatorId,
 			String spatialUnitId,
 			String featureId) {
-		logger.info("Received request to delete single indicator feature databse records for indicatorId '{}' and spatialUnitId '{}' and featureId '{}'", indicatorId, spatialUnitId, featureId);
-
-        String accept = request.getHeader("Accept");
-
-        /*
-         * delete topic with the specified id
-         */
+		LOG.info("Received request to delete single indicator feature databse records for indicatorId '{}' and spatialUnitId '{}' and featureId '{}'", indicatorId, spatialUnitId, featureId);
 
         boolean isDeleted;
         try {
@@ -145,13 +128,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 			String spatialUnitId,
 			String featureId,
 			String featureRecordId) {
-		logger.info("Received request to delete single indicator feature databse record for indicatorId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId, featureId, featureRecordId);
-
-        String accept = request.getHeader("Accept");
-
-        /*
-         * delete topic with the specified id
-         */
+		LOG.info("Received request to delete single indicator feature databse record for indicatorId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId, featureId, featureRecordId);
 
         boolean isDeleted;
         try {
@@ -171,13 +148,8 @@ public class IndicatorsController extends BasePathController implements Indicato
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
     public ResponseEntity<IndicatorOverviewType> addIndicatorAsBody(IndicatorPOSTInputType indicatorData) {
-        logger.info("Received request to insert new indicator");
+        LOG.info("Received request to insert new indicator");
 
-        String accept = request.getHeader("Accept");
-
-        /*
-         * analyse input data and save it within database
-         */
         IndicatorOverviewType indicatorMetadata;
         try {
             indicatorMetadata = indicatorsManager.addIndicator(indicatorData);
@@ -197,7 +169,7 @@ public class IndicatorsController extends BasePathController implements Indicato
                 // return ApiResponseUtil.createResponseEntityFromException(e);
             }
 
-            return new ResponseEntity<IndicatorOverviewType>(indicatorMetadata, responseHeaders, HttpStatus.CREATED);
+            return new ResponseEntity<>(indicatorMetadata, responseHeaders, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -206,13 +178,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     @Override
     @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'creator')")
     public ResponseEntity deleteIndicatorById(@P("indicatorId") String indicatorId) {
-        logger.info("Received request to delete indicator for indicatorId '{}'", indicatorId);
-
-        String accept = request.getHeader("Accept");
-
-        /*
-         * delete topic with the specified id
-         */
+        LOG.info("Received request to delete indicator for indicatorId '{}'", indicatorId);
 
         boolean isDeleted;
         try {
@@ -236,9 +202,8 @@ public class IndicatorsController extends BasePathController implements Indicato
             @P("indicatorId") String indicatorId,
             @P("spatialUnitId") String spatialUnitId,
             String simplifyGeometries) {
-        logger.info("Received request to get indicators features for spatialUnitId '{}' and Id '{}' ",
+        LOG.info("Received request to get indicators features for spatialUnitId '{}' and Id '{}' ",
                 spatialUnitId, indicatorId);
-        String accept = request.getHeader("Accept");
 
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
@@ -268,10 +233,9 @@ public class IndicatorsController extends BasePathController implements Indicato
             BigDecimal month,
             BigDecimal day,
             String simplifyGeometries) {
-        logger.info(
+        LOG.info(
                 "Received request to get indicators features for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
                 spatialUnitId, indicatorId, year, month, day);
-        String accept = request.getHeader("Accept");
 
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
@@ -297,7 +261,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<List<IndicatorOverviewType>> getIndicators() {
-        logger.info("Received request to get all indicators metadata");
+        LOG.info("Received request to get all indicators metadata");
         String accept = request.getHeader("Accept");
 
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
@@ -321,7 +285,7 @@ public class IndicatorsController extends BasePathController implements Indicato
 
     @Override
     public ResponseEntity<List<IndicatorOverviewType>> filterIndicators(ResourceFilterType resourceFilterType) {
-        logger.info("Received request to get all indicators metadata");
+        LOG.info("Received request to get all indicators metadata filtered by the resource type");
         String accept = request.getHeader("Accept");
 
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
@@ -342,7 +306,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     @Override
     @PreAuthorize("isAuthorizedForEntity(#indicatorId, 'indicator', 'viewer')")
     public ResponseEntity<IndicatorOverviewType> getIndicatorById(@P("indicatorId") String indicatorId) {
-        logger.info("Received request to get indicator metadata for indicatorId '{}'", indicatorId);
+        LOG.info("Received request to get indicator metadata for indicatorId '{}'", indicatorId);
         String accept = request.getHeader("Accept");
 
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
@@ -362,7 +326,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     @Override
     public ResponseEntity<List<PermissionLevelType>> getIndicatorPermissionsById(
             String indicatorId) {
-        logger.info("Received request to list permissions for indicator with datasetId '{}'", indicatorId);
+        LOG.info("Received request to list permissions for indicator with datasetId '{}'", indicatorId);
         String accept = request.getHeader("Accept");
 
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
@@ -385,7 +349,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     public ResponseEntity<List<PermissionLevelType>> getIndicatorPermissionsBySpatialUnitIdAndId(
             String indicatorId,
             String spatialUnitId) {
-        logger.info("Received request to list permissions for spatialUnit Id {} and indicator with datasetId '{}'",
+        LOG.info("Received request to list permissions for spatialUnit Id {} and indicator with datasetId '{}'",
                 spatialUnitId, indicatorId);
         String accept = request.getHeader("Accept");
 
@@ -410,13 +374,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     public ResponseEntity updateIndicatorAsBody(
             @P("indicatorId") String indicatorId,
             IndicatorPUTInputType indicatorData) {
-        logger.info("Received request to update indicator features for indicator '{}'", indicatorId);
-
-        String accept = request.getHeader("Accept");
-
-        /*
-         * analyse input data and save it within database
-         */
+        LOG.info("Received request to update indicator features for indicator '{}'", indicatorId);
 
         try {
             indicatorId = indicatorsManager.updateFeatures(indicatorData, indicatorId);
@@ -429,9 +387,8 @@ public class IndicatorsController extends BasePathController implements Indicato
         if (indicatorId != null) {
             HttpHeaders responseHeaders = new HttpHeaders();
 
-            String location = indicatorId;
             try {
-                responseHeaders.setLocation(new URI(location));
+                responseHeaders.setLocation(new URI(indicatorId));
             } catch (URISyntaxException e) {
                 return ApiUtils.createResponseEntityFromException(e);
             }
@@ -447,13 +404,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     public ResponseEntity updateIndicatorMetadataAsBody(
             @P("indicatorId") String indicatorId,
             IndicatorMetadataPATCHInputType metadata) {
-        logger.info("Received request to update indicator metadata for indicatorId '{}'", indicatorId);
-
-        String accept = request.getHeader("Accept");
-
-        /*
-         * analyse input data and save it within database
-         */
+        LOG.info("Received request to update indicator metadata for indicatorId '{}'", indicatorId);
 
         try {
             indicatorId = indicatorsManager.updateMetadata(metadata, indicatorId);
@@ -466,9 +417,8 @@ public class IndicatorsController extends BasePathController implements Indicato
         if (indicatorId != null) {
             HttpHeaders responseHeaders = new HttpHeaders();
 
-            String location = indicatorId;
             try {
-                responseHeaders.setLocation(new URI(location));
+                responseHeaders.setLocation(new URI(indicatorId));
             } catch (URISyntaxException e) {
                 return ApiUtils.createResponseEntityFromException(e);
             }
@@ -483,9 +433,9 @@ public class IndicatorsController extends BasePathController implements Indicato
     @Override
     @PreAuthorize("isAuthorizedForEntity(#indicatorOrderArray, 'indicator', 'editor')")
     public ResponseEntity<Void> updateIndicatorDisplayOrder(@P("indicatorOrderArray") List<IndicatorPATCHDisplayOrderInputType> indicatorOrderArray) {
-    	logger.info("Received request to update indicator display order ");
+    	LOG.info("Received request to update indicator display order ");
 
-        boolean update = false;
+        boolean update;
 
         try {
             update = indicatorsManager.updateIndicatorOrder(indicatorOrderArray);
@@ -510,7 +460,7 @@ public class IndicatorsController extends BasePathController implements Indicato
             @P("indicatorId") String indicatorId,
             @P("spatialUnitId") String spatialUnitId,
             PermissionLevelInputType indicatorData) {
-        logger.info("Received request to update indicator roles for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
+        LOG.info("Received request to update indicator roles for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
         try {
             indicatorId = indicatorsManager.updateIndicatorPermissions(indicatorData, indicatorId, spatialUnitId);
             lastModManager.updateLastDatabaseModification_indicators();
@@ -521,9 +471,8 @@ public class IndicatorsController extends BasePathController implements Indicato
         if (indicatorId != null) {
             HttpHeaders responseHeaders = new HttpHeaders();
 
-            String location = indicatorId;
             try {
-                responseHeaders.setLocation(new URI(location));
+                responseHeaders.setLocation(new URI(indicatorId));
             } catch (URISyntaxException e) {
                 return ApiUtils.createResponseEntityFromException(e);
             }
@@ -538,7 +487,7 @@ public class IndicatorsController extends BasePathController implements Indicato
     public ResponseEntity updateIndicatorPermissions(
             @P("indicatorId") String indicatorId,
             PermissionLevelInputType indicatorData) {
-        logger.info("Received request to update indicator roles for indicatorId '{}'", indicatorId);
+        LOG.info("Received request to update indicator roles for indicatorId '{}'", indicatorId);
         try {
             indicatorId = indicatorsManager.updateIndicatorPermissions(indicatorData, indicatorId);
             lastModManager.updateLastDatabaseModification_indicators();
@@ -549,9 +498,8 @@ public class IndicatorsController extends BasePathController implements Indicato
         if (indicatorId != null) {
             HttpHeaders responseHeaders = new HttpHeaders();
 
-            String location = indicatorId;
             try {
-                responseHeaders.setLocation(new URI(location));
+                responseHeaders.setLocation(new URI(indicatorId));
             } catch (URISyntaxException e) {
                 return ApiUtils.createResponseEntityFromException(e);
             }
@@ -576,9 +524,8 @@ public class IndicatorsController extends BasePathController implements Indicato
         if (indicatorId != null) {
             HttpHeaders responseHeaders = new HttpHeaders();
 
-            String location = indicatorId;
             try {
-                responseHeaders.setLocation(new URI(location));
+                responseHeaders.setLocation(new URI(indicatorId));
             } catch (URISyntaxException e) {
                 return ApiUtils.createResponseEntityFromException(e);
             }
@@ -594,7 +541,7 @@ public class IndicatorsController extends BasePathController implements Indicato
             @P("indicatorId") String indicatorId,
             @P("spatialUnitId") String spatialUnitId,
             OwnerInputType indicatorData) {
-        logger.info("Received request to update indicator ownership for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
+        LOG.info("Received request to update indicator ownership for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
         try {
             indicatorId = indicatorsManager.updateOwnership(indicatorData, indicatorId, spatialUnitId);
             lastModManager.updateLastDatabaseModification_indicators();
@@ -605,9 +552,8 @@ public class IndicatorsController extends BasePathController implements Indicato
         if (indicatorId != null) {
             HttpHeaders responseHeaders = new HttpHeaders();
 
-            String location = indicatorId;
             try {
-                responseHeaders.setLocation(new URI(location));
+                responseHeaders.setLocation(new URI(indicatorId));
             } catch (URISyntaxException e) {
                 return ApiUtils.createResponseEntityFromException(e);
             }
@@ -625,13 +571,7 @@ public class IndicatorsController extends BasePathController implements Indicato
             String featureId,
             String featureRecordId,
             IndicatorPropertiesWithoutGeomType indicatorFeatureRecordData) {
-		logger.info("Received request to update single indicator feature database record for indicatorId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId, featureId, featureRecordId);
-
-        String accept = request.getHeader("Accept");
-
-        /*
-         * analyse input data and save it within database
-         */
+		LOG.info("Received request to update single indicator feature database record for indicatorId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'", indicatorId, spatialUnitId, featureId, featureRecordId);
 
         try {
             indicatorId = indicatorsManager.updateFeatureRecordByRecordId(indicatorFeatureRecordData, indicatorId, spatialUnitId, featureId, featureRecordId);
@@ -644,9 +584,8 @@ public class IndicatorsController extends BasePathController implements Indicato
         if (indicatorId != null) {
             HttpHeaders responseHeaders = new HttpHeaders();
 
-            String location = indicatorId;
             try {
-                responseHeaders.setLocation(new URI(location));
+                responseHeaders.setLocation(new URI(indicatorId));
             } catch (URISyntaxException e) {
                 return ApiUtils.createResponseEntityFromException(e);
             }
@@ -666,10 +605,9 @@ public class IndicatorsController extends BasePathController implements Indicato
             BigDecimal year,
             BigDecimal month,
             BigDecimal day) {
-        logger.info(
+        LOG.info(
                 "Received request to get indicators feature properties without geometries for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
                 spatialUnitId, indicatorId, year, month, day);
-        String accept = request.getHeader("Accept");
 
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
@@ -677,7 +615,7 @@ public class IndicatorsController extends BasePathController implements Indicato
             List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties =
                     indicatorsManager.getValidIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, year,
                             month, day, provider);
-            return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties, HttpStatus.OK);
+            return new ResponseEntity<>(indicatorFeatureProperties, HttpStatus.OK);
         } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
         }
@@ -689,14 +627,13 @@ public class IndicatorsController extends BasePathController implements Indicato
     public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getIndicatorBySpatialUnitIdAndIdWithoutGeometry(
             @P("indicatorId") String indicatorId,
             @P("spatialUnitId") String spatialUnitId) {
-        logger.info("Received request to get indicator feature properties for spatialUnitId '{}' and Id '{}' (without geometries)",
+        LOG.info("Received request to get indicator feature properties for spatialUnitId '{}' and Id '{}' (without geometries)",
                 spatialUnitId, indicatorId);
-        String accept = request.getHeader("Accept");
 
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
         try {
             List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager.getIndicatorFeaturePropertiesWithoutGeometry(indicatorId, spatialUnitId, provider);
-            return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties, HttpStatus.OK);
+            return new ResponseEntity<>(indicatorFeatureProperties, HttpStatus.OK);
         } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
         }
@@ -710,16 +647,15 @@ public class IndicatorsController extends BasePathController implements Indicato
 			String featureId,
 			String simplifyGeometries) {
 
-		logger.info("Received request to get single indicator feature database records for indicatorId '{}' and spatialUnitId '{}' and featureId '{}'",
+		LOG.info("Received request to get single indicator feature database records for indicatorId '{}' and spatialUnitId '{}' and featureId '{}'",
                 indicatorId, spatialUnitId, featureId);
-        String accept = request.getHeader("Accept");
 
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
         try {
         	List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager
 					.getSingleIndicatorFeatureRecords(indicatorId, spatialUnitId, featureId, provider);
-			return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties,
-					HttpStatus.OK);
+			return new ResponseEntity<>(indicatorFeatureProperties,
+                    HttpStatus.OK);
         } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
         }
@@ -734,17 +670,16 @@ public class IndicatorsController extends BasePathController implements Indicato
 			String featureRecordId,
 			String simplifyGeometries) {
 
-		logger.info(
+		LOG.info(
 				"Received request to get public single indicator feature records for datasetId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'",
 				indicatorId, spatialUnitId, featureId, featureRecordId);
-		String accept = request.getHeader("Accept");
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
 		try {
 			List<IndicatorPropertiesWithoutGeomType> indicatorFeatureProperties = indicatorsManager
 					.getSingleIndicatorFeatureRecord(indicatorId, spatialUnitId, featureId, featureRecordId, provider);
-			return new ResponseEntity<List<IndicatorPropertiesWithoutGeomType>>(indicatorFeatureProperties,
-					HttpStatus.OK);
+			return new ResponseEntity<>(indicatorFeatureProperties,
+                    HttpStatus.OK);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
