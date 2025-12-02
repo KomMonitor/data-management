@@ -20,6 +20,10 @@ public interface TopicsRepository extends JpaRepository<TopicsEntity, Long> {
 
 	List<TopicsEntity> findByTopicType(TopicTypeEnum topicType);
 
+	List<TopicsEntity> findByTopicResource(TopicResourceEnum topicResource);
+
+	List<TopicsEntity> findByTopicTypeAndTopicResource(TopicTypeEnum topicType, TopicResourceEnum topicResource);
+
 	boolean existsByTopicNameAndTopicTypeAndTopicResource(String topicName, TopicTypeEnum topicType,
 			TopicResourceEnum topicResource);
 }

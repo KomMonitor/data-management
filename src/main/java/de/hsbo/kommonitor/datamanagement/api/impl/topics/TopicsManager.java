@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.transaction.Transactional;
@@ -185,20 +186,37 @@ public class TopicsManager {
 
 	public List<TopicOverviewType> getTopics(String topicResourceType) {
 		LOG.info("Retrieving all topics from db");
-		
-		// only return main topics as they include the sub topics in use!!!
-		// hence, do not show sub topics on first tier of returned JSON structure but only as subTopics of the respective main topics
-		List<TopicsEntity> topicEntities = topicsRepo.findByTopicType(TopicTypeEnum.MAIN);
+		List<TopicOverviewType> topics;
+
 		if(topicResourceType != null) {
-			topicEntities = topicEntities.stream()
-					.filter(t -> t.getTopicResource().equals(TopicResourceEnum.fromValue(topicResourceType)))
-					.toList();
+			TopicResourceEnum topicResource = TopicResourceEnum.fromValue(topicResourceType);
+			topics = getSortedTopicOverviews(topicResource);
+		} else {
+			List<TopicOverviewType> indicatorTopics = getSortedTopicOverviews(TopicResourceEnum.INDICATOR);
+			List<TopicOverviewType> georesourceTopics = getSortedTopicOverviews(TopicResourceEnum.GEORESOURCE);
+			topics = Stream.concat(indicatorTopics.stream(), georesourceTopics.stream()).toList();
 		}
-		List<TopicOverviewType> topics = TopicsMapper.mapToSwaggerTopics(topicEntities);
-		
-		topics.sort(Comparator.comparing(TopicOverviewType::getDisplayOrder));
 		
 		return topics;
+	}
+
+	private List<TopicOverviewType> getSortedTopicOverviews(TopicResourceEnum topicResource) {
+		// only return main topics as they include the sub topics in use!!!
+		// hence, do not show sub topics on first tier of returned JSON structure but only as subTopics of the respective main topics
+		List<TopicsEntity> topicEntities = topicsRepo.findByTopicTypeAndTopicResource(TopicTypeEnum.MAIN, topicResource);
+		TopicsOrderModeEntity orderModeEntity = topicsOrderModeRepo.findByTopicResource(topicResource);
+		List<TopicOverviewType> topics = TopicsMapper.mapToSwaggerTopics(topicEntities);
+		switch (orderModeEntity.getOrderMode()) {
+			case ALPHABETICAL:
+				topics.sort(Comparator.comparing(TopicOverviewType::getTopicName));
+				return topics;
+			case CUSTOM:
+				topics.sort(Comparator.comparing(TopicOverviewType::getDisplayOrder));
+				return topics;
+			default:
+				topics.sort(Comparator.comparing(TopicOverviewType::getTopicName));
+				return topics;
+		}
 	}
 
 	public TopicOverviewType getTopicById(String topicId) {
