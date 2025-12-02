@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.hsbo.kommonitor.datamanagement.export.GeoPackageService;
 import org.geotools.api.data.*;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
@@ -54,11 +55,12 @@ import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomTyp
 
 public class IndicatorDatabaseHandler {
 
-	
+	private static final Logger LOG = LoggerFactory.getLogger(IndicatorDatabaseHandler.class);
+
 	private static final String VALUE_SUFFIX = "_VALUES";
 	private static final String VIEW_SUFFIX = "_VIEW";
 	public static final String DATE_PREFIX = "DATE_";
-	private static Logger logger = LoggerFactory.getLogger(IndicatorDatabaseHandler.class);
+
 	private static boolean ADDITIONAL_PROPERTIES_WERE_SET = false;
 	
 	private static FeatureJSON instantiateFeatureJSON() {
@@ -73,24 +75,24 @@ public class IndicatorDatabaseHandler {
 
 		List<Date> availableDatesForIndicator = collectIndicatorDates(indicatorValues);
 
-		logger.info("Create SimpleFeatureType for indicator");
+		LOG.info("Create SimpleFeatureType for indicator");
 
 		SimpleFeatureType featureType = createSimpleFeatureTypeForIndicators(postGisStore, ResourceTypeEnum.INDICATOR,
 				availableDatesForIndicator);
 
 		SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
 
-		logger.info("build features according to IndicatorValueMapping");
+		LOG.info("build features according to IndicatorValueMapping");
 
 		/*
 		 * A list to collect features as we create them.
 		 */
 		List<SimpleFeature> features = constructSimpleFeatures(indicatorValues, builder);
 
-		logger.info("create new Table from featureSchema using table name {}", featureType.getTypeName());
+		LOG.info("create new Table from featureSchema using table name {}", featureType.getTypeName());
 		postGisStore.createSchema(featureType);
 
-		logger.info("Start to add the actual features to table with name {}", featureType.getTypeName());
+		LOG.info("Start to add the actual features to table with name {}", featureType.getTypeName());
 
 		DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
 
@@ -168,7 +170,7 @@ public class IndicatorDatabaseHandler {
 					+ " ON CONFLICT (table_schema, table_name, pk_column) DO NOTHING;";
 
 			
-			logger.info("Created the following SQL command to create or update indicator table: '{}'", createViewCommand);
+			LOG.info("Created the following SQL command to create or update indicator table: '{}'", createViewCommand);
 			
 			// TODO check if works
 			statement.execute(createViewCommand);
@@ -218,7 +220,7 @@ public class IndicatorDatabaseHandler {
 
 			transaction.close();
 
-			logger.info("Features should have been added to table with name {}", featureType.getTypeName());
+			LOG.info("Features should have been added to table with name {}", featureType.getTypeName());
 	}
 
 	private static List<SimpleFeature> constructSimpleFeatures(
@@ -242,7 +244,7 @@ public class IndicatorDatabaseHandler {
 					try {
 						builder.add(mappingEntry.getIndicatorValue());
 					} catch (Exception ex) {
-						logger.error("Error while building feature.", ex);
+						LOG.error("Error while building feature.", ex);
 					}
 
 				}
@@ -258,7 +260,7 @@ public class IndicatorDatabaseHandler {
 		List<Date> availableDates = new ArrayList<>();
 
 		if(indicatorValues == null || indicatorValues.size() == 0){
-			logger.info("submitted post body included null or empty list of indicatorValues. Hence no timestamp values can be created.");
+			LOG.info("submitted post body included null or empty list of indicatorValues. Hence no timestamp values can be created.");
 		}
 		else{
 			List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorValues.get(0).getValueMapping();
@@ -380,7 +382,7 @@ public class IndicatorDatabaseHandler {
 		
 		List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = indicatorData.getIndicatorValues();
 		if(indicatorValues == null || indicatorValues.size() == 0){
-			logger.info("submitted put body included null or empty list of indicatorValues. Hence no changes can be applied.");
+			LOG.info("submitted put body included null or empty list of indicatorValues. Hence no changes can be applied.");
 			throw new Exception("submitted put body included null or empty list of indicatorValues");
 		}
 		else if(indicatorValues.size() > 0){
@@ -505,7 +507,7 @@ public class IndicatorDatabaseHandler {
 				alterTableStmt.addBatch("ALTER TABLE \"" + indicatorValueTableName + "\" ADD COLUMN \"" + columnName + "\" real");
 			}
 			
-			logger.info("Adding new DATABASE COLUMNS...");
+			LOG.info("Adding new DATABASE COLUMNS...");
 			alterTableStmt.executeBatch();
 
 		} catch (Exception e) {
@@ -553,7 +555,7 @@ public class IndicatorDatabaseHandler {
 			
 			if(!schemaContainsDateProperty(schema, datePropertyName)){
 				// add new Property
-				logger.debug("Add new propert/column '{}' to table '{}'", datePropertyName, schema.getTypeName());
+				LOG.debug("Add new propert/column '{}' to table '{}'", datePropertyName, schema.getTypeName());
 				newPropertyNames.add(datePropertyName);
 				ADDITIONAL_PROPERTIES_WERE_SET = true;
 			}
@@ -685,7 +687,7 @@ public class IndicatorDatabaseHandler {
 	}
 
 	public static String getValidFeatures(String featureViewName, BigDecimal year, BigDecimal month, BigDecimal day, String simplifyGeometries) throws Exception {
-		logger.info("Fetch indicator features for table with name {} and timestamp '{}-{}-{}' and simplificationType '{}'", featureViewName, year, month, day, simplifyGeometries);
+		LOG.info("Fetch indicator features for table with name {} and timestamp '{}-{}-{}' and simplificationType '{}'", featureViewName, year, month, day, simplifyGeometries);
 		/*
 		 * here all indicators for the requested spatial unit shall be retrieved. However, the timeseries shall be reduced
 		 * to only contain the requested timestamp
@@ -712,7 +714,7 @@ public class IndicatorDatabaseHandler {
 		 features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
 
 		int indicatorFeaturesSize = features.size();
-		logger.info("Transform {} found indicator features to GeoJSON", indicatorFeaturesSize);
+		LOG.info("Transform {} found indicator features to GeoJSON", indicatorFeaturesSize);
 
 		String geoJson = null;
 
@@ -766,7 +768,7 @@ public class IndicatorDatabaseHandler {
 	}
 
 	public static void deleteIndicatorValueTable(String dbViewName) throws IOException, SQLException {
-		logger.info("Deleting indicator value table {}.", dbViewName);
+		LOG.info("Deleting indicator value table {}.", dbViewName);
 		
 		Connection jdbcConnection = null;
 		Statement statement = null;
@@ -783,7 +785,7 @@ public class IndicatorDatabaseHandler {
 			// TODO check if works
 			statement.executeUpdate(dropTableCommand);
 
-			logger.info("Deletion of table {} and view {} was successful", valueTableName, dbViewName);
+			LOG.info("Deletion of table {} and view {} was successful", valueTableName, dbViewName);
 		} catch (Exception e) {
 			try {
 				statement.close();
@@ -818,12 +820,12 @@ public class IndicatorDatabaseHandler {
 		SimpleFeatureType schema = featureSource.getSchema();
 		
 		Date date = new GregorianCalendar(year.intValue(), month.intValue() - 1, day.intValue()).getTime();
-		logger.info("parsing date from submitted date components. Submitted components were 'year: {}, month: {}, day: {}'. As Java time treats month 0-based, the follwing date will be used: 'year-month(-1)-day {}-{}-{}'", year, month, day, year, month.intValue()-1, day);
+		LOG.info("parsing date from submitted date components. Submitted components were 'year: {}, month: {}, day: {}'. As Java time treats month 0-based, the follwing date will be used: 'year-month(-1)-day {}-{}-{}'", year, month, day, year, month.intValue()-1, day);
 		String datePropertyName = createDateStringForDbProperty(date);
 		
 		if(schemaContainsDateProperty(schema, datePropertyName)){
 			// add new Property
-			logger.debug("Found matching date column for propert/column '{}' of table '{}'", datePropertyName, schema.getTypeName());
+			LOG.debug("Found matching date column for propert/column '{}' of table '{}'", datePropertyName, schema.getTypeName());
 			foundExistingDateColumn = true;
 		}
 		
@@ -853,7 +855,7 @@ public class IndicatorDatabaseHandler {
 
 				String alterTableCommand = builder.toString();
 				
-				logger.info("Send following ALTER TABLE command to database: " + alterTableCommand);
+				LOG.info("Send following ALTER TABLE command to database: " + alterTableCommand);
 				
 				// TODO check if works
 				statement.executeUpdate(alterTableCommand);
@@ -876,25 +878,19 @@ public class IndicatorDatabaseHandler {
 			}
 
 		}
-		
 	}
 
 	public static String getIndicatorFeatures(String featureViewTableName, String simplifyGeometries) throws Exception {
 
-		logger.info("Fetch indicator features for table with name {}", featureViewTableName);
+		LOG.info("Fetch indicator features for table with name {}", featureViewTableName);
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
+		SimpleFeatureCollection  features = (SimpleFeatureCollection) getIndicatorsFeatures(featureViewTableName, dataStore, simplifyGeometries);
 
-		SimpleFeatureSource featureSource = dataStore.getFeatureSource(featureViewTableName);
-
-		FeatureCollection features = featureSource.getFeatures();
+		GeoPackageService service = new GeoPackageService();
 		
-		features = DateTimeUtil.fixDateResonseTypes(features);
-		
-		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
-
 		int indicatorFeaturesSize = features.size();
-		logger.info("Transform {} found indicator features to GeoJSON", indicatorFeaturesSize);
+		LOG.info("Transform {} found indicator features to GeoJSON", indicatorFeaturesSize);
 
 		String geoJson = null;
 
@@ -911,6 +907,16 @@ public class IndicatorDatabaseHandler {
 		dataStore.dispose();
 
 		return geoJson;
+	}
+
+	public static FeatureCollection getIndicatorsFeatures(String featureViewTableName, DataStore dataStore, String simplifyGeometries) throws Exception {
+		SimpleFeatureSource featureSource = dataStore.getFeatureSource(featureViewTableName);
+		FeatureCollection features = featureSource.getFeatures();
+
+		features = DateTimeUtil.fixDateResonseTypes(features);
+		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
+
+		return features;
 	}
 
 //	public static void deleteIndicatorFeatureView(String featureViewTableName) throws IOException {
@@ -968,7 +974,7 @@ public class IndicatorDatabaseHandler {
 			
 			String createTableCommand = "SELECT \"" + datePropertyName + "\" FROM \"" + indicatorValueTableName + "\";";
 			
-			logger.info("Created the following SQL command to create or update indicator table: '{}'", createTableCommand);
+			LOG.info("Created the following SQL command to create or update indicator table: '{}'", createTableCommand);
 			
 			ResultSet result = statement.executeQuery(createTableCommand);
 			
@@ -999,7 +1005,7 @@ public class IndicatorDatabaseHandler {
 
 	public static FeatureCollection getValidFeaturesAsFeatureCollection(DataStore dataStore, String indicatorViewTableName,
 			BigDecimal year, BigDecimal month, BigDecimal day) throws IOException, CQLException {
-		logger.info("Fetch indicator features as FeatureCollection for table with name {} and timestamp '{}-{}-{}'", indicatorViewTableName, year, month, day);
+		LOG.info("Fetch indicator features as FeatureCollection for table with name {} and timestamp '{}-{}-{}'", indicatorViewTableName, year, month, day);
 		/*
 		 * here all indicators for the requested spatial unit shall be retrieved. However, the timeseries shall be reduced
 		 * to only contain the requested timestamp
@@ -1025,7 +1031,7 @@ public class IndicatorDatabaseHandler {
 
 	public static List<IndicatorPropertiesWithoutGeomType> getIndicatorFeaturePropertiesWithoutGeometries(
 			String indicatorViewTableName) throws SQLException, IOException {
-		logger.info("Fetch indicator feature properties without geometry for table with name {}", indicatorViewTableName);
+		LOG.info("Fetch indicator feature properties without geometry for table with name {}", indicatorViewTableName);
 
 		List<IndicatorPropertiesWithoutGeomType> indicatorFeaturePropertiesWithoutGeom = new ArrayList<IndicatorPropertiesWithoutGeomType>();
 		
@@ -1040,7 +1046,7 @@ public class IndicatorDatabaseHandler {
 			
 			String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorViewTableName + "\";";
 			
-			logger.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
+			LOG.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
 			
 			ResultSet result = statement.executeQuery(getFeaturePropertiesCommand);
 			
@@ -1070,7 +1076,7 @@ public class IndicatorDatabaseHandler {
 
 	public static List<IndicatorPropertiesWithoutGeomType> getValidFeaturePropertiesWithoutGeometries(
 			String indicatorViewTableName, BigDecimal year, BigDecimal month, BigDecimal day) throws IOException, SQLException {
-		logger.info("Fetch indicator feature properties without geometry for table with name {}", indicatorViewTableName);
+		LOG.info("Fetch indicator feature properties without geometry for table with name {}", indicatorViewTableName);
 
 		List<IndicatorPropertiesWithoutGeomType> indicatorFeaturePropertiesWithoutGeom = new ArrayList<IndicatorPropertiesWithoutGeomType>();
 		
@@ -1094,7 +1100,7 @@ public class IndicatorDatabaseHandler {
 			
 			String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorViewTableName + "\" " + whereClause + ";";
 			
-			logger.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
+			LOG.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
 			
 			ResultSet result = statement.executeQuery(getFeaturePropertiesCommand);
 			
@@ -1169,7 +1175,7 @@ public class IndicatorDatabaseHandler {
 			
 			String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorValueTableName + "\" WHERE \"" + KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME + "\" = '" + featureId + "';";
 			
-			logger.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
+			LOG.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
 			
 			ResultSet result = statement.executeQuery(getFeaturePropertiesCommand);
 			
@@ -1213,7 +1219,7 @@ public class IndicatorDatabaseHandler {
 			
 			String getFeaturePropertiesCommand = "SELECT * FROM \"" + indicatorValueTableName + "\" WHERE \"" + KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME + "\" = '" + featureId + " AND \"" + KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME + "\" = '" + featureRecordId + "';";
 			
-			logger.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
+			LOG.info("Created the following SQL command to retrieve indicator properties from indicator table: '{}'", getFeaturePropertiesCommand);
 			
 			ResultSet result = statement.executeQuery(getFeaturePropertiesCommand);
 			
@@ -1259,7 +1265,7 @@ public class IndicatorDatabaseHandler {
 
 			String deleteFromTableCommand = builder.toString();
 			
-			logger.info("Send following DELETE command to database: " + deleteFromTableCommand);
+			LOG.info("Send following DELETE command to database: " + deleteFromTableCommand);
 			
 			// TODO check if works
 			statement.executeUpdate(deleteFromTableCommand);
@@ -1302,7 +1308,7 @@ public class IndicatorDatabaseHandler {
 
 			String deleteFromTableCommand = builder.toString();
 			
-			logger.info("Send following DELETE command to database: " + deleteFromTableCommand);
+			LOG.info("Send following DELETE command to database: " + deleteFromTableCommand);
 			
 			// TODO check if works
 			statement.executeUpdate(deleteFromTableCommand);
@@ -1367,7 +1373,7 @@ public class IndicatorDatabaseHandler {
 
 			String updateTableCommand = builder.toString();
 			
-			logger.info("Send following UPDATE TABLE command to database: " + updateTableCommand);
+			LOG.info("Send following UPDATE TABLE command to database: " + updateTableCommand);
 			
 			// TODO check if works
 			statement.executeUpdate(updateTableCommand);
