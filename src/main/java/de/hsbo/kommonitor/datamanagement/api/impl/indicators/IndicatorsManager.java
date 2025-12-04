@@ -27,6 +27,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.geotools.api.data.DataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
@@ -679,30 +680,9 @@ public class IndicatorsManager {
         LOG.info("Retrieving valid indicator features from Dataset with id '{}'for spatialUnit '{}' for date '{}-{}-{}'", indicatorId, spatialUnitId,
                 year, month, day);
 
-        if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
-            if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)) {
-                IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = fetchIndicatorSpatialUnitJoinEntity(provider, indicatorId, spatialUnitId);
+        String indicatorViewTableName = getIndicatorViewTableName(indicatorId, spatialUnitId, provider);
 
-                String indicatorViewTableName = indicatorSpatialsUnitsEntity.getIndicatorViewTableName();
-
-                return IndicatorDatabaseHandler.getValidFeatures(indicatorViewTableName, year, month, day, simplifyGeometries);
-
-            } else {
-                LOG.error(
-                        "No indicator dataset for the given indicatorId '{}' and spatialUnitId '{}' was found in database. Get request has no effect.",
-                        indicatorId, spatialUnitId);
-                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                        "Tried to get valid indicator features, but there is no table for the combination of indicatorId "
-                                + indicatorId + " and spatialUnitId " + spatialUnitId);
-            }
-
-        } else {
-            LOG.error(
-                    "No indicator dataset with datasetId '{}' was found in database. Get request has no effect.",
-                    indicatorId);
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                    "Tried to get indicator features, but no dataset existes with datasetId " + indicatorId);
-        }
+        return IndicatorDatabaseHandler.getValidFeatures(indicatorViewTableName, year, month, day, simplifyGeometries);
     }
 
     public String getIndicatorFeatures(String indicatorId, String spatialUnitId, String simplifyGeometries) throws Exception {
@@ -712,31 +692,45 @@ public class IndicatorsManager {
     public String getIndicatorFeatures(String indicatorId, String spatialUnitId, String simplifyGeometries, AuthInfoProvider provider) throws Exception {
         LOG.info("Retrieving all indicator features from Dataset with id '{}'for spatialUnitId '{}' ", indicatorId, spatialUnitId);
 
+        String indicatorViewTableName = getIndicatorViewTableName(indicatorId, spatialUnitId, provider);
+
+        return IndicatorDatabaseHandler.getIndicatorFeatures(indicatorViewTableName, simplifyGeometries);
+    }
+
+    public FeatureCollection getIndicatorFeatureCollection(String indicatorId, String spatialUnitId, String simplifyGeometries, AuthInfoProvider provider, DataStore dataStore) throws Exception {
+        LOG.info("Exporting all indicator features from Dataset with id '{}'for spatialUnitId '{}' ", indicatorId, spatialUnitId);
+
+        String indicatorViewTableName = getIndicatorViewTableName(indicatorId, spatialUnitId, provider);
+
+        return IndicatorDatabaseHandler.getIndicatorsFeatures(indicatorViewTableName, dataStore, simplifyGeometries);
+    }
+
+    private String getIndicatorViewTableName(String indicatorId, String spatialUnitId, AuthInfoProvider provider) throws ResourceNotFoundException {
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
             if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)) {
                 IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = fetchIndicatorSpatialUnitJoinEntity(provider, indicatorId, spatialUnitId);
 
-                String indicatorViewTableName = indicatorSpatialsUnitsEntity.getIndicatorViewTableName();
-
-                return IndicatorDatabaseHandler.getIndicatorFeatures(indicatorViewTableName, simplifyGeometries);
+                return indicatorSpatialsUnitsEntity.getIndicatorViewTableName();
 
             } else {
                 LOG.error(
-                        "No indicator dataset for the given indicatorId '{}' and spatialUnitId '{}' was found in database. Get request has no effect.",
+                        "No indicator dataset for the given indicatorId '{}' and spatialUnitId '{}' was found in database.",
                         indicatorId, spatialUnitId);
                 throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                        "Tried to get indicator features, but there is no table for the combination of indicatorId "
+                        "Tried to get valid indicator features, but there is no table for the combination of indicatorId "
                                 + indicatorId + " and spatialUnitId " + spatialUnitId);
             }
 
         } else {
             LOG.error(
-                    "No indicator dataset with indicatorId '{}' was found in database. Get request has no effect.",
-                    indicatorId);
+                    "No indicator dataset with datasetId '{}' was found in database.", indicatorId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to get indicator features, but no dataset existes with datasetId " + indicatorId);
         }
+
     }
+
+
 
     public boolean deleteIndicatorDatasetById(String indicatorId) throws Exception {
 		LOG.info("Trying to delete indicator dataset with datasetId '{}'", indicatorId);
