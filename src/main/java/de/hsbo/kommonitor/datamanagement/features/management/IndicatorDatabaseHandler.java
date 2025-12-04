@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import de.hsbo.kommonitor.datamanagement.export.GeoPackageService;
 import org.geotools.api.data.*;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
@@ -69,7 +68,7 @@ public class IndicatorDatabaseHandler {
 		return new FeatureJSON(geometryJSON);
 	}
 	
-	public static String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) throws IOException, CQLException, SQLException {
+	public static String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) throws IOException {
 
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 
@@ -886,8 +885,6 @@ public class IndicatorDatabaseHandler {
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
 		SimpleFeatureCollection  features = (SimpleFeatureCollection) getIndicatorsFeatures(featureViewTableName, dataStore, simplifyGeometries);
-
-		GeoPackageService service = new GeoPackageService();
 		
 		int indicatorFeaturesSize = features.size();
 		LOG.info("Transform {} found indicator features to GeoJSON", indicatorFeaturesSize);
@@ -910,6 +907,7 @@ public class IndicatorDatabaseHandler {
 	}
 
 	public static FeatureCollection getIndicatorsFeatures(String featureViewTableName, DataStore dataStore, String simplifyGeometries) throws Exception {
+		LOG.info("Fetch indicator features for table with name {}", featureViewTableName);
 		SimpleFeatureSource featureSource = dataStore.getFeatureSource(featureViewTableName);
 		FeatureCollection features = featureSource.getFeatures();
 

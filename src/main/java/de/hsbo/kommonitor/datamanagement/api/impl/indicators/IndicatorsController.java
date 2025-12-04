@@ -5,13 +5,20 @@ import de.hsbo.kommonitor.datamanagement.api.IndicatorsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.export.GeoPackageService;
+import de.hsbo.kommonitor.datamanagement.export.TempFileInputStream;
+import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.servlet.http.HttpServletRequest;
+import org.geotools.api.data.DataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,6 +28,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -43,6 +52,9 @@ public class IndicatorsController extends BasePathController implements Indicato
 
     @Autowired
     private AuthInfoProviderFactory authInfoProviderFactory;
+
+    @Autowired
+    private GeoPackageService gpkgService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public IndicatorsController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -144,6 +156,40 @@ public class IndicatorsController extends BasePathController implements Indicato
 
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+
+    @Override
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
+    public ResponseEntity<Resource> exportIndicatorBySpatialUnitIdAndId(
+            @P("indicatorId") String indicatorId,
+            @P("spatialUnitId") String spatialUnitId,
+            String format) {
+        LOG.info("Received request to export indicators features for spatialUnitId '{}' and Id '{}' ",
+                spatialUnitId, indicatorId);
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+
+        try {
+            DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+            SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) indicatorsManager.getIndicatorFeatureCollection(indicatorId, spatialUnitId, SimplifyGeometriesEnum.ORIGINAL.toString(), provider, dataStore);
+            File gpkgFile = gpkgService.createGeoPackage(featureCollection);
+            dataStore.dispose();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kommonitor-export-" + indicatorId + ".gpkg");
+            headers.add("Content-Type", "application/json; charset=utf-8");
+
+            TempFileInputStream resourceStream = new TempFileInputStream(gpkgFile);
+            InputStreamResource resource = new InputStreamResource(resourceStream);
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
 
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")

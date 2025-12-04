@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-12T17:42:53.200483800+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-02T16:46:04.328388700+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 @Validated
 @Tag(name = "indicators", description = "the Indicators API")
 public interface IndicatorsApi {
@@ -285,6 +285,50 @@ public interface IndicatorsApi {
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
         @Parameter(name = "featureId", description = "the identifier of the indicator dataset feature", required = true, in = ParameterIn.PATH) @PathVariable("featureId") String featureId,
         @Parameter(name = "featureRecordId", description = "the unique database record identifier of the indicator dataset feature - multiple records may exist for the same real world object if they apply to different periods of validity", required = true, in = ParameterIn.PATH) @PathVariable("featureRecordId") String featureRecordId
+    );
+
+
+    /**
+     * GET /indicators/{indicatorId}/{spatialUnitId}/export : export the indicator for the selected spatial unit in a certain format
+     * export the indicator for the selected spatial in a certain format
+     *
+     * @param indicatorId unique identifier of the selected indicator dataset (required)
+     * @param spatialUnitId the unique identifier of the spatial level (required)
+     * @param format Controls in which format the dataset should be downloaded. Supported values are [&#39;gpkg&#39;, &#39;shp&#39;] (optional, default to original)
+     * @return OK (status code 200)
+     *         or Invalid status value (status code 400)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     */
+    @Operation(
+        operationId = "exportIndicatorBySpatialUnitIdAndId",
+        summary = "export the indicator for the selected spatial unit in a certain format",
+        description = "export the indicator for the selected spatial in a certain format",
+        tags = { "indicators" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/octed-stream", schema = @Schema(implementation = org.springframework.core.io.Resource.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Invalid status value"),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/indicators/{indicatorId}/{spatialUnitId}/export",
+        produces = { "application/octed-stream" }
+    )
+    
+    ResponseEntity<org.springframework.core.io.Resource> exportIndicatorBySpatialUnitIdAndId(
+        @Parameter(name = "indicatorId", description = "unique identifier of the selected indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
+        @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
+        @Parameter(name = "format", description = "Controls in which format the dataset should be downloaded. Supported values are ['gpkg', 'shp']", in = ParameterIn.QUERY) @Valid @RequestParam(value = "format", required = false, defaultValue = "original") String format
     );
 
 
