@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity.BodyBuilder;
 
 public class ApiUtils {
 	
-	private static Logger logger = LoggerFactory.getLogger(ApiUtils.class);
+	private final static Logger LOG = LoggerFactory.getLogger(ApiUtils.class);
 	
 	/**
      * Creates a 'ResponseEntity' containing 'ErrorType' using a passed
@@ -21,8 +21,7 @@ public class ApiUtils {
      * @return A 'ResponseEntity' containing an 'ErrorType' object.
      */
     public static ResponseEntity createResponseEntityFromException(Exception exception) {
-        exception.printStackTrace();
-        logger.error(exception.getMessage());
+        LOG.error(exception.getMessage());
     	
     	ErrorType er = new ErrorType();
         er.setLabel(exception.getClass().getName());
@@ -30,7 +29,8 @@ public class ApiUtils {
         er.setType(exception.getClass().getSimpleName());
 
         BodyBuilder bb = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR);
-        ResponseEntity respEn = bb.contentType(MediaType.parseMediaType("application/json"))
+        ResponseEntity respEn = bb
+                .contentType(MediaType.parseMediaType("application/json"))
                 .body(er);
 
         return respEn;
