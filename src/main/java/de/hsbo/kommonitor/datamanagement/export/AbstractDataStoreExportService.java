@@ -84,6 +84,9 @@ public abstract class AbstractDataStoreExportService implements DataExportServic
             {
                 builder.add(name, java.util.Date.class);
             }
+//            else if ("id".equalsIgnoreCase(name)) {
+//                builder.add("source_id", binding); // Rename ID
+//            }
             else {
                 builder.add(name, binding);
             }
@@ -95,15 +98,22 @@ public abstract class AbstractDataStoreExportService implements DataExportServic
         List<SimpleFeature> newFeatures = new ArrayList<>();
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(targetSchema);
 
+        long featureId = 0;
+
         try (var iterator = sourceData.features()) {
             while (iterator.hasNext()) {
                 SimpleFeature oldFeature = iterator.next();
                 featureBuilder.reset();
 
                 for (AttributeDescriptor descriptor : targetSchema.getAttributeDescriptors()) {
-                    String name = descriptor.getLocalName();
+                    String targetName = descriptor.getLocalName();
+                    String sourceName = targetName;
 
-                    Object value = oldFeature.getAttribute(name);
+//                    if ("source_id".equals(targetName)) {
+//                        sourceName = (oldFeature.getAttribute("ID") != null) ? "ID" : "id";
+//                    }
+
+                    Object value = oldFeature.getAttribute(sourceName);
 
                     // --- DATE VALUE CONVERSION START ---
                     if (value instanceof java.time.LocalDate) {
@@ -117,14 +127,14 @@ public abstract class AbstractDataStoreExportService implements DataExportServic
                         value = new java.sql.Timestamp(((java.util.Date) value).getTime());
                     }
                     if (value != null) {
-                        featureBuilder.set(name, value);
+                        featureBuilder.set(targetName, value);
                     }
                 }
                 featureBuilder.featureUserData(Hints.USE_PROVIDED_FID, true);
 
                 // Handle FID
-                String validId = oldFeature.getProperty("ID") != null ? (String) oldFeature.getProperty("ID").getValue() : java.util.UUID.randomUUID().toString();
-                SimpleFeature feature = featureBuilder.buildFeature(validId);
+//                String validId = oldFeature.getProperty("ID") != null ? (String) oldFeature.getProperty("ID").getValue() : java.util.UUID.randomUUID().toString();
+                SimpleFeature feature = featureBuilder.buildFeature(String.valueOf(featureId++));
                 newFeatures.add(feature);
             }
         }
