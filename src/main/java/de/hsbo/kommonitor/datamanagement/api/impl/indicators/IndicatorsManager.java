@@ -5,6 +5,8 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUn
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
+
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -24,6 +26,8 @@ import java.util.stream.Stream;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
+import de.hsbo.kommonitor.datamanagement.export.DataExportService;
+import de.hsbo.kommonitor.datamanagement.export.ExportServiceRepository;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.geotools.api.data.DataStore;
@@ -104,6 +108,9 @@ public class IndicatorsManager {
 
     @Autowired
     private LastModificationManager lastModManager;
+
+    @Autowired
+    private ExportServiceRepository exportServiceRepository;
 
     public String updateMetadata(IndicatorMetadataPATCHInputType metadata, String indicatorId) throws Exception {
         LOG.info("Trying to update indicator metadata for datasetId '{}'", indicatorId);
@@ -1750,5 +1757,16 @@ public class IndicatorsManager {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to update indicator feature record, but no dataset exists with datasetId " + indicatorId);
         }
+    }
+
+    public File exportFeatureCollection(SimpleFeatureCollection featureCollection, String format) throws ResourceNotFoundException, IOException {
+        Optional<DataExportService> exportService = exportServiceRepository.getService(format);
+
+        if (exportService.isEmpty()) {
+            LOG.error("No export service found for format '{}'.", format);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Export format " + format +  "is not supported");
+        }
+
+        return exportService.get().createExportFile(featureCollection);
     }
 }

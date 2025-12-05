@@ -8,7 +8,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
-import de.hsbo.kommonitor.datamanagement.export.GeoPackageService;
 import de.hsbo.kommonitor.datamanagement.export.TempFileInputStream;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -29,7 +28,6 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -52,9 +50,6 @@ public class IndicatorsController extends BasePathController implements Indicato
 
     @Autowired
     private AuthInfoProviderFactory authInfoProviderFactory;
-
-    @Autowired
-    private GeoPackageService gpkgService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public IndicatorsController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -171,15 +166,23 @@ public class IndicatorsController extends BasePathController implements Indicato
 
         try {
             DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
-            SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) indicatorsManager.getIndicatorFeatureCollection(indicatorId, spatialUnitId, SimplifyGeometriesEnum.ORIGINAL.toString(), provider, dataStore);
-            File gpkgFile = gpkgService.createGeoPackage(featureCollection);
+
+            SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) indicatorsManager
+                    .getIndicatorFeatureCollection(
+                            indicatorId,
+                            spatialUnitId,
+                            SimplifyGeometriesEnum.ORIGINAL.toString(),
+                            provider,
+                            dataStore);
+            File exportFile = indicatorsManager.exportFeatureCollection(featureCollection, format);
+
             dataStore.dispose();
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kommonitor-export-" + indicatorId + ".gpkg");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kommonitor-export-" + indicatorId + "." + format);
             headers.add("Content-Type", "application/json; charset=utf-8");
 
-            TempFileInputStream resourceStream = new TempFileInputStream(gpkgFile);
+            TempFileInputStream resourceStream = new TempFileInputStream(exportFile);
             InputStreamResource resource = new InputStreamResource(resourceStream);
             return ResponseEntity.ok()
                     .headers(headers)
