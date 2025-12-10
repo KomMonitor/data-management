@@ -4,26 +4,35 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.IndicatorsPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
+import de.hsbo.kommonitor.datamanagement.export.ExportManager;
+import de.hsbo.kommonitor.datamanagement.export.TempFileInputStream;
+import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
 import de.hsbo.kommonitor.datamanagement.model.ResourceFilterType;
 import jakarta.servlet.http.HttpServletRequest;
+import org.geotools.api.data.DataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
 public class IndicatorsPublicController extends BasePathController implements IndicatorsPublicApi {
 
-    private static final Logger logger = LoggerFactory.getLogger(IndicatorsPublicController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IndicatorsPublicController.class);
 
     private final ObjectMapper objectMapper;
 
@@ -31,6 +40,9 @@ public class IndicatorsPublicController extends BasePathController implements In
 
     @Autowired
     IndicatorsManager indicatorsManager;
+
+    @Autowired
+    private ExportManager exportManager;
 
     @Autowired
     public IndicatorsPublicController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -43,7 +55,7 @@ public class IndicatorsPublicController extends BasePathController implements In
             String indicatorId,
             String spatialUnitId,
             String simplifyGeometries) {
-        logger.info("Received request to get public indicators features for spatialUnitId '{}' and Id '{}' ",
+        LOG.info("Received request to get public indicators features for spatialUnitId '{}' and Id '{}' ",
                 spatialUnitId, indicatorId);
         String accept = request.getHeader("Accept");
 
@@ -65,6 +77,75 @@ public class IndicatorsPublicController extends BasePathController implements In
     }
 
     @Override
+    public ResponseEntity<Resource> exportPublicIndicatorBySpatialUnitIdAndId(String indicatorId, String spatialUnitId, String format) {
+        LOG.info("Received request to export indicators features for spatialUnitId '{}' and Id '{}' ",
+                spatialUnitId, indicatorId);
+
+        try {
+            DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+
+            SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) indicatorsManager
+                    .getIndicatorFeatureCollection(
+                            indicatorId,
+                            spatialUnitId,
+                            SimplifyGeometriesEnum.ORIGINAL.toString(),
+                            dataStore);
+            File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
+
+            dataStore.dispose();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kommonitor-export-" + indicatorId + "." + format);
+            headers.add("Content-Type", "application/json; charset=utf-8");
+
+            TempFileInputStream resourceStream = new TempFileInputStream(exportFile);
+            InputStreamResource resource = new InputStreamResource(resourceStream);
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Resource> exportPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonth(String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month, BigDecimal day, String format) {
+        try {
+            DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+
+            SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) indicatorsManager
+                    .getValidIndicatorFeatureCollection(
+                            indicatorId,
+                            spatialUnitId,
+                            year,
+                            month,
+                            day,
+                            SimplifyGeometriesEnum.ORIGINAL.toString(),
+                            dataStore
+                    );
+            File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
+
+            dataStore.dispose();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kommonitor-export-" + indicatorId + "." + format);
+            headers.add("Content-Type", "application/json; charset=utf-8");
+
+            TempFileInputStream resourceStream = new TempFileInputStream(exportFile);
+            InputStreamResource resource = new InputStreamResource(resourceStream);
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
     public ResponseEntity<byte[]> getPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonth(
             String indicatorId,
             String spatialUnitId,
@@ -72,7 +153,7 @@ public class IndicatorsPublicController extends BasePathController implements In
             BigDecimal month,
             BigDecimal day,
             String simplifyGeometries) {
-        logger.info(
+        LOG.info(
                 "Received request to get public indicators features for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
                 spatialUnitId, indicatorId, year, month, day);
         String accept = request.getHeader("Accept");
@@ -98,7 +179,7 @@ public class IndicatorsPublicController extends BasePathController implements In
 
     @Override
     public ResponseEntity<List<IndicatorOverviewType>> getPublicIndicators() {
-        logger.info("Received request to get all public indicators metadata");
+        LOG.info("Received request to get all public indicators metadata");
         String accept = request.getHeader("Accept");
 
         try {
@@ -115,7 +196,7 @@ public class IndicatorsPublicController extends BasePathController implements In
 
     @Override
     public ResponseEntity<List<IndicatorOverviewType>> filterPublicIndicators(ResourceFilterType resourceFilterType) {
-        logger.info("Received request to get filtered public indicators metadata");
+        LOG.info("Received request to get filtered public indicators metadata");
         String accept = request.getHeader("Accept");
 
         try {
@@ -132,7 +213,7 @@ public class IndicatorsPublicController extends BasePathController implements In
 
     @Override
     public ResponseEntity<IndicatorOverviewType> getPublicIndicatorById(String indicatorId) {
-        logger.info("Received request to get public indicator metadata for indicatorId '{}'", indicatorId);
+        LOG.info("Received request to get public indicator metadata for indicatorId '{}'", indicatorId);
         String accept = request.getHeader("Accept");
 
         try {
@@ -154,7 +235,7 @@ public class IndicatorsPublicController extends BasePathController implements In
             BigDecimal year,
             BigDecimal month,
             BigDecimal day) {
-        logger.info(
+        LOG.info(
                 "Received request to get public indicators feature properties without geometries for spatialUnitId '{}' and Id '{}' and Date '{}-{}-{}' ",
                 spatialUnitId, indicatorId, year, month, day);
         String accept = request.getHeader("Accept");
@@ -173,7 +254,7 @@ public class IndicatorsPublicController extends BasePathController implements In
     public ResponseEntity<List<IndicatorPropertiesWithoutGeomType>> getPublicIndicatorBySpatialUnitIdAndIdWithoutGeometry(
             String indicatorId,
             String spatialUnitId) {
-        logger.info("Received request to get public indicator feature properties for spatialUnitId '{}' and Id '{}' (without geometries)",
+        LOG.info("Received request to get public indicator feature properties for spatialUnitId '{}' and Id '{}' (without geometries)",
                 spatialUnitId, indicatorId);
         String accept = request.getHeader("Accept");
 
@@ -191,7 +272,7 @@ public class IndicatorsPublicController extends BasePathController implements In
 			String spatialUnitId,
 			String featureId) {
 
-		logger.info(
+		LOG.info(
 				"Received request to get public single indicator feature records for datasetId '{}' and spatialUnitId '{}' and featureId '{}'",
 				indicatorId, spatialUnitId, featureId);
 		String accept = request.getHeader("Accept");
@@ -212,7 +293,7 @@ public class IndicatorsPublicController extends BasePathController implements In
 			String featureId,
 			String featureRecordId) {
 
-		logger.info(
+		LOG.info(
 				"Received request to get public single indicator feature records for datasetId '{}' and spatialUnitId '{}' and featureId '{}' and recordId '{}'",
 				indicatorId, spatialUnitId, featureId, featureRecordId);
 		String accept = request.getHeader("Accept");

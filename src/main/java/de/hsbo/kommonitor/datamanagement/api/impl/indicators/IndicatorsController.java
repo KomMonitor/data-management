@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.IndicatorsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.export.ExportManager;
 import de.hsbo.kommonitor.datamanagement.export.TempFileInputStream;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -28,6 +30,8 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,6 +48,9 @@ public class IndicatorsController extends BasePathController implements Indicato
 
     @Autowired
     IndicatorsManager indicatorsManager;
+
+    @Autowired
+    private ExportManager exportManager;
     
     @Autowired
     private LastModificationManager lastModManager;
@@ -174,7 +181,7 @@ public class IndicatorsController extends BasePathController implements Indicato
                             SimplifyGeometriesEnum.ORIGINAL.toString(),
                             provider,
                             dataStore);
-            File exportFile = indicatorsManager.exportFeatureCollection(featureCollection, format);
+            File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
 
             dataStore.dispose();
 
@@ -193,6 +200,62 @@ public class IndicatorsController extends BasePathController implements Indicato
             return ApiUtils.createResponseEntityFromException(e);
         }
     }
+
+    @Override
+    public ResponseEntity<Resource> exportIndicatorBySpatialUnitIdAndIdAndYearAndMonth(String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month, BigDecimal day, String format) {
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+
+        try {
+            DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+
+            SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) indicatorsManager
+                    .getValidIndicatorFeatureCollection(
+                            indicatorId,
+                            spatialUnitId,
+                            year,
+                            month,
+                            day,
+                            SimplifyGeometriesEnum.ORIGINAL.toString(),
+                            dataStore,
+                            provider
+                    );
+            File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
+
+            dataStore.dispose();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kommonitor-export-" + indicatorId + "." + format);
+            headers.add("Content-Type", "application/json; charset=utf-8");
+
+            TempFileInputStream resourceStream = new TempFileInputStream(exportFile);
+            InputStreamResource resource = new InputStreamResource(resourceStream);
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    // TODO Check if to use this refactored method
+//    public ResponseEntity<Resource> createExportResponse(DataStore dataStore, SimpleFeatureCollection featureCollection, String format, String indicatorId) throws IOException, ResourceNotFoundException {
+//        File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
+//
+//        dataStore.dispose();
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kommonitor-export-" + indicatorId + "." + format);
+//        headers.add("Content-Type", "application/json; charset=utf-8");
+//
+//        TempFileInputStream resourceStream = new TempFileInputStream(exportFile);
+//        InputStreamResource resource = new InputStreamResource(resourceStream);
+//        return ResponseEntity.ok()
+//                .headers(headers)
+//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                .body(resource);
+//    }
 
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")

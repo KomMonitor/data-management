@@ -81,7 +81,7 @@ import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPUTInputType;
 
 public class SpatialFeatureDatabaseHandler {
 
-	private static Logger logger = LoggerFactory.getLogger(SpatialFeatureDatabaseHandler.class);
+	private static Logger LOG = LoggerFactory.getLogger(SpatialFeatureDatabaseHandler.class);
 	private static int numberOfModifiedEntries;
 	private static int numberOfInsertedEntries;
 	private static int numberOfEntriesMarkedAsOutdated;
@@ -94,7 +94,7 @@ public class SpatialFeatureDatabaseHandler {
 			PeriodOfValidityType periodOfValidity, String correspondingMetadataDatasetId)
 			throws IOException, CQLException {
 
-		logger.info("Parsing GeoJSON into features and schema");
+		LOG.info("Parsing GeoJSON into features and schema");
 
 		FeatureJSON featureJSON = instantiateFeatureJSON();
 		SimpleFeatureType featureSchema = featureJSON.readFeatureCollectionSchema(geoJSONFeatures, false);
@@ -109,7 +109,7 @@ public class SpatialFeatureDatabaseHandler {
 		// GeoJSONUtil
 		// .readFeatureCollection(stream);
 
-		logger.info("Enriching featureSchema with KomMonitor specific properties");
+		LOG.info("Enriching featureSchema with KomMonitor specific properties");
 
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 		featureSchema = enrichWithKomMonitorProperties(featureSchema, postGisStore, resourceType);
@@ -126,10 +126,10 @@ public class SpatialFeatureDatabaseHandler {
 		featureCollection = retypeFeatureCollectionWithKomMonitorPropertiesIfNecessary(featureSchema, featureCollection,
 				startDate, endDate);
 
-		logger.info("create new Table from featureSchema using table name {}", featureSchema.getTypeName());
+		LOG.info("create new Table from featureSchema using table name {}", featureSchema.getTypeName());
 		postGisStore.createSchema(featureSchema);
 
-		logger.info("Start to add the actual features to table with name {}", featureSchema.getTypeName());
+		LOG.info("Start to add the actual features to table with name {}", featureSchema.getTypeName());
 		persistSpatialResource(featureSchema, featureCollection, postGisStore);
 
 		/*
@@ -137,7 +137,7 @@ public class SpatialFeatureDatabaseHandler {
 		 * MetadataEntry
 		 */
 
-		logger.info(
+		LOG.info(
 				"Modifying the metadata entry to set the name of the formerly created feature database table. MetadataId for resourceType {} is {}",
 				resourceType.name(), correspondingMetadataDatasetId);
 		DatabaseHelperUtil.updateResourceMetadataEntry(resourceType, featureSchema.getTypeName().toString(),
@@ -186,8 +186,8 @@ public class SpatialFeatureDatabaseHandler {
 				boolean add = geotoolsFeatures.add(simpleFeature);
 
 			} catch (DecodingException ex) {
-				logger.error(String.format("Decoding failed for feature %s", simpleFeature.getID()));
-				logger.debug(String.format("Failed feature decoding attributes: %s", simpleFeature.getAttributes()));
+				LOG.error(String.format("Decoding failed for feature %s", simpleFeature.getID()));
+				LOG.debug(String.format("Failed feature decoding attributes: %s", simpleFeature.getAttributes()));
 			}
 		}
 
@@ -208,12 +208,12 @@ public class SpatialFeatureDatabaseHandler {
 																			// access!
 			addFeatureCollectionToTable(featureSchema, featureCollection, store);
 
-			logger.info("Features should have been added to table with name {}", featureSchema.getTypeName());
+			LOG.info("Features should have been added to table with name {}", featureSchema.getTypeName());
 
-			logger.info("Start to modify the features (set periodOfValidity) in table with name {}",
+			LOG.info("Start to modify the features (set periodOfValidity) in table with name {}",
 					featureSchema.getTypeName());
 
-			logger.info("Modification of features finished  for table with name {}", featureSchema.getTypeName());
+			LOG.info("Modification of features finished  for table with name {}", featureSchema.getTypeName());
 		}
 	}
 
@@ -245,7 +245,7 @@ public class SpatialFeatureDatabaseHandler {
 		for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
 			if (!(attributeDescriptor instanceof GeometryDescriptorImpl)) {
 				if (attributeDescriptor.getLocalName().equals(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME)) {
-					logger.debug("Features contain 'fid' property, which is reserved as PK. Will use 'fid_1' as property name instead.");
+					LOG.debug("Features contain 'fid' property, which is reserved as PK. Will use 'fid_1' as property name instead.");
 					Name name = attributeDescriptor.getName();
 					attributeDescriptor = new AttributeDescriptorImpl(
 							attributeDescriptor.getType(),
@@ -382,7 +382,7 @@ public class SpatialFeatureDatabaseHandler {
 		for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
 			if (!(attributeDescriptor instanceof GeometryDescriptorImpl)) {
 				if (attributeDescriptor.getLocalName().equals(KomMonitorFeaturePropertyConstants.UNIQUE_FEATURE_ID_PRIMARYKEY_NAME)) {
-					logger.debug("Features contain 'fid' property, which is reserved as PK. Will use 'fid_1' as property name instead.");
+					LOG.debug("Features contain 'fid' property, which is reserved as PK. Will use 'fid_1' as property name instead.");
 					Name name = attributeDescriptor.getName();
 					attributeDescriptor = new AttributeDescriptorImpl(
 							attributeDescriptor.getType(),
@@ -471,16 +471,16 @@ public class SpatialFeatureDatabaseHandler {
 	}
 
 	public static void deleteFeatureTable(ResourceTypeEnum resourceType, String dbTableName) throws IOException {
-		logger.info("Deleting feature table {}.", dbTableName);
+		LOG.info("Deleting feature table {}.", dbTableName);
 
 		DataStore store = DatabaseHelperUtil.getPostGisDataStore();
 
 		try {
 			store.removeSchema(dbTableName);
 
-			logger.info("Deletion of table {} was successful {}", dbTableName);
+			LOG.info("Deletion of table {} was successful {}", dbTableName);
 		} catch (Exception e) {
-			logger.error("Error while deleting database table with name '{}'", dbTableName);
+			LOG.error("Error while deleting database table with name '{}'", dbTableName);
 			e.printStackTrace();
 		}
 
@@ -543,26 +543,30 @@ public class SpatialFeatureDatabaseHandler {
 		return validityPeriods;
 	}
 
+
+	public static FeatureCollection getAllGeoresourceFeatures(String dbTableName, DataStore dataStore, String simplifyGeometries) throws IOException {
+		SimpleFeatureSource featureSource = dataStore.getFeatureSource(dbTableName);
+		FeatureCollection features = featureSource.getFeatures();
+
+		features = DateTimeUtil.fixDateResonseTypes(features);
+		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
+
+		return features;
+	}
+
 	public static String getAllFeatures(String dbTableName, String simplifyGeometries) throws Exception {
 		/*
 		 * fetch all features from table
 		 * 
 		 * then transform the featureCollection to GeoJSON! return geojsonString
 		 */
-		logger.info("Fetch all features for from table with name {}", dbTableName);
+		LOG.info("Fetch all features for from table with name {}", dbTableName);
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
-		FeatureCollection features;
-
-		SimpleFeatureSource featureSource = dataStore.getFeatureSource(dbTableName);
-		features = featureSource.getFeatures();
-
-		features = DateTimeUtil.fixDateResonseTypes(features);
-
-		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
+		FeatureCollection features = getAllGeoresourceFeatures(dbTableName, dataStore, simplifyGeometries);
 
 		int validFeaturesSize = features.size();
-		logger.info("Transform {} found features to GeoJSON", validFeaturesSize);
+		LOG.info("Transform {} found features to GeoJSON", validFeaturesSize);
 
 		String geoJson = null;
 
@@ -621,11 +625,6 @@ public class SpatialFeatureDatabaseHandler {
 
 	}
 
-	private static FeatureCollection fetchAllFeatures(SimpleFeatureSource featureSource) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public static String getValidFeatures(Date date, String dbTableName, String simplifyGeometries) throws Exception {
 		/*
 		 * fetch all features from table where startDate <= date and (endDate >= date ||
@@ -633,7 +632,7 @@ public class SpatialFeatureDatabaseHandler {
 		 * 
 		 * then transform the featureCollection to GeoJSON! return geojsonString
 		 */
-		logger.info("Fetch features for validDate {} from table with name {}", date, dbTableName);
+		LOG.info("Fetch features for validDate {} from table with name {}", date, dbTableName);
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
 		FeatureCollection features;
@@ -646,7 +645,7 @@ public class SpatialFeatureDatabaseHandler {
 		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
 
 		int validFeaturesSize = features.size();
-		logger.info("Transform {} found features to GeoJSON", validFeaturesSize);
+		LOG.info("Transform {} found features to GeoJSON", validFeaturesSize);
 
 		String geoJson = null;
 
@@ -712,7 +711,7 @@ public class SpatialFeatureDatabaseHandler {
 		String geoJsonString = featureData.getGeoJsonString();
 		Boolean isPartialUpdate = featureData.getIsPartialUpdate();
 
-		logger.info("Start Georesource update");
+		LOG.info("Start Georesource update");
 		updateSpatialFeatureTable(dbTableName, periodOfValidity, geoJsonString, isPartialUpdate);
 	}
 
@@ -742,7 +741,7 @@ public class SpatialFeatureDatabaseHandler {
 		 * geometric operations are required for now
 		 */
 
-		logger.info("Updating feature table {}.", dbTableName);
+		LOG.info("Updating feature table {}.", dbTableName);
 
 		numberOfModifiedEntries = 0;
 		numberOfInsertedEntries = 0;
@@ -758,21 +757,21 @@ public class SpatialFeatureDatabaseHandler {
 
 		FilterFactory ff = new FilterFactoryImpl();
 
-		logger.info("read input feature collection schema");
+		LOG.info("read input feature collection schema");
 
 		FeatureJSON featureJSON = instantiateFeatureJSON();
 		SimpleFeatureType inputFeatureSchema = featureJSON.readFeatureCollectionSchema(geoJsonString, false);
 		// FeatureCollection inputFeatureCollection =
 		// featureJSON.readFeatureCollection(geoJsonString);
 
-		logger.info("parse feature collection as jackson collection");
+		LOG.info("parse feature collection as jackson collection");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 		org.geojson.FeatureCollection inputFeatureCollection_jackson = objectMapper.readValue(geoJsonString,
 				org.geojson.FeatureCollection.class);
 
-		logger.info("to geotools collection");
+		LOG.info("to geotools collection");
 		FeatureCollection inputFeatureCollection = toGeoToolsFeatureCollection(inputFeatureCollection_jackson,
 				inputFeatureSchema);
 
@@ -784,10 +783,10 @@ public class SpatialFeatureDatabaseHandler {
 		handleUpdateProcess(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema, inputFeatureCollection,
 				newFeaturesToBeAdded, isPartialUpdate);
 
-		logger.info("run vacuum analyse");
+		LOG.info("run vacuum analyse");
 		DatabaseHelperUtil.runVacuumAnalyse(dbTableName);
 
-		logger.info(
+		LOG.info(
 				"Update of feature table {} was successful. Modified {} entries. Added {} new entries. Marked {} entries as outdated.",
 				dbTableName, numberOfModifiedEntries, numberOfInsertedEntries, numberOfEntriesMarkedAsOutdated);
 	}
@@ -815,7 +814,7 @@ public class SpatialFeatureDatabaseHandler {
 
 		if (featureSource instanceof SimpleFeatureStore) {
 
-			logger.info("compare schemas");
+			LOG.info("compare schemas");
 			SimpleFeatureType dbSchema = featureSource.getSchema();
 			compareSchemas(inputFeatureSchema, dbSchema, dbTableName);
 
@@ -837,12 +836,12 @@ public class SpatialFeatureDatabaseHandler {
 			 */
 
 			if (!isPartialUpdate) {
-				logger.info("Start compare db features to input features");
+				LOG.info("Start compare db features to input features");
 				compareDbFeaturesToInputFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureCollection,
 						newFeaturesToBeAdded, dbFeatures, sfStore);
 			}
 
-			logger.info("Start compare input features to db features");
+			LOG.info("Start compare input features to db features");
 			compareInputFeaturesToDbFeatures(dbTableName, startDate_new, endDate_new, ff, inputFeatureSchema,
 					inputFeatureCollection, newFeaturesToBeAdded, dbFeatures, sfStore);
 		}
@@ -997,7 +996,7 @@ public class SpatialFeatureDatabaseHandler {
 
 			String alterTableCommand = builder.toString();
 
-			logger.info("Send following ALTER TABLE command to database: " + alterTableCommand);
+			LOG.info("Send following ALTER TABLE command to database: " + alterTableCommand);
 
 			// TODO check if works
 			statement.executeUpdate(alterTableCommand);
@@ -1116,7 +1115,7 @@ public class SpatialFeatureDatabaseHandler {
 		} catch (Exception eek) {
 			transaction.rollback();
 			eek.printStackTrace();
-			logger.error("An error occured while updating the feature table with name '" + dbTableName
+			LOG.error("An error occured while updating the feature table with name '" + dbTableName
 					+ "'. Update failed. Error message is: '" + eek.getMessage() + "'");
 			throw new Exception("An error occured while updating the feature table with name '" + dbTableName
 					+ "'. Update failed. Error message is: '" + eek.getMessage() + "'");
@@ -1171,7 +1170,7 @@ public class SpatialFeatureDatabaseHandler {
 
 			inputFeaturesIterator.close();
 
-			logger.info("insert new features");
+			LOG.info("insert new features");
 
 			/*
 			 * now deal with the completely new features and add them all to db
@@ -1187,7 +1186,7 @@ public class SpatialFeatureDatabaseHandler {
 		} catch (Exception eek) {
 			transaction.rollback();
 			eek.printStackTrace();
-			logger.error("An error occured while updating the feature table with name '" + dbTableName
+			LOG.error("An error occured while updating the feature table with name '" + dbTableName
 					+ "'. Update failed. Error message is: '" + eek.getMessage() + "'");
 			throw new Exception("An error occured while updating the feature table with name '" + dbTableName
 					+ "'. Update failed. Error message is: '" + eek.getMessage() + "'");
@@ -1604,8 +1603,8 @@ public class SpatialFeatureDatabaseHandler {
 		try {
 			return dbGeometry.equals(inputGeometry);
 		} catch (Exception e) {
-			logger.error("Geometry comparison failed with error: {}", e.getMessage());
-			logger.info("Geometry comparison will return false");
+			LOG.error("Geometry comparison failed with error: {}", e.getMessage());
+			LOG.info("Geometry comparison will return false");
 		}
 
 		return false;
@@ -1716,7 +1715,7 @@ public class SpatialFeatureDatabaseHandler {
 
 			String deleteCommand = builder.toString();
 
-			logger.info("Send following DELETE/ALTER TABLE command to database: " + deleteCommand);
+			LOG.info("Send following DELETE/ALTER TABLE command to database: " + deleteCommand);
 
 			// TODO check if works
 			statement.executeUpdate(deleteCommand);
@@ -1738,10 +1737,10 @@ public class SpatialFeatureDatabaseHandler {
 			}
 		}
 
-		logger.info("rewrite table to get rid of dropped columns");
+		LOG.info("rewrite table to get rid of dropped columns");
 		DatabaseHelperUtil.rewriteSpatialFeatureTable(dbTableName);
 
-		logger.info("Deletion of all features and their properties from feature table {} was successful.", dbTableName);
+		LOG.info("Deletion of all features and their properties from feature table {} was successful.", dbTableName);
 
 	}
 
@@ -1952,7 +1951,7 @@ public class SpatialFeatureDatabaseHandler {
 		 * 
 		 * then transform the featureCollection to GeoJSON! return geojsonString
 		 */
-		logger.info("Fetch all feature records for table with name {} and featureId {}", dbTableName, featureId);
+		LOG.info("Fetch all feature records for table with name {} and featureId {}", dbTableName, featureId);
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
 		FeatureCollection features;
@@ -1965,7 +1964,7 @@ public class SpatialFeatureDatabaseHandler {
 		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
 
 		int validFeaturesSize = features.size();
-		logger.info("Transform {} found features to GeoJSON", validFeaturesSize);
+		LOG.info("Transform {} found features to GeoJSON", validFeaturesSize);
 
 		String geoJson = null;
 
@@ -1991,7 +1990,7 @@ public class SpatialFeatureDatabaseHandler {
 		 * 
 		 * then transform the featureCollection to GeoJSON! return geojsonString
 		 */
-		logger.info("Fetch single feature record for table with name {} and featureId {} and recordId {}", dbTableName,
+		LOG.info("Fetch single feature record for table with name {} and featureId {} and recordId {}", dbTableName,
 				featureId, featureRecordId);
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
@@ -2005,7 +2004,7 @@ public class SpatialFeatureDatabaseHandler {
 		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
 
 		int validFeaturesSize = features.size();
-		logger.info("Transform {} found features to GeoJSON", validFeaturesSize);
+		LOG.info("Transform {} found features to GeoJSON", validFeaturesSize);
 
 		String geoJson = null;
 
@@ -2056,7 +2055,7 @@ public class SpatialFeatureDatabaseHandler {
 
 	public static void deleteSingleFeatureRecordsForFeatureId(ResourceTypeEnum georesource, String dbTableName,
 			String featureId) throws Exception {
-		logger.info("Trying to delete all feature records for table with name {} and featureId {}", dbTableName, featureId);
+		LOG.info("Trying to delete all feature records for table with name {} and featureId {}", dbTableName, featureId);
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();		
 		
 		Transaction transaction = new DefaultTransaction("removeFeatureRecords");
@@ -2081,7 +2080,7 @@ public class SpatialFeatureDatabaseHandler {
 
 	public static void deleteSingleFeatureRecordForRecordId(ResourceTypeEnum georesource, String dbTableName,
 			String featureId, String featureRecordId) throws Exception {
-		logger.info("Trying to delete single feature record for table with name {} and featureId {} and recordId {}", dbTableName, featureId, featureRecordId);
+		LOG.info("Trying to delete single feature record for table with name {} and featureId {} and recordId {}", dbTableName, featureId, featureRecordId);
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();		
 		
 		Transaction transaction = new DefaultTransaction("removeFeatureRecord");
@@ -2148,14 +2147,14 @@ public class SpatialFeatureDatabaseHandler {
 		// FeatureCollection inputFeatureCollection =
 		// featureJSON.readFeatureCollection(geoJsonString);
 
-		logger.info("parse feature collection as jackson collection");
+		LOG.info("parse feature collection as jackson collection");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 		org.geojson.Feature inputFeature_jackson = objectMapper.readValue(georesourceFeatureRecordData,
 				org.geojson.Feature.class);
 
-		logger.info("to geotools collection");
+		LOG.info("to geotools collection");
 		Feature feature = toGeoToolsFeature(inputFeature_jackson,
 				inputFeatureSchema);
 		
@@ -2192,4 +2191,13 @@ public class SpatialFeatureDatabaseHandler {
 		return simpleFeature;
 	}
 
+	public static FeatureCollection getValidGeoresourceFeatures(Date date, DataStore dataStore, String dbTableName, String simplifyGeometries) throws CQLException, IOException {
+		SimpleFeatureSource featureSource = dataStore.getFeatureSource(dbTableName);
+		FeatureCollection features = fetchFeaturesForDate(featureSource, date);
+
+		features = DateTimeUtil.fixDateResonseTypes(features);
+		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
+
+		return features;
+	}
 }

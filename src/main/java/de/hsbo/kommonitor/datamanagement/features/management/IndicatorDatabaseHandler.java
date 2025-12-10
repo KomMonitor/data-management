@@ -685,6 +685,21 @@ public class IndicatorDatabaseHandler {
 		return false;
 	}
 
+	public static FeatureCollection getValidIndicatorFeatures(String featureViewName, DataStore dataStore, BigDecimal year, BigDecimal month, BigDecimal day, String simplifyGeometries) throws IOException, CQLException {
+		SimpleFeatureSource featureSource = dataStore.getFeatureSource(featureViewName);
+		Calendar cal = Calendar.getInstance();
+		// -1 in month, as month is 0-based
+		cal.set(year.intValue(), month.intValue() - 1, day.intValue());
+		Date date = cal.getTime();
+
+		FeatureCollection features = fetchFeaturesForDate(featureSource, date);
+
+		features = DateTimeUtil.fixDateResonseTypes(features);
+		features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
+
+		return features;
+	}
+
 	public static String getValidFeatures(String featureViewName, BigDecimal year, BigDecimal month, BigDecimal day, String simplifyGeometries) throws Exception {
 		LOG.info("Fetch indicator features for table with name {} and timestamp '{}-{}-{}' and simplificationType '{}'", featureViewName, year, month, day, simplifyGeometries);
 		/*
@@ -692,25 +707,7 @@ public class IndicatorDatabaseHandler {
 		 * to only contain the requested timestamp
 		 */
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
-
-		SimpleFeatureSource featureSource = dataStore.getFeatureSource(featureViewName);
-
-		Calendar cal = Calendar.getInstance();
-		// -1 in month, as month is 0-based
-		cal.set(year.intValue(), month.intValue() - 1, day.intValue());
-		Date date = cal.getTime();
-//		String datePropertyString = createDateStringForDbProperty(date);
-//		/*
-//		 * TODO FIXME check if that query actually works
-//		 */
-//		Query query = new Query(featureViewName, null, new String[] { datePropertyString });
-//		FeatureCollection features = featureSource.getFeatures(query);
-		
-		 FeatureCollection features = fetchFeaturesForDate(featureSource, date);
-		 
-		 features = DateTimeUtil.fixDateResonseTypes(features);
-		 
-		 features = GeometrySimplifierUtil.simplifyGeometriesAccordingToParameter(features, simplifyGeometries);
+		FeatureCollection features = getValidIndicatorFeatures(featureViewName, dataStore, year, month, day, simplifyGeometries);
 
 		int indicatorFeaturesSize = features.size();
 		LOG.info("Transform {} found indicator features to GeoJSON", indicatorFeaturesSize);
@@ -880,8 +877,6 @@ public class IndicatorDatabaseHandler {
 	}
 
 	public static String getIndicatorFeatures(String featureViewTableName, String simplifyGeometries) throws Exception {
-
-		LOG.info("Fetch indicator features for table with name {}", featureViewTableName);
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
 		SimpleFeatureCollection  features = (SimpleFeatureCollection) getIndicatorsFeatures(featureViewTableName, dataStore, simplifyGeometries);

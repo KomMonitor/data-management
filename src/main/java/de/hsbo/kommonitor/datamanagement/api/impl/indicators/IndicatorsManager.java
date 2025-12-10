@@ -6,7 +6,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUn
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -26,12 +25,9 @@ import java.util.stream.Stream;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
-import de.hsbo.kommonitor.datamanagement.export.DataExportService;
-import de.hsbo.kommonitor.datamanagement.export.ExportServiceRepository;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.geotools.api.data.DataStore;
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
@@ -57,15 +53,12 @@ import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.*;
 import de.hsbo.kommonitor.datamanagement.msg.MessageResolver;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-
-import java.util.*;
 
 @Transactional
 @Repository
@@ -108,9 +101,6 @@ public class IndicatorsManager {
 
     @Autowired
     private LastModificationManager lastModManager;
-
-    @Autowired
-    private ExportServiceRepository exportServiceRepository;
 
     public String updateMetadata(IndicatorMetadataPATCHInputType metadata, String indicatorId) throws Exception {
         LOG.info("Trying to update indicator metadata for datasetId '{}'", indicatorId);
@@ -704,12 +694,40 @@ public class IndicatorsManager {
         return IndicatorDatabaseHandler.getIndicatorFeatures(indicatorViewTableName, simplifyGeometries);
     }
 
+    public FeatureCollection getIndicatorFeatureCollection(String indicatorId, String spatialUnitId, String simplifyGeometries, DataStore dataStore) throws Exception {
+        LOG.info("Retrieving all public indicator features from Dataset with id '{}'for spatialUnitId '{}' as FeatureCollection", indicatorId, spatialUnitId);
+
+        String indicatorViewTableName = getIndicatorViewTableName(indicatorId, spatialUnitId, null);
+
+        return IndicatorDatabaseHandler.getIndicatorsFeatures(indicatorViewTableName, dataStore, simplifyGeometries);
+    }
+
     public FeatureCollection getIndicatorFeatureCollection(String indicatorId, String spatialUnitId, String simplifyGeometries, AuthInfoProvider provider, DataStore dataStore) throws Exception {
-        LOG.info("Exporting all indicator features from Dataset with id '{}'for spatialUnitId '{}' ", indicatorId, spatialUnitId);
+        LOG.info("Retrieving all indicator features from Dataset with id '{}'for spatialUnitId '{}' as FeatureCollection", indicatorId, spatialUnitId);
 
         String indicatorViewTableName = getIndicatorViewTableName(indicatorId, spatialUnitId, provider);
 
         return IndicatorDatabaseHandler.getIndicatorsFeatures(indicatorViewTableName, dataStore, simplifyGeometries);
+    }
+
+    public FeatureCollection getValidIndicatorFeatureCollection(String indicatorId, String spatialUnitId, BigDecimal year,
+                                            BigDecimal month, BigDecimal day, String simplifyGeometries, DataStore datastore) throws Exception {
+        LOG.info("Retrieving valid public indicator features from Dataset with id '{}'for spatialUnit '{}' for date '{}-{}-{}'", indicatorId, spatialUnitId,
+                year, month, day);
+
+        String indicatorViewTableName = getIndicatorViewTableName(indicatorId, spatialUnitId, null);
+
+        return IndicatorDatabaseHandler.getValidIndicatorFeatures(indicatorViewTableName, datastore, year, month, day, simplifyGeometries);
+    }
+
+    public FeatureCollection getValidIndicatorFeatureCollection(String indicatorId, String spatialUnitId, BigDecimal year,
+                                            BigDecimal month, BigDecimal day, String simplifyGeometries, DataStore datastore, AuthInfoProvider provider) throws Exception {
+        LOG.info("Retrieving valid indicator features from Dataset with id '{}'for spatialUnit '{}' for date '{}-{}-{}'", indicatorId, spatialUnitId,
+                year, month, day);
+
+        String indicatorViewTableName = getIndicatorViewTableName(indicatorId, spatialUnitId, provider);
+
+        return IndicatorDatabaseHandler.getValidIndicatorFeatures(indicatorViewTableName, datastore, year, month, day, simplifyGeometries);
     }
 
     private String getIndicatorViewTableName(String indicatorId, String spatialUnitId, AuthInfoProvider provider) throws ResourceNotFoundException {
@@ -732,7 +750,7 @@ public class IndicatorsManager {
             LOG.error(
                     "No indicator dataset with datasetId '{}' was found in database.", indicatorId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                    "Tried to get indicator features, but no dataset existes with datasetId " + indicatorId);
+                    "Tried to get indicator features, but no dataset exists with datasetId " + indicatorId);
         }
 
     }
@@ -1757,16 +1775,5 @@ public class IndicatorsManager {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to update indicator feature record, but no dataset exists with datasetId " + indicatorId);
         }
-    }
-
-    public File exportFeatureCollection(SimpleFeatureCollection featureCollection, String format) throws ResourceNotFoundException, IOException {
-        Optional<DataExportService> exportService = exportServiceRepository.getService(format);
-
-        if (exportService.isEmpty()) {
-            LOG.error("No export service found for format '{}'.", format);
-            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "Export format " + format +  "is not supported");
-        }
-
-        return exportService.get().createExportFile(featureCollection);
     }
 }

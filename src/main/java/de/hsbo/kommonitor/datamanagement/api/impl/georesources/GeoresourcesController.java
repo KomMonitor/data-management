@@ -5,17 +5,22 @@ import de.hsbo.kommonitor.datamanagement.api.GeoresourcesApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.export.ExportManager;
+import de.hsbo.kommonitor.datamanagement.export.TempFileInputStream;
+import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.model.*;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 
+import org.geotools.api.data.DataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,8 +28,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,7 +38,7 @@ import java.util.List;
 @Controller
 public class GeoresourcesController extends BasePathController implements GeoresourcesApi {
 
-	private static Logger logger = LoggerFactory.getLogger(GeoresourcesController.class);
+	private static Logger LOG = LoggerFactory.getLogger(GeoresourcesController.class);
 
 	private final ObjectMapper objectMapper;
 
@@ -48,6 +53,9 @@ public class GeoresourcesController extends BasePathController implements Geores
 	@Autowired
 	AuthInfoProviderFactory authInfoProviderFactory;
 
+	@Autowired
+	private ExportManager exportManager;
+
 	@org.springframework.beans.factory.annotation.Autowired
 	public GeoresourcesController(ObjectMapper objectMapper, HttpServletRequest request) {
 		this.objectMapper = objectMapper;
@@ -57,7 +65,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
 	public ResponseEntity<GeoresourceOverviewType> addGeoresourceAsBody(GeoresourcePOSTInputType featureData) {
-		logger.info("Received request to insert new georesource");
+		LOG.info("Received request to insert new georesource");
 
 		/*
 		 * analyse input data and save it within database
@@ -91,7 +99,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'editor')")
 	public ResponseEntity<Void> deleteAllGeoresourceFeaturesById(@P("georesourceId") String georesourceId) {
-		logger.info("Received request to delete all georesource features for datasetId '{}'", georesourceId);
+		LOG.info("Received request to delete all georesource features for datasetId '{}'", georesourceId);
 
 		String accept = request.getHeader("Accept");
 
@@ -120,7 +128,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	public ResponseEntity<Void> deleteSingleGeoresourceFeatureById(
 			@P("georesourceId") String georesourceId,
 			String featureId) {
-		logger.info(
+		LOG.info(
 				"Received request to delete single georesource feature databse records for datasetId '{}' and featureId '{}'",
 				georesourceId, featureId);
 
@@ -151,7 +159,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 			@P("georesourceId") String georesourceId,
 			String featureId,
 			String featureRecordId) {
-		logger.info(
+		LOG.info(
 				"Received request to delete single georesource feature databse record for datasetId '{}' and featureId '{}' and recordId '{}'",
 				georesourceId, featureId, featureRecordId);
 
@@ -178,9 +186,84 @@ public class GeoresourcesController extends BasePathController implements Geores
 	}
 
 	@Override
+	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
+	public ResponseEntity<Resource> exportAllGeoresourceFeaturesById(String georesourceId, String format) {
+		LOG.info(
+				"Received request to export all georesource features for datasetId '{}' in format '{}'",
+				georesourceId, format);
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+		try {
+			DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+
+			SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) georesourcesManager
+					.getGeoresourceFeatureCollection(
+							georesourceId,
+							SimplifyGeometriesEnum.ORIGINAL.toString(),
+							provider,
+							dataStore
+					);
+			File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
+
+			dataStore.dispose();
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kommonitor-export-" + georesourceId + "." + format);
+			headers.add("Content-Type", "application/json; charset=utf-8");
+
+			TempFileInputStream resourceStream = new TempFileInputStream(exportFile);
+			InputStreamResource resource = new InputStreamResource(resourceStream);
+			return ResponseEntity.ok()
+					.headers(headers)
+					.contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.body(resource);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
+	public ResponseEntity<Resource> exportGeoresourceByIdAndYearAndMonth(String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day, String format) {
+		LOG.info(
+				"Received request to export georesource features for datasetId '{}', date '{}-{}-{}' and format '{}'", georesourceId, year, month, day, format);
+
+		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+
+		try {
+			DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+
+			SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) georesourcesManager.getValidGeoresourceFeatureCollection(
+					georesourceId,
+					year,
+					month,
+					day,
+					SimplifyGeometriesEnum.ORIGINAL.toString(),
+					provider,
+					dataStore);
+			File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
+
+			dataStore.dispose();
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kommonitor-export-" + georesourceId + "." + format);
+			headers.add("Content-Type", "application/json; charset=utf-8");
+
+			TempFileInputStream resourceStream = new TempFileInputStream(exportFile);
+			InputStreamResource resource = new InputStreamResource(resourceStream);
+			return ResponseEntity.ok()
+					.headers(headers)
+					.contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.body(resource);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'creator')")
 	public ResponseEntity<Void> deleteGeoresourceById(@P("georesourceId") String georesourceId) {
-		logger.info("Received request to delete georesource for datasetId '{}'", georesourceId);
+		LOG.info("Received request to delete georesource for datasetId '{}'", georesourceId);
 
 		String accept = request.getHeader("Accept");
 
@@ -211,14 +294,8 @@ public class GeoresourcesController extends BasePathController implements Geores
 			BigDecimal year,
 			BigDecimal month,
 			BigDecimal day) {
-		logger.info("Received request to delete georesource for datasetId '{}' and Date '{}-{}-{}'", georesourceId,
+		LOG.info("Received request to delete georesource for datasetId '{}' and Date '{}-{}-{}'", georesourceId,
 				year, month, day);
-
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * delete topic with the specified id
-		 */
 
 		boolean isDeleted;
 		try {
@@ -239,7 +316,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
 	public ResponseEntity<List<GeoresourceOverviewType>> getGeoresources() {
-		logger.info("Received request to get all georesources metadata");
+		LOG.info("Received request to get all georesources metadata");
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 		String accept = request.getHeader("Accept");
@@ -258,7 +335,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 
 	@Override
 	public ResponseEntity<List<GeoresourceOverviewType>> filterGeoresources(ResourceFilterType resourceFilterType) {
-		logger.info("Received request to get filtered georesources metadata");
+		LOG.info("Received request to get filtered georesources metadata");
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 		String accept = request.getHeader("Accept");
@@ -278,7 +355,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
 	public ResponseEntity<GeoresourceOverviewType> getGeoresourceById(@P("georesourceId") String georesourceId) {
-		logger.info("Received request to get georesource metadata for datasetId '{}' test", georesourceId);
+		LOG.info("Received request to get georesource metadata for datasetId '{}' test", georesourceId);
 		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
@@ -303,7 +380,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 
 	@Override
 	public ResponseEntity<List<PermissionLevelType>> getGeoresourcePermissionsById(String georesourceId) {
-		logger.info("Received request to list access rights for georesource with datasetId '{}'", georesourceId);
+		LOG.info("Received request to list access rights for georesource with datasetId '{}'", georesourceId);
 		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
@@ -327,7 +404,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	public ResponseEntity updateGeoresourcePermissions(
 			@P("georesourceId") String georesourceId,
 	 		PermissionLevelInputType permissionLevelInputType) {
-		logger.info("Received request to update georesource roles for georesourceId '{}'.", georesourceId);
+		LOG.info("Received request to update georesource roles for georesourceId '{}'.", georesourceId);
 		try {   
 			georesourceId = georesourcesManager.updatePermissions(permissionLevelInputType, georesourceId);
 			lastModManager.updateLastDatabaseModification_georesources();
@@ -355,7 +432,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	public ResponseEntity<Void> updateGeoresourceOwnership(
 			@P("georesourceId") String georesourceId,
 			OwnerInputType ownerInputType) {
-		logger.info("Received request to update georesource ownership for georesourceId '{}'.", georesourceId);
+		LOG.info("Received request to update georesource ownership for georesourceId '{}'.", georesourceId);
 		try {
 			georesourceId = georesourcesManager.updateOwnership(ownerInputType, georesourceId);
 			lastModManager.updateLastDatabaseModification_georesources();
@@ -382,7 +459,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	public ResponseEntity<byte[]> getAllGeoresourceFeaturesById(
 			@P("georesourceId") String georesourceId,
 			String simplifyGeometries) {
-		logger.info(
+		LOG.info(
 				"Received request to get all georesource features for datasetId '{}' and simplifyGeometries parameter '{}'",
 				georesourceId, simplifyGeometries);
 		String accept = request.getHeader("Accept");
@@ -415,10 +492,9 @@ public class GeoresourcesController extends BasePathController implements Geores
 			BigDecimal month,
 			BigDecimal day,
 			String simplifyGeometries) {
-		logger.info(
+		LOG.info(
 				"Received request to get georesource features for datasetId '{}' and simplifyGeometries parameter '{}'",
 				georesourceId, simplifyGeometries);
-		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
@@ -443,7 +519,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
 	public ResponseEntity<String> getGeoresourceSchemaByLevel(@P("georesourceId") String georesourceId) {
-		logger.info("Received request to get georesource metadata for datasetId '{}'", georesourceId);
+		LOG.info("Received request to get georesource metadata for datasetId '{}'", georesourceId);
 		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
@@ -467,7 +543,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
 	public ResponseEntity<byte[]> getAllGeoresourceFeaturesByIdWithoutGeometry(@P("georesourceId") String georesourceId) {
-		logger.info("Received request to get all georesource features for datasetId '{}' without geometry",
+		LOG.info("Received request to get all georesource features for datasetId '{}' without geometry",
 				georesourceId);
 		String accept = request.getHeader("Accept");
 
@@ -497,7 +573,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 			@P("georesourceId") String georesourceId,
 			String featureId,
 			String simplifyGeometries) {
-		logger.info(
+		LOG.info(
 				"Received request to get public single georesource feature records for datasetId '{}' and featureId '{}'",
 				georesourceId, featureId);
 		String accept = request.getHeader("Accept");
@@ -529,7 +605,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 			String featureId,
 			String featureRecordId,
 			String simplifyGeometries) {
-		logger.info(
+		LOG.info(
 				"Received request to get public single georesource feature record for datasetId '{}' and featureId '{}' and recordId '{}'",
 				georesourceId, featureId, featureRecordId);
 
@@ -563,7 +639,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 			BigDecimal month,
 			BigDecimal day
 			) {
-		logger.info("Received request to get georesource features for datasetId '{}' without geometry", georesourceId);
+		LOG.info("Received request to get georesource features for datasetId '{}' without geometry", georesourceId);
 		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
@@ -592,7 +668,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	public ResponseEntity<Void> updateGeoresourceAsBody(
 			@P("georesourceId") String georesourceId,
 			GeoresourcePUTInputType featureData) {
-		logger.info("Received request to update georesource features for datasetId '{}'", georesourceId);
+		LOG.info("Received request to update georesource features for datasetId '{}'", georesourceId);
 
 		String accept = request.getHeader("Accept");
 
@@ -629,7 +705,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 	public ResponseEntity<Void> updateGeoresourceMetadataAsBody(
 			@P("georesourceId") String georesourceId,
 			GeoresourcePATCHInputType metadata) {
-		logger.info("Received request to update georesource metadata for datasetId '{}'", georesourceId);
+		LOG.info("Received request to update georesource metadata for datasetId '{}'", georesourceId);
 
 		String accept = request.getHeader("Accept");
 
@@ -668,7 +744,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 			String featureId,
 			String featureRecordId,
 			String georesourceFeatureRecordData) {
-		logger.info(
+		LOG.info(
 				"Received request to update single georesource feature database record for datasetId '{}' and featureId '{}' and recordId '{}'",
 				georesourceId, featureId, featureRecordId);
 

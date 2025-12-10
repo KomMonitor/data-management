@@ -4,25 +4,35 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.api.impl.util.SimplifyGeometriesEnum;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.export.ExportManager;
+import de.hsbo.kommonitor.datamanagement.export.TempFileInputStream;
+import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourceOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.ResourceFilterType;
 import jakarta.servlet.http.HttpServletRequest;
+import org.geotools.api.data.DataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
 public class GeorecourcesPublicController extends BasePathController implements GeoresourcesPublicApi {
 
-	private static Logger logger = LoggerFactory.getLogger(GeorecourcesPublicController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(GeorecourcesPublicController.class);
 
 	private final ObjectMapper objectMapper;
 
@@ -32,6 +42,9 @@ public class GeorecourcesPublicController extends BasePathController implements 
 	GeoresourcesManager georesourcesManager;
 
 	@Autowired
+	private ExportManager exportManager;
+
+	@Autowired
 	public GeorecourcesPublicController(ObjectMapper objectMapper, HttpServletRequest request) {
 		this.objectMapper = objectMapper;
 		this.request = request;
@@ -39,7 +52,7 @@ public class GeorecourcesPublicController extends BasePathController implements 
 
 	@Override
 	public ResponseEntity<List<GeoresourceOverviewType>> getPublicGeoresources() {
-		logger.info("Received request to get all public georesources metadata");
+		LOG.info("Received request to get all public georesources metadata");
 
 		String accept = request.getHeader("Accept");
 		try {
@@ -57,7 +70,7 @@ public class GeorecourcesPublicController extends BasePathController implements 
 	@Override
 	public ResponseEntity<GeoresourceOverviewType> getPublicGeoresourceById(
 			String georesourceId) {
-		logger.info("Received request to get public georesource metadata for datasetId '{}'", georesourceId);
+		LOG.info("Received request to get public georesource metadata for datasetId '{}'", georesourceId);
 
 		String accept = request.getHeader("Accept");
 		try {
@@ -75,7 +88,7 @@ public class GeorecourcesPublicController extends BasePathController implements 
 
 	@Override
 	public ResponseEntity<List<GeoresourceOverviewType>> filterPublicGeoresources(ResourceFilterType resourceFilterType) {
-		logger.info("Received request to get filtered public georesources metadata");
+		LOG.info("Received request to get filtered public georesources metadata");
 
 		String accept = request.getHeader("Accept");
 		try {
@@ -94,7 +107,7 @@ public class GeorecourcesPublicController extends BasePathController implements 
 	public ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesById(
 			String georesourceId,
 			String simplifyGeometries) {
-		logger.info(
+		LOG.info(
 				"Received request to get all public georesource features for datasetId '{}' and simplifyGeometries parameter '{}'",
 				georesourceId, simplifyGeometries);
 
@@ -109,13 +122,84 @@ public class GeorecourcesPublicController extends BasePathController implements 
 	}
 
 	@Override
+	public ResponseEntity<Resource> exportAllPublicGeoresourceFeaturesById(String georesourceId, String format) {
+		LOG.info(
+				"Received request to export all public georesource features for datasetId '{}' in format '{}'",
+				georesourceId, format);
+
+		try {
+			DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+
+			SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) georesourcesManager
+					.getGeoresourceFeatureCollection(
+							georesourceId,
+							SimplifyGeometriesEnum.ORIGINAL.toString(),
+							dataStore
+					);
+
+			File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
+
+			dataStore.dispose();
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kommonitor-export-" + georesourceId + "." + format);
+			headers.add("Content-Type", "application/json; charset=utf-8");
+
+			TempFileInputStream resourceStream = new TempFileInputStream(exportFile);
+			InputStreamResource resource = new InputStreamResource(resourceStream);
+			return ResponseEntity.ok()
+					.headers(headers)
+					.contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.body(resource);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
+	public ResponseEntity<Resource> exportPublicGeoresourceByIdAndYearAndMonth(String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day, String format) {
+		LOG.info(
+				"Received request to export public georesource features for datasetId '{}', date '{}-{}-{}' and format '{}'", georesourceId, year, month, day, format);
+
+		try {
+			DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+
+			SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) georesourcesManager.getValidGeoresourceFeatureCollection(
+					georesourceId,
+					year,
+					month,
+					day,
+					SimplifyGeometriesEnum.ORIGINAL.toString(),
+					dataStore);
+			File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
+
+			dataStore.dispose();
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kommonitor-export-" + georesourceId + "." + format);
+			headers.add("Content-Type", "application/json; charset=utf-8");
+
+			TempFileInputStream resourceStream = new TempFileInputStream(exportFile);
+			InputStreamResource resource = new InputStreamResource(resourceStream);
+			return ResponseEntity.ok()
+					.headers(headers)
+					.contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.body(resource);
+
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
 	public ResponseEntity<byte[]> getPublicGeoresourceByIdAndYearAndMonth(
 			String georesourceId,
 			BigDecimal year,
 			BigDecimal month,
 			BigDecimal day,
 			String simplifyGeometries) {
-		logger.info(
+		LOG.info(
 				"Received request to get public georesource features for datasetId '{}' and simplifyGeometries parameter '{}'",
 				georesourceId, simplifyGeometries);
 
@@ -133,7 +217,7 @@ public class GeorecourcesPublicController extends BasePathController implements 
 	@Override
 	public ResponseEntity<String> getPublicGeoresourceSchemaByLevel(
 			String georesourceId) {
-		logger.info("Received request to get public georesource metadata for datasetId '{}'", georesourceId);
+		LOG.info("Received request to get public georesource metadata for datasetId '{}'", georesourceId);
 
 
 		String accept = request.getHeader("Accept");
@@ -153,7 +237,7 @@ public class GeorecourcesPublicController extends BasePathController implements 
 	@Override
 	public ResponseEntity<byte[]> getAllPublicGeoresourceFeaturesByIdWithoutGeometry(
 			String georesourceId) {
-		logger.info("Received request to get all public georesource features for datasetId '{}' without geometry",
+		LOG.info("Received request to get all public georesource features for datasetId '{}' without geometry",
 				georesourceId);
 
 		try {
@@ -173,7 +257,7 @@ public class GeorecourcesPublicController extends BasePathController implements 
 			BigDecimal month,
 			BigDecimal day
 			) {
-		logger.info("Received request to get public georesource features for datasetId '{}' without geometry",
+		LOG.info("Received request to get public georesource features for datasetId '{}' without geometry",
 				georesourceId);
 
 		try {
@@ -192,7 +276,7 @@ public class GeorecourcesPublicController extends BasePathController implements 
 			String georesourceId,
 			String featureId,
 			String simplifyGeometries) {
-		logger.info(
+		LOG.info(
 				"Received request to get public single georesource feature records for datasetId '{}' and featureId '{}'",
 				georesourceId, featureId);
 
@@ -212,7 +296,7 @@ public class GeorecourcesPublicController extends BasePathController implements 
 			String featureId,
 			String featureRecordId,
 			String simplifyGeometries) {
-		logger.info(
+		LOG.info(
 				"Received request to get public single georesource feature record for datasetId '{}' and featureId '{}' and recordId '{}'",
 				georesourceId, featureId, featureRecordId);
 
