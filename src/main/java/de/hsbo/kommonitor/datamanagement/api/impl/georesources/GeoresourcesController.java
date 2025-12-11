@@ -187,13 +187,14 @@ public class GeoresourcesController extends BasePathController implements Geores
 
 	@Override
 	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
-	public ResponseEntity<Resource> exportAllGeoresourceFeaturesById(String georesourceId, String format) {
+	public ResponseEntity<Resource> exportAllGeoresourceFeaturesById(@P("georesourceId") String georesourceId, String format) {
 		LOG.info(
 				"Received request to export all georesource features for datasetId '{}' in format '{}'",
 				georesourceId, format);
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+		DataStore dataStore = null;
 		try {
-			DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+			dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
 			SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) georesourcesManager
 					.getGeoresourceFeatureCollection(
@@ -202,6 +203,10 @@ public class GeoresourcesController extends BasePathController implements Geores
 							provider,
 							dataStore
 					);
+			if (featureCollection.isEmpty()) {
+				throw new Exception(String.format("No valid features could be retrieved for georesource %s.", georesourceId));
+			}
+
 			File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
 
 			dataStore.dispose();
@@ -218,19 +223,24 @@ public class GeoresourcesController extends BasePathController implements Geores
 					.body(resource);
 
 		} catch (Exception e) {
+			if (dataStore != null) {
+				dataStore.dispose();
+			}
 			return ApiUtils.createResponseEntityFromException(e);
 		}
 	}
 
 	@Override
-	public ResponseEntity<Resource> exportGeoresourceByIdAndYearAndMonth(String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day, String format) {
+	@PreAuthorize("isAuthorizedForEntity(#georesourceId, 'georesource', 'viewer')")
+	public ResponseEntity<Resource> exportGeoresourceByIdAndYearAndMonth(@P("georesourceId") String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day, String format) {
 		LOG.info(
 				"Received request to export georesource features for datasetId '{}', date '{}-{}-{}' and format '{}'", georesourceId, year, month, day, format);
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+		DataStore dataStore = null;
 
 		try {
-			DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+			dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
 			SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) georesourcesManager.getValidGeoresourceFeatureCollection(
 					georesourceId,
@@ -240,6 +250,10 @@ public class GeoresourcesController extends BasePathController implements Geores
 					SimplifyGeometriesEnum.ORIGINAL.toString(),
 					provider,
 					dataStore);
+			if (featureCollection.isEmpty()) {
+				throw new Exception(String.format("No valid features could be retrieved for georesource %s for date %s-%s-%s.", georesourceId, year, month, day));
+			}
+
 			File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
 
 			dataStore.dispose();
@@ -256,6 +270,9 @@ public class GeoresourcesController extends BasePathController implements Geores
 					.body(resource);
 
 		} catch (Exception e) {
+			if (dataStore != null) {
+				dataStore.dispose();
+			}
 			return ApiUtils.createResponseEntityFromException(e);
 		}
 	}

@@ -170,9 +170,10 @@ public class IndicatorsController extends BasePathController implements Indicato
                 spatialUnitId, indicatorId);
 
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+        DataStore dataStore = null;
 
         try {
-            DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+            dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
             SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) indicatorsManager
                     .getIndicatorFeatureCollection(
@@ -181,6 +182,10 @@ public class IndicatorsController extends BasePathController implements Indicato
                             SimplifyGeometriesEnum.ORIGINAL.toString(),
                             provider,
                             dataStore);
+            if (featureCollection.isEmpty()) {
+                throw new Exception(String.format("No valid features could be retrieved for indicator %s and spatial unit %s.", indicatorId, spatialUnitId));
+            }
+
             File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
 
             dataStore.dispose();
@@ -197,16 +202,27 @@ public class IndicatorsController extends BasePathController implements Indicato
                     .body(resource);
 
         } catch (Exception e) {
+            if (dataStore != null) {
+                dataStore.dispose();
+            }
             return ApiUtils.createResponseEntityFromException(e);
         }
     }
 
     @Override
-    public ResponseEntity<Resource> exportIndicatorBySpatialUnitIdAndIdAndYearAndMonth(String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month, BigDecimal day, String format) {
+    @PreAuthorize("isAuthorizedForJoinedEntity(#indicatorId, #spatialUnitId, 'indicator_spatialunit', 'viewer')")
+    public ResponseEntity<Resource> exportIndicatorBySpatialUnitIdAndIdAndYearAndMonth(
+            @P("indicatorId") String indicatorId,
+            @P("spatialUnitId") String spatialUnitId,
+            BigDecimal year,
+            BigDecimal month,
+            BigDecimal day,
+            String format) {
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+        DataStore dataStore = null;
 
         try {
-            DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+            dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
             SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) indicatorsManager
                     .getValidIndicatorFeatureCollection(
@@ -219,6 +235,10 @@ public class IndicatorsController extends BasePathController implements Indicato
                             dataStore,
                             provider
                     );
+            if (featureCollection.isEmpty()) {
+                throw new Exception(String.format("No valid features could be retrieved for indicator %s. and spatial unit %s for date %s-%s-%s.", indicatorId, spatialUnitId, year, month, day));
+            }
+
             File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
 
             dataStore.dispose();
@@ -235,6 +255,9 @@ public class IndicatorsController extends BasePathController implements Indicato
                     .body(resource);
 
         } catch (Exception e) {
+            if (dataStore != null) {
+                dataStore.dispose();
+            }
             return ApiUtils.createResponseEntityFromException(e);
         }
     }

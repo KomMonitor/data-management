@@ -80,9 +80,9 @@ public class IndicatorsPublicController extends BasePathController implements In
     public ResponseEntity<Resource> exportPublicIndicatorBySpatialUnitIdAndId(String indicatorId, String spatialUnitId, String format) {
         LOG.info("Received request to export indicators features for spatialUnitId '{}' and Id '{}' ",
                 spatialUnitId, indicatorId);
-
+        DataStore dataStore = null;
         try {
-            DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+            dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
             SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) indicatorsManager
                     .getIndicatorFeatureCollection(
@@ -90,6 +90,10 @@ public class IndicatorsPublicController extends BasePathController implements In
                             spatialUnitId,
                             SimplifyGeometriesEnum.ORIGINAL.toString(),
                             dataStore);
+            if (featureCollection.isEmpty()) {
+                throw new Exception(String.format("No valid features could be retrieved for indicator %s and spatial unit %s.", indicatorId, spatialUnitId));
+            }
+
             File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
 
             dataStore.dispose();
@@ -106,14 +110,18 @@ public class IndicatorsPublicController extends BasePathController implements In
                     .body(resource);
 
         } catch (Exception e) {
+            if (dataStore != null) {
+                dataStore.dispose();
+            }
             return ApiUtils.createResponseEntityFromException(e);
         }
     }
 
     @Override
     public ResponseEntity<Resource> exportPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonth(String indicatorId, String spatialUnitId, BigDecimal year, BigDecimal month, BigDecimal day, String format) {
+        DataStore dataStore = null;
         try {
-            DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+            dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
             SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) indicatorsManager
                     .getValidIndicatorFeatureCollection(
@@ -125,6 +133,11 @@ public class IndicatorsPublicController extends BasePathController implements In
                             SimplifyGeometriesEnum.ORIGINAL.toString(),
                             dataStore
                     );
+
+            if (featureCollection.isEmpty()) {
+                throw new Exception(String.format("No valid features could be retrieved for indicator %s and spatial unit %s. for date %s-%s-%s", indicatorId, spatialUnitId, year, month, day));
+            }
+
             File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
 
             dataStore.dispose();
@@ -141,6 +154,9 @@ public class IndicatorsPublicController extends BasePathController implements In
                     .body(resource);
 
         } catch (Exception e) {
+            if (dataStore != null) {
+                dataStore.dispose();
+            }
             return ApiUtils.createResponseEntityFromException(e);
         }
     }

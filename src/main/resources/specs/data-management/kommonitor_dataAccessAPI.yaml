@@ -399,14 +399,13 @@ paths:
             type: string
         - name: format
           in: query
-          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg', 'shp']
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
           allowEmptyValue: false
           schema:
             type: string
             default: gpkg
             enum:
               - gpkg
-              - shp
       responses:
         "200":
           description: OK
@@ -1031,14 +1030,13 @@ paths:
             type: number
         - name: format
           in: query
-          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg', 'shp']
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
           allowEmptyValue: false
           schema:
             type: string
             default: gpkg
             enum:
               - gpkg
-              - shp
       responses:
         "200":
           description: OK
@@ -1638,14 +1636,13 @@ paths:
             type: string
         - name: format
           in: query
-          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg', 'shp']
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
           allowEmptyValue: false
           schema:
             type: string
             default: gpkg
             enum:
               - gpkg
-              - shp
       responses:
         "200":
           description: OK
@@ -2308,14 +2305,13 @@ paths:
             type: number
         - name: format
           in: query
-          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg', 'shp']
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
           allowEmptyValue: false
           schema:
             type: string
             default: gpkg
             enum:
               - gpkg
-              - shp
       responses:
         "200":
           description: OK
@@ -3659,14 +3655,13 @@ paths:
             type: string
         - name: format
           in: query
-          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg', 'shp']
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
           allowEmptyValue: false
           schema:
             type: string
             default: gpkg
             enum:
               - gpkg
-              - shp
       responses:
         "200":
           description: OK
@@ -3994,14 +3989,13 @@ paths:
             type: number
         - name: format
           in: query
-          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg', 'shp']
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
           allowEmptyValue: false
           schema:
             type: string
             default: gpkg
             enum:
               - gpkg
-              - shp
       responses:
         "200":
           description: OK
@@ -4256,14 +4250,13 @@ paths:
             type: string
         - name: format
           in: query
-          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg', 'shp']
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
           allowEmptyValue: false
           schema:
             type: string
             default: gpkg
             enum:
               - gpkg
-              - shp
       responses:
         "200":
           description: OK
@@ -4553,14 +4546,13 @@ paths:
             type: number
         - name: format
           in: query
-          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg', 'shp']
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
           allowEmptyValue: false
           schema:
             type: string
             default: gpkg
             enum:
               - gpkg
-              - shp
       responses:
         "200":
           description: OK

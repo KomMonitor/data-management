@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-10T12:55:21.232375200+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-11T11:12:03.047743300+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 @Validated
 @Tag(name = "indicators-public", description = "the Indicators API")
 public interface IndicatorsPublicApi {
@@ -47,7 +47,7 @@ public interface IndicatorsPublicApi {
      *
      * @param indicatorId unique identifier of the selected public indicator dataset (required)
      * @param spatialUnitId the unique identifier of the spatial level (required)
-     * @param format Controls in which format the dataset should be downloaded. Supported values are [&#39;gpkg&#39;, &#39;shp&#39;] (optional, default to gpkg)
+     * @param format Controls in which format the dataset should be downloaded. Supported values are [&#39;gpkg&#39;] (optional, default to gpkg)
      * @return OK (status code 200)
      */
     @Operation(
@@ -73,7 +73,7 @@ public interface IndicatorsPublicApi {
     ResponseEntity<org.springframework.core.io.Resource> exportPublicIndicatorBySpatialUnitIdAndId(
         @Parameter(name = "indicatorId", description = "unique identifier of the selected public indicator dataset", required = true, in = ParameterIn.PATH) @PathVariable("indicatorId") String indicatorId,
         @Parameter(name = "spatialUnitId", description = "the unique identifier of the spatial level", required = true, in = ParameterIn.PATH) @PathVariable("spatialUnitId") String spatialUnitId,
-        @Parameter(name = "format", description = "Controls in which format the dataset should be downloaded. Supported values are ['gpkg', 'shp']", in = ParameterIn.QUERY) @Valid @RequestParam(value = "format", required = false, defaultValue = "gpkg") String format
+        @Parameter(name = "format", description = "Controls in which format the dataset should be downloaded. Supported values are ['gpkg']", in = ParameterIn.QUERY) @Valid @RequestParam(value = "format", required = false, defaultValue = "gpkg") String format
     );
 
 
@@ -86,7 +86,7 @@ public interface IndicatorsPublicApi {
      * @param year year for which the indicator shall be queried (required)
      * @param month month for which the indicator shall be queried (required)
      * @param day day for which datasets shall be queried (required)
-     * @param format Controls in which format the dataset should be downloaded. Supported values are [&#39;gpkg&#39;, &#39;shp&#39;] (optional, default to gpkg)
+     * @param format Controls in which format the dataset should be downloaded. Supported values are [&#39;gpkg&#39;] (optional, default to gpkg)
      * @return OK (status code 200)
      */
     @Operation(
@@ -115,7 +115,7 @@ public interface IndicatorsPublicApi {
         @Parameter(name = "year", description = "year for which the indicator shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year,
         @Parameter(name = "month", description = "month for which the indicator shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
         @Parameter(name = "day", description = "day for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day,
-        @Parameter(name = "format", description = "Controls in which format the dataset should be downloaded. Supported values are ['gpkg', 'shp']", in = ParameterIn.QUERY) @Valid @RequestParam(value = "format", required = false, defaultValue = "gpkg") String format
+        @Parameter(name = "format", description = "Controls in which format the dataset should be downloaded. Supported values are ['gpkg']", in = ParameterIn.QUERY) @Valid @RequestParam(value = "format", required = false, defaultValue = "gpkg") String format
     );
 
 

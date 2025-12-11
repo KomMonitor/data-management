@@ -19,9 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class AbstractDataStoreExportService implements DataExportService{
 
@@ -37,8 +35,9 @@ public abstract class AbstractDataStoreExportService implements DataExportServic
         try {
             dataStore = DataStoreFinder.getDataStore(getDataStoreParams(file));
 
-            SimpleFeatureType featureType = createSchema(featureCollection.getSchema());
-            SimpleFeatureCollection transformedFeatureCollection = transformData(featureType, featureCollection);
+            Map<String, String> propertyMapping = new HashMap<>();
+            SimpleFeatureType featureType = createSchema(featureCollection.getSchema(), propertyMapping);
+            SimpleFeatureCollection transformedFeatureCollection = transformData(featureType, featureCollection, propertyMapping);
 
             dataStore.createSchema(featureType);
 
@@ -63,7 +62,8 @@ public abstract class AbstractDataStoreExportService implements DataExportServic
         }
     }
 
-    private SimpleFeatureType createSchema(SimpleFeatureType schema) throws FactoryException {
+    private SimpleFeatureType createSchema(SimpleFeatureType schema, Map<String, String> propertyMapping) throws FactoryException {
+        List<String> attributes = new ArrayList<>();
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         builder.setName(schema.getName());
 
@@ -74,29 +74,49 @@ public abstract class AbstractDataStoreExportService implements DataExportServic
         }
 
         for (AttributeDescriptor descriptor : schema.getAttributeDescriptors()) {
-            String name = descriptor.getLocalName();
+            String sourceName = descriptor.getLocalName();
+            String targetName = checkAndGetName(descriptor.getLocalName(), attributes);
             Class<?> binding = descriptor.getType().getBinding();
 
             if (descriptor instanceof GeometryDescriptor) {
-                builder.add(name, binding, crs);
+                builder.add(targetName, binding, crs);
             }
             else if (binding.equals(java.time.LocalDate.class) || binding.equals(java.time.LocalDateTime.class))
             {
-                builder.add(name, java.util.Date.class);
+                builder.add(targetName, java.util.Date.class);
             }
 //            else if ("id".equalsIgnoreCase(name)) {
 //                builder.add("source_id", binding); // Rename ID
 //            }
             else {
-                builder.add(name, binding);
+                builder.add(targetName, binding);
             }
+            attributes.add(sourceName);
+            // We use this map to make the source name available when transforming the data and fetching the
+            // values from a feature for the source name
+            propertyMapping.put(targetName, sourceName);
         }
         return builder.buildFeatureType();
     }
 
-    private SimpleFeatureCollection transformData(SimpleFeatureType targetSchema, SimpleFeatureCollection sourceData) {
+    // Since GeoPackage does not allow identical column names, even with different uppercase and lowercase letters,
+    // we have to rename the existing column names.
+    private String checkAndGetName(String name, List<String> attributes) {
+        if (propertyExists(name, attributes)) {
+            return name + "_1";
+        } else {
+            return name;
+        }
+    }
+
+    private boolean propertyExists(String name, List<String> attributes) {
+        return attributes.stream().anyMatch(a -> a.equalsIgnoreCase(name));
+    }
+
+    private SimpleFeatureCollection transformData(SimpleFeatureType targetSchema, SimpleFeatureCollection sourceData, Map<String, String> propertyMapping) {
         List<SimpleFeature> newFeatures = new ArrayList<>();
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(targetSchema);
+        List<String> attributes = new ArrayList<>();
 
         long featureId = 0;
 
@@ -106,34 +126,33 @@ public abstract class AbstractDataStoreExportService implements DataExportServic
                 featureBuilder.reset();
 
                 for (AttributeDescriptor descriptor : targetSchema.getAttributeDescriptors()) {
-                    String targetName = descriptor.getLocalName();
-                    String sourceName = targetName;
+                    String name = checkAndGetName(descriptor.getLocalName(), attributes);
 
+//                    String sourceName = targetName;
 //                    if ("source_id".equals(targetName)) {
 //                        sourceName = (oldFeature.getAttribute("ID") != null) ? "ID" : "id";
 //                    }
 
-                    Object value = oldFeature.getAttribute(sourceName);
+                    Object value = oldFeature.getAttribute(propertyMapping.get(name));
 
-                    // --- DATE VALUE CONVERSION START ---
-                    if (value instanceof java.time.LocalDate) {
-                        java.time.LocalDate ld = (java.time.LocalDate) value;
+                    // Convert dates to be GeoPackage conform
+                    if (value instanceof java.time.LocalDate ld) {
                         value = java.sql.Timestamp.valueOf(ld.atStartOfDay());
                     }
-                    else if (value instanceof java.time.LocalDateTime) {
-                        value = java.sql.Timestamp.valueOf((java.time.LocalDateTime) value);
+                    else if (value instanceof java.time.LocalDateTime ld) {
+                        value = java.sql.Timestamp.valueOf(ld);
                     }
-                    else if (value instanceof java.util.Date) {
-                        value = new java.sql.Timestamp(((java.util.Date) value).getTime());
+                    else if (value instanceof java.util.Date d) {
+                        value = new java.sql.Timestamp(d.getTime());
                     }
                     if (value != null) {
-                        featureBuilder.set(targetName, value);
+                        featureBuilder.set(name, value);
                     }
                 }
                 featureBuilder.featureUserData(Hints.USE_PROVIDED_FID, true);
 
                 // Handle FID
-//                String validId = oldFeature.getProperty("ID") != null ? (String) oldFeature.getProperty("ID").getValue() : java.util.UUID.randomUUID().toString();
+                // String validId = oldFeature.getProperty("ID") != null ? (String) oldFeature.getProperty("ID").getValue() : java.util.UUID.randomUUID().toString();
                 SimpleFeature feature = featureBuilder.buildFeature(String.valueOf(featureId++));
                 newFeatures.add(feature);
             }

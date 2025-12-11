@@ -14,6 +14,7 @@ import de.hsbo.kommonitor.datamanagement.model.ResourceFilterType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.geotools.api.data.DataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.geojson.feature.FeatureJSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -126,9 +128,9 @@ public class GeorecourcesPublicController extends BasePathController implements 
 		LOG.info(
 				"Received request to export all public georesource features for datasetId '{}' in format '{}'",
 				georesourceId, format);
-
+		DataStore dataStore = null;
 		try {
-			DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+			dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
 			SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) georesourcesManager
 					.getGeoresourceFeatureCollection(
@@ -137,6 +139,10 @@ public class GeorecourcesPublicController extends BasePathController implements 
 							dataStore
 					);
 
+			if (featureCollection.isEmpty()) {
+				throw new Exception(String.format("No valid features could be retrieved for georesource %s.", georesourceId));
+			}
+
 			File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
 
 			dataStore.dispose();
@@ -153,6 +159,9 @@ public class GeorecourcesPublicController extends BasePathController implements 
 					.body(resource);
 
 		} catch (Exception e) {
+			if (dataStore != null) {
+				dataStore.dispose();
+			}
 			return ApiUtils.createResponseEntityFromException(e);
 		}
 	}
@@ -161,9 +170,9 @@ public class GeorecourcesPublicController extends BasePathController implements 
 	public ResponseEntity<Resource> exportPublicGeoresourceByIdAndYearAndMonth(String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day, String format) {
 		LOG.info(
 				"Received request to export public georesource features for datasetId '{}', date '{}-{}-{}' and format '{}'", georesourceId, year, month, day, format);
-
+		DataStore dataStore = null;
 		try {
-			DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
+			dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
 			SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) georesourcesManager.getValidGeoresourceFeatureCollection(
 					georesourceId,
@@ -172,6 +181,9 @@ public class GeorecourcesPublicController extends BasePathController implements 
 					day,
 					SimplifyGeometriesEnum.ORIGINAL.toString(),
 					dataStore);
+			if (featureCollection.isEmpty()) {
+				throw new Exception(String.format("No valid features could be retrieved for georesource %s for date %s-%s-%s..", georesourceId, year, month, day));
+			}
 			File exportFile = exportManager.exportFeatureCollection(featureCollection, format);
 
 			dataStore.dispose();
@@ -188,6 +200,9 @@ public class GeorecourcesPublicController extends BasePathController implements 
 					.body(resource);
 
 		} catch (Exception e) {
+			if (dataStore != null) {
+				dataStore.dispose();
+			}
 			return ApiUtils.createResponseEntityFromException(e);
 		}
 	}
