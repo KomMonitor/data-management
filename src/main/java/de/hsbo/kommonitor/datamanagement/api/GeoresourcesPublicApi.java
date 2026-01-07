@@ -35,10 +35,84 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-12T17:42:53.200483800+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-11T11:12:03.047743300+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 @Validated
 @Tag(name = "georesources-public", description = "the public Georesources API")
 public interface GeoresourcesPublicApi {
+
+    /**
+     * GET /public/georesources/{georesourceId}/allFeatures/export : export a public georesource in a certain format
+     * export a public georesource in a certain format
+     *
+     * @param georesourceId unique identifier of the selected public georesource dataset (required)
+     * @param format Controls in which format the dataset should be downloaded. Supported values are [&#39;gpkg&#39;] (optional, default to gpkg)
+     * @return OK (status code 200)
+     */
+    @Operation(
+        operationId = "exportAllPublicGeoresourceFeaturesById",
+        summary = "export a public georesource in a certain format",
+        description = "export a public georesource in a certain format",
+        tags = { "georesources-public" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/octed-stream", schema = @Schema(implementation = org.springframework.core.io.Resource.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/public/georesources/{georesourceId}/allFeatures/export",
+        produces = { "application/octed-stream" }
+    )
+    
+    ResponseEntity<org.springframework.core.io.Resource> exportAllPublicGeoresourceFeaturesById(
+        @Parameter(name = "georesourceId", description = "unique identifier of the selected public georesource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
+        @Parameter(name = "format", description = "Controls in which format the dataset should be downloaded. Supported values are ['gpkg']", in = ParameterIn.QUERY) @Valid @RequestParam(value = "format", required = false, defaultValue = "gpkg") String format
+    );
+
+
+    /**
+     * GET /public/georesources/{georesourceId}/{year}/{month}/{day}/export : export a public georesource dataset for a certain date in a certain format
+     * export a public georesource dataset for a certain date in a certain format
+     *
+     * @param georesourceId unique identifier of the selected georesource dataset (required)
+     * @param year year for which datasets shall be queried (required)
+     * @param month month for which datasets shall be queried (required)
+     * @param day day for which datasets shall be queried (required)
+     * @param format Controls in which format the dataset should be downloaded. Supported values are [&#39;gpkg&#39;] (optional, default to gpkg)
+     * @return OK (status code 200)
+     */
+    @Operation(
+        operationId = "exportPublicGeoresourceByIdAndYearAndMonth",
+        summary = "export a public georesource dataset for a certain date in a certain format",
+        description = "export a public georesource dataset for a certain date in a certain format",
+        tags = { "georesources-public" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/octed-stream", schema = @Schema(implementation = org.springframework.core.io.Resource.class))
+            })
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.GET,
+        value = "/public/georesources/{georesourceId}/{year}/{month}/{day}/export",
+        produces = { "application/octed-stream" }
+    )
+    
+    ResponseEntity<org.springframework.core.io.Resource> exportPublicGeoresourceByIdAndYearAndMonth(
+        @Parameter(name = "georesourceId", description = "unique identifier of the selected georesource dataset", required = true, in = ParameterIn.PATH) @PathVariable("georesourceId") String georesourceId,
+        @Parameter(name = "year", description = "year for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("year") BigDecimal year,
+        @Parameter(name = "month", description = "month for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("month") BigDecimal month,
+        @Parameter(name = "day", description = "day for which datasets shall be queried", required = true, in = ParameterIn.PATH) @PathVariable("day") BigDecimal day,
+        @Parameter(name = "format", description = "Controls in which format the dataset should be downloaded. Supported values are ['gpkg']", in = ParameterIn.QUERY) @Valid @RequestParam(value = "format", required = false, defaultValue = "gpkg") String format
+    );
+
 
     /**
      * POST /public/georesources/filter : Filter public georesources

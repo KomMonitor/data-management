@@ -383,6 +383,40 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /georesources/{georesourceId}/allFeatures/export:
+    get:
+      tags:
+        - georesources
+      summary: export a georesource dataset in a certain format
+      description: export a georesource dataset in a certain format
+      operationId: exportAllGeoresourceFeaturesById
+      parameters:
+        - name: georesourceId
+          in: path
+          description: unique identifier of the selected georesource dataset
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
+          allowEmptyValue: false
+          schema:
+            type: string
+            default: gpkg
+            enum:
+              - gpkg
+      responses:
+        "200":
+          description: OK
+          content:
+            application/octed-stream:
+              schema:
+                type: string
+                format: binary
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /georesources/{georesourceId}/allFeatures/without-geometry:
     get:
       tags:
@@ -962,6 +996,58 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /georesources/{georesourceId}/{year}/{month}/{day}/export:
+    get:
+      tags:
+        - georesources
+      summary: export a georesource dataset for a certain date in a certain format
+      description: export a georesource dataset for a certain date in a certain format
+      operationId: exportGeoresourceByIdAndYearAndMonth
+      parameters:
+        - name: georesourceId
+          in: path
+          description: unique identifier of the selected georesource dataset
+          required: true
+          schema:
+            type: string
+        - name: year
+          in: path
+          description: year for which datasets shall be queried
+          required: true
+          schema:
+            type: number
+        - name: month
+          in: path
+          description: month for which datasets shall be queried
+          required: true
+          schema:
+            type: number
+        - name: day
+          in: path
+          description: day for which datasets shall be queried
+          required: true
+          schema:
+            type: number
+        - name: format
+          in: query
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
+          allowEmptyValue: false
+          schema:
+            type: string
+            default: gpkg
+            enum:
+              - gpkg
+      responses:
+        "200":
+          description: OK
+          content:
+            application/octed-stream:
+              schema:
+                type: string
+                format: binary
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /georesources/{georesourceId}/{year}/{month}/{day}/without-geometry:
     get:
       tags:
@@ -1528,6 +1614,46 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /indicators/{indicatorId}/{spatialUnitId}/export:
+    get:
+      tags:
+        - indicators
+      summary: export the indicator for the selected spatial unit in a certain format
+      description: export the indicator for the selected spatial in a certain +format
+      operationId: exportIndicatorBySpatialUnitIdAndId
+      parameters:
+        - name: indicatorId
+          in: path
+          description: unique identifier of the selected indicator dataset
+          required: true
+          schema:
+            type: string
+        - name: spatialUnitId
+          in: path
+          description: the unique identifier of the spatial level
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
+          allowEmptyValue: false
+          schema:
+            type: string
+            default: gpkg
+            enum:
+              - gpkg
+      responses:
+        "200":
+          description: OK
+          content:
+            application/octed-stream:
+              schema:
+                type: string
+                format: binary
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /indicators/{indicatorId}/{spatialUnitId}/permissions:
     get:
       tags:
@@ -2139,6 +2265,64 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /indicators/{indicatorId}/{spatialUnitId}/{year}/{month}/{day}/export:
+    get:
+      tags:
+        - indicators
+      summary: export the indicator for the selected spatial unit for a certain date in a certain format
+      description: export the indicator for the selected spatial unit for a certain date in a certain format
+      operationId: exportIndicatorBySpatialUnitIdAndIdAndYearAndMonth
+      parameters:
+        - name: indicatorId
+          in: path
+          description: unique identifier of the selected indicator dataset
+          required: true
+          schema:
+            type: string
+        - name: spatialUnitId
+          in: path
+          description: the unique identifier of the spatial level
+          required: true
+          schema:
+            type: string
+        - name: year
+          in: path
+          description: year for which the indicator shall be queried
+          required: true
+          schema:
+            type: number
+        - name: month
+          in: path
+          description: month for which the indicator shall be queried
+          required: true
+          schema:
+            type: number
+        - name: day
+          in: path
+          description: day for which datasets shall be queried
+          required: true
+          schema:
+            type: number
+        - name: format
+          in: query
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
+          allowEmptyValue: false
+          schema:
+            type: string
+            default: gpkg
+            enum:
+              - gpkg
+      responses:
+        "200":
+          description: OK
+          content:
+            application/octed-stream:
+              schema:
+                type: string
+                format: binary
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /indicators/{indicatorId}/{spatialUnitId}/{year}/{month}/{day}/without-geometry:
     get:
       tags:
@@ -3455,6 +3639,40 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /public/georesources/{georesourceId}/allFeatures/export:
+    get:
+      tags:
+        - georesources-public
+      summary: export a public georesource in a certain format
+      description: export a public georesource in a certain format
+      operationId: exportAllPublicGeoresourceFeaturesById
+      parameters:
+        - name: georesourceId
+          in: path
+          description: unique identifier of the selected public georesource dataset
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
+          allowEmptyValue: false
+          schema:
+            type: string
+            default: gpkg
+            enum:
+              - gpkg
+      responses:
+        "200":
+          description: OK
+          content:
+            application/octed-stream:
+              schema:
+                type: string
+                format: binary
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /public/georesources/{georesourceId}/allFeatures/without-geometry:
     get:
       tags:
@@ -3737,6 +3955,58 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /public/georesources/{georesourceId}/{year}/{month}/{day}/export:
+    get:
+      tags:
+        - georesources-public
+      summary: export a public georesource dataset for a certain date in a certain format
+      description: export a public georesource dataset for a certain date in a certain format
+      operationId: exportPublicGeoresourceByIdAndYearAndMonth
+      parameters:
+        - name: georesourceId
+          in: path
+          description: unique identifier of the selected georesource dataset
+          required: true
+          schema:
+            type: string
+        - name: year
+          in: path
+          description: year for which datasets shall be queried
+          required: true
+          schema:
+            type: number
+        - name: month
+          in: path
+          description: month for which datasets shall be queried
+          required: true
+          schema:
+            type: number
+        - name: day
+          in: path
+          description: day for which datasets shall be queried
+          required: true
+          schema:
+            type: number
+        - name: format
+          in: query
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
+          allowEmptyValue: false
+          schema:
+            type: string
+            default: gpkg
+            enum:
+              - gpkg
+      responses:
+        "200":
+          description: OK
+          content:
+            application/octed-stream:
+              schema:
+                type: string
+                format: binary
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /public/georesources/{georesourceId}/{year}/{month}/{day}/without-geometry:
     get:
       tags:
@@ -3958,6 +4228,46 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /public/indicators/{indicatorId}/{spatialUnitId}/export:
+    get:
+      tags:
+        - indicators-public
+      summary: export a public indicator for the selected spatial unit in a certain format
+      description: export a public indicator for the selected spatial in a certain +format
+      operationId: exportPublicIndicatorBySpatialUnitIdAndId
+      parameters:
+        - name: indicatorId
+          in: path
+          description: unique identifier of the selected public indicator dataset
+          required: true
+          schema:
+            type: string
+        - name: spatialUnitId
+          in: path
+          description: the unique identifier of the spatial level
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
+          allowEmptyValue: false
+          schema:
+            type: string
+            default: gpkg
+            enum:
+              - gpkg
+      responses:
+        "200":
+          description: OK
+          content:
+            application/octed-stream:
+              schema:
+                type: string
+                format: binary
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /public/indicators/{indicatorId}/{spatialUnitId}/singleFeature/{featureId}:
     get:
       tags:
@@ -4196,6 +4506,64 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /public/indicators/{indicatorId}/{spatialUnitId}/{year}/{month}/{day}/export:
+    get:
+      tags:
+        - indicators-public
+      summary: export the public indicator for the selected spatial unit for a certain date in a certain format
+      description: export the public indicator for the selected spatial unit for a certain date in a certain format
+      operationId: exportPublicIndicatorBySpatialUnitIdAndIdAndYearAndMonth
+      parameters:
+        - name: indicatorId
+          in: path
+          description: unique identifier of the selected indicator dataset
+          required: true
+          schema:
+            type: string
+        - name: spatialUnitId
+          in: path
+          description: the unique identifier of the spatial level
+          required: true
+          schema:
+            type: string
+        - name: year
+          in: path
+          description: year for which the indicator shall be queried
+          required: true
+          schema:
+            type: number
+        - name: month
+          in: path
+          description: month for which the indicator shall be queried
+          required: true
+          schema:
+            type: number
+        - name: day
+          in: path
+          description: day for which datasets shall be queried
+          required: true
+          schema:
+            type: number
+        - name: format
+          in: query
+          description: Controls in which format the dataset should be downloaded. Supported values are ['gpkg']
+          allowEmptyValue: false
+          schema:
+            type: string
+            default: gpkg
+            enum:
+              - gpkg
+      responses:
+        "200":
+          description: OK
+          content:
+            application/octed-stream:
+              schema:
+                type: string
+                format: binary
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /public/indicators/{indicatorId}/{spatialUnitId}/{year}/{month}/{day}/without-geometry:
     get:
       tags:
