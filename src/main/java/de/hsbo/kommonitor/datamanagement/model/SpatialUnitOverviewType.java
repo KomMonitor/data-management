@@ -27,7 +27,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-08T15:24:50.334003500+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class SpatialUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -42,9 +42,9 @@ public class SpatialUnitOverviewType implements Serializable {
 
   private CommonMetadataType metadata;
 
-  private String nextLowerHierarchyLevel;
+  private @Nullable String nextLowerHierarchyLevel;
 
-  private String nextUpperHierarchyLevel;
+  private @Nullable String nextUpperHierarchyLevel;
 
   private String spatialUnitId;
 
@@ -53,9 +53,9 @@ public class SpatialUnitOverviewType implements Serializable {
   @Valid
   private List<PermissionLevelType> userPermissions = new ArrayList<>();
 
-  private String wfsUrl;
+  private @Nullable String wfsUrl;
 
-  private String wmsUrl;
+  private @Nullable String wmsUrl;
 
   private @Nullable Boolean isOutlineLayer;
 
@@ -74,17 +74,13 @@ public class SpatialUnitOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public SpatialUnitOverviewType(List<String> permissions, Boolean isPublic, CommonMetadataType metadata, String nextLowerHierarchyLevel, String nextUpperHierarchyLevel, String spatialUnitId, String spatialUnitLevel, List<PermissionLevelType> userPermissions, String wfsUrl, String wmsUrl) {
+  public SpatialUnitOverviewType(List<String> permissions, Boolean isPublic, CommonMetadataType metadata, String spatialUnitId, String spatialUnitLevel, List<PermissionLevelType> userPermissions) {
     this.permissions = permissions;
     this.isPublic = isPublic;
     this.metadata = metadata;
-    this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
-    this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
     this.spatialUnitId = spatialUnitId;
     this.spatialUnitLevel = spatialUnitLevel;
     this.userPermissions = userPermissions;
-    this.wfsUrl = wfsUrl;
-    this.wmsUrl = wmsUrl;
   }
 
   public SpatialUnitOverviewType permissions(List<String> permissions) {
@@ -192,8 +188,8 @@ public class SpatialUnitOverviewType implements Serializable {
    * the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level
    * @return nextLowerHierarchyLevel
    */
-  @NotNull 
-  @Schema(name = "nextLowerHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "nextLowerHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("nextLowerHierarchyLevel")
   public String getNextLowerHierarchyLevel() {
     return nextLowerHierarchyLevel;
@@ -212,8 +208,8 @@ public class SpatialUnitOverviewType implements Serializable {
    * the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level
    * @return nextUpperHierarchyLevel
    */
-  @NotNull 
-  @Schema(name = "nextUpperHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "nextUpperHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("nextUpperHierarchyLevel")
   public String getNextUpperHierarchyLevel() {
     return nextUpperHierarchyLevel;
@@ -300,8 +296,8 @@ public class SpatialUnitOverviewType implements Serializable {
    * the URL of a running WFS instance serving the spatial features of the associated dataset
    * @return wfsUrl
    */
-  @NotNull 
-  @Schema(name = "wfsUrl", description = "the URL of a running WFS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "wfsUrl", description = "the URL of a running WFS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("wfsUrl")
   public String getWfsUrl() {
     return wfsUrl;
@@ -320,8 +316,8 @@ public class SpatialUnitOverviewType implements Serializable {
    * the URL of a running WMS instance serving the spatial features of the associated dataset
    * @return wmsUrl
    */
-  @NotNull 
-  @Schema(name = "wmsUrl", description = "the URL of a running WMS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "wmsUrl", description = "the URL of a running WMS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("wmsUrl")
   public String getWmsUrl() {
     return wmsUrl;

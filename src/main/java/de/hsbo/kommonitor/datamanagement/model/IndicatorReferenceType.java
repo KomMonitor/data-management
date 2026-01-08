@@ -21,12 +21,12 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "IndicatorReferenceType", description = "a reference to another indicator, e.g. a sub-indicator that is used to compute the main indicator")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-08T15:24:50.334003500+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class IndicatorReferenceType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String referencedIndicatorDescription;
+  private @Nullable String referencedIndicatorDescription;
 
   private String referencedIndicatorId;
 
@@ -39,8 +39,7 @@ public class IndicatorReferenceType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorReferenceType(String referencedIndicatorDescription, String referencedIndicatorId, String referencedIndicatorName) {
-    this.referencedIndicatorDescription = referencedIndicatorDescription;
+  public IndicatorReferenceType(String referencedIndicatorId, String referencedIndicatorName) {
     this.referencedIndicatorId = referencedIndicatorId;
     this.referencedIndicatorName = referencedIndicatorName;
   }
@@ -54,8 +53,8 @@ public class IndicatorReferenceType implements Serializable {
    * a meaningful description of how the referenced indicator is related to the main indicator
    * @return referencedIndicatorDescription
    */
-  @NotNull 
-  @Schema(name = "referencedIndicatorDescription", description = "a meaningful description of how the referenced indicator is related to the main indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "referencedIndicatorDescription", description = "a meaningful description of how the referenced indicator is related to the main indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("referencedIndicatorDescription")
   public String getReferencedIndicatorDescription() {
     return referencedIndicatorDescription;

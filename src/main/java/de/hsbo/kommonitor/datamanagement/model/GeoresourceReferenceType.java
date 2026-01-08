@@ -21,12 +21,12 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "GeoresourceReferenceType", description = "a reference to georesource, e.g. a resource that is used to compute the main indicator")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-08T15:24:50.334003500+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class GeoresourceReferenceType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String referencedGeoresourceDescription;
+  private @Nullable String referencedGeoresourceDescription;
 
   private String referencedGeoresourceId;
 
@@ -39,8 +39,7 @@ public class GeoresourceReferenceType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public GeoresourceReferenceType(String referencedGeoresourceDescription, String referencedGeoresourceId, String referencedGeoresourceName) {
-    this.referencedGeoresourceDescription = referencedGeoresourceDescription;
+  public GeoresourceReferenceType(String referencedGeoresourceId, String referencedGeoresourceName) {
     this.referencedGeoresourceId = referencedGeoresourceId;
     this.referencedGeoresourceName = referencedGeoresourceName;
   }
@@ -54,8 +53,8 @@ public class GeoresourceReferenceType implements Serializable {
    * a meaningful description of how the referenced georesource is related to the main indicator
    * @return referencedGeoresourceDescription
    */
-  @NotNull 
-  @Schema(name = "referencedGeoresourceDescription", description = "a meaningful description of how the referenced georesource is related to the main indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "referencedGeoresourceDescription", description = "a meaningful description of how the referenced georesource is related to the main indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("referencedGeoresourceDescription")
   public String getReferencedGeoresourceDescription() {
     return referencedGeoresourceDescription;

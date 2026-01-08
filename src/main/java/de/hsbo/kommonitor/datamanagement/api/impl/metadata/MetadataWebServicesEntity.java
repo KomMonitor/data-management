@@ -4,11 +4,14 @@ import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.ConnectionDetailsEntity;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.ServiceResourceEnum;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 @Entity(name = "metadataservices")
 public class MetadataWebServicesEntity implements RestrictedEntity {
@@ -53,6 +56,9 @@ public class MetadataWebServicesEntity implements RestrictedEntity {
 
 	@ManyToOne
 	private OrganizationalUnitEntity owner;
+
+	@Transient
+	private List<PermissionLevelType> userPermissions;
 
 	public MetadataWebServicesEntity() {
 	}
@@ -160,5 +166,13 @@ public class MetadataWebServicesEntity implements RestrictedEntity {
 
 	public void setConnectionDetails(ConnectionDetailsEntity connectionDetails) {
 		this.connectionDetails = connectionDetails;
+	}
+
+	public List<PermissionLevelType> getUserPermissions() {
+		return userPermissions;
+	}
+
+	public void setUserPermissions(List<PermissionLevelType> userPermissions) {
+		this.userPermissions = userPermissions;
 	}
 }
