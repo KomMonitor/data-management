@@ -28,4 +28,114 @@
             <column name="ordermode" value="0" />
         </insert>
     </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-6">
+        <createTable tableName="metadataservices">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="metadataservices_pkey"/>
+            </column>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="description" type="TEXT"/>
+            <column name="topicreference" type="VARCHAR(255)"/>
+            <column name="ispublic" type="BOOLEAN"/>
+            <column name="serviceresource" type="SMALLINT"/>
+            <column name="databasis" type="TEXT"/>
+            <column name="datasource" type="TEXT"/>
+            <column name="contact" type="TEXT"/>
+            <column name="note" type="TEXT"/>
+            <column name="owner_organizationalunitid" type="VARCHAR(255)"/>
+            <column name="connectiondetailsid" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-7">
+        <createTable tableName="connectiondetails">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="connectiondetails_pkey"/>
+            </column>
+            <column name="servicetype" type="SMALLINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-8">
+        <createTable tableName="wmsconnectiondetails">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="wmsconnectiondetails_pkey"/>
+            </column>
+            <column name="baseurl" type="TEXT"/>
+            <column name="layername" type="TEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-9">
+        <createTable tableName="metadataservices_permissions">
+            <column name="metadataservices_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-10">
+        <addForeignKeyConstraint
+                baseColumnNames="connectiondetailsid"
+                baseTableName="metadataservices"
+                constraintName="fk_metadataservices_connectiondetails"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="id"
+                referencedTableName="connectiondetails"
+                validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-11">
+        <addForeignKeyConstraint
+                baseColumnNames="id"
+                baseTableName="wmsconnectiondetails"
+                constraintName="fk_wmsconnectiondetails_connectiondetails"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="id"
+                referencedTableName="connectiondetails"
+                validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-12">
+        <addForeignKeyConstraint
+                baseColumnNames="owner_organizationalunitid"
+                baseTableName="metadataservices"
+                constraintName="fk_metadataservices_organizationalunits"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="organizationalunitid"
+                referencedTableName="organizationalunits"
+                validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-13">
+        <addForeignKeyConstraint
+                baseColumnNames="permission_id"
+                baseTableName="metadataservices_permissions"
+                constraintName="fk_metadataservices_permissions_permission"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="permissionid"
+                referencedTableName="permissions"
+                validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-14">
+        <addForeignKeyConstraint
+                baseColumnNames="metadataservices_id"
+                baseTableName="metadataservices_permissions"
+                constraintName="fk_metadataservices_permissions_metadataservice"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="id"
+                referencedTableName="metadataservices"
+                validate="true"/>
+    </changeSet>
 </databaseChangeLog>
