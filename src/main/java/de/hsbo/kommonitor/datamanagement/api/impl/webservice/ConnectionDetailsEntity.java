@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.webservice;
 
+import de.hsbo.kommonitor.datamanagement.model.ServiceTypeEnum;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -12,6 +13,11 @@ public abstract class ConnectionDetailsEntity {
     @UuidGenerator
     private String id = null;
 
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "servicetype", insertable = false, updatable = false)
+    private ServiceTypeEnum serviceType;
+
+
     public ConnectionDetailsEntity() {
     }
 
@@ -19,4 +25,7 @@ public abstract class ConnectionDetailsEntity {
         return id;
     }
 
+    public ServiceTypeEnum getServiceType() {
+        return serviceType;
+    }
 }

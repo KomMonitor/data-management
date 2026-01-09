@@ -22,12 +22,12 @@ import jakarta.annotation.Generated;
  * ConnectionInfoType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-08T15:24:50.334003500+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-09T14:32:27.729735900+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class ConnectionInfoType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String id;
+  private @Nullable String id;
 
   private ServiceTypeEnum serviceType;
 
@@ -38,8 +38,7 @@ public class ConnectionInfoType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public ConnectionInfoType(String id, ServiceTypeEnum serviceType) {
-    this.id = id;
+  public ConnectionInfoType(ServiceTypeEnum serviceType) {
     this.serviceType = serviceType;
   }
 
@@ -52,8 +51,8 @@ public class ConnectionInfoType implements Serializable {
    * the unique identifier of the web service
    * @return id
    */
-  @NotNull 
-  @Schema(name = "id", description = "the unique identifier of the web service", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "id", description = "the unique identifier of the web service", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("id")
   public String getId() {
     return id;

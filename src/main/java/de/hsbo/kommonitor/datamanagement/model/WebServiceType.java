@@ -24,11 +24,11 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * WebServiceOverviewType
+ * WebServiceType
  */
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-09T14:32:27.729735900+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
-public class WebServiceOverviewType implements Serializable {
+public class WebServiceType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -60,16 +60,14 @@ public class WebServiceOverviewType implements Serializable {
   @Valid
   private List<PermissionLevelType> userPermissions = new ArrayList<>();
 
-  private String id;
-
-  public WebServiceOverviewType() {
+  public WebServiceType() {
     super();
   }
 
   /**
    * Constructor with only required parameters
    */
-  public WebServiceOverviewType(String contact, String datasource, String description, Boolean isPublic, String ownerId, String title, String topicReference, String id) {
+  public WebServiceType(String contact, String datasource, String description, Boolean isPublic, String ownerId, String title, String topicReference) {
     this.contact = contact;
     this.datasource = datasource;
     this.description = description;
@@ -77,10 +75,9 @@ public class WebServiceOverviewType implements Serializable {
     this.ownerId = ownerId;
     this.title = title;
     this.topicReference = topicReference;
-    this.id = id;
   }
 
-  public WebServiceOverviewType contact(String contact) {
+  public WebServiceType contact(String contact) {
     this.contact = contact;
     return this;
   }
@@ -100,7 +97,7 @@ public class WebServiceOverviewType implements Serializable {
     this.contact = contact;
   }
 
-  public WebServiceOverviewType connectionDetails(WmsConnectionInfoType connectionDetails) {
+  public WebServiceType connectionDetails(WmsConnectionInfoType connectionDetails) {
     this.connectionDetails = connectionDetails;
     return this;
   }
@@ -120,7 +117,7 @@ public class WebServiceOverviewType implements Serializable {
     this.connectionDetails = connectionDetails;
   }
 
-  public WebServiceOverviewType databasis(String databasis) {
+  public WebServiceType databasis(String databasis) {
     this.databasis = databasis;
     return this;
   }
@@ -140,7 +137,7 @@ public class WebServiceOverviewType implements Serializable {
     this.databasis = databasis;
   }
 
-  public WebServiceOverviewType datasource(String datasource) {
+  public WebServiceType datasource(String datasource) {
     this.datasource = datasource;
     return this;
   }
@@ -160,7 +157,7 @@ public class WebServiceOverviewType implements Serializable {
     this.datasource = datasource;
   }
 
-  public WebServiceOverviewType description(String description) {
+  public WebServiceType description(String description) {
     this.description = description;
     return this;
   }
@@ -180,7 +177,7 @@ public class WebServiceOverviewType implements Serializable {
     this.description = description;
   }
 
-  public WebServiceOverviewType isPublic(Boolean isPublic) {
+  public WebServiceType isPublic(Boolean isPublic) {
     this.isPublic = isPublic;
     return this;
   }
@@ -200,7 +197,7 @@ public class WebServiceOverviewType implements Serializable {
     this.isPublic = isPublic;
   }
 
-  public WebServiceOverviewType note(String note) {
+  public WebServiceType note(String note) {
     this.note = note;
     return this;
   }
@@ -220,7 +217,7 @@ public class WebServiceOverviewType implements Serializable {
     this.note = note;
   }
 
-  public WebServiceOverviewType ownerId(String ownerId) {
+  public WebServiceType ownerId(String ownerId) {
     this.ownerId = ownerId;
     return this;
   }
@@ -240,12 +237,12 @@ public class WebServiceOverviewType implements Serializable {
     this.ownerId = ownerId;
   }
 
-  public WebServiceOverviewType permissions(List<String> permissions) {
+  public WebServiceType permissions(List<String> permissions) {
     this.permissions = permissions;
     return this;
   }
 
-  public WebServiceOverviewType addPermissionsItem(String permissionsItem) {
+  public WebServiceType addPermissionsItem(String permissionsItem) {
     if (this.permissions == null) {
       this.permissions = new ArrayList<>();
     }
@@ -268,7 +265,7 @@ public class WebServiceOverviewType implements Serializable {
     this.permissions = permissions;
   }
 
-  public WebServiceOverviewType serviceResource(ServiceResourceEnum serviceResource) {
+  public WebServiceType serviceResource(ServiceResourceEnum serviceResource) {
     this.serviceResource = serviceResource;
     return this;
   }
@@ -288,7 +285,7 @@ public class WebServiceOverviewType implements Serializable {
     this.serviceResource = serviceResource;
   }
 
-  public WebServiceOverviewType title(String title) {
+  public WebServiceType title(String title) {
     this.title = title;
     return this;
   }
@@ -308,7 +305,7 @@ public class WebServiceOverviewType implements Serializable {
     this.title = title;
   }
 
-  public WebServiceOverviewType topicReference(String topicReference) {
+  public WebServiceType topicReference(String topicReference) {
     this.topicReference = topicReference;
     return this;
   }
@@ -328,12 +325,12 @@ public class WebServiceOverviewType implements Serializable {
     this.topicReference = topicReference;
   }
 
-  public WebServiceOverviewType userPermissions(List<PermissionLevelType> userPermissions) {
+  public WebServiceType userPermissions(List<PermissionLevelType> userPermissions) {
     this.userPermissions = userPermissions;
     return this;
   }
 
-  public WebServiceOverviewType addUserPermissionsItem(PermissionLevelType userPermissionsItem) {
+  public WebServiceType addUserPermissionsItem(PermissionLevelType userPermissionsItem) {
     if (this.userPermissions == null) {
       this.userPermissions = new ArrayList<>();
     }
@@ -356,26 +353,6 @@ public class WebServiceOverviewType implements Serializable {
     this.userPermissions = userPermissions;
   }
 
-  public WebServiceOverviewType id(String id) {
-    this.id = id;
-    return this;
-  }
-
-  /**
-   * the unique identifier of the web service
-   * @return id
-   */
-  @NotNull 
-  @Schema(name = "id", description = "the unique identifier of the web service", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("id")
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -384,32 +361,31 @@ public class WebServiceOverviewType implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    WebServiceOverviewType webServiceOverviewType = (WebServiceOverviewType) o;
-    return Objects.equals(this.contact, webServiceOverviewType.contact) &&
-        Objects.equals(this.connectionDetails, webServiceOverviewType.connectionDetails) &&
-        Objects.equals(this.databasis, webServiceOverviewType.databasis) &&
-        Objects.equals(this.datasource, webServiceOverviewType.datasource) &&
-        Objects.equals(this.description, webServiceOverviewType.description) &&
-        Objects.equals(this.isPublic, webServiceOverviewType.isPublic) &&
-        Objects.equals(this.note, webServiceOverviewType.note) &&
-        Objects.equals(this.ownerId, webServiceOverviewType.ownerId) &&
-        Objects.equals(this.permissions, webServiceOverviewType.permissions) &&
-        Objects.equals(this.serviceResource, webServiceOverviewType.serviceResource) &&
-        Objects.equals(this.title, webServiceOverviewType.title) &&
-        Objects.equals(this.topicReference, webServiceOverviewType.topicReference) &&
-        Objects.equals(this.userPermissions, webServiceOverviewType.userPermissions) &&
-        Objects.equals(this.id, webServiceOverviewType.id);
+    WebServiceType webServiceType = (WebServiceType) o;
+    return Objects.equals(this.contact, webServiceType.contact) &&
+        Objects.equals(this.connectionDetails, webServiceType.connectionDetails) &&
+        Objects.equals(this.databasis, webServiceType.databasis) &&
+        Objects.equals(this.datasource, webServiceType.datasource) &&
+        Objects.equals(this.description, webServiceType.description) &&
+        Objects.equals(this.isPublic, webServiceType.isPublic) &&
+        Objects.equals(this.note, webServiceType.note) &&
+        Objects.equals(this.ownerId, webServiceType.ownerId) &&
+        Objects.equals(this.permissions, webServiceType.permissions) &&
+        Objects.equals(this.serviceResource, webServiceType.serviceResource) &&
+        Objects.equals(this.title, webServiceType.title) &&
+        Objects.equals(this.topicReference, webServiceType.topicReference) &&
+        Objects.equals(this.userPermissions, webServiceType.userPermissions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(contact, connectionDetails, databasis, datasource, description, isPublic, note, ownerId, permissions, serviceResource, title, topicReference, userPermissions, id);
+    return Objects.hash(contact, connectionDetails, databasis, datasource, description, isPublic, note, ownerId, permissions, serviceResource, title, topicReference, userPermissions);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class WebServiceOverviewType {\n");
+    sb.append("class WebServiceType {\n");
     sb.append("    contact: ").append(toIndentedString(contact)).append("\n");
     sb.append("    connectionDetails: ").append(toIndentedString(connectionDetails)).append("\n");
     sb.append("    databasis: ").append(toIndentedString(databasis)).append("\n");
@@ -423,7 +399,6 @@ public class WebServiceOverviewType implements Serializable {
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
     sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("}");
     return sb.toString();
   }
