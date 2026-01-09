@@ -1,10 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.*;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
@@ -36,7 +33,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -63,6 +59,12 @@ public class SpatialUnitsManager {
 
     @Autowired
     private IndicatorsManager indicatorsManager;
+
+    @Autowired
+    private OrganizationalUnitManager orgaManager;
+
+    @Autowired
+    private PermissionManager permissionManager;
 
     @Autowired
     OGCWebServiceManager ogcServiceManager;
@@ -317,8 +319,8 @@ public class SpatialUnitsManager {
         entity.setWmsUrl(null);
 
         //
-        entity.setPermissions(getPermissionEntities(featureData.getPermissions()));
-        entity.setOwner(getOrganizationalUnitEntity(featureData.getOwnerId()));
+        entity.setPermissions(permissionManager.retrievePermissions(featureData.getPermissions()));
+        entity.setOwner(orgaManager.getOrganizationalUnitEntity(featureData.getOwnerId()));
         entity.setPublic(featureData.getIsPublic());
 
         // persist in db
@@ -326,28 +328,6 @@ public class SpatialUnitsManager {
 
         logger.info("Completed to add spatialUnit metadata entry for spatialUnit dataset with id {}.", entity.getDatasetId());
 
-        return entity;
-    }
-
-    private Collection<PermissionEntity> getPermissionEntities(List<String> ids) throws ResourceNotFoundException {
-        Collection<PermissionEntity> allowedRoles = new ArrayList<>();
-        for (String id : ids) {
-            PermissionEntity role = permissionRepository.findByPermissionId(id);
-            if (role == null) {
-                throw new ResourceNotFoundException(400, String.format("The requested role %s does not exist.", id));
-            }
-            if (!allowedRoles.contains(role)) {
-                allowedRoles.add(role);
-            }
-        }
-        return allowedRoles;
-    }
-
-    private OrganizationalUnitEntity getOrganizationalUnitEntity(String id) throws ResourceNotFoundException {
-        OrganizationalUnitEntity entity = organizationalUnitRepository.findByOrganizationalUnitId(id);
-        if (entity == null) {
-            throw new ResourceNotFoundException(400, String.format("The requested organizationalUnit does not exist.", id));
-        }
         return entity;
     }
 
@@ -549,7 +529,7 @@ public class SpatialUnitsManager {
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
 
-            metadataEntity.setPermissions(getPermissionEntities(permissionLevels.getPermissions()));
+            metadataEntity.setPermissions(permissionManager.retrievePermissions(permissionLevels.getPermissions()));
             metadataEntity.setPublic(permissionLevels.getIsPublic());
 
             spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
@@ -565,7 +545,7 @@ public class SpatialUnitsManager {
         logger.info("Trying to update spatialUnit ownership for datasetId '{}'", spatialUnitId);
         if (spatialUnitsMetadataRepo.existsByDatasetId(spatialUnitId)) {
             MetadataSpatialUnitsEntity metadataEntity = spatialUnitsMetadataRepo.findByDatasetId(spatialUnitId);
-            metadataEntity.setOwner(getOrganizationalUnitEntity(owner.getOwnerId()));
+            metadataEntity.setOwner(orgaManager.getOrganizationalUnitEntity(owner.getOwnerId()));
 
             spatialUnitsMetadataRepo.saveAndFlush(metadataEntity);
             return spatialUnitId;

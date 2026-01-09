@@ -6,13 +6,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.*;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
 import jakarta.transaction.Transactional;
 
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.geotools.api.data.DataStore;
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.text.cql2.CQLException;
 import org.slf4j.Logger;
@@ -23,10 +23,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
@@ -70,6 +66,12 @@ public class GeoresourcesManager {
 
 	@Autowired
 	private ScriptManager scriptManager;
+
+	@Autowired
+	private OrganizationalUnitManager orgaManager;
+
+	@Autowired
+	private PermissionManager permissionManager;
 
 	@Autowired
 	private MessageResolver messageResolver;
@@ -150,29 +152,6 @@ public class GeoresourcesManager {
 			throw e;
 		}
 	}
-
-	private Collection<PermissionEntity> retrievePermissions(List<String> permissionIds) throws ResourceNotFoundException {
-		Collection<PermissionEntity> allowedRoles = new ArrayList<>();
-		for (String id : permissionIds) {
-			PermissionEntity role = permissionRepository.findByPermissionId(id);
-			if (role == null) {
-				throw new ResourceNotFoundException(400, String.format("The requested role %s does not exist.", id));
-			}
-			if (!allowedRoles.contains(role)) {
-				allowedRoles.add(role);
-			}
-		}
-		return allowedRoles;
-	}
-
-	private OrganizationalUnitEntity getOrganizationalUnitEntity(String id) throws ResourceNotFoundException {
-		OrganizationalUnitEntity entity = organizationalUnitRepository.findByOrganizationalUnitId(id);
-		if (entity == null) {
-			throw new ResourceNotFoundException(400, String.format("The requested organizationalUnit does not exist.", id));
-		}
-		return entity;
-	}
-
 
 	private void updateMetadataWithOgcServiceUrls(String metadataId, String dbTableName) {
 		MetadataGeoresourcesEntity metadata = georesourcesMetadataRepo.findByDatasetId(metadataId);
@@ -278,8 +257,8 @@ public class GeoresourcesManager {
 		entity.setWfsUrl(null);
 		entity.setWmsUrl(null);
 
-		entity.setPermissions(retrievePermissions(featureData.getPermissions()));
-		entity.setOwner(getOrganizationalUnitEntity(featureData.getOwnerId()));
+		entity.setPermissions(permissionManager.retrievePermissions(featureData.getPermissions()));
+		entity.setOwner(orgaManager.getOrganizationalUnitEntity(featureData.getOwnerId()));
 		entity.setPublic(featureData.getIsPublic());
 
 		// persist in db
@@ -694,7 +673,7 @@ public class GeoresourcesManager {
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
-			metadataEntity.setPermissions(retrievePermissions(permissionLevelInput.getPermissions()));
+			metadataEntity.setPermissions(permissionManager.retrievePermissions(permissionLevelInput.getPermissions()));
 			metadataEntity.setPublic(permissionLevelInput.getIsPublic());
 
 			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
@@ -712,7 +691,7 @@ public class GeoresourcesManager {
 		LOG.info("Trying to update georesource ownership for datasetId '{}'", georesourceId);
 		if (georesourcesMetadataRepo.existsByDatasetId(georesourceId)) {
 			MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
-			metadataEntity.setOwner(getOrganizationalUnitEntity(owner.getOwnerId()));
+			metadataEntity.setOwner(orgaManager.getOrganizationalUnitEntity(owner.getOwnerId()));
 
 			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 			return georesourceId;

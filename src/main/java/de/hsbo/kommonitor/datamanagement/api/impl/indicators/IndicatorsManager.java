@@ -1,10 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitRepository;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -92,6 +89,12 @@ public class IndicatorsManager {
 
     @Autowired
     SpatialUnitsMetadataRepository spatialUnitsMetadataRepo;
+
+    @Autowired
+    OrganizationalUnitManager orgaManager;
+
+    @Autowired
+    PermissionManager permissionManager;
 
     @Autowired
     IndicatorsMapper indicatorsMapper;
@@ -200,7 +203,7 @@ public class IndicatorsManager {
             IndicatorSpatialUnitJoinEntity indicatorEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
 
             if (keyPropertiesHaveChanged(indicatorEntity, indicatorData)) {
-                indicatorEntity.setPermissions(retrievePermissions(indicatorData.getPermissions()));
+                indicatorEntity.setPermissions(permissionManager.retrievePermissions(indicatorData.getPermissions()));
                 indicatorEntity.setPublic(indicatorData.getIsPublic());
 
                 indicatorsSpatialUnitsRepo.saveAndFlush(indicatorEntity);
@@ -231,7 +234,7 @@ public class IndicatorsManager {
             var indicatorEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
 
             if (keyPropertiesHaveChanged(indicatorEntity, indicatorData)) {
-                indicatorEntity.setPermissions(retrievePermissions(indicatorData.getPermissions()));
+                indicatorEntity.setPermissions(permissionManager.retrievePermissions(indicatorData.getPermissions()));
                 indicatorEntity.setPublic(indicatorData.getIsPublic());
                 indicatorsMetadataRepo.saveAndFlush(indicatorEntity);
                 LOG.info(
@@ -259,7 +262,7 @@ public class IndicatorsManager {
         LOG.info("Trying to update indicator ownership for indicatorId '{}' and spatialUnitId '{}'", indicatorId, spatialUnitId);
         if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId)) {
             IndicatorSpatialUnitJoinEntity indicatorEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
-            indicatorEntity.setOwner(getOrganizationalUnitEntity(owner.getOwnerId()));
+            indicatorEntity.setOwner(orgaManager.getOrganizationalUnitEntity(owner.getOwnerId()));
 
             indicatorsSpatialUnitsRepo.saveAndFlush(indicatorEntity);
             LOG.info("Succesfully updated the ownership for indicator dataset with indicatorId '{}' and spatialUnitId '{}'.",
@@ -279,7 +282,7 @@ public class IndicatorsManager {
         LOG.info("Trying to update indicator metadata ownership for datasetId '{}'", indicatorId);
         if (indicatorsMetadataRepo.existsByDatasetId(indicatorId)) {
             MetadataIndicatorsEntity metadataEntity = indicatorsMetadataRepo.findByDatasetId(indicatorId);
-            metadataEntity.setOwner(getOrganizationalUnitEntity(owner.getOwnerId()));
+            metadataEntity.setOwner(orgaManager.getOrganizationalUnitEntity(owner.getOwnerId()));
 
             indicatorsMetadataRepo.saveAndFlush(metadataEntity);
             LOG.info("Successfully updated the ownership for indicator dataset with indicatorId '{}'.", indicatorId);
@@ -1161,28 +1164,6 @@ public class IndicatorsManager {
 
     }
 
-    private Collection<PermissionEntity> retrievePermissions(List<String> permissionIds) throws ResourceNotFoundException {
-        Collection<PermissionEntity> allowedRoles = new ArrayList<>();
-        for (String id : permissionIds) {
-            PermissionEntity role = permissionRepository.findByPermissionId(id);
-            if (role == null) {
-                throw new ResourceNotFoundException(400, String.format("The requested role %s does not exist.", id));
-            }
-            if (!allowedRoles.contains(role)) {
-                allowedRoles.add(role);
-            }
-        }
-        return allowedRoles;
-    }
-
-    private OrganizationalUnitEntity getOrganizationalUnitEntity(String id) throws ResourceNotFoundException {
-        OrganizationalUnitEntity entity = organizationalUnitRepository.findByOrganizationalUnitId(id);
-        if (entity == null) {
-            throw new ResourceNotFoundException(400, String.format("The requested organizationalUnit does not exist.", id));
-        }
-        return entity;
-    }
-
 //	private void handleInitialIndicatorPersistanceAndPublishing(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, String indicatorName,
 //			String spatialUnitName, String metadataId) throws CQLException, IOException, SQLException, Exception {
 //		String indicatorValueTableName = createIndicatorValueTable(indicatorValues, metadataId);
@@ -1324,8 +1305,8 @@ public class IndicatorsManager {
         entity.setWfsUrl(ogcServiceManager.getWfsUrl(indicatorViewTableName));
         entity.setDefaultStyleName(styleName);
 
-        entity.setPermissions(retrievePermissions(permissions));
-        entity.setOwner(getOrganizationalUnitEntity(ownerId));
+        entity.setPermissions(permissionManager.retrievePermissions(permissions));
+        entity.setOwner(orgaManager.getOrganizationalUnitEntity(ownerId));
         entity.setPublic(istPublic);
 
         indicatorsSpatialUnitsRepo.saveAndFlush(entity);
@@ -1402,8 +1383,8 @@ public class IndicatorsManager {
         entity.setWfsUrl(null);
         entity.setWmsUrl(null);
 
-        entity.setPermissions(retrievePermissions(indicatorData.getPermissions()));
-        entity.setOwner(getOrganizationalUnitEntity(indicatorData.getOwnerId()));
+        entity.setPermissions(permissionManager.retrievePermissions(indicatorData.getPermissions()));
+        entity.setOwner(orgaManager.getOrganizationalUnitEntity(indicatorData.getOwnerId()));
         entity.setPublic(indicatorData.getIsPublic());
 
         entity.setRegionalReferenceValues(new ArrayList<RegionalReferenceValueEntity>());

@@ -513,6 +513,14 @@ public class OrganizationalUnitManager {
             throw new KeycloakException("Creating group and roles in Keycloak failed due to internal Keycloak conflicts.");
         }
     }
+
+    public OrganizationalUnitEntity getOrganizationalUnitEntity(String id) throws ResourceNotFoundException {
+        OrganizationalUnitEntity entity = organizationalUnitRepository.findByOrganizationalUnitId(id);
+        if (entity == null) {
+            throw new ResourceNotFoundException(400, String.format("The requested organizationalUnit %s does not exist.", id));
+        }
+        return entity;
+    }
     
     protected void syncAllOrganizationalUnits() {
         organizationalUnitRepository.findAll().forEach(this::syncOrganizationalUnit);

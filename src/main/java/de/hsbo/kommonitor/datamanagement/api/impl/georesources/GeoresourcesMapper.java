@@ -37,8 +37,7 @@ private static GeoresourcesMetadataRepository georesourceMetadataRepo;
 		return metadatasets;
 	}
 
-	public static GeoresourceOverviewType mapToSwaggerGeoresource(MetadataGeoresourcesEntity georesourceMetadataEntity)
-			throws Exception {
+	public static GeoresourceOverviewType mapToSwaggerGeoresource(MetadataGeoresourcesEntity georesourceMetadataEntity) throws Exception {
 		GeoresourceOverviewType dataset = new GeoresourceOverviewType();
 
 		

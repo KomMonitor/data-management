@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +59,20 @@ public class PermissionManager {
         List<PermissionEntity> roleEntities = permissionRepository.findAll();
 
         return OrganizationalUnitMapper.mapToSwaggerPermissions(roleEntities);
+    }
+
+    public Collection<PermissionEntity> retrievePermissions(List<String> permissionIds) throws ResourceNotFoundException {
+        Collection<PermissionEntity> allowedRoles = new ArrayList<>();
+        for (String id : permissionIds) {
+            PermissionEntity role = permissionRepository.findByPermissionId(id);
+            if (role == null) {
+                throw new ResourceNotFoundException(400, String.format("The requested role %s does not exist.", id));
+            }
+            if (!allowedRoles.contains(role)) {
+                allowedRoles.add(role);
+            }
+        }
+        return allowedRoles;
     }
 
 }
