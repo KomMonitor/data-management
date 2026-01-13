@@ -5292,6 +5292,230 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /web-services:
+    get:
+      tags:
+        - web-services
+      summary: retrieve information about available web services
+      description: retrieve information about available web services
+      operationId: getWebServices
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebServiceOverviewType'
+      security:
+        - kommonitor-data-access_oauth: [ ]
+    post:
+      tags:
+        - web-services
+      summary: Add a new web service
+      description: Add/Register a web service that provides georesources or indicators data
+      operationId: addWebServiceAsBody
+      requestBody:
+        description: web service metadata
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebServiceType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/WebServiceOverviewType'
+        "201":
+          description: Created
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/WebServiceOverviewType'
+  /web-services/{webServiceId}:
+    get:
+      tags:
+        - web-services
+      summary: retrieve information about a certain web service
+      description: retrieve information about a certain web service
+      operationId: getWebServiceById
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service metadata entry
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebServiceOverviewType'
+      security:
+        - kommonitor-data-access_oauth: [ ]
+    put:
+      tags:
+        - web-services
+      summary: Modify/Update the metadata of a web service
+      description: Modify/Update the metadata of a web service
+      operationId: updateWebServiceAsBody
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service metadata entry
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: feature data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebServiceType'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "201":
+          description: Created
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+      x-codegen-request-body-name: webServiceData
+    delete:
+      tags:
+        - web-services
+      summary: Delete the metadata of a certain web service
+      description: Delete the metadata of a certain web service
+      operationId: deleteWebServiceById
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service metadata entry
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "204":
+          description: No Content
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+    patch:
+      tags:
+        - web-services
+      summary: Modify/Update the metadata of a certain web service
+      description: Modify/Update the metadata of a certain web service
+      operationId: updateWebServiceMetadataAsBody
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service metadata entry
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: metadata input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebServiceType'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "204":
+          description: No Content
+          content: { }
+      security:
+        - kommonitor-data-access_oauth: [ ]
+      x-codegen-request-body-name: metadata
+  /web-services/{webServiceId}/permissions:
+    get:
+      tags:
+        - web-services
+      summary: retrieve information about the permissions for the selected web service
+      description: retrieve information about the permissions for the selected web service
+      operationId: getWebServicePermissionsById
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service dataset
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PermissionLevelType'
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+    put:
+      tags:
+        - web-services
+      summary: update the permissions for the selected web service dataset
+      description: update the permissions for the selected web service dataset
+      operationId: updateWebServicePermissions
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service dataset
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Web service permission level input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionLevelInputType'
+      responses:
+        "204":
+          description: No Content
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+  /web-services/{webServiceId}/ownership:
+    put:
+      tags:
+        - web-services
+      summary: update the ownership for the selected web service
+      description: update the ownership for the selected web service
+      operationId: updateWebServiceOwnership
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service dataset
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Web service ownership input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerInputType'
+      responses:
+        "204":
+          description: No Content
+      security:
+        - kommonitor-data-access_oauth: [ ]
   /spatial-units:
     get:
       tags:
@@ -6481,7 +6705,6 @@ components:
         - contact
         - datasource
         - description
-        - sridEPSG
         - updateInterval
       type: object
       properties:
@@ -6759,9 +6982,6 @@ components:
         - datasetName
         - metadata
         - periodOfValidity
-        - isPOI
-        - isLOI
-        - isAOI
         - ownerId
         - isPublic
       type: object
@@ -6858,7 +7078,6 @@ components:
     GeoresourceReferenceType:
       title: GeoresourceReferenceType
       required:
-        - referencedGeoresourceDescription
         - referencedGeoresourceId
         - referencedGeoresourceName
       type: object
@@ -6970,18 +7189,14 @@ components:
     IndicatorOverviewType:
       title: IndicatorOverviewType
       required:
-        - abbreviation
         - applicableDates
         - applicableSpatialUnits
-        - characteristicValue
         - creationType
         - indicatorId
         - indicatorName
         - interpretation
         - isHeadlineIndicator
         - metadata
-        - ogcServices
-        - processDescription
         - ownerId
         - tags
         - topicReference
@@ -7173,7 +7388,6 @@ components:
     IndicatorPOSTInputType:
       title: IndicatorPOSTInputType
       required:
-        - abbreviation
         - permissions
         - characteristicValue
         - creationType
@@ -7378,7 +7592,6 @@ components:
     IndicatorReferenceType:
       title: IndicatorReferenceType
       required:
-        - referencedIndicatorDescription
         - referencedIndicatorId
         - referencedIndicatorName
       type: object
@@ -7447,13 +7660,11 @@ components:
         topics:
           type: string
           format: date-time
+        web-services:
+          type: string
+          format: date-time
     OgcServicesType:
       title: OgcServicesType
-      required:
-        - defaultStyleName
-        - spatialUnit
-        - wfsUrl
-        - wmsUrl
       type: object
       properties:
         defaultStyleName:
@@ -7841,13 +8052,9 @@ components:
         - isPublic
         - permissions
         - metadata
-        - nextLowerHierarchyLevel
-        - nextUpperHierarchyLevel
         - spatialUnitId
         - spatialUnitLevel
         - userPermissions
-        - wfsUrl
-        - wmsUrl
       type: object
       properties:
         permissions:
@@ -8107,6 +8314,102 @@ components:
           description: list of resources that should be filtered
           items:
             type: string
+    WebServiceType:
+      title: WebServiceType
+      required:
+        - contact
+        - datasource
+        - description
+        - isPublic
+        - ownerId
+        - title
+        - topicReference
+      type: object
+      properties:
+        contact:
+          type: string
+          description: contact details where additional information can be achieved
+        connectionDetails:
+          oneOf:
+            - $ref: '#/components/schemas/WmsConnectionInfoType'
+          discriminator:
+            propertyName: serviceType
+        databasis:
+          type: string
+          description: information about data used as a basis to generate the web service
+        datasource:
+          type: string
+          description: information about the origin/source of the web service
+        description:
+          type: string
+          description: description of the web service
+        isPublic:
+          type: boolean
+          description: flag whether the resource is publicly accessible
+        note:
+          type: string
+          description: an optional note with background information about the web service
+        ownerId:
+          type: string
+          description: identifier of the owning group
+        permissions:
+          type: array
+          description: list of permissions on this entity
+          items:
+            type: string
+        serviceResource:
+          description: service resource indicating if the topic object corresponds to an indicator or to a georesource
+          $ref: '#/components/schemas/ServiceResourceEnum'
+        title:
+          type: string
+          description: title of the web service
+        topicReference:
+          type: string
+          description: 'id of the last topic hierarchy entity '
+        userPermissions:
+          type: array
+          description: 'list of permissions that are effective on this dataset for
+            the current user '
+          items:
+            $ref: '#/components/schemas/PermissionLevelType'
+    WebServiceOverviewType:
+      title: WebServiceOverviewType
+      allOf:
+        - $ref: "#/components/schemas/WebServiceType"
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+              description: the unique identifier of the web service
+    ConnectionInfoType:
+      title: ConnectionInfoType
+      required:
+        - serviceType
+      type: object
+      properties:
+        id:
+          type: string
+          description: the unique identifier of the web service
+        serviceType:
+          description: indicates the web service type (currently only WMS supported)
+          $ref: '#/components/schemas/ServiceTypeEnum'
+    WmsConnectionInfoType:
+      title: WmsConnectionInfoType
+      allOf:
+        - $ref: "#/components/schemas/ConnectionInfoType"
+        - type: object
+          required:
+            - baseUrl
+            - layerName
+          properties:
+            baseUrl:
+              type: string
+              description: the base URL of the WMS web service
+            layerName:
+              type: string
+              description: the layer Name of the WMS web service
     UserInfoOverviewType:
       title: UserInfoOverviewType
       required:
@@ -8116,6 +8419,7 @@ components:
         - indicatorFavourites
         - georesourceTopicFavourites
         - indicatorTopicFavourites
+        - webServiceFavourites
       type: object
       properties:
         userInfoId:
@@ -8144,6 +8448,11 @@ components:
           description: list of indicator topic user favourites
           items:
             type: string
+        webServiceFavourites:
+          type: array
+          description: list of web service user favourites
+          items:
+            type: string
     UserInfoInputType:
       title: UserInfoInputType
       type: object
@@ -8166,6 +8475,11 @@ components:
         indicatorTopicFavourites:
           type: array
           description: list of indicator topic user favourites
+          items:
+            type: string
+        webServiceFavourites:
+          type: array
+          description: list of web service user favourites
           items:
             type: string
     OrganizationalUnitRoleAuthorityType:
@@ -8304,6 +8618,15 @@ components:
       enum:
         - text
         - symbol
+    ServiceResourceEnum:
+      type: string
+      enum:
+        - indicator
+        - georesource
+    ServiceTypeEnum:
+      type: string
+      enum:
+        - wms
   securitySchemes:
     kommonitor-data-access_oauth:
       type: oauth2
