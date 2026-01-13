@@ -5,8 +5,6 @@ import java.util.List;
 
 import jakarta.transaction.Transactional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -16,125 +14,114 @@ import org.springframework.stereotype.Repository;
 @Component
 public class LastModificationManager {
 
-	private static Logger logger = LoggerFactory.getLogger(LastModificationManager.class);
-
 	@Autowired
 	LastModificationRepository lastModificationRepo;
 
-	public void updateLastDatabaseModificationIndicators() throws Exception {
+	public void updateLastDatabaseModificationIndicators() {
 		List<LastModificationEntity> all = lastModificationRepo.findAll();
 
-		if (all.size() > 0) {
-			LastModificationEntity lastModificationEntity = all.get(0);
+        LastModificationEntity lastModificationEntity;
+        if (!all.isEmpty()) {
+            lastModificationEntity = all.get(0);
+        } else {
+            lastModificationEntity = new LastModificationEntity();
+        }
+        lastModificationEntity.setIndicators(new Date());
+        lastModificationRepo.saveAndFlush(lastModificationEntity);
 
-			lastModificationEntity.setIndicators(new Date());
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
+    }
+
+	public void updateLastDatabaseModificationGeoresources() {
+		List<LastModificationEntity> all = lastModificationRepo.findAll();
+
+        LastModificationEntity lastModificationEntity;
+        if (!all.isEmpty()) {
+            lastModificationEntity = all.get(0);
+        } else {
+            lastModificationEntity = new LastModificationEntity();
+        }
+        lastModificationEntity.setGeoresources(new Date());
+        lastModificationRepo.saveAndFlush(lastModificationEntity);
+
+    }
+
+	public void updateLastDatabaseModificationSpatialUnits() {
+		List<LastModificationEntity> all = lastModificationRepo.findAll();
+
+        LastModificationEntity lastModificationEntity;
+        if (!all.isEmpty()) {
+            lastModificationEntity = all.get(0);
+        } else {
+            lastModificationEntity = new LastModificationEntity();
+        }
+        lastModificationEntity.setSpatialUnits(new Date());
+        lastModificationRepo.saveAndFlush(lastModificationEntity);
+
+    }
+
+	public void updateLastDatabaseModificationAccessControl() {
+		List<LastModificationEntity> all = lastModificationRepo.findAll();
+
+        LastModificationEntity lastModificationEntity;
+        if (!all.isEmpty()) {
+            lastModificationEntity = all.get(0);
+        } else {
+            lastModificationEntity = new LastModificationEntity();
+        }
+        lastModificationEntity.setAccessControl(new Date());
+        lastModificationRepo.saveAndFlush(lastModificationEntity);
+
+    }
+
+	public void updateLastDatabaseModificationTopics() {
+		List<LastModificationEntity> all = lastModificationRepo.findAll();
+
+        LastModificationEntity lastModificationEntity;
+        if (!all.isEmpty()) {
+            lastModificationEntity = all.get(0);
+        } else {
+            lastModificationEntity = new LastModificationEntity();
+        }
+        lastModificationEntity.setTopics(new Date());
+        lastModificationRepo.saveAndFlush(lastModificationEntity);
+
+    }
+
+	public void updateLastDatabaseModificationProcessScripts() {
+		List<LastModificationEntity> all = lastModificationRepo.findAll();
+
+        LastModificationEntity lastModificationEntity;
+        if (!all.isEmpty()) {
+            lastModificationEntity = all.get(0);
+        } else {
+            lastModificationEntity = new LastModificationEntity();
+        }
+        lastModificationEntity.setProcessScripts(new Date());
+        lastModificationRepo.saveAndFlush(lastModificationEntity);
+
+    }
+
+	public void updateLastDatabaseModificationWebServices() {
+		List<LastModificationEntity> all = lastModificationRepo.findAll();
+
+		LastModificationEntity lastModificationEntity;
+		if (!all.isEmpty()) {
+			lastModificationEntity = all.get(0);
 		} else {
-			LastModificationEntity lastModificationEntity = new LastModificationEntity();
-
-			lastModificationEntity.setIndicators(new Date());
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
+			lastModificationEntity = new LastModificationEntity();
 		}
-
+		lastModificationEntity.setWebServices(new Date());
+		lastModificationRepo.saveAndFlush(lastModificationEntity);
 	}
 
-	public void updateLastDatabaseModificationGeoresources() throws Exception {
+	public LastModificationEntity getLastModificationInfo() {
 		List<LastModificationEntity> all = lastModificationRepo.findAll();
 
-		if (all.size() > 0) {
-			LastModificationEntity lastModificationEntity = all.get(0);
-
-			lastModificationEntity.setGeoresources(new Date());
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
-		} else {
-			LastModificationEntity lastModificationEntity = new LastModificationEntity();
-
-			lastModificationEntity.setGeoresources(new Date());
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
-		}
-
-	}
-
-	public void updateLastDatabaseModificationSpatialUnits() throws Exception {
-		List<LastModificationEntity> all = lastModificationRepo.findAll();
-
-		if (all.size() > 0) {
-			LastModificationEntity lastModificationEntity = all.get(0);
-
-			lastModificationEntity.setSpatialUnits(new Date());
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
-		} else {
-			LastModificationEntity lastModificationEntity = new LastModificationEntity();
-
-			lastModificationEntity.setSpatialUnits(new Date());
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
-		}
-
-	}
-
-	public void updateLastDatabaseModificationAccessControl() throws Exception {
-		List<LastModificationEntity> all = lastModificationRepo.findAll();
-
-		if (all.size() > 0) {
-			LastModificationEntity lastModificationEntity = all.get(0);
-
-			lastModificationEntity.setAccessControl(new Date());
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
-		} else {
-			LastModificationEntity lastModificationEntity = new LastModificationEntity();
-
-			lastModificationEntity.setAccessControl(new Date());
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
-		}
-
-	}
-
-	public void updateLastDatabaseModificationTopics() throws Exception {
-		List<LastModificationEntity> all = lastModificationRepo.findAll();
-
-		if (all.size() > 0) {
-			LastModificationEntity lastModificationEntity = all.get(0);
-
-			lastModificationEntity.setTopics(new Date());
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
-		} else {
-			LastModificationEntity lastModificationEntity = new LastModificationEntity();
-
-			lastModificationEntity.setTopics(new Date());
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
-		}
-
-	}
-
-	public void updateLastDatabaseModificationProcessScripts() throws Exception {
-		List<LastModificationEntity> all = lastModificationRepo.findAll();
-
-		if (all.size() > 0) {
-			LastModificationEntity lastModificationEntity = all.get(0);
-
-			lastModificationEntity.setProcessScripts(new Date());
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
-		} else {
-			LastModificationEntity lastModificationEntity = new LastModificationEntity();
-
-			lastModificationEntity.setProcessScripts(new Date());
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
-		}
-
-	}
-
-	public LastModificationEntity getLastModifcationInfo() {
-		List<LastModificationEntity> all = lastModificationRepo.findAll();
-
-		if (all.size() > 0) {
-			LastModificationEntity lastModificationEntity = all.get(0);
-			
-			lastModificationEntity = checkLastModificationEntity();
-
-			return lastModificationEntity;
+		if (!all.isEmpty()) {
+            return checkLastModificationEntity();
 		} else {
 			checkLastModificationEntity();
-			return getLastModifcationInfo();
+			return getLastModificationInfo();
 		}
 	}
 
@@ -142,8 +129,9 @@ public class LastModificationManager {
 		List<LastModificationEntity> all = lastModificationRepo.findAll();
 
 		Date now = new Date();
-		if (all.size() > 0) {
-			LastModificationEntity lastModificationEntity = all.get(0);
+        LastModificationEntity lastModificationEntity;
+        if (!all.isEmpty()) {
+            lastModificationEntity = all.get(0);
 			
 			if (lastModificationEntity.getGeoresources() == null) {
 				lastModificationEntity.setGeoresources(now);
@@ -163,18 +151,12 @@ public class LastModificationManager {
 			if (lastModificationEntity.getProcessScripts() == null) {
 				lastModificationEntity.setProcessScripts(now);
 			}
-			
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
-			return lastModificationEntity;
-		} else {
-			LastModificationEntity lastModificationEntity = new LastModificationEntity(now);			
 
-			lastModificationRepo.saveAndFlush(lastModificationEntity);
-			
-			return lastModificationEntity;
-		}
-	}
+        } else {
+            lastModificationEntity = new LastModificationEntity(now);
+        }
+        lastModificationRepo.saveAndFlush(lastModificationEntity);
+        return lastModificationEntity;
+    }
 
-	public void updateLastDatabaseModificationWebServices() {
-	}
 }

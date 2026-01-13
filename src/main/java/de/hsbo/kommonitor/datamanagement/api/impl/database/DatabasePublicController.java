@@ -36,7 +36,7 @@ public class DatabasePublicController extends BasePathController implements Data
 		logger.info("Received request to get last database modification");
 		String accept = request.getHeader("Accept");
 		try {
-			LastModificationOverviewType lastMod = LastModificationMapper.mapToSwaggerModification(lastModManager.getLastModifcationInfo());
+			LastModificationOverviewType lastMod = LastModificationMapper.mapToSwaggerModification(lastModManager.getLastModificationInfo());
 
 			return new ResponseEntity<LastModificationOverviewType>(lastMod, HttpStatus.OK);
 		} catch (Exception e) {

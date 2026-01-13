@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * LastModificationOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-13T14:24:34.959242200+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
 public class LastModificationOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -44,6 +44,9 @@ public class LastModificationOverviewType implements Serializable {
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private @Nullable OffsetDateTime topics;
+
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  private @Nullable OffsetDateTime webServices;
 
   public LastModificationOverviewType accessControl(OffsetDateTime accessControl) {
     this.accessControl = accessControl;
@@ -165,6 +168,26 @@ public class LastModificationOverviewType implements Serializable {
     this.topics = topics;
   }
 
+  public LastModificationOverviewType webServices(OffsetDateTime webServices) {
+    this.webServices = webServices;
+    return this;
+  }
+
+  /**
+   * Get webServices
+   * @return webServices
+   */
+  @Valid 
+  @Schema(name = "web-services", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("web-services")
+  public OffsetDateTime getWebServices() {
+    return webServices;
+  }
+
+  public void setWebServices(OffsetDateTime webServices) {
+    this.webServices = webServices;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -179,12 +202,13 @@ public class LastModificationOverviewType implements Serializable {
         Objects.equals(this.indicators, lastModificationOverviewType.indicators) &&
         Objects.equals(this.processScripts, lastModificationOverviewType.processScripts) &&
         Objects.equals(this.spatialUnits, lastModificationOverviewType.spatialUnits) &&
-        Objects.equals(this.topics, lastModificationOverviewType.topics);
+        Objects.equals(this.topics, lastModificationOverviewType.topics) &&
+        Objects.equals(this.webServices, lastModificationOverviewType.webServices);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(accessControl, georesources, indicators, processScripts, spatialUnits, topics);
+    return Objects.hash(accessControl, georesources, indicators, processScripts, spatialUnits, topics, webServices);
   }
 
   @Override
@@ -197,6 +221,7 @@ public class LastModificationOverviewType implements Serializable {
     sb.append("    processScripts: ").append(toIndentedString(processScripts)).append("\n");
     sb.append("    spatialUnits: ").append(toIndentedString(spatialUnits)).append("\n");
     sb.append("    topics: ").append(toIndentedString(topics)).append("\n");
+    sb.append("    webServices: ").append(toIndentedString(webServices)).append("\n");
     sb.append("}");
     return sb.toString();
   }

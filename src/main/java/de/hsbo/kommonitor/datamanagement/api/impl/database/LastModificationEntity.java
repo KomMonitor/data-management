@@ -43,6 +43,10 @@ public class LastModificationEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date accessControl = null;
 
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date webServices = null;
+
 	public String getId() {
 		return id;
 	}
@@ -95,6 +99,14 @@ public class LastModificationEntity {
 		this.accessControl = roles;
 	}
 
+	public Date getWebServices() {
+		return webServices;
+	}
+
+	public void setWebServices(Date webServices) {
+		this.webServices = webServices;
+	}
+
 	/*
 	 * default constructor is required by hibernate / jpa
 	 */
@@ -110,6 +122,7 @@ public class LastModificationEntity {
 		this.accessControl = now;
 		this.spatialUnits = now;
 		this.topics = now;
+		this.webServices = now;
 	}
 
 }
