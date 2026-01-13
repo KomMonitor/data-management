@@ -10,6 +10,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetad
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.WebServicesRepository;
 import jakarta.annotation.PostConstruct;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoRepository;
@@ -39,6 +40,9 @@ public final class AuthHelperService {
     
     @Autowired
     private IndicatorSpatialUnitsRepository indicatorspatialUnitsRepository;
+
+    @Autowired
+    private WebServicesRepository webServicesRepository;
 
     @Autowired
     private UserInfoRepository userInfoRepository;
@@ -83,6 +87,10 @@ public final class AuthHelperService {
         return this.indicatorspatialUnitsRepository;
     }
 
+    public WebServicesRepository getWebServicesRepository() {
+        return this.webServicesRepository;
+    }
+
     public UserInfoRepository getUserInfoRepository(){
         return this.userInfoRepository;
     }
@@ -101,5 +109,6 @@ public final class AuthHelperService {
             throw new IllegalStateException("AuthHelperService instance is not initialized");
         }
     }
-    
+
+
 }

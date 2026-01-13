@@ -13,6 +13,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetad
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.WebServicesRepository;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
 import de.hsbo.kommonitor.datamanagement.auth.token.TokenParser;
@@ -53,6 +54,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
     private final IndicatorsMetadataRepository indicatorRepository;
     private final SpatialUnitsMetadataRepository spatialunitsRepository;
     private final IndicatorSpatialUnitsRepository indicatorspatialunitsRepository;
+    private final WebServicesRepository webServicesRepository;
     private final UserInfoRepository userInfoRepository;
 
     private final OrganizationalUnitRepository organizationalUnitRepository;
@@ -68,6 +70,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         this.indicatorRepository = this.authHelperService.getIndicatorRepository();
         this.spatialunitsRepository = this.authHelperService.getSpatialunitsRepository();
         this.indicatorspatialunitsRepository = this.authHelperService.getIndicatorSpatialunitsRepository();
+        this.webServicesRepository = this.authHelperService.getWebServicesRepository();
         this.userInfoRepository = this.authHelperService.getUserInfoRepository();
 
         this.organizationalUnitRepository = this.authHelperService.getOrganizationalUnitRepository();
@@ -273,6 +276,8 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
                 return this.indicatorRepository.findByDatasetId(entityID);
             case SPATIALUNIT:
                 return this.spatialunitsRepository.findByDatasetId(entityID);
+            case WEBSERVICE:
+                return this.webServicesRepository.findById(entityID);
             default:
                 throw new IllegalArgumentException("cannot retrieve entity, unknown entity type " + entityType.toString());
         }
@@ -315,7 +320,8 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
     public enum EntityType {
         GEORESOURCE("georesource"),
         INDICATOR("indicator"),
-        SPATIALUNIT("spatialunit");
+        SPATIALUNIT("spatialunit"),
+        WEBSERVICE("web-service");
 
         private final String value;
 
