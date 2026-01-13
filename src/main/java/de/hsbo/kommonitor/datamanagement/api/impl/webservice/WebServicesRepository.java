@@ -6,7 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface WebServicesRepository extends JpaRepository<MetadataWebServicesEntity, Long> {
     MetadataWebServicesEntity findById(String id);
 
-    boolean existsById(String idd);
+    MetadataWebServicesEntity findByTile(String title);
+
+    boolean existsById(String id);
+
+    boolean existsByTitle(String title);
 
     void deleteById(String id);
 
