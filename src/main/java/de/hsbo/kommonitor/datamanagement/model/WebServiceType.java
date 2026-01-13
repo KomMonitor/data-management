@@ -27,7 +27,7 @@ import jakarta.annotation.Generated;
  * WebServiceType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-09T14:32:27.729735900+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class WebServiceType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -97,7 +97,7 @@ public class WebServiceType implements Serializable {
     this.contact = contact;
   }
 
-  public WebServiceType connectionDetails(WmsConnectionInfoType connectionDetails) {
+  public WebServiceType connectionDetails(@Nullable WmsConnectionInfoType connectionDetails) {
     this.connectionDetails = connectionDetails;
     return this;
   }
@@ -109,15 +109,15 @@ public class WebServiceType implements Serializable {
   @Valid 
   @Schema(name = "connectionDetails", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("connectionDetails")
-  public WmsConnectionInfoType getConnectionDetails() {
+  public @Nullable WmsConnectionInfoType getConnectionDetails() {
     return connectionDetails;
   }
 
-  public void setConnectionDetails(WmsConnectionInfoType connectionDetails) {
+  public void setConnectionDetails(@Nullable WmsConnectionInfoType connectionDetails) {
     this.connectionDetails = connectionDetails;
   }
 
-  public WebServiceType databasis(String databasis) {
+  public WebServiceType databasis(@Nullable String databasis) {
     this.databasis = databasis;
     return this;
   }
@@ -129,11 +129,11 @@ public class WebServiceType implements Serializable {
   
   @Schema(name = "databasis", description = "information about data used as a basis to generate the web service", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("databasis")
-  public String getDatabasis() {
+  public @Nullable String getDatabasis() {
     return databasis;
   }
 
-  public void setDatabasis(String databasis) {
+  public void setDatabasis(@Nullable String databasis) {
     this.databasis = databasis;
   }
 
@@ -197,7 +197,7 @@ public class WebServiceType implements Serializable {
     this.isPublic = isPublic;
   }
 
-  public WebServiceType note(String note) {
+  public WebServiceType note(@Nullable String note) {
     this.note = note;
     return this;
   }
@@ -209,11 +209,11 @@ public class WebServiceType implements Serializable {
   
   @Schema(name = "note", description = "an optional note with background information about the web service", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("note")
-  public String getNote() {
+  public @Nullable String getNote() {
     return note;
   }
 
-  public void setNote(String note) {
+  public void setNote(@Nullable String note) {
     this.note = note;
   }
 
@@ -265,7 +265,7 @@ public class WebServiceType implements Serializable {
     this.permissions = permissions;
   }
 
-  public WebServiceType serviceResource(ServiceResourceEnum serviceResource) {
+  public WebServiceType serviceResource(@Nullable ServiceResourceEnum serviceResource) {
     this.serviceResource = serviceResource;
     return this;
   }
@@ -277,11 +277,11 @@ public class WebServiceType implements Serializable {
   @Valid 
   @Schema(name = "serviceResource", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("serviceResource")
-  public ServiceResourceEnum getServiceResource() {
+  public @Nullable ServiceResourceEnum getServiceResource() {
     return serviceResource;
   }
 
-  public void setServiceResource(ServiceResourceEnum serviceResource) {
+  public void setServiceResource(@Nullable ServiceResourceEnum serviceResource) {
     this.serviceResource = serviceResource;
   }
 

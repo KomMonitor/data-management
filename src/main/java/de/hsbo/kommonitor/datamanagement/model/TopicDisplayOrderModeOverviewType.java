@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  * TopicDisplayOrderModeOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-18T13:18:46.199354100+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class TopicDisplayOrderModeOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;

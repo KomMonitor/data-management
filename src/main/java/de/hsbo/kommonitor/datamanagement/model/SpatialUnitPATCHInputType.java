@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitPATCHInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class SpatialUnitPATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -157,7 +157,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
     this.isOutlineLayer = isOutlineLayer;
   }
 
-  public SpatialUnitPATCHInputType outlineColor(String outlineColor) {
+  public SpatialUnitPATCHInputType outlineColor(@Nullable String outlineColor) {
     this.outlineColor = outlineColor;
     return this;
   }
@@ -169,15 +169,15 @@ public class SpatialUnitPATCHInputType implements Serializable {
   
   @Schema(name = "outlineColor", description = "outline color for this layer as hex code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineColor")
-  public String getOutlineColor() {
+  public @Nullable String getOutlineColor() {
     return outlineColor;
   }
 
-  public void setOutlineColor(String outlineColor) {
+  public void setOutlineColor(@Nullable String outlineColor) {
     this.outlineColor = outlineColor;
   }
 
-  public SpatialUnitPATCHInputType outlineWidth(BigDecimal outlineWidth) {
+  public SpatialUnitPATCHInputType outlineWidth(@Nullable BigDecimal outlineWidth) {
     this.outlineWidth = outlineWidth;
     return this;
   }
@@ -189,15 +189,15 @@ public class SpatialUnitPATCHInputType implements Serializable {
   @Valid 
   @Schema(name = "outlineWidth", description = "outline width as stroke width for outline geometry", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineWidth")
-  public BigDecimal getOutlineWidth() {
+  public @Nullable BigDecimal getOutlineWidth() {
     return outlineWidth;
   }
 
-  public void setOutlineWidth(BigDecimal outlineWidth) {
+  public void setOutlineWidth(@Nullable BigDecimal outlineWidth) {
     this.outlineWidth = outlineWidth;
   }
 
-  public SpatialUnitPATCHInputType outlineDashArrayString(String outlineDashArrayString) {
+  public SpatialUnitPATCHInputType outlineDashArrayString(@Nullable String outlineDashArrayString) {
     this.outlineDashArrayString = outlineDashArrayString;
     return this;
   }
@@ -209,11 +209,11 @@ public class SpatialUnitPATCHInputType implements Serializable {
   
   @Schema(name = "outlineDashArrayString", description = "string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineDashArrayString")
-  public String getOutlineDashArrayString() {
+  public @Nullable String getOutlineDashArrayString() {
     return outlineDashArrayString;
   }
 
-  public void setOutlineDashArrayString(String outlineDashArrayString) {
+  public void setOutlineDashArrayString(@Nullable String outlineDashArrayString) {
     this.outlineDashArrayString = outlineDashArrayString;
   }
 

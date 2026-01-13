@@ -32,7 +32,7 @@ import jakarta.annotation.Generated;
  * IndicatorMetadataPATCHInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-13T11:45:45.252135300+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class IndicatorMetadataPATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -119,7 +119,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
     this.abbreviation = abbreviation;
   }
 
-  public IndicatorMetadataPATCHInputType characteristicValue(String characteristicValue) {
+  public IndicatorMetadataPATCHInputType characteristicValue(@Nullable String characteristicValue) {
     this.characteristicValue = characteristicValue;
     return this;
   }
@@ -131,15 +131,15 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   
   @Schema(name = "characteristicValue", description = "the distuingishing characteristic value of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("characteristicValue")
-  public String getCharacteristicValue() {
+  public @Nullable String getCharacteristicValue() {
     return characteristicValue;
   }
 
-  public void setCharacteristicValue(String characteristicValue) {
+  public void setCharacteristicValue(@Nullable String characteristicValue) {
     this.characteristicValue = characteristicValue;
   }
 
-  public IndicatorMetadataPATCHInputType creationType(CreationTypeEnum creationType) {
+  public IndicatorMetadataPATCHInputType creationType(@Nullable CreationTypeEnum creationType) {
     this.creationType = creationType;
     return this;
   }
@@ -151,15 +151,15 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   @Valid 
   @Schema(name = "creationType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("creationType")
-  public CreationTypeEnum getCreationType() {
+  public @Nullable CreationTypeEnum getCreationType() {
     return creationType;
   }
 
-  public void setCreationType(CreationTypeEnum creationType) {
+  public void setCreationType(@Nullable CreationTypeEnum creationType) {
     this.creationType = creationType;
   }
 
-  public IndicatorMetadataPATCHInputType datasetName(String datasetName) {
+  public IndicatorMetadataPATCHInputType datasetName(@Nullable String datasetName) {
     this.datasetName = datasetName;
     return this;
   }
@@ -171,15 +171,15 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   
   @Schema(name = "datasetName", description = "the meaningful name of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("datasetName")
-  public String getDatasetName() {
+  public @Nullable String getDatasetName() {
     return datasetName;
   }
 
-  public void setDatasetName(String datasetName) {
+  public void setDatasetName(@Nullable String datasetName) {
     this.datasetName = datasetName;
   }
 
-  public IndicatorMetadataPATCHInputType defaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+  public IndicatorMetadataPATCHInputType defaultClassificationMapping(@Nullable DefaultClassificationMappingType defaultClassificationMapping) {
     this.defaultClassificationMapping = defaultClassificationMapping;
     return this;
   }
@@ -191,11 +191,11 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   @Valid 
   @Schema(name = "defaultClassificationMapping", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("defaultClassificationMapping")
-  public DefaultClassificationMappingType getDefaultClassificationMapping() {
+  public @Nullable DefaultClassificationMappingType getDefaultClassificationMapping() {
     return defaultClassificationMapping;
   }
 
-  public void setDefaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+  public void setDefaultClassificationMapping(@Nullable DefaultClassificationMappingType defaultClassificationMapping) {
     this.defaultClassificationMapping = defaultClassificationMapping;
   }
 
@@ -227,7 +227,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
     this.regionalReferenceValues = regionalReferenceValues;
   }
 
-  public IndicatorMetadataPATCHInputType displayOrder(BigDecimal displayOrder) {
+  public IndicatorMetadataPATCHInputType displayOrder(@Nullable BigDecimal displayOrder) {
     this.displayOrder = displayOrder;
     return this;
   }
@@ -239,15 +239,15 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   @Valid 
   @Schema(name = "displayOrder", example = "0", description = "an order number to control display order in clients", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("displayOrder")
-  public BigDecimal getDisplayOrder() {
+  public @Nullable BigDecimal getDisplayOrder() {
     return displayOrder;
   }
 
-  public void setDisplayOrder(BigDecimal displayOrder) {
+  public void setDisplayOrder(@Nullable BigDecimal displayOrder) {
     this.displayOrder = displayOrder;
   }
 
-  public IndicatorMetadataPATCHInputType indicatorType(IndicatorTypeEnum indicatorType) {
+  public IndicatorMetadataPATCHInputType indicatorType(@Nullable IndicatorTypeEnum indicatorType) {
     this.indicatorType = indicatorType;
     return this;
   }
@@ -259,11 +259,11 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   @Valid 
   @Schema(name = "indicatorType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicatorType")
-  public IndicatorTypeEnum getIndicatorType() {
+  public @Nullable IndicatorTypeEnum getIndicatorType() {
     return indicatorType;
   }
 
-  public void setIndicatorType(IndicatorTypeEnum indicatorType) {
+  public void setIndicatorType(@Nullable IndicatorTypeEnum indicatorType) {
     this.indicatorType = indicatorType;
   }
 
@@ -307,7 +307,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
     this.isHeadlineIndicator = isHeadlineIndicator;
   }
 
-  public IndicatorMetadataPATCHInputType lowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+  public IndicatorMetadataPATCHInputType lowestSpatialUnitForComputation(@Nullable String lowestSpatialUnitForComputation) {
     this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
     return this;
   }
@@ -319,11 +319,11 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   
   @Schema(name = "lowestSpatialUnitForComputation", description = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("lowestSpatialUnitForComputation")
-  public String getLowestSpatialUnitForComputation() {
+  public @Nullable String getLowestSpatialUnitForComputation() {
     return lowestSpatialUnitForComputation;
   }
 
-  public void setLowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+  public void setLowestSpatialUnitForComputation(@Nullable String lowestSpatialUnitForComputation) {
     this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
   }
 
@@ -347,7 +347,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
     this.metadata = metadata;
   }
 
-  public IndicatorMetadataPATCHInputType precision(Integer precision) {
+  public IndicatorMetadataPATCHInputType precision(@Nullable Integer precision) {
     this.precision = precision;
     return this;
   }
@@ -359,11 +359,11 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   
   @Schema(name = "precision", description = "Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("precision")
-  public Integer getPrecision() {
+  public @Nullable Integer getPrecision() {
     return precision;
   }
 
-  public void setPrecision(Integer precision) {
+  public void setPrecision(@Nullable Integer precision) {
     this.precision = precision;
   }
 
@@ -387,7 +387,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
     this.processDescription = processDescription;
   }
 
-  public IndicatorMetadataPATCHInputType referenceDateNote(String referenceDateNote) {
+  public IndicatorMetadataPATCHInputType referenceDateNote(@Nullable String referenceDateNote) {
     this.referenceDateNote = referenceDateNote;
     return this;
   }
@@ -399,11 +399,11 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   
   @Schema(name = "referenceDateNote", description = "an optional note on the reference date of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("referenceDateNote")
-  public String getReferenceDateNote() {
+  public @Nullable String getReferenceDateNote() {
     return referenceDateNote;
   }
 
-  public void setReferenceDateNote(String referenceDateNote) {
+  public void setReferenceDateNote(@Nullable String referenceDateNote) {
     this.referenceDateNote = referenceDateNote;
   }
 

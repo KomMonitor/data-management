@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitPOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-13T11:45:45.252135300+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class SpatialUnitPOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -124,7 +124,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
     this.geoJsonString = geoJsonString;
   }
 
-  public SpatialUnitPOSTInputType jsonSchema(String jsonSchema) {
+  public SpatialUnitPOSTInputType jsonSchema(@Nullable String jsonSchema) {
     this.jsonSchema = jsonSchema;
     return this;
   }
@@ -136,11 +136,11 @@ public class SpatialUnitPOSTInputType implements Serializable {
   
   @Schema(name = "jsonSchema", description = "a JSON schema as string that defines the data model for this dataset. It can be used to validate the geoJsonString property.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("jsonSchema")
-  public String getJsonSchema() {
+  public @Nullable String getJsonSchema() {
     return jsonSchema;
   }
 
-  public void setJsonSchema(String jsonSchema) {
+  public void setJsonSchema(@Nullable String jsonSchema) {
     this.jsonSchema = jsonSchema;
   }
 
@@ -164,7 +164,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
     this.metadata = metadata;
   }
 
-  public SpatialUnitPOSTInputType nextLowerHierarchyLevel(String nextLowerHierarchyLevel) {
+  public SpatialUnitPOSTInputType nextLowerHierarchyLevel(@Nullable String nextLowerHierarchyLevel) {
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
     return this;
   }
@@ -176,15 +176,15 @@ public class SpatialUnitPOSTInputType implements Serializable {
   
   @Schema(name = "nextLowerHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("nextLowerHierarchyLevel")
-  public String getNextLowerHierarchyLevel() {
+  public @Nullable String getNextLowerHierarchyLevel() {
     return nextLowerHierarchyLevel;
   }
 
-  public void setNextLowerHierarchyLevel(String nextLowerHierarchyLevel) {
+  public void setNextLowerHierarchyLevel(@Nullable String nextLowerHierarchyLevel) {
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
   }
 
-  public SpatialUnitPOSTInputType nextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
+  public SpatialUnitPOSTInputType nextUpperHierarchyLevel(@Nullable String nextUpperHierarchyLevel) {
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
     return this;
   }
@@ -196,11 +196,11 @@ public class SpatialUnitPOSTInputType implements Serializable {
   
   @Schema(name = "nextUpperHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("nextUpperHierarchyLevel")
-  public String getNextUpperHierarchyLevel() {
+  public @Nullable String getNextUpperHierarchyLevel() {
     return nextUpperHierarchyLevel;
   }
 
-  public void setNextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
+  public void setNextUpperHierarchyLevel(@Nullable String nextUpperHierarchyLevel) {
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
   }
 
@@ -264,7 +264,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
     this.isOutlineLayer = isOutlineLayer;
   }
 
-  public SpatialUnitPOSTInputType outlineColor(String outlineColor) {
+  public SpatialUnitPOSTInputType outlineColor(@Nullable String outlineColor) {
     this.outlineColor = outlineColor;
     return this;
   }
@@ -276,15 +276,15 @@ public class SpatialUnitPOSTInputType implements Serializable {
   
   @Schema(name = "outlineColor", description = "outline color for this layer as hex code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineColor")
-  public String getOutlineColor() {
+  public @Nullable String getOutlineColor() {
     return outlineColor;
   }
 
-  public void setOutlineColor(String outlineColor) {
+  public void setOutlineColor(@Nullable String outlineColor) {
     this.outlineColor = outlineColor;
   }
 
-  public SpatialUnitPOSTInputType outlineWidth(BigDecimal outlineWidth) {
+  public SpatialUnitPOSTInputType outlineWidth(@Nullable BigDecimal outlineWidth) {
     this.outlineWidth = outlineWidth;
     return this;
   }
@@ -296,15 +296,15 @@ public class SpatialUnitPOSTInputType implements Serializable {
   @Valid 
   @Schema(name = "outlineWidth", description = "outline width as stroke width for outline geometry", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineWidth")
-  public BigDecimal getOutlineWidth() {
+  public @Nullable BigDecimal getOutlineWidth() {
     return outlineWidth;
   }
 
-  public void setOutlineWidth(BigDecimal outlineWidth) {
+  public void setOutlineWidth(@Nullable BigDecimal outlineWidth) {
     this.outlineWidth = outlineWidth;
   }
 
-  public SpatialUnitPOSTInputType outlineDashArrayString(String outlineDashArrayString) {
+  public SpatialUnitPOSTInputType outlineDashArrayString(@Nullable String outlineDashArrayString) {
     this.outlineDashArrayString = outlineDashArrayString;
     return this;
   }
@@ -316,15 +316,15 @@ public class SpatialUnitPOSTInputType implements Serializable {
   
   @Schema(name = "outlineDashArrayString", description = "string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineDashArrayString")
-  public String getOutlineDashArrayString() {
+  public @Nullable String getOutlineDashArrayString() {
     return outlineDashArrayString;
   }
 
-  public void setOutlineDashArrayString(String outlineDashArrayString) {
+  public void setOutlineDashArrayString(@Nullable String outlineDashArrayString) {
     this.outlineDashArrayString = outlineDashArrayString;
   }
 
-  public SpatialUnitPOSTInputType ownerId(String ownerId) {
+  public SpatialUnitPOSTInputType ownerId(@Nullable String ownerId) {
     this.ownerId = ownerId;
     return this;
   }
@@ -336,11 +336,11 @@ public class SpatialUnitPOSTInputType implements Serializable {
   
   @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("ownerId")
-  public String getOwnerId() {
+  public @Nullable String getOwnerId() {
     return ownerId;
   }
 
-  public void setOwnerId(String ownerId) {
+  public void setOwnerId(@Nullable String ownerId) {
     this.ownerId = ownerId;
   }
 

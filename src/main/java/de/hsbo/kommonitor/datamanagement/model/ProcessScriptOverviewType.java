@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * ProcessScriptOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class ProcessScriptOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -201,7 +201,7 @@ public class ProcessScriptOverviewType implements Serializable {
     this.scriptId = scriptId;
   }
 
-  public ProcessScriptOverviewType scriptType(String scriptType) {
+  public ProcessScriptOverviewType scriptType(@Nullable String scriptType) {
     this.scriptType = scriptType;
     return this;
   }
@@ -213,11 +213,11 @@ public class ProcessScriptOverviewType implements Serializable {
   
   @Schema(name = "scriptType", description = "a script type reference name used to distuingish process scripts from a client perspective, i.e. setup admin pages due to knowledge about type-specific script parameters and required indicators/georesources", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("scriptType")
-  public String getScriptType() {
+  public @Nullable String getScriptType() {
     return scriptType;
   }
 
-  public void setScriptType(String scriptType) {
+  public void setScriptType(@Nullable String scriptType) {
     this.scriptType = scriptType;
   }
 

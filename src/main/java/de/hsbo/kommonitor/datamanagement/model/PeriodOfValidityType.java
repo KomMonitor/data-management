@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "PeriodOfValidityType", description = "definition of the period of validity of a certain dataset")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class PeriodOfValidityType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -45,7 +45,7 @@ public class PeriodOfValidityType implements Serializable {
     this.startDate = startDate;
   }
 
-  public PeriodOfValidityType endDate(LocalDate endDate) {
+  public PeriodOfValidityType endDate(@Nullable LocalDate endDate) {
     this.endDate = endDate;
     return this;
   }
@@ -57,11 +57,11 @@ public class PeriodOfValidityType implements Serializable {
   @Valid 
   @Schema(name = "endDate", description = "an optional timestamp representing the ending date according to ISO 8601 (e.g. 2018-01-30). The parameter can be omitted, if the end date is unknown.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("endDate")
-  public LocalDate getEndDate() {
+  public @Nullable LocalDate getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(LocalDate endDate) {
+  public void setEndDate(@Nullable LocalDate endDate) {
     this.endDate = endDate;
   }
 

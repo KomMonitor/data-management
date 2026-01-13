@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  * GeoresourcePUTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class GeoresourcePUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -64,7 +64,7 @@ public class GeoresourcePUTInputType implements Serializable {
     this.geoJsonString = geoJsonString;
   }
 
-  public GeoresourcePUTInputType isPartialUpdate(Boolean isPartialUpdate) {
+  public GeoresourcePUTInputType isPartialUpdate(@Nullable Boolean isPartialUpdate) {
     this.isPartialUpdate = isPartialUpdate;
     return this;
   }
@@ -76,11 +76,11 @@ public class GeoresourcePUTInputType implements Serializable {
   
   @Schema(name = "isPartialUpdate", description = "if set to TRUE, then a partial upload of geometries is possible. Missing features that are already in the database will then not be deleted", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("isPartialUpdate")
-  public Boolean getIsPartialUpdate() {
+  public @Nullable Boolean getIsPartialUpdate() {
     return isPartialUpdate;
   }
 
-  public void setIsPartialUpdate(Boolean isPartialUpdate) {
+  public void setIsPartialUpdate(@Nullable Boolean isPartialUpdate) {
     this.isPartialUpdate = isPartialUpdate;
   }
 

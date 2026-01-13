@@ -35,7 +35,7 @@ import jakarta.annotation.Generated;
  * IndicatorOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-08T15:24:50.334003500+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class IndicatorOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -129,7 +129,7 @@ public class IndicatorOverviewType implements Serializable {
     this.isPublic = isPublic;
   }
 
-  public IndicatorOverviewType abbreviation(String abbreviation) {
+  public IndicatorOverviewType abbreviation(@Nullable String abbreviation) {
     this.abbreviation = abbreviation;
     return this;
   }
@@ -141,11 +141,11 @@ public class IndicatorOverviewType implements Serializable {
   
   @Schema(name = "abbreviation", description = "abbreviated mark of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("abbreviation")
-  public String getAbbreviation() {
+  public @Nullable String getAbbreviation() {
     return abbreviation;
   }
 
-  public void setAbbreviation(String abbreviation) {
+  public void setAbbreviation(@Nullable String abbreviation) {
     this.abbreviation = abbreviation;
   }
 
@@ -233,7 +233,7 @@ public class IndicatorOverviewType implements Serializable {
     this.applicableSpatialUnits = applicableSpatialUnits;
   }
 
-  public IndicatorOverviewType characteristicValue(String characteristicValue) {
+  public IndicatorOverviewType characteristicValue(@Nullable String characteristicValue) {
     this.characteristicValue = characteristicValue;
     return this;
   }
@@ -245,11 +245,11 @@ public class IndicatorOverviewType implements Serializable {
   
   @Schema(name = "characteristicValue", description = "the distuingishing characteristic value of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("characteristicValue")
-  public String getCharacteristicValue() {
+  public @Nullable String getCharacteristicValue() {
     return characteristicValue;
   }
 
-  public void setCharacteristicValue(String characteristicValue) {
+  public void setCharacteristicValue(@Nullable String characteristicValue) {
     this.characteristicValue = characteristicValue;
   }
 
@@ -273,7 +273,7 @@ public class IndicatorOverviewType implements Serializable {
     this.creationType = creationType;
   }
 
-  public IndicatorOverviewType defaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+  public IndicatorOverviewType defaultClassificationMapping(@Nullable DefaultClassificationMappingType defaultClassificationMapping) {
     this.defaultClassificationMapping = defaultClassificationMapping;
     return this;
   }
@@ -285,11 +285,11 @@ public class IndicatorOverviewType implements Serializable {
   @Valid 
   @Schema(name = "defaultClassificationMapping", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("defaultClassificationMapping")
-  public DefaultClassificationMappingType getDefaultClassificationMapping() {
+  public @Nullable DefaultClassificationMappingType getDefaultClassificationMapping() {
     return defaultClassificationMapping;
   }
 
-  public void setDefaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+  public void setDefaultClassificationMapping(@Nullable DefaultClassificationMappingType defaultClassificationMapping) {
     this.defaultClassificationMapping = defaultClassificationMapping;
   }
 
@@ -321,7 +321,7 @@ public class IndicatorOverviewType implements Serializable {
     this.regionalReferenceValues = regionalReferenceValues;
   }
 
-  public IndicatorOverviewType displayOrder(BigDecimal displayOrder) {
+  public IndicatorOverviewType displayOrder(@Nullable BigDecimal displayOrder) {
     this.displayOrder = displayOrder;
     return this;
   }
@@ -333,11 +333,11 @@ public class IndicatorOverviewType implements Serializable {
   @Valid 
   @Schema(name = "displayOrder", example = "0.0", description = "an order number to control display order in clients", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("displayOrder")
-  public BigDecimal getDisplayOrder() {
+  public @Nullable BigDecimal getDisplayOrder() {
     return displayOrder;
   }
 
-  public void setDisplayOrder(BigDecimal displayOrder) {
+  public void setDisplayOrder(@Nullable BigDecimal displayOrder) {
     this.displayOrder = displayOrder;
   }
 
@@ -381,7 +381,7 @@ public class IndicatorOverviewType implements Serializable {
     this.indicatorName = indicatorName;
   }
 
-  public IndicatorOverviewType indicatorType(IndicatorTypeEnum indicatorType) {
+  public IndicatorOverviewType indicatorType(@Nullable IndicatorTypeEnum indicatorType) {
     this.indicatorType = indicatorType;
     return this;
   }
@@ -393,11 +393,11 @@ public class IndicatorOverviewType implements Serializable {
   @Valid 
   @Schema(name = "indicatorType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicatorType")
-  public IndicatorTypeEnum getIndicatorType() {
+  public @Nullable IndicatorTypeEnum getIndicatorType() {
     return indicatorType;
   }
 
-  public void setIndicatorType(IndicatorTypeEnum indicatorType) {
+  public void setIndicatorType(@Nullable IndicatorTypeEnum indicatorType) {
     this.indicatorType = indicatorType;
   }
 
@@ -441,7 +441,7 @@ public class IndicatorOverviewType implements Serializable {
     this.isHeadlineIndicator = isHeadlineIndicator;
   }
 
-  public IndicatorOverviewType lowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+  public IndicatorOverviewType lowestSpatialUnitForComputation(@Nullable String lowestSpatialUnitForComputation) {
     this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
     return this;
   }
@@ -453,11 +453,11 @@ public class IndicatorOverviewType implements Serializable {
   
   @Schema(name = "lowestSpatialUnitForComputation", description = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("lowestSpatialUnitForComputation")
-  public String getLowestSpatialUnitForComputation() {
+  public @Nullable String getLowestSpatialUnitForComputation() {
     return lowestSpatialUnitForComputation;
   }
 
-  public void setLowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+  public void setLowestSpatialUnitForComputation(@Nullable String lowestSpatialUnitForComputation) {
     this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
   }
 
@@ -529,7 +529,7 @@ public class IndicatorOverviewType implements Serializable {
     this.ownerId = ownerId;
   }
 
-  public IndicatorOverviewType processDescription(String processDescription) {
+  public IndicatorOverviewType processDescription(@Nullable String processDescription) {
     this.processDescription = processDescription;
     return this;
   }
@@ -541,15 +541,15 @@ public class IndicatorOverviewType implements Serializable {
   
   @Schema(name = "processDescription", description = "description about how the indicator was computed", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("processDescription")
-  public String getProcessDescription() {
+  public @Nullable String getProcessDescription() {
     return processDescription;
   }
 
-  public void setProcessDescription(String processDescription) {
+  public void setProcessDescription(@Nullable String processDescription) {
     this.processDescription = processDescription;
   }
 
-  public IndicatorOverviewType precision(Integer precision) {
+  public IndicatorOverviewType precision(@Nullable Integer precision) {
     this.precision = precision;
     return this;
   }
@@ -561,15 +561,15 @@ public class IndicatorOverviewType implements Serializable {
   
   @Schema(name = "precision", description = "Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("precision")
-  public Integer getPrecision() {
+  public @Nullable Integer getPrecision() {
     return precision;
   }
 
-  public void setPrecision(Integer precision) {
+  public void setPrecision(@Nullable Integer precision) {
     this.precision = precision;
   }
 
-  public IndicatorOverviewType referenceDateNote(String referenceDateNote) {
+  public IndicatorOverviewType referenceDateNote(@Nullable String referenceDateNote) {
     this.referenceDateNote = referenceDateNote;
     return this;
   }
@@ -581,11 +581,11 @@ public class IndicatorOverviewType implements Serializable {
   
   @Schema(name = "referenceDateNote", description = "an optional note on the reference date of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("referenceDateNote")
-  public String getReferenceDateNote() {
+  public @Nullable String getReferenceDateNote() {
     return referenceDateNote;
   }
 
-  public void setReferenceDateNote(String referenceDateNote) {
+  public void setReferenceDateNote(@Nullable String referenceDateNote) {
     this.referenceDateNote = referenceDateNote;
   }
 

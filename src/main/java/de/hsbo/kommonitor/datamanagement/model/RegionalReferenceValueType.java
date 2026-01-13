@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * RegionalReferenceValueType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class RegionalReferenceValueType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -67,7 +67,7 @@ public class RegionalReferenceValueType implements Serializable {
     this.referenceDate = referenceDate;
   }
 
-  public RegionalReferenceValueType regionalSum(Float regionalSum) {
+  public RegionalReferenceValueType regionalSum(@Nullable Float regionalSum) {
     this.regionalSum = regionalSum;
     return this;
   }
@@ -79,15 +79,15 @@ public class RegionalReferenceValueType implements Serializable {
   
   @Schema(name = "regionalSum", description = "regional sum value", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("regionalSum")
-  public Float getRegionalSum() {
+  public @Nullable Float getRegionalSum() {
     return regionalSum;
   }
 
-  public void setRegionalSum(Float regionalSum) {
+  public void setRegionalSum(@Nullable Float regionalSum) {
     this.regionalSum = regionalSum;
   }
 
-  public RegionalReferenceValueType regionalAverage(Float regionalAverage) {
+  public RegionalReferenceValueType regionalAverage(@Nullable Float regionalAverage) {
     this.regionalAverage = regionalAverage;
     return this;
   }
@@ -99,15 +99,15 @@ public class RegionalReferenceValueType implements Serializable {
   
   @Schema(name = "regionalAverage", description = "regional average value", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("regionalAverage")
-  public Float getRegionalAverage() {
+  public @Nullable Float getRegionalAverage() {
     return regionalAverage;
   }
 
-  public void setRegionalAverage(Float regionalAverage) {
+  public void setRegionalAverage(@Nullable Float regionalAverage) {
     this.regionalAverage = regionalAverage;
   }
 
-  public RegionalReferenceValueType spatiallyUnassignable(Float spatiallyUnassignable) {
+  public RegionalReferenceValueType spatiallyUnassignable(@Nullable Float spatiallyUnassignable) {
     this.spatiallyUnassignable = spatiallyUnassignable;
     return this;
   }
@@ -119,11 +119,11 @@ public class RegionalReferenceValueType implements Serializable {
   
   @Schema(name = "spatiallyUnassignable", description = "number of items that cannot be spatially assigned to any spatial unit", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("spatiallyUnassignable")
-  public Float getSpatiallyUnassignable() {
+  public @Nullable Float getSpatiallyUnassignable() {
     return spatiallyUnassignable;
   }
 
-  public void setSpatiallyUnassignable(Float spatiallyUnassignable) {
+  public void setSpatiallyUnassignable(@Nullable Float spatiallyUnassignable) {
     this.spatiallyUnassignable = spatiallyUnassignable;
   }
 

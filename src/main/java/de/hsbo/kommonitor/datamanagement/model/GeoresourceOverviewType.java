@@ -30,7 +30,7 @@ import jakarta.annotation.Generated;
  * GeoresourceOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class GeoresourceOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -132,7 +132,7 @@ public class GeoresourceOverviewType implements Serializable {
     this.permissions = permissions;
   }
 
-  public GeoresourceOverviewType aoiColor(String aoiColor) {
+  public GeoresourceOverviewType aoiColor(@Nullable String aoiColor) {
     this.aoiColor = aoiColor;
     return this;
   }
@@ -144,11 +144,11 @@ public class GeoresourceOverviewType implements Serializable {
   
   @Schema(name = "aoiColor", description = "color name or color code (i.e. hex number) for areas of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("aoiColor")
-  public String getAoiColor() {
+  public @Nullable String getAoiColor() {
     return aoiColor;
   }
 
-  public void setAoiColor(String aoiColor) {
+  public void setAoiColor(@Nullable String aoiColor) {
     this.aoiColor = aoiColor;
   }
 
@@ -300,7 +300,7 @@ public class GeoresourceOverviewType implements Serializable {
     this.isPublic = isPublic;
   }
 
-  public GeoresourceOverviewType loiColor(String loiColor) {
+  public GeoresourceOverviewType loiColor(@Nullable String loiColor) {
     this.loiColor = loiColor;
     return this;
   }
@@ -312,15 +312,15 @@ public class GeoresourceOverviewType implements Serializable {
   
   @Schema(name = "loiColor", description = "color name or color code (i.e. hex number) for lines of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("loiColor")
-  public String getLoiColor() {
+  public @Nullable String getLoiColor() {
     return loiColor;
   }
 
-  public void setLoiColor(String loiColor) {
+  public void setLoiColor(@Nullable String loiColor) {
     this.loiColor = loiColor;
   }
 
-  public GeoresourceOverviewType loiDashArrayString(String loiDashArrayString) {
+  public GeoresourceOverviewType loiDashArrayString(@Nullable String loiDashArrayString) {
     this.loiDashArrayString = loiDashArrayString;
     return this;
   }
@@ -332,15 +332,15 @@ public class GeoresourceOverviewType implements Serializable {
   
   @Schema(name = "loiDashArrayString", description = "sring of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("loiDashArrayString")
-  public String getLoiDashArrayString() {
+  public @Nullable String getLoiDashArrayString() {
     return loiDashArrayString;
   }
 
-  public void setLoiDashArrayString(String loiDashArrayString) {
+  public void setLoiDashArrayString(@Nullable String loiDashArrayString) {
     this.loiDashArrayString = loiDashArrayString;
   }
 
-  public GeoresourceOverviewType loiWidth(BigDecimal loiWidth) {
+  public GeoresourceOverviewType loiWidth(@Nullable BigDecimal loiWidth) {
     this.loiWidth = loiWidth;
     return this;
   }
@@ -352,11 +352,11 @@ public class GeoresourceOverviewType implements Serializable {
   @Valid 
   @Schema(name = "loiWidth", example = "0.0", description = "display width for lines of interest (number of pixels in leaflet)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("loiWidth")
-  public BigDecimal getLoiWidth() {
+  public @Nullable BigDecimal getLoiWidth() {
     return loiWidth;
   }
 
-  public void setLoiWidth(BigDecimal loiWidth) {
+  public void setLoiWidth(@Nullable BigDecimal loiWidth) {
     this.loiWidth = loiWidth;
   }
 
@@ -400,7 +400,7 @@ public class GeoresourceOverviewType implements Serializable {
     this.ownerId = ownerId;
   }
 
-  public GeoresourceOverviewType poiMarkerStyle(PoiMarkerStyleEnum poiMarkerStyle) {
+  public GeoresourceOverviewType poiMarkerStyle(@Nullable PoiMarkerStyleEnum poiMarkerStyle) {
     this.poiMarkerStyle = poiMarkerStyle;
     return this;
   }
@@ -412,15 +412,15 @@ public class GeoresourceOverviewType implements Serializable {
   @Valid 
   @Schema(name = "poiMarkerStyle", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiMarkerStyle")
-  public PoiMarkerStyleEnum getPoiMarkerStyle() {
+  public @Nullable PoiMarkerStyleEnum getPoiMarkerStyle() {
     return poiMarkerStyle;
   }
 
-  public void setPoiMarkerStyle(PoiMarkerStyleEnum poiMarkerStyle) {
+  public void setPoiMarkerStyle(@Nullable PoiMarkerStyleEnum poiMarkerStyle) {
     this.poiMarkerStyle = poiMarkerStyle;
   }
 
-  public GeoresourceOverviewType poiMarkerText(String poiMarkerText) {
+  public GeoresourceOverviewType poiMarkerText(@Nullable String poiMarkerText) {
     this.poiMarkerText = poiMarkerText;
     return this;
   }
@@ -432,15 +432,15 @@ public class GeoresourceOverviewType implements Serializable {
   @Size(max = 3) 
   @Schema(name = "poiMarkerText", description = "the poi marker text string to be used if poiMarkerStyle is set to text", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiMarkerText")
-  public String getPoiMarkerText() {
+  public @Nullable String getPoiMarkerText() {
     return poiMarkerText;
   }
 
-  public void setPoiMarkerText(String poiMarkerText) {
+  public void setPoiMarkerText(@Nullable String poiMarkerText) {
     this.poiMarkerText = poiMarkerText;
   }
 
-  public GeoresourceOverviewType poiMarkerColor(ColorType poiMarkerColor) {
+  public GeoresourceOverviewType poiMarkerColor(@Nullable ColorType poiMarkerColor) {
     this.poiMarkerColor = poiMarkerColor;
     return this;
   }
@@ -452,15 +452,15 @@ public class GeoresourceOverviewType implements Serializable {
   @Valid 
   @Schema(name = "poiMarkerColor", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiMarkerColor")
-  public ColorType getPoiMarkerColor() {
+  public @Nullable ColorType getPoiMarkerColor() {
     return poiMarkerColor;
   }
 
-  public void setPoiMarkerColor(ColorType poiMarkerColor) {
+  public void setPoiMarkerColor(@Nullable ColorType poiMarkerColor) {
     this.poiMarkerColor = poiMarkerColor;
   }
 
-  public GeoresourceOverviewType poiSymbolBootstrap3Name(String poiSymbolBootstrap3Name) {
+  public GeoresourceOverviewType poiSymbolBootstrap3Name(@Nullable String poiSymbolBootstrap3Name) {
     this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
     return this;
   }
@@ -472,15 +472,15 @@ public class GeoresourceOverviewType implements Serializable {
   
   @Schema(name = "poiSymbolBootstrap3Name", description = "If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiSymbolBootstrap3Name")
-  public String getPoiSymbolBootstrap3Name() {
+  public @Nullable String getPoiSymbolBootstrap3Name() {
     return poiSymbolBootstrap3Name;
   }
 
-  public void setPoiSymbolBootstrap3Name(String poiSymbolBootstrap3Name) {
+  public void setPoiSymbolBootstrap3Name(@Nullable String poiSymbolBootstrap3Name) {
     this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
   }
 
-  public GeoresourceOverviewType poiSymbolColor(ColorType poiSymbolColor) {
+  public GeoresourceOverviewType poiSymbolColor(@Nullable ColorType poiSymbolColor) {
     this.poiSymbolColor = poiSymbolColor;
     return this;
   }
@@ -492,11 +492,11 @@ public class GeoresourceOverviewType implements Serializable {
   @Valid 
   @Schema(name = "poiSymbolColor", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiSymbolColor")
-  public ColorType getPoiSymbolColor() {
+  public @Nullable ColorType getPoiSymbolColor() {
     return poiSymbolColor;
   }
 
-  public void setPoiSymbolColor(ColorType poiSymbolColor) {
+  public void setPoiSymbolColor(@Nullable ColorType poiSymbolColor) {
     this.poiSymbolColor = poiSymbolColor;
   }
 
@@ -548,7 +548,7 @@ public class GeoresourceOverviewType implements Serializable {
     this.userPermissions = userPermissions;
   }
 
-  public GeoresourceOverviewType wfsUrl(String wfsUrl) {
+  public GeoresourceOverviewType wfsUrl(@Nullable String wfsUrl) {
     this.wfsUrl = wfsUrl;
     return this;
   }
@@ -560,15 +560,15 @@ public class GeoresourceOverviewType implements Serializable {
   
   @Schema(name = "wfsUrl", description = "the URL of a running WFS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("wfsUrl")
-  public String getWfsUrl() {
+  public @Nullable String getWfsUrl() {
     return wfsUrl;
   }
 
-  public void setWfsUrl(String wfsUrl) {
+  public void setWfsUrl(@Nullable String wfsUrl) {
     this.wfsUrl = wfsUrl;
   }
 
-  public GeoresourceOverviewType wmsUrl(String wmsUrl) {
+  public GeoresourceOverviewType wmsUrl(@Nullable String wmsUrl) {
     this.wmsUrl = wmsUrl;
     return this;
   }
@@ -580,11 +580,11 @@ public class GeoresourceOverviewType implements Serializable {
   
   @Schema(name = "wmsUrl", description = "the URL of a running WMS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("wmsUrl")
-  public String getWmsUrl() {
+  public @Nullable String getWmsUrl() {
     return wmsUrl;
   }
 
-  public void setWmsUrl(String wmsUrl) {
+  public void setWmsUrl(@Nullable String wmsUrl) {
     this.wmsUrl = wmsUrl;
   }
 

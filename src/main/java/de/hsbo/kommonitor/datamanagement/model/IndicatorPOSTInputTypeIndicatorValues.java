@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputTypeIndicatorValues
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -34,7 +34,7 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
   @Valid
   private List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping = new ArrayList<>();
 
-  public IndicatorPOSTInputTypeIndicatorValues spatialReferenceKey(String spatialReferenceKey) {
+  public IndicatorPOSTInputTypeIndicatorValues spatialReferenceKey(@Nullable String spatialReferenceKey) {
     this.spatialReferenceKey = spatialReferenceKey;
     return this;
   }
@@ -46,11 +46,11 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
   
   @Schema(name = "spatialReferenceKey", description = "identifier (uuid) of the spatial feature to which the values shall be applied", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("spatialReferenceKey")
-  public String getSpatialReferenceKey() {
+  public @Nullable String getSpatialReferenceKey() {
     return spatialReferenceKey;
   }
 
-  public void setSpatialReferenceKey(String spatialReferenceKey) {
+  public void setSpatialReferenceKey(@Nullable String spatialReferenceKey) {
     this.spatialReferenceKey = spatialReferenceKey;
   }
 

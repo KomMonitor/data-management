@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "OrganizationalUnitOverviewType", description = "organizational unit (group)")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class OrganizationalUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -175,7 +175,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     this.contact = contact;
   }
 
-  public OrganizationalUnitOverviewType description(String description) {
+  public OrganizationalUnitOverviewType description(@Nullable String description) {
     this.description = description;
     return this;
   }
@@ -187,11 +187,11 @@ public class OrganizationalUnitOverviewType implements Serializable {
   
   @Schema(name = "description", description = "additional information", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("description")
-  public String getDescription() {
+  public @Nullable String getDescription() {
     return description;
   }
 
-  public void setDescription(String description) {
+  public void setDescription(@Nullable String description) {
     this.description = description;
   }
 
@@ -271,7 +271,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     this.parentId = parentId;
   }
 
-  public OrganizationalUnitOverviewType mandantId(String mandantId) {
+  public OrganizationalUnitOverviewType mandantId(@Nullable String mandantId) {
     this.mandantId = mandantId;
     return this;
   }
@@ -283,11 +283,11 @@ public class OrganizationalUnitOverviewType implements Serializable {
   
   @Schema(name = "mandantId", description = "uuid of the group that acts as mandant", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("mandantId")
-  public String getMandantId() {
+  public @Nullable String getMandantId() {
     return mandantId;
   }
 
-  public void setMandantId(String mandantId) {
+  public void setMandantId(@Nullable String mandantId) {
     this.mandantId = mandantId;
   }
 

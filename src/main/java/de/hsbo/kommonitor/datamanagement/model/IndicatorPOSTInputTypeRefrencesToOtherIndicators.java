@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputTypeRefrencesToOtherIndicators
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class IndicatorPOSTInputTypeRefrencesToOtherIndicators implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -29,7 +29,7 @@ public class IndicatorPOSTInputTypeRefrencesToOtherIndicators implements Seriali
 
   private @Nullable String referenceDescription;
 
-  public IndicatorPOSTInputTypeRefrencesToOtherIndicators indicatorId(String indicatorId) {
+  public IndicatorPOSTInputTypeRefrencesToOtherIndicators indicatorId(@Nullable String indicatorId) {
     this.indicatorId = indicatorId;
     return this;
   }
@@ -41,15 +41,15 @@ public class IndicatorPOSTInputTypeRefrencesToOtherIndicators implements Seriali
   
   @Schema(name = "indicatorId", description = "identifier of the referenced indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicatorId")
-  public String getIndicatorId() {
+  public @Nullable String getIndicatorId() {
     return indicatorId;
   }
 
-  public void setIndicatorId(String indicatorId) {
+  public void setIndicatorId(@Nullable String indicatorId) {
     this.indicatorId = indicatorId;
   }
 
-  public IndicatorPOSTInputTypeRefrencesToOtherIndicators referenceDescription(String referenceDescription) {
+  public IndicatorPOSTInputTypeRefrencesToOtherIndicators referenceDescription(@Nullable String referenceDescription) {
     this.referenceDescription = referenceDescription;
     return this;
   }
@@ -61,11 +61,11 @@ public class IndicatorPOSTInputTypeRefrencesToOtherIndicators implements Seriali
   
   @Schema(name = "referenceDescription", description = "short description of how the indicator is referenced to the superior one", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("referenceDescription")
-  public String getReferenceDescription() {
+  public @Nullable String getReferenceDescription() {
     return referenceDescription;
   }
 
-  public void setReferenceDescription(String referenceDescription) {
+  public void setReferenceDescription(@Nullable String referenceDescription) {
     this.referenceDescription = referenceDescription;
   }
 

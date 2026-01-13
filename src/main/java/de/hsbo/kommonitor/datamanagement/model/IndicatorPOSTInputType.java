@@ -31,7 +31,7 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-08T15:24:50.334003500+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class IndicatorPOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -108,7 +108,7 @@ public class IndicatorPOSTInputType implements Serializable {
     this.isPublic = isPublic;
   }
 
-  public IndicatorPOSTInputType abbreviation(String abbreviation) {
+  public IndicatorPOSTInputType abbreviation(@Nullable String abbreviation) {
     this.abbreviation = abbreviation;
     return this;
   }
@@ -120,11 +120,11 @@ public class IndicatorPOSTInputType implements Serializable {
   
   @Schema(name = "abbreviation", description = "abbreviated mark of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("abbreviation")
-  public String getAbbreviation() {
+  public @Nullable String getAbbreviation() {
     return abbreviation;
   }
 
-  public void setAbbreviation(String abbreviation) {
+  public void setAbbreviation(@Nullable String abbreviation) {
     this.abbreviation = abbreviation;
   }
 
@@ -236,7 +236,7 @@ public class IndicatorPOSTInputType implements Serializable {
     this.defaultClassificationMapping = defaultClassificationMapping;
   }
 
-  public IndicatorPOSTInputType displayOrder(BigDecimal displayOrder) {
+  public IndicatorPOSTInputType displayOrder(@Nullable BigDecimal displayOrder) {
     this.displayOrder = displayOrder;
     return this;
   }
@@ -248,15 +248,15 @@ public class IndicatorPOSTInputType implements Serializable {
   @Valid 
   @Schema(name = "displayOrder", example = "0", description = "an order number to control display order in clients", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("displayOrder")
-  public BigDecimal getDisplayOrder() {
+  public @Nullable BigDecimal getDisplayOrder() {
     return displayOrder;
   }
 
-  public void setDisplayOrder(BigDecimal displayOrder) {
+  public void setDisplayOrder(@Nullable BigDecimal displayOrder) {
     this.displayOrder = displayOrder;
   }
 
-  public IndicatorPOSTInputType indicatorType(IndicatorTypeEnum indicatorType) {
+  public IndicatorPOSTInputType indicatorType(@Nullable IndicatorTypeEnum indicatorType) {
     this.indicatorType = indicatorType;
     return this;
   }
@@ -268,11 +268,11 @@ public class IndicatorPOSTInputType implements Serializable {
   @Valid 
   @Schema(name = "indicatorType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicatorType")
-  public IndicatorTypeEnum getIndicatorType() {
+  public @Nullable IndicatorTypeEnum getIndicatorType() {
     return indicatorType;
   }
 
-  public void setIndicatorType(IndicatorTypeEnum indicatorType) {
+  public void setIndicatorType(@Nullable IndicatorTypeEnum indicatorType) {
     this.indicatorType = indicatorType;
   }
 
@@ -316,7 +316,7 @@ public class IndicatorPOSTInputType implements Serializable {
     this.isHeadlineIndicator = isHeadlineIndicator;
   }
 
-  public IndicatorPOSTInputType lowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+  public IndicatorPOSTInputType lowestSpatialUnitForComputation(@Nullable String lowestSpatialUnitForComputation) {
     this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
     return this;
   }
@@ -328,11 +328,11 @@ public class IndicatorPOSTInputType implements Serializable {
   
   @Schema(name = "lowestSpatialUnitForComputation", description = "identifier/name of the lowest spatial unit for which the indicator can be computed and thus is available (only necessary for computable indicators)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("lowestSpatialUnitForComputation")
-  public String getLowestSpatialUnitForComputation() {
+  public @Nullable String getLowestSpatialUnitForComputation() {
     return lowestSpatialUnitForComputation;
   }
 
-  public void setLowestSpatialUnitForComputation(String lowestSpatialUnitForComputation) {
+  public void setLowestSpatialUnitForComputation(@Nullable String lowestSpatialUnitForComputation) {
     this.lowestSpatialUnitForComputation = lowestSpatialUnitForComputation;
   }
 
@@ -356,7 +356,7 @@ public class IndicatorPOSTInputType implements Serializable {
     this.metadata = metadata;
   }
 
-  public IndicatorPOSTInputType precision(Integer precision) {
+  public IndicatorPOSTInputType precision(@Nullable Integer precision) {
     this.precision = precision;
     return this;
   }
@@ -368,11 +368,11 @@ public class IndicatorPOSTInputType implements Serializable {
   
   @Schema(name = "precision", description = "Defines the number of decimal places for indicator values. If null, there is no predefined precision for this indicator.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("precision")
-  public Integer getPrecision() {
+  public @Nullable Integer getPrecision() {
     return precision;
   }
 
-  public void setPrecision(Integer precision) {
+  public void setPrecision(@Nullable Integer precision) {
     this.precision = precision;
   }
 
@@ -416,7 +416,7 @@ public class IndicatorPOSTInputType implements Serializable {
     this.processDescription = processDescription;
   }
 
-  public IndicatorPOSTInputType referenceDateNote(String referenceDateNote) {
+  public IndicatorPOSTInputType referenceDateNote(@Nullable String referenceDateNote) {
     this.referenceDateNote = referenceDateNote;
     return this;
   }
@@ -428,11 +428,11 @@ public class IndicatorPOSTInputType implements Serializable {
   
   @Schema(name = "referenceDateNote", description = "an optional note on the reference date of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("referenceDateNote")
-  public String getReferenceDateNote() {
+  public @Nullable String getReferenceDateNote() {
     return referenceDateNote;
   }
 
-  public void setReferenceDateNote(String referenceDateNote) {
+  public void setReferenceDateNote(@Nullable String referenceDateNote) {
     this.referenceDateNote = referenceDateNote;
   }
 

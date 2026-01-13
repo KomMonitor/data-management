@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  * UserInfoInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class UserInfoInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -39,6 +39,9 @@ public class UserInfoInputType implements Serializable {
 
   @Valid
   private List<String> indicatorTopicFavourites = new ArrayList<>();
+
+  @Valid
+  private List<String> webServiceFavourites = new ArrayList<>();
 
   public UserInfoInputType georesourceFavourites(List<String> georesourceFavourites) {
     this.georesourceFavourites = georesourceFavourites;
@@ -152,6 +155,34 @@ public class UserInfoInputType implements Serializable {
     this.indicatorTopicFavourites = indicatorTopicFavourites;
   }
 
+  public UserInfoInputType webServiceFavourites(List<String> webServiceFavourites) {
+    this.webServiceFavourites = webServiceFavourites;
+    return this;
+  }
+
+  public UserInfoInputType addWebServiceFavouritesItem(String webServiceFavouritesItem) {
+    if (this.webServiceFavourites == null) {
+      this.webServiceFavourites = new ArrayList<>();
+    }
+    this.webServiceFavourites.add(webServiceFavouritesItem);
+    return this;
+  }
+
+  /**
+   * list of web service user favourites
+   * @return webServiceFavourites
+   */
+  
+  @Schema(name = "webServiceFavourites", description = "list of web service user favourites", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("webServiceFavourites")
+  public List<String> getWebServiceFavourites() {
+    return webServiceFavourites;
+  }
+
+  public void setWebServiceFavourites(List<String> webServiceFavourites) {
+    this.webServiceFavourites = webServiceFavourites;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -164,12 +195,13 @@ public class UserInfoInputType implements Serializable {
     return Objects.equals(this.georesourceFavourites, userInfoInputType.georesourceFavourites) &&
         Objects.equals(this.indicatorFavourites, userInfoInputType.indicatorFavourites) &&
         Objects.equals(this.georesourceTopicFavourites, userInfoInputType.georesourceTopicFavourites) &&
-        Objects.equals(this.indicatorTopicFavourites, userInfoInputType.indicatorTopicFavourites);
+        Objects.equals(this.indicatorTopicFavourites, userInfoInputType.indicatorTopicFavourites) &&
+        Objects.equals(this.webServiceFavourites, userInfoInputType.webServiceFavourites);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(georesourceFavourites, indicatorFavourites, georesourceTopicFavourites, indicatorTopicFavourites);
+    return Objects.hash(georesourceFavourites, indicatorFavourites, georesourceTopicFavourites, indicatorTopicFavourites, webServiceFavourites);
   }
 
   @Override
@@ -180,6 +212,7 @@ public class UserInfoInputType implements Serializable {
     sb.append("    indicatorFavourites: ").append(toIndentedString(indicatorFavourites)).append("\n");
     sb.append("    georesourceTopicFavourites: ").append(toIndentedString(georesourceTopicFavourites)).append("\n");
     sb.append("    indicatorTopicFavourites: ").append(toIndentedString(indicatorTopicFavourites)).append("\n");
+    sb.append("    webServiceFavourites: ").append(toIndentedString(webServiceFavourites)).append("\n");
     sb.append("}");
     return sb.toString();
   }

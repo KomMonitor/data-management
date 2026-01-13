@@ -27,7 +27,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-08T15:24:50.334003500+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class SpatialUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -179,7 +179,7 @@ public class SpatialUnitOverviewType implements Serializable {
     this.metadata = metadata;
   }
 
-  public SpatialUnitOverviewType nextLowerHierarchyLevel(String nextLowerHierarchyLevel) {
+  public SpatialUnitOverviewType nextLowerHierarchyLevel(@Nullable String nextLowerHierarchyLevel) {
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
     return this;
   }
@@ -191,15 +191,15 @@ public class SpatialUnitOverviewType implements Serializable {
   
   @Schema(name = "nextLowerHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("nextLowerHierarchyLevel")
-  public String getNextLowerHierarchyLevel() {
+  public @Nullable String getNextLowerHierarchyLevel() {
     return nextLowerHierarchyLevel;
   }
 
-  public void setNextLowerHierarchyLevel(String nextLowerHierarchyLevel) {
+  public void setNextLowerHierarchyLevel(@Nullable String nextLowerHierarchyLevel) {
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
   }
 
-  public SpatialUnitOverviewType nextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
+  public SpatialUnitOverviewType nextUpperHierarchyLevel(@Nullable String nextUpperHierarchyLevel) {
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
     return this;
   }
@@ -211,11 +211,11 @@ public class SpatialUnitOverviewType implements Serializable {
   
   @Schema(name = "nextUpperHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("nextUpperHierarchyLevel")
-  public String getNextUpperHierarchyLevel() {
+  public @Nullable String getNextUpperHierarchyLevel() {
     return nextUpperHierarchyLevel;
   }
 
-  public void setNextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
+  public void setNextUpperHierarchyLevel(@Nullable String nextUpperHierarchyLevel) {
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
   }
 
@@ -287,7 +287,7 @@ public class SpatialUnitOverviewType implements Serializable {
     this.userPermissions = userPermissions;
   }
 
-  public SpatialUnitOverviewType wfsUrl(String wfsUrl) {
+  public SpatialUnitOverviewType wfsUrl(@Nullable String wfsUrl) {
     this.wfsUrl = wfsUrl;
     return this;
   }
@@ -299,15 +299,15 @@ public class SpatialUnitOverviewType implements Serializable {
   
   @Schema(name = "wfsUrl", description = "the URL of a running WFS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("wfsUrl")
-  public String getWfsUrl() {
+  public @Nullable String getWfsUrl() {
     return wfsUrl;
   }
 
-  public void setWfsUrl(String wfsUrl) {
+  public void setWfsUrl(@Nullable String wfsUrl) {
     this.wfsUrl = wfsUrl;
   }
 
-  public SpatialUnitOverviewType wmsUrl(String wmsUrl) {
+  public SpatialUnitOverviewType wmsUrl(@Nullable String wmsUrl) {
     this.wmsUrl = wmsUrl;
     return this;
   }
@@ -319,15 +319,15 @@ public class SpatialUnitOverviewType implements Serializable {
   
   @Schema(name = "wmsUrl", description = "the URL of a running WMS instance serving the spatial features of the associated dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("wmsUrl")
-  public String getWmsUrl() {
+  public @Nullable String getWmsUrl() {
     return wmsUrl;
   }
 
-  public void setWmsUrl(String wmsUrl) {
+  public void setWmsUrl(@Nullable String wmsUrl) {
     this.wmsUrl = wmsUrl;
   }
 
-  public SpatialUnitOverviewType isOutlineLayer(Boolean isOutlineLayer) {
+  public SpatialUnitOverviewType isOutlineLayer(@Nullable Boolean isOutlineLayer) {
     this.isOutlineLayer = isOutlineLayer;
     return this;
   }
@@ -339,15 +339,15 @@ public class SpatialUnitOverviewType implements Serializable {
   
   @Schema(name = "isOutlineLayer", description = "if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("isOutlineLayer")
-  public Boolean getIsOutlineLayer() {
+  public @Nullable Boolean getIsOutlineLayer() {
     return isOutlineLayer;
   }
 
-  public void setIsOutlineLayer(Boolean isOutlineLayer) {
+  public void setIsOutlineLayer(@Nullable Boolean isOutlineLayer) {
     this.isOutlineLayer = isOutlineLayer;
   }
 
-  public SpatialUnitOverviewType outlineColor(String outlineColor) {
+  public SpatialUnitOverviewType outlineColor(@Nullable String outlineColor) {
     this.outlineColor = outlineColor;
     return this;
   }
@@ -359,15 +359,15 @@ public class SpatialUnitOverviewType implements Serializable {
   
   @Schema(name = "outlineColor", description = "outline color for this layer as hex code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineColor")
-  public String getOutlineColor() {
+  public @Nullable String getOutlineColor() {
     return outlineColor;
   }
 
-  public void setOutlineColor(String outlineColor) {
+  public void setOutlineColor(@Nullable String outlineColor) {
     this.outlineColor = outlineColor;
   }
 
-  public SpatialUnitOverviewType outlineWidth(BigDecimal outlineWidth) {
+  public SpatialUnitOverviewType outlineWidth(@Nullable BigDecimal outlineWidth) {
     this.outlineWidth = outlineWidth;
     return this;
   }
@@ -379,15 +379,15 @@ public class SpatialUnitOverviewType implements Serializable {
   @Valid 
   @Schema(name = "outlineWidth", description = "outline width as stroke width for outline geometry", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineWidth")
-  public BigDecimal getOutlineWidth() {
+  public @Nullable BigDecimal getOutlineWidth() {
     return outlineWidth;
   }
 
-  public void setOutlineWidth(BigDecimal outlineWidth) {
+  public void setOutlineWidth(@Nullable BigDecimal outlineWidth) {
     this.outlineWidth = outlineWidth;
   }
 
-  public SpatialUnitOverviewType outlineDashArrayString(String outlineDashArrayString) {
+  public SpatialUnitOverviewType outlineDashArrayString(@Nullable String outlineDashArrayString) {
     this.outlineDashArrayString = outlineDashArrayString;
     return this;
   }
@@ -399,15 +399,15 @@ public class SpatialUnitOverviewType implements Serializable {
   
   @Schema(name = "outlineDashArrayString", description = "string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineDashArrayString")
-  public String getOutlineDashArrayString() {
+  public @Nullable String getOutlineDashArrayString() {
     return outlineDashArrayString;
   }
 
-  public void setOutlineDashArrayString(String outlineDashArrayString) {
+  public void setOutlineDashArrayString(@Nullable String outlineDashArrayString) {
     this.outlineDashArrayString = outlineDashArrayString;
   }
 
-  public SpatialUnitOverviewType ownerId(String ownerId) {
+  public SpatialUnitOverviewType ownerId(@Nullable String ownerId) {
     this.ownerId = ownerId;
     return this;
   }
@@ -419,11 +419,11 @@ public class SpatialUnitOverviewType implements Serializable {
   
   @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("ownerId")
-  public String getOwnerId() {
+  public @Nullable String getOwnerId() {
     return ownerId;
   }
 
-  public void setOwnerId(String ownerId) {
+  public void setOwnerId(@Nullable String ownerId) {
     this.ownerId = ownerId;
   }
 

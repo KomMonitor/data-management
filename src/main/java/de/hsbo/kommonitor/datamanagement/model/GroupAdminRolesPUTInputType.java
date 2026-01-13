@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * GroupAdminRolesPUTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class GroupAdminRolesPUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -70,7 +70,7 @@ public class GroupAdminRolesPUTInputType implements Serializable {
     this.organizationalUnitId = organizationalUnitId;
   }
 
-  public GroupAdminRolesPUTInputType organizationalUnitName(String organizationalUnitName) {
+  public GroupAdminRolesPUTInputType organizationalUnitName(@Nullable String organizationalUnitName) {
     this.organizationalUnitName = organizationalUnitName;
     return this;
   }
@@ -82,15 +82,15 @@ public class GroupAdminRolesPUTInputType implements Serializable {
   
   @Schema(name = "organizationalUnitName", description = "unique name of the organizational Unit", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("organizationalUnitName")
-  public String getOrganizationalUnitName() {
+  public @Nullable String getOrganizationalUnitName() {
     return organizationalUnitName;
   }
 
-  public void setOrganizationalUnitName(String organizationalUnitName) {
+  public void setOrganizationalUnitName(@Nullable String organizationalUnitName) {
     this.organizationalUnitName = organizationalUnitName;
   }
 
-  public GroupAdminRolesPUTInputType keycloakId(String keycloakId) {
+  public GroupAdminRolesPUTInputType keycloakId(@Nullable String keycloakId) {
     this.keycloakId = keycloakId;
     return this;
   }
@@ -102,11 +102,11 @@ public class GroupAdminRolesPUTInputType implements Serializable {
   
   @Schema(name = "keycloakId", description = "unique Keycloak group ID", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("keycloakId")
-  public String getKeycloakId() {
+  public @Nullable String getKeycloakId() {
     return keycloakId;
   }
 
-  public void setKeycloakId(String keycloakId) {
+  public void setKeycloakId(@Nullable String keycloakId) {
     this.keycloakId = keycloakId;
   }
 

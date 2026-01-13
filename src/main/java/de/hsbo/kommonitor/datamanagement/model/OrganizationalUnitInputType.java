@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "OrganizationalUnitInputType", description = "organizational unit (group)")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class OrganizationalUnitInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -53,7 +53,7 @@ public class OrganizationalUnitInputType implements Serializable {
     this.contact = contact;
   }
 
-  public OrganizationalUnitInputType organizationalUnitId(String organizationalUnitId) {
+  public OrganizationalUnitInputType organizationalUnitId(@Nullable String organizationalUnitId) {
     this.organizationalUnitId = organizationalUnitId;
     return this;
   }
@@ -65,11 +65,11 @@ public class OrganizationalUnitInputType implements Serializable {
   
   @Schema(name = "organizationalUnitId", description = "unique id of this organizational Unit", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("organizationalUnitId")
-  public String getOrganizationalUnitId() {
+  public @Nullable String getOrganizationalUnitId() {
     return organizationalUnitId;
   }
 
-  public void setOrganizationalUnitId(String organizationalUnitId) {
+  public void setOrganizationalUnitId(@Nullable String organizationalUnitId) {
     this.organizationalUnitId = organizationalUnitId;
   }
 
@@ -113,7 +113,7 @@ public class OrganizationalUnitInputType implements Serializable {
     this.mandant = mandant;
   }
 
-  public OrganizationalUnitInputType keycloakId(String keycloakId) {
+  public OrganizationalUnitInputType keycloakId(@Nullable String keycloakId) {
     this.keycloakId = keycloakId;
     return this;
   }
@@ -125,11 +125,11 @@ public class OrganizationalUnitInputType implements Serializable {
   
   @Schema(name = "keycloakId", description = "uuid of the corresponding Keycloak group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("keycloakId")
-  public String getKeycloakId() {
+  public @Nullable String getKeycloakId() {
     return keycloakId;
   }
 
-  public void setKeycloakId(String keycloakId) {
+  public void setKeycloakId(@Nullable String keycloakId) {
     this.keycloakId = keycloakId;
   }
 
@@ -153,7 +153,7 @@ public class OrganizationalUnitInputType implements Serializable {
     this.contact = contact;
   }
 
-  public OrganizationalUnitInputType description(String description) {
+  public OrganizationalUnitInputType description(@Nullable String description) {
     this.description = description;
     return this;
   }
@@ -165,15 +165,15 @@ public class OrganizationalUnitInputType implements Serializable {
   
   @Schema(name = "description", description = "additional information", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("description")
-  public String getDescription() {
+  public @Nullable String getDescription() {
     return description;
   }
 
-  public void setDescription(String description) {
+  public void setDescription(@Nullable String description) {
     this.description = description;
   }
 
-  public OrganizationalUnitInputType parentId(String parentId) {
+  public OrganizationalUnitInputType parentId(@Nullable String parentId) {
     this.parentId = parentId;
     return this;
   }
@@ -185,11 +185,11 @@ public class OrganizationalUnitInputType implements Serializable {
   
   @Schema(name = "parentId", description = "uuid of the parent group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("parentId")
-  public String getParentId() {
+  public @Nullable String getParentId() {
     return parentId;
   }
 
-  public void setParentId(String parentId) {
+  public void setParentId(@Nullable String parentId) {
     this.parentId = parentId;
   }
 

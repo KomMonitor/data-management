@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "PermissionOverviewType", description = "Metadata of a permission")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class PermissionOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -67,7 +67,7 @@ public class PermissionOverviewType implements Serializable {
     this.permissionLevel = permissionLevel;
   }
 
-  public PermissionOverviewType permissioneType(PermissionResourceType permissioneType) {
+  public PermissionOverviewType permissioneType(@Nullable PermissionResourceType permissioneType) {
     this.permissioneType = permissioneType;
     return this;
   }
@@ -79,11 +79,11 @@ public class PermissionOverviewType implements Serializable {
   @Valid 
   @Schema(name = "permissioneType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("permissioneType")
-  public PermissionResourceType getPermissioneType() {
+  public @Nullable PermissionResourceType getPermissioneType() {
     return permissioneType;
   }
 
-  public void setPermissioneType(PermissionResourceType permissioneType) {
+  public void setPermissioneType(@Nullable PermissionResourceType permissioneType) {
     this.permissioneType = permissioneType;
   }
 

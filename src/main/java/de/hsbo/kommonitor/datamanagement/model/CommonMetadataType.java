@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * CommonMetadataType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-08T15:24:50.334003500+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class CommonMetadataType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -127,7 +127,7 @@ public class CommonMetadataType implements Serializable {
     this.contact = contact;
   }
 
-  public CommonMetadataType databasis(String databasis) {
+  public CommonMetadataType databasis(@Nullable String databasis) {
     this.databasis = databasis;
     return this;
   }
@@ -139,11 +139,11 @@ public class CommonMetadataType implements Serializable {
   
   @Schema(name = "databasis", description = "information about data used as a basis to generate the dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("databasis")
-  public String getDatabasis() {
+  public @Nullable String getDatabasis() {
     return databasis;
   }
 
-  public void setDatabasis(String databasis) {
+  public void setDatabasis(@Nullable String databasis) {
     this.databasis = databasis;
   }
 
@@ -187,7 +187,7 @@ public class CommonMetadataType implements Serializable {
     this.description = description;
   }
 
-  public CommonMetadataType lastUpdate(LocalDate lastUpdate) {
+  public CommonMetadataType lastUpdate(@Nullable LocalDate lastUpdate) {
     this.lastUpdate = lastUpdate;
     return this;
   }
@@ -199,15 +199,15 @@ public class CommonMetadataType implements Serializable {
   @Valid 
   @Schema(name = "lastUpdate", description = "a timestamp representing the lastUpdate according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("lastUpdate")
-  public LocalDate getLastUpdate() {
+  public @Nullable LocalDate getLastUpdate() {
     return lastUpdate;
   }
 
-  public void setLastUpdate(LocalDate lastUpdate) {
+  public void setLastUpdate(@Nullable LocalDate lastUpdate) {
     this.lastUpdate = lastUpdate;
   }
 
-  public CommonMetadataType literature(String literature) {
+  public CommonMetadataType literature(@Nullable String literature) {
     this.literature = literature;
     return this;
   }
@@ -219,15 +219,15 @@ public class CommonMetadataType implements Serializable {
   
   @Schema(name = "literature", description = "an optional hint to literature about the dataset (e.g. URL or book/article name)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("literature")
-  public String getLiterature() {
+  public @Nullable String getLiterature() {
     return literature;
   }
 
-  public void setLiterature(String literature) {
+  public void setLiterature(@Nullable String literature) {
     this.literature = literature;
   }
 
-  public CommonMetadataType note(String note) {
+  public CommonMetadataType note(@Nullable String note) {
     this.note = note;
     return this;
   }
@@ -239,15 +239,15 @@ public class CommonMetadataType implements Serializable {
   
   @Schema(name = "note", description = "an optional note with background information about the dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("note")
-  public String getNote() {
+  public @Nullable String getNote() {
     return note;
   }
 
-  public void setNote(String note) {
+  public void setNote(@Nullable String note) {
     this.note = note;
   }
 
-  public CommonMetadataType sridEPSG(BigDecimal sridEPSG) {
+  public CommonMetadataType sridEPSG(@Nullable BigDecimal sridEPSG) {
     this.sridEPSG = sridEPSG;
     return this;
   }
@@ -259,11 +259,11 @@ public class CommonMetadataType implements Serializable {
   @Valid 
   @Schema(name = "sridEPSG", example = "0.0", description = "the coordinate reference system of the dataset as EPSG code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("sridEPSG")
-  public BigDecimal getSridEPSG() {
+  public @Nullable BigDecimal getSridEPSG() {
     return sridEPSG;
   }
 
-  public void setSridEPSG(BigDecimal sridEPSG) {
+  public void setSridEPSG(@Nullable BigDecimal sridEPSG) {
     this.sridEPSG = sridEPSG;
   }
 

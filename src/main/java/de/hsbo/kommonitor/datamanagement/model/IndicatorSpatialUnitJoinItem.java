@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * IndicatorSpatialUnitJoinItem
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class IndicatorSpatialUnitJoinItem implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -83,7 +83,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     this.permissions = permissions;
   }
 
-  public IndicatorSpatialUnitJoinItem ownerId(String ownerId) {
+  public IndicatorSpatialUnitJoinItem ownerId(@Nullable String ownerId) {
     this.ownerId = ownerId;
     return this;
   }
@@ -95,11 +95,11 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
   
   @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("ownerId")
-  public String getOwnerId() {
+  public @Nullable String getOwnerId() {
     return ownerId;
   }
 
-  public void setOwnerId(String ownerId) {
+  public void setOwnerId(@Nullable String ownerId) {
     this.ownerId = ownerId;
   }
 
@@ -171,7 +171,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     this.userPermissions = userPermissions;
   }
 
-  public IndicatorSpatialUnitJoinItem isPublic(Boolean isPublic) {
+  public IndicatorSpatialUnitJoinItem isPublic(@Nullable Boolean isPublic) {
     this.isPublic = isPublic;
     return this;
   }
@@ -183,11 +183,11 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
   
   @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("isPublic")
-  public Boolean getIsPublic() {
+  public @Nullable Boolean getIsPublic() {
     return isPublic;
   }
 
-  public void setIsPublic(Boolean isPublic) {
+  public void setIsPublic(@Nullable Boolean isPublic) {
     this.isPublic = isPublic;
   }
 

@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  * TopicInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class TopicInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -105,7 +105,7 @@ public class TopicInputType implements Serializable {
     this.topicDescription = topicDescription;
   }
 
-  public TopicInputType topicId(String topicId) {
+  public TopicInputType topicId(@Nullable String topicId) {
     this.topicId = topicId;
     return this;
   }
@@ -117,11 +117,11 @@ public class TopicInputType implements Serializable {
   
   @Schema(name = "topicId", description = "the topic identifier", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("topicId")
-  public String getTopicId() {
+  public @Nullable String getTopicId() {
     return topicId;
   }
 
-  public void setTopicId(String topicId) {
+  public void setTopicId(@Nullable String topicId) {
     this.topicId = topicId;
   }
 
@@ -145,7 +145,7 @@ public class TopicInputType implements Serializable {
     this.topicName = topicName;
   }
 
-  public TopicInputType topicResource(TopicResourceEnum topicResource) {
+  public TopicInputType topicResource(@Nullable TopicResourceEnum topicResource) {
     this.topicResource = topicResource;
     return this;
   }
@@ -157,11 +157,11 @@ public class TopicInputType implements Serializable {
   @Valid 
   @Schema(name = "topicResource", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("topicResource")
-  public TopicResourceEnum getTopicResource() {
+  public @Nullable TopicResourceEnum getTopicResource() {
     return topicResource;
   }
 
-  public void setTopicResource(TopicResourceEnum topicResource) {
+  public void setTopicResource(@Nullable TopicResourceEnum topicResource) {
     this.topicResource = topicResource;
   }
 

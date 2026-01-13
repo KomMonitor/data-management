@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * LastModificationOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-13T14:24:34.959242200+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class LastModificationOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -48,7 +48,7 @@ public class LastModificationOverviewType implements Serializable {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private @Nullable OffsetDateTime webServices;
 
-  public LastModificationOverviewType accessControl(OffsetDateTime accessControl) {
+  public LastModificationOverviewType accessControl(@Nullable OffsetDateTime accessControl) {
     this.accessControl = accessControl;
     return this;
   }
@@ -60,15 +60,15 @@ public class LastModificationOverviewType implements Serializable {
   @Valid 
   @Schema(name = "access-control", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("access-control")
-  public OffsetDateTime getAccessControl() {
+  public @Nullable OffsetDateTime getAccessControl() {
     return accessControl;
   }
 
-  public void setAccessControl(OffsetDateTime accessControl) {
+  public void setAccessControl(@Nullable OffsetDateTime accessControl) {
     this.accessControl = accessControl;
   }
 
-  public LastModificationOverviewType georesources(OffsetDateTime georesources) {
+  public LastModificationOverviewType georesources(@Nullable OffsetDateTime georesources) {
     this.georesources = georesources;
     return this;
   }
@@ -80,15 +80,15 @@ public class LastModificationOverviewType implements Serializable {
   @Valid 
   @Schema(name = "georesources", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("georesources")
-  public OffsetDateTime getGeoresources() {
+  public @Nullable OffsetDateTime getGeoresources() {
     return georesources;
   }
 
-  public void setGeoresources(OffsetDateTime georesources) {
+  public void setGeoresources(@Nullable OffsetDateTime georesources) {
     this.georesources = georesources;
   }
 
-  public LastModificationOverviewType indicators(OffsetDateTime indicators) {
+  public LastModificationOverviewType indicators(@Nullable OffsetDateTime indicators) {
     this.indicators = indicators;
     return this;
   }
@@ -100,15 +100,15 @@ public class LastModificationOverviewType implements Serializable {
   @Valid 
   @Schema(name = "indicators", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicators")
-  public OffsetDateTime getIndicators() {
+  public @Nullable OffsetDateTime getIndicators() {
     return indicators;
   }
 
-  public void setIndicators(OffsetDateTime indicators) {
+  public void setIndicators(@Nullable OffsetDateTime indicators) {
     this.indicators = indicators;
   }
 
-  public LastModificationOverviewType processScripts(OffsetDateTime processScripts) {
+  public LastModificationOverviewType processScripts(@Nullable OffsetDateTime processScripts) {
     this.processScripts = processScripts;
     return this;
   }
@@ -120,15 +120,15 @@ public class LastModificationOverviewType implements Serializable {
   @Valid 
   @Schema(name = "process-scripts", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("process-scripts")
-  public OffsetDateTime getProcessScripts() {
+  public @Nullable OffsetDateTime getProcessScripts() {
     return processScripts;
   }
 
-  public void setProcessScripts(OffsetDateTime processScripts) {
+  public void setProcessScripts(@Nullable OffsetDateTime processScripts) {
     this.processScripts = processScripts;
   }
 
-  public LastModificationOverviewType spatialUnits(OffsetDateTime spatialUnits) {
+  public LastModificationOverviewType spatialUnits(@Nullable OffsetDateTime spatialUnits) {
     this.spatialUnits = spatialUnits;
     return this;
   }
@@ -140,15 +140,15 @@ public class LastModificationOverviewType implements Serializable {
   @Valid 
   @Schema(name = "spatial-units", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("spatial-units")
-  public OffsetDateTime getSpatialUnits() {
+  public @Nullable OffsetDateTime getSpatialUnits() {
     return spatialUnits;
   }
 
-  public void setSpatialUnits(OffsetDateTime spatialUnits) {
+  public void setSpatialUnits(@Nullable OffsetDateTime spatialUnits) {
     this.spatialUnits = spatialUnits;
   }
 
-  public LastModificationOverviewType topics(OffsetDateTime topics) {
+  public LastModificationOverviewType topics(@Nullable OffsetDateTime topics) {
     this.topics = topics;
     return this;
   }
@@ -160,15 +160,15 @@ public class LastModificationOverviewType implements Serializable {
   @Valid 
   @Schema(name = "topics", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("topics")
-  public OffsetDateTime getTopics() {
+  public @Nullable OffsetDateTime getTopics() {
     return topics;
   }
 
-  public void setTopics(OffsetDateTime topics) {
+  public void setTopics(@Nullable OffsetDateTime topics) {
     this.topics = topics;
   }
 
-  public LastModificationOverviewType webServices(OffsetDateTime webServices) {
+  public LastModificationOverviewType webServices(@Nullable OffsetDateTime webServices) {
     this.webServices = webServices;
     return this;
   }
@@ -180,11 +180,11 @@ public class LastModificationOverviewType implements Serializable {
   @Valid 
   @Schema(name = "web-services", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("web-services")
-  public OffsetDateTime getWebServices() {
+  public @Nullable OffsetDateTime getWebServices() {
     return webServices;
   }
 
-  public void setWebServices(OffsetDateTime webServices) {
+  public void setWebServices(@Nullable OffsetDateTime webServices) {
     this.webServices = webServices;
   }
 

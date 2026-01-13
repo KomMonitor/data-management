@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  * UserInfoOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class UserInfoOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -44,6 +44,9 @@ public class UserInfoOverviewType implements Serializable {
   @Valid
   private List<String> indicatorTopicFavourites = new ArrayList<>();
 
+  @Valid
+  private List<String> webServiceFavourites = new ArrayList<>();
+
   public UserInfoOverviewType() {
     super();
   }
@@ -51,13 +54,14 @@ public class UserInfoOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public UserInfoOverviewType(String userInfoId, String keycloakId, List<String> georesourceFavourites, List<String> indicatorFavourites, List<String> georesourceTopicFavourites, List<String> indicatorTopicFavourites) {
+  public UserInfoOverviewType(String userInfoId, String keycloakId, List<String> georesourceFavourites, List<String> indicatorFavourites, List<String> georesourceTopicFavourites, List<String> indicatorTopicFavourites, List<String> webServiceFavourites) {
     this.userInfoId = userInfoId;
     this.keycloakId = keycloakId;
     this.georesourceFavourites = georesourceFavourites;
     this.indicatorFavourites = indicatorFavourites;
     this.georesourceTopicFavourites = georesourceTopicFavourites;
     this.indicatorTopicFavourites = indicatorTopicFavourites;
+    this.webServiceFavourites = webServiceFavourites;
   }
 
   public UserInfoOverviewType userInfoId(String userInfoId) {
@@ -212,6 +216,34 @@ public class UserInfoOverviewType implements Serializable {
     this.indicatorTopicFavourites = indicatorTopicFavourites;
   }
 
+  public UserInfoOverviewType webServiceFavourites(List<String> webServiceFavourites) {
+    this.webServiceFavourites = webServiceFavourites;
+    return this;
+  }
+
+  public UserInfoOverviewType addWebServiceFavouritesItem(String webServiceFavouritesItem) {
+    if (this.webServiceFavourites == null) {
+      this.webServiceFavourites = new ArrayList<>();
+    }
+    this.webServiceFavourites.add(webServiceFavouritesItem);
+    return this;
+  }
+
+  /**
+   * list of web service user favourites
+   * @return webServiceFavourites
+   */
+  @NotNull 
+  @Schema(name = "webServiceFavourites", description = "list of web service user favourites", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("webServiceFavourites")
+  public List<String> getWebServiceFavourites() {
+    return webServiceFavourites;
+  }
+
+  public void setWebServiceFavourites(List<String> webServiceFavourites) {
+    this.webServiceFavourites = webServiceFavourites;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -226,12 +258,13 @@ public class UserInfoOverviewType implements Serializable {
         Objects.equals(this.georesourceFavourites, userInfoOverviewType.georesourceFavourites) &&
         Objects.equals(this.indicatorFavourites, userInfoOverviewType.indicatorFavourites) &&
         Objects.equals(this.georesourceTopicFavourites, userInfoOverviewType.georesourceTopicFavourites) &&
-        Objects.equals(this.indicatorTopicFavourites, userInfoOverviewType.indicatorTopicFavourites);
+        Objects.equals(this.indicatorTopicFavourites, userInfoOverviewType.indicatorTopicFavourites) &&
+        Objects.equals(this.webServiceFavourites, userInfoOverviewType.webServiceFavourites);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(userInfoId, keycloakId, georesourceFavourites, indicatorFavourites, georesourceTopicFavourites, indicatorTopicFavourites);
+    return Objects.hash(userInfoId, keycloakId, georesourceFavourites, indicatorFavourites, georesourceTopicFavourites, indicatorTopicFavourites, webServiceFavourites);
   }
 
   @Override
@@ -244,6 +277,7 @@ public class UserInfoOverviewType implements Serializable {
     sb.append("    indicatorFavourites: ").append(toIndentedString(indicatorFavourites)).append("\n");
     sb.append("    georesourceTopicFavourites: ").append(toIndentedString(georesourceTopicFavourites)).append("\n");
     sb.append("    indicatorTopicFavourites: ").append(toIndentedString(indicatorTopicFavourites)).append("\n");
+    sb.append("    webServiceFavourites: ").append(toIndentedString(webServiceFavourites)).append("\n");
     sb.append("}");
     return sb.toString();
   }

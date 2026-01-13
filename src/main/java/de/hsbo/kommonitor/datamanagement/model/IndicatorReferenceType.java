@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "IndicatorReferenceType", description = "a reference to another indicator, e.g. a sub-indicator that is used to compute the main indicator")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-08T15:24:50.334003500+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class IndicatorReferenceType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -44,7 +44,7 @@ public class IndicatorReferenceType implements Serializable {
     this.referencedIndicatorName = referencedIndicatorName;
   }
 
-  public IndicatorReferenceType referencedIndicatorDescription(String referencedIndicatorDescription) {
+  public IndicatorReferenceType referencedIndicatorDescription(@Nullable String referencedIndicatorDescription) {
     this.referencedIndicatorDescription = referencedIndicatorDescription;
     return this;
   }
@@ -56,11 +56,11 @@ public class IndicatorReferenceType implements Serializable {
   
   @Schema(name = "referencedIndicatorDescription", description = "a meaningful description of how the referenced indicator is related to the main indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("referencedIndicatorDescription")
-  public String getReferencedIndicatorDescription() {
+  public @Nullable String getReferencedIndicatorDescription() {
     return referencedIndicatorDescription;
   }
 
-  public void setReferencedIndicatorDescription(String referencedIndicatorDescription) {
+  public void setReferencedIndicatorDescription(@Nullable String referencedIndicatorDescription) {
     this.referencedIndicatorDescription = referencedIndicatorDescription;
   }
 

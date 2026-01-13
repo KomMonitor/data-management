@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  * TopicOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-13T11:55:10.717478800+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class TopicOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -149,7 +149,7 @@ public class TopicOverviewType implements Serializable {
     this.topicName = topicName;
   }
 
-  public TopicOverviewType topicResource(TopicResourceEnum topicResource) {
+  public TopicOverviewType topicResource(@Nullable TopicResourceEnum topicResource) {
     this.topicResource = topicResource;
     return this;
   }
@@ -161,11 +161,11 @@ public class TopicOverviewType implements Serializable {
   @Valid 
   @Schema(name = "topicResource", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("topicResource")
-  public TopicResourceEnum getTopicResource() {
+  public @Nullable TopicResourceEnum getTopicResource() {
     return topicResource;
   }
 
-  public void setTopicResource(TopicResourceEnum topicResource) {
+  public void setTopicResource(@Nullable TopicResourceEnum topicResource) {
     this.topicResource = topicResource;
   }
 

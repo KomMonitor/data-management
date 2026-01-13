@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  * OrganizationalUnitPermissionOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class OrganizationalUnitPermissionOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -70,7 +70,7 @@ public class OrganizationalUnitPermissionOverviewType implements Serializable {
     this.contact = contact;
   }
 
-  public OrganizationalUnitPermissionOverviewType description(String description) {
+  public OrganizationalUnitPermissionOverviewType description(@Nullable String description) {
     this.description = description;
     return this;
   }
@@ -82,11 +82,11 @@ public class OrganizationalUnitPermissionOverviewType implements Serializable {
   
   @Schema(name = "description", description = "additional information", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("description")
-  public String getDescription() {
+  public @Nullable String getDescription() {
     return description;
   }
 
-  public void setDescription(String description) {
+  public void setDescription(@Nullable String description) {
     this.description = description;
   }
 

@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * ProcessInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-06-26T12:50:04.783434100+02:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class ProcessInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -152,7 +152,7 @@ public class ProcessInputType implements Serializable {
     this.description = description;
   }
 
-  public ProcessInputType maxParameterValueForNumericInputs(BigDecimal maxParameterValueForNumericInputs) {
+  public ProcessInputType maxParameterValueForNumericInputs(@Nullable BigDecimal maxParameterValueForNumericInputs) {
     this.maxParameterValueForNumericInputs = maxParameterValueForNumericInputs;
     return this;
   }
@@ -164,15 +164,15 @@ public class ProcessInputType implements Serializable {
   @Valid 
   @Schema(name = "maxParameterValueForNumericInputs", example = "0.0", description = "the maximum value that is allowed for the process parameter", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("maxParameterValueForNumericInputs")
-  public BigDecimal getMaxParameterValueForNumericInputs() {
+  public @Nullable BigDecimal getMaxParameterValueForNumericInputs() {
     return maxParameterValueForNumericInputs;
   }
 
-  public void setMaxParameterValueForNumericInputs(BigDecimal maxParameterValueForNumericInputs) {
+  public void setMaxParameterValueForNumericInputs(@Nullable BigDecimal maxParameterValueForNumericInputs) {
     this.maxParameterValueForNumericInputs = maxParameterValueForNumericInputs;
   }
 
-  public ProcessInputType minParameterValueForNumericInputs(BigDecimal minParameterValueForNumericInputs) {
+  public ProcessInputType minParameterValueForNumericInputs(@Nullable BigDecimal minParameterValueForNumericInputs) {
     this.minParameterValueForNumericInputs = minParameterValueForNumericInputs;
     return this;
   }
@@ -184,11 +184,11 @@ public class ProcessInputType implements Serializable {
   @Valid 
   @Schema(name = "minParameterValueForNumericInputs", example = "0.0", description = "the minimum value that is allowed for the process parameter", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("minParameterValueForNumericInputs")
-  public BigDecimal getMinParameterValueForNumericInputs() {
+  public @Nullable BigDecimal getMinParameterValueForNumericInputs() {
     return minParameterValueForNumericInputs;
   }
 
-  public void setMinParameterValueForNumericInputs(BigDecimal minParameterValueForNumericInputs) {
+  public void setMinParameterValueForNumericInputs(@Nullable BigDecimal minParameterValueForNumericInputs) {
     this.minParameterValueForNumericInputs = minParameterValueForNumericInputs;
   }
 

@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "GeoresourceReferenceType", description = "a reference to georesource, e.g. a resource that is used to compute the main indicator")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-08T15:24:50.334003500+01:00[Europe/Berlin]", comments = "Generator version: 7.13.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class GeoresourceReferenceType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -44,7 +44,7 @@ public class GeoresourceReferenceType implements Serializable {
     this.referencedGeoresourceName = referencedGeoresourceName;
   }
 
-  public GeoresourceReferenceType referencedGeoresourceDescription(String referencedGeoresourceDescription) {
+  public GeoresourceReferenceType referencedGeoresourceDescription(@Nullable String referencedGeoresourceDescription) {
     this.referencedGeoresourceDescription = referencedGeoresourceDescription;
     return this;
   }
@@ -56,11 +56,11 @@ public class GeoresourceReferenceType implements Serializable {
   
   @Schema(name = "referencedGeoresourceDescription", description = "a meaningful description of how the referenced georesource is related to the main indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("referencedGeoresourceDescription")
-  public String getReferencedGeoresourceDescription() {
+  public @Nullable String getReferencedGeoresourceDescription() {
     return referencedGeoresourceDescription;
   }
 
-  public void setReferencedGeoresourceDescription(String referencedGeoresourceDescription) {
+  public void setReferencedGeoresourceDescription(@Nullable String referencedGeoresourceDescription) {
     this.referencedGeoresourceDescription = referencedGeoresourceDescription;
   }
 
