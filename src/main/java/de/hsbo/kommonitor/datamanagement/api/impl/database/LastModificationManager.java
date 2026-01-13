@@ -21,7 +21,7 @@ public class LastModificationManager {
 	@Autowired
 	LastModificationRepository lastModificationRepo;
 
-	public void updateLastDatabaseModification_indicators() throws Exception {
+	public void updateLastDatabaseModificationIndicators() throws Exception {
 		List<LastModificationEntity> all = lastModificationRepo.findAll();
 
 		if (all.size() > 0) {
@@ -38,7 +38,7 @@ public class LastModificationManager {
 
 	}
 
-	public void updateLastDatabaseModification_georesources() throws Exception {
+	public void updateLastDatabaseModificationGeoresources() throws Exception {
 		List<LastModificationEntity> all = lastModificationRepo.findAll();
 
 		if (all.size() > 0) {
@@ -55,7 +55,7 @@ public class LastModificationManager {
 
 	}
 
-	public void updateLastDatabaseModification_spatialUnits() throws Exception {
+	public void updateLastDatabaseModificationSpatialUnits() throws Exception {
 		List<LastModificationEntity> all = lastModificationRepo.findAll();
 
 		if (all.size() > 0) {
@@ -72,7 +72,7 @@ public class LastModificationManager {
 
 	}
 
-	public void updateLastDatabaseModification_accessControl() throws Exception {
+	public void updateLastDatabaseModificationAccessControl() throws Exception {
 		List<LastModificationEntity> all = lastModificationRepo.findAll();
 
 		if (all.size() > 0) {
@@ -89,7 +89,7 @@ public class LastModificationManager {
 
 	}
 
-	public void updateLastDatabaseModification_topics() throws Exception {
+	public void updateLastDatabaseModificationTopics() throws Exception {
 		List<LastModificationEntity> all = lastModificationRepo.findAll();
 
 		if (all.size() > 0) {
@@ -106,7 +106,7 @@ public class LastModificationManager {
 
 	}
 
-	public void updateLastDatabaseModification_processScripts() throws Exception {
+	public void updateLastDatabaseModificationProcessScripts() throws Exception {
 		List<LastModificationEntity> all = lastModificationRepo.findAll();
 
 		if (all.size() > 0) {
@@ -175,4 +175,6 @@ public class LastModificationManager {
 		}
 	}
 
+	public void updateLastDatabaseModificationWebServices() {
+	}
 }

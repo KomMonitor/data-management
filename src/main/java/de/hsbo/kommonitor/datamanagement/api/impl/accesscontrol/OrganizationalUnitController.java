@@ -27,7 +27,7 @@ import java.util.List;
 @Controller
 public class OrganizationalUnitController extends BasePathController implements AccessControlApi {
 
-    private static Logger logger = LoggerFactory.getLogger(OrganizationalUnitController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OrganizationalUnitController.class);
 
     private final ObjectMapper objectMapper;
 
@@ -54,7 +54,7 @@ public class OrganizationalUnitController extends BasePathController implements 
     @Override
     // @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<List<OrganizationalUnitOverviewType>> getOrganizationalUnits() {
-        logger.debug("Received request to get all organizationalUnits");
+        LOG.debug("Received request to get all organizationalUnits");
 
         AuthInfoProvider authInfo = authInfoProviderFactory.createAuthInfoProvider();
         String accept = request.getHeader("Accept");
@@ -70,7 +70,7 @@ public class OrganizationalUnitController extends BasePathController implements 
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('editor')")
     public ResponseEntity<OrganizationalUnitOverviewType> getOrganizationalUnitById(String organizationalUnitId) {
-        logger.debug("Received request to get organizationalUnit with id '{}'", organizationalUnitId);
+        LOG.debug("Received request to get organizationalUnit with id '{}'", organizationalUnitId);
 
         AuthInfoProvider authInfo = authInfoProviderFactory.createAuthInfoProvider();
         String accept = request.getHeader("Accept");
@@ -90,13 +90,13 @@ public class OrganizationalUnitController extends BasePathController implements 
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
     public ResponseEntity<Void> addOrganizationalUnit(OrganizationalUnitInputType organizationalUnitData) {
-        logger.info("Received request to insert new organizationalUnit with associated Roles");
+        LOG.info("Received request to insert new organizationalUnit with associated Roles");
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
         OrganizationalUnitOverviewType persisted;
         try {
             persisted = organizationalUnitManager.addOrganizationalUnit(organizationalUnitData, provider);
-            lastModManager.updateLastDatabaseModification_accessControl();
+            lastModManager.updateLastDatabaseModificationAccessControl();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
         }
@@ -120,13 +120,13 @@ public class OrganizationalUnitController extends BasePathController implements 
     @Override public ResponseEntity<Void> updateOrganizationalUnit(
             @P("organizationalUnitId") String organizationalUnitId,
             OrganizationalUnitInputType inputData) {
-        logger.info("Received request to update new organizationalUnit with associated Roles");
+        LOG.info("Received request to update new organizationalUnit with associated Roles");
         String accept = request.getHeader("Accept");
 
         String persistedId;
         try {
             persistedId = organizationalUnitManager.updateOrganizationalUnit(inputData, organizationalUnitId);
-            lastModManager.updateLastDatabaseModification_accessControl();
+            lastModManager.updateLastDatabaseModificationAccessControl();
         } catch (Exception e1) {
             return ApiUtils.createResponseEntityFromException(e1);
         }
@@ -146,11 +146,11 @@ public class OrganizationalUnitController extends BasePathController implements 
 
     @PreAuthorize("isAuthorizedForOrganization(#organizationalUnitId)")
     @Override public ResponseEntity deleteOrganizationalUnit(@P("organizationalUnitId") String organizationalUnitId) {
-        logger.info("Received request to delete organizationalUnit and associated roles for id '{}'",
+        LOG.info("Received request to delete organizationalUnit and associated roles for id '{}'",
                     organizationalUnitId);
         try {
             boolean isDeleted = organizationalUnitManager.deleteOrganizationalUnitAndRolesById(organizationalUnitId);
-            lastModManager.updateLastDatabaseModification_accessControl();
+            lastModManager.updateLastDatabaseModificationAccessControl();
 
             if (isDeleted) {
                 return new ResponseEntity<>(HttpStatus.OK);
@@ -167,7 +167,7 @@ public class OrganizationalUnitController extends BasePathController implements 
     @Override public ResponseEntity<OrganizationalUnitPermissionOverviewType> getOrganizationalUnitPermissions(
             String organizationalUnitId,
             ResourceType resourceType) {
-        logger.info("Received request to get organizationalUnit permissions for id '{}'", organizationalUnitId);
+        LOG.info("Received request to get organizationalUnit permissions for id '{}'", organizationalUnitId);
         String accept = request.getHeader("Accept");
 
         try {
@@ -187,7 +187,7 @@ public class OrganizationalUnitController extends BasePathController implements 
     @Override
     public ResponseEntity<OrganizationalUnitRoleAuthorityType> getOrganizationalUnitRoleAuthorities(
             @P("organizationalUnitId") String organizationalUnitId) {
-        logger.info("Received request to get organizationalUnit role authorities for id '{}'", organizationalUnitId);
+        LOG.info("Received request to get organizationalUnit role authorities for id '{}'", organizationalUnitId);
         String accept = request.getHeader("Accept");
         try {
             if (accept != null && accept.contains("application/json")) {
@@ -208,7 +208,7 @@ public class OrganizationalUnitController extends BasePathController implements 
     @Override
     public ResponseEntity<OrganizationalUnitRoleDelegateType> getOrganizationalUnitRoleDelegates(
             @P("organizationalUnitId")String organizationalUnitId) {
-        logger.info("Received request to get organizationalUnit role delegates for id '{}'", organizationalUnitId);
+        LOG.info("Received request to get organizationalUnit role delegates for id '{}'", organizationalUnitId);
         String accept = request.getHeader("Accept");
         try {
             if (accept != null && accept.contains("application/json")) {
@@ -228,7 +228,7 @@ public class OrganizationalUnitController extends BasePathController implements 
     @Override
     public ResponseEntity<Void> updateRoleDelegates(@P("organizationalUnitId")String organizationalUnitId,
                                                     List<GroupAdminRolesPUTInputType> organizationalUnitData) {
-        logger.info("Received request to update organizationalUnit role delegates for id '{}'", organizationalUnitId);
+        LOG.info("Received request to update organizationalUnit role delegates for id '{}'", organizationalUnitId);
         try {
             organizationalUnitManager.updateDelegatedGroupAdminRoles(organizationalUnitId, organizationalUnitData);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -240,7 +240,7 @@ public class OrganizationalUnitController extends BasePathController implements 
     @PreAuthorize("isAuthorizedForAdminOperations()")
     @Override
     public ResponseEntity<Void> syncAllOrganizationalUnits() {
-        logger.debug("Received request to synchronize all organizationalUnits");
+        LOG.debug("Received request to synchronize all organizationalUnits");
         organizationalUnitManager.syncAllOrganizationalUnits();
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -248,7 +248,7 @@ public class OrganizationalUnitController extends BasePathController implements 
     @PreAuthorize("isAuthorizedForAdminOperations()")
     @Override
     public ResponseEntity<Void> syncOrganizationalUnit(String organizationalUnitId) {
-        logger.debug("Received request to synchronize organizationalUnit with ID '{}'.", organizationalUnitId);
+        LOG.debug("Received request to synchronize organizationalUnit with ID '{}'.", organizationalUnitId);
         try {
             organizationalUnitManager.syncOrganizationalUnit(organizationalUnitId);
             return new ResponseEntity<>(HttpStatus.OK);

@@ -410,7 +410,7 @@ public class IndicatorsManager {
         // recreate all views due to changes for spatialUnit
         recreateAllViewsForSpatialUnitById(spatialUnitId);
 
-        lastModManager.updateLastDatabaseModification_indicators();
+        lastModManager.updateLastDatabaseModificationIndicators();
 
     }
 

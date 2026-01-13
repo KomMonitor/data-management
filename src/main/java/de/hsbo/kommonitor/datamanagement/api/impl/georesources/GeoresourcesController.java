@@ -73,7 +73,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 		GeoresourceOverviewType georesourceMetadata;
 		try {
 			georesourceMetadata = georesourcesManager.addGeoresource(featureData);
-			lastModManager.updateLastDatabaseModification_georesources();
+			lastModManager.updateLastDatabaseModificationGeoresources();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
@@ -110,7 +110,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 		boolean isDeleted;
 		try {
 			isDeleted = georesourcesManager.deleteAllGeoresourceFeaturesById(georesourceId);
-			lastModManager.updateLastDatabaseModification_georesources();
+			lastModManager.updateLastDatabaseModificationGeoresources();
 
 			if (isDeleted) {
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -141,7 +141,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 		boolean isDeleted;
 		try {
 			isDeleted = georesourcesManager.deleteSingleGeoresourceFeatureRecordsByFeatureId(georesourceId, featureId);
-			lastModManager.updateLastDatabaseModification_georesources();
+			lastModManager.updateLastDatabaseModificationGeoresources();
 
 			if (isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -173,7 +173,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 		try {
 			isDeleted = georesourcesManager.deleteSingleGeoresourceFeatureRecordByRecordId(georesourceId, featureId,
 					featureRecordId);
-			lastModManager.updateLastDatabaseModification_georesources();
+			lastModManager.updateLastDatabaseModificationGeoresources();
 
 			if (isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -291,7 +291,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 		boolean isDeleted;
 		try {
 			isDeleted = georesourcesManager.deleteGeoresourceDatasetById(georesourceId);
-			lastModManager.updateLastDatabaseModification_georesources();
+			lastModManager.updateLastDatabaseModificationGeoresources();
 
 			if (isDeleted) {
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -317,7 +317,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 		boolean isDeleted;
 		try {
 			isDeleted = georesourcesManager.deleteGeoresourceFeaturesByIdAndDate(georesourceId, year, month, day);
-			lastModManager.updateLastDatabaseModification_georesources();
+			lastModManager.updateLastDatabaseModificationGeoresources();
 
 			if (isDeleted) {
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -424,7 +424,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 		LOG.info("Received request to update georesource roles for georesourceId '{}'.", georesourceId);
 		try {   
 			georesourceId = georesourcesManager.updatePermissions(permissionLevelInputType, georesourceId);
-			lastModManager.updateLastDatabaseModification_georesources();
+			lastModManager.updateLastDatabaseModificationGeoresources();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 		}
@@ -452,7 +452,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 		LOG.info("Received request to update georesource ownership for georesourceId '{}'.", georesourceId);
 		try {
 			georesourceId = georesourcesManager.updateOwnership(ownerInputType, georesourceId);
-			lastModManager.updateLastDatabaseModification_georesources();
+			lastModManager.updateLastDatabaseModificationGeoresources();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 		}
@@ -695,7 +695,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 
 		try {
 			georesourceId = georesourcesManager.updateFeatures(featureData, georesourceId);
-			lastModManager.updateLastDatabaseModification_georesources();
+			lastModManager.updateLastDatabaseModificationGeoresources();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
@@ -732,7 +732,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 
 		try {
 			georesourceId = georesourcesManager.updateMetadata(metadata, georesourceId);
-			lastModManager.updateLastDatabaseModification_georesources();
+			lastModManager.updateLastDatabaseModificationGeoresources();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
@@ -774,7 +774,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 		try {
 			georesourceId = georesourcesManager.updateFeatureRecordByRecordId(georesourceFeatureRecordData,
 					georesourceId, featureId, featureRecordId);
-			lastModManager.updateLastDatabaseModification_georesources();
+			lastModManager.updateLastDatabaseModificationGeoresources();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 

@@ -54,7 +54,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 		TopicOverviewType topic;
 		try {
 			topic = topicsManager.addTopic(topicData);
-			lastModManager.updateLastDatabaseModification_topics();
+			lastModManager.updateLastDatabaseModificationTopics();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 			
@@ -89,7 +89,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 			boolean isDeleted;
 			try {
 				isDeleted = topicsManager.deleteTopicById(topicId);
-				lastModManager.updateLastDatabaseModification_topics();
+				lastModManager.updateLastDatabaseModificationTopics();
 			
 			if(isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -109,7 +109,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 		try {
 			update = topicsManager.updateMainTopicOrder(mainGeoresourceTopicOrderArray, TopicResourceEnum.GEORESOURCE);
-			lastModManager.updateLastDatabaseModification_topics();
+			lastModManager.updateLastDatabaseModificationTopics();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 		}
@@ -129,7 +129,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 		try {
 			update = topicsManager.updateMainTopicOrder(indicatorMainTopicOrderArray, TopicResourceEnum.INDICATOR);
-			lastModManager.updateLastDatabaseModification_topics();
+			lastModManager.updateLastDatabaseModificationTopics();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 		}
@@ -149,7 +149,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 		try {
 			update = topicsManager.updateTopicOrderMode(georesourceTopicOrderMode, TopicResourceEnum.GEORESOURCE);
-			lastModManager.updateLastDatabaseModification_topics();
+			lastModManager.updateLastDatabaseModificationTopics();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 		}
@@ -169,7 +169,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 		try {
 			update = topicsManager.updateTopicOrderMode(indicatorTopicOrderMode, TopicResourceEnum.INDICATOR);
-			lastModManager.updateLastDatabaseModification_topics();
+			lastModManager.updateLastDatabaseModificationTopics();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 		}
@@ -188,7 +188,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 		try {
 			topicId = topicsManager.updateSubtopicsOrder(topicId, subtopicOrderArray);
-			lastModManager.updateLastDatabaseModification_topics();
+			lastModManager.updateLastDatabaseModificationTopics();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 		}
@@ -208,7 +208,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 		
 		try {
 			topicId = topicsManager.updateTopic(topicData, topicId);
-			lastModManager.updateLastDatabaseModification_topics();
+			lastModManager.updateLastDatabaseModificationTopics();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 

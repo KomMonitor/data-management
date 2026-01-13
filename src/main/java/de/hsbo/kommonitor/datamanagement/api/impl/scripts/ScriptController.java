@@ -66,7 +66,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 		ProcessScriptOverviewType script;
 		try {
 			script = scriptManager.addScript(processScriptData);
-			lastModManager.updateLastDatabaseModification_processScripts();
+			lastModManager.updateLastDatabaseModificationProcessScripts();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
@@ -103,7 +103,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 			boolean isDeleted;
 			try {
 				isDeleted = scriptManager.deleteScriptByIndicatorId(indicatorId);
-				lastModManager.updateLastDatabaseModification_processScripts();
+				lastModManager.updateLastDatabaseModificationProcessScripts();
 			
 			if(isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -183,7 +183,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 		 */
 		try {
 			indicatorId = scriptManager.updateScriptForIndicatorId(processScriptData, indicatorId);
-			lastModManager.updateLastDatabaseModification_processScripts();
+			lastModManager.updateLastDatabaseModificationProcessScripts();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
@@ -243,7 +243,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 			boolean isDeleted;
 			try {
 				isDeleted = scriptManager.deleteScriptByScriptId(scriptId);
-				lastModManager.updateLastDatabaseModification_processScripts();
+				lastModManager.updateLastDatabaseModificationProcessScripts();
 			
 			if(isDeleted)
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -317,7 +317,7 @@ public class ScriptController extends BasePathController implements ProcessScrip
 		 */
 		try {
 			scriptId = scriptManager.updateScriptForScriptId(processScriptData, scriptId);
-			lastModManager.updateLastDatabaseModification_processScripts();
+			lastModManager.updateLastDatabaseModificationProcessScripts();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 
