@@ -224,16 +224,18 @@ public class GeoresourcesManager {
 		entity.setNote(genericMetadata.getNote());
 		entity.setLiterature(genericMetadata.getLiterature());
 		entity.setJsonSchema(featureData.getJsonSchema());
-
-		java.util.Date lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
-		if (lastUpdate == null)
+		Date lastUpdate;
+		if (genericMetadata.getLastUpdate() == null) {
+			lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
+		} else {
 			lastUpdate = java.util.Calendar.getInstance().getTime();
+		}
 		entity.setLastUpdate(lastUpdate);
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
-		entity.setPOI(featureData.getIsPOI());
-		entity.setLOI(featureData.getIsLOI());
-		entity.setAOI(featureData.getIsAOI());
+		entity.setPOI(Boolean.TRUE.equals(featureData.getIsPOI()));
+		entity.setLOI(Boolean.TRUE.equals(featureData.getIsLOI()));
+		entity.setAOI(Boolean.TRUE.equals(featureData.getIsAOI()));
 		entity.setPoiMarkerStyle(featureData.getPoiMarkerStyle());
 		entity.setPoiMarkerText(featureData.getPoiMarkerText());
 		entity.setPoiSymbolBootstrap3Name(featureData.getPoiSymbolBootstrap3Name());
@@ -477,25 +479,27 @@ public class GeoresourcesManager {
 	}
 
 	public FeatureCollection getValidGeoresourceFeatureCollection(String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day, String simplifyGeometries, DataStore dataStore) throws Exception {
-		Calendar calender = Calendar.getInstance();
-		calender.set(year.intValue(), month.intValueExact() - 1, day.intValue());
-		java.util.Date date = calender.getTime();
-		LOG.info("Retrieving valid georesource features from Dataset with id '{}' for date '{}'", georesourceId,
-				date);
+		Date date = getDate(year, month, day);
+		LOG.info("Retrieving public valid georesource features from Dataset with id '{}' for date '{}'",
+				georesourceId, date);
 
 		String dbTableName = getGeoresourceTableName(georesourceId, null);
 		return SpatialFeatureDatabaseHandler.getValidGeoresourceFeatures(date, dataStore, dbTableName, simplifyGeometries);
 	}
 
 	public FeatureCollection getValidGeoresourceFeatureCollection(String georesourceId, BigDecimal year, BigDecimal month, BigDecimal day, String simplifyGeometries, AuthInfoProvider provider, DataStore dataStore) throws Exception {
-		Calendar calender = Calendar.getInstance();
-		calender.set(year.intValue(), month.intValueExact() - 1, day.intValue());
-		java.util.Date date = calender.getTime();
-		LOG.info("Retrieving valid georesource features from Dataset with id '{}' for date '{}'", georesourceId,
-				date);
+		Date date = getDate(year, month, day);
+		LOG.info("Retrieving valid georesource features from Dataset with id '{}' for date '{}'",
+				georesourceId, date);
 
 		String dbTableName = getGeoresourceTableName(georesourceId, provider);
 		return SpatialFeatureDatabaseHandler.getValidGeoresourceFeatures(date, dataStore, dbTableName, simplifyGeometries);
+	}
+
+	private Date getDate(BigDecimal year, BigDecimal month, BigDecimal day) {
+		Calendar calender = Calendar.getInstance();
+		calender.set(year.intValue(), month.intValueExact() - 1, day.intValue());
+		return calender.getTime();
 	}
 
 	public String getAllGeoresourceFeatures(String georesourceId, String simplifyGeometries) throws Exception {
@@ -661,7 +665,7 @@ public class GeoresourcesManager {
 			return georesourceId;
 		} else {
 			LOG.error(
-					"No georesource dataset with datasetId '{}' was found in database. Update request has no effect.",
+					"No georesource dataset with datasetId '{}' was found in database. Update georesource request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to update georesource metadata, but no dataset existes with datasetId " + georesourceId);
@@ -680,7 +684,7 @@ public class GeoresourcesManager {
 			return georesourceId;
 		} else {
             LOG.error(
-					"No georesource dataset with datasetId '{}' was found in database. Update request has no effect.",
+					"No georesource dataset with datasetId '{}' was found in database. Update permissions request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
 					"Tried to update georesource metadata, but no dataset existes with datasetId " + georesourceId);
@@ -702,8 +706,7 @@ public class GeoresourcesManager {
 		}
 	}
 
-	private void updateMetadata(GeoresourcePATCHInputType metadata, MetadataGeoresourcesEntity entity)
-			throws Exception {
+	private void updateMetadata(GeoresourcePATCHInputType metadata, MetadataGeoresourcesEntity entity) {
 		entity.setDatasetName(metadata.getDatasetName());
 
 		CommonMetadataType genericMetadata = metadata.getMetadata();
@@ -713,14 +716,18 @@ public class GeoresourcesManager {
 		entity.setDataBasis(genericMetadata.getDatabasis());
 		entity.setNote(genericMetadata.getNote());
 		entity.setLiterature(genericMetadata.getLiterature());
-
-		java.util.Date lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
+		Date lastUpdate;
+		if (genericMetadata.getLastUpdate() == null) {
+			lastUpdate = DateTimeUtil.fromLocalDate(genericMetadata.getLastUpdate());
+		} else {
+			lastUpdate = java.util.Calendar.getInstance().getTime();
+		}
         entity.setLastUpdate(lastUpdate);
 		entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
 		entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
-		entity.setPOI(metadata.getIsPOI());
-		entity.setLOI(metadata.getIsLOI());
-		entity.setAOI(metadata.getIsAOI());
+		entity.setPOI(Boolean.TRUE.equals(metadata.getIsPOI()));
+		entity.setLOI(Boolean.TRUE.equals(metadata.getIsLOI()));
+		entity.setAOI(Boolean.TRUE.equals(metadata.getIsAOI()));
 		entity.setPoiMarkerStyle(metadata.getPoiMarkerStyle());
 		entity.setPoiMarkerText(metadata.getPoiMarkerText());
 		entity.setPoiSymbolBootstrap3Name(metadata.getPoiSymbolBootstrap3Name());
@@ -798,7 +805,7 @@ public class GeoresourcesManager {
 
 		List<MetadataGeoresourcesEntity> georesourcesMetadataEntities = georesourcesMetadataRepo.findAll().stream()
 				.filter(MetadataGeoresourcesEntity::isPublic)
-				.collect(Collectors.toList());
+				.toList();
 
 		List<MetadataGeoresourcesEntity> idFilteredList = georesourcesMetadataEntities.stream()
 				.filter(g -> resourceFilterType.getIds().stream()
