@@ -2,6 +2,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.users;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataWebServicesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -36,6 +37,12 @@ public class UserInfoEntity {
             joinColumns = @JoinColumn(name="user_id",referencedColumnName="userInfoId"),
             inverseJoinColumns = @JoinColumn(name="topic_id",referencedColumnName="topicId"))
     private Collection<TopicsEntity> topicFavourites;
+
+    @ManyToMany
+    @JoinTable(name="webservices_favourites",
+            joinColumns = @JoinColumn(name="user_id",referencedColumnName="userInfoId"),
+            inverseJoinColumns = @JoinColumn(name="webservice_id",referencedColumnName="id"))
+    private Collection<MetadataWebServicesEntity> webServiceFavourites;
 
     public String getUserInfoId() {
         return userInfoId;
@@ -87,5 +94,17 @@ public class UserInfoEntity {
 
     public void removeTopicFavourite(TopicsEntity entity) {
         this.topicFavourites.remove(entity);
+    }
+
+    public Collection<MetadataWebServicesEntity> getWebServiceFavourites() {
+        return webServiceFavourites;
+    }
+
+    public void setWebServiceFavourites(Collection<MetadataWebServicesEntity> webServiceFavourites) {
+        this.webServiceFavourites = webServiceFavourites;
+    }
+
+    public void removeWebServiceFavourite(MetadataWebServicesEntity entity) {
+        this.webServiceFavourites.remove(entity);
     }
 }

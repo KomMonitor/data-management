@@ -138,4 +138,45 @@
                 referencedTableName="metadataservices"
                 validate="true"/>
     </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-15">
+        <addColumn schemaName= "public" tableName="lastmodification">
+            <column name="webservices" type="TIMESTAMP WITH TIME ZONE"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-16">
+        <createTable tableName="webservices_favourites">
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="webservice_id" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-17">
+        <addForeignKeyConstraint
+                baseColumnNames="user_id"
+                baseTableName="webservices_favourites"
+                constraintName="fk_webservices_favourites_userinfo"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="userinfoid"
+                referencedTableName="userinfo"
+                validate="true"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.2.0-18">
+        <addForeignKeyConstraint
+                baseColumnNames="webservice_id"
+                baseTableName="webservices_favourites"
+                constraintName="fk_webservices_favourites_dataset"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                referencedColumnNames="id"
+                referencedTableName="metadataservices"
+                validate="true"/>
+    </changeSet>
 </databaseChangeLog>

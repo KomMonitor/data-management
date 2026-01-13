@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.ConnectionDetailsEntity;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.ServiceResourceEnum;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.UuidGenerator;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "metadataservices")
 public class MetadataWebServicesEntity implements RestrictedEntity {
@@ -59,6 +61,17 @@ public class MetadataWebServicesEntity implements RestrictedEntity {
 
 	@Transient
 	private List<PermissionLevelType> userPermissions;
+
+	@ManyToMany(mappedBy = "webServiceFavourites")
+	private Set<UserInfoEntity> userFavorites = new HashSet<>();
+
+	public Set<UserInfoEntity> getUserFavorites() {
+		return userFavorites;
+	}
+
+	public void setUserFavorites(Set<UserInfoEntity> userFavorites) {
+		this.userFavorites = userFavorites;
+	}
 
 	public MetadataWebServicesEntity() {
 	}
