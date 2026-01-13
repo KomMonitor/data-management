@@ -3,6 +3,8 @@ package de.hsbo.kommonitor.datamanagement.api.impl.webservice;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMapper;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataWebServicesEntity;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -175,5 +177,43 @@ public class WebServiceManager {
         webServicesEntity.setPermissions(new ArrayList<>());
         webServicesRepository.saveAndFlush(webServicesEntity);
         return webServicesRepository.findById(webServicesEntity.getId());
+    }
+
+    public WebServiceOverviewType getWebServiceById(String webServiceId) throws ResourceNotFoundException {
+        return getWebServiceById(webServiceId, null);
+    }
+
+    public WebServiceOverviewType getWebServiceById(String webServiceId, AuthInfoProvider provider) throws ResourceNotFoundException {
+        LOG.info("Retrieving web service metadata for ID '{}'", webServiceId);
+
+        MetadataWebServicesEntity webServicesEntity = webServicesRepository.findById(webServiceId);
+
+        if (provider == null) {
+            if (webServicesEntity == null || !webServicesEntity.isPublic()) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", webServiceId));
+            }
+        } else {
+            if (webServicesEntity == null || !provider.checkPermissions(webServicesEntity, PermissionLevelType.VIEWER)) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", webServiceId));
+            }
+            try {
+                webServicesEntity.setUserPermissions(provider.getPermissions(webServicesEntity));
+            } catch (NoSuchElementException ex) {
+                LOG.error("No permissions found for web service '{}'", webServicesEntity.getId());
+            }
+        }
+        return WebServiceMapper.mapToSwaggerWebService(webServicesEntity);
+    }
+
+    public List<PermissionLevelType> getWebServicePermissionsById(String webServiceId, AuthInfoProvider provider) throws ResourceNotFoundException {
+        LOG.info("Retrieving web Service permissions for datasetId '{}'", webServiceId);
+
+        MetadataWebServicesEntity webServicesEntity = webServicesRepository.findById(webServiceId);
+
+        if (webServicesEntity == null || !provider.checkPermissions(webServicesEntity, PermissionLevelType.VIEWER)) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", webServiceId));
+        }
+
+        return provider.getPermissions(webServicesEntity);
     }
 }

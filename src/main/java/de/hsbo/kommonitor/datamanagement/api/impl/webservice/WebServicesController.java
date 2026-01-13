@@ -7,6 +7,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManag
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesController;
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -95,18 +96,56 @@ public class WebServicesController extends BasePathController implements WebServ
     @Override
     @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'web-service', 'viewer')")
     public ResponseEntity<WebServiceOverviewType> getWebServiceById(@P("webServiceId")String webServiceId) {
-        return null;
+        LOG.info("Received request to get web service metadata for datasetId '{}' test", webServiceId);
+        String accept = request.getHeader("Accept");
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                WebServiceOverviewType webService = webServiceManager.getWebServiceById(webServiceId, provider);
+                return new ResponseEntity<>(webService, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
     }
 
     @Override
     public ResponseEntity<List<PermissionLevelType>> getWebServicePermissionsById(String webServiceId) {
-        return null;
+        LOG.info("Received request to list access rights for web service with ID '{}'", webServiceId);
+        String accept = request.getHeader("Accept");
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                List<PermissionLevelType> permissions = webServiceManager.getWebServicePermissionsById(webServiceId, provider);
+                return new ResponseEntity<>(permissions, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
     }
 
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<List<WebServiceOverviewType>> getWebServices() {
-        return null;
+        LOG.info("Received request to get all web service metadata");
+
+        AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
+        String accept = request.getHeader("Accept");
+        try {
+            if (accept != null && accept.contains("application/json")) {
+                List<WebServiceOverviewType> webServices = webServiceManager
+                        .getAllWebServicesMetadata(provider);
+                return new ResponseEntity<>(webServices, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
     }
 
     @Override
