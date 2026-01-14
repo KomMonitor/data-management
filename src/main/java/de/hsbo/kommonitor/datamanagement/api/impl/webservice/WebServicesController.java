@@ -68,7 +68,7 @@ public class WebServicesController extends BasePathController implements WebServ
                 return ApiUtils.createResponseEntityFromException(e);
             }
 
-            return new ResponseEntity<WebServiceOverviewType>(webServiceMetadata, responseHeaders, HttpStatus.CREATED);
+            return new ResponseEntity<>(webServiceMetadata, responseHeaders, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -150,24 +150,56 @@ public class WebServicesController extends BasePathController implements WebServ
 
     @Override
     @PreAuthorize("isAuthorizedForEntity(#webServiceId, 'web-service', 'editor')")
-    public ResponseEntity<Void> updateWebServiceAsBody(@P("webServiceId")String webServiceId, WebServiceType webServiceData) {
-        return null;
-    }
+    public ResponseEntity<Void> updateWebServiceMetadataAsBody(@P("webServiceId")String webServiceId, WebServiceType metadata) {
+        LOG.info("Received request to update web service metadata for ID '{}'", webServiceId);
 
-    @Override
-    public ResponseEntity<Void> updateWebServiceMetadataAsBody(String webServiceId, WebServiceType metadata) {
-        return null;
+        try {
+            webServiceId = webServiceManager.updateMetadata(metadata, webServiceId);
+            lastModManager.updateLastDatabaseModificationWebServices();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+
+        return handleUpdateSuccessResponse(webServiceId);
     }
 
     @Override
     @PreAuthorize("isAuthorizedForEntity(#webServiceId, 'web-service', 'creator')")
     public ResponseEntity<Void> updateWebServiceOwnership(@P("webServiceId")String webServiceId, OwnerInputType ownerInputType) {
-        return null;
+        LOG.info("Received request to update web service ownership for ID '{}'.", webServiceId);
+        try {
+            webServiceId = webServiceManager.updateOwnership(ownerInputType, webServiceId);
+            lastModManager.updateLastDatabaseModificationWebServices();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+        return handleUpdateSuccessResponse(webServiceId);
     }
 
     @Override
     @PreAuthorize("isAuthorizedForEntity(#webServiceId, 'web-service', 'creator')")
     public ResponseEntity<Void> updateWebServicePermissions(@P("webServiceId")String webServiceId, PermissionLevelInputType permissionLevelInputType) {
-        return null;
+        LOG.info("Received request to update web service permissions for ID '{}'.", webServiceId);
+        try {
+            webServiceId = webServiceManager.updatePermissions(permissionLevelInputType, webServiceId);
+            lastModManager.updateLastDatabaseModificationWebServices();
+        } catch (Exception e1) {
+            return ApiUtils.createResponseEntityFromException(e1);
+        }
+        return handleUpdateSuccessResponse(webServiceId);
+    }
+
+    private ResponseEntity<Void> handleUpdateSuccessResponse(String webServiceId) {
+        if (webServiceId != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+            try {
+                responseHeaders.setLocation(new URI(webServiceId));
+            } catch (URISyntaxException e) {
+                return ApiUtils.createResponseEntityFromException(e);
+            }
+            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

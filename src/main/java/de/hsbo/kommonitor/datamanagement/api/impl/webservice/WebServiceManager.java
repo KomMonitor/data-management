@@ -162,8 +162,6 @@ public class WebServiceManager {
                 LOG.error("Error while deleting metadata entry for web services with id {}", webServiceId, e);
                 success = false;
             }
-
-
             return success;
         } else {
             LOG.error(
@@ -215,5 +213,77 @@ public class WebServiceManager {
         }
 
         return provider.getPermissions(webServicesEntity);
+    }
+
+    public String updateMetadata(WebServiceType metadata, String webServiceId) throws ResourceNotFoundException {
+        LOG.info("Trying to update web service metadata with ID '{}'", webServiceId);
+
+        if (webServicesRepository.existsById(webServiceId)) {
+            MetadataWebServicesEntity metadataEntity = webServicesRepository.findById(webServiceId);
+
+            updateMetadata(metadata, metadataEntity);
+            
+            webServicesRepository.saveAndFlush(metadataEntity);
+            return webServiceId;
+        } else {
+            LOG.error(
+                    "No web service dataset with ID '{}' was found in database. Update web service request has no effect.",
+                    webServiceId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update web service metadata, but no dataset exists with datasetId " + webServiceId);
+        }
+    }
+
+    public String updateOwnership(OwnerInputType ownerData, String webServiceId) throws ResourceNotFoundException {
+        LOG.info("Trying to update web service ownership for ID '{}'", webServiceId);
+        if (webServicesRepository.existsById(webServiceId)) {
+            MetadataWebServicesEntity metadataEntity = webServicesRepository.findById(webServiceId);
+
+            metadataEntity.setOwner(orgaManager.getOrganizationalUnitEntity(ownerData.getOwnerId()));
+
+            webServicesRepository.saveAndFlush(metadataEntity);
+            return webServiceId;
+        } else {
+            LOG.error("No web service dataset with ID '{}' was found in database. Update ownership request has no effect.", webServiceId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update web service ownership, but no dataset exists with ID " + webServiceId);
+        }
+    }
+
+    public String updatePermissions(PermissionLevelInputType permissionLevelInput, String webServiceId) throws ResourceNotFoundException {
+        LOG.info("Trying to update web service permissions for ID '{}'", webServiceId);
+        if (webServicesRepository.existsById(webServiceId)) {
+            MetadataWebServicesEntity metadataEntity = webServicesRepository.findById(webServiceId);
+
+            metadataEntity.setPermissions(permissionManager.retrievePermissions(permissionLevelInput.getPermissions()));
+            metadataEntity.setPublic(permissionLevelInput.getIsPublic());
+
+            webServicesRepository.saveAndFlush(metadataEntity);
+            return webServiceId;
+        } else {
+            LOG.error(
+                    "No web service dataset with ID '{}' was found in database. Update permissions request has no effect.",
+                    webServiceId);
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "Tried to update web service permissions, but no dataset exists with ID " + webServiceId);
+        }
+    }
+
+    private void updateMetadata(WebServiceType metadata, MetadataWebServicesEntity entity) {
+        entity.setTitle(metadata.getTitle());
+        entity.setContact(metadata.getContact());
+        entity.setTopicReference(metadata.getTopicReference());
+        entity.setDescription(metadata.getDescription());
+        entity.setNote(metadata.getNote());
+        entity.setDataSource(metadata.getDatasource());
+        entity.setDataBasis(metadata.getDatabasis());
+        entity.setServiceResource(metadata.getServiceResource());
+        if (metadata.getConnectionDetails() != null) {
+            if (entity.getConnectionDetails() instanceof WmsConnectionDetailsEntity w) {
+                w.setBaseUrl(metadata.getConnectionDetails().getBaseUrl());
+                w.setLayerName(metadata.getConnectionDetails().getLayerName());
+                entity.setConnectionDetails(w);
+            }
+        }
     }
 }

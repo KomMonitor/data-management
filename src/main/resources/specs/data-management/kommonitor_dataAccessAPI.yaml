@@ -5364,7 +5364,7 @@ paths:
         - web-services
       summary: Modify/Update the metadata of a web service
       description: Modify/Update the metadata of a web service
-      operationId: updateWebServiceAsBody
+      operationId: updateWebServiceMetadataAsBody
       parameters:
         - name: webServiceId
           in: path
@@ -5411,35 +5411,6 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: [ ]
-    patch:
-      tags:
-        - web-services
-      summary: Modify/Update the metadata of a certain web service
-      description: Modify/Update the metadata of a certain web service
-      operationId: updateWebServiceMetadataAsBody
-      parameters:
-        - name: webServiceId
-          in: path
-          description: identifier of the web service metadata entry
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: metadata input
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WebServiceType'
-        required: true
-      responses:
-        "200":
-          description: OK
-        "204":
-          description: No Content
-          content: { }
-      security:
-        - kommonitor-data-access_oauth: [ ]
-      x-codegen-request-body-name: metadata
   /web-services/{webServiceId}/permissions:
     get:
       tags:

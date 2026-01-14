@@ -687,7 +687,7 @@ public class GeoresourcesManager {
 					"No georesource dataset with datasetId '{}' was found in database. Update permissions request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to update georesource metadata, but no dataset exists with datasetId " + georesourceId);
+					"Tried to update georesource permissions, but no dataset exists with datasetId " + georesourceId);
 		}
 	}
 
