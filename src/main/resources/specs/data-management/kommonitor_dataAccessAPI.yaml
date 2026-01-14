@@ -5292,13 +5292,13 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
-  /web-services:
+  /public/web-services:
     get:
       tags:
-        - web-services
-      summary: retrieve information about available web services
-      description: retrieve information about available web services
-      operationId: getWebServices
+        - web-services-public
+      summary: retrieve information about available public web services
+      description: retrieve information about available public web services
+      operationId: getPublicWebServices
       responses:
         "200":
           description: OK
@@ -5310,39 +5310,13 @@ paths:
                   $ref: '#/components/schemas/WebServiceOverviewType'
       security:
         - kommonitor-data-access_oauth: [ ]
-    post:
-      tags:
-        - web-services
-      summary: Add a new web service
-      description: Add/Register a web service that provides georesources or indicators data
-      operationId: addWebServiceAsBody
-      requestBody:
-        description: web service metadata
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WebServiceType'
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/WebServiceOverviewType'
-        "201":
-          description: Created
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/WebServiceOverviewType'
-  /web-services/{webServiceId}:
+  /public/web-services/{webServiceId}:
     get:
       tags:
-        - web-services
-      summary: retrieve information about a certain web service
-      description: retrieve information about a certain web service
-      operationId: getWebServiceById
+        - web-services-public
+      summary: retrieve information about a certain public web service
+      description: retrieve information about a certain public web service
+      operationId: getWebPublicServiceById
       parameters:
         - name: webServiceId
           in: path
@@ -5357,134 +5331,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebServiceOverviewType'
-      security:
-        - kommonitor-data-access_oauth: [ ]
-    put:
-      tags:
-        - web-services
-      summary: Modify/Update the metadata of a web service
-      description: Modify/Update the metadata of a web service
-      operationId: updateWebServiceMetadataAsBody
-      parameters:
-        - name: webServiceId
-          in: path
-          description: identifier of the web service metadata entry
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: feature data
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WebServiceType'
-        required: true
-      responses:
-        "200":
-          description: OK
-        "201":
-          description: Created
-          content: { }
-      deprecated: false
-      security:
-        - kommonitor-data-access_oauth: [ ]
-      x-codegen-request-body-name: webServiceData
-    delete:
-      tags:
-        - web-services
-      summary: Delete the metadata of a certain web service
-      description: Delete the metadata of a certain web service
-      operationId: deleteWebServiceById
-      parameters:
-        - name: webServiceId
-          in: path
-          description: identifier of the web service metadata entry
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-        "204":
-          description: No Content
-          content: { }
-      deprecated: false
-      security:
-        - kommonitor-data-access_oauth: [ ]
-  /web-services/{webServiceId}/permissions:
-    get:
-      tags:
-        - web-services
-      summary: retrieve information about the permissions for the selected web service
-      description: retrieve information about the permissions for the selected web service
-      operationId: getWebServicePermissionsById
-      parameters:
-        - name: webServiceId
-          in: path
-          description: identifier of the web service dataset
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PermissionLevelType'
-      deprecated: false
-      security:
-        - kommonitor-data-access_oauth: [ ]
-    put:
-      tags:
-        - web-services
-      summary: update the permissions for the selected web service dataset
-      description: update the permissions for the selected web service dataset
-      operationId: updateWebServicePermissions
-      parameters:
-        - name: webServiceId
-          in: path
-          description: identifier of the web service dataset
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Web service permission level input
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PermissionLevelInputType'
-      responses:
-        "204":
-          description: No Content
-      deprecated: false
-      security:
-        - kommonitor-data-access_oauth: [ ]
-  /web-services/{webServiceId}/ownership:
-    put:
-      tags:
-        - web-services
-      summary: update the ownership for the selected web service
-      description: update the ownership for the selected web service
-      operationId: updateWebServiceOwnership
-      parameters:
-        - name: webServiceId
-          in: path
-          description: identifier of the web service dataset
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Web service ownership input
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OwnerInputType'
-      responses:
-        "204":
-          description: No Content
       security:
         - kommonitor-data-access_oauth: [ ]
   /spatial-units:
@@ -6668,6 +6514,201 @@ paths:
       security:
         - kommonitor-data-access_oauth: [ ]
       x-codegen-request-body-name: subtopicOrderArray
+  /web-services:
+    get:
+      tags:
+        - web-services
+      summary: retrieve information about available web services
+      description: retrieve information about available web services
+      operationId: getWebServices
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebServiceOverviewType'
+      security:
+        - kommonitor-data-access_oauth: [ ]
+    post:
+      tags:
+        - web-services
+      summary: Add a new web service
+      description: Add/Register a web service that provides georesources or indicators data
+      operationId: addWebServiceAsBody
+      requestBody:
+        description: web service metadata
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebServiceType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/WebServiceOverviewType'
+        "201":
+          description: Created
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/WebServiceOverviewType'
+  /web-services/{webServiceId}:
+    get:
+      tags:
+        - web-services
+      summary: retrieve information about a certain web service
+      description: retrieve information about a certain web service
+      operationId: getWebServiceById
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service metadata entry
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebServiceOverviewType'
+      security:
+        - kommonitor-data-access_oauth: [ ]
+    put:
+      tags:
+        - web-services
+      summary: Modify/Update the metadata of a web service
+      description: Modify/Update the metadata of a web service
+      operationId: updateWebServiceMetadataAsBody
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service metadata entry
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: feature data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebServiceType'
+        required: true
+      responses:
+        "200":
+          description: OK
+        "201":
+          description: Created
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+      x-codegen-request-body-name: webServiceData
+    delete:
+      tags:
+        - web-services
+      summary: Delete the metadata of a certain web service
+      description: Delete the metadata of a certain web service
+      operationId: deleteWebServiceById
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service metadata entry
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "204":
+          description: No Content
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+  /web-services/{webServiceId}/permissions:
+    get:
+      tags:
+        - web-services
+      summary: retrieve information about the permissions for the selected web service
+      description: retrieve information about the permissions for the selected web service
+      operationId: getWebServicePermissionsById
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service dataset
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PermissionLevelType'
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+    put:
+      tags:
+        - web-services
+      summary: update the permissions for the selected web service dataset
+      description: update the permissions for the selected web service dataset
+      operationId: updateWebServicePermissions
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service dataset
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Web service permission level input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionLevelInputType'
+      responses:
+        "204":
+          description: No Content
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+  /web-services/{webServiceId}/ownership:
+    put:
+      tags:
+        - web-services
+      summary: update the ownership for the selected web service
+      description: update the ownership for the selected web service
+      operationId: updateWebServiceOwnership
+      parameters:
+        - name: webServiceId
+          in: path
+          description: identifier of the web service dataset
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Web service ownership input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerInputType'
+      responses:
+        "204":
+          description: No Content
+      security:
+        - kommonitor-data-access_oauth: [ ]
 components:
   schemas:
     CommonMetadataType:
