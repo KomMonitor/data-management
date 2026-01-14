@@ -222,7 +222,7 @@ public class WebServiceManager {
             MetadataWebServicesEntity metadataEntity = webServicesRepository.findById(webServiceId);
 
             updateMetadata(metadata, metadataEntity);
-            
+
             webServicesRepository.saveAndFlush(metadataEntity);
             return webServiceId;
         } else {

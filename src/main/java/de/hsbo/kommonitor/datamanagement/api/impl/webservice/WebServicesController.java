@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.WebServicesApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
-import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesController;
-import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
