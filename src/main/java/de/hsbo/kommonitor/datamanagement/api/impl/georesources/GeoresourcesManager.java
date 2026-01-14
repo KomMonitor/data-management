@@ -668,7 +668,7 @@ public class GeoresourcesManager {
 					"No georesource dataset with datasetId '{}' was found in database. Update georesource request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to update georesource metadata, but no dataset existes with datasetId " + georesourceId);
+					"Tried to update georesource metadata, but no dataset exists with datasetId " + georesourceId);
 		}
 	}
 
@@ -687,7 +687,7 @@ public class GeoresourcesManager {
 					"No georesource dataset with datasetId '{}' was found in database. Update permissions request has no effect.",
 					georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to update georesource metadata, but no dataset existes with datasetId " + georesourceId);
+					"Tried to update georesource metadata, but no dataset exists with datasetId " + georesourceId);
 		}
 	}
 
@@ -700,9 +700,9 @@ public class GeoresourcesManager {
 			georesourcesMetadataRepo.saveAndFlush(metadataEntity);
 			return georesourceId;
 		} else {
-			LOG.error("No spatialUnit dataset with datasetId '{}' was found in database. Update request has no effect.", georesourceId);
+			LOG.error("No georesource dataset with datasetId '{}' was found in database. Update ownership request has no effect.", georesourceId);
 			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-					"Tried to update spatialUnit metadata, but no dataset existes with datasetId " + georesourceId);
+					"Tried to update georesource ownership, but no dataset exists with datasetId " + georesourceId);
 		}
 	}
 

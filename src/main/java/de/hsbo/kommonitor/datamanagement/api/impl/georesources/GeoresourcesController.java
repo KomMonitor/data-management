@@ -101,12 +101,6 @@ public class GeoresourcesController extends BasePathController implements Geores
 	public ResponseEntity<Void> deleteAllGeoresourceFeaturesById(@P("georesourceId") String georesourceId) {
 		LOG.info("Received request to delete all georesource features for datasetId '{}'", georesourceId);
 
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * delete topic with the specified id
-		 */
-
 		boolean isDeleted;
 		try {
 			isDeleted = georesourcesManager.deleteAllGeoresourceFeaturesById(georesourceId);
@@ -132,12 +126,6 @@ public class GeoresourcesController extends BasePathController implements Geores
 				"Received request to delete single georesource feature databse records for datasetId '{}' and featureId '{}'",
 				georesourceId, featureId);
 
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * delete topic with the specified id
-		 */
-
 		boolean isDeleted;
 		try {
 			isDeleted = georesourcesManager.deleteSingleGeoresourceFeatureRecordsByFeatureId(georesourceId, featureId);
@@ -162,12 +150,6 @@ public class GeoresourcesController extends BasePathController implements Geores
 		LOG.info(
 				"Received request to delete single georesource feature databse record for datasetId '{}' and featureId '{}' and recordId '{}'",
 				georesourceId, featureId, featureRecordId);
-
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * delete topic with the specified id
-		 */
 
 		boolean isDeleted;
 		try {
@@ -282,12 +264,6 @@ public class GeoresourcesController extends BasePathController implements Geores
 	public ResponseEntity<Void> deleteGeoresourceById(@P("georesourceId") String georesourceId) {
 		LOG.info("Received request to delete georesource for datasetId '{}'", georesourceId);
 
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * delete topic with the specified id
-		 */
-
 		boolean isDeleted;
 		try {
 			isDeleted = georesourcesManager.deleteGeoresourceDatasetById(georesourceId);
@@ -376,17 +352,13 @@ public class GeoresourcesController extends BasePathController implements Geores
 		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
-		/*
-		 * retrieve the user for the specified id
-		 */
+
 		try {
 			if (accept != null && accept.contains("application/json")) {
-
 				GeoresourceOverviewType georesourceMetadata = georesourcesManager
 						.getGeoresourceByDatasetId(georesourceId, provider);
 
 				return new ResponseEntity<>(georesourceMetadata, HttpStatus.OK);
-
 			} else {
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
@@ -421,27 +393,14 @@ public class GeoresourcesController extends BasePathController implements Geores
 	public ResponseEntity updateGeoresourcePermissions(
 			@P("georesourceId") String georesourceId,
 	 		PermissionLevelInputType permissionLevelInputType) {
-		LOG.info("Received request to update georesource roles for georesourceId '{}'.", georesourceId);
+		LOG.info("Received request to update georesource permissions for georesourceId '{}'.", georesourceId);
 		try {   
 			georesourceId = georesourcesManager.updatePermissions(permissionLevelInputType, georesourceId);
 			lastModManager.updateLastDatabaseModificationGeoresources();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 		}
-		if (georesourceId != null) {
-            HttpHeaders responseHeaders = new HttpHeaders();
-
-            String location = georesourceId;
-            try {
-                responseHeaders.setLocation(new URI(location));
-            } catch (URISyntaxException e) {
-                return ApiUtils.createResponseEntityFromException(e);
-            }
-            return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+		return createUpdateSuccessResponse(georesourceId);
 	}
 
 	@Override
@@ -456,19 +415,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
 		}
-		if (georesourceId != null) {
-			HttpHeaders responseHeaders = new HttpHeaders();
-
-			String location = georesourceId;
-			try {
-				responseHeaders.setLocation(new URI(location));
-			} catch (URISyntaxException e) {
-				return ApiUtils.createResponseEntityFromException(e);
-			}
-			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return createUpdateSuccessResponse(georesourceId);
 	}
 
 	@Override
@@ -488,14 +435,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 					provider);
 			String fileName = "GeoresourceFeatures_" + georesourceId + "_all.json";
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("content-disposition", "attachment; filename=" + fileName);
-			headers.add("Content-Type", "application/json; charset=utf-8");
-			byte[] JsonBytes = geoJsonFeatures.getBytes();
-
-			return ResponseEntity.ok().headers(headers)
-					.contentType(MediaType.parseMediaType("application/vnd.geo+json")).body(JsonBytes);
-
+			return createFeatureResponse(geoJsonFeatures, fileName);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
@@ -520,14 +460,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 					simplifyGeometries, provider);
 			String fileName = "GeoresourceFeatures_" + georesourceId + "_" + year + "-" + month + "-" + day + ".json";
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("content-disposition", "attachment; filename=" + fileName);
-			headers.add("Content-Type", "application/json; charset=utf-8");
-			byte[] JsonBytes = geoJsonFeatures.getBytes();
-
-			return ResponseEntity.ok().headers(headers)
-					.contentType(MediaType.parseMediaType("application/vnd.geo+json")).body(JsonBytes);
-
+			return createFeatureResponse(geoJsonFeatures, fileName);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
@@ -543,7 +476,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 
 		if (accept != null && accept.contains("application/json")) {
 
-			String jsonSchema = null;
+			String jsonSchema;
 			try {
 				jsonSchema = georesourcesManager.getJsonSchemaForDatasetName(georesourceId, provider);
 			} catch (Exception e) {
@@ -551,7 +484,6 @@ public class GeoresourcesController extends BasePathController implements Geores
 			}
 
 			return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
-
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -571,14 +503,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 					provider);
 			String fileName = "GeoresourceFeatures_" + georesourceId + "_all_withoutGeometry.json";
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("content-disposition", "attachment; filename=" + fileName);
-			headers.add("Content-Type", "application/json; charset=utf-8");
-			byte[] JsonBytes = geoJsonFeatures.getBytes();
-
-			return ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType("application/json"))
-					.body(JsonBytes);
-
+			return createFeatureResponse(geoJsonFeatures, fileName);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
@@ -602,14 +527,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 					simplifyGeometries, provider);
 			String fileName = "GeoresourceFeatures_" + georesourceId + "_all.json";
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("content-disposition", "attachment; filename=" + fileName);
-			headers.add("Content-Type", "application/json; charset=utf-8");
-			byte[] JsonBytes = geoJsonFeatures.getBytes();
-
-			return ResponseEntity.ok().headers(headers)
-					.contentType(MediaType.parseMediaType("application/vnd.geo+json")).body(JsonBytes);
-
+			return createFeatureResponse(geoJsonFeatures, fileName);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
@@ -626,8 +544,6 @@ public class GeoresourcesController extends BasePathController implements Geores
 				"Received request to get public single georesource feature record for datasetId '{}' and featureId '{}' and recordId '{}'",
 				georesourceId, featureId, featureRecordId);
 
-		String accept = request.getHeader("Accept");
-
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
 		try {
@@ -635,14 +551,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 					featureRecordId, simplifyGeometries, provider);
 			String fileName = "GeoresourceFeatures_" + georesourceId + "_all.json";
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("content-disposition", "attachment; filename=" + fileName);
-			headers.add("Content-Type", "application/json; charset=utf-8");
-			byte[] JsonBytes = geoJsonFeatures.getBytes();
-
-			return ResponseEntity.ok().headers(headers)
-					.contentType(MediaType.parseMediaType("application/vnd.geo+json")).body(JsonBytes);
-
+			return createFeatureResponse(geoJsonFeatures, fileName);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
@@ -657,7 +566,6 @@ public class GeoresourcesController extends BasePathController implements Geores
 			BigDecimal day
 			) {
 		LOG.info("Received request to get georesource features for datasetId '{}' without geometry", georesourceId);
-		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
@@ -667,14 +575,7 @@ public class GeoresourcesController extends BasePathController implements Geores
 			String fileName = "GeoresourceFeatures_" + georesourceId + "_" + year + "-" + month + "-" + day
 					+ "_withoutGeometry.json";
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("content-disposition", "attachment; filename=" + fileName);
-			headers.add("Content-Type", "application/json; charset=utf-8");
-			byte[] JsonBytes = geoJsonFeatures.getBytes();
-
-			return ResponseEntity.ok().headers(headers)
-					.contentType(MediaType.parseMediaType("application/vnd.geo+json")).body(JsonBytes);
-
+			return createFeatureResponse(geoJsonFeatures, fileName);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
@@ -687,34 +588,14 @@ public class GeoresourcesController extends BasePathController implements Geores
 			GeoresourcePUTInputType featureData) {
 		LOG.info("Received request to update georesource features for datasetId '{}'", georesourceId);
 
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * analyse input data and save it within database
-		 */
-
 		try {
 			georesourceId = georesourcesManager.updateFeatures(featureData, georesourceId);
 			lastModManager.updateLastDatabaseModificationGeoresources();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
-
 		}
 
-		if (georesourceId != null) {
-			HttpHeaders responseHeaders = new HttpHeaders();
-
-			String location = georesourceId;
-			try {
-				responseHeaders.setLocation(new URI(location));
-			} catch (URISyntaxException e) {
-				return ApiUtils.createResponseEntityFromException(e);
-			}
-
-			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return createUpdateSuccessResponse(georesourceId);
 	}
 
 	@Override
@@ -724,34 +605,14 @@ public class GeoresourcesController extends BasePathController implements Geores
 			GeoresourcePATCHInputType metadata) {
 		LOG.info("Received request to update georesource metadata for datasetId '{}'", georesourceId);
 
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * analyse input data and save it within database
-		 */
-
 		try {
 			georesourceId = georesourcesManager.updateMetadata(metadata, georesourceId);
 			lastModManager.updateLastDatabaseModificationGeoresources();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
-
 		}
 
-		if (georesourceId != null) {
-			HttpHeaders responseHeaders = new HttpHeaders();
-
-			String location = georesourceId;
-			try {
-				responseHeaders.setLocation(new URI(location));
-			} catch (URISyntaxException e) {
-				return ApiUtils.createResponseEntityFromException(e);
-			}
-
-			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return createUpdateSuccessResponse(georesourceId);
 	}
 
 	@Override
@@ -765,35 +626,39 @@ public class GeoresourcesController extends BasePathController implements Geores
 				"Received request to update single georesource feature database record for datasetId '{}' and featureId '{}' and recordId '{}'",
 				georesourceId, featureId, featureRecordId);
 
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * analyse input data and save it within database
-		 */
-
 		try {
 			georesourceId = georesourcesManager.updateFeatureRecordByRecordId(georesourceFeatureRecordData,
 					georesourceId, featureId, featureRecordId);
 			lastModManager.updateLastDatabaseModificationGeoresources();
 		} catch (Exception e1) {
 			return ApiUtils.createResponseEntityFromException(e1);
-
 		}
 
+		return createUpdateSuccessResponse(georesourceId);
+	}
+
+	private ResponseEntity<Void> createUpdateSuccessResponse(String georesourceId) {
 		if (georesourceId != null) {
 			HttpHeaders responseHeaders = new HttpHeaders();
-
-			String location = georesourceId;
 			try {
-				responseHeaders.setLocation(new URI(location));
+				responseHeaders.setLocation(new URI(georesourceId));
 			} catch (URISyntaxException e) {
 				return ApiUtils.createResponseEntityFromException(e);
 			}
-
 			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	private ResponseEntity<byte[]> createFeatureResponse(String geoJsonFeatures, String fileName) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("content-disposition", "attachment; filename=" + fileName);
+		headers.add("Content-Type", "application/json; charset=utf-8");
+		byte[] JsonBytes = geoJsonFeatures.getBytes();
+
+		return ResponseEntity.ok().headers(headers)
+				.contentType(MediaType.parseMediaType("application/vnd.geo+json")).body(JsonBytes);
 	}
 
 }
