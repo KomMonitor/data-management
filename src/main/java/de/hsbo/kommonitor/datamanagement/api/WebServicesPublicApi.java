@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-14T11:08:24.840356900+01:00[Europe/Berlin]", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-14T12:53:18.516455800+01:00[Europe/Berlin]", comments = "Generator version: 7.18.0")
 @Validated
 @Tag(name = "web-services-public", description = "the web-services-public API")
 public interface WebServicesPublicApi {

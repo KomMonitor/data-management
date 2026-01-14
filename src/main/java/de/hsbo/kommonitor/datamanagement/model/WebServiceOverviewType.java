@@ -34,7 +34,7 @@ public class WebServiceOverviewType implements Serializable {
 
   private String contact;
 
-  private @Nullable WmsConnectionInfoType connectionDetails;
+  private WmsConnectionInfoType connectionDetails;
 
   private @Nullable String databasis;
 
@@ -42,14 +42,7 @@ public class WebServiceOverviewType implements Serializable {
 
   private String description;
 
-  private Boolean isPublic;
-
   private @Nullable String note;
-
-  private String ownerId;
-
-  @Valid
-  private List<String> permissions = new ArrayList<>();
 
   private @Nullable ServiceResourceEnum serviceResource;
 
@@ -57,10 +50,17 @@ public class WebServiceOverviewType implements Serializable {
 
   private String topicReference;
 
+  private String id;
+
+  private @Nullable Boolean isPublic;
+
+  private String ownerId;
+
+  @Valid
+  private List<String> permissions = new ArrayList<>();
+
   @Valid
   private List<PermissionLevelType> userPermissions = new ArrayList<>();
-
-  private String id;
 
   public WebServiceOverviewType() {
     super();
@@ -69,15 +69,15 @@ public class WebServiceOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public WebServiceOverviewType(String contact, String datasource, String description, Boolean isPublic, String ownerId, String title, String topicReference, String id) {
+  public WebServiceOverviewType(String contact, WmsConnectionInfoType connectionDetails, String datasource, String description, String title, String topicReference, String id, String ownerId) {
     this.contact = contact;
+    this.connectionDetails = connectionDetails;
     this.datasource = datasource;
     this.description = description;
-    this.isPublic = isPublic;
-    this.ownerId = ownerId;
     this.title = title;
     this.topicReference = topicReference;
     this.id = id;
+    this.ownerId = ownerId;
   }
 
   public WebServiceOverviewType contact(String contact) {
@@ -100,7 +100,7 @@ public class WebServiceOverviewType implements Serializable {
     this.contact = contact;
   }
 
-  public WebServiceOverviewType connectionDetails(@Nullable WmsConnectionInfoType connectionDetails) {
+  public WebServiceOverviewType connectionDetails(WmsConnectionInfoType connectionDetails) {
     this.connectionDetails = connectionDetails;
     return this;
   }
@@ -109,14 +109,14 @@ public class WebServiceOverviewType implements Serializable {
    * Get connectionDetails
    * @return connectionDetails
    */
-  @Valid 
-  @Schema(name = "connectionDetails", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "connectionDetails", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("connectionDetails")
-  public @Nullable WmsConnectionInfoType getConnectionDetails() {
+  public WmsConnectionInfoType getConnectionDetails() {
     return connectionDetails;
   }
 
-  public void setConnectionDetails(@Nullable WmsConnectionInfoType connectionDetails) {
+  public void setConnectionDetails(WmsConnectionInfoType connectionDetails) {
     this.connectionDetails = connectionDetails;
   }
 
@@ -180,26 +180,6 @@ public class WebServiceOverviewType implements Serializable {
     this.description = description;
   }
 
-  public WebServiceOverviewType isPublic(Boolean isPublic) {
-    this.isPublic = isPublic;
-    return this;
-  }
-
-  /**
-   * flag whether the resource is publicly accessible
-   * @return isPublic
-   */
-  @NotNull 
-  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("isPublic")
-  public Boolean getIsPublic() {
-    return isPublic;
-  }
-
-  public void setIsPublic(Boolean isPublic) {
-    this.isPublic = isPublic;
-  }
-
   public WebServiceOverviewType note(@Nullable String note) {
     this.note = note;
     return this;
@@ -218,54 +198,6 @@ public class WebServiceOverviewType implements Serializable {
 
   public void setNote(@Nullable String note) {
     this.note = note;
-  }
-
-  public WebServiceOverviewType ownerId(String ownerId) {
-    this.ownerId = ownerId;
-    return this;
-  }
-
-  /**
-   * identifier of the owning group
-   * @return ownerId
-   */
-  @NotNull 
-  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("ownerId")
-  public String getOwnerId() {
-    return ownerId;
-  }
-
-  public void setOwnerId(String ownerId) {
-    this.ownerId = ownerId;
-  }
-
-  public WebServiceOverviewType permissions(List<String> permissions) {
-    this.permissions = permissions;
-    return this;
-  }
-
-  public WebServiceOverviewType addPermissionsItem(String permissionsItem) {
-    if (this.permissions == null) {
-      this.permissions = new ArrayList<>();
-    }
-    this.permissions.add(permissionsItem);
-    return this;
-  }
-
-  /**
-   * list of permissions on this entity
-   * @return permissions
-   */
-  
-  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("permissions")
-  public List<String> getPermissions() {
-    return permissions;
-  }
-
-  public void setPermissions(List<String> permissions) {
-    this.permissions = permissions;
   }
 
   public WebServiceOverviewType serviceResource(@Nullable ServiceResourceEnum serviceResource) {
@@ -328,6 +260,94 @@ public class WebServiceOverviewType implements Serializable {
     this.topicReference = topicReference;
   }
 
+  public WebServiceOverviewType id(String id) {
+    this.id = id;
+    return this;
+  }
+
+  /**
+   * the unique identifier of the web service
+   * @return id
+   */
+  @NotNull 
+  @Schema(name = "id", description = "the unique identifier of the web service", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("id")
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public WebServiceOverviewType isPublic(@Nullable Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the resource is publicly accessible
+   * @return isPublic
+   */
+  
+  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("isPublic")
+  public @Nullable Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  public void setIsPublic(@Nullable Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
+  public WebServiceOverviewType ownerId(String ownerId) {
+    this.ownerId = ownerId;
+    return this;
+  }
+
+  /**
+   * identifier of the owning group
+   * @return ownerId
+   */
+  @NotNull 
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("ownerId")
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
+  public WebServiceOverviewType permissions(List<String> permissions) {
+    this.permissions = permissions;
+    return this;
+  }
+
+  public WebServiceOverviewType addPermissionsItem(String permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
+    }
+    this.permissions.add(permissionsItem);
+    return this;
+  }
+
+  /**
+   * list of permissions on this entity
+   * @return permissions
+   */
+  
+  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("permissions")
+  public List<String> getPermissions() {
+    return permissions;
+  }
+
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
+  }
+
   public WebServiceOverviewType userPermissions(List<PermissionLevelType> userPermissions) {
     this.userPermissions = userPermissions;
     return this;
@@ -356,26 +376,6 @@ public class WebServiceOverviewType implements Serializable {
     this.userPermissions = userPermissions;
   }
 
-  public WebServiceOverviewType id(String id) {
-    this.id = id;
-    return this;
-  }
-
-  /**
-   * the unique identifier of the web service
-   * @return id
-   */
-  @NotNull 
-  @Schema(name = "id", description = "the unique identifier of the web service", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("id")
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -390,20 +390,20 @@ public class WebServiceOverviewType implements Serializable {
         Objects.equals(this.databasis, webServiceOverviewType.databasis) &&
         Objects.equals(this.datasource, webServiceOverviewType.datasource) &&
         Objects.equals(this.description, webServiceOverviewType.description) &&
-        Objects.equals(this.isPublic, webServiceOverviewType.isPublic) &&
         Objects.equals(this.note, webServiceOverviewType.note) &&
-        Objects.equals(this.ownerId, webServiceOverviewType.ownerId) &&
-        Objects.equals(this.permissions, webServiceOverviewType.permissions) &&
         Objects.equals(this.serviceResource, webServiceOverviewType.serviceResource) &&
         Objects.equals(this.title, webServiceOverviewType.title) &&
         Objects.equals(this.topicReference, webServiceOverviewType.topicReference) &&
-        Objects.equals(this.userPermissions, webServiceOverviewType.userPermissions) &&
-        Objects.equals(this.id, webServiceOverviewType.id);
+        Objects.equals(this.id, webServiceOverviewType.id) &&
+        Objects.equals(this.isPublic, webServiceOverviewType.isPublic) &&
+        Objects.equals(this.ownerId, webServiceOverviewType.ownerId) &&
+        Objects.equals(this.permissions, webServiceOverviewType.permissions) &&
+        Objects.equals(this.userPermissions, webServiceOverviewType.userPermissions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(contact, connectionDetails, databasis, datasource, description, isPublic, note, ownerId, permissions, serviceResource, title, topicReference, userPermissions, id);
+    return Objects.hash(contact, connectionDetails, databasis, datasource, description, note, serviceResource, title, topicReference, id, isPublic, ownerId, permissions, userPermissions);
   }
 
   @Override
@@ -415,15 +415,15 @@ public class WebServiceOverviewType implements Serializable {
     sb.append("    databasis: ").append(toIndentedString(databasis)).append("\n");
     sb.append("    datasource: ").append(toIndentedString(datasource)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("    note: ").append(toIndentedString(note)).append("\n");
-    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
-    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("    serviceResource: ").append(toIndentedString(serviceResource)).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
-    sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
+    sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
+    sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");
     sb.append("}");
     return sb.toString();
   }

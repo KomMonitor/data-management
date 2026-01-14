@@ -40,7 +40,7 @@ public class WebServiceMapper {
         return dataset;
     }
 
-    public static MetadataWebServicesEntity mapToWebServicesEntity(WebServiceType dataset) {
+    public static MetadataWebServicesEntity mapToWebServicesEntity(WebServiceCreationType dataset) {
         MetadataWebServicesEntity entity = new MetadataWebServicesEntity();
         entity.setTitle(dataset.getTitle());
         entity.setContact(dataset.getContact());

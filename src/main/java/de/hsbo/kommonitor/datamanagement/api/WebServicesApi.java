@@ -9,6 +9,7 @@ import org.springframework.lang.Nullable;
 import de.hsbo.kommonitor.datamanagement.model.OwnerInputType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelInputType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.WebServiceCreationType;
 import de.hsbo.kommonitor.datamanagement.model.WebServiceOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.WebServiceType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
@@ -35,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-14T10:09:39.707713400+01:00[Europe/Berlin]", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-14T12:53:18.516455800+01:00[Europe/Berlin]", comments = "Generator version: 7.18.0")
 @Validated
 @Tag(name = "web-services", description = "the web-services API")
 public interface WebServicesApi {
@@ -45,7 +46,7 @@ public interface WebServicesApi {
      * POST /web-services : Add a new web service
      * Add/Register a web service that provides georesources or indicators data
      *
-     * @param webServiceType web service metadata (required)
+     * @param webServiceCreationType web service metadata (required)
      * @return OK (status code 200)
      *         or Created (status code 201)
      */
@@ -70,7 +71,7 @@ public interface WebServicesApi {
         consumes = { "application/json" }
     )
     ResponseEntity<WebServiceOverviewType> addWebServiceAsBody(
-        @Parameter(name = "WebServiceType", description = "web service metadata", required = true) @Valid @RequestBody WebServiceType webServiceType
+        @Parameter(name = "WebServiceCreationType", description = "web service metadata", required = true) @Valid @RequestBody WebServiceCreationType webServiceCreationType
     );
 
 

@@ -6543,7 +6543,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WebServiceType'
+              $ref: '#/components/schemas/WebServiceCreationType'
         required: true
       responses:
         "200":
@@ -8330,9 +8330,9 @@ components:
       title: WebServiceType
       required:
         - contact
+        - connectionDetails
         - datasource
         - description
-        - isPublic
         - ownerId
         - title
         - topicReference
@@ -8355,20 +8355,9 @@ components:
         description:
           type: string
           description: description of the web service
-        isPublic:
-          type: boolean
-          description: flag whether the resource is publicly accessible
         note:
           type: string
           description: an optional note with background information about the web service
-        ownerId:
-          type: string
-          description: identifier of the owning group
-        permissions:
-          type: array
-          description: list of permissions on this entity
-          items:
-            type: string
         serviceResource:
           description: service resource indicating if the topic object corresponds to an indicator or to a georesource
           $ref: '#/components/schemas/ServiceResourceEnum'
@@ -8378,12 +8367,27 @@ components:
         topicReference:
           type: string
           description: 'id of the last topic hierarchy entity '
-        userPermissions:
-          type: array
-          description: 'list of permissions that are effective on this dataset for
-            the current user '
-          items:
-            $ref: '#/components/schemas/PermissionLevelType'
+    WebServiceCreationType:
+      title: WebServiceOverviewType
+      allOf:
+        - $ref: "#/components/schemas/WebServiceType"
+        - type: object
+          required:
+            - isPublic
+            - ownerId
+            - permissions
+          properties:
+            isPublic:
+              type: boolean
+              description: flag whether the resource is publicly accessible
+            ownerId:
+              type: string
+              description: identifier of the owning group
+            permissions:
+              type: array
+              description: list of permissions on this entity
+              items:
+                type: string
     WebServiceOverviewType:
       title: WebServiceOverviewType
       allOf:
@@ -8395,6 +8399,23 @@ components:
             id:
               type: string
               description: the unique identifier of the web service
+            isPublic:
+              type: boolean
+              description: flag whether the resource is publicly accessible
+            ownerId:
+              type: string
+              description: identifier of the owning group
+            permissions:
+              type: array
+              description: list of permissions on this entity
+              items:
+                type: string
+            userPermissions:
+              type: array
+              description: 'list of permissions that are effective on this dataset for
+                the current user '
+              items:
+                $ref: '#/components/schemas/PermissionLevelType'
     ConnectionInfoType:
       title: ConnectionInfoType
       required:

@@ -17,11 +17,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
+import org.springframework.stereotype.Controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+@Controller
 public class WebServicesController extends BasePathController implements WebServicesApi {
 
     private static Logger LOG = LoggerFactory.getLogger(WebServicesController.class);
@@ -46,8 +48,8 @@ public class WebServicesController extends BasePathController implements WebServ
 
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
-    public ResponseEntity<WebServiceOverviewType> addWebServiceAsBody(WebServiceType webServiceType) {
-        LOG.info("Received request to insert new georesource");
+    public ResponseEntity<WebServiceOverviewType> addWebServiceAsBody(WebServiceCreationType webServiceType) {
+        LOG.info("Received request to insert new web service");
 
         WebServiceOverviewType webServiceMetadata;
         try {
@@ -92,7 +94,7 @@ public class WebServicesController extends BasePathController implements WebServ
     }
 
     @Override
-    @PreAuthorize("isAuthorizedForEntity(#georesourceId, 'web-service', 'viewer')")
+    @PreAuthorize("isAuthorizedForEntity(#webServiceId, 'web-service', 'viewer')")
     public ResponseEntity<WebServiceOverviewType> getWebServiceById(@P("webServiceId")String webServiceId) {
         LOG.info("Received request to get web service metadata for datasetId '{}' test", webServiceId);
         String accept = request.getHeader("Accept");

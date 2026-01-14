@@ -3,8 +3,6 @@ package de.hsbo.kommonitor.datamanagement.api.impl.webservice;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
-import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMapper;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataWebServicesEntity;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -83,7 +81,7 @@ public class WebServiceManager {
         return georesourcesMeatadataEntities;
     }
 
-    private MetadataWebServicesEntity createMetadata(WebServiceType data) throws Exception {
+    private MetadataWebServicesEntity createMetadata(WebServiceCreationType data) throws Exception {
         LOG.info("Trying to add web service metadata entry.");
         MetadataWebServicesEntity entity = WebServiceMapper.mapToWebServicesEntity(data);
 
@@ -98,14 +96,14 @@ public class WebServiceManager {
     }
 
 
-    public WebServiceOverviewType addWebService(WebServiceType webServiceType) throws Exception {
+    public WebServiceOverviewType addWebService(WebServiceCreationType webServiceType) throws Exception {
         String metadataId = null;
         try {
             String title = webServiceType.getTitle();
             LOG.info("Trying to persist web service with title '{}'", title);
 
             if (webServicesRepository.existsByTitle(title)) {
-                MetadataWebServicesEntity existingWebService = webServicesRepository.findByTile(title);
+                MetadataWebServicesEntity existingWebService = webServicesRepository.findByTitle(title);
                 LOG.error(
                         "The web service with title '{}' already exists. Thus aborting add web service request.", title);
                 String errMsg = messageResolver.getMessage(MSG_WEBSERVICE_EXISTS_ERROR);
