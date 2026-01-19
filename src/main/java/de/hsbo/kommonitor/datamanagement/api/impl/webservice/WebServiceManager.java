@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Transactional
 @Repository
@@ -38,20 +39,36 @@ public class WebServiceManager {
     @Autowired
     private MessageResolver messageResolver;
 
-    public List<WebServiceOverviewType> getAllWebServicesMetadata() throws Exception {
+    public List<WebServiceOverviewType> getAllWebServicesMetadata(String resourceType) throws Exception {
         LOG.info("Retrieving all public web services metadata from db");
+        List<MetadataWebServicesEntity> metadataWebServicesEntities;
 
-        List<MetadataWebServicesEntity> metadataWebServicesEntities = webServicesRepository.findAll().stream()
-                .filter(MetadataWebServicesEntity::isPublic)
-                .toList();
+        if(resourceType != null) {
+            metadataWebServicesEntities = webServicesRepository.findAll().stream()
+                    .filter(MetadataWebServicesEntity::isPublic)
+                    .filter(m -> m.getServiceResource().equals(ServiceResourceEnum.fromValue(resourceType)))
+                    .toList();
+        } else {
+            metadataWebServicesEntities = webServicesRepository.findAll().stream()
+                    .filter(MetadataWebServicesEntity::isPublic)
+                    .toList();
+        }
+
+
 
         return getWebServicesOverview(metadataWebServicesEntities);
     }
 
-    public List<WebServiceOverviewType> getAllWebServicesMetadata(AuthInfoProvider provider) throws Exception {
+    public List<WebServiceOverviewType> getAllWebServicesMetadata(String resourceType, AuthInfoProvider provider) throws Exception {
         LOG.info("Retrieving secured web services metadata from db");
 
         List<MetadataWebServicesEntity> metadataWebServicesEntities =  fetchWebServicesMetadataEntities(provider);
+
+        if(resourceType != null) {
+            metadataWebServicesEntities = metadataWebServicesEntities.stream()
+                    .filter(m -> m.getServiceResource().equals(ServiceResourceEnum.fromValue(resourceType)))
+                    .toList();
+        }
 
         return getWebServicesOverview(metadataWebServicesEntities);
     }
@@ -59,7 +76,7 @@ public class WebServiceManager {
     private List<WebServiceOverviewType> getWebServicesOverview(List<MetadataWebServicesEntity> metadataWebServicesEntities) {
         List<WebServiceOverviewType> webServices = WebServiceMapper.mapToSwaggerWebServices(metadataWebServicesEntities);
         webServices.sort(Comparator.comparing(WebServiceOverviewType::getTitle));
-        return WebServiceMapper.mapToSwaggerWebServices(metadataWebServicesEntities);
+        return webServices;
     }
 
     private List<MetadataWebServicesEntity> fetchWebServicesMetadataEntities(AuthInfoProvider provider) {

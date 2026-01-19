@@ -46,7 +46,7 @@ public class MetadataWebServicesEntity implements RestrictedEntity {
 
 	private ServiceResourceEnum serviceResource = null;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "connectiondetailsid", referencedColumnName = "id")
 	private ConnectionDetailsEntity connectionDetails;
 

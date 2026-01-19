@@ -130,7 +130,7 @@ public class WebServicesController extends BasePathController implements WebServ
 
     @Override
     @PreAuthorize("hasRequiredPermissionLevel('viewer')")
-    public ResponseEntity<List<WebServiceOverviewType>> getWebServices() {
+    public ResponseEntity<List<WebServiceOverviewType>> getWebServices(String resourceType) {
         LOG.info("Received request to get all web service metadata");
 
         AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
@@ -138,7 +138,7 @@ public class WebServicesController extends BasePathController implements WebServ
         try {
             if (accept != null && accept.contains("application/json")) {
                 List<WebServiceOverviewType> webServices = webServiceManager
-                        .getAllWebServicesMetadata(provider);
+                        .getAllWebServicesMetadata(resourceType, provider);
                 return new ResponseEntity<>(webServices, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

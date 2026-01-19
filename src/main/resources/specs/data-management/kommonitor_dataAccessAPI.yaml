@@ -5299,6 +5299,17 @@ paths:
       summary: retrieve information about available public web services
       description: retrieve information about available public web services
       operationId: getPublicWebServices
+      parameters:
+        - name: resourceType
+          in: query
+          description: Controls whether only web services for indicators or georesources should be returned.
+            Supported values are ['georesource', 'indicator']
+          allowEmptyValue: true
+          schema:
+            type: string
+            enum:
+              - indicator
+              - georesource
       responses:
         "200":
           description: OK
@@ -6521,6 +6532,17 @@ paths:
       summary: retrieve information about available web services
       description: retrieve information about available web services
       operationId: getWebServices
+      parameters:
+        - name: resourceType
+          in: query
+          description: Controls whether only web services for indicators or georesources should be returned.
+            Supported values are ['georesource', 'indicator']
+          allowEmptyValue: true
+          schema:
+            type: string
+            enum:
+              - indicator
+              - georesource
       responses:
         "200":
           description: OK

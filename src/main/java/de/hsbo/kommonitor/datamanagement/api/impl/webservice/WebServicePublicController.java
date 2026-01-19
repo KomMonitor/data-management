@@ -34,13 +34,13 @@ public class WebServicePublicController extends BasePathController implements We
     }
 
     @Override
-    public ResponseEntity<List<WebServiceOverviewType>> getPublicWebServices() {
+    public ResponseEntity<List<WebServiceOverviewType>> getPublicWebServices(String resourceType) {
         LOG.info("Received request to get all public web service metadata");
 
         String accept = request.getHeader("Accept");
         try {
             if (accept != null && accept.contains("application/json")) {
-                List<WebServiceOverviewType> webServiceMetadata = webServiceManager.getAllWebServicesMetadata();
+                List<WebServiceOverviewType> webServiceMetadata = webServiceManager.getAllWebServicesMetadata(resourceType);
                 return new ResponseEntity<>(webServiceMetadata, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-14T12:53:18.516455800+01:00[Europe/Berlin]", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-01-19T12:46:05.537985700+01:00[Europe/Berlin]", comments = "Generator version: 7.18.0")
 @Validated
 @Tag(name = "web-services", description = "the web-services API")
 public interface WebServicesApi {
@@ -175,6 +175,7 @@ public interface WebServicesApi {
      * GET /web-services : retrieve information about available web services
      * retrieve information about available web services
      *
+     * @param resourceType Controls whether only web services for indicators or georesources should be returned. Supported values are [&#39;georesource&#39;, &#39;indicator&#39;] (optional)
      * @return OK (status code 200)
      */
     @Operation(
@@ -197,7 +198,7 @@ public interface WebServicesApi {
         produces = { "application/json" }
     )
     ResponseEntity<List<WebServiceOverviewType>> getWebServices(
-        
+        @Parameter(name = "resourceType", description = "Controls whether only web services for indicators or georesources should be returned. Supported values are ['georesource', 'indicator']", in = ParameterIn.QUERY) @Valid @RequestParam(value = "resourceType", required = false) @Nullable String resourceType
     );
 
 
