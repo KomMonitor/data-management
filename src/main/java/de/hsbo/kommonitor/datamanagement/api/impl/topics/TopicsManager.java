@@ -107,6 +107,9 @@ public class TopicsManager {
 
 	private boolean isAlreadyInSubtopics_byName(TopicInputType subTopicCandidate, Collection<TopicsEntity> currentSubTopics) {
 		
+		if(currentSubTopics == null || currentSubTopics.size() == 0) {
+			return false;
+		}
 		for (TopicsEntity currentSubTopic : currentSubTopics) {
 			if(currentSubTopic.getTopicName().equals(subTopicCandidate.getTopicName())) {
 				return true;
