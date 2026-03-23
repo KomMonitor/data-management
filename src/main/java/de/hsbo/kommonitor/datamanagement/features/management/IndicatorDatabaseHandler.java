@@ -77,24 +77,24 @@ public class IndicatorDatabaseHandler {
 	public static String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) throws IOException {
 
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
-
+		
 		List<Date> availableDatesForIndicator = collectIndicatorDates(indicatorValues);
-
+		
 		// sort availableDates
 		availableDatesForIndicator.sort(Comparator.comparing(date -> date));
-
+		
 		/*
-		 *
+		 * 
 		 * when a new simple feature type is created, thenth order of feature attributes is used in the exact same order
 		 * when creating the simple features themselves.
-		 *
+		 * 
 		 * hence we must make sure that for indicator dates we must inspect which feature has which date and set NULL values if any date is missing
 		 * also we should sort incoming features indicatorValues array by timestamp ascending to make sure table columns are built in ascending order.
-		 *
+		 * 
 		 */
-
-		// Create a new list using the Stream API
-
+		
+		// Create a new list using the Stream API		
+		
 		indicatorValues = sortIndicatorValuesByAvailableDates_ascending(indicatorValues, availableDatesForIndicator);
 
 		LOG.info("Create SimpleFeatureType for indicator");
@@ -137,36 +137,36 @@ public class IndicatorDatabaseHandler {
 		for (IndicatorPOSTInputTypeIndicatorValues indicatorPOSTInputTypeIndicatorValueEntry : indicatorValues) {
 			IndicatorPOSTInputTypeIndicatorValues sortedElement = new IndicatorPOSTInputTypeIndicatorValues();
 			sortedElement.setSpatialReferenceKey(indicatorPOSTInputTypeIndicatorValueEntry.getSpatialReferenceKey());
-
+			
 			// now make sure that for each availableDateForIndicator (in that order!) an indicatorValue is present (maybe NULL)
 			Map<Date, Float> availableDatesForIndicatorMap = new HashMap<Date, Float>();
 			// init map with NULL values
 			for (Date availableDate : availableDatesForIndicator) {
 				availableDatesForIndicatorMap.put(availableDate, null);
 			}
-
+			
 			// now fill actual indicator values for respective indicator dates (for each feature certain dates might be missing)
 			List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping_original = indicatorPOSTInputTypeIndicatorValueEntry.getValueMapping();
 			for (IndicatorPOSTInputTypeValueMapping valueMappingEntry_original : valueMapping_original) {
 				availableDatesForIndicatorMap.put(DateTimeUtil.fromLocalDate(valueMappingEntry_original.getTimestamp()), valueMappingEntry_original.getIndicatorValue());
 			}
-
-
+			
+			
 			// create sorted valueMapping array
 			List<IndicatorPOSTInputTypeValueMapping> valueMapping_sorted = new ArrayList<IndicatorPOSTInputTypeValueMapping>();
 			// preserve correct date order
 			for (Date availableDate : availableDatesForIndicator) {
 				IndicatorPOSTInputTypeValueMapping entry = new IndicatorPOSTInputTypeValueMapping();
 				entry.setTimestamp(DateTimeUtil.toLocalDate(availableDate));
-				entry.setIndicatorValue(availableDatesForIndicatorMap.get(availableDate));
-
+				entry.setIndicatorValue(availableDatesForIndicatorMap.get(availableDate));	
+				
 				valueMapping_sorted.add(entry);
 			}
-
+			
 			// set sorted valueMapping array for current IndicatorPOSTInputTypeIndicatorValues object, thus modifying it for further actions
 			indicatorPOSTInputTypeIndicatorValueEntry.setValueMapping(valueMapping_sorted);
 		}
-
+		
 		return indicatorValues;
 	}
 
@@ -329,7 +329,7 @@ public class IndicatorDatabaseHandler {
 			LOG.info("submitted post body included null or empty list of indicatorValues. Hence no timestamp values can be created.");
 		}
 		else{
-
+			
 			for (IndicatorPOSTInputTypeIndicatorValues indicatorValuesEntry : indicatorValues) {
 				for (IndicatorPOSTInputTypeValueMapping indicatorValueMappingEntry : indicatorValuesEntry.getValueMapping()) {
 					if (indicatorValueMappingEntry.getTimestamp() != null) {
@@ -455,7 +455,7 @@ public class IndicatorDatabaseHandler {
 
 		/*
 		 * identify all available timestamps within delivered indicatorValues list
-		 * by iterating over all elements
+		 * by iterating over all elements 
 		 */
 		List<String> additionalPropertyNamesToAddAsFloatColumns = identifyNewProperties(schema, indicatorValues);
 
@@ -603,7 +603,7 @@ public class IndicatorDatabaseHandler {
 		ADDITIONAL_PROPERTIES_WERE_SET  = false;
 		
 		List<Date> indicatorDateCandidates = collectIndicatorDates(indicatorValues);
-
+		
 		// now compare candidates to existing database schema to identify new date properties/columns
 		for (Date candidateDate : indicatorDateCandidates) {
 			String datePropertyName = createDateStringForDbProperty(candidateDate);
@@ -614,7 +614,7 @@ public class IndicatorDatabaseHandler {
 				ADDITIONAL_PROPERTIES_WERE_SET = true;
 			}
 		}
-
+		
 		return newPropertyNames;
 	}
 
