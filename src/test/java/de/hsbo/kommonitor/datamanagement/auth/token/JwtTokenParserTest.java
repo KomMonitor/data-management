@@ -10,6 +10,7 @@ import de.hsbo.kommonitor.datamanagement.auth.Group;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -19,6 +20,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import java.text.ParseException;
 import java.util.Set;
 
+@Disabled
 public class JwtTokenParserTest {
 
     // Set a JWT token for local testing purpose. Beware of committing the token!!1!
@@ -34,7 +36,6 @@ public class JwtTokenParserTest {
     }
 
     @Test
-    @Ignore
     void getOwnedRolesTest() {
         JwtTokenParser parser = new JwtTokenParser();
         Set<Group> groups = parser.getGroupMemberships(token);

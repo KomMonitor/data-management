@@ -1,6 +1,10 @@
 # Change Log
 
-## 5.1.4
+## 5.1.6
+* Adjust test class [53f9130](53f9130601309fc2858b8f1d109f5b508ebf7728)
+* Merge branch &#39;master&#39; into fix/update-features-timestamp-order-bug [fb35879](fb35879ea1c35cc6451e49f7d489fedf5b977e9d)
+* Prepare hotfix release [40a2c64](40a2c6432ec1b4fb34ddfe7d94f94075d507a316)
+* fix a bug, where on POST to topics that have one or more subtopics included in request body, subtopic handling failed when initial main entity has no prior subtopics [ac904c1](ac904c12b4fef04ae18ea8ee94aa96060e7f15e5)
 * Fix indicator name updating for joined table [3b0b9eb](3b0b9eb4a1fe1b5f7b16827ff5fe67aca4b16ce3)
 * Refine exception handling [378a542](378a542cb94b0e4985cde70d61ac2a8f70d4704b)
 * Add logs and update base run image [fb31ad6](fb31ad697044d38945a82aeb2d347c8412db141f)
