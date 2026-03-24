@@ -54,6 +54,17 @@
             <artifactId>keycloak-admin-client</artifactId>
             <version>24.0.5</version>
         </dependency>
+        <!-- RESTEasy Client & Apache Connector (Jakarta-Variante) used to proxy outgoing HTTP requests, version must be in sync with keycloak -->
+		<dependency>
+		    <groupId>org.jboss.resteasy</groupId>
+		    <artifactId>resteasy-client</artifactId>
+		    <version>6.2.7.Final</version> <!-- Passend zu Keycloak 24 -->
+		</dependency>
+<!--		<dependency>
+		    <groupId>org.jboss.resteasy</groupId>
+		    <artifactId>resteasy-client-apache-hc</artifactId>
+		    <version>6.2.7.Final</version>
+		</dependency>-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
