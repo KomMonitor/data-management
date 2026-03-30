@@ -77,10 +77,10 @@ services:
        - server.max-http-header-size=48000
        - kommonitor.roles.admin=kommonitor-creator                                 # name of the Keycloak role that is used as "administrator" role within KomMonitor granting rights to inspect all data and perform all actions. This name of this role is configurable, but must be set to the equal value within management and importer component as well as within Keycloak 
        - kommonitor.recreateAllViewsOnStartup=false         # if true, will run a recreation of all database indicator views on startup (default false)
-       - proxy.host=host.to.proxy                       # set an optional http / https proxy host
-       - proxy.port=8888                                # set an optional http / https proxy port
-       - proxy.user=optionalUsername				# set an optional http / https proxy username
-       - proxy.password=optionalPassword				# set an optional http / https proxy password
+#       - proxy.host=host.to.proxy                       # set an optional http / https proxy host
+#       - proxy.port=8888                                # set an optional http / https proxy port
+#       - proxy.user=optionalUsername                    # set an optional http / https proxy username
+#       - proxy.password=optionalPassword                # set an optional http / https proxy password
 
 # ... other KomMonitor components omitted here
 
