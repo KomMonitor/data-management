@@ -79,7 +79,7 @@ services:
        - kommonitor.recreateAllViewsOnStartup=false         # if true, will run a recreation of all database indicator views on startup (default false)
        - proxy.host=host.to.proxy                       # set an optional http / https proxy host
        - proxy.port=8888                                # set an optional http / https proxy port
-       - proxy.username=optionalUsername				# set an optional http / https proxy username
+       - proxy.user=optionalUsername				# set an optional http / https proxy username
        - proxy.password=optionalPassword				# set an optional http / https proxy password
 
 # ... other KomMonitor components omitted here
