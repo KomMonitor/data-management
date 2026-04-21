@@ -8,6 +8,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +104,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
-	public ResponseEntity<Void> updateGeoresourceMainTopicDisplayOrder(List<@Valid TopicDisplayOrderInputType> mainGeoresourceTopicOrderArray) {
+	public ResponseEntity<Void> updateGeoresourceMainTopicDisplayOrder(@Valid List<@Valid TopicDisplayOrderInputType> mainGeoresourceTopicOrderArray) {
 		LOG.info("Received request to update georesource main topic display order ");
 		boolean update;
 
@@ -123,7 +124,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
-	public ResponseEntity<Void> updateIndicatorsMainTopicDisplayOrder(List<@Valid TopicDisplayOrderInputType> indicatorMainTopicOrderArray) {
+	public ResponseEntity<Void> updateIndicatorsMainTopicDisplayOrder(@Valid List<@Valid TopicDisplayOrderInputType> indicatorMainTopicOrderArray) {
 		LOG.info("Received request to update indicator main topic display order ");
 		boolean update;
 
@@ -183,7 +184,7 @@ public class TopicsController extends BasePathController implements TopicsApi {
 
 	@Override
 	@PreAuthorize("hasRequiredPermissionLevel('creator', 'themes')")
-	public ResponseEntity updateSubtopicDisplayOrder(String topicId, List<@Valid TopicDisplayOrderInputType> subtopicOrderArray) {
+	public ResponseEntity updateSubtopicDisplayOrder(@NotNull String topicId, @Valid List<@Valid TopicDisplayOrderInputType> subtopicOrderArray) {
 		LOG.info("Received request to update subtopic display order ");
 
 		try {
