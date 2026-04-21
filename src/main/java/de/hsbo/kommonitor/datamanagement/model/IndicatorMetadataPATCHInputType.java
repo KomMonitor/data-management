@@ -5,9 +5,9 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import de.hsbo.kommonitor.datamanagement.model.AbstractClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeRefrencesToGeoresources;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
@@ -45,7 +45,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
 
   private @Nullable String datasetName;
 
-  private @Nullable DefaultClassificationMappingType defaultClassificationMapping;
+  private @Nullable AbstractClassificationMappingType defaultClassificationMapping;
 
   @Valid
   private List<@Valid RegionalReferenceValueType> regionalReferenceValues = new ArrayList<>();
@@ -179,7 +179,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
     this.datasetName = datasetName;
   }
 
-  public IndicatorMetadataPATCHInputType defaultClassificationMapping(@Nullable DefaultClassificationMappingType defaultClassificationMapping) {
+  public IndicatorMetadataPATCHInputType defaultClassificationMapping(@Nullable AbstractClassificationMappingType defaultClassificationMapping) {
     this.defaultClassificationMapping = defaultClassificationMapping;
     return this;
   }
@@ -191,11 +191,11 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   @Valid 
   @Schema(name = "defaultClassificationMapping", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("defaultClassificationMapping")
-  public @Nullable DefaultClassificationMappingType getDefaultClassificationMapping() {
+  public @Nullable AbstractClassificationMappingType getDefaultClassificationMapping() {
     return defaultClassificationMapping;
   }
 
-  public void setDefaultClassificationMapping(@Nullable DefaultClassificationMappingType defaultClassificationMapping) {
+  public void setDefaultClassificationMapping(@Nullable AbstractClassificationMappingType defaultClassificationMapping) {
     this.defaultClassificationMapping = defaultClassificationMapping;
   }
 

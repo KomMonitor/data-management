@@ -28,6 +28,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.Geoserve
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
 public class HttpConfig {
@@ -57,8 +58,8 @@ public class HttpConfig {
 	private Environment environment;
 
     @Bean
-    public ObjectMapper provideObjectMapper(){
-        ObjectMapper objectMapper = new ObjectMapper();
+    public ObjectMapper provideObjectMapper(Jackson2ObjectMapperBuilder builder){
+        ObjectMapper objectMapper = builder.build();
         objectMapper.registerModule(new JtsModule());
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);

@@ -2,9 +2,14 @@ package de.hsbo.kommonitor.datamanagement.model;
 
 import java.net.URI;
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
+import de.hsbo.kommonitor.datamanagement.model.AbstractClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.ClassificationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,12 +31,11 @@ import jakarta.annotation.Generated;
  * DefaultClassificationMappingType
  */
 
+
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
-public class DefaultClassificationMappingType implements Serializable {
+public class DefaultClassificationMappingType extends AbstractClassificationMappingType implements Serializable {
 
   private static final long serialVersionUID = 1L;
-
-  private String colorBrewerSchemeName;
 
   private BigDecimal numClasses;
 
@@ -86,31 +90,11 @@ public class DefaultClassificationMappingType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public DefaultClassificationMappingType(String colorBrewerSchemeName, BigDecimal numClasses, ClassificationMethodEnum classificationMethod, List<@Valid DefaultClassificationMappingItemType> items) {
-    this.colorBrewerSchemeName = colorBrewerSchemeName;
+  public DefaultClassificationMappingType(BigDecimal numClasses, ClassificationMethodEnum classificationMethod, List<@Valid DefaultClassificationMappingItemType> items, String colorBrewerSchemeName) {
+    super(colorBrewerSchemeName);
     this.numClasses = numClasses;
     this.classificationMethod = classificationMethod;
     this.items = items;
-  }
-
-  public DefaultClassificationMappingType colorBrewerSchemeName(String colorBrewerSchemeName) {
-    this.colorBrewerSchemeName = colorBrewerSchemeName;
-    return this;
-  }
-
-  /**
-   * the name of the colorBrewer color scheme used to define the colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.
-   * @return colorBrewerSchemeName
-   */
-  @NotNull 
-  @Schema(name = "colorBrewerSchemeName", description = "the name of the colorBrewer color scheme used to define the colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("colorBrewerSchemeName")
-  public String getColorBrewerSchemeName() {
-    return colorBrewerSchemeName;
-  }
-
-  public void setColorBrewerSchemeName(String colorBrewerSchemeName) {
-    this.colorBrewerSchemeName = colorBrewerSchemeName;
   }
 
   public DefaultClassificationMappingType numClasses(BigDecimal numClasses) {
@@ -183,6 +167,16 @@ public class DefaultClassificationMappingType implements Serializable {
     this.items = items;
   }
 
+
+  public DefaultClassificationMappingType classificationType(ClassificationTypeEnum classificationType) {
+    super.classificationType(classificationType);
+    return this;
+  }
+
+  public DefaultClassificationMappingType colorBrewerSchemeName(String colorBrewerSchemeName) {
+    super.colorBrewerSchemeName(colorBrewerSchemeName);
+    return this;
+  }
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -192,22 +186,22 @@ public class DefaultClassificationMappingType implements Serializable {
       return false;
     }
     DefaultClassificationMappingType defaultClassificationMappingType = (DefaultClassificationMappingType) o;
-    return Objects.equals(this.colorBrewerSchemeName, defaultClassificationMappingType.colorBrewerSchemeName) &&
-        Objects.equals(this.numClasses, defaultClassificationMappingType.numClasses) &&
+    return Objects.equals(this.numClasses, defaultClassificationMappingType.numClasses) &&
         Objects.equals(this.classificationMethod, defaultClassificationMappingType.classificationMethod) &&
-        Objects.equals(this.items, defaultClassificationMappingType.items);
+        Objects.equals(this.items, defaultClassificationMappingType.items) &&
+        super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(colorBrewerSchemeName, numClasses, classificationMethod, items);
+    return Objects.hash(numClasses, classificationMethod, items, super.hashCode());
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class DefaultClassificationMappingType {\n");
-    sb.append("    colorBrewerSchemeName: ").append(toIndentedString(colorBrewerSchemeName)).append("\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    numClasses: ").append(toIndentedString(numClasses)).append("\n");
     sb.append("    classificationMethod: ").append(toIndentedString(classificationMethod)).append("\n");
     sb.append("    items: ").append(toIndentedString(items)).append("\n");

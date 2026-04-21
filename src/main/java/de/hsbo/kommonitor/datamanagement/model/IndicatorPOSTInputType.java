@@ -5,9 +5,9 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import de.hsbo.kommonitor.datamanagement.model.AbstractClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeRefrencesToGeoresources;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeRefrencesToOtherIndicators;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorTypeEnum;
@@ -47,7 +47,7 @@ public class IndicatorPOSTInputType implements Serializable {
 
   private String datasetName;
 
-  private DefaultClassificationMappingType defaultClassificationMapping;
+  private AbstractClassificationMappingType defaultClassificationMapping;
 
   private @Nullable BigDecimal displayOrder;
 
@@ -91,7 +91,7 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorPOSTInputType(List<String> permissions, String characteristicValue, CreationTypeEnum creationType, String datasetName, DefaultClassificationMappingType defaultClassificationMapping, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String ownerId, String processDescription, List<String> tags, String topicReference, String unit, Boolean isPublic) {
+  public IndicatorPOSTInputType(List<String> permissions, String characteristicValue, CreationTypeEnum creationType, String datasetName, AbstractClassificationMappingType defaultClassificationMapping, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String ownerId, String processDescription, List<String> tags, String topicReference, String unit, Boolean isPublic) {
     this.permissions = permissions;
     this.characteristicValue = characteristicValue;
     this.creationType = creationType;
@@ -216,7 +216,7 @@ public class IndicatorPOSTInputType implements Serializable {
     this.datasetName = datasetName;
   }
 
-  public IndicatorPOSTInputType defaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+  public IndicatorPOSTInputType defaultClassificationMapping(AbstractClassificationMappingType defaultClassificationMapping) {
     this.defaultClassificationMapping = defaultClassificationMapping;
     return this;
   }
@@ -228,11 +228,11 @@ public class IndicatorPOSTInputType implements Serializable {
   @NotNull @Valid 
   @Schema(name = "defaultClassificationMapping", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("defaultClassificationMapping")
-  public DefaultClassificationMappingType getDefaultClassificationMapping() {
+  public AbstractClassificationMappingType getDefaultClassificationMapping() {
     return defaultClassificationMapping;
   }
 
-  public void setDefaultClassificationMapping(DefaultClassificationMappingType defaultClassificationMapping) {
+  public void setDefaultClassificationMapping(AbstractClassificationMappingType defaultClassificationMapping) {
     this.defaultClassificationMapping = defaultClassificationMapping;
   }
 

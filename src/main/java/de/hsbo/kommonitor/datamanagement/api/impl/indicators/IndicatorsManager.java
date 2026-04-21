@@ -20,6 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.AbstractMetadata;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -151,18 +152,19 @@ public class IndicatorsManager {
                     String datasetTitle = createTitleForWebService(indicatorSpatialUnitJoinEntity.getSpatialUnitName(),
                             indicatorSpatialUnitJoinEntity.getIndicatorName());
 
-                    String styleName;
-                    if (metadata.getDefaultClassificationMapping() != null
-                            && metadata.getDefaultClassificationMapping().getItems() != null
-                            && !metadata.getDefaultClassificationMapping().getItems().isEmpty()) {
-                        styleName = publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(),
-                                datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
-                    } else {
-                        DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper
-                                .extractDefaultClassificationMappingFromMetadata(metadataEntity);
-                        styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle,
-                                indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
-                    }
+                    String styleName = publishStyleForWebServices(metadata.getDefaultClassificationMapping(),
+                            datasetTitle, metadataEntity, indicatorSpatialUnitJoinEntity);
+//                    if (metadata.getDefaultClassificationMapping() != null
+//                            && metadata.getDefaultClassificationMapping().getItems() != null
+//                            && !metadata.getDefaultClassificationMapping().getItems().isEmpty()) {
+//                        styleName = publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(),
+//                                datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
+//                    } else {
+//                        DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper
+//                                .extractDefaultClassificationMappingFromMetadata(metadataEntity);
+//                        styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle,
+//                                indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
+//                    }
 
                     ogcServiceManager.publishDbLayerAsOgcService(
                             indicatorSpatialUnitJoinEntity.getIndicatorViewTableName(), datasetTitle, styleName,
@@ -344,21 +346,8 @@ public class IndicatorsManager {
         entity.setLowestSpatialUnitForComputation(metadata.getLowestSpatialUnitForComputation());
 
         if (metadata.getDefaultClassificationMapping() != null) {
-            entity.setDefaultClassificationMappingItems(metadata.getDefaultClassificationMapping().getItems());
-            entity.setColorBrewerSchemeName(metadata.getDefaultClassificationMapping().getColorBrewerSchemeName());
-            @NotNull
-    		@Valid
-    		@DecimalMin("1")
-    		@DecimalMax("9")
-    		BigDecimal numClasses = metadata.getDefaultClassificationMapping().getNumClasses();
-            if (numClasses == null) {
-            	numClasses = new BigDecimal(5);
-            }
-    		entity.setNumClasses(numClasses.intValue());
-    		entity.setClassificationMethod(metadata.getDefaultClassificationMapping().getClassificationMethod());
+            setClassificationMapping(entity, metadata.getDefaultClassificationMapping());
         }
-
-
 
         /*
          * add topic to referenced topics, but only if topic is not yet included!
@@ -523,6 +512,30 @@ public class IndicatorsManager {
                     indicatorId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
                     "Tried to update indicator features, but no dataset existes with datasetId " + indicatorId);
+        }
+    }
+
+    private String publishStyleForWebServices(AbstractClassificationMappingType classificationMapping,
+                                              String datasetTitle,
+                                              MetadataIndicatorsEntity metadataEntity,
+                                              IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity) throws Exception {
+        if (classificationMapping instanceof DefaultClassificationMappingType defaultClassificationMapping) {
+            String styleName;
+            if (classificationMapping != null
+                    && defaultClassificationMapping.getItems() != null
+                    && !defaultClassificationMapping.getItems().isEmpty()) {
+                styleName = publishDefaultStyleForWebServices(defaultClassificationMapping,
+                        datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
+            } else {
+                defaultClassificationMapping = indicatorsMapper
+                        .extractDefaultClassificationMappingFromMetadata(metadataEntity);
+                styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle,
+                        indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
+            }
+            return styleName;
+        } else {
+            throw new UnsupportedOperationException(String.format("Updating classification of type '%s' not supported.",
+                    classificationMapping.getClass().getSimpleName()));
         }
     }
 
@@ -1356,18 +1369,7 @@ public class IndicatorsManager {
         entity.setCharacteristicValue(indicatorData.getCharacteristicValue());
         entity.setLowestSpatialUnitForComputation(indicatorData.getLowestSpatialUnitForComputation());
 
-        entity.setDefaultClassificationMappingItems(indicatorData.getDefaultClassificationMapping().getItems());
-        entity.setColorBrewerSchemeName(indicatorData.getDefaultClassificationMapping().getColorBrewerSchemeName());
-        @NotNull
-		@Valid
-		@DecimalMin("1")
-		@DecimalMax("9")
-		BigDecimal numClasses = indicatorData.getDefaultClassificationMapping().getNumClasses();
-        if (numClasses == null) {
-        	numClasses = new BigDecimal(5);
-        }
-		entity.setNumClasses(numClasses.intValue());
-		entity.setClassificationMethod(indicatorData.getDefaultClassificationMapping().getClassificationMethod());
+        setClassificationMapping(entity, indicatorData.getDefaultClassificationMapping());
 
         entity.setAbbreviation(indicatorData.getAbbreviation());
         entity.setHeadlineIndicator(indicatorData.getIsHeadlineIndicator());
@@ -1400,6 +1402,30 @@ public class IndicatorsManager {
                 entity.getDatasetId());
 
         return entity;
+    }
+
+    public void setClassificationMapping(MetadataIndicatorsEntity entity, AbstractClassificationMappingType classificationMapping) {
+        if (classificationMapping instanceof DefaultClassificationMappingType defaultClassification) {
+            setClassificationMapping(entity, defaultClassification);
+        } else {
+            throw new UnsupportedOperationException(String.format("Updating classification of type '%s' not supported.",
+                    classificationMapping.getClass().getSimpleName()));
+        }
+    }
+
+    public void setClassificationMapping(MetadataIndicatorsEntity entity, DefaultClassificationMappingType classificationMapping) {
+        entity.setDefaultClassificationMappingItems(classificationMapping.getItems());
+        entity.setColorBrewerSchemeName(classificationMapping.getColorBrewerSchemeName());
+        @NotNull
+        @Valid
+        @DecimalMin("1")
+        @DecimalMax("9")
+        BigDecimal numClasses = classificationMapping.getNumClasses();
+        if (numClasses == null) {
+            numClasses = new BigDecimal(5);
+        }
+        entity.setNumClasses(numClasses.intValue());
+        entity.setClassificationMethod(classificationMapping.getClassificationMethod());
     }
 
     public List<IndicatorPropertiesWithoutGeomType> getIndicatorFeaturePropertiesWithoutGeometry(String indicatorId,
