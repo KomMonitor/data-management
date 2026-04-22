@@ -6796,6 +6796,12 @@ components:
           items:
             type: number
             format: float
+        labels:
+          type: array
+          description: array of labels for each class
+          items:
+            type: number
+            format: string
     AbstractClassificationMappingType:
       type: object
       discriminator:

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,6 +38,11 @@ public class DefaultClassificationMappingItemType {
     @Valid
     private List<Float> breaks = new ArrayList<>();
 
+    @JsonProperty("labels")
+    @Valid
+    @Nullable
+    private List<String> labels = new ArrayList<>();
+
     public DefaultClassificationMappingItemType spatialUnitId(String spatialUnitId) {
         this.spatialUnitId = spatialUnitId;
         return this;
@@ -47,7 +53,7 @@ public class DefaultClassificationMappingItemType {
      *
      * @return spatialUnit
      **/
-    @Schema(required = true, description = "spatial unit id for manual classification")
+    @Schema(description = "spatial unit id for manual classification", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull
 
     public String getSpatialUnitId() {
@@ -73,15 +79,39 @@ public class DefaultClassificationMappingItemType {
      *
      * @return breaks
      **/
-    @Schema(required = true, description = "array of numeric break values")
+    @Schema(description = "array of numeric break values", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull
-
     public List<Float> getBreaks() {
         return breaks;
     }
 
     public void setBreaks(List<Float> breaks) {
         this.breaks = breaks;
+    }
+
+
+    public DefaultClassificationMappingItemType labels(@Nullable List<String> labels) {
+        this.labels = labels;
+        return this;
+    }
+
+    public DefaultClassificationMappingItemType addLabelItem(String label) {
+        this.labels.add(label);
+        return this;
+    }
+
+    /**
+     * array of labels for each class
+     *
+     * @return labels
+     **/
+    @Schema(description = "array of labels for each class", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    public @Nullable List<String> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(@Nullable List<String> labels) {
+        this.labels = labels;
     }
 
 
@@ -95,12 +125,13 @@ public class DefaultClassificationMappingItemType {
         }
         DefaultClassificationMappingItemType defaultClassificationMappingItemType = (DefaultClassificationMappingItemType) o;
         return Objects.equals(this.spatialUnitId, defaultClassificationMappingItemType.spatialUnitId) &&
-                Objects.equals(this.breaks, defaultClassificationMappingItemType.breaks);
+                Objects.equals(this.breaks, defaultClassificationMappingItemType.breaks) &&
+                Objects.equals(this.labels, defaultClassificationMappingItemType.labels);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(spatialUnitId, breaks);
+        return Objects.hash(spatialUnitId, breaks, labels);
     }
 
     @Override
@@ -110,6 +141,7 @@ public class DefaultClassificationMappingItemType {
 
         sb.append("    spatialUnitId: ").append(toIndentedString(spatialUnitId)).append("\n");
         sb.append("    breaks: ").append(toIndentedString(breaks)).append("\n");
+        sb.append("    labels: ").append(toIndentedString(labels)).append("\n");
         sb.append("}");
         return sb.toString();
     }

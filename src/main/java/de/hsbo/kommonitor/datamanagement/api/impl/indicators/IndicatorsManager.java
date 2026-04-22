@@ -154,17 +154,6 @@ public class IndicatorsManager {
 
                     String styleName = publishStyleForWebServices(metadata.getDefaultClassificationMapping(),
                             datasetTitle, metadataEntity, indicatorSpatialUnitJoinEntity);
-//                    if (metadata.getDefaultClassificationMapping() != null
-//                            && metadata.getDefaultClassificationMapping().getItems() != null
-//                            && !metadata.getDefaultClassificationMapping().getItems().isEmpty()) {
-//                        styleName = publishDefaultStyleForWebServices(metadata.getDefaultClassificationMapping(),
-//                                datasetTitle, indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
-//                    } else {
-//                        DefaultClassificationMappingType defaultClassificationMapping = indicatorsMapper
-//                                .extractDefaultClassificationMappingFromMetadata(metadataEntity);
-//                        styleName = publishDefaultStyleForWebServices(defaultClassificationMapping, datasetTitle,
-//                                indicatorSpatialUnitJoinEntity.getIndicatorViewTableName());
-//                    }
 
                     ogcServiceManager.publishDbLayerAsOgcService(
                             indicatorSpatialUnitJoinEntity.getIndicatorViewTableName(), datasetTitle, styleName,
