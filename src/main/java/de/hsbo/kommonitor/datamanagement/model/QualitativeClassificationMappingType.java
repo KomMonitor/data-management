@@ -10,6 +10,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.AbstractClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.ClassificationTypeEnum;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
@@ -74,6 +77,16 @@ public class QualitativeClassificationMappingType extends AbstractClassification
 
   public QualitativeClassificationMappingType colorBrewerSchemeName(String colorBrewerSchemeName) {
     super.colorBrewerSchemeName(colorBrewerSchemeName);
+    return this;
+  }
+
+  public QualitativeClassificationMappingType individualColors(List<String> individualColors) {
+    super.individualColors(individualColors);
+    return this;
+  }
+
+  public QualitativeClassificationMappingType addIndividualColorsItem(String individualColorsItem) {
+    super.addIndividualColorsItem(individualColorsItem);
     return this;
   }
   @Override

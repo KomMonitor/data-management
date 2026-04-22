@@ -3,9 +3,8 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.*;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
 import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
@@ -56,6 +55,8 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
     private Collection<RegionalReferenceValueEntity> regionalReferenceValues;
 
 	private String colorBrewerSchemeName;
+
+	private List<String> individualColors;
 	
 	@Column(columnDefinition = "integer default 5")
 	private int numClasses;
@@ -193,6 +194,14 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 
 	public void setNumClasses(int numClasses) {
 		this.numClasses = numClasses;
+	}
+
+	public List<String> getIndividualColors() {
+		return individualColors;
+	}
+
+	public void setIndividualColors(List<String> individualColors) {
+		this.individualColors = individualColors;
 	}
 
 	public ClassificationMethodEnum getClassificationMethod() {

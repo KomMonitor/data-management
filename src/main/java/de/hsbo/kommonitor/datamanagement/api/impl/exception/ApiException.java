@@ -17,4 +17,8 @@ public class ApiException extends Exception{
         super(msg);
         this.code = code;
     }
+
+    public int getCode() {
+        return code;
+    }
 }

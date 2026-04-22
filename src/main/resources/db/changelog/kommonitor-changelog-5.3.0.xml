@@ -7,4 +7,11 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.3.0-2">
+        <addColumn schemaName= "public" tableName="metadataindicators">
+            <column name="individualcolors" type="VARCHAR(255) []">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.util;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.model.ErrorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,20 +16,28 @@ public class ApiUtils {
 	
 	/**
      * Creates a 'ResponseEntity' containing 'ErrorType' using a passed
-     * 'Exeption' for exception handling.
+     * 'Exception' for exception handling.
      *
      * @param exception
      * @return A 'ResponseEntity' containing an 'ErrorType' object.
      */
     public static ResponseEntity createResponseEntityFromException(Exception exception) {
         LOG.error(exception.getMessage());
+
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        if(exception instanceof ApiException apiEx) {
+            status = HttpStatus.resolve(apiEx.getCode());
+            if (status == null) {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        }
     	
     	ErrorType er = new ErrorType();
         er.setLabel(exception.getClass().getName());
         er.setMessage(exception.getMessage());
         er.setType(exception.getClass().getSimpleName());
 
-        BodyBuilder bb = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR);
+        BodyBuilder bb = ResponseEntity.status(status);
         ResponseEntity respEn = bb
                 .contentType(MediaType.parseMediaType("application/json"))
                 .body(er);

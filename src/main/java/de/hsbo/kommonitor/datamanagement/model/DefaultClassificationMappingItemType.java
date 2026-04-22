@@ -41,7 +41,7 @@ public class DefaultClassificationMappingItemType {
     @JsonProperty("labels")
     @Valid
     @Nullable
-    private List<String> labels = new ArrayList<>();
+    private List<String> labels = null;
 
     public DefaultClassificationMappingItemType spatialUnitId(String spatialUnitId) {
         this.spatialUnitId = spatialUnitId;

@@ -5,6 +5,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -20,6 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.AbstractMetadata;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
@@ -66,6 +68,8 @@ public class IndicatorsManager {
     private static final Logger LOG = LoggerFactory.getLogger(IndicatorsManager.class);
 
     private static final String MSG_INDICATOR_EXISTS_ERROR = "indicator-exists-error";
+    private static final String MSG_CLASSIFICATION_MAPPING_ITEM_ERROR = "invalid-classification-mapping-item-error";
+    private static final String MSG_CLASSIFICATION_MAPPING_ERROR = "invalid-classification-mapping-error";
 
     @Autowired
     private IndicatorsMetadataRepository indicatorsMetadataRepo;
@@ -1393,7 +1397,7 @@ public class IndicatorsManager {
         return entity;
     }
 
-    public void setClassificationMapping(MetadataIndicatorsEntity entity, AbstractClassificationMappingType classificationMapping) {
+    public void setClassificationMapping(MetadataIndicatorsEntity entity, AbstractClassificationMappingType classificationMapping) throws ApiException {
         if (classificationMapping instanceof DefaultClassificationMappingType defaultClassification) {
             setClassificationMapping(entity, defaultClassification);
         } else {
@@ -1402,7 +1406,7 @@ public class IndicatorsManager {
         }
     }
 
-    public void setClassificationMapping(MetadataIndicatorsEntity entity, DefaultClassificationMappingType classificationMapping) {
+    public void setClassificationMapping(MetadataIndicatorsEntity entity, DefaultClassificationMappingType classificationMapping) throws ApiException {
         entity.setDefaultClassificationMappingItems(classificationMapping.getItems());
         entity.setColorBrewerSchemeName(classificationMapping.getColorBrewerSchemeName());
         @NotNull
@@ -1413,9 +1417,36 @@ public class IndicatorsManager {
         if (numClasses == null) {
             numClasses = new BigDecimal(5);
         }
+
+        if (classificationMapping.getColorBrewerSchemeName().equals("INDIVIDUAL")) {
+            if (classificationMapping.getIndividualColors() == null || numClasses.intValue() != classificationMapping.getIndividualColors().size()) {
+                String errMsg = messageResolver.getMessage(MSG_CLASSIFICATION_MAPPING_ERROR);
+                throw new ApiException(400, String.format(errMsg, "individualColors"));
+            }
+            entity.setIndividualColors(classificationMapping.getIndividualColors());
+        }
+
+
+        for (DefaultClassificationMappingItemType item : classificationMapping.getItems()) {
+            checkClassificationMapping(item, numClasses.intValue());
+        }
         entity.setNumClasses(numClasses.intValue());
         entity.setClassificationMethod(classificationMapping.getClassificationMethod());
     }
+
+    private void checkClassificationMapping(DefaultClassificationMappingItemType item, int numClasses) throws ApiException {
+        if (item.getBreaks().size() != (numClasses - 1)) {
+            String errMsg = messageResolver.getMessage(MSG_CLASSIFICATION_MAPPING_ITEM_ERROR);
+            throw new ApiException(400, String.format(errMsg, "breaks", item.getSpatialUnitId()));
+        }
+        if (item.getLabels() != null && !item.getLabels().isEmpty()) {
+            if (item.getLabels().size() != numClasses) {
+                String errMsg = messageResolver.getMessage(MSG_CLASSIFICATION_MAPPING_ITEM_ERROR);
+                throw new ApiException(400, String.format(errMsg, "labels", item.getSpatialUnitId()));
+            }
+        }
+    }
+
 
     public List<IndicatorPropertiesWithoutGeomType> getIndicatorFeaturePropertiesWithoutGeometry(String indicatorId,
                                                                                                  String spatialUnitId) throws SQLException, IOException, ResourceNotFoundException {

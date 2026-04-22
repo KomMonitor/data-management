@@ -177,6 +177,16 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
     super.colorBrewerSchemeName(colorBrewerSchemeName);
     return this;
   }
+
+  public DefaultClassificationMappingType individualColors(List<String> individualColors) {
+    super.individualColors(individualColors);
+    return this;
+  }
+
+  public DefaultClassificationMappingType addIndividualColorsItem(String individualColorsItem) {
+    super.addIndividualColorsItem(individualColorsItem);
+    return this;
+  }
   @Override
   public boolean equals(Object o) {
     if (this == o) {
