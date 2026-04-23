@@ -561,7 +561,7 @@ public class GeoresourcesManager {
 
 		MetadataGeoresourcesEntity metadataEntity = georesourcesMetadataRepo.findByDatasetId(georesourceId);
 
-        if (metadataEntity == null || !metadataEntity.isPublic()) {
+        if (metadataEntity == null || Boolean.FALSE.equals(metadataEntity.isPublic())) {
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), String.format("The requested resource '%s' was not found.", georesourceId));
         }
 

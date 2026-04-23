@@ -466,7 +466,7 @@ public class IndicatorsController extends BasePathController implements Indicato
         try {
             if (accept != null && accept.contains("application/json")) {
                 List<PermissionLevelType> permissions =
-                        indicatorsManager.getIndicatortPermissionsByDatasetId(indicatorId, provider);
+                        indicatorsManager.getIndicatorPermissionsByDatasetId(indicatorId, provider);
 
                 return new ResponseEntity<>(permissions, HttpStatus.OK);
             } else {
@@ -490,7 +490,7 @@ public class IndicatorsController extends BasePathController implements Indicato
         try {
             if (accept != null && accept.contains("application/json")) {
                 List<PermissionLevelType> permissions =
-                        indicatorsManager.getIndicatortPermissionsBySpatialUnitIdAndId(indicatorId, spatialUnitId, provider);
+                        indicatorsManager.getIndicatorPermissionsBySpatialUnitIdAndId(indicatorId, spatialUnitId, provider);
 
                 return new ResponseEntity<>(permissions, HttpStatus.OK);
             } else {
