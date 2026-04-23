@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import de.hsbo.kommonitor.datamanagement.model.*;
-import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +20,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.RegionalReferenceValueEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.GeoresourceReferenceMapper;
@@ -53,9 +51,9 @@ public class IndicatorsMapper {
 	}
 
 	public List<IndicatorOverviewType> mapToSwaggerIndicators(
-			List<MetadataIndicatorsEntity> indicatorsMetadataEntity) throws Exception {
-		List<IndicatorOverviewType> indicatorOverviews = new ArrayList<IndicatorOverviewType>(
-				indicatorsMetadataEntity.size());
+			List<MetadataIndicatorsEntity> indicatorsMetadataEntity) {
+		List<IndicatorOverviewType> indicatorOverviews = new ArrayList<>(
+                indicatorsMetadataEntity.size());
 		
 		
 		/*
@@ -78,7 +76,7 @@ public class IndicatorsMapper {
 	}
 
 	private Map<String, List<IndicatorSpatialUnitJoinEntity>> getIndicatorSpatialUnitsMap() {
-		Map<String, List<IndicatorSpatialUnitJoinEntity>> indicatorSpatialUnitsMap = new HashMap<String, List<IndicatorSpatialUnitJoinEntity>>();
+		Map<String, List<IndicatorSpatialUnitJoinEntity>> indicatorSpatialUnitsMap = new HashMap<>();
 		
 		List<IndicatorSpatialUnitJoinEntity> allEntities = indicatorSpatialUnitsRepo.findAll();
 
@@ -92,7 +90,7 @@ public class IndicatorsMapper {
 				indicatorSpatialUnitsMap.put(indicatorSpatialUnitEntity.getIndicatorMetadataId(), modifiedEntry);
 			}
 			else {
-				List<IndicatorSpatialUnitJoinEntity> newEntry = new ArrayList<IndicatorSpatialUnitJoinEntity>();
+				List<IndicatorSpatialUnitJoinEntity> newEntry = new ArrayList<>();
 				newEntry.add(indicatorSpatialUnitEntity);
 				indicatorSpatialUnitsMap.put(indicatorSpatialUnitEntity.getIndicatorMetadataId(), newEntry);
 			}	
@@ -102,7 +100,7 @@ public class IndicatorsMapper {
 	}
 
 	private Map<String, List<GeoresourceReferenceType>> getGeoresourceReferencesMap() {
-		Map<String, List<GeoresourceReferenceType>> georesourceReferencesMap = new HashMap<String, List<GeoresourceReferenceType>>();
+		Map<String, List<GeoresourceReferenceType>> georesourceReferencesMap = new HashMap<>();
 		
 		List<GeoresourceReferenceEntity> allReferences = ReferenceManager.getAllGeoresourceReferences();
 		
@@ -113,7 +111,7 @@ public class IndicatorsMapper {
 				georesourceReferencesMap.put(georesourceReferenceEntity.getMainIndicatorId(), modifiedEntry);
 			}
 			else {
-				List<GeoresourceReferenceType> newEntry = new ArrayList<GeoresourceReferenceType>();
+				List<GeoresourceReferenceType> newEntry = new ArrayList<>();
 				newEntry.add(GeoresourceReferenceMapper.mapToSwaggerModel(georesourceReferenceEntity));
 				georesourceReferencesMap.put(georesourceReferenceEntity.getMainIndicatorId(), newEntry);
 			}	
@@ -123,7 +121,7 @@ public class IndicatorsMapper {
 	}
 
 	private Map<String, List<IndicatorReferenceType>> getIndicatorReferencesMap() {
-		Map<String, List<IndicatorReferenceType>> indicatorReferencesMap = new HashMap<String, List<IndicatorReferenceType>>();
+		Map<String, List<IndicatorReferenceType>> indicatorReferencesMap = new HashMap<>();
 		
 		List<IndicatorReferenceEntity> allReferences = ReferenceManager.getAllIndicatorReferences();
 		
@@ -134,7 +132,7 @@ public class IndicatorsMapper {
 				indicatorReferencesMap.put(indicatorReferenceEntity.getIndicatorId(), modifiedEntry);
 			}
 			else {
-				List<IndicatorReferenceType> newEntry = new ArrayList<IndicatorReferenceType>();
+				List<IndicatorReferenceType> newEntry = new ArrayList<>();
 				newEntry.add(IndicatorReferenceMapper.mapToSwaggerModel(indicatorReferenceEntity));
 				indicatorReferencesMap.put(indicatorReferenceEntity.getIndicatorId(), newEntry);
 			}	
@@ -144,8 +142,7 @@ public class IndicatorsMapper {
 	}
 
 	public IndicatorOverviewType mapToSwaggerIndicator(MetadataIndicatorsEntity indicatorsMetadataEntity,
-			List<IndicatorReferenceType> indicatorReferences, List<GeoresourceReferenceType> georesourcesReferences, List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnitEntities)
-			throws Exception {
+			List<IndicatorReferenceType> indicatorReferences, List<GeoresourceReferenceType> georesourcesReferences, List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnitEntities) {
 		IndicatorOverviewType indicatorOverviewType = new IndicatorOverviewType();
 
 		/*
@@ -161,7 +158,7 @@ public class IndicatorsMapper {
 		 */
 		
 		
-		if (indicatorSpatialUnitEntities != null && indicatorSpatialUnitEntities.size() > 0) {
+		if (indicatorSpatialUnitEntities != null && !indicatorSpatialUnitEntities.isEmpty()) {
 			/*
 			 * TODO FIXME quick and dirty database modification of indicator
 			 * timestamps
@@ -224,14 +221,13 @@ public class IndicatorsMapper {
 
 		indicatorOverviewType.setAbbreviation(indicatorsMetadataEntity.getAbbreviation());
 		indicatorOverviewType.setIsHeadlineIndicator(indicatorsMetadataEntity.isHeadlineIndicator());
-		;
 		indicatorOverviewType.setInterpretation(indicatorsMetadataEntity.getInterpretation());
-		indicatorOverviewType.setTags(new ArrayList<String>(indicatorsMetadataEntity.getTags()));
+		indicatorOverviewType.setTags(new ArrayList<>(indicatorsMetadataEntity.getTags()));
 		indicatorOverviewType.setPrecision(indicatorsMetadataEntity.getPrecision());
 
 		indicatorOverviewType.setUserPermissions(indicatorsMetadataEntity.getUserPermissions());
 
-		List<RegionalReferenceValueType> refValues = new ArrayList<RegionalReferenceValueType>();
+		List<RegionalReferenceValueType> refValues = new ArrayList<>();
 		for (RegionalReferenceValueEntity regionalReferenceValueEntity : indicatorsMetadataEntity.getRegionalReferenceValues()) {
 			RegionalReferenceValueType regRefValueType = new RegionalReferenceValueType();
 
@@ -260,7 +256,7 @@ public class IndicatorsMapper {
 	private List<String> getAllowedRoleIds(HashSet<PermissionEntity> roles) {
 		return roles
 				.stream()
-				.map(r -> r.getPermissionId())
+				.map(PermissionEntity::getPermissionId)
 				.collect(Collectors.toList());
 	}
 
@@ -274,9 +270,7 @@ public class IndicatorsMapper {
 
 		Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems = indicatorsMetadataEntity
 				.getDefaultClassificationMappingItems();
-		// List<DefaultClassificationMappingItemType> list = new
-		// ArrayList<>(defaultClassificationMappingItems);
-		// Collections.sort(list);
+
 		for (DefaultClassificationMappingItemType classificationItem : defaultClassificationMappingItems) {
 			defaultClassification.addItemsItem(classificationItem);
 		}
@@ -284,19 +278,19 @@ public class IndicatorsMapper {
 	}
 
 	public static AbstractClassificationMappingType extractClassificationMappingFromMetadata(MetadataIndicatorsEntity indicatorsMetadataEntity) {
-		ClassificationTypeEnum classifiationType = indicatorsMetadataEntity.getClassificationType();
+		ClassificationTypeEnum classificationType = indicatorsMetadataEntity.getClassificationType();
 
-		if (classifiationType.equals(ClassificationTypeEnum.SEQUENTIAL)) {
+		if (classificationType.equals(ClassificationTypeEnum.SEQUENTIAL)) {
 			return extractDefaultClassificationMappingFromMetadata(indicatorsMetadataEntity);
 		} else {
 			throw new UnsupportedOperationException(String.format("Classification of type '%s' not supported.",
-					classifiationType.getValue()));
+					classificationType.getValue()));
 		}
 	}
 
 	private List<OgcServicesType> generateOgcServiceOverview(
 			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnitEntities) {
-		List<OgcServicesType> ogcServices = new ArrayList<OgcServicesType>();
+		List<OgcServicesType> ogcServices = new ArrayList<>();
 
 		if  (indicatorSpatialUnitEntities == null) {
 			return ogcServices;
@@ -316,8 +310,8 @@ public class IndicatorsMapper {
 	}
 
 	private List<IndicatorSpatialUnitJoinItem> getApplicableSpatialUnitsNames(
-			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits) throws Exception {
-		List<IndicatorSpatialUnitJoinItem> indicatorSpatialUnitJoinItems = new ArrayList<IndicatorSpatialUnitJoinItem>(indicatorSpatialUnits.size());
+			List<IndicatorSpatialUnitJoinEntity> indicatorSpatialUnits) {
+		List<IndicatorSpatialUnitJoinItem> indicatorSpatialUnitJoinItems = new ArrayList<>(indicatorSpatialUnits.size());
 		for (IndicatorSpatialUnitJoinEntity indicatorSpatialUnitJoinEntity : indicatorSpatialUnits) {
 			IndicatorSpatialUnitJoinItem item = new IndicatorSpatialUnitJoinItem();
 			item.setSpatialUnitId(indicatorSpatialUnitJoinEntity.getSpatialUnitId());
@@ -336,26 +330,14 @@ public class IndicatorsMapper {
 			indicatorSpatialUnitJoinItems.add(item);
 			// This is a QAD to prevent shared collection references for spatial unit roles
 			// within the IndicatorSpatialUnitJoinEntity and the below requested MetadataSpatialUnitsEntities
-//			indicatorSpatialUnitJoinEntity.clearSpatialUnitRoles();
+			// indicatorSpatialUnitJoinEntity.clearSpatialUnitRoles();
 		}
-
-//		List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitsMetadataArray);
-//
-//		swaggerSpatialUnitsMetadata = SpatialUnitsManager.sortSpatialUnitsHierarchically(swaggerSpatialUnitsMetadata);
-
-//		List<String> orderedSpatialUnitNames = new ArrayList<String>();
-
-//		for (SpatialUnitOverviewType metadataSpatialUnitsEntity : swaggerSpatialUnitsMetadata) {
-//			if (spatialUnitsNames.contains(metadataSpatialUnitsEntity.getSpatialUnitLevel())){
-//				orderedSpatialUnitNames.add(metadataSpatialUnitsEntity.getSpatialUnitLevel());
-//			}
-//		}
 
 		return indicatorSpatialUnitJoinItems;
 	}
 
 	private List<String> getTopicNames(Collection<TopicsEntity> indicatorTopics) {
-		List<String> topicNames = new ArrayList<String>(indicatorTopics.size());
+		List<String> topicNames = new ArrayList<>(indicatorTopics.size());
 
 		for (TopicsEntity topicEntity : indicatorTopics) {
 			topicNames.add(topicEntity.getTopicName());
