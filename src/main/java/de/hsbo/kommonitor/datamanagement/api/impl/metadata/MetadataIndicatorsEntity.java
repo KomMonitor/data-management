@@ -7,6 +7,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity
 import java.util.*;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
+import de.hsbo.kommonitor.datamanagement.model.ClassificationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
 import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType.ClassificationMethodEnum;
@@ -22,21 +23,37 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 
 	@Column(columnDefinition="text")
 	private String processDescription = null;
+
 	private String unit = null;
+
 	private CreationTypeEnum creationType = null;
+
 	private IndicatorTypeEnum indicatorType = null;
+
 	private String lowestSpatialUnitForComputation = null;
+
 	private String abbreviation = null;
+
 	private boolean isHeadlineIndicator = false;
+
 	private String interpretation = null;
+
 	private String referenceDateNote = null;
+
 	private int displayOrder = 0;
-	
+
 	private String characteristicValue = null;
-	
+
 	private String topicReference = null;
 
 	private Integer precision;
+
+	private String colorBrewerSchemeName;
+
+	private List<String> individualColors;
+
+	@Enumerated(EnumType.ORDINAL)
+	private ClassificationTypeEnum classificationType = null;
 	
 	@ElementCollection
     @CollectionTable(name = "indicator_timestamps", joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"))
@@ -53,10 +70,6 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"),
 	inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid"))
     private Collection<RegionalReferenceValueEntity> regionalReferenceValues;
-
-	private String colorBrewerSchemeName;
-
-	private List<String> individualColors;
 	
 	@Column(columnDefinition = "integer default 5")
 	private int numClasses;
@@ -202,6 +215,14 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 
 	public void setIndividualColors(List<String> individualColors) {
 		this.individualColors = individualColors;
+	}
+
+	public ClassificationTypeEnum getClassificationType() {
+		return classificationType;
+	}
+
+	public void setClassificationType(ClassificationTypeEnum classificationType) {
+		this.classificationType = classificationType;
 	}
 
 	public ClassificationMethodEnum getClassificationMethod() {

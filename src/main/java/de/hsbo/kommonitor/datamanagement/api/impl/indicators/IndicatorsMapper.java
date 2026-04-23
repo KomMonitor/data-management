@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import de.hsbo.kommonitor.datamanagement.model.*;
 import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,15 +31,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.references.ReferenceM
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
-import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
-import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingItemType;
-import de.hsbo.kommonitor.datamanagement.model.DefaultClassificationMappingType;
-import de.hsbo.kommonitor.datamanagement.model.GeoresourceReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorReferenceType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorSpatialUnitJoinItem;
-import de.hsbo.kommonitor.datamanagement.model.OgcServicesType;
-import de.hsbo.kommonitor.datamanagement.model.RegionalReferenceValueType;
 
 @Component
 public class IndicatorsMapper {
@@ -226,10 +218,9 @@ public class IndicatorsMapper {
 
 		indicatorOverviewType.setOgcServices(generateOgcServiceOverview(indicatorSpatialUnitEntities));
 
-		DefaultClassificationMappingType defaultClassification = extractDefaultClassificationMappingFromMetadata(
-				indicatorsMetadataEntity);
+		AbstractClassificationMappingType classification = extractClassificationMappingFromMetadata(indicatorsMetadataEntity);
 
-		indicatorOverviewType.setDefaultClassificationMapping(defaultClassification);
+		indicatorOverviewType.setDefaultClassificationMapping(classification);
 
 		indicatorOverviewType.setAbbreviation(indicatorsMetadataEntity.getAbbreviation());
 		indicatorOverviewType.setIsHeadlineIndicator(indicatorsMetadataEntity.isHeadlineIndicator());
@@ -279,6 +270,7 @@ public class IndicatorsMapper {
 		defaultClassification.setColorBrewerSchemeName(indicatorsMetadataEntity.getColorBrewerSchemeName());
 		defaultClassification.setNumClasses(new BigDecimal(indicatorsMetadataEntity.getNumClasses()));
 		defaultClassification.setClassificationMethod(indicatorsMetadataEntity.getClassificationMethod());
+		defaultClassification.setIndividualColors(indicatorsMetadataEntity.getIndividualColors());
 
 		Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems = indicatorsMetadataEntity
 				.getDefaultClassificationMappingItems();
@@ -289,6 +281,17 @@ public class IndicatorsMapper {
 			defaultClassification.addItemsItem(classificationItem);
 		}
 		return defaultClassification;
+	}
+
+	public static AbstractClassificationMappingType extractClassificationMappingFromMetadata(MetadataIndicatorsEntity indicatorsMetadataEntity) {
+		ClassificationTypeEnum classifiationType = indicatorsMetadataEntity.getClassificationType();
+
+		if (classifiationType.equals(ClassificationTypeEnum.SEQUENTIAL)) {
+			return extractDefaultClassificationMappingFromMetadata(indicatorsMetadataEntity);
+		} else {
+			throw new UnsupportedOperationException(String.format("Classification of type '%s' not supported.",
+					classifiationType.getValue()));
+		}
 	}
 
 	private List<OgcServicesType> generateOgcServiceOverview(

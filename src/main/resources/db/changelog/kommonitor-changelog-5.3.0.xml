@@ -14,4 +14,16 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.3.0-3">
+        <addColumn schemaName= "public" tableName="metadataindicators">
+            <column name="classificationtype" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.3.0-4">
+        <update schemaName= "public" tableName="metadataindicators">
+            <column name="classificationtype" value="0"/>
+        </update>
+    </changeSet>
 </databaseChangeLog>
