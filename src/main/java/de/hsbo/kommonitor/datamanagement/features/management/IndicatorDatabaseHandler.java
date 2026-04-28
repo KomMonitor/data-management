@@ -79,7 +79,7 @@ public class IndicatorDatabaseHandler {
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 		
 		List<Date> availableDatesForIndicator = collectIndicatorDates(indicatorValues);
-		
+
 		// sort availableDates
 		availableDatesForIndicator.sort(Comparator.comparing(date -> date));
 		
@@ -99,8 +99,7 @@ public class IndicatorDatabaseHandler {
 
 		LOG.info("Create SimpleFeatureType for indicator");
 
-		SimpleFeatureType featureType = createSimpleFeatureTypeForIndicators(postGisStore,
-				availableDatesForIndicator);
+		SimpleFeatureType featureType = createSimpleFeatureTypeForIndicators(postGisStore, availableDatesForIndicator);
 
 		SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
 
@@ -329,7 +328,6 @@ public class IndicatorDatabaseHandler {
 			LOG.info("submitted post body included null or empty list of indicatorValues. Hence no timestamp values can be created.");
 		}
 		else{
-			
 			for (IndicatorPOSTInputTypeIndicatorValues indicatorValuesEntry : indicatorValues) {
 				for (IndicatorPOSTInputTypeValueMapping indicatorValueMappingEntry : indicatorValuesEntry.getValueMapping()) {
 					if (indicatorValueMappingEntry.getTimestamp() != null) {
@@ -446,7 +444,7 @@ public class IndicatorDatabaseHandler {
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 		SimpleFeatureSource featureSource = postGisStore.getFeatureSource(indicatorValueTableName);
 		SimpleFeatureType schema = featureSource.getSchema();
-		
+
 		List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = indicatorData.getIndicatorValues();
 		if(indicatorValues == null || indicatorValues.isEmpty()){
 			LOG.info("submitted put body included null or empty list of indicatorValues. Hence no changes can be applied.");
@@ -614,7 +612,6 @@ public class IndicatorDatabaseHandler {
 				ADDITIONAL_PROPERTIES_WERE_SET = true;
 			}
 		}
-		
 		return newPropertyNames;
 	}
 
@@ -909,7 +906,7 @@ public class IndicatorDatabaseHandler {
 		DataStore dataStore = DatabaseHelperUtil.getPostGisDataStore();
 
 		SimpleFeatureCollection  features = (SimpleFeatureCollection) getIndicatorsFeatures(featureViewTableName, dataStore, simplifyGeometries);
-		
+
 		int indicatorFeaturesSize = features.size();
 		LOG.info("Transform {} found indicator features to GeoJSON", indicatorFeaturesSize);
 

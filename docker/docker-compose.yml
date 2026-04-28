@@ -7,7 +7,7 @@ networks:
 
 services:
   keycloak:
-    image: kommonitor/keycloak:26.4.7-postgres
+    image: kommonitor/keycloak:26.5.5-postgres
     entrypoint: /opt/keycloak/bin/kc.sh start-dev
     container_name: keycloak
     restart: unless-stopped
@@ -28,7 +28,7 @@ services:
       - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
       - KC_DB=dev-file
   kommonitor-db:
-    image: postgis/postgis:latest
+    image: postgis/postgis:15-master
     container_name: kommonitor-db
     restart: unless-stopped
     networks:
