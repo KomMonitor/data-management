@@ -19,5 +19,9 @@ WORKDIR /app
 # Copy from the base build image
 COPY --from=build app/kommonitor-management/target/kommonitor-data-management-app.jar /app/kommonitor-data-management-app.jar
 
+# Copy the modified entrypoint.sh
+COPY --from=build --chmod=755 app/kommonitor-importer/entrypoint.sh /__cacert_entrypoint.sh
+ENTRYPOINT ["/__cacert_entrypoint.sh"]
+
 # Set the command for starting the app
 CMD ["sh", "-c", "java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=docker -jar /app/kommonitor-data-management-app.jar"]
