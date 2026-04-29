@@ -14,7 +14,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtIssuerValidator;
+import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -42,8 +47,15 @@ public class GlobalProxyConfig {
     @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri:#{null}}")
     private String jwkSetUri;
     
+    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri:#{null}}")
+    private String issuerUri;
+    
     @Bean
     public JwtDecoder jwtDecoder() {
+    	
+    	NimbusJwtDecoder jwtDecoder = null;
+    			
+    	// 1. Basis-Decoder mit der JWK-Set-URI erstellen
         if (proxyHost != null && !proxyHost.isEmpty() && proxyPort != null) {
             log.info("Configuring JwtDecoder to use Proxy {}:{}", proxyHost, proxyPort);
             
@@ -69,14 +81,35 @@ public class GlobalProxyConfig {
                     log.error("Failed to fetch JWKS from {} via Proxy. Check proxy credentials and connectivity.", jwkSetUri, e);
                 }
             });
+     
+            jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri)
+            .restOperations(restTemplate)
+            .build();           
 
-            return NimbusJwtDecoder.withJwkSetUri(jwkSetUri)
-                    .restOperations(restTemplate)
-                    .build();
+            
         }
+        else {
+        	log.info("No proxy configured for JwtDecoder. Using direct connection to {}", jwkSetUri);
+            jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
+        }
+        
+        // 2. Optionale Validatoren vorbereiten
+        OAuth2TokenValidator<Jwt> defaultValidator = JwtValidators.createDefault();
 
-        log.info("No proxy configured for JwtDecoder. Using direct connection to {}", jwkSetUri);
-        return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
+        if (issuerUri != null && !issuerUri.isEmpty()) {
+            log.info("Adding optional Issuer validation for URI: {}", issuerUri);
+            
+            // Erstellt einen kombinierten Validator (Timestamp + Issuer)
+            OAuth2TokenValidator<Jwt> issuerValidator = new JwtIssuerValidator(issuerUri);
+            OAuth2TokenValidator<Jwt> combinedValidator = new DelegatingOAuth2TokenValidator<>(defaultValidator, issuerValidator);
+            
+            jwtDecoder.setJwtValidator(combinedValidator);
+        } else {
+            log.warn("No issuer-uri provided. JWT issuer validation is DISABLED!");
+            jwtDecoder.setJwtValidator(defaultValidator);
+        }
+        
+        return jwtDecoder;        
     }
 
     @PostConstruct
