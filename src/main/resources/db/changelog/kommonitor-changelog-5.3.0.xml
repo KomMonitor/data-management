@@ -16,14 +16,79 @@
     </changeSet>
     <changeSet author="kommonitor" id="kommonitor-5.3.0-3">
         <addColumn schemaName= "public" tableName="metadataindicators">
-            <column name="classificationtype" type="SMALLINT">
-                <constraints nullable="false"/>
-            </column>
+            <column name="classificationtype" type="SMALLINT"/>
         </addColumn>
     </changeSet>
     <changeSet author="kommonitor" id="kommonitor-5.3.0-4">
         <update schemaName= "public" tableName="metadataindicators">
             <column name="classificationtype" value="0"/>
         </update>
+    </changeSet>
+    <changeSet author="kommonitor"  id="kommonitor-5.3.0-5">
+        <addNotNullConstraint columnName="classificationtype"
+                              schemaName="public"
+                              tableName="metadataindicators"/>
+    </changeSet>
+
+
+    <!--TODO Adjust to new table for qualitative classification-->
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-21">
+        <createTable tableName="defaultclassificationmappingitemtype">
+            <column name="mappingid" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="defaultclassificationmappingitemtype_pkey"/>
+            </column>
+            <column name="spatialunitid" type="VARCHAR(255)"/>
+            <column name="breaks" type="FLOAT4[]"/>
+            <column name="labels" type="VARCHAR(255) []">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-5.0.0-9">
+        <createTable tableName="metadataindicators_defaultclassification">
+            <column name="dataset_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mapping_id" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+
+    <changeSet author="kommonitor"  id="kommonitor-5.3.0-5">
+        <createTable tableName="qualitativeclassification">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_classification"/>
+            </column>
+            <column name="indicator_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color" type="VARCHAR(50)"/>
+            <column name="value" type="VARCHAR(255)"/>
+            <column name="labels" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor"  id="kommonitor-5.3.0-5">
+        <createTable tableName="classification">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_classification"/>
+            </column>
+            <column name="indicator_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color" type="VARCHAR(50)"/>
+            <column name="value" type="VARCHAR(255)"/>
+            <column name="labels" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="kommonitor"  id="kommonitor-5.3.0-5">
+        <addForeignKeyConstraint baseTableName="classification"
+                                 baseColumnNames="indicator_id"
+                                 constraintName="fk_classification_indicator"
+                                 referencedTableName="metadataindicators"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
     </changeSet>
 </databaseChangeLog>
