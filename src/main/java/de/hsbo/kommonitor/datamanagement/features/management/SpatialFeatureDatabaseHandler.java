@@ -58,6 +58,7 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.util.factory.GeoTools;
+import org.jspecify.annotations.NonNull;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.precision.GeometryPrecisionReducer;
@@ -1591,23 +1592,40 @@ public class SpatialFeatureDatabaseHandler {
 		Geometry dbGeometry = (Geometry) dbFeature.getDefaultGeometryProperty().getValue();
 		Geometry inputGeometry = (Geometry) inputFeature.getDefaultGeometryProperty().getValue();
 
-		// round input geometries to 6 decimals
-		PrecisionModel precision = new PrecisionModel(1000000);
-
-		// reduce coordinates in order to prevent topology exceptions
-		// test out, which number of decimals is appropriate
-		// for WGS 84 inputs, the 6th decimal represents decimeter precision
-		dbGeometry = GeometryPrecisionReducer.reduce(dbGeometry, precision);
-		inputGeometry = GeometryPrecisionReducer.reduce(inputGeometry, precision);
-
-		try {
-			return dbGeometry.equals(inputGeometry);
-		} catch (Exception e) {
-			LOG.error("Geometry comparison failed with error: {}", e.getMessage());
-			LOG.info("Geometry comparison will return false");
+		if (dbGeometry == null || inputGeometry == null) {
+			return dbGeometry == inputGeometry;
 		}
 
-		return false;
+		// 6 decimals precision for WGS 84 (approx. 0.11m)
+		GeometryPrecisionReducer reducer = getGeometryPrecisionReducer();
+
+		try {
+			Geometry reducedDb = reducer.reduce(dbGeometry);
+			Geometry reducedInput = reducer.reduce(inputGeometry);
+
+			// compare using topological equality
+			return reducedDb.equalsTopo(reducedInput);
+		} catch (Exception e) {
+			LOG.error("Geometry comparison failed with error: {}", e.getMessage());
+			try {
+				LOG.info("Use exact geometry comparison instead of topological comparison");
+				return dbGeometry.norm().equalsExact(inputGeometry.norm(), 1e-6);
+			} catch (Exception ex) {
+				LOG.error("All geometry comparison methods failed: {}", ex.getMessage());
+				return false;
+			}
+
+		}
+	}
+
+	private static @NonNull GeometryPrecisionReducer getGeometryPrecisionReducer() {
+		PrecisionModel precisionModel = new PrecisionModel(1000000);
+		GeometryPrecisionReducer reducer = new GeometryPrecisionReducer(precisionModel);
+		// Removes polygons that become too small and prevents "Reduction failed"
+		reducer.setRemoveCollapsedComponents(true);
+ 		// Just round coordinates without rebuilding topology
+		reducer.setPointwise(true);
+		return reducer;
 	}
 
 	private static Filter createFilterForUniqueFeatureId(FilterFactory ff, Feature correspondingDbFeature) {
