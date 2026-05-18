@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.AbstractClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.ClassificationTypeEnum;
+import de.hsbo.kommonitor.datamanagement.model.QualitativeClassificationMappingItemType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +36,8 @@ public class QualitativeClassificationMappingType extends AbstractClassification
 
   private static final long serialVersionUID = 1L;
 
-  private String testProp;
+  @Valid
+  private List<@Valid QualitativeClassificationMappingItemType> items = new ArrayList<>();
 
   public QualitativeClassificationMappingType() {
     super();
@@ -44,29 +46,37 @@ public class QualitativeClassificationMappingType extends AbstractClassification
   /**
    * Constructor with only required parameters
    */
-  public QualitativeClassificationMappingType(String testProp, String colorBrewerSchemeName) {
+  public QualitativeClassificationMappingType(List<@Valid QualitativeClassificationMappingItemType> items, String colorBrewerSchemeName) {
     super(colorBrewerSchemeName);
-    this.testProp = testProp;
+    this.items = items;
   }
 
-  public QualitativeClassificationMappingType testProp(String testProp) {
-    this.testProp = testProp;
+  public QualitativeClassificationMappingType items(List<@Valid QualitativeClassificationMappingItemType> items) {
+    this.items = items;
+    return this;
+  }
+
+  public QualitativeClassificationMappingType addItemsItem(QualitativeClassificationMappingItemType itemsItem) {
+    if (this.items == null) {
+      this.items = new ArrayList<>();
+    }
+    this.items.add(itemsItem);
     return this;
   }
 
   /**
-   * Prop for testing
-   * @return testProp
+   * Array of classification mapping items. Each item holds categorical data as well as its color and label mappings for a certain spatial unit.
+   * @return items
    */
-  @NotNull 
-  @Schema(name = "testProp", description = "Prop for testing", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("testProp")
-  public String getTestProp() {
-    return testProp;
+  @NotNull @Valid 
+  @Schema(name = "items", description = "Array of classification mapping items. Each item holds categorical data as well as its color and label mappings for a certain spatial unit.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("items")
+  public List<@Valid QualitativeClassificationMappingItemType> getItems() {
+    return items;
   }
 
-  public void setTestProp(String testProp) {
-    this.testProp = testProp;
+  public void setItems(List<@Valid QualitativeClassificationMappingItemType> items) {
+    this.items = items;
   }
 
 
@@ -79,16 +89,6 @@ public class QualitativeClassificationMappingType extends AbstractClassification
     super.colorBrewerSchemeName(colorBrewerSchemeName);
     return this;
   }
-
-  public QualitativeClassificationMappingType individualColors(List<String> individualColors) {
-    super.individualColors(individualColors);
-    return this;
-  }
-
-  public QualitativeClassificationMappingType addIndividualColorsItem(String individualColorsItem) {
-    super.addIndividualColorsItem(individualColorsItem);
-    return this;
-  }
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -98,13 +98,13 @@ public class QualitativeClassificationMappingType extends AbstractClassification
       return false;
     }
     QualitativeClassificationMappingType qualitativeClassificationMappingType = (QualitativeClassificationMappingType) o;
-    return Objects.equals(this.testProp, qualitativeClassificationMappingType.testProp) &&
+    return Objects.equals(this.items, qualitativeClassificationMappingType.items) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(testProp, super.hashCode());
+    return Objects.hash(items, super.hashCode());
   }
 
   @Override
@@ -112,7 +112,7 @@ public class QualitativeClassificationMappingType extends AbstractClassification
     StringBuilder sb = new StringBuilder();
     sb.append("class QualitativeClassificationMappingType {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    testProp: ").append(toIndentedString(testProp)).append("\n");
+    sb.append("    items: ").append(toIndentedString(items)).append("\n");
     sb.append("}");
     return sb.toString();
   }

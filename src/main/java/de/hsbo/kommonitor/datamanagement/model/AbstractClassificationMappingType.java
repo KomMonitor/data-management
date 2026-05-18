@@ -9,9 +9,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.ClassificationTypeEnum;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
@@ -46,9 +43,6 @@ public class AbstractClassificationMappingType implements Serializable {
   private @Nullable ClassificationTypeEnum classificationType;
 
   private String colorBrewerSchemeName;
-
-  @Valid
-  private List<String> individualColors = new ArrayList<>();
 
   public AbstractClassificationMappingType() {
     super();
@@ -101,34 +95,6 @@ public class AbstractClassificationMappingType implements Serializable {
     this.colorBrewerSchemeName = colorBrewerSchemeName;
   }
 
-  public AbstractClassificationMappingType individualColors(List<String> individualColors) {
-    this.individualColors = individualColors;
-    return this;
-  }
-
-  public AbstractClassificationMappingType addIndividualColorsItem(String individualColorsItem) {
-    if (this.individualColors == null) {
-      this.individualColors = new ArrayList<>();
-    }
-    this.individualColors.add(individualColorsItem);
-    return this;
-  }
-
-  /**
-   * array of individual colors used for classification
-   * @return individualColors
-   */
-  
-  @Schema(name = "individualColors", description = "array of individual colors used for classification", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("individualColors")
-  public List<String> getIndividualColors() {
-    return individualColors;
-  }
-
-  public void setIndividualColors(List<String> individualColors) {
-    this.individualColors = individualColors;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -139,13 +105,12 @@ public class AbstractClassificationMappingType implements Serializable {
     }
     AbstractClassificationMappingType abstractClassificationMappingType = (AbstractClassificationMappingType) o;
     return Objects.equals(this.classificationType, abstractClassificationMappingType.classificationType) &&
-        Objects.equals(this.colorBrewerSchemeName, abstractClassificationMappingType.colorBrewerSchemeName) &&
-        Objects.equals(this.individualColors, abstractClassificationMappingType.individualColors);
+        Objects.equals(this.colorBrewerSchemeName, abstractClassificationMappingType.colorBrewerSchemeName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(classificationType, colorBrewerSchemeName, individualColors);
+    return Objects.hash(classificationType, colorBrewerSchemeName);
   }
 
   @Override
@@ -154,7 +119,6 @@ public class AbstractClassificationMappingType implements Serializable {
     sb.append("class AbstractClassificationMappingType {\n");
     sb.append("    classificationType: ").append(toIndentedString(classificationType)).append("\n");
     sb.append("    colorBrewerSchemeName: ").append(toIndentedString(colorBrewerSchemeName)).append("\n");
-    sb.append("    individualColors: ").append(toIndentedString(individualColors)).append("\n");
     sb.append("}");
     return sb.toString();
   }

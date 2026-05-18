@@ -6780,27 +6780,6 @@ components:
             - YEARLY
             - DAILY
             - WEEKLY
-    DefaultClassificationMappingItemType:
-      title: DefaultClassificationMappingItemType
-      required:
-        - spatialUnitId
-        - breaks
-      type: object
-      properties:
-        spatialUnitId:
-          type: string
-          description: spatial unit id for manual classification
-        breaks:
-          type: array
-          description: array of numeric break values
-          items:
-            type: number
-            format: float
-        labels:
-          type: array
-          description: array of labels for each class
-          items:
-            type: string
     AbstractClassificationMappingType:
       type: object
       discriminator:
@@ -6819,11 +6798,6 @@ components:
           description: the name of the colorBrewer color scheme used to define the
             colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
             for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.
-        individualColors:
-          type: array
-          description: array of individual colors used for classification
-          items:
-            type: string
     DefaultClassificationMappingType:
       allOf:
         - $ref: '#/components/schemas/AbstractClassificationMappingType'
@@ -6848,22 +6822,82 @@ components:
                 - JENKS
                 - EQUAL_INTERVAL
                 - QUANTILE
+            individualColors:
+              type: array
+              description: array of individual colors used for classification as hex color code
+              items:
+                type: string
             items:
               type: array
               description: array of classification mapping items. each item holds the break values for a certain spatial unit. not all spatial units of a certain indicator must be set.
               items:
                 $ref: '#/components/schemas/DefaultClassificationMappingItemType'
+    DefaultClassificationMappingItemType:
+      title: DefaultClassificationMappingItemType
+      required:
+        - spatialUnitId
+        - breaks
+      type: object
+      properties:
+        spatialUnitId:
+          type: string
+          description: spatial unit id for manual classification
+        breaks:
+          type: array
+          description: array of numeric break values
+          items:
+            type: number
+            format: float
+        labels:
+          type: array
+          description: array of labels for each class
+          items:
+            type: string
     QualitativeClassificationMappingType:
       allOf:
         - $ref: '#/components/schemas/AbstractClassificationMappingType'
         - title: QualitativeClassificationMappingType
           required:
-            - testProp
+            - items
           type: object
           properties:
-            testProp:
-              type: string
-              description: Prop for testing
+            items:
+              type: array
+              description: Array of classification mapping items. Each item holds categorical data as well as its color
+                and label mappings for a certain spatial unit.
+              items:
+                $ref: '#/components/schemas/QualitativeClassificationMappingItemType'
+    QualitativeClassificationMappingItemType:
+      title: DefaultClassificationMappingItemType
+      required:
+        - spatialUnitId
+        - categorialData
+      type: object
+      properties:
+        spatialUnitId:
+          type: string
+          description: spatial unit id
+        categoricalData:
+          type: array
+          description: mapping of categorical values, colors and labels
+          items:
+            $ref: '#/components/schemas/CategoricalMappingType'
+    CategoricalMappingType:
+      title: DefaultClassificationMappingItemType
+      required:
+        - categoricalValue
+        - color
+      type: object
+      properties:
+        categoricalValue:
+          type: string
+          description: the categorical value
+        color:
+          type: string
+          description: color to use for the current categorical value as hex color code
+        label:
+          type: string
+          description: alias label to use for the current categorical value
     RegionalReferenceValueType:
       title: RegionalReferenceValueType
       required:

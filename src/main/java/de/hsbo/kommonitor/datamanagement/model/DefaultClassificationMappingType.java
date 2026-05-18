@@ -81,6 +81,9 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
   private ClassificationMethodEnum classificationMethod;
 
   @Valid
+  private List<String> individualColors = new ArrayList<>();
+
+  @Valid
   private List<@Valid DefaultClassificationMappingItemType> items = new ArrayList<>();
 
   public DefaultClassificationMappingType() {
@@ -139,6 +142,34 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
     this.classificationMethod = classificationMethod;
   }
 
+  public DefaultClassificationMappingType individualColors(List<String> individualColors) {
+    this.individualColors = individualColors;
+    return this;
+  }
+
+  public DefaultClassificationMappingType addIndividualColorsItem(String individualColorsItem) {
+    if (this.individualColors == null) {
+      this.individualColors = new ArrayList<>();
+    }
+    this.individualColors.add(individualColorsItem);
+    return this;
+  }
+
+  /**
+   * array of individual colors used for classification as hex color code
+   * @return individualColors
+   */
+  
+  @Schema(name = "individualColors", description = "array of individual colors used for classification as hex color code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("individualColors")
+  public List<String> getIndividualColors() {
+    return individualColors;
+  }
+
+  public void setIndividualColors(List<String> individualColors) {
+    this.individualColors = individualColors;
+  }
+
   public DefaultClassificationMappingType items(List<@Valid DefaultClassificationMappingItemType> items) {
     this.items = items;
     return this;
@@ -177,16 +208,6 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
     super.colorBrewerSchemeName(colorBrewerSchemeName);
     return this;
   }
-
-  public DefaultClassificationMappingType individualColors(List<String> individualColors) {
-    super.individualColors(individualColors);
-    return this;
-  }
-
-  public DefaultClassificationMappingType addIndividualColorsItem(String individualColorsItem) {
-    super.addIndividualColorsItem(individualColorsItem);
-    return this;
-  }
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -198,13 +219,14 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
     DefaultClassificationMappingType defaultClassificationMappingType = (DefaultClassificationMappingType) o;
     return Objects.equals(this.numClasses, defaultClassificationMappingType.numClasses) &&
         Objects.equals(this.classificationMethod, defaultClassificationMappingType.classificationMethod) &&
+        Objects.equals(this.individualColors, defaultClassificationMappingType.individualColors) &&
         Objects.equals(this.items, defaultClassificationMappingType.items) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(numClasses, classificationMethod, items, super.hashCode());
+    return Objects.hash(numClasses, classificationMethod, individualColors, items, super.hashCode());
   }
 
   @Override
@@ -214,6 +236,7 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    numClasses: ").append(toIndentedString(numClasses)).append("\n");
     sb.append("    classificationMethod: ").append(toIndentedString(classificationMethod)).append("\n");
+    sb.append("    individualColors: ").append(toIndentedString(individualColors)).append("\n");
     sb.append("    items: ").append(toIndentedString(items)).append("\n");
     sb.append("}");
     return sb.toString();

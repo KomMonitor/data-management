@@ -1,4 +1,3 @@
 # Only API interfaces should be updated but not the implementing Controller classes
 **/*ApiController.java
-**/DefaultClassificationMappingItemType.java
 **/IndicatorPropertiesWithoutGeomType.java
