@@ -7,19 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.geotools.api.data.DataStore;
 import org.geotools.api.data.SimpleFeatureSource;
@@ -1606,12 +1594,17 @@ public class SpatialFeatureDatabaseHandler {
 			// compare using topological equality
 			return reducedDb.equalsTopo(reducedInput);
 		} catch (Exception e) {
-			LOG.error("Geometry comparison failed with error: {}", e.getMessage());
+			Property idProp = dbFeature.getProperty("ID");
+			String idValue = "UNKNOWN";
+			if(idProp != null && idProp.getValue() instanceof String value) {
+				idValue = value;
+			}
+			LOG.error("Geometry comparison failed for Feature '{}' with error: {}", idValue, e.getMessage());
 			try {
-				LOG.info("Use exact geometry comparison instead of topological comparison");
+				LOG.info("Use exact geometry comparison instead of topological comparison for Feature '{}'", idValue);
 				return dbGeometry.norm().equalsExact(inputGeometry.norm(), 1e-6);
 			} catch (Exception ex) {
-				LOG.error("All geometry comparison methods failed: {}", ex.getMessage());
+				LOG.error("All geometry comparison methods failed for Feature '{}': {}", idValue, ex.getMessage());
 				return false;
 			}
 
