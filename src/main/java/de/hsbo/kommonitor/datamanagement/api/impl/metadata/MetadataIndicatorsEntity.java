@@ -6,6 +6,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity
 
 import java.util.*;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.DefaultClassificationMappingItemEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
 import de.hsbo.kommonitor.datamanagement.model.ClassificationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
@@ -91,15 +92,15 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	@JoinTable(name = "metadataindicators_defaultclassification",
 	joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), 
 	inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid"))
-	private Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems;
+	private Collection<DefaultClassificationMappingItemEntity> defaultClassificationMappingItems;
 	
-	public HashSet<DefaultClassificationMappingItemType> getDefaultClassificationMappingItems() {
-		return new HashSet<DefaultClassificationMappingItemType>(defaultClassificationMappingItems);
+	public HashSet<DefaultClassificationMappingItemEntity> getDefaultClassificationMappingItems() {
+		return new HashSet<DefaultClassificationMappingItemEntity>(defaultClassificationMappingItems);
 	}
 
 	public void setDefaultClassificationMappingItems(
-			Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems) {
-		this.defaultClassificationMappingItems = new HashSet<DefaultClassificationMappingItemType>(defaultClassificationMappingItems);
+			Collection<DefaultClassificationMappingItemEntity> defaultClassificationMappingItems) {
+		this.defaultClassificationMappingItems = new HashSet<DefaultClassificationMappingItemEntity>(defaultClassificationMappingItems);
 	}
 
 	@ManyToMany(mappedBy = "indicatorFavourites")

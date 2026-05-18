@@ -268,12 +268,16 @@ public class IndicatorsMapper {
 		defaultClassification.setClassificationMethod(indicatorsMetadataEntity.getClassificationMethod());
 		defaultClassification.setIndividualColors(indicatorsMetadataEntity.getIndividualColors());
 
-		Collection<DefaultClassificationMappingItemType> defaultClassificationMappingItems = indicatorsMetadataEntity
-				.getDefaultClassificationMappingItems();
+		List<DefaultClassificationMappingItemType> defaultClassificationMappingItems =
+				indicatorsMetadataEntity.getDefaultClassificationMappingItems().stream().map(i -> {
+					DefaultClassificationMappingItemType mappingItem =new DefaultClassificationMappingItemType();
+					mappingItem.setBreaks(i.getBreaks());
+					mappingItem.setLabels(i.getLabels());
+					mappingItem.setSpatialUnitId(i.getSpatialUnitId());
+					return mappingItem;
+				}).toList();
+		defaultClassification.setItems(defaultClassificationMappingItems);
 
-		for (DefaultClassificationMappingItemType classificationItem : defaultClassificationMappingItems) {
-			defaultClassification.addItemsItem(classificationItem);
-		}
 		return defaultClassification;
 	}
 

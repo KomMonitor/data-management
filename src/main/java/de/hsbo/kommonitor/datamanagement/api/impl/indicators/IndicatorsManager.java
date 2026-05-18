@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.DefaultClassificationMappingItemEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -1399,7 +1400,15 @@ public class IndicatorsManager {
     }
 
     public void setClassificationMapping(MetadataIndicatorsEntity entity, DefaultClassificationMappingType classificationMapping) throws ApiException {
-        entity.setDefaultClassificationMappingItems(classificationMapping.getItems());
+        List<DefaultClassificationMappingItemEntity> classificationItems = classificationMapping.getItems().stream().map(i -> {
+            DefaultClassificationMappingItemEntity e = new DefaultClassificationMappingItemEntity();
+            e.setBreaks(i.getBreaks());
+            e.setLabels(i.getLabels());
+            e.setSpatialUnitId(i.getSpatialUnitId());
+            return e;
+        }).toList();
+
+        entity.setDefaultClassificationMappingItems(classificationItems);
         entity.setColorBrewerSchemeName(classificationMapping.getColorBrewerSchemeName());
         @NotNull
         @Valid
