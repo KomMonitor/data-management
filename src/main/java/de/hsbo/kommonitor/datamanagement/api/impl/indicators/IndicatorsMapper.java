@@ -3,15 +3,10 @@ package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.DefaultClassificationMappingItemEntity;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -266,18 +261,51 @@ public class IndicatorsMapper {
 		defaultClassification.setColorBrewerSchemeName(indicatorsMetadataEntity.getColorBrewerSchemeName());
 		defaultClassification.setNumClasses(new BigDecimal(indicatorsMetadataEntity.getNumClasses()));
 		defaultClassification.setClassificationMethod(indicatorsMetadataEntity.getClassificationMethod());
-		defaultClassification.setIndividualColors(indicatorsMetadataEntity.getIndividualColors());
+		defaultClassification.setClassificationType(ClassificationTypeEnum.SEQUENTIAL);
+
+		List<String> individualColors = new ArrayList<>();
+		Optional<DefaultClassificationMappingItemEntity> mappingItem = indicatorsMetadataEntity.getDefaultClassificationMappingItems().stream().findAny();
+		if(mappingItem.isPresent()) {
+			individualColors = mappingItem.get().getIndividualColors();
+		}
+		defaultClassification.setIndividualColors(individualColors);
 
 		List<DefaultClassificationMappingItemType> defaultClassificationMappingItems =
 				indicatorsMetadataEntity.getDefaultClassificationMappingItems().stream().map(i -> {
-					DefaultClassificationMappingItemType mappingItem =new DefaultClassificationMappingItemType();
-					mappingItem.setBreaks(i.getBreaks());
-					mappingItem.setLabels(i.getLabels());
-					mappingItem.setSpatialUnitId(i.getSpatialUnitId());
-					return mappingItem;
+					DefaultClassificationMappingItemType item =new DefaultClassificationMappingItemType();
+					item.setBreaks(i.getBreaks());
+					item.setLabels(i.getLabels());
+					item.setSpatialUnitId(i.getSpatialUnitId());
+					return item;
 				}).toList();
+
 		defaultClassification.setItems(defaultClassificationMappingItems);
 
+		return defaultClassification;
+	}
+
+
+	private static AbstractClassificationMappingType extractQualitativeClassificationMappingFromMetadata(MetadataIndicatorsEntity indicatorsMetadataEntity) {
+		QualitativeClassificationMappingType defaultClassification = new QualitativeClassificationMappingType();
+		defaultClassification.setColorBrewerSchemeName(indicatorsMetadataEntity.getColorBrewerSchemeName());
+		defaultClassification.setNumClasses(new BigDecimal(indicatorsMetadataEntity.getNumClasses()));
+		defaultClassification.setClassificationType(ClassificationTypeEnum.QUALITATIVE);
+
+		List<QualitativeClassificationMappingItemType> mappingItems;
+		mappingItems = indicatorsMetadataEntity.getQualitativeClassificationMappingItems().stream().map(i -> {
+			QualitativeClassificationMappingItemType mappingItem = new QualitativeClassificationMappingItemType();
+			mappingItem.setSpatialUnitId(i.getSpatialUnitId());
+			mappingItem.setCategoricalData(i.getCategoricalData().stream().map(d -> {
+				CategoricalMappingType catMapping = new CategoricalMappingType();
+				catMapping.setCategoricalValue(d.getCategoricalValue());
+				catMapping.setColor(d.getColor());
+				catMapping.setLabel(d.getLabel());
+				return catMapping;
+			}).toList());
+			return mappingItem;
+		}).toList();
+
+		defaultClassification.setItems(mappingItems);
 		return defaultClassification;
 	}
 
@@ -286,7 +314,10 @@ public class IndicatorsMapper {
 
 		if (classificationType.equals(ClassificationTypeEnum.SEQUENTIAL)) {
 			return extractDefaultClassificationMappingFromMetadata(indicatorsMetadataEntity);
-		} else {
+		} else if (classificationType.equals(ClassificationTypeEnum.QUALITATIVE)) {
+			return extractQualitativeClassificationMappingFromMetadata(indicatorsMetadataEntity);
+		}
+		else {
 			throw new UnsupportedOperationException(String.format("Classification of type '%s' not supported.",
 					classificationType.getValue()));
 		}

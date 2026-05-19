@@ -6,7 +6,9 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity
 
 import java.util.*;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.AbstractClassificationMappingItemType;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.DefaultClassificationMappingItemEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.QualitativeClassificationMappingItemEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
 import de.hsbo.kommonitor.datamanagement.model.ClassificationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
@@ -51,8 +53,6 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 
 	private String colorBrewerSchemeName;
 
-	private List<String> individualColors;
-
 	@Enumerated(EnumType.ORDINAL)
 	private ClassificationTypeEnum classificationType = null;
 	
@@ -88,19 +88,42 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	 * within the entity "GeoresourceReferenceEntity"
 	 */
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinTable(name = "metadataindicators_defaultclassification",
 	joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"), 
 	inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid"))
 	private Collection<DefaultClassificationMappingItemEntity> defaultClassificationMappingItems;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinTable(
+			name = "metadataindicators_qualitativeclassification",
+			joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"),
+			inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid")
+	)
+	private Collection<QualitativeClassificationMappingItemEntity> qualitativeClassificationMappingItems = new ArrayList<>();
 	
-	public HashSet<DefaultClassificationMappingItemEntity> getDefaultClassificationMappingItems() {
-		return new HashSet<DefaultClassificationMappingItemEntity>(defaultClassificationMappingItems);
+	public Collection<DefaultClassificationMappingItemEntity> getDefaultClassificationMappingItems() {
+		return defaultClassificationMappingItems;
 	}
 
-	public void setDefaultClassificationMappingItems(
-			Collection<DefaultClassificationMappingItemEntity> defaultClassificationMappingItems) {
-		this.defaultClassificationMappingItems = new HashSet<DefaultClassificationMappingItemEntity>(defaultClassificationMappingItems);
+	public void setDefaultClassificationMappingItems(Collection<DefaultClassificationMappingItemEntity> defaultClassificationMappingItems) {
+		this.defaultClassificationMappingItems = defaultClassificationMappingItems;
+	}
+
+	public Collection<QualitativeClassificationMappingItemEntity> getQualitativeClassificationMappingItems() {
+		return qualitativeClassificationMappingItems;
+	}
+
+	public void setQualitativeClassificationMappingItems(Collection<QualitativeClassificationMappingItemEntity> qualitativeClassificationMappingItems) {
+		this.qualitativeClassificationMappingItems = qualitativeClassificationMappingItems;
+	}
+
+	@Transient
+	public Collection<AbstractClassificationMappingItemType> getAllClassificationMappingItems() {
+		Collection<AbstractClassificationMappingItemType> allItems = new ArrayList<>();
+		allItems.addAll(defaultClassificationMappingItems);
+		allItems.addAll(qualitativeClassificationMappingItems);
+		return allItems;
 	}
 
 	@ManyToMany(mappedBy = "indicatorFavourites")
@@ -208,14 +231,6 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 
 	public void setNumClasses(int numClasses) {
 		this.numClasses = numClasses;
-	}
-
-	public List<String> getIndividualColors() {
-		return individualColors;
-	}
-
-	public void setIndividualColors(List<String> individualColors) {
-		this.individualColors = individualColors;
 	}
 
 	public ClassificationTypeEnum getClassificationType() {

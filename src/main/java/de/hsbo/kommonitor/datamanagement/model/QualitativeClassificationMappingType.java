@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.AbstractClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.ClassificationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.QualitativeClassificationMappingItemType;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,8 +47,8 @@ public class QualitativeClassificationMappingType extends AbstractClassification
   /**
    * Constructor with only required parameters
    */
-  public QualitativeClassificationMappingType(List<@Valid QualitativeClassificationMappingItemType> items, String colorBrewerSchemeName) {
-    super(colorBrewerSchemeName);
+  public QualitativeClassificationMappingType(List<@Valid QualitativeClassificationMappingItemType> items, String colorBrewerSchemeName, BigDecimal numClasses) {
+    super(colorBrewerSchemeName, numClasses);
     this.items = items;
   }
 
@@ -87,6 +88,11 @@ public class QualitativeClassificationMappingType extends AbstractClassification
 
   public QualitativeClassificationMappingType colorBrewerSchemeName(String colorBrewerSchemeName) {
     super.colorBrewerSchemeName(colorBrewerSchemeName);
+    return this;
+  }
+
+  public QualitativeClassificationMappingType numClasses(BigDecimal numClasses) {
+    super.numClasses(numClasses);
     return this;
   }
   @Override

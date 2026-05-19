@@ -6789,6 +6789,7 @@ components:
           QUALITATIVE: '#/components/schemas/QualitativeClassificationMappingType'
       required:
         - colorBrewerSchemeName
+        - numClasses
       properties:
         classificationType:
           $ref: '#/components/schemas/ClassificationTypeEnum'
@@ -6798,22 +6799,21 @@ components:
           description: the name of the colorBrewer color scheme used to define the
             colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
             for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.
+        numClasses:
+          type: number
+          format: int16
+          description: the number of classes
+          minimum: 1
+          maximum: 9
     DefaultClassificationMappingType:
       allOf:
         - $ref: '#/components/schemas/AbstractClassificationMappingType'
         - title: DefaultClassificationMappingType
           required:
-            - numClasses
             - classificationMethod
             - items
           type: object
           properties:
-            numClasses:
-              type: number
-              format: int16
-              description: the number of classes
-              minimum: 1
-              maximum: 9
             classificationMethod:
               type: string
               description: the classification method as enumeration

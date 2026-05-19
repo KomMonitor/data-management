@@ -9,18 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "DefaultClassificationMappingItemType")
-public class DefaultClassificationMappingItemEntity {
+public class DefaultClassificationMappingItemEntity extends AbstractClassificationMappingItemType{
 
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @UuidGenerator
-    private String mappingId;
 
     private String spatialUnitId = null;
 
     private List<Float> breaks = new ArrayList<>();
 
     private List<String> labels = null;
+
+    private List<String> individualColors;
 
     public String getSpatialUnitId() {
         return spatialUnitId;
@@ -46,4 +44,12 @@ public class DefaultClassificationMappingItemEntity {
         this.labels = labels;
     }
 
+
+    public List<String> getIndividualColors() {
+        return individualColors;
+    }
+
+    public void setIndividualColors(List<String> individualColors) {
+        this.individualColors = individualColors;
+    }
 }

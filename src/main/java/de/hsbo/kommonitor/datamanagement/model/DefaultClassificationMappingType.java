@@ -37,8 +37,6 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
 
   private static final long serialVersionUID = 1L;
 
-  private BigDecimal numClasses;
-
   /**
    * the classification method as enumeration
    */
@@ -93,33 +91,10 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
   /**
    * Constructor with only required parameters
    */
-  public DefaultClassificationMappingType(BigDecimal numClasses, ClassificationMethodEnum classificationMethod, List<@Valid DefaultClassificationMappingItemType> items, String colorBrewerSchemeName) {
-    super(colorBrewerSchemeName);
-    this.numClasses = numClasses;
+  public DefaultClassificationMappingType(ClassificationMethodEnum classificationMethod, List<@Valid DefaultClassificationMappingItemType> items, String colorBrewerSchemeName, BigDecimal numClasses) {
+    super(colorBrewerSchemeName, numClasses);
     this.classificationMethod = classificationMethod;
     this.items = items;
-  }
-
-  public DefaultClassificationMappingType numClasses(BigDecimal numClasses) {
-    this.numClasses = numClasses;
-    return this;
-  }
-
-  /**
-   * the number of classes
-   * minimum: 1
-   * maximum: 9
-   * @return numClasses
-   */
-  @NotNull @Valid @DecimalMin(value = "1") @DecimalMax(value = "9") 
-  @Schema(name = "numClasses", description = "the number of classes", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("numClasses")
-  public BigDecimal getNumClasses() {
-    return numClasses;
-  }
-
-  public void setNumClasses(BigDecimal numClasses) {
-    this.numClasses = numClasses;
   }
 
   public DefaultClassificationMappingType classificationMethod(ClassificationMethodEnum classificationMethod) {
@@ -208,6 +183,11 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
     super.colorBrewerSchemeName(colorBrewerSchemeName);
     return this;
   }
+
+  public DefaultClassificationMappingType numClasses(BigDecimal numClasses) {
+    super.numClasses(numClasses);
+    return this;
+  }
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -217,8 +197,7 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
       return false;
     }
     DefaultClassificationMappingType defaultClassificationMappingType = (DefaultClassificationMappingType) o;
-    return Objects.equals(this.numClasses, defaultClassificationMappingType.numClasses) &&
-        Objects.equals(this.classificationMethod, defaultClassificationMappingType.classificationMethod) &&
+    return Objects.equals(this.classificationMethod, defaultClassificationMappingType.classificationMethod) &&
         Objects.equals(this.individualColors, defaultClassificationMappingType.individualColors) &&
         Objects.equals(this.items, defaultClassificationMappingType.items) &&
         super.equals(o);
@@ -226,7 +205,7 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
 
   @Override
   public int hashCode() {
-    return Objects.hash(numClasses, classificationMethod, individualColors, items, super.hashCode());
+    return Objects.hash(classificationMethod, individualColors, items, super.hashCode());
   }
 
   @Override
@@ -234,7 +213,6 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
     StringBuilder sb = new StringBuilder();
     sb.append("class DefaultClassificationMappingType {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    numClasses: ").append(toIndentedString(numClasses)).append("\n");
     sb.append("    classificationMethod: ").append(toIndentedString(classificationMethod)).append("\n");
     sb.append("    individualColors: ").append(toIndentedString(individualColors)).append("\n");
     sb.append("    items: ").append(toIndentedString(items)).append("\n");

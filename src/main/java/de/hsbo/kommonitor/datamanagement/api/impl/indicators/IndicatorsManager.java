@@ -21,7 +21,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.CategoricalMappingItemEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.DefaultClassificationMappingItemEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.QualitativeClassificationMappingItemEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -53,10 +55,6 @@ import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHa
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.msg.MessageResolver;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
 
 @Transactional
 @Repository
@@ -991,8 +989,6 @@ public class IndicatorsManager {
 			LOG.error(
 					"No indicator dataset associated to a spatial unit with id '{}' was found in database. Delete indicator layers request has no effect.",
 					spatialUnitId);
-//			throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-//					"Tried to delete indicator layers for spatial unit, but no dataset exists that is associated to a spatial unit with id " + spatialUnitId);
             return false;
         }
 
@@ -1080,7 +1076,7 @@ public class IndicatorsManager {
             LOG.info("Trying to persist indicator with name '{}', characteristicValue '{}', indicatorType '{}', creationType '{}' and associated spatialUnitName '{}'", indicatorName, characteristicValue, indicatorType, creationType.toString(), spatialUnitName);
 
             /*
-             * analyse input type
+             * analyze input type
              *
              * store metadata entry for indicator
              *
@@ -1130,7 +1126,7 @@ public class IndicatorsManager {
              * remove partially created resources and throw error
              */
             LOG.error("Error while creating indicator. Error message: ", e);
-            LOG.info("Deleting partially created resources");
+            LOG.info("Deleting partially created resources while trying to creator indicator.");
 
             try {
                 LOG.info("Delete metadata entry if exists for id '{}'", metadataId);
@@ -1391,48 +1387,109 @@ public class IndicatorsManager {
     }
 
     public void setClassificationMapping(MetadataIndicatorsEntity entity, AbstractClassificationMappingType classificationMapping) throws ApiException {
+        if (classificationMapping == null) {
+            entity.setDefaultClassificationMappingItems(new ArrayList<>());
+            entity.setQualitativeClassificationMappingItems(new ArrayList<>());
+            return;
+        }
+
         if (classificationMapping instanceof DefaultClassificationMappingType defaultClassification) {
             setClassificationMapping(entity, defaultClassification);
-        } else {
+        } else if (classificationMapping instanceof  QualitativeClassificationMappingType qualitativeClassification) {
+            setClassificationMapping(entity, qualitativeClassification);
+        }
+        else {
             throw new UnsupportedOperationException(String.format("Updating classification of type '%s' not supported.",
                     classificationMapping.getClass().getSimpleName()));
         }
     }
 
     public void setClassificationMapping(MetadataIndicatorsEntity entity, DefaultClassificationMappingType classificationMapping) throws ApiException {
-        List<DefaultClassificationMappingItemEntity> classificationItems = classificationMapping.getItems().stream().map(i -> {
-            DefaultClassificationMappingItemEntity e = new DefaultClassificationMappingItemEntity();
-            e.setBreaks(i.getBreaks());
-            e.setLabels(i.getLabels());
-            e.setSpatialUnitId(i.getSpatialUnitId());
-            return e;
-        }).toList();
+        // If there is a change from qualitative to default classification, remove qualitative classification items first
+        if (entity.getQualitativeClassificationMappingItems() != null) {
+            entity.getQualitativeClassificationMappingItems().clear();
+        }
 
-        entity.setDefaultClassificationMappingItems(classificationItems);
-        entity.setColorBrewerSchemeName(classificationMapping.getColorBrewerSchemeName());
-        @NotNull
-        @Valid
-        @DecimalMin("1")
-        @DecimalMax("9")
+        entity.setClassificationType(ClassificationTypeEnum.SEQUENTIAL);
+
         BigDecimal numClasses = classificationMapping.getNumClasses();
         if (numClasses == null) {
             numClasses = new BigDecimal(5);
         }
-
         if (classificationMapping.getColorBrewerSchemeName().equals("INDIVIDUAL")) {
             if (classificationMapping.getIndividualColors() == null || numClasses.intValue() != classificationMapping.getIndividualColors().size()) {
                 String errMsg = messageResolver.getMessage(MSG_CLASSIFICATION_MAPPING_ERROR);
                 throw new ApiException(400, String.format(errMsg, "individualColors"));
             }
-            entity.setIndividualColors(classificationMapping.getIndividualColors());
         }
 
+        List<DefaultClassificationMappingItemEntity> classificationItems = classificationMapping.getItems().stream().map(i -> {
+            DefaultClassificationMappingItemEntity e = new DefaultClassificationMappingItemEntity();
+            e.setBreaks(i.getBreaks());
+            e.setLabels(i.getLabels());
+            e.setSpatialUnitId(i.getSpatialUnitId());
+            e.setIndividualColors(classificationMapping.getIndividualColors());
+            return e;
+        }).toList();
+
+        if (entity.getDefaultClassificationMappingItems() != null) {
+            entity.getDefaultClassificationMappingItems().clear();
+            entity.getDefaultClassificationMappingItems().addAll(classificationItems);
+        }
+        else {
+            entity.setDefaultClassificationMappingItems(classificationItems);
+        }
+
+        entity.setColorBrewerSchemeName(classificationMapping.getColorBrewerSchemeName());
 
         for (DefaultClassificationMappingItemType item : classificationMapping.getItems()) {
             checkClassificationMapping(item, numClasses.intValue());
         }
         entity.setNumClasses(numClasses.intValue());
         entity.setClassificationMethod(classificationMapping.getClassificationMethod());
+    }
+
+    public void setClassificationMapping(MetadataIndicatorsEntity entity, QualitativeClassificationMappingType classificationMapping) throws ApiException {
+        // If there is a change from default to qualitative classification, remove default classification items first
+        if (entity.getDefaultClassificationMappingItems() != null) {
+            entity.getDefaultClassificationMappingItems().clear();
+        }
+        entity.setClassificationType(ClassificationTypeEnum.QUALITATIVE);
+
+        List<QualitativeClassificationMappingItemEntity> classificationItems = classificationMapping.getItems().stream().map(i -> {
+            QualitativeClassificationMappingItemEntity qualClassEntity = new QualitativeClassificationMappingItemEntity();
+            qualClassEntity.setSpatialUnitId(i.getSpatialUnitId());
+            qualClassEntity.setCategoricalData(i.getCategoricalData().stream().map(d -> {
+                CategoricalMappingItemEntity categoricalItem = new CategoricalMappingItemEntity();
+                categoricalItem.setCategoricalValue(d.getCategoricalValue());
+                categoricalItem.setColor(d.getColor());
+                categoricalItem.setLabel(d.getLabel());
+                categoricalItem.setParentMapping(qualClassEntity);
+                return categoricalItem;
+            }).toList());
+            return qualClassEntity;
+        }).toList();
+
+        if (entity.getQualitativeClassificationMappingItems() != null) {
+            entity.getQualitativeClassificationMappingItems().clear();
+            entity.getQualitativeClassificationMappingItems().addAll(classificationItems);
+        } else {
+            entity.setQualitativeClassificationMappingItems(classificationItems);
+            entity.setColorBrewerSchemeName(classificationMapping.getColorBrewerSchemeName());
+        }
+
+        BigDecimal numClasses = classificationMapping.getNumClasses();
+        if (numClasses == null) {
+            numClasses = new BigDecimal(5);
+        }
+
+        for (QualitativeClassificationMappingItemType item : classificationMapping.getItems()) {
+            checkClassificationMapping(item, numClasses.intValue());
+        }
+
+        entity.setNumClasses(numClasses.intValue());
+        entity.setClassificationMethod(null);
+
     }
 
     private void checkClassificationMapping(DefaultClassificationMappingItemType item, int numClasses) throws ApiException {
@@ -1447,6 +1504,14 @@ public class IndicatorsManager {
             }
         }
     }
+
+    private void checkClassificationMapping(QualitativeClassificationMappingItemType item, int numClasses) throws ApiException {
+        if (item.getCategoricalData().size() != numClasses) {
+            String errMsg = messageResolver.getMessage(MSG_CLASSIFICATION_MAPPING_ITEM_ERROR);
+            throw new ApiException(400, String.format(errMsg, "categoricalData", item.getSpatialUnitId()));
+        }
+    }
+
 
 
     public List<IndicatorPropertiesWithoutGeomType> getIndicatorFeaturePropertiesWithoutGeometry(String indicatorId,

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.ClassificationTypeEnum;
+import java.math.BigDecimal;
 import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
@@ -44,6 +45,8 @@ public class AbstractClassificationMappingType implements Serializable {
 
   private String colorBrewerSchemeName;
 
+  private BigDecimal numClasses;
+
   public AbstractClassificationMappingType() {
     super();
   }
@@ -51,8 +54,9 @@ public class AbstractClassificationMappingType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public AbstractClassificationMappingType(String colorBrewerSchemeName) {
+  public AbstractClassificationMappingType(String colorBrewerSchemeName, BigDecimal numClasses) {
     this.colorBrewerSchemeName = colorBrewerSchemeName;
+    this.numClasses = numClasses;
   }
 
   public AbstractClassificationMappingType classificationType(@Nullable ClassificationTypeEnum classificationType) {
@@ -95,6 +99,28 @@ public class AbstractClassificationMappingType implements Serializable {
     this.colorBrewerSchemeName = colorBrewerSchemeName;
   }
 
+  public AbstractClassificationMappingType numClasses(BigDecimal numClasses) {
+    this.numClasses = numClasses;
+    return this;
+  }
+
+  /**
+   * the number of classes
+   * minimum: 1
+   * maximum: 9
+   * @return numClasses
+   */
+  @NotNull @Valid @DecimalMin(value = "1") @DecimalMax(value = "9") 
+  @Schema(name = "numClasses", description = "the number of classes", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("numClasses")
+  public BigDecimal getNumClasses() {
+    return numClasses;
+  }
+
+  public void setNumClasses(BigDecimal numClasses) {
+    this.numClasses = numClasses;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -105,12 +131,13 @@ public class AbstractClassificationMappingType implements Serializable {
     }
     AbstractClassificationMappingType abstractClassificationMappingType = (AbstractClassificationMappingType) o;
     return Objects.equals(this.classificationType, abstractClassificationMappingType.classificationType) &&
-        Objects.equals(this.colorBrewerSchemeName, abstractClassificationMappingType.colorBrewerSchemeName);
+        Objects.equals(this.colorBrewerSchemeName, abstractClassificationMappingType.colorBrewerSchemeName) &&
+        Objects.equals(this.numClasses, abstractClassificationMappingType.numClasses);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(classificationType, colorBrewerSchemeName);
+    return Objects.hash(classificationType, colorBrewerSchemeName, numClasses);
   }
 
   @Override
@@ -119,6 +146,7 @@ public class AbstractClassificationMappingType implements Serializable {
     sb.append("class AbstractClassificationMappingType {\n");
     sb.append("    classificationType: ").append(toIndentedString(classificationType)).append("\n");
     sb.append("    colorBrewerSchemeName: ").append(toIndentedString(colorBrewerSchemeName)).append("\n");
+    sb.append("    numClasses: ").append(toIndentedString(numClasses)).append("\n");
     sb.append("}");
     return sb.toString();
   }
