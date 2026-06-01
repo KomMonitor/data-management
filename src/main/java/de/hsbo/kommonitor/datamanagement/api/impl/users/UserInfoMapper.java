@@ -3,6 +3,7 @@ package de.hsbo.kommonitor.datamanagement.api.impl.users;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.AbstractMetadata;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataWebServicesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.model.TopicResourceEnum;
 import de.hsbo.kommonitor.datamanagement.model.UserInfoOverviewType;
@@ -17,9 +18,14 @@ public class UserInfoMapper {
         userInfo.setKeycloakId(userInfoEntity.getKeycloakId());
         userInfo.setGeoresourceFavourites(mapGeoresourceFavourites(userInfoEntity.getGeoresourceFavourites()));
         userInfo.setIndicatorFavourites(mapIndicatorFavourites(userInfoEntity.getIndicatorFavourites()));
+        userInfo.setWebServiceFavourites(mapWebServiceFavourites(userInfoEntity.getWebServiceFavourites()));
         userInfo.setGeoresourceTopicFavourites(mapGeoresourceTopicFavourites(userInfoEntity.getTopicFavourites()));
         userInfo.setIndicatorTopicFavourites(mapIndicatorTopicFavourites(userInfoEntity.getTopicFavourites()));
         return userInfo;
+    }
+
+    private static List<String> mapWebServiceFavourites(Collection<MetadataWebServicesEntity> webServiceFavourites) {
+        return webServiceFavourites.stream().map(MetadataWebServicesEntity::getId).toList();
     }
 
     private static List<String> mapGeoresourceFavourites(Collection<MetadataGeoresourcesEntity> georesourceFavourites) {
