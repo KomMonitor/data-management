@@ -7,8 +7,10 @@ import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetad
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataWebServicesEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.webservice.WebServicesRepository;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.TopicResourceEnum;
 import de.hsbo.kommonitor.datamanagement.model.UserInfoInputType;
@@ -40,6 +42,9 @@ public class UserInfoManager {
 
     @Autowired
     IndicatorsMetadataRepository indicatorsRepository;
+
+    @Autowired
+    WebServicesRepository webServicesRepository;
 
     @Autowired
     TopicsRepository topicsRepository;
@@ -90,7 +95,7 @@ public class UserInfoManager {
     }
 
     public UserInfoOverviewType updateUserPartiallyInfoByUserInfoId(String userInfoId, UserInfoInputType userInfoData, AuthInfoProvider authInfoProvider) throws Exception {
-        LOG.info("Updating user info for user info ID '{}'", userInfoId);
+        LOG.info("Updating user info partially for user info ID '{}'", userInfoId);
 
         UserInfoEntity userInfoEntity = userInfoRepository.findByUserInfoId(userInfoId);
 
@@ -157,6 +162,12 @@ public class UserInfoManager {
             userInfoEntity.setIndicatorFavourites(Collections.emptyList());
         }
 
+        if(inputUserInfo.getWebServiceFavourites() != null) {
+            userInfoEntity.setWebServiceFavourites(retrieveWebServices(inputUserInfo.getWebServiceFavourites()));
+        } else {
+            userInfoEntity.setIndicatorFavourites(Collections.emptyList());
+        }
+
         Collection<TopicsEntity> indicatorTopicsList;
         Collection<TopicsEntity> georesourceTopicsList;
         if(inputUserInfo.getIndicatorTopicFavourites() != null) {
@@ -180,6 +191,10 @@ public class UserInfoManager {
 
         if(inputUserInfo.getIndicatorFavourites() != null) {
             userInfoEntity.setIndicatorFavourites(retrieveIndicators(inputUserInfo.getIndicatorFavourites()));
+        }
+
+        if(inputUserInfo.getWebServiceFavourites() != null) {
+            userInfoEntity.setWebServiceFavourites(retrieveWebServices(inputUserInfo.getWebServiceFavourites()));
         }
 
         if(inputUserInfo.getIndicatorTopicFavourites() != null) {
@@ -232,6 +247,22 @@ public class UserInfoManager {
             }
         }
         return indicatorsList;
+    }
+
+    private Collection<MetadataWebServicesEntity> retrieveWebServices(List<String> webServiceIds)
+            throws ResourceNotFoundException {
+        Collection<MetadataWebServicesEntity> webServiceList = new ArrayList<>();
+        for (String id : webServiceIds) {
+            MetadataWebServicesEntity webServicesEntity = webServicesRepository.findById(id);
+            if (webServicesEntity == null) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                        String.format("The requested web service '%s' was not found.", id));
+            }
+            if (!webServiceList.contains(webServicesEntity)) {
+                webServiceList.add(webServicesEntity);
+            }
+        }
+        return webServiceList;
     }
 
     private Collection<TopicsEntity> retrieveTopics(List<String> topicIds, TopicResourceEnum topicResource) throws ResourceNotFoundException {
