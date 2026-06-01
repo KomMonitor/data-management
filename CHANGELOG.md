@@ -1,6 +1,7 @@
 # Change Log
 
-## 5.2.2
+## 5.2.3
+* Add management for web services to user favourites [189f996](189f99679616c134cebcf70ace1ad715af60660b)
 * Improve error logging for same geometry check [621bb17](621bb17b3ccbc2237420cda1a64e8534fa8c2d88)
 * Remove dev GitHub action flow [450b62b](450b62bf570a4a66a7bee1418e67f4b02d166480)
 * Make gemometry comparison more stable [5cacc0a](5cacc0a39a00cfa2f8cd4a4847a237bdbde91e7b)
