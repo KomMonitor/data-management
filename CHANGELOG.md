@@ -1,6 +1,7 @@
 # Change Log
 
-## 5.2.3
+## 5.2.4
+* refine implementation for proxy setup - add proxy config bean for RestEasy client necessary for keycloak admin cli requests [64d0eff](64d0eff592113fe395424527ac634279cbaf5c6d)
 * Add management for web services to user favourites [189f996](189f99679616c134cebcf70ace1ad715af60660b)
 * Improve error logging for same geometry check [621bb17](621bb17b3ccbc2237420cda1a64e8534fa8c2d88)
 * Remove dev GitHub action flow [450b62b](450b62bf570a4a66a7bee1418e67f4b02d166480)
