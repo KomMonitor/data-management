@@ -33,9 +33,6 @@ public class DefaultClassificationMappingItemType implements Serializable {
   @Valid
   private List<Float> breaks = new ArrayList<>();
 
-  @Valid
-  private List<String> labels = new ArrayList<>();
-
   public DefaultClassificationMappingItemType() {
     super();
   }
@@ -96,34 +93,6 @@ public class DefaultClassificationMappingItemType implements Serializable {
     this.breaks = breaks;
   }
 
-  public DefaultClassificationMappingItemType labels(List<String> labels) {
-    this.labels = labels;
-    return this;
-  }
-
-  public DefaultClassificationMappingItemType addLabelsItem(String labelsItem) {
-    if (this.labels == null) {
-      this.labels = new ArrayList<>();
-    }
-    this.labels.add(labelsItem);
-    return this;
-  }
-
-  /**
-   * array of labels for each class
-   * @return labels
-   */
-  
-  @Schema(name = "labels", description = "array of labels for each class", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("labels")
-  public List<String> getLabels() {
-    return labels;
-  }
-
-  public void setLabels(List<String> labels) {
-    this.labels = labels;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -134,13 +103,12 @@ public class DefaultClassificationMappingItemType implements Serializable {
     }
     DefaultClassificationMappingItemType defaultClassificationMappingItemType = (DefaultClassificationMappingItemType) o;
     return Objects.equals(this.spatialUnitId, defaultClassificationMappingItemType.spatialUnitId) &&
-        Objects.equals(this.breaks, defaultClassificationMappingItemType.breaks) &&
-        Objects.equals(this.labels, defaultClassificationMappingItemType.labels);
+        Objects.equals(this.breaks, defaultClassificationMappingItemType.breaks);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(spatialUnitId, breaks, labels);
+    return Objects.hash(spatialUnitId, breaks);
   }
 
   @Override
@@ -149,7 +117,6 @@ public class DefaultClassificationMappingItemType implements Serializable {
     sb.append("class DefaultClassificationMappingItemType {\n");
     sb.append("    spatialUnitId: ").append(toIndentedString(spatialUnitId)).append("\n");
     sb.append("    breaks: ").append(toIndentedString(breaks)).append("\n");
-    sb.append("    labels: ").append(toIndentedString(labels)).append("\n");
     sb.append("}");
     return sb.toString();
   }

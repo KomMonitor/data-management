@@ -78,6 +78,10 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	@Column(columnDefinition = "integer default 2")
 	private ClassificationMethodEnum classificationMethod;
 
+	private List<String> labels = null;
+
+	private List<String> individualColors;
+
 	/*
 	 * references to other indicators are mapped by hand
 	 * within the entity "IndicatorReferenceEntity"
@@ -247,6 +251,23 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 
 	public void setClassificationMethod(ClassificationMethodEnum classificationMethod) {
 		this.classificationMethod = classificationMethod;
+	}
+
+	public List<String> getLabels() {
+		return labels;
+	}
+
+	public void setLabels(List<String> labels) {
+		this.labels = labels;
+	}
+
+
+	public List<String> getIndividualColors() {
+		return individualColors;
+	}
+
+	public void setIndividualColors(List<String> individualColors) {
+		this.individualColors = individualColors;
 	}
 
 	public void addTimestampIfNotExist(String timestamp)throws Exception {

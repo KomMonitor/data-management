@@ -6827,6 +6827,11 @@ components:
               description: array of individual colors used for classification as hex color code
               items:
                 type: string
+            labels:
+              type: array
+              description: array of labels for each class
+              items:
+                type: string
             items:
               type: array
               description: array of classification mapping items. each item holds the break values for a certain spatial unit. not all spatial units of a certain indicator must be set.
@@ -6848,11 +6853,6 @@ components:
           items:
             type: number
             format: float
-        labels:
-          type: array
-          description: array of labels for each class
-          items:
-            type: string
     QualitativeClassificationMappingType:
       allOf:
         - $ref: '#/components/schemas/AbstractClassificationMappingType'

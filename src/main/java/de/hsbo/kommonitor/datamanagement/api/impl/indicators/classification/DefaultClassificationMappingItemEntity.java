@@ -16,10 +16,6 @@ public class DefaultClassificationMappingItemEntity extends AbstractClassificati
 
     private List<Float> breaks = new ArrayList<>();
 
-    private List<String> labels = null;
-
-    private List<String> individualColors;
-
     public String getSpatialUnitId() {
         return spatialUnitId;
     }
@@ -36,20 +32,4 @@ public class DefaultClassificationMappingItemEntity extends AbstractClassificati
         this.breaks = breaks;
     }
 
-    public List<String> getLabels() {
-        return labels;
-    }
-
-    public void setLabels(List<String> labels) {
-        this.labels = labels;
-    }
-
-
-    public List<String> getIndividualColors() {
-        return individualColors;
-    }
-
-    public void setIndividualColors(List<String> individualColors) {
-        this.individualColors = individualColors;
-    }
 }

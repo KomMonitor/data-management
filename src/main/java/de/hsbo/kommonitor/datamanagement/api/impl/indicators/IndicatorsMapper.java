@@ -262,19 +262,20 @@ public class IndicatorsMapper {
 		defaultClassification.setNumClasses(new BigDecimal(indicatorsMetadataEntity.getNumClasses()));
 		defaultClassification.setClassificationMethod(indicatorsMetadataEntity.getClassificationMethod());
 		defaultClassification.setClassificationType(ClassificationTypeEnum.SEQUENTIAL);
+		defaultClassification.setIndividualColors(indicatorsMetadataEntity.getIndividualColors());
+		defaultClassification.setLabels(indicatorsMetadataEntity.getLabels());
 
-		List<String> individualColors = new ArrayList<>();
-		Optional<DefaultClassificationMappingItemEntity> mappingItem = indicatorsMetadataEntity.getDefaultClassificationMappingItems().stream().findAny();
-		if(mappingItem.isPresent()) {
-			individualColors = mappingItem.get().getIndividualColors();
-		}
-		defaultClassification.setIndividualColors(individualColors);
+//		List<String> individualColors = new ArrayList<>();
+//		Optional<DefaultClassificationMappingItemEntity> mappingItem = indicatorsMetadataEntity.getDefaultClassificationMappingItems().stream().findAny();
+//		if(mappingItem.isPresent()) {
+//			individualColors = mappingItem.get().getIndividualColors();
+//		}
+//		defaultClassification.setIndividualColors(individualColors);
 
 		List<DefaultClassificationMappingItemType> defaultClassificationMappingItems =
 				indicatorsMetadataEntity.getDefaultClassificationMappingItems().stream().map(i -> {
 					DefaultClassificationMappingItemType item =new DefaultClassificationMappingItemType();
 					item.setBreaks(i.getBreaks());
-					item.setLabels(i.getLabels());
 					item.setSpatialUnitId(i.getSpatialUnitId());
 					return item;
 				}).toList();

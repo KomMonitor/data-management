@@ -82,6 +82,9 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
   private List<String> individualColors = new ArrayList<>();
 
   @Valid
+  private List<String> labels = new ArrayList<>();
+
+  @Valid
   private List<@Valid DefaultClassificationMappingItemType> items = new ArrayList<>();
 
   public DefaultClassificationMappingType() {
@@ -145,6 +148,34 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
     this.individualColors = individualColors;
   }
 
+  public DefaultClassificationMappingType labels(List<String> labels) {
+    this.labels = labels;
+    return this;
+  }
+
+  public DefaultClassificationMappingType addLabelsItem(String labelsItem) {
+    if (this.labels == null) {
+      this.labels = new ArrayList<>();
+    }
+    this.labels.add(labelsItem);
+    return this;
+  }
+
+  /**
+   * array of labels for each class
+   * @return labels
+   */
+  
+  @Schema(name = "labels", description = "array of labels for each class", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("labels")
+  public List<String> getLabels() {
+    return labels;
+  }
+
+  public void setLabels(List<String> labels) {
+    this.labels = labels;
+  }
+
   public DefaultClassificationMappingType items(List<@Valid DefaultClassificationMappingItemType> items) {
     this.items = items;
     return this;
@@ -199,13 +230,14 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
     DefaultClassificationMappingType defaultClassificationMappingType = (DefaultClassificationMappingType) o;
     return Objects.equals(this.classificationMethod, defaultClassificationMappingType.classificationMethod) &&
         Objects.equals(this.individualColors, defaultClassificationMappingType.individualColors) &&
+        Objects.equals(this.labels, defaultClassificationMappingType.labels) &&
         Objects.equals(this.items, defaultClassificationMappingType.items) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(classificationMethod, individualColors, items, super.hashCode());
+    return Objects.hash(classificationMethod, individualColors, labels, items, super.hashCode());
   }
 
   @Override
@@ -215,6 +247,7 @@ public class DefaultClassificationMappingType extends AbstractClassificationMapp
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    classificationMethod: ").append(toIndentedString(classificationMethod)).append("\n");
     sb.append("    individualColors: ").append(toIndentedString(individualColors)).append("\n");
+    sb.append("    labels: ").append(toIndentedString(labels)).append("\n");
     sb.append("    items: ").append(toIndentedString(items)).append("\n");
     sb.append("}");
     return sb.toString();

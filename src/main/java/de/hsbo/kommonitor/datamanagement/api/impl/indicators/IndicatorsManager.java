@@ -1409,26 +1409,19 @@ public class IndicatorsManager {
         if (entity.getQualitativeClassificationMappingItems() != null) {
             entity.getQualitativeClassificationMappingItems().clear();
         }
-
         entity.setClassificationType(ClassificationTypeEnum.SEQUENTIAL);
 
         BigDecimal numClasses = classificationMapping.getNumClasses();
         if (numClasses == null) {
             numClasses = new BigDecimal(5);
         }
-        if (classificationMapping.getColorBrewerSchemeName().equals("INDIVIDUAL")) {
-            if (classificationMapping.getIndividualColors() == null || numClasses.intValue() != classificationMapping.getIndividualColors().size()) {
-                String errMsg = messageResolver.getMessage(MSG_CLASSIFICATION_MAPPING_ERROR);
-                throw new ApiException(400, String.format(errMsg, "individualColors"));
-            }
-        }
+
+        checkClassificationMapping(classificationMapping, numClasses.intValue());
 
         List<DefaultClassificationMappingItemEntity> classificationItems = classificationMapping.getItems().stream().map(i -> {
             DefaultClassificationMappingItemEntity e = new DefaultClassificationMappingItemEntity();
             e.setBreaks(i.getBreaks());
-            e.setLabels(i.getLabels());
             e.setSpatialUnitId(i.getSpatialUnitId());
-            e.setIndividualColors(classificationMapping.getIndividualColors());
             return e;
         }).toList();
 
@@ -1447,6 +1440,8 @@ public class IndicatorsManager {
         }
         entity.setNumClasses(numClasses.intValue());
         entity.setClassificationMethod(classificationMapping.getClassificationMethod());
+        entity.setLabels(classificationMapping.getLabels());
+        entity.setIndividualColors(classificationMapping.getIndividualColors());
     }
 
     public void setClassificationMapping(MetadataIndicatorsEntity entity, QualitativeClassificationMappingType classificationMapping) throws ApiException {
@@ -1492,16 +1487,25 @@ public class IndicatorsManager {
 
     }
 
+    private void checkClassificationMapping(DefaultClassificationMappingType classificationMapping, int numClasses) throws ApiException {
+        if (classificationMapping.getColorBrewerSchemeName().equals("INDIVIDUAL")) {
+            if (classificationMapping.getIndividualColors() == null || numClasses != classificationMapping.getIndividualColors().size()) {
+                String errMsg = messageResolver.getMessage(MSG_CLASSIFICATION_MAPPING_ERROR);
+                throw new ApiException(400, String.format(errMsg, "individualColors"));
+            }
+        }
+        if (classificationMapping.getLabels() != null && !classificationMapping.getLabels().isEmpty()) {
+            if (classificationMapping.getLabels().size() != numClasses) {
+                String errMsg = messageResolver.getMessage(MSG_CLASSIFICATION_MAPPING_ERROR);
+                throw new ApiException(400, String.format(errMsg, "labels"));
+            }
+        }
+    }
+
     private void checkClassificationMapping(DefaultClassificationMappingItemType item, int numClasses) throws ApiException {
         if (item.getBreaks().size() != (numClasses - 1)) {
             String errMsg = messageResolver.getMessage(MSG_CLASSIFICATION_MAPPING_ITEM_ERROR);
             throw new ApiException(400, String.format(errMsg, "breaks", item.getSpatialUnitId()));
-        }
-        if (item.getLabels() != null && !item.getLabels().isEmpty()) {
-            if (item.getLabels().size() != numClasses) {
-                String errMsg = messageResolver.getMessage(MSG_CLASSIFICATION_MAPPING_ITEM_ERROR);
-                throw new ApiException(400, String.format(errMsg, "labels", item.getSpatialUnitId()));
-            }
         }
     }
 
