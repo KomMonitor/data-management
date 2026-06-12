@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeValueMapping;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,8 +32,56 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
 
   private @Nullable String spatialReferenceKey;
 
+  /**
+   * Informational field indicating the type of mapping values inside this container.
+   */
+  public enum ValueTypeEnum {
+    NUMERIC("numeric"),
+    
+    CATEGORICAL("categorical");
+
+    private final String value;
+
+    ValueTypeEnum(String value) {
+      this.value = value;
+    }
+
+    @JsonValue
+    public String getValue() {
+      return value;
+    }
+
+    @Override
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static ValueTypeEnum fromValue(String value) {
+      for (ValueTypeEnum b : ValueTypeEnum.values()) {
+        if (b.value.equals(value)) {
+          return b;
+        }
+      }
+      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+    }
+  }
+
+  private ValueTypeEnum valueType = ValueTypeEnum.NUMERIC;
+
   @Valid
   private List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping = new ArrayList<>();
+
+  public IndicatorPOSTInputTypeIndicatorValues() {
+    super();
+  }
+
+  /**
+   * Constructor with only required parameters
+   */
+  public IndicatorPOSTInputTypeIndicatorValues(List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping) {
+    this.valueMapping = valueMapping;
+  }
 
   public IndicatorPOSTInputTypeIndicatorValues spatialReferenceKey(@Nullable String spatialReferenceKey) {
     this.spatialReferenceKey = spatialReferenceKey;
@@ -54,6 +103,26 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
     this.spatialReferenceKey = spatialReferenceKey;
   }
 
+  public IndicatorPOSTInputTypeIndicatorValues valueType(ValueTypeEnum valueType) {
+    this.valueType = valueType;
+    return this;
+  }
+
+  /**
+   * Informational field indicating the type of mapping values inside this container.
+   * @return valueType
+   */
+  
+  @Schema(name = "valueType", description = "Informational field indicating the type of mapping values inside this container.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("valueType")
+  public ValueTypeEnum getValueType() {
+    return valueType;
+  }
+
+  public void setValueType(ValueTypeEnum valueType) {
+    this.valueType = valueType;
+  }
+
   public IndicatorPOSTInputTypeIndicatorValues valueMapping(List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping) {
     this.valueMapping = valueMapping;
     return this;
@@ -68,11 +137,11 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
   }
 
   /**
-   * an array of entries mapping an indicator value to a timestamp as mapping key
+   * an array of polymorphic mapping entries
    * @return valueMapping
    */
-  @Valid 
-  @Schema(name = "valueMapping", description = "an array of entries mapping an indicator value to a timestamp as mapping key", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "valueMapping", description = "an array of polymorphic mapping entries", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("valueMapping")
   public List<@Valid IndicatorPOSTInputTypeValueMapping> getValueMapping() {
     return valueMapping;
@@ -92,12 +161,13 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
     }
     IndicatorPOSTInputTypeIndicatorValues indicatorPOSTInputTypeIndicatorValues = (IndicatorPOSTInputTypeIndicatorValues) o;
     return Objects.equals(this.spatialReferenceKey, indicatorPOSTInputTypeIndicatorValues.spatialReferenceKey) &&
+        Objects.equals(this.valueType, indicatorPOSTInputTypeIndicatorValues.valueType) &&
         Objects.equals(this.valueMapping, indicatorPOSTInputTypeIndicatorValues.valueMapping);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(spatialReferenceKey, valueMapping);
+    return Objects.hash(spatialReferenceKey, valueType, valueMapping);
   }
 
   @Override
@@ -105,6 +175,7 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
     StringBuilder sb = new StringBuilder();
     sb.append("class IndicatorPOSTInputTypeIndicatorValues {\n");
     sb.append("    spatialReferenceKey: ").append(toIndentedString(spatialReferenceKey)).append("\n");
+    sb.append("    valueType: ").append(toIndentedString(valueType)).append("\n");
     sb.append("    valueMapping: ").append(toIndentedString(valueMapping)).append("\n");
     sb.append("}");
     return sb.toString();

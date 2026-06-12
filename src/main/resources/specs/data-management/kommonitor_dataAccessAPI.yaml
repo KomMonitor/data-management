@@ -7594,17 +7594,80 @@ components:
     IndicatorPOSTInputTypeIndicatorValues:
       title: IndicatorPOSTInputTypeIndicatorValues
       type: object
+      required:
+        - valueMapping
       properties:
         spatialReferenceKey:
           type: string
-          description: identifier (uuid) of the spatial feature to which the values
-            shall be applied
+          description: identifier (uuid) of the spatial feature to which the values shall be applied
+        # Optional: You can keep valueType here as a top-level summary metadata field if desired
+        valueType:
+          type: string
+          description: Informational field indicating the type of mapping values inside this container.
+          enum:
+            - numeric
+            - categorical
+          default: numeric
         valueMapping:
           type: array
-          description: an array of entries mapping an indicator value to a timestamp
-            as mapping key
+          description: an array of polymorphic mapping entries
           items:
             $ref: '#/components/schemas/IndicatorPOSTInputTypeValueMapping'
+
+    # --- Abstract Base Class for Items ---
+    IndicatorPOSTInputTypeValueMapping:
+      title: IndicatorPOSTInputTypeValueMapping
+      type: object
+      required:
+        - timestamp
+        - valueType  # <-- Required for Jackson polymorphism inside the array
+      properties:
+        timestamp:
+          type: string
+          description: timestamp consisting of year, month and day according to ISO 8601 (e.g. 2018-01-30)
+          format: date
+        valueType:
+          type: string
+          description: Discriminator field to determine concrete mapping class type.
+          enum:
+            - numeric
+            - categorical
+          default: numeric
+      discriminator:
+        propertyName: valueType
+        mapping:
+          numeric: '#/components/schemas/IndicatorPOSTInputTypeNumericalValueMapping'
+          categorical: '#/components/schemas/IndicatorPOSTInputTypeCategoricalValueMapping'
+
+    # --- Concrete Subclass 1 (Numerical) ---
+    IndicatorPOSTInputTypeNumericalValueMapping:
+      title: IndicatorPOSTInputTypeNumericalValueMapping
+      allOf:
+        - $ref: '#/components/schemas/IndicatorPOSTInputTypeValueMapping'
+        - type: object
+          required:
+            - indicatorValue
+          properties:
+            indicatorValue:
+              type: number
+              description: the numeric extent of the indicator for the timestamp
+              format: float
+              example: 0.0
+
+    # --- Concrete Subclass 2 (Categorical) ---
+    IndicatorPOSTInputTypeCategoricalValueMapping:
+      title: IndicatorPOSTInputTypeCategoricalValueMapping
+      allOf:
+        - $ref: '#/components/schemas/IndicatorPOSTInputTypeValueMapping'
+        - type: object
+          required:
+            - indicatorValue
+          properties:
+            indicatorValue:
+              type: string
+              description: the text-based categorical value of the indicator for the timestamp
+              example: "high"
+
     IndicatorPOSTInputTypeRefrencesToGeoresources:
       title: IndicatorPOSTInputTypeRefrencesToGeoresources
       type: object
@@ -7627,20 +7690,6 @@ components:
           type: string
           description: short description of how the indicator is referenced to the
             superior one
-    IndicatorPOSTInputTypeValueMapping:
-      title: IndicatorPOSTInputTypeValueMapping
-      type: object
-      properties:
-        indicatorValue:
-          type: number
-          description: the numeric extent of the indicator for the timestamp
-          format: float
-          example: 0.0
-        timestamp:
-          type: string
-          description: timestamp consisting of year, month and day according to ISO
-            8601 (e.g. 2018-01-30)
-          format: date
     IndicatorPUTInputType:
       title: IndicatorPUTInputType
       required:
