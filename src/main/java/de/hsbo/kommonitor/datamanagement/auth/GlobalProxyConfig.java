@@ -112,6 +112,11 @@ public class GlobalProxyConfig {
     @PostConstruct
     public void init() {
     	
+    	// 0. Bereinige den Proxy-Host (entfernt versehentliches http:// oder https://)
+        if (proxyHost != null) {
+            proxyHost = proxyHost.replace("http://", "").replace("https://", "").replace("/", "");
+        }
+    	
     	// 1. Prüfung auf Unvollständigkeit (Wichtig für Admins!)
         validateProxyConfig();
     	
@@ -119,6 +124,9 @@ public class GlobalProxyConfig {
         setupSystemProperties();
         // Dann sofort die Patterns daraus generieren
         setupNonProxyPatterns();
+        
+        // Globales Routing erzwingen via default proxy selector
+        setupGlobalProxySelector();
     }
     
     private void setupSystemProperties() {
@@ -241,6 +249,29 @@ public class GlobalProxyConfig {
 //                })
 //                .build();
 //    }
+    
+    private void setupGlobalProxySelector() {
+        if (isProxyConfigured()) {
+            log.info("Registering Global ProxySelector for the JVM to enforce routing rules.");
+            ProxySelector.setDefault(new ProxySelector() {
+                @Override
+                public List<Proxy> select(URI uri) {
+                    String host = uri.getHost();
+                    if (isInternal(host)) {
+                        log.debug("Global Route: Bypassing proxy for internal host {}", host);
+                        return List.of(Proxy.NO_PROXY);
+                    }
+                    log.debug("Global Route: Proxying request to external host {}", host);
+                    return List.of(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort)));
+                }
+
+                @Override
+                public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
+                    log.error("Global Route: Proxy connection failed for URI: {}", uri, ioe);
+                }
+            });
+        }
+    }
     
     @Bean
     public JwtDecoder jwtDecoder() {
