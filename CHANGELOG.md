@@ -1,6 +1,7 @@
 # Change Log
 
-## 5.2.4
+## 5.2.5
+* fix proxy inclusion in resteasy client based Keycloak communication for user group management [e6e4699](e6e4699e32370af004ff285bf44192a818b82bfd)
 * refine implementation for proxy setup - add proxy config bean for RestEasy client necessary for keycloak admin cli requests [64d0eff](64d0eff592113fe395424527ac634279cbaf5c6d)
 * Add management for web services to user favourites [189f996](189f99679616c134cebcf70ace1ad715af60660b)
 * Improve error logging for same geometry check [621bb17](621bb17b3ccbc2237420cda1a64e8534fa8c2d88)
