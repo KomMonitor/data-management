@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,8 +45,6 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.client.ClientRequestFilter;
-
-import java.util.Base64;
 
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -366,11 +365,14 @@ public class GlobalProxyConfig {
     
     @Bean
     public ResteasyClient resteasyClient() {
-        // 1. Reuse identical core HttpClient routing configurations
-        HttpClient httpClient = buildSharedHttpClient("ResteasyClient");
-
+       
         // 2. Initialize RESTEasy builder
         ResteasyClientBuilderImpl builder = new ResteasyClientBuilderImpl();
+        
+        // Wir zwingen RESTEasy, die Standard-Java-Engine zu nutzen. 
+        // Diese greift automatisch auf deine System.setProperty("http.proxyHost", ...) 
+        // und den globalen Authenticator aus der init()-Methode zu.
+        builder.httpEngine(new org.jboss.resteasy.client.jaxrs.engines.URLConnectionEngine());
         
         // 3. Register custom Keycloak provider with its specific priority
         builder.register(new KeycloakRestClientProvider(), 1000);

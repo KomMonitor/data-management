@@ -22,6 +22,8 @@ public class ApiUtils {
      */
     public static ResponseEntity createResponseEntityFromException(Exception exception) {
         LOG.error(exception.getMessage());
+        
+        exception.printStackTrace();
     	
     	ErrorType er = new ErrorType();
         er.setLabel(exception.getClass().getName());
