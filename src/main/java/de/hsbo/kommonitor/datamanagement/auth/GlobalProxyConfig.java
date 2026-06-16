@@ -18,7 +18,15 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient43Engine;
 import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +52,6 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.ws.rs.client.ClientRequestFilter;
 
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -257,7 +264,7 @@ public class GlobalProxyConfig {
                 @Override
                 public List<Proxy> select(URI uri) {
                     String host = uri.getHost();
-                    if (isInternal(host)) {
+                    if (host.equals(proxyHost) || isInternal(host)) {
                         log.debug("Global Route: Bypassing proxy for internal host {}", host);
                         return List.of(Proxy.NO_PROXY);
                     }
@@ -345,7 +352,7 @@ public class GlobalProxyConfig {
             httpClientBuilder.proxy(new ProxySelector() {
                 @Override
                 public List<Proxy> select(URI uri) {
-                    if (isInternal(uri.getHost())) {
+                    if (uri.getHost().equals(proxyHost) || isInternal(uri.getHost())) {
                         log.debug("Internal request to {} - bypassing proxy.", uri.getHost());
                         return List.of(Proxy.NO_PROXY);
                     }
@@ -396,27 +403,39 @@ public class GlobalProxyConfig {
     
     @Bean
     public ResteasyClient resteasyClient() {
-       
-        // 2. Initialize RESTEasy builder
+        log.info("Initializing RESTEasy Client with isolated Apache HttpClient for clean Proxy Routing");
+
         ResteasyClientBuilderImpl builder = new ResteasyClientBuilderImpl();
-        
-        // Wir zwingen RESTEasy, die Standard-Java-Engine zu nutzen. 
-        // Diese greift automatisch auf deine System.setProperty("http.proxyHost", ...) 
-        // und den globalen Authenticator aus der init()-Methode zu.
-        builder.httpEngine(new org.jboss.resteasy.client.jaxrs.engines.URLConnectionEngine());
-        
-        // 3. Register custom Keycloak provider with its specific priority
+
+        if (isProxyConfigured()) {
+            // 1. RoutePlanner nutzt den globalen ProxySelector (deine isInternal Logik greift!)
+            SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+
+            var clientBuilder = HttpClients.custom().setRoutePlanner(routePlanner);
+
+            // 2. CredentialsProvider kümmert sich automatisch um den 407 HTTPS-Tunnel Fehler!
+            if (hasProxyCredentials()) {
+                CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                credentialsProvider.setCredentials(
+                        AuthScope.ANY,
+                        new UsernamePasswordCredentials(proxyUser, proxyPassword)
+                );
+                clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+                log.debug("Apache HttpClient configured with Proxy Credentials");
+            }
+
+            // 3. Apache Client isoliert aufbauen und in RESTEasy einklinken
+            CloseableHttpClient apacheHttpClient = clientBuilder.build();
+            builder.httpEngine(new ApacheHttpClient43Engine(apacheHttpClient));
+            
+            log.info("RESTEasy Client successfully configured with ApacheHttpClient43Engine");
+        }
+
+        // Keycloak Provider registrieren
         builder.register(new KeycloakRestClientProvider(), 1000);
 
-        // 4. Register the Proxy-Auth Header Filter (equivalent to RestTemplate Interceptor)
-        builder.register((ClientRequestFilter) requestContext -> {
-            String host = requestContext.getUri().getHost();
-
-            if (isProxyConfigured() && !isInternal(host) && hasProxyCredentials()) {
-                requestContext.getHeaders().add("Proxy-Authorization", buildProxyAuthHeader());
-                log.debug("RESTEasy: Added Proxy-Authorization header for external host: {}", host);
-            }
-        });
+        // HINWEIS: Der manuelle ClientRequestFilter für "Proxy-Authorization" 
+        // wird hier absichtlich weggelassen, da Apache das nun nativ übernimmt!
 
         return builder.build();
     }
