@@ -1,6 +1,7 @@
 # Change Log
 
-## 5.2.6-beta.1
+## 5.2.6-beta.2
+* fix proxied restEasy client setup for keycloak admin communication [2b89cda](2b89cdae599c70f10124cfa56705ac527dd7cd00)
 * add an additional global proxy selector enforcing proxy routing deep in Javas networking tier if necessary - with debug logs [2c352f4](2c352f4739918700298d9acb2b00096906e14e05)
 * fix proxy inclusion in resteasy client based Keycloak communication for user group management [e6e4699](e6e4699e32370af004ff285bf44192a818b82bfd)
 * refine implementation for proxy setup - add proxy config bean for RestEasy client necessary for keycloak admin cli requests [64d0eff](64d0eff592113fe395424527ac634279cbaf5c6d)
