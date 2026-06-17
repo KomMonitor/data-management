@@ -37,7 +37,7 @@
         <springfox.version>2.9.2</springfox.version>
         <!--Note: GeoTools >=33 seems to have braking changes. Creating Geom columns in DB is broken for those versions.-->
         <geotools.version>32.4</geotools.version>
-        <postgresql.version>42.7.10</postgresql.version>
+        <postgresql.version>42.7.11</postgresql.version>
         <hibernate-spatial.version>6.6.48.Final</hibernate-spatial.version>
         <release-plugin.version>3.1.1</release-plugin.version>
         <changelog-plugin.version>0.5.1</changelog-plugin.version>
