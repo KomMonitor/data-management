@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorValueTypeEnum;
 import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
@@ -44,42 +45,7 @@ public class IndicatorPOSTInputTypeValueMapping implements Serializable {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate timestamp;
 
-  /**
-   * Discriminator field to determine concrete mapping class type.
-   */
-  public enum ValueTypeEnum {
-    NUMERIC("numeric"),
-    
-    CATEGORICAL("categorical");
-
-    private final String value;
-
-    ValueTypeEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static ValueTypeEnum fromValue(String value) {
-      for (ValueTypeEnum b : ValueTypeEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
-  private ValueTypeEnum valueType = ValueTypeEnum.NUMERIC;
+  private IndicatorValueTypeEnum valueType;
 
   public IndicatorPOSTInputTypeValueMapping() {
     super();
@@ -88,7 +54,7 @@ public class IndicatorPOSTInputTypeValueMapping implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorPOSTInputTypeValueMapping(LocalDate timestamp, ValueTypeEnum valueType) {
+  public IndicatorPOSTInputTypeValueMapping(LocalDate timestamp, IndicatorValueTypeEnum valueType) {
     this.timestamp = timestamp;
     this.valueType = valueType;
   }
@@ -113,23 +79,23 @@ public class IndicatorPOSTInputTypeValueMapping implements Serializable {
     this.timestamp = timestamp;
   }
 
-  public IndicatorPOSTInputTypeValueMapping valueType(ValueTypeEnum valueType) {
+  public IndicatorPOSTInputTypeValueMapping valueType(IndicatorValueTypeEnum valueType) {
     this.valueType = valueType;
     return this;
   }
 
   /**
-   * Discriminator field to determine concrete mapping class type.
+   * Get valueType
    * @return valueType
    */
-  @NotNull 
-  @Schema(name = "valueType", description = "Discriminator field to determine concrete mapping class type.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @NotNull @Valid 
+  @Schema(name = "valueType", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("valueType")
-  public ValueTypeEnum getValueType() {
+  public IndicatorValueTypeEnum getValueType() {
     return valueType;
   }
 
-  public void setValueType(ValueTypeEnum valueType) {
+  public void setValueType(IndicatorValueTypeEnum valueType) {
     this.valueType = valueType;
   }
 

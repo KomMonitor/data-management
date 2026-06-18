@@ -66,6 +66,7 @@ public class IndicatorsManager {
     private static final String MSG_INDICATOR_EXISTS_ERROR = "indicator-exists-error";
     private static final String MSG_CLASSIFICATION_MAPPING_ITEM_ERROR = "invalid-classification-mapping-item-error";
     private static final String MSG_CLASSIFICATION_MAPPING_ERROR = "invalid-classification-mapping-error";
+    private static final String MSG_INVALID_INDICATOR_TYPE = "invalid-indicator-value-type";
 
     @Autowired
     private IndicatorsMetadataRepository indicatorsMetadataRepo;
@@ -399,11 +400,7 @@ public class IndicatorsManager {
             MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
             String datasetTitle = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
 
-            // check if data contains null or NAN values
-            /*
-             * DEACTIVATE FOR NOW AS WE WANT TO ALLOW NAN VALUES AS NODATA VALUES
-             */
-//			checkInputData(indicatorData);
+			checkInputData(indicatorData);
 
             if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName)) {
                 IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName);
@@ -490,6 +487,44 @@ public class IndicatorsManager {
         }
     }
 
+    private void checkInputData(IndicatorPUTInputType indicatorData) throws Exception {
+        List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = indicatorData.getIndicatorValues();
+        IndicatorValueTypeEnum valueType;
+        if(!indicatorValues.isEmpty()) {
+            valueType = indicatorValues.get(0).getValueType();
+        }
+        else {
+            return;
+        }
+
+        boolean sameValueType = indicatorValues.stream().anyMatch(i -> !i.getValueType().equals(valueType));
+        if(sameValueType) {
+            String errMsg = messageResolver.getMessage(MSG_INVALID_INDICATOR_TYPE);
+            throw new ApiException(400, String.format(errMsg, valueType.getValue()));
+        }
+
+        if (valueType.equals(IndicatorValueTypeEnum.NUMERIC)) {
+            checkIndicatorValueTypes(indicatorValues, IndicatorPOSTInputTypeNumericalValueMapping.class, IndicatorValueTypeEnum.NUMERIC);
+        } else if (valueType.equals(IndicatorValueTypeEnum.CATEGORICAL)){
+            checkIndicatorValueTypes(indicatorValues, IndicatorPOSTInputTypeCategoricalValueMapping.class, IndicatorValueTypeEnum.CATEGORICAL);
+        } else {
+            throw new ApiException(400, String.format("Unsupported indicator value type '%s'", valueType.getValue()));
+        }
+    }
+
+    private void checkIndicatorValueTypes(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, Class<? extends IndicatorPOSTInputTypeValueMapping> expectedClass, IndicatorValueTypeEnum valueType) throws ApiException {
+        for (IndicatorPOSTInputTypeIndicatorValues indicatorPOSTInputTypeIndicatorValues : indicatorValues) {
+            List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorPOSTInputTypeIndicatorValues.getValueMapping();
+            for (IndicatorPOSTInputTypeValueMapping indicatorPOSTInputTypeValueMapping : valueMapping) {
+                // Ensure that all mappings have numeric  indicator type
+                if (!expectedClass.isInstance(indicatorPOSTInputTypeValueMapping)) {
+                    String errMsg = messageResolver.getMessage(MSG_INVALID_INDICATOR_TYPE);
+                    throw new ApiException(400, String.format(errMsg, valueType.getValue()));
+                }
+            }
+        }
+    }
+
     public void clearPartialResources(String indicatorViewTableName, boolean publishedAsService, String indicatorId, String spatialUnitName) throws Exception {
         try {
 
@@ -565,20 +600,6 @@ public class IndicatorsManager {
 
 
         return null;
-    }
-
-    private void checkInputData(IndicatorPUTInputType indicatorData) throws Exception {
-        List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = indicatorData.getIndicatorValues();
-
-        for (IndicatorPOSTInputTypeIndicatorValues indicatorPOSTInputTypeIndicatorValues : indicatorValues) {
-            List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorPOSTInputTypeIndicatorValues.getValueMapping();
-            for (IndicatorPOSTInputTypeValueMapping indicatorPOSTInputTypeValueMapping : valueMapping) {
-                Float indicatorValue = indicatorPOSTInputTypeValueMapping.getIndicatorValue();
-                if (indicatorValue == null || Float.isNaN(indicatorValue))
-                    throw new Exception("Input contains NULL or NAN values as indicator value. Thus aborting request to update indicator features.");
-            }
-        }
-
     }
 
     private String createTitleForWebService(String spatialUnitName, String indicatorName) {

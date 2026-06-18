@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
+import de.hsbo.kommonitor.datamanagement.model.*;
 import org.geotools.api.data.DataStore;
 import org.geotools.api.data.SimpleFeatureSource;
 import org.geotools.api.data.SimpleFeatureStore;
@@ -52,10 +54,6 @@ import com.google.common.collect.Lists;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.GeometrySimplifierUtil;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeIndicatorValues;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeValueMapping;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPUTInputType;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorPropertiesWithoutGeomType;
 import jakarta.validation.Valid;
 
 public class IndicatorDatabaseHandler {
@@ -97,9 +95,10 @@ public class IndicatorDatabaseHandler {
 		
 		indicatorValues = sortIndicatorValuesByAvailableDates_ascending(indicatorValues, availableDatesForIndicator);
 
+
 		LOG.info("Create SimpleFeatureType for indicator");
 
-		SimpleFeatureType featureType = createSimpleFeatureTypeForIndicators(postGisStore, availableDatesForIndicator);
+		SimpleFeatureType featureType = createSimpleFeatureTypeForNumericalIndicators(postGisStore, availableDatesForIndicator);
 
 		SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
 
@@ -138,7 +137,7 @@ public class IndicatorDatabaseHandler {
 			sortedElement.setSpatialReferenceKey(indicatorPOSTInputTypeIndicatorValueEntry.getSpatialReferenceKey());
 			
 			// now make sure that for each availableDateForIndicator (in that order!) an indicatorValue is present (maybe NULL)
-			Map<Date, Float> availableDatesForIndicatorMap = new HashMap<Date, Float>();
+			Map<Date, Object> availableDatesForIndicatorMap = new HashMap<>();
 			// init map with NULL values
 			for (Date availableDate : availableDatesForIndicator) {
 				availableDatesForIndicatorMap.put(availableDate, null);
@@ -147,18 +146,27 @@ public class IndicatorDatabaseHandler {
 			// now fill actual indicator values for respective indicator dates (for each feature certain dates might be missing)
 			List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping_original = indicatorPOSTInputTypeIndicatorValueEntry.getValueMapping();
 			for (IndicatorPOSTInputTypeValueMapping valueMappingEntry_original : valueMapping_original) {
-				availableDatesForIndicatorMap.put(DateTimeUtil.fromLocalDate(valueMappingEntry_original.getTimestamp()), valueMappingEntry_original.getIndicatorValue());
+				availableDatesForIndicatorMap.put(DateTimeUtil.fromLocalDate(valueMappingEntry_original.getTimestamp()), extractIndicatorValue(valueMappingEntry_original));
 			}
-			
-			
+
 			// create sorted valueMapping array
 			List<IndicatorPOSTInputTypeValueMapping> valueMapping_sorted = new ArrayList<IndicatorPOSTInputTypeValueMapping>();
 			// preserve correct date order
 			for (Date availableDate : availableDatesForIndicator) {
-				IndicatorPOSTInputTypeValueMapping entry = new IndicatorPOSTInputTypeValueMapping();
+				IndicatorPOSTInputTypeValueMapping entry;
+				Object mapValue = availableDatesForIndicatorMap.get(availableDate);
+
+				if (indicatorPOSTInputTypeIndicatorValueEntry.getValueType().equals(IndicatorValueTypeEnum.NUMERIC)) {
+					IndicatorPOSTInputTypeNumericalValueMapping numericalEntry = new IndicatorPOSTInputTypeNumericalValueMapping();
+					numericalEntry.setIndicatorValue(((Number) mapValue).floatValue());
+					entry = numericalEntry;
+				} else {
+					IndicatorPOSTInputTypeCategoricalValueMapping categoricalEntry = new IndicatorPOSTInputTypeCategoricalValueMapping();
+					categoricalEntry.setIndicatorValue(mapValue != null ? mapValue.toString() : null);
+					entry = categoricalEntry;
+				}
 				entry.setTimestamp(DateTimeUtil.toLocalDate(availableDate));
-				entry.setIndicatorValue(availableDatesForIndicatorMap.get(availableDate));	
-				
+
 				valueMapping_sorted.add(entry);
 			}
 			
@@ -307,7 +315,7 @@ public class IndicatorDatabaseHandler {
 				List<IndicatorPOSTInputTypeValueMapping> valueMapping = indicatorEntry.getValueMapping();
 				for (IndicatorPOSTInputTypeValueMapping mappingEntry : valueMapping) {
 					try {
-						builder.add(mappingEntry.getIndicatorValue());
+						builder.add(extractIndicatorValue(mappingEntry));
 					} catch (Exception ex) {
 						LOG.error("Error while building feature.", ex);
 					}
@@ -346,14 +354,10 @@ public class IndicatorDatabaseHandler {
 		return availableDates;
 	}
 
-	private static SimpleFeatureType createSimpleFeatureTypeForIndicators(DataStore dataStore,
-																		  List<Date> availableDatesForIndicator) throws IOException {
+	private static SimpleFeatureType createSimpleFeatureTypeForNumericalIndicators(DataStore dataStore,
+																				   List<Date> availableDatesForIndicator) throws IOException {
 		SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
 		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(ResourceTypeEnum.INDICATOR, dataStore, VALUE_SUFFIX));
-		// tb.setNamespaceURI(featureSchema.getName().getNamespaceURI());
-		// tb.setCRS(featureSchema.getCoordinateReferenceSystem());
-		// tb.addAll(featureSchema.getAttributeDescriptors());
-		// tb.setDefaultGeometry("Polygon");
 
 		/*
 		 * add KomMonitor specific properties!
@@ -363,6 +367,24 @@ public class IndicatorDatabaseHandler {
 		for (Date date : availableDatesForIndicator) {
 			String dateString = createDateStringForDbProperty(date);
 			tb.add(dateString, Float.class);
+		}
+
+		return tb.buildFeatureType();
+	}
+
+	private static SimpleFeatureType createSimpleFeatureTypeForCategoricalIndicators(DataStore dataStore,
+																				   List<Date> availableDatesForIndicator) throws IOException {
+		SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+		tb.setName(DatabaseHelperUtil.createUniqueTableNameForResourceType(ResourceTypeEnum.INDICATOR, dataStore, VALUE_SUFFIX));
+
+		/*
+		 * add KomMonitor specific properties!
+		 */
+		tb.add(KomMonitorFeaturePropertyConstants.SPATIAL_UNIT_FEATURE_ID_NAME, String.class);
+
+		for (Date date : availableDatesForIndicator) {
+			String dateString = createDateStringForDbProperty(date);
+			tb.add(dateString, String.class);
 		}
 
 		return tb.buildFeatureType();
@@ -639,7 +661,7 @@ public class IndicatorDatabaseHandler {
 					for (IndicatorPOSTInputTypeValueMapping valueMappingEntry : valueMapping) {
 						Date dateColumn = DateTimeUtil.fromLocalDate(valueMappingEntry.getTimestamp());
 						String dateColumnName = createDateStringForDbProperty(dateColumn);			
-						sfBuilder.set(dateColumnName, valueMappingEntry.getIndicatorValue());
+						sfBuilder.set(dateColumnName, extractIndicatorValue(valueMappingEntry));
 					}
 					newFeaturesToBeAdded.add(sfBuilder.buildFeature(null));
 				}
@@ -652,7 +674,7 @@ public class IndicatorDatabaseHandler {
 						String dateColumnName = createDateStringForDbProperty(dateColumn);
 						
 						columnNames.add(dateColumnName);
-						columnValues.add(valueMappingEntry.getIndicatorValue());
+						columnValues.add(extractIndicatorValue(valueMappingEntry));
 //						store.modifyFeatures(dateColumnName, valueMappingEntry.getIndicatorValue(), filter);
 					}
 					
@@ -674,7 +696,16 @@ public class IndicatorDatabaseHandler {
 		if (!newFeaturesToBeAdded.isEmpty()){
 			store.addFeatures(newFeaturesToBeAdded);
 		}
-	}	
+	}
+
+	private static Object extractIndicatorValue(IndicatorPOSTInputTypeValueMapping entry) {
+		if (entry instanceof IndicatorPOSTInputTypeNumericalValueMapping) {
+			return ((IndicatorPOSTInputTypeNumericalValueMapping) entry).getIndicatorValue();
+		} else if (entry instanceof IndicatorPOSTInputTypeCategoricalValueMapping) {
+			return ((IndicatorPOSTInputTypeCategoricalValueMapping) entry).getIndicatorValue();
+		}
+		return null; // Or throw an IllegalArgumentException if an unexpected type appears
+	}
 	
 	private static boolean isNotInExistingFeatures(Filter filter, SimpleFeatureCollection existingFeatures) {
 		// TODO Auto-generated method stub

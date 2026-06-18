@@ -7600,14 +7600,10 @@ components:
         spatialReferenceKey:
           type: string
           description: identifier (uuid) of the spatial feature to which the values shall be applied
-        # Optional: You can keep valueType here as a top-level summary metadata field if desired
         valueType:
-          type: string
           description: Informational field indicating the type of mapping values inside this container.
-          enum:
-            - numeric
-            - categorical
-          default: numeric
+          $ref: '#/components/schemas/IndicatorValueTypeEnum'
+          default: NUMERIC
         valueMapping:
           type: array
           description: an array of polymorphic mapping entries
@@ -7627,12 +7623,9 @@ components:
           description: timestamp consisting of year, month and day according to ISO 8601 (e.g. 2018-01-30)
           format: date
         valueType:
-          type: string
           description: Discriminator field to determine concrete mapping class type.
-          enum:
-            - numeric
-            - categorical
-          default: numeric
+          $ref: '#/components/schemas/IndicatorValueTypeEnum'
+          default: NUMERIC
       discriminator:
         propertyName: valueType
         mapping:
@@ -8804,6 +8797,11 @@ components:
       enum:
         - SEQUENTIAL
         - QUALITATIVE
+    IndicatorValueTypeEnum:
+      type: string
+      enum:
+        - NUMERIC
+        - CATEGORICAL
   securitySchemes:
     kommonitor-data-access_oauth:
       type: oauth2

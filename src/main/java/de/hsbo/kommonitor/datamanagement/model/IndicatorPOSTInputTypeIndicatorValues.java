@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeValueMapping;
+import de.hsbo.kommonitor.datamanagement.model.IndicatorValueTypeEnum;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,42 +33,7 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
 
   private @Nullable String spatialReferenceKey;
 
-  /**
-   * Informational field indicating the type of mapping values inside this container.
-   */
-  public enum ValueTypeEnum {
-    NUMERIC("numeric"),
-    
-    CATEGORICAL("categorical");
-
-    private final String value;
-
-    ValueTypeEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static ValueTypeEnum fromValue(String value) {
-      for (ValueTypeEnum b : ValueTypeEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
-  private ValueTypeEnum valueType = ValueTypeEnum.NUMERIC;
+  private @Nullable IndicatorValueTypeEnum valueType;
 
   @Valid
   private List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping = new ArrayList<>();
@@ -103,23 +69,23 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
     this.spatialReferenceKey = spatialReferenceKey;
   }
 
-  public IndicatorPOSTInputTypeIndicatorValues valueType(ValueTypeEnum valueType) {
+  public IndicatorPOSTInputTypeIndicatorValues valueType(@Nullable IndicatorValueTypeEnum valueType) {
     this.valueType = valueType;
     return this;
   }
 
   /**
-   * Informational field indicating the type of mapping values inside this container.
+   * Get valueType
    * @return valueType
    */
-  
-  @Schema(name = "valueType", description = "Informational field indicating the type of mapping values inside this container.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Valid 
+  @Schema(name = "valueType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("valueType")
-  public ValueTypeEnum getValueType() {
+  public @Nullable IndicatorValueTypeEnum getValueType() {
     return valueType;
   }
 
-  public void setValueType(ValueTypeEnum valueType) {
+  public void setValueType(@Nullable IndicatorValueTypeEnum valueType) {
     this.valueType = valueType;
   }
 
