@@ -66,7 +66,8 @@ public class IndicatorsManager {
     private static final String MSG_INDICATOR_EXISTS_ERROR = "indicator-exists-error";
     private static final String MSG_CLASSIFICATION_MAPPING_ITEM_ERROR = "invalid-classification-mapping-item-error";
     private static final String MSG_CLASSIFICATION_MAPPING_ERROR = "invalid-classification-mapping-error";
-    private static final String MSG_INVALID_INDICATOR_TYPE = "invalid-indicator-value-type";
+    private static final String MSG_INVALID_INDICATOR_TYPE = "conflicting-indicator-value-type-error";
+    private static final String MSG_CONFLICTING_CLASSIFICATION = "conflicting-classification-value-type-error";
 
     @Autowired
     private IndicatorsMetadataRepository indicatorsMetadataRepo;
@@ -400,10 +401,22 @@ public class IndicatorsManager {
             MetadataIndicatorsEntity indicatorMetadataEntry = indicatorsMetadataRepo.findByDatasetId(indicatorId);
             String datasetTitle = createTitleForWebService(spatialUnitName, indicatorMetadataEntry.getDatasetName());
 
-			checkInputData(indicatorData);
+			IndicatorValueTypeEnum valueType = checkInputData(indicatorData);
 
             if (indicatorsSpatialUnitsRepo.existsByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName)) {
                 IndicatorSpatialUnitJoinEntity indicatorSpatialsUnitsEntity = indicatorsSpatialUnitsRepo.findByIndicatorMetadataIdAndSpatialUnitName(indicatorId, spatialUnitName);
+                // First check, if indicator values have the proper type regard to the classification type from metadata
+                ClassificationTypeEnum classification = indicatorSpatialsUnitsEntity.getMetadataIndicatorsEntity().getClassificationType();
+                if (ClassificationTypeEnum.QUALITATIVE.equals(classification) && !IndicatorValueTypeEnum.CATEGORICAL.equals(valueType)) {
+                    String errMsg = messageResolver.getMessage(MSG_CONFLICTING_CLASSIFICATION);
+                    throw new ApiException(400, String.format(errMsg, ClassificationTypeEnum.QUALITATIVE.getValue(), IndicatorValueTypeEnum.CATEGORICAL.getValue()));
+                }
+
+                if (ClassificationTypeEnum.SEQUENTIAL.equals(classification) && !IndicatorValueTypeEnum.NUMERIC.equals(valueType)) {
+                    String errMsg = messageResolver.getMessage(MSG_CONFLICTING_CLASSIFICATION);
+                    throw new ApiException(400, String.format(errMsg, ClassificationTypeEnum.SEQUENTIAL.getValue(), IndicatorValueTypeEnum.NUMERIC.getValue()));
+                }
+
                 String indicatorViewTableName = indicatorSpatialsUnitsEntity.getIndicatorViewTableName();
 
                 /*
@@ -437,7 +450,7 @@ public class IndicatorsManager {
                 String indicatorViewTableName = null;
                 boolean publishedAsService = false;
                 try {
-                    String indicatorValueTable = createIndicatorValueTable(indicatorData.getIndicatorValues(), indicatorId);
+                    String indicatorValueTable = createIndicatorValueTable(indicatorData.getIndicatorValues(), indicatorId, valueType);
                     indicatorViewTableName = createOrReplaceIndicatorView_fromValueTableName(indicatorValueTable, spatialUnitName, indicatorId);
 //					deleteIndicatorValueTable(indicatorValueTable);
 
@@ -487,18 +500,18 @@ public class IndicatorsManager {
         }
     }
 
-    private void checkInputData(IndicatorPUTInputType indicatorData) throws Exception {
+    private IndicatorValueTypeEnum checkInputData(IndicatorPUTInputType indicatorData) throws Exception {
         List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues = indicatorData.getIndicatorValues();
         IndicatorValueTypeEnum valueType;
         if(!indicatorValues.isEmpty()) {
             valueType = indicatorValues.get(0).getValueType();
         }
         else {
-            return;
+            return null;
         }
 
-        boolean sameValueType = indicatorValues.stream().anyMatch(i -> !i.getValueType().equals(valueType));
-        if(sameValueType) {
+        boolean sameValueType = indicatorValues.stream().allMatch(i -> i.getValueType().equals(valueType));
+        if(!sameValueType) {
             String errMsg = messageResolver.getMessage(MSG_INVALID_INDICATOR_TYPE);
             throw new ApiException(400, String.format(errMsg, valueType.getValue()));
         }
@@ -510,6 +523,7 @@ public class IndicatorsManager {
         } else {
             throw new ApiException(400, String.format("Unsupported indicator value type '%s'", valueType.getValue()));
         }
+        return valueType;
     }
 
     private void checkIndicatorValueTypes(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, Class<? extends IndicatorPOSTInputTypeValueMapping> expectedClass, IndicatorValueTypeEnum valueType) throws ApiException {
@@ -1277,13 +1291,15 @@ public class IndicatorsManager {
     }
 
     private String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues,
-                                             String metadataId) throws IOException {
+                                             String metadataId,
+                                             IndicatorValueTypeEnum valueType
+    ) throws IOException, ApiException {
         /*
          * write indicator values to a new unique db table
          */
         LOG.info("Trying to create unique table for indicator values.");
 
-        String dbTableName = IndicatorDatabaseHandler.createIndicatorValueTable(indicatorValues);
+        String dbTableName = IndicatorDatabaseHandler.createIndicatorValueTable(indicatorValues, valueType);
 
         LOG.info("Completed creation of indicator values table corresponding to datasetId {}. Table name is {}.",
                 metadataId, dbTableName);

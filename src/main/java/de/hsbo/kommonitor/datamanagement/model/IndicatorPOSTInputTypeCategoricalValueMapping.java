@@ -2,14 +2,9 @@ package de.hsbo.kommonitor.datamanagement.model;
 
 import java.net.URI;
 import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeValueMapping;
-import de.hsbo.kommonitor.datamanagement.model.IndicatorValueTypeEnum;
 import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
@@ -28,7 +23,6 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputTypeCategoricalValueMapping
  */
 
-
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
 public class IndicatorPOSTInputTypeCategoricalValueMapping extends IndicatorPOSTInputTypeValueMapping implements Serializable {
 
@@ -43,8 +37,8 @@ public class IndicatorPOSTInputTypeCategoricalValueMapping extends IndicatorPOST
   /**
    * Constructor with only required parameters
    */
-  public IndicatorPOSTInputTypeCategoricalValueMapping(String indicatorValue, LocalDate timestamp, IndicatorValueTypeEnum valueType) {
-    super(timestamp, valueType);
+  public IndicatorPOSTInputTypeCategoricalValueMapping(String indicatorValue, LocalDate timestamp) {
+    super(timestamp);
     this.indicatorValue = indicatorValue;
   }
 
@@ -71,11 +65,6 @@ public class IndicatorPOSTInputTypeCategoricalValueMapping extends IndicatorPOST
 
   public IndicatorPOSTInputTypeCategoricalValueMapping timestamp(LocalDate timestamp) {
     super.timestamp(timestamp);
-    return this;
-  }
-
-  public IndicatorPOSTInputTypeCategoricalValueMapping valueType(IndicatorValueTypeEnum valueType) {
-    super.valueType(valueType);
     return this;
   }
   @Override

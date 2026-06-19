@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.ServiceResourceEnum;
+import de.hsbo.kommonitor.datamanagement.model.WebServiceType;
 import de.hsbo.kommonitor.datamanagement.model.WmsConnectionInfoType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,33 +29,15 @@ import jakarta.annotation.Generated;
  */
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
-public class WebServiceOverviewType implements Serializable {
+public class WebServiceOverviewType extends WebServiceType implements Serializable {
 
   private static final long serialVersionUID = 1L;
-
-  private String contact;
-
-  private WmsConnectionInfoType connectionDetails;
-
-  private @Nullable String databasis;
-
-  private String datasource;
-
-  private String description;
-
-  private @Nullable String note;
-
-  private @Nullable ServiceResourceEnum serviceResource;
-
-  private String title;
-
-  private String topicReference;
 
   private String id;
 
   private @Nullable Boolean isPublic;
 
-  private String ownerId;
+  private @Nullable String ownerId;
 
   @Valid
   private List<String> permissions = new ArrayList<>();
@@ -69,195 +52,9 @@ public class WebServiceOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public WebServiceOverviewType(String contact, WmsConnectionInfoType connectionDetails, String datasource, String description, String title, String topicReference, String id, String ownerId) {
-    this.contact = contact;
-    this.connectionDetails = connectionDetails;
-    this.datasource = datasource;
-    this.description = description;
-    this.title = title;
-    this.topicReference = topicReference;
+  public WebServiceOverviewType(String id, String contact, WmsConnectionInfoType connectionDetails, String datasource, String description, String title, String topicReference) {
+    super(contact, connectionDetails, datasource, description, title, topicReference);
     this.id = id;
-    this.ownerId = ownerId;
-  }
-
-  public WebServiceOverviewType contact(String contact) {
-    this.contact = contact;
-    return this;
-  }
-
-  /**
-   * contact details where additional information can be achieved
-   * @return contact
-   */
-  @NotNull 
-  @Schema(name = "contact", description = "contact details where additional information can be achieved", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("contact")
-  public String getContact() {
-    return contact;
-  }
-
-  public void setContact(String contact) {
-    this.contact = contact;
-  }
-
-  public WebServiceOverviewType connectionDetails(WmsConnectionInfoType connectionDetails) {
-    this.connectionDetails = connectionDetails;
-    return this;
-  }
-
-  /**
-   * Get connectionDetails
-   * @return connectionDetails
-   */
-  @NotNull @Valid 
-  @Schema(name = "connectionDetails", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("connectionDetails")
-  public WmsConnectionInfoType getConnectionDetails() {
-    return connectionDetails;
-  }
-
-  public void setConnectionDetails(WmsConnectionInfoType connectionDetails) {
-    this.connectionDetails = connectionDetails;
-  }
-
-  public WebServiceOverviewType databasis(@Nullable String databasis) {
-    this.databasis = databasis;
-    return this;
-  }
-
-  /**
-   * information about data used as a basis to generate the web service
-   * @return databasis
-   */
-  
-  @Schema(name = "databasis", description = "information about data used as a basis to generate the web service", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("databasis")
-  public @Nullable String getDatabasis() {
-    return databasis;
-  }
-
-  public void setDatabasis(@Nullable String databasis) {
-    this.databasis = databasis;
-  }
-
-  public WebServiceOverviewType datasource(String datasource) {
-    this.datasource = datasource;
-    return this;
-  }
-
-  /**
-   * information about the origin/source of the web service
-   * @return datasource
-   */
-  @NotNull 
-  @Schema(name = "datasource", description = "information about the origin/source of the web service", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("datasource")
-  public String getDatasource() {
-    return datasource;
-  }
-
-  public void setDatasource(String datasource) {
-    this.datasource = datasource;
-  }
-
-  public WebServiceOverviewType description(String description) {
-    this.description = description;
-    return this;
-  }
-
-  /**
-   * description of the web service
-   * @return description
-   */
-  @NotNull 
-  @Schema(name = "description", description = "description of the web service", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("description")
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public WebServiceOverviewType note(@Nullable String note) {
-    this.note = note;
-    return this;
-  }
-
-  /**
-   * an optional note with background information about the web service
-   * @return note
-   */
-  
-  @Schema(name = "note", description = "an optional note with background information about the web service", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("note")
-  public @Nullable String getNote() {
-    return note;
-  }
-
-  public void setNote(@Nullable String note) {
-    this.note = note;
-  }
-
-  public WebServiceOverviewType serviceResource(@Nullable ServiceResourceEnum serviceResource) {
-    this.serviceResource = serviceResource;
-    return this;
-  }
-
-  /**
-   * Get serviceResource
-   * @return serviceResource
-   */
-  @Valid 
-  @Schema(name = "serviceResource", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("serviceResource")
-  public @Nullable ServiceResourceEnum getServiceResource() {
-    return serviceResource;
-  }
-
-  public void setServiceResource(@Nullable ServiceResourceEnum serviceResource) {
-    this.serviceResource = serviceResource;
-  }
-
-  public WebServiceOverviewType title(String title) {
-    this.title = title;
-    return this;
-  }
-
-  /**
-   * title of the web service
-   * @return title
-   */
-  @NotNull 
-  @Schema(name = "title", description = "title of the web service", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("title")
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public WebServiceOverviewType topicReference(String topicReference) {
-    this.topicReference = topicReference;
-    return this;
-  }
-
-  /**
-   * id of the last topic hierarchy entity 
-   * @return topicReference
-   */
-  @NotNull 
-  @Schema(name = "topicReference", description = "id of the last topic hierarchy entity ", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("topicReference")
-  public String getTopicReference() {
-    return topicReference;
-  }
-
-  public void setTopicReference(String topicReference) {
-    this.topicReference = topicReference;
   }
 
   public WebServiceOverviewType id(String id) {
@@ -300,7 +97,7 @@ public class WebServiceOverviewType implements Serializable {
     this.isPublic = isPublic;
   }
 
-  public WebServiceOverviewType ownerId(String ownerId) {
+  public WebServiceOverviewType ownerId(@Nullable String ownerId) {
     this.ownerId = ownerId;
     return this;
   }
@@ -309,14 +106,14 @@ public class WebServiceOverviewType implements Serializable {
    * identifier of the owning group
    * @return ownerId
    */
-  @NotNull 
-  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("ownerId")
-  public String getOwnerId() {
+  public @Nullable String getOwnerId() {
     return ownerId;
   }
 
-  public void setOwnerId(String ownerId) {
+  public void setOwnerId(@Nullable String ownerId) {
     this.ownerId = ownerId;
   }
 
@@ -376,6 +173,51 @@ public class WebServiceOverviewType implements Serializable {
     this.userPermissions = userPermissions;
   }
 
+
+  public WebServiceOverviewType contact(String contact) {
+    super.contact(contact);
+    return this;
+  }
+
+  public WebServiceOverviewType connectionDetails(WmsConnectionInfoType connectionDetails) {
+    super.connectionDetails(connectionDetails);
+    return this;
+  }
+
+  public WebServiceOverviewType databasis(String databasis) {
+    super.databasis(databasis);
+    return this;
+  }
+
+  public WebServiceOverviewType datasource(String datasource) {
+    super.datasource(datasource);
+    return this;
+  }
+
+  public WebServiceOverviewType description(String description) {
+    super.description(description);
+    return this;
+  }
+
+  public WebServiceOverviewType note(String note) {
+    super.note(note);
+    return this;
+  }
+
+  public WebServiceOverviewType serviceResource(ServiceResourceEnum serviceResource) {
+    super.serviceResource(serviceResource);
+    return this;
+  }
+
+  public WebServiceOverviewType title(String title) {
+    super.title(title);
+    return this;
+  }
+
+  public WebServiceOverviewType topicReference(String topicReference) {
+    super.topicReference(topicReference);
+    return this;
+  }
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -385,40 +227,24 @@ public class WebServiceOverviewType implements Serializable {
       return false;
     }
     WebServiceOverviewType webServiceOverviewType = (WebServiceOverviewType) o;
-    return Objects.equals(this.contact, webServiceOverviewType.contact) &&
-        Objects.equals(this.connectionDetails, webServiceOverviewType.connectionDetails) &&
-        Objects.equals(this.databasis, webServiceOverviewType.databasis) &&
-        Objects.equals(this.datasource, webServiceOverviewType.datasource) &&
-        Objects.equals(this.description, webServiceOverviewType.description) &&
-        Objects.equals(this.note, webServiceOverviewType.note) &&
-        Objects.equals(this.serviceResource, webServiceOverviewType.serviceResource) &&
-        Objects.equals(this.title, webServiceOverviewType.title) &&
-        Objects.equals(this.topicReference, webServiceOverviewType.topicReference) &&
-        Objects.equals(this.id, webServiceOverviewType.id) &&
+    return Objects.equals(this.id, webServiceOverviewType.id) &&
         Objects.equals(this.isPublic, webServiceOverviewType.isPublic) &&
         Objects.equals(this.ownerId, webServiceOverviewType.ownerId) &&
         Objects.equals(this.permissions, webServiceOverviewType.permissions) &&
-        Objects.equals(this.userPermissions, webServiceOverviewType.userPermissions);
+        Objects.equals(this.userPermissions, webServiceOverviewType.userPermissions) &&
+        super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(contact, connectionDetails, databasis, datasource, description, note, serviceResource, title, topicReference, id, isPublic, ownerId, permissions, userPermissions);
+    return Objects.hash(id, isPublic, ownerId, permissions, userPermissions, super.hashCode());
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class WebServiceOverviewType {\n");
-    sb.append("    contact: ").append(toIndentedString(contact)).append("\n");
-    sb.append("    connectionDetails: ").append(toIndentedString(connectionDetails)).append("\n");
-    sb.append("    databasis: ").append(toIndentedString(databasis)).append("\n");
-    sb.append("    datasource: ").append(toIndentedString(datasource)).append("\n");
-    sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    note: ").append(toIndentedString(note)).append("\n");
-    sb.append("    serviceResource: ").append(toIndentedString(serviceResource)).append("\n");
-    sb.append("    title: ").append(toIndentedString(title)).append("\n");
-    sb.append("    topicReference: ").append(toIndentedString(topicReference)).append("\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("    ownerId: ").append(toIndentedString(ownerId)).append("\n");

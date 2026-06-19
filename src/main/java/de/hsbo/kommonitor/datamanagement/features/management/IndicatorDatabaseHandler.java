@@ -72,7 +72,7 @@ public class IndicatorDatabaseHandler {
 		return new FeatureJSON(geometryJSON);
 	}
 	
-	public static String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues) throws IOException {
+	public static String createIndicatorValueTable(List<IndicatorPOSTInputTypeIndicatorValues> indicatorValues, IndicatorValueTypeEnum valueType) throws IOException, ApiException {
 
 		DataStore postGisStore = DatabaseHelperUtil.getPostGisDataStore();
 		
@@ -98,7 +98,8 @@ public class IndicatorDatabaseHandler {
 
 		LOG.info("Create SimpleFeatureType for indicator");
 
-		SimpleFeatureType featureType = createSimpleFeatureTypeForNumericalIndicators(postGisStore, availableDatesForIndicator);
+		//TODO check for indicator value type
+		SimpleFeatureType featureType = createSimpleFeatureTypeForIndicators(postGisStore, availableDatesForIndicator, valueType);
 
 		SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
 
@@ -319,9 +320,7 @@ public class IndicatorDatabaseHandler {
 					} catch (Exception ex) {
 						LOG.error("Error while building feature.", ex);
 					}
-
 				}
-
 				features.add(builder.buildFeature(spatialReferenceKey));
 			}
 		}
@@ -352,6 +351,23 @@ public class IndicatorDatabaseHandler {
 		
 
 		return availableDates;
+	}
+
+	private static SimpleFeatureType createSimpleFeatureTypeForIndicators(DataStore dataStore,
+																				   List<Date> availableDatesForIndicator,
+																				   IndicatorValueTypeEnum valueTypeEnum
+	) throws IOException, ApiException {
+		switch (valueTypeEnum) {
+            case NUMERIC -> {
+                return createSimpleFeatureTypeForNumericalIndicators(dataStore, availableDatesForIndicator);
+            }
+			case CATEGORICAL -> {
+				return createSimpleFeatureTypeForCategoricalIndicators(dataStore, availableDatesForIndicator);
+			}
+			default -> {
+				throw new ApiException(400, "Unsupported indicator value type");
+			}
+        }
 	}
 
 	private static SimpleFeatureType createSimpleFeatureTypeForNumericalIndicators(DataStore dataStore,

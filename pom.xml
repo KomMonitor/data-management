@@ -618,6 +618,7 @@
                                         <useSpringBoot3>true</useSpringBoot3>
                                         <hideGenerationTimestamp>true</hideGenerationTimestamp>
                                     </configOptions>
+                                    <openapiNormalizer>REF_AS_PARENT_IN_ALLOF=true</openapiNormalizer>
                                 </configuration>
                             </execution>
                         </executions>

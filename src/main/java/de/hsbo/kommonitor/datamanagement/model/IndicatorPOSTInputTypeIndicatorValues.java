@@ -33,10 +33,10 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
 
   private @Nullable String spatialReferenceKey;
 
-  private @Nullable IndicatorValueTypeEnum valueType;
+  private IndicatorValueTypeEnum valueType = IndicatorValueTypeEnum.NUMERIC;
 
   @Valid
-  private List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping = new ArrayList<>();
+  private List<IndicatorPOSTInputTypeValueMapping> valueMapping = new ArrayList<>();
 
   public IndicatorPOSTInputTypeIndicatorValues() {
     super();
@@ -45,7 +45,7 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorPOSTInputTypeIndicatorValues(List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping) {
+  public IndicatorPOSTInputTypeIndicatorValues(List<IndicatorPOSTInputTypeValueMapping> valueMapping) {
     this.valueMapping = valueMapping;
   }
 
@@ -69,27 +69,27 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
     this.spatialReferenceKey = spatialReferenceKey;
   }
 
-  public IndicatorPOSTInputTypeIndicatorValues valueType(@Nullable IndicatorValueTypeEnum valueType) {
+  public IndicatorPOSTInputTypeIndicatorValues valueType(IndicatorValueTypeEnum valueType) {
     this.valueType = valueType;
     return this;
   }
 
   /**
-   * Get valueType
+   * Informational field indicating the type of mapping values inside this container.
    * @return valueType
    */
   @Valid 
-  @Schema(name = "valueType", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "valueType", description = "Informational field indicating the type of mapping values inside this container.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("valueType")
-  public @Nullable IndicatorValueTypeEnum getValueType() {
+  public IndicatorValueTypeEnum getValueType() {
     return valueType;
   }
 
-  public void setValueType(@Nullable IndicatorValueTypeEnum valueType) {
+  public void setValueType(IndicatorValueTypeEnum valueType) {
     this.valueType = valueType;
   }
 
-  public IndicatorPOSTInputTypeIndicatorValues valueMapping(List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping) {
+  public IndicatorPOSTInputTypeIndicatorValues valueMapping(List<IndicatorPOSTInputTypeValueMapping> valueMapping) {
     this.valueMapping = valueMapping;
     return this;
   }
@@ -103,17 +103,17 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
   }
 
   /**
-   * an array of polymorphic mapping entries
+   * an array of entries mapping an indicator value to a timestamp as mapping key
    * @return valueMapping
    */
   @NotNull @Valid 
-  @Schema(name = "valueMapping", description = "an array of polymorphic mapping entries", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "valueMapping", description = "an array of entries mapping an indicator value to a timestamp as mapping key", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("valueMapping")
-  public List<@Valid IndicatorPOSTInputTypeValueMapping> getValueMapping() {
+  public List<IndicatorPOSTInputTypeValueMapping> getValueMapping() {
     return valueMapping;
   }
 
-  public void setValueMapping(List<@Valid IndicatorPOSTInputTypeValueMapping> valueMapping) {
+  public void setValueMapping(List<IndicatorPOSTInputTypeValueMapping> valueMapping) {
     this.valueMapping = valueMapping;
   }
 

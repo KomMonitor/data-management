@@ -7602,37 +7602,53 @@ components:
           description: identifier (uuid) of the spatial feature to which the values shall be applied
         valueType:
           description: Informational field indicating the type of mapping values inside this container.
-          $ref: '#/components/schemas/IndicatorValueTypeEnum'
+          allOf:
+            - $ref: '#/components/schemas/IndicatorValueTypeEnum'
           default: NUMERIC
         valueMapping:
           type: array
-          description: an array of polymorphic mapping entries
+          description: an array of entries mapping an indicator value to a timestamp
+            as mapping key
+#          items:
+#            $ref: '#/components/schemas/IndicatorPOSTInputTypeValueMapping'
           items:
-            $ref: '#/components/schemas/IndicatorPOSTInputTypeValueMapping'
+            allOf:
+              - $ref: '#/components/schemas/IndicatorPOSTInputTypeValueMapping'
 
+#    IndicatorPOSTInputTypeValueMapping:
+#      title: IndicatorPOSTInputTypeValueMapping
+#      type: object
+#      required:
+#        - indicatorValue
+#        - timestamp
+#      properties:
+#        indicatorValue:
+#          description: The value of the indicator for the timestamp. Can be a floating-point number or a categorical string depending on the parent container's valueType.
+#        timestamp:
+#          type: string
+#          description: timestamp consisting of year, month and day according to ISO 8601 (e.g. 2018-01-30)
+#          format: date
     # --- Abstract Base Class for Items ---
     IndicatorPOSTInputTypeValueMapping:
       title: IndicatorPOSTInputTypeValueMapping
       type: object
+      x-abstract: true
+      x-jackson-deserialize-builder: |
+        @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
       required:
         - timestamp
-        - valueType  # <-- Required for Jackson polymorphism inside the array
+#        - valueType  # <-- Required for Jackson polymorphism inside the array
       properties:
         timestamp:
           type: string
           description: timestamp consisting of year, month and day according to ISO 8601 (e.g. 2018-01-30)
           format: date
-        valueType:
-          description: Discriminator field to determine concrete mapping class type.
-          $ref: '#/components/schemas/IndicatorValueTypeEnum'
-          default: NUMERIC
-      discriminator:
-        propertyName: valueType
-        mapping:
-          numeric: '#/components/schemas/IndicatorPOSTInputTypeNumericalValueMapping'
-          categorical: '#/components/schemas/IndicatorPOSTInputTypeCategoricalValueMapping'
-
-    # --- Concrete Subclass 1 (Numerical) ---
+#        valueType:
+#          description: Discriminator field to determine concrete mapping class type.
+#          $ref: '#/components/schemas/IndicatorValueTypeEnum'
+#          default: NUMERIC
+#
+#    # --- Concrete Subclass 1 (Numerical) ---
     IndicatorPOSTInputTypeNumericalValueMapping:
       title: IndicatorPOSTInputTypeNumericalValueMapping
       allOf:
@@ -7646,8 +7662,8 @@ components:
               description: the numeric extent of the indicator for the timestamp
               format: float
               example: 0.0
-
-    # --- Concrete Subclass 2 (Categorical) ---
+#
+#    # --- Concrete Subclass 2 (Categorical) ---
     IndicatorPOSTInputTypeCategoricalValueMapping:
       title: IndicatorPOSTInputTypeCategoricalValueMapping
       allOf:

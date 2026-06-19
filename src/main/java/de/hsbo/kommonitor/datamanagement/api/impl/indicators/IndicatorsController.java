@@ -512,8 +512,8 @@ public class IndicatorsController extends BasePathController implements Indicato
             indicatorId = indicatorsManager.updateFeatures(indicatorData, indicatorId);
             lastModManager.updateLastDatabaseModificationIndicators();
         } catch (Exception e1) {
+            LOG.error("Error while updating indicator timeseries data.", e1);
             return ApiUtils.createResponseEntityFromException(e1);
-
         }
 
         if (indicatorId != null) {
