@@ -1,6 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.IndicatorsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
@@ -27,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.math.BigDecimal;

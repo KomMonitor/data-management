@@ -6,10 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMapper;
@@ -28,7 +24,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.Geoserve
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.management.OGCWebServiceManager;
 import de.hsbo.kommonitor.datamanagement.features.management.DatabaseHelperUtil;
 import de.hsbo.kommonitor.datamanagement.features.management.IndicatorDatabaseHandler;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import tools.jackson.databind.json.JsonMapper;
 
 @Configuration
 public class HttpConfig {
@@ -57,13 +53,19 @@ public class HttpConfig {
 	@Autowired
 	private Environment environment;
 
+//    @Bean
+//    public ObjectMapper provideObjectMapper(Jackson2ObjectMapperBuilder builder){
+//        ObjectMapper objectMapper = builder.build();
+//        objectMapper.registerModule(new JtsModule());
+//        objectMapper.registerModule(new JavaTimeModule());
+//        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+//        return objectMapper;
+//    }
+
     @Bean
-    public ObjectMapper provideObjectMapper(Jackson2ObjectMapperBuilder builder){
-        ObjectMapper objectMapper = builder.build();
-        objectMapper.registerModule(new JtsModule());
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        return objectMapper;
+    public JsonMapper provideObjectMapper(JsonMapper.Builder builder) {
+        builder.addModule(new JtsModule());
+        return builder.build();
     }
     
 //    @Bean

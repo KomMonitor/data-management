@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
@@ -34,6 +33,7 @@ import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.features.management.ResourceTypeEnum;
 import de.hsbo.kommonitor.datamanagement.features.management.SpatialFeatureDatabaseHandler;
 import de.hsbo.kommonitor.datamanagement.msg.MessageResolver;
+import tools.jackson.databind.ObjectMapper;
 
 @Transactional
 @Repository

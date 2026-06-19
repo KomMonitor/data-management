@@ -3,21 +3,21 @@ package de.hsbo.kommonitor.datamanagement.config;
 import de.hsbo.kommonitor.datamanagement.model.AbstractClassificationMappingType;
 import de.hsbo.kommonitor.datamanagement.model.AbstractClassificationMappingTypeTemplate;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeIndicatorValues;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 @Configuration
 public class JacksonConfig {
     @Bean
-    public Jackson2ObjectMapperBuilderCustomizer customizeJackson() {
+    public JsonMapperBuilderCustomizer customizeJackson() {
         return builder -> builder
-                .mixIn(
+                .addMixIn(
                         AbstractClassificationMappingType.class,
                         AbstractClassificationMappingTypeTemplate.class
                 )
-                .mixIn(
+                .addMixIn(
                         IndicatorPOSTInputTypeIndicatorValues.class,
                         IndicatorPOSTInputTypeIndicatorValuesMixin.class
                 );

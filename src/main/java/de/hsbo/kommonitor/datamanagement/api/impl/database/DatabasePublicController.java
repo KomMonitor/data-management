@@ -8,11 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.hsbo.kommonitor.datamanagement.api.DatabasePublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.model.LastModificationOverviewType;
+import tools.jackson.databind.ObjectMapper;
 
 @Controller
 public class DatabasePublicController extends BasePathController implements DatabasePublicApi {

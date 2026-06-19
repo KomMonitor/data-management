@@ -1,6 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
@@ -16,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.util.List;

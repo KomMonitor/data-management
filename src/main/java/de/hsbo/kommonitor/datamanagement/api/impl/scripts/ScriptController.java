@@ -18,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.hsbo.kommonitor.datamanagement.api.ProcessScriptsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
@@ -28,6 +27,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.model.ProcessScriptOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.ProcessScriptPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.ProcessScriptPUTInputType;
+import tools.jackson.databind.ObjectMapper;
 
 @Controller
 public class ScriptController extends BasePathController implements ProcessScriptsApi {

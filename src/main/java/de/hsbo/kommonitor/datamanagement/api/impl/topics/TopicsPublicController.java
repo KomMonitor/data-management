@@ -1,6 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.topics;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.TopicsPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.model.TopicDisplayOrderModeOverviewType;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 

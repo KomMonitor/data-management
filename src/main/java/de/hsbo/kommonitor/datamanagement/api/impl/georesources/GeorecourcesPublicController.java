@@ -1,6 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.georesources;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.GeoresourcesPublicApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
@@ -25,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.StringWriter;

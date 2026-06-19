@@ -29,13 +29,13 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
 
 
     @Override
-    public EvaluationContext createEvaluationContext(Supplier<Authentication> authentication, MethodInvocation mi) {
+    public EvaluationContext createEvaluationContext(Supplier<? extends Authentication> authentication, MethodInvocation mi) {
         EntitySecurityExpressionRoot root = new EntitySecurityExpressionRoot(authentication.get());
         root.setPermissionEvaluator(getPermissionEvaluator());
         root.setTrustResolver(this.trustResolver);
         root.setRoleHierarchy(getRoleHierarchy());
 
-        StandardEvaluationContext context = (StandardEvaluationContext) super.createEvaluationContext(authentication.get(), mi);
+        StandardEvaluationContext context = (StandardEvaluationContext) super.createEvaluationContext(authentication, mi);
         context.setRootObject(root);
         return context;
     }

@@ -1,6 +1,5 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
@@ -21,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
+import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.net.URI;

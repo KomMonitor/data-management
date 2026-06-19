@@ -1,30 +1,29 @@
 package de.hsbo.kommonitor.datamanagement.config;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeCategoricalValueMapping;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeIndicatorValues;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeNumericalValueMapping;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPOSTInputTypeValueMapping;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorValueTypeEnum;
 
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ValueDeserializer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IndicatorPOSTInputTypeIndicatorValuesDeserializer extends StdDeserializer<IndicatorPOSTInputTypeIndicatorValues> {
+public class IndicatorPOSTInputTypeIndicatorValuesDeserializer extends ValueDeserializer<IndicatorPOSTInputTypeIndicatorValues> {
 
     public IndicatorPOSTInputTypeIndicatorValuesDeserializer() {
-        super(IndicatorPOSTInputTypeIndicatorValues.class);
+        super();
     }
 
+
     @Override
-    public IndicatorPOSTInputTypeIndicatorValues deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        ObjectMapper mapper = (ObjectMapper) jp.getCodec();
-        JsonNode node = mapper.readTree(jp);
+    public IndicatorPOSTInputTypeIndicatorValues deserialize(JsonParser jp, DeserializationContext ctxt) throws JacksonException{
+        JsonNode node = ctxt.readTree(jp);
 
         IndicatorPOSTInputTypeIndicatorValues result = new IndicatorPOSTInputTypeIndicatorValues();
 
@@ -34,7 +33,7 @@ public class IndicatorPOSTInputTypeIndicatorValuesDeserializer extends StdDeseri
 
         IndicatorValueTypeEnum valueType = IndicatorValueTypeEnum.NUMERIC;
         if (node.has("valueType") && !node.get("valueType").isNull()) {
-            valueType = mapper.treeToValue(node.get("valueType"), IndicatorValueTypeEnum.class);
+            valueType = ctxt.readTreeAsValue(node.get("valueType"), IndicatorValueTypeEnum.class);
         }
         result.setValueType(valueType);
 
@@ -42,9 +41,9 @@ public class IndicatorPOSTInputTypeIndicatorValuesDeserializer extends StdDeseri
             List<IndicatorPOSTInputTypeValueMapping> list = new ArrayList<>();
             for (JsonNode element : node.get("valueMapping")) {
                 if (valueType == IndicatorValueTypeEnum.CATEGORICAL) {
-                    list.add(mapper.treeToValue(element, IndicatorPOSTInputTypeCategoricalValueMapping.class));
+                    list.add(ctxt.readTreeAsValue(element, IndicatorPOSTInputTypeCategoricalValueMapping.class));
                 } else {
-                    list.add(mapper.treeToValue(element, IndicatorPOSTInputTypeNumericalValueMapping.class));
+                    list.add(ctxt.readTreeAsValue(element, IndicatorPOSTInputTypeNumericalValueMapping.class));
                 }
             }
             result.setValueMapping(list);
