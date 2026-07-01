@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,12 +20,12 @@ public class IndicatorPOSTInputTypeIndicatorValuesDeserializerTest {
 
     @BeforeEach
     public void setUp() {
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
-        objectMapper.addMixIn(
-                IndicatorPOSTInputTypeIndicatorValues.class,
-                JacksonConfig.IndicatorPOSTInputTypeIndicatorValuesMixin.class
-        );
+        objectMapper = JsonMapper.builder()
+                .addMixIn(
+                        IndicatorPOSTInputTypeIndicatorValues.class,
+                        JacksonConfig.IndicatorPOSTInputTypeIndicatorValuesMixin.class
+                )
+                .build();
     }
 
     @Test
