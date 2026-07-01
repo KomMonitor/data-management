@@ -62,10 +62,8 @@ import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.GeoresourcePUTInputType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPUTInputType;
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SpatialFeatureDatabaseHandler {
 
@@ -78,6 +76,9 @@ public class SpatialFeatureDatabaseHandler {
 	private static boolean ADDITIONAL_PROPERTIES_WERE_SET = false;
 	private static boolean MISSING_PROPERTIES_DETECTED = false;
 
+	private static final ObjectMapper GEOJSON_MAPPER = new ObjectMapper()
+			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
 	public static String writeGeoJSONFeaturesToDatabase(ResourceTypeEnum resourceType, String geoJSONFeatures,
 			PeriodOfValidityType periodOfValidity, String correspondingMetadataDatasetId)
 			throws IOException, CQLException {
@@ -87,9 +88,7 @@ public class SpatialFeatureDatabaseHandler {
 		FeatureJSON featureJSON = instantiateFeatureJSON();
 		SimpleFeatureType featureSchema = featureJSON.readFeatureCollectionSchema(geoJSONFeatures, false);
 
-		JsonMapper objectMapper = JsonMapper.builder()
-				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-				.build();
+		ObjectMapper objectMapper = GEOJSON_MAPPER;
 
 		org.geojson.FeatureCollection featureCollection_jackson = objectMapper.readValue(geoJSONFeatures,
 				org.geojson.FeatureCollection.class);
@@ -143,7 +142,7 @@ public class SpatialFeatureDatabaseHandler {
 		Iterator<org.geojson.Feature> featureIterator = featureCollection_jackson.iterator();
 
 		FeatureJSON featureJSON = new FeatureJSON();
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = GEOJSON_MAPPER;
 
 		List<SimpleFeature> geotoolsFeatures = new ArrayList<>(featureCollection_jackson.getFeatures().size());
 
@@ -584,13 +583,11 @@ public class SpatialFeatureDatabaseHandler {
 	}
 
 	private static String getFeaturePropertiesArray(String geoJsonFeatures)
-			throws JacksonException {
+			throws IOException {
 
 		FeatureJSON featureJson = SpatialFeatureDatabaseHandler.instantiateFeatureJSON();
 
-		JsonMapper objectMapper = JsonMapper.builder()
-				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-				.build();
+		ObjectMapper objectMapper = GEOJSON_MAPPER;
 
 		org.geojson.FeatureCollection featureCollection_jackson = objectMapper.readValue(geoJsonFeatures,
 				org.geojson.FeatureCollection.class);
@@ -608,7 +605,7 @@ public class SpatialFeatureDatabaseHandler {
 			System.out.println(json);
 
 			return json;
-		} catch (JacksonException e) {
+		} catch (IOException e) {
 			LOG.error("Error while parsing Feature property array.", e);
 			throw e;
 		}
@@ -755,9 +752,7 @@ public class SpatialFeatureDatabaseHandler {
 		// featureJSON.readFeatureCollection(geoJsonString);
 
 		LOG.info("parse feature collection as jackson collection");
-		JsonMapper objectMapper = JsonMapper.builder()
-				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-				.build();
+		ObjectMapper objectMapper = GEOJSON_MAPPER;
 
 		org.geojson.FeatureCollection inputFeatureCollection_jackson = objectMapper.readValue(geoJsonString,
 				org.geojson.FeatureCollection.class);
@@ -1763,12 +1758,15 @@ public class SpatialFeatureDatabaseHandler {
 
 		FeatureJSON featureJson = SpatialFeatureDatabaseHandler.instantiateFeatureJSON();
 
-		JsonMapper objectMapper = JsonMapper.builder()
-				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-				.build();
+		ObjectMapper objectMapper = GEOJSON_MAPPER;
 
-		org.geojson.FeatureCollection featureCollection_jackson = objectMapper.readValue(allGeoresourceFeatures,
-				org.geojson.FeatureCollection.class);
+		org.geojson.FeatureCollection featureCollection_jackson;
+		try {
+			featureCollection_jackson = objectMapper.readValue(allGeoresourceFeatures,
+					org.geojson.FeatureCollection.class);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to parse GeoJSON feature collection", e);
+		}
 
 		List<org.geojson.Feature> features = featureCollection_jackson.getFeatures();
 
@@ -2161,9 +2159,7 @@ public class SpatialFeatureDatabaseHandler {
 		// featureJSON.readFeatureCollection(geoJsonString);
 
 		LOG.info("parse feature collection as jackson collection");
-        JsonMapper objectMapper = JsonMapper.builder()
-				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-				.build();
+		ObjectMapper objectMapper = GEOJSON_MAPPER;
 
 		org.geojson.Feature inputFeature_jackson = objectMapper.readValue(georesourceFeatureRecordData,
 				org.geojson.Feature.class);
@@ -2198,7 +2194,7 @@ public class SpatialFeatureDatabaseHandler {
 	private static Feature toGeoToolsFeature(org.geojson.Feature inputFeature_jackson,
 			SimpleFeatureType inputFeatureSchema) throws JsonProcessingException, IOException {
 		FeatureJSON featureJSON = new FeatureJSON();
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = GEOJSON_MAPPER;
 
 		SimpleFeature simpleFeature = featureJSON.readFeature(mapper.writeValueAsString(inputFeature_jackson));
 		
