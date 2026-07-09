@@ -6,9 +6,8 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity
 
 import java.util.*;
 
-import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.AbstractClassificationMappingItemType;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.CategoricalMappingItemEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.DefaultClassificationMappingItemEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.QualitativeClassificationMappingItemEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
 import de.hsbo.kommonitor.datamanagement.model.ClassificationTypeEnum;
 import de.hsbo.kommonitor.datamanagement.model.CreationTypeEnum;
@@ -98,14 +97,9 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 	inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid"))
 	private Collection<DefaultClassificationMappingItemEntity> defaultClassificationMappingItems;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinTable(
-			name = "metadataindicators_qualitativeclassification",
-			joinColumns = @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid"),
-			inverseJoinColumns = @JoinColumn(name = "mapping_id", referencedColumnName = "mappingid")
-	)
-	private Collection<QualitativeClassificationMappingItemEntity> qualitativeClassificationMappingItems = new ArrayList<>();
-	
+	@OneToMany(mappedBy = "indicator", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Collection<CategoricalMappingItemEntity> qualitativeClassificationMappingItems = new ArrayList<>();
+
 	public Collection<DefaultClassificationMappingItemEntity> getDefaultClassificationMappingItems() {
 		return defaultClassificationMappingItems;
 	}
@@ -114,20 +108,12 @@ public class MetadataIndicatorsEntity extends AbstractMetadata implements Restri
 		this.defaultClassificationMappingItems = defaultClassificationMappingItems;
 	}
 
-	public Collection<QualitativeClassificationMappingItemEntity> getQualitativeClassificationMappingItems() {
+	public Collection<CategoricalMappingItemEntity> getQualitativeClassificationMappingItems() {
 		return qualitativeClassificationMappingItems;
 	}
 
-	public void setQualitativeClassificationMappingItems(Collection<QualitativeClassificationMappingItemEntity> qualitativeClassificationMappingItems) {
-		this.qualitativeClassificationMappingItems = qualitativeClassificationMappingItems;
-	}
-
-	@Transient
-	public Collection<AbstractClassificationMappingItemType> getAllClassificationMappingItems() {
-		Collection<AbstractClassificationMappingItemType> allItems = new ArrayList<>();
-		allItems.addAll(defaultClassificationMappingItems);
-		allItems.addAll(qualitativeClassificationMappingItems);
-		return allItems;
+	public void setQualitativeClassificationMappingItems(Collection<? extends CategoricalMappingItemEntity> qualitativeClassificationMappingItems) {
+		this.qualitativeClassificationMappingItems = new ArrayList<>(qualitativeClassificationMappingItems);
 	}
 
 	@ManyToMany(mappedBy = "indicatorFavourites")

@@ -1,5 +1,6 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,8 +13,8 @@ public class CategoricalMappingItemEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mappingid", referencedColumnName = "mappingid", nullable = false)
-    private QualitativeClassificationMappingItemEntity parentMapping;
+    @JoinColumn(name = "dataset_id", referencedColumnName = "datasetid", nullable = false)
+    private MetadataIndicatorsEntity indicator;
 
     @Column(name = "categorical_value", nullable = false)
     private String categoricalValue;
@@ -35,12 +36,12 @@ public class CategoricalMappingItemEntity {
         this.id = id;
     }
 
-    public QualitativeClassificationMappingItemEntity getParentMapping() {
-        return parentMapping;
+    public MetadataIndicatorsEntity getIndicator() {
+        return indicator;
     }
 
-    public void setParentMapping(QualitativeClassificationMappingItemEntity parentMapping) {
-        this.parentMapping = parentMapping;
+    public void setIndicator(MetadataIndicatorsEntity indicator) {
+        this.indicator = indicator;
     }
 
     public String getCategoricalValue() {

@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.CategoricalMappingItemEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.DefaultClassificationMappingItemEntity;
-import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.QualitativeClassificationMappingItemEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.topics.TopicsRepository;
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -1488,19 +1487,16 @@ public class IndicatorsManager {
         }
         entity.setClassificationType(ClassificationTypeEnum.QUALITATIVE);
 
-        List<QualitativeClassificationMappingItemEntity> classificationItems = classificationMapping.getItems().stream().map(i -> {
-            QualitativeClassificationMappingItemEntity qualClassEntity = new QualitativeClassificationMappingItemEntity();
-            qualClassEntity.setSpatialUnitId(i.getSpatialUnitId());
-            qualClassEntity.setCategoricalData(i.getCategoricalData().stream().map(d -> {
-                CategoricalMappingItemEntity categoricalItem = new CategoricalMappingItemEntity();
-                categoricalItem.setCategoricalValue(d.getCategoricalValue());
-                categoricalItem.setColor(d.getColor());
-                categoricalItem.setLabel(d.getLabel());
-                categoricalItem.setParentMapping(qualClassEntity);
-                return categoricalItem;
-            }).toList());
-            return qualClassEntity;
-        }).toList();
+        List<CategoricalMappingItemEntity> classificationItems = classificationMapping.getCategoricalData().stream()
+                .map(d -> {
+                    CategoricalMappingItemEntity item = new CategoricalMappingItemEntity();
+                    item.setCategoricalValue(d.getCategoricalValue());
+                    item.setColor(d.getColor());
+                    item.setLabel(d.getLabel());
+                    item.setIndicator(entity);
+                    return item;
+                })
+                .toList();
 
         if (entity.getQualitativeClassificationMappingItems() != null) {
             entity.getQualitativeClassificationMappingItems().clear();
@@ -1515,9 +1511,7 @@ public class IndicatorsManager {
             numClasses = new BigDecimal(5);
         }
 
-        for (QualitativeClassificationMappingItemType item : classificationMapping.getItems()) {
-            checkClassificationMapping(item, numClasses.intValue());
-        }
+        checkClassificationMapping(classificationMapping, numClasses.intValue());
 
         entity.setNumClasses(numClasses.intValue());
         entity.setClassificationMethod(null);
@@ -1546,10 +1540,10 @@ public class IndicatorsManager {
         }
     }
 
-    private void checkClassificationMapping(QualitativeClassificationMappingItemType item, int numClasses) throws ApiException {
-        if (item.getCategoricalData().size() != numClasses) {
-            String errMsg = messageResolver.getMessage(MSG_CLASSIFICATION_MAPPING_ITEM_ERROR);
-            throw new ApiException(400, String.format(errMsg, "categoricalData", item.getSpatialUnitId()));
+    private void checkClassificationMapping(QualitativeClassificationMappingType classificationMapping, int numClasses) throws ApiException {
+        if (classificationMapping.getCategoricalData().size() != numClasses) {
+            String errMsg = messageResolver.getMessage(MSG_CLASSIFICATION_MAPPING_ERROR);
+            throw new ApiException(400, String.format(errMsg, "categoricalData"));
         }
     }
 

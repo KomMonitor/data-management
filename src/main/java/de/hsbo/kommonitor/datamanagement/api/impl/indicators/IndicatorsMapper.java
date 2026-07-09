@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.CategoricalMappingItemEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.classification.DefaultClassificationMappingItemEntity;
 import de.hsbo.kommonitor.datamanagement.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -292,21 +293,16 @@ public class IndicatorsMapper {
 		defaultClassification.setNumClasses(new BigDecimal(indicatorsMetadataEntity.getNumClasses()));
 		defaultClassification.setClassificationType(ClassificationTypeEnum.QUALITATIVE);
 
-		List<QualitativeClassificationMappingItemType> mappingItems;
-		mappingItems = indicatorsMetadataEntity.getQualitativeClassificationMappingItems().stream().map(i -> {
-			QualitativeClassificationMappingItemType mappingItem = new QualitativeClassificationMappingItemType();
-			mappingItem.setSpatialUnitId(i.getSpatialUnitId());
-			mappingItem.setCategoricalData(i.getCategoricalData().stream().map(d -> {
-				CategoricalMappingType catMapping = new CategoricalMappingType();
-				catMapping.setCategoricalValue(d.getCategoricalValue());
-				catMapping.setColor(d.getColor());
-				catMapping.setLabel(d.getLabel());
-				return catMapping;
-			}).toList());
-			return mappingItem;
-		}).toList();
+		List<CategoricalMappingType> categoricalData = indicatorsMetadataEntity.getQualitativeClassificationMappingItems().stream()
+				.map(i -> {
+					CategoricalMappingType catMapping = new CategoricalMappingType();
+					catMapping.setCategoricalValue(i.getCategoricalValue());
+					catMapping.setColor(i.getColor());
+					catMapping.setLabel(i.getLabel());
+					return catMapping;
+				}).toList();
 
-		defaultClassification.setItems(mappingItems);
+		defaultClassification.setCategoricalData(categoricalData);
 		return defaultClassification;
 	}
 
