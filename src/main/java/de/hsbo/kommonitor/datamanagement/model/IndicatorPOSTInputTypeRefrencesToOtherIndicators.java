@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputTypeRefrencesToOtherIndicators
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class IndicatorPOSTInputTypeRefrencesToOtherIndicators implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -45,6 +45,7 @@ public class IndicatorPOSTInputTypeRefrencesToOtherIndicators implements Seriali
     return indicatorId;
   }
 
+  @JsonProperty("indicatorId")
   public void setIndicatorId(@Nullable String indicatorId) {
     this.indicatorId = indicatorId;
   }
@@ -65,6 +66,7 @@ public class IndicatorPOSTInputTypeRefrencesToOtherIndicators implements Seriali
     return referenceDescription;
   }
 
+  @JsonProperty("referenceDescription")
   public void setReferenceDescription(@Nullable String referenceDescription) {
     this.referenceDescription = referenceDescription;
   }
@@ -101,11 +103,8 @@ public class IndicatorPOSTInputTypeRefrencesToOtherIndicators implements Seriali
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

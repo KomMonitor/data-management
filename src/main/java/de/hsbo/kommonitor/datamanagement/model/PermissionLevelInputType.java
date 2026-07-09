@@ -23,12 +23,11 @@ import jakarta.annotation.Generated;
  * PermissionLevelInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class PermissionLevelInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @Valid
   private List<String> permissions = new ArrayList<>();
 
   private Boolean isPublic;
@@ -69,6 +68,7 @@ public class PermissionLevelInputType implements Serializable {
     return permissions;
   }
 
+  @JsonProperty("permissions")
   public void setPermissions(List<String> permissions) {
     this.permissions = permissions;
   }
@@ -89,6 +89,7 @@ public class PermissionLevelInputType implements Serializable {
     return isPublic;
   }
 
+  @JsonProperty("isPublic")
   public void setIsPublic(Boolean isPublic) {
     this.isPublic = isPublic;
   }
@@ -125,11 +126,8 @@ public class PermissionLevelInputType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

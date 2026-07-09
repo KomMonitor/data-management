@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * ProcessScriptPUTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class ProcessScriptPUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -33,17 +33,14 @@ public class ProcessScriptPUTInputType implements Serializable {
 
   private String name;
 
-  @Valid
   private List<String> requiredGeoresourceIds = new ArrayList<>();
 
-  @Valid
   private List<String> requiredIndicatorIds = new ArrayList<>();
 
   private String scriptCodeBase64;
 
   private @Nullable String scriptType;
 
-  @Valid
   private List<@Valid ProcessInputType> variableProcessParameters = new ArrayList<>();
 
   public ProcessScriptPUTInputType() {
@@ -78,6 +75,7 @@ public class ProcessScriptPUTInputType implements Serializable {
     return description;
   }
 
+  @JsonProperty("description")
   public void setDescription(String description) {
     this.description = description;
   }
@@ -98,6 +96,7 @@ public class ProcessScriptPUTInputType implements Serializable {
     return name;
   }
 
+  @JsonProperty("name")
   public void setName(String name) {
     this.name = name;
   }
@@ -126,6 +125,7 @@ public class ProcessScriptPUTInputType implements Serializable {
     return requiredGeoresourceIds;
   }
 
+  @JsonProperty("requiredGeoresourceIds")
   public void setRequiredGeoresourceIds(List<String> requiredGeoresourceIds) {
     this.requiredGeoresourceIds = requiredGeoresourceIds;
   }
@@ -154,6 +154,7 @@ public class ProcessScriptPUTInputType implements Serializable {
     return requiredIndicatorIds;
   }
 
+  @JsonProperty("requiredIndicatorIds")
   public void setRequiredIndicatorIds(List<String> requiredIndicatorIds) {
     this.requiredIndicatorIds = requiredIndicatorIds;
   }
@@ -174,6 +175,7 @@ public class ProcessScriptPUTInputType implements Serializable {
     return scriptCodeBase64;
   }
 
+  @JsonProperty("scriptCodeBase64")
   public void setScriptCodeBase64(String scriptCodeBase64) {
     this.scriptCodeBase64 = scriptCodeBase64;
   }
@@ -194,6 +196,7 @@ public class ProcessScriptPUTInputType implements Serializable {
     return scriptType;
   }
 
+  @JsonProperty("scriptType")
   public void setScriptType(@Nullable String scriptType) {
     this.scriptType = scriptType;
   }
@@ -222,6 +225,7 @@ public class ProcessScriptPUTInputType implements Serializable {
     return variableProcessParameters;
   }
 
+  @JsonProperty("variableProcessParameters")
   public void setVariableProcessParameters(List<@Valid ProcessInputType> variableProcessParameters) {
     this.variableProcessParameters = variableProcessParameters;
   }
@@ -268,11 +272,8 @@ public class ProcessScriptPUTInputType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

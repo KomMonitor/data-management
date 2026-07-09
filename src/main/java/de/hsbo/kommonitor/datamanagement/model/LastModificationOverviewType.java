@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * LastModificationOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class LastModificationOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -64,6 +64,7 @@ public class LastModificationOverviewType implements Serializable {
     return accessControl;
   }
 
+  @JsonProperty("access-control")
   public void setAccessControl(@Nullable OffsetDateTime accessControl) {
     this.accessControl = accessControl;
   }
@@ -84,6 +85,7 @@ public class LastModificationOverviewType implements Serializable {
     return georesources;
   }
 
+  @JsonProperty("georesources")
   public void setGeoresources(@Nullable OffsetDateTime georesources) {
     this.georesources = georesources;
   }
@@ -104,6 +106,7 @@ public class LastModificationOverviewType implements Serializable {
     return indicators;
   }
 
+  @JsonProperty("indicators")
   public void setIndicators(@Nullable OffsetDateTime indicators) {
     this.indicators = indicators;
   }
@@ -124,6 +127,7 @@ public class LastModificationOverviewType implements Serializable {
     return processScripts;
   }
 
+  @JsonProperty("process-scripts")
   public void setProcessScripts(@Nullable OffsetDateTime processScripts) {
     this.processScripts = processScripts;
   }
@@ -144,6 +148,7 @@ public class LastModificationOverviewType implements Serializable {
     return spatialUnits;
   }
 
+  @JsonProperty("spatial-units")
   public void setSpatialUnits(@Nullable OffsetDateTime spatialUnits) {
     this.spatialUnits = spatialUnits;
   }
@@ -164,6 +169,7 @@ public class LastModificationOverviewType implements Serializable {
     return topics;
   }
 
+  @JsonProperty("topics")
   public void setTopics(@Nullable OffsetDateTime topics) {
     this.topics = topics;
   }
@@ -184,6 +190,7 @@ public class LastModificationOverviewType implements Serializable {
     return webServices;
   }
 
+  @JsonProperty("web-services")
   public void setWebServices(@Nullable OffsetDateTime webServices) {
     this.webServices = webServices;
   }
@@ -230,11 +237,8 @@ public class LastModificationOverviewType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

@@ -6858,30 +6858,36 @@ components:
         - $ref: '#/components/schemas/AbstractClassificationMappingType'
         - title: QualitativeClassificationMappingType
           required:
-            - items
+#            - items
+            - categoricalData
           type: object
           properties:
-            items:
+            categoricalData:
               type: array
-              description: Array of classification mapping items. Each item holds categorical data as well as its color
-                and label mappings for a certain spatial unit.
+              description: mapping of categorical values, colors and labels
               items:
-                $ref: '#/components/schemas/QualitativeClassificationMappingItemType'
-    QualitativeClassificationMappingItemType:
-      title: DefaultClassificationMappingItemType
-      required:
-        - spatialUnitId
-        - categorialData
-      type: object
-      properties:
-        spatialUnitId:
-          type: string
-          description: spatial unit id
-        categoricalData:
-          type: array
-          description: mapping of categorical values, colors and labels
-          items:
-            $ref: '#/components/schemas/CategoricalMappingType'
+                $ref: '#/components/schemas/CategoricalMappingType'
+#            items:
+#              type: array
+#              description: Array of classification mapping items. Each item holds categorical data as well as its color
+#                and label mappings for a certain spatial unit.
+#              items:
+#                $ref: '#/components/schemas/QualitativeClassificationMappingItemType'
+#    QualitativeClassificationMappingItemType:
+#      title: DefaultClassificationMappingItemType
+#      required:
+#        - spatialUnitId
+#        - categorialData
+#      type: object
+#      properties:
+#        spatialUnitId:
+#          type: string
+#          description: spatial unit id
+#        categoricalData:
+#          type: array
+#          description: mapping of categorical values, colors and labels
+#          items:
+#            $ref: '#/components/schemas/CategoricalMappingType'
     CategoricalMappingType:
       title: DefaultClassificationMappingItemType
       required:

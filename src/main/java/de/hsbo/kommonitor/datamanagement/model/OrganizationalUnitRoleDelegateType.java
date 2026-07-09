@@ -24,12 +24,11 @@ import jakarta.annotation.Generated;
  * OrganizationalUnitRoleDelegateType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class OrganizationalUnitRoleDelegateType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @Valid
   private List<@Valid GroupAdminRolesType> roleDelegates = new ArrayList<>();
 
   public OrganizationalUnitRoleDelegateType() {
@@ -67,6 +66,7 @@ public class OrganizationalUnitRoleDelegateType implements Serializable {
     return roleDelegates;
   }
 
+  @JsonProperty("roleDelegates")
   public void setRoleDelegates(List<@Valid GroupAdminRolesType> roleDelegates) {
     this.roleDelegates = roleDelegates;
   }
@@ -101,11 +101,8 @@ public class OrganizationalUnitRoleDelegateType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

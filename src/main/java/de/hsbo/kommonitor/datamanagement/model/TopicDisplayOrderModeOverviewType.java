@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  * TopicDisplayOrderModeOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class TopicDisplayOrderModeOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -60,6 +60,7 @@ public class TopicDisplayOrderModeOverviewType implements Serializable {
     return topicResource;
   }
 
+  @JsonProperty("topicResource")
   public void setTopicResource(TopicResourceEnum topicResource) {
     this.topicResource = topicResource;
   }
@@ -80,6 +81,7 @@ public class TopicDisplayOrderModeOverviewType implements Serializable {
     return orderMode;
   }
 
+  @JsonProperty("orderMode")
   public void setOrderMode(TopicOrderModeEnum orderMode) {
     this.orderMode = orderMode;
   }
@@ -116,11 +118,8 @@ public class TopicDisplayOrderModeOverviewType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

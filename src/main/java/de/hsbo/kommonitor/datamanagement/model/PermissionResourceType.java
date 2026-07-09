@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Defines what resource type a permission refers to (resource, themes or users)
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public enum PermissionResourceType implements Serializable {
   
   RESOURCES("resources"),

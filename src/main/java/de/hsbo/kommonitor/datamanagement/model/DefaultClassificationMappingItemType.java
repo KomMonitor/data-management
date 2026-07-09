@@ -23,14 +23,13 @@ import jakarta.annotation.Generated;
  * DefaultClassificationMappingItemType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class DefaultClassificationMappingItemType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private String spatialUnitId;
 
-  @Valid
   private List<Float> breaks = new ArrayList<>();
 
   public DefaultClassificationMappingItemType() {
@@ -61,6 +60,7 @@ public class DefaultClassificationMappingItemType implements Serializable {
     return spatialUnitId;
   }
 
+  @JsonProperty("spatialUnitId")
   public void setSpatialUnitId(String spatialUnitId) {
     this.spatialUnitId = spatialUnitId;
   }
@@ -89,6 +89,7 @@ public class DefaultClassificationMappingItemType implements Serializable {
     return breaks;
   }
 
+  @JsonProperty("breaks")
   public void setBreaks(List<Float> breaks) {
     this.breaks = breaks;
   }
@@ -125,11 +126,8 @@ public class DefaultClassificationMappingItemType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

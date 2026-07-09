@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * ProcessScriptOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class ProcessScriptOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -35,17 +35,14 @@ public class ProcessScriptOverviewType implements Serializable {
 
   private String name;
 
-  @Valid
   private List<String> requiredGeoresourceIds = new ArrayList<>();
 
-  @Valid
   private List<String> requiredIndicatorIds = new ArrayList<>();
 
   private String scriptId;
 
   private @Nullable String scriptType;
 
-  @Valid
   private List<@Valid ProcessInputType> variableProcessParameters = new ArrayList<>();
 
   public ProcessScriptOverviewType() {
@@ -81,6 +78,7 @@ public class ProcessScriptOverviewType implements Serializable {
     return description;
   }
 
+  @JsonProperty("description")
   public void setDescription(String description) {
     this.description = description;
   }
@@ -101,6 +99,7 @@ public class ProcessScriptOverviewType implements Serializable {
     return indicatorId;
   }
 
+  @JsonProperty("indicatorId")
   public void setIndicatorId(String indicatorId) {
     this.indicatorId = indicatorId;
   }
@@ -121,6 +120,7 @@ public class ProcessScriptOverviewType implements Serializable {
     return name;
   }
 
+  @JsonProperty("name")
   public void setName(String name) {
     this.name = name;
   }
@@ -149,6 +149,7 @@ public class ProcessScriptOverviewType implements Serializable {
     return requiredGeoresourceIds;
   }
 
+  @JsonProperty("requiredGeoresourceIds")
   public void setRequiredGeoresourceIds(List<String> requiredGeoresourceIds) {
     this.requiredGeoresourceIds = requiredGeoresourceIds;
   }
@@ -177,6 +178,7 @@ public class ProcessScriptOverviewType implements Serializable {
     return requiredIndicatorIds;
   }
 
+  @JsonProperty("requiredIndicatorIds")
   public void setRequiredIndicatorIds(List<String> requiredIndicatorIds) {
     this.requiredIndicatorIds = requiredIndicatorIds;
   }
@@ -197,6 +199,7 @@ public class ProcessScriptOverviewType implements Serializable {
     return scriptId;
   }
 
+  @JsonProperty("scriptId")
   public void setScriptId(String scriptId) {
     this.scriptId = scriptId;
   }
@@ -217,6 +220,7 @@ public class ProcessScriptOverviewType implements Serializable {
     return scriptType;
   }
 
+  @JsonProperty("scriptType")
   public void setScriptType(@Nullable String scriptType) {
     this.scriptType = scriptType;
   }
@@ -245,6 +249,7 @@ public class ProcessScriptOverviewType implements Serializable {
     return variableProcessParameters;
   }
 
+  @JsonProperty("variableProcessParameters")
   public void setVariableProcessParameters(List<@Valid ProcessInputType> variableProcessParameters) {
     this.variableProcessParameters = variableProcessParameters;
   }
@@ -293,11 +298,8 @@ public class ProcessScriptOverviewType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

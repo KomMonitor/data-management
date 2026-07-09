@@ -29,12 +29,11 @@ import jakarta.annotation.Generated;
  * GeoresourcePOSTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class GeoresourcePOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @Valid
   private List<String> permissions = new ArrayList<>();
 
   private @Nullable String aoiColor;
@@ -116,6 +115,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return permissions;
   }
 
+  @JsonProperty("permissions")
   public void setPermissions(List<String> permissions) {
     this.permissions = permissions;
   }
@@ -136,6 +136,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return aoiColor;
   }
 
+  @JsonProperty("aoiColor")
   public void setAoiColor(@Nullable String aoiColor) {
     this.aoiColor = aoiColor;
   }
@@ -156,6 +157,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return datasetName;
   }
 
+  @JsonProperty("datasetName")
   public void setDatasetName(String datasetName) {
     this.datasetName = datasetName;
   }
@@ -176,6 +178,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return geoJsonString;
   }
 
+  @JsonProperty("geoJsonString")
   public void setGeoJsonString(@Nullable String geoJsonString) {
     this.geoJsonString = geoJsonString;
   }
@@ -196,6 +199,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return isAOI;
   }
 
+  @JsonProperty("isAOI")
   public void setIsAOI(@Nullable Boolean isAOI) {
     this.isAOI = isAOI;
   }
@@ -216,6 +220,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return isLOI;
   }
 
+  @JsonProperty("isLOI")
   public void setIsLOI(@Nullable Boolean isLOI) {
     this.isLOI = isLOI;
   }
@@ -236,6 +241,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return isPOI;
   }
 
+  @JsonProperty("isPOI")
   public void setIsPOI(@Nullable Boolean isPOI) {
     this.isPOI = isPOI;
   }
@@ -256,6 +262,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return jsonSchema;
   }
 
+  @JsonProperty("jsonSchema")
   public void setJsonSchema(@Nullable String jsonSchema) {
     this.jsonSchema = jsonSchema;
   }
@@ -276,6 +283,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return loiColor;
   }
 
+  @JsonProperty("loiColor")
   public void setLoiColor(@Nullable String loiColor) {
     this.loiColor = loiColor;
   }
@@ -296,6 +304,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return loiDashArrayString;
   }
 
+  @JsonProperty("loiDashArrayString")
   public void setLoiDashArrayString(@Nullable String loiDashArrayString) {
     this.loiDashArrayString = loiDashArrayString;
   }
@@ -316,6 +325,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return loiWidth;
   }
 
+  @JsonProperty("loiWidth")
   public void setLoiWidth(@Nullable BigDecimal loiWidth) {
     this.loiWidth = loiWidth;
   }
@@ -336,6 +346,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return metadata;
   }
 
+  @JsonProperty("metadata")
   public void setMetadata(CommonMetadataType metadata) {
     this.metadata = metadata;
   }
@@ -356,6 +367,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return ownerId;
   }
 
+  @JsonProperty("ownerId")
   public void setOwnerId(String ownerId) {
     this.ownerId = ownerId;
   }
@@ -376,6 +388,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return periodOfValidity;
   }
 
+  @JsonProperty("periodOfValidity")
   public void setPeriodOfValidity(PeriodOfValidityType periodOfValidity) {
     this.periodOfValidity = periodOfValidity;
   }
@@ -396,6 +409,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return poiMarkerStyle;
   }
 
+  @JsonProperty("poiMarkerStyle")
   public void setPoiMarkerStyle(@Nullable PoiMarkerStyleEnum poiMarkerStyle) {
     this.poiMarkerStyle = poiMarkerStyle;
   }
@@ -416,6 +430,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return poiMarkerText;
   }
 
+  @JsonProperty("poiMarkerText")
   public void setPoiMarkerText(@Nullable String poiMarkerText) {
     this.poiMarkerText = poiMarkerText;
   }
@@ -436,6 +451,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return poiMarkerColor;
   }
 
+  @JsonProperty("poiMarkerColor")
   public void setPoiMarkerColor(@Nullable ColorType poiMarkerColor) {
     this.poiMarkerColor = poiMarkerColor;
   }
@@ -456,6 +472,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return poiSymbolBootstrap3Name;
   }
 
+  @JsonProperty("poiSymbolBootstrap3Name")
   public void setPoiSymbolBootstrap3Name(@Nullable String poiSymbolBootstrap3Name) {
     this.poiSymbolBootstrap3Name = poiSymbolBootstrap3Name;
   }
@@ -476,6 +493,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return poiSymbolColor;
   }
 
+  @JsonProperty("poiSymbolColor")
   public void setPoiSymbolColor(@Nullable ColorType poiSymbolColor) {
     this.poiSymbolColor = poiSymbolColor;
   }
@@ -496,6 +514,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return topicReference;
   }
 
+  @JsonProperty("topicReference")
   public void setTopicReference(@Nullable String topicReference) {
     this.topicReference = topicReference;
   }
@@ -516,6 +535,7 @@ public class GeoresourcePOSTInputType implements Serializable {
     return isPublic;
   }
 
+  @JsonProperty("isPublic")
   public void setIsPublic(Boolean isPublic) {
     this.isPublic = isPublic;
   }
@@ -590,11 +610,8 @@ public class GeoresourcePOSTInputType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

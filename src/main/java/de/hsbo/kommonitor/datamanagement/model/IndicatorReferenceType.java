@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "IndicatorReferenceType", description = "a reference to another indicator, e.g. a sub-indicator that is used to compute the main indicator")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class IndicatorReferenceType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -60,6 +60,7 @@ public class IndicatorReferenceType implements Serializable {
     return referencedIndicatorDescription;
   }
 
+  @JsonProperty("referencedIndicatorDescription")
   public void setReferencedIndicatorDescription(@Nullable String referencedIndicatorDescription) {
     this.referencedIndicatorDescription = referencedIndicatorDescription;
   }
@@ -80,6 +81,7 @@ public class IndicatorReferenceType implements Serializable {
     return referencedIndicatorId;
   }
 
+  @JsonProperty("referencedIndicatorId")
   public void setReferencedIndicatorId(String referencedIndicatorId) {
     this.referencedIndicatorId = referencedIndicatorId;
   }
@@ -100,6 +102,7 @@ public class IndicatorReferenceType implements Serializable {
     return referencedIndicatorName;
   }
 
+  @JsonProperty("referencedIndicatorName")
   public void setReferencedIndicatorName(String referencedIndicatorName) {
     this.referencedIndicatorName = referencedIndicatorName;
   }
@@ -138,11 +141,8 @@ public class IndicatorReferenceType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

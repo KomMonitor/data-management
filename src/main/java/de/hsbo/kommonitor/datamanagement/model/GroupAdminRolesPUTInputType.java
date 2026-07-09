@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * GroupAdminRolesPUTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class GroupAdminRolesPUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -35,7 +35,6 @@ public class GroupAdminRolesPUTInputType implements Serializable {
 
   private @Nullable String keycloakId;
 
-  @Valid
   private List<AdminRoleType> adminRoles = new ArrayList<>();
 
   public GroupAdminRolesPUTInputType() {
@@ -66,6 +65,7 @@ public class GroupAdminRolesPUTInputType implements Serializable {
     return organizationalUnitId;
   }
 
+  @JsonProperty("organizationalUnitId")
   public void setOrganizationalUnitId(String organizationalUnitId) {
     this.organizationalUnitId = organizationalUnitId;
   }
@@ -86,6 +86,7 @@ public class GroupAdminRolesPUTInputType implements Serializable {
     return organizationalUnitName;
   }
 
+  @JsonProperty("organizationalUnitName")
   public void setOrganizationalUnitName(@Nullable String organizationalUnitName) {
     this.organizationalUnitName = organizationalUnitName;
   }
@@ -106,6 +107,7 @@ public class GroupAdminRolesPUTInputType implements Serializable {
     return keycloakId;
   }
 
+  @JsonProperty("keycloakId")
   public void setKeycloakId(@Nullable String keycloakId) {
     this.keycloakId = keycloakId;
   }
@@ -134,6 +136,7 @@ public class GroupAdminRolesPUTInputType implements Serializable {
     return adminRoles;
   }
 
+  @JsonProperty("adminRoles")
   public void setAdminRoles(List<AdminRoleType> adminRoles) {
     this.adminRoles = adminRoles;
   }
@@ -174,11 +177,8 @@ public class GroupAdminRolesPUTInputType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

@@ -28,7 +28,7 @@ import jakarta.annotation.Generated;
  * WebServiceOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class WebServiceOverviewType extends WebServiceType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -39,10 +39,8 @@ public class WebServiceOverviewType extends WebServiceType implements Serializab
 
   private @Nullable String ownerId;
 
-  @Valid
   private List<String> permissions = new ArrayList<>();
 
-  @Valid
   private List<PermissionLevelType> userPermissions = new ArrayList<>();
 
   public WebServiceOverviewType() {
@@ -73,6 +71,7 @@ public class WebServiceOverviewType extends WebServiceType implements Serializab
     return id;
   }
 
+  @JsonProperty("id")
   public void setId(String id) {
     this.id = id;
   }
@@ -93,6 +92,7 @@ public class WebServiceOverviewType extends WebServiceType implements Serializab
     return isPublic;
   }
 
+  @JsonProperty("isPublic")
   public void setIsPublic(@Nullable Boolean isPublic) {
     this.isPublic = isPublic;
   }
@@ -113,6 +113,7 @@ public class WebServiceOverviewType extends WebServiceType implements Serializab
     return ownerId;
   }
 
+  @JsonProperty("ownerId")
   public void setOwnerId(@Nullable String ownerId) {
     this.ownerId = ownerId;
   }
@@ -141,6 +142,7 @@ public class WebServiceOverviewType extends WebServiceType implements Serializab
     return permissions;
   }
 
+  @JsonProperty("permissions")
   public void setPermissions(List<String> permissions) {
     this.permissions = permissions;
   }
@@ -169,6 +171,7 @@ public class WebServiceOverviewType extends WebServiceType implements Serializab
     return userPermissions;
   }
 
+  @JsonProperty("userPermissions")
   public void setUserPermissions(List<PermissionLevelType> userPermissions) {
     this.userPermissions = userPermissions;
   }
@@ -258,11 +261,8 @@ public class WebServiceOverviewType extends WebServiceType implements Serializab
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

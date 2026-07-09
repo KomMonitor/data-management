@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "PeriodOfValidityType", description = "definition of the period of validity of a certain dataset")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class PeriodOfValidityType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -61,6 +61,7 @@ public class PeriodOfValidityType implements Serializable {
     return endDate;
   }
 
+  @JsonProperty("endDate")
   public void setEndDate(@Nullable LocalDate endDate) {
     this.endDate = endDate;
   }
@@ -81,6 +82,7 @@ public class PeriodOfValidityType implements Serializable {
     return startDate;
   }
 
+  @JsonProperty("startDate")
   public void setStartDate(LocalDate startDate) {
     this.startDate = startDate;
   }
@@ -117,11 +119,8 @@ public class PeriodOfValidityType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

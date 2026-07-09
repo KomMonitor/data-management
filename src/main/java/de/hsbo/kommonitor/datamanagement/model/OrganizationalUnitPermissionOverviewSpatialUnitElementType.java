@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * OrganizationalUnitPermissionOverviewSpatialUnitElementType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class OrganizationalUnitPermissionOverviewSpatialUnitElementType extends OrganizationalUnitPermissionOverviewElementType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -57,6 +57,7 @@ public class OrganizationalUnitPermissionOverviewSpatialUnitElementType extends 
     return spatialUnitId;
   }
 
+  @JsonProperty("spatialUnitId")
   public void setSpatialUnitId(UUID spatialUnitId) {
     this.spatialUnitId = spatialUnitId;
   }
@@ -108,11 +109,8 @@ public class OrganizationalUnitPermissionOverviewSpatialUnitElementType extends 
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

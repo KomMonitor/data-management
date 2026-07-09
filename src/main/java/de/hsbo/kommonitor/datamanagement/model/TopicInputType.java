@@ -26,12 +26,11 @@ import jakarta.annotation.Generated;
  * TopicInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class TopicInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @Valid
   private List<@Valid TopicInputType> subTopics = new ArrayList<>();
 
   private String topicDescription;
@@ -81,6 +80,7 @@ public class TopicInputType implements Serializable {
     return subTopics;
   }
 
+  @JsonProperty("subTopics")
   public void setSubTopics(List<@Valid TopicInputType> subTopics) {
     this.subTopics = subTopics;
   }
@@ -101,6 +101,7 @@ public class TopicInputType implements Serializable {
     return topicDescription;
   }
 
+  @JsonProperty("topicDescription")
   public void setTopicDescription(String topicDescription) {
     this.topicDescription = topicDescription;
   }
@@ -121,6 +122,7 @@ public class TopicInputType implements Serializable {
     return topicId;
   }
 
+  @JsonProperty("topicId")
   public void setTopicId(@Nullable String topicId) {
     this.topicId = topicId;
   }
@@ -141,6 +143,7 @@ public class TopicInputType implements Serializable {
     return topicName;
   }
 
+  @JsonProperty("topicName")
   public void setTopicName(String topicName) {
     this.topicName = topicName;
   }
@@ -161,6 +164,7 @@ public class TopicInputType implements Serializable {
     return topicResource;
   }
 
+  @JsonProperty("topicResource")
   public void setTopicResource(@Nullable TopicResourceEnum topicResource) {
     this.topicResource = topicResource;
   }
@@ -181,6 +185,7 @@ public class TopicInputType implements Serializable {
     return topicType;
   }
 
+  @JsonProperty("topicType")
   public void setTopicType(TopicTypeEnum topicType) {
     this.topicType = topicType;
   }
@@ -225,11 +230,8 @@ public class TopicInputType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

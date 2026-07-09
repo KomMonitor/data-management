@@ -24,17 +24,15 @@ import jakarta.annotation.Generated;
  * IndicatorPUTInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class IndicatorPUTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @Valid
   private List<String> permissions = new ArrayList<>();
 
   private String applicableSpatialUnit;
 
-  @Valid
   private List<@Valid IndicatorPOSTInputTypeIndicatorValues> indicatorValues = new ArrayList<>();
 
   private Boolean isPublic;
@@ -80,6 +78,7 @@ public class IndicatorPUTInputType implements Serializable {
     return permissions;
   }
 
+  @JsonProperty("permissions")
   public void setPermissions(List<String> permissions) {
     this.permissions = permissions;
   }
@@ -100,6 +99,7 @@ public class IndicatorPUTInputType implements Serializable {
     return applicableSpatialUnit;
   }
 
+  @JsonProperty("applicableSpatialUnit")
   public void setApplicableSpatialUnit(String applicableSpatialUnit) {
     this.applicableSpatialUnit = applicableSpatialUnit;
   }
@@ -128,6 +128,7 @@ public class IndicatorPUTInputType implements Serializable {
     return indicatorValues;
   }
 
+  @JsonProperty("indicatorValues")
   public void setIndicatorValues(List<@Valid IndicatorPOSTInputTypeIndicatorValues> indicatorValues) {
     this.indicatorValues = indicatorValues;
   }
@@ -148,6 +149,7 @@ public class IndicatorPUTInputType implements Serializable {
     return isPublic;
   }
 
+  @JsonProperty("isPublic")
   public void setIsPublic(Boolean isPublic) {
     this.isPublic = isPublic;
   }
@@ -168,6 +170,7 @@ public class IndicatorPUTInputType implements Serializable {
     return ownerId;
   }
 
+  @JsonProperty("ownerId")
   public void setOwnerId(String ownerId) {
     this.ownerId = ownerId;
   }
@@ -210,11 +213,8 @@ public class IndicatorPUTInputType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

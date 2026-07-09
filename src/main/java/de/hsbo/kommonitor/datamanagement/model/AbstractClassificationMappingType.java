@@ -36,7 +36,7 @@ import jakarta.annotation.Generated;
   @JsonSubTypes.Type(value = DefaultClassificationMappingType.class, name = "SEQUENTIAL")
 })
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class AbstractClassificationMappingType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -75,6 +75,7 @@ public class AbstractClassificationMappingType implements Serializable {
     return classificationType;
   }
 
+  @JsonProperty("classificationType")
   public void setClassificationType(@Nullable ClassificationTypeEnum classificationType) {
     this.classificationType = classificationType;
   }
@@ -95,6 +96,7 @@ public class AbstractClassificationMappingType implements Serializable {
     return colorBrewerSchemeName;
   }
 
+  @JsonProperty("colorBrewerSchemeName")
   public void setColorBrewerSchemeName(String colorBrewerSchemeName) {
     this.colorBrewerSchemeName = colorBrewerSchemeName;
   }
@@ -117,6 +119,7 @@ public class AbstractClassificationMappingType implements Serializable {
     return numClasses;
   }
 
+  @JsonProperty("numClasses")
   public void setNumClasses(BigDecimal numClasses) {
     this.numClasses = numClasses;
   }
@@ -155,11 +158,8 @@ public class AbstractClassificationMappingType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

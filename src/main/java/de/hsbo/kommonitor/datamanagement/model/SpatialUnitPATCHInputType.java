@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * SpatialUnitPATCHInputType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class SpatialUnitPATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -73,6 +73,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
     return datasetName;
   }
 
+  @JsonProperty("datasetName")
   public void setDatasetName(String datasetName) {
     this.datasetName = datasetName;
   }
@@ -93,6 +94,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
     return metadata;
   }
 
+  @JsonProperty("metadata")
   public void setMetadata(CommonMetadataType metadata) {
     this.metadata = metadata;
   }
@@ -113,6 +115,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
     return nextLowerHierarchyLevel;
   }
 
+  @JsonProperty("nextLowerHierarchyLevel")
   public void setNextLowerHierarchyLevel(String nextLowerHierarchyLevel) {
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
   }
@@ -133,6 +136,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
     return nextUpperHierarchyLevel;
   }
 
+  @JsonProperty("nextUpperHierarchyLevel")
   public void setNextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
   }
@@ -153,6 +157,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
     return isOutlineLayer;
   }
 
+  @JsonProperty("isOutlineLayer")
   public void setIsOutlineLayer(Boolean isOutlineLayer) {
     this.isOutlineLayer = isOutlineLayer;
   }
@@ -173,6 +178,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
     return outlineColor;
   }
 
+  @JsonProperty("outlineColor")
   public void setOutlineColor(@Nullable String outlineColor) {
     this.outlineColor = outlineColor;
   }
@@ -193,6 +199,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
     return outlineWidth;
   }
 
+  @JsonProperty("outlineWidth")
   public void setOutlineWidth(@Nullable BigDecimal outlineWidth) {
     this.outlineWidth = outlineWidth;
   }
@@ -213,6 +220,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
     return outlineDashArrayString;
   }
 
+  @JsonProperty("outlineDashArrayString")
   public void setOutlineDashArrayString(@Nullable String outlineDashArrayString) {
     this.outlineDashArrayString = outlineDashArrayString;
   }
@@ -261,11 +269,8 @@ public class SpatialUnitPATCHInputType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

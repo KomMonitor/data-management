@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  * OrganizationalUnitPermissionOverviewElementType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class OrganizationalUnitPermissionOverviewElementType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -61,6 +61,7 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
     return id;
   }
 
+  @JsonProperty("id")
   public void setId(UUID id) {
     this.id = id;
   }
@@ -81,6 +82,7 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
     return permissionLevel;
   }
 
+  @JsonProperty("permissionLevel")
   public void setPermissionLevel(String permissionLevel) {
     this.permissionLevel = permissionLevel;
   }
@@ -101,6 +103,7 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
     return roleId;
   }
 
+  @JsonProperty("roleId")
   public void setRoleId(UUID roleId) {
     this.roleId = roleId;
   }
@@ -139,11 +142,8 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

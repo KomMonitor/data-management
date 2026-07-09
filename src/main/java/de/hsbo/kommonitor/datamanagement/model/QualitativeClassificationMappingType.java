@@ -9,8 +9,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.hsbo.kommonitor.datamanagement.model.AbstractClassificationMappingType;
+import de.hsbo.kommonitor.datamanagement.model.CategoricalMappingType;
 import de.hsbo.kommonitor.datamanagement.model.ClassificationTypeEnum;
-import de.hsbo.kommonitor.datamanagement.model.QualitativeClassificationMappingItemType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,13 +32,12 @@ import jakarta.annotation.Generated;
  */
 
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class QualitativeClassificationMappingType extends AbstractClassificationMappingType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @Valid
-  private List<@Valid QualitativeClassificationMappingItemType> items = new ArrayList<>();
+  private List<@Valid CategoricalMappingType> categoricalData = new ArrayList<>();
 
   public QualitativeClassificationMappingType() {
     super();
@@ -47,37 +46,38 @@ public class QualitativeClassificationMappingType extends AbstractClassification
   /**
    * Constructor with only required parameters
    */
-  public QualitativeClassificationMappingType(List<@Valid QualitativeClassificationMappingItemType> items, String colorBrewerSchemeName, BigDecimal numClasses) {
+  public QualitativeClassificationMappingType(List<@Valid CategoricalMappingType> categoricalData, String colorBrewerSchemeName, BigDecimal numClasses) {
     super(colorBrewerSchemeName, numClasses);
-    this.items = items;
+    this.categoricalData = categoricalData;
   }
 
-  public QualitativeClassificationMappingType items(List<@Valid QualitativeClassificationMappingItemType> items) {
-    this.items = items;
+  public QualitativeClassificationMappingType categoricalData(List<@Valid CategoricalMappingType> categoricalData) {
+    this.categoricalData = categoricalData;
     return this;
   }
 
-  public QualitativeClassificationMappingType addItemsItem(QualitativeClassificationMappingItemType itemsItem) {
-    if (this.items == null) {
-      this.items = new ArrayList<>();
+  public QualitativeClassificationMappingType addCategoricalDataItem(CategoricalMappingType categoricalDataItem) {
+    if (this.categoricalData == null) {
+      this.categoricalData = new ArrayList<>();
     }
-    this.items.add(itemsItem);
+    this.categoricalData.add(categoricalDataItem);
     return this;
   }
 
   /**
-   * Array of classification mapping items. Each item holds categorical data as well as its color and label mappings for a certain spatial unit.
-   * @return items
+   * mapping of categorical values, colors and labels
+   * @return categoricalData
    */
   @NotNull @Valid 
-  @Schema(name = "items", description = "Array of classification mapping items. Each item holds categorical data as well as its color and label mappings for a certain spatial unit.", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("items")
-  public List<@Valid QualitativeClassificationMappingItemType> getItems() {
-    return items;
+  @Schema(name = "categoricalData", description = "mapping of categorical values, colors and labels", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("categoricalData")
+  public List<@Valid CategoricalMappingType> getCategoricalData() {
+    return categoricalData;
   }
 
-  public void setItems(List<@Valid QualitativeClassificationMappingItemType> items) {
-    this.items = items;
+  @JsonProperty("categoricalData")
+  public void setCategoricalData(List<@Valid CategoricalMappingType> categoricalData) {
+    this.categoricalData = categoricalData;
   }
 
 
@@ -104,13 +104,13 @@ public class QualitativeClassificationMappingType extends AbstractClassification
       return false;
     }
     QualitativeClassificationMappingType qualitativeClassificationMappingType = (QualitativeClassificationMappingType) o;
-    return Objects.equals(this.items, qualitativeClassificationMappingType.items) &&
+    return Objects.equals(this.categoricalData, qualitativeClassificationMappingType.categoricalData) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(items, super.hashCode());
+    return Objects.hash(categoricalData, super.hashCode());
   }
 
   @Override
@@ -118,7 +118,7 @@ public class QualitativeClassificationMappingType extends AbstractClassification
     StringBuilder sb = new StringBuilder();
     sb.append("class QualitativeClassificationMappingType {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    items: ").append(toIndentedString(items)).append("\n");
+    sb.append("    categoricalData: ").append(toIndentedString(categoricalData)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -127,11 +127,8 @@ public class QualitativeClassificationMappingType extends AbstractClassification
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

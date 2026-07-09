@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Permission Levels for CRUD operations.
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public enum PermissionLevelType implements Serializable {
   
   CREATOR("creator"),

@@ -27,7 +27,7 @@ import jakarta.annotation.Generated;
  * WebServiceCreationType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class WebServiceCreationType extends WebServiceType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -36,7 +36,6 @@ public class WebServiceCreationType extends WebServiceType implements Serializab
 
   private String ownerId;
 
-  @Valid
   private List<String> permissions = new ArrayList<>();
 
   public WebServiceCreationType() {
@@ -69,6 +68,7 @@ public class WebServiceCreationType extends WebServiceType implements Serializab
     return isPublic;
   }
 
+  @JsonProperty("isPublic")
   public void setIsPublic(Boolean isPublic) {
     this.isPublic = isPublic;
   }
@@ -89,6 +89,7 @@ public class WebServiceCreationType extends WebServiceType implements Serializab
     return ownerId;
   }
 
+  @JsonProperty("ownerId")
   public void setOwnerId(String ownerId) {
     this.ownerId = ownerId;
   }
@@ -117,6 +118,7 @@ public class WebServiceCreationType extends WebServiceType implements Serializab
     return permissions;
   }
 
+  @JsonProperty("permissions")
   public void setPermissions(List<String> permissions) {
     this.permissions = permissions;
   }
@@ -202,11 +204,8 @@ public class WebServiceCreationType extends WebServiceType implements Serializab
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

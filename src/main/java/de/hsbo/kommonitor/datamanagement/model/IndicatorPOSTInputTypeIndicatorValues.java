@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputTypeIndicatorValues
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -35,7 +35,6 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
 
   private IndicatorValueTypeEnum valueType = IndicatorValueTypeEnum.NUMERIC;
 
-  @Valid
   private List<IndicatorPOSTInputTypeValueMapping> valueMapping = new ArrayList<>();
 
   public IndicatorPOSTInputTypeIndicatorValues() {
@@ -65,6 +64,7 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
     return spatialReferenceKey;
   }
 
+  @JsonProperty("spatialReferenceKey")
   public void setSpatialReferenceKey(@Nullable String spatialReferenceKey) {
     this.spatialReferenceKey = spatialReferenceKey;
   }
@@ -85,6 +85,7 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
     return valueType;
   }
 
+  @JsonProperty("valueType")
   public void setValueType(IndicatorValueTypeEnum valueType) {
     this.valueType = valueType;
   }
@@ -113,6 +114,7 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
     return valueMapping;
   }
 
+  @JsonProperty("valueMapping")
   public void setValueMapping(List<IndicatorPOSTInputTypeValueMapping> valueMapping) {
     this.valueMapping = valueMapping;
   }
@@ -151,11 +153,8 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

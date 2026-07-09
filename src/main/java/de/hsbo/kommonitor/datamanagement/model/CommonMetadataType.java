@@ -24,7 +24,7 @@ import jakarta.annotation.Generated;
  * CommonMetadataType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class CommonMetadataType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -123,6 +123,7 @@ public class CommonMetadataType implements Serializable {
     return contact;
   }
 
+  @JsonProperty("contact")
   public void setContact(String contact) {
     this.contact = contact;
   }
@@ -143,6 +144,7 @@ public class CommonMetadataType implements Serializable {
     return databasis;
   }
 
+  @JsonProperty("databasis")
   public void setDatabasis(@Nullable String databasis) {
     this.databasis = databasis;
   }
@@ -163,6 +165,7 @@ public class CommonMetadataType implements Serializable {
     return datasource;
   }
 
+  @JsonProperty("datasource")
   public void setDatasource(String datasource) {
     this.datasource = datasource;
   }
@@ -183,6 +186,7 @@ public class CommonMetadataType implements Serializable {
     return description;
   }
 
+  @JsonProperty("description")
   public void setDescription(String description) {
     this.description = description;
   }
@@ -203,6 +207,7 @@ public class CommonMetadataType implements Serializable {
     return lastUpdate;
   }
 
+  @JsonProperty("lastUpdate")
   public void setLastUpdate(@Nullable LocalDate lastUpdate) {
     this.lastUpdate = lastUpdate;
   }
@@ -223,6 +228,7 @@ public class CommonMetadataType implements Serializable {
     return literature;
   }
 
+  @JsonProperty("literature")
   public void setLiterature(@Nullable String literature) {
     this.literature = literature;
   }
@@ -243,6 +249,7 @@ public class CommonMetadataType implements Serializable {
     return note;
   }
 
+  @JsonProperty("note")
   public void setNote(@Nullable String note) {
     this.note = note;
   }
@@ -263,6 +270,7 @@ public class CommonMetadataType implements Serializable {
     return sridEPSG;
   }
 
+  @JsonProperty("sridEPSG")
   public void setSridEPSG(@Nullable BigDecimal sridEPSG) {
     this.sridEPSG = sridEPSG;
   }
@@ -283,6 +291,7 @@ public class CommonMetadataType implements Serializable {
     return updateInterval;
   }
 
+  @JsonProperty("updateInterval")
   public void setUpdateInterval(UpdateIntervalEnum updateInterval) {
     this.updateInterval = updateInterval;
   }
@@ -333,11 +342,8 @@ public class CommonMetadataType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

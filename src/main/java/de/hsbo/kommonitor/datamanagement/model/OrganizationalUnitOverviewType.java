@@ -26,7 +26,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "OrganizationalUnitOverviewType", description = "organizational unit (group)")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class OrganizationalUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -43,17 +43,14 @@ public class OrganizationalUnitOverviewType implements Serializable {
 
   private @Nullable String description;
 
-  @Valid
   private List<@Valid PermissionOverviewType> permissions = new ArrayList<>();
 
-  @Valid
   private List<AdminRoleType> userAdminRoles = new ArrayList<>();
 
   private String parentId;
 
   private @Nullable String mandantId;
 
-  @Valid
   private List<String> children = new ArrayList<>();
 
   public OrganizationalUnitOverviewType() {
@@ -91,6 +88,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     return organizationalUnitId;
   }
 
+  @JsonProperty("organizationalUnitId")
   public void setOrganizationalUnitId(String organizationalUnitId) {
     this.organizationalUnitId = organizationalUnitId;
   }
@@ -111,6 +109,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     return name;
   }
 
+  @JsonProperty("name")
   public void setName(String name) {
     this.name = name;
   }
@@ -131,6 +130,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     return mandant;
   }
 
+  @JsonProperty("mandant")
   public void setMandant(Boolean mandant) {
     this.mandant = mandant;
   }
@@ -151,6 +151,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     return keycloakId;
   }
 
+  @JsonProperty("keycloakId")
   public void setKeycloakId(String keycloakId) {
     this.keycloakId = keycloakId;
   }
@@ -171,6 +172,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     return contact;
   }
 
+  @JsonProperty("contact")
   public void setContact(String contact) {
     this.contact = contact;
   }
@@ -191,6 +193,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     return description;
   }
 
+  @JsonProperty("description")
   public void setDescription(@Nullable String description) {
     this.description = description;
   }
@@ -219,6 +222,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     return permissions;
   }
 
+  @JsonProperty("permissions")
   public void setPermissions(List<@Valid PermissionOverviewType> permissions) {
     this.permissions = permissions;
   }
@@ -247,6 +251,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     return userAdminRoles;
   }
 
+  @JsonProperty("userAdminRoles")
   public void setUserAdminRoles(List<AdminRoleType> userAdminRoles) {
     this.userAdminRoles = userAdminRoles;
   }
@@ -267,6 +272,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     return parentId;
   }
 
+  @JsonProperty("parentId")
   public void setParentId(String parentId) {
     this.parentId = parentId;
   }
@@ -287,6 +293,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     return mandantId;
   }
 
+  @JsonProperty("mandantId")
   public void setMandantId(@Nullable String mandantId) {
     this.mandantId = mandantId;
   }
@@ -315,6 +322,7 @@ public class OrganizationalUnitOverviewType implements Serializable {
     return children;
   }
 
+  @JsonProperty("children")
   public void setChildren(List<String> children) {
     this.children = children;
   }
@@ -369,11 +377,8 @@ public class OrganizationalUnitOverviewType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

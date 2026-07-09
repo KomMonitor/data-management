@@ -21,7 +21,7 @@ import jakarta.annotation.Generated;
  */
 
 @Schema(name = "OrganizationalUnitInputType", description = "organizational unit (group)")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class OrganizationalUnitInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -69,6 +69,7 @@ public class OrganizationalUnitInputType implements Serializable {
     return organizationalUnitId;
   }
 
+  @JsonProperty("organizationalUnitId")
   public void setOrganizationalUnitId(@Nullable String organizationalUnitId) {
     this.organizationalUnitId = organizationalUnitId;
   }
@@ -89,6 +90,7 @@ public class OrganizationalUnitInputType implements Serializable {
     return name;
   }
 
+  @JsonProperty("name")
   public void setName(String name) {
     this.name = name;
   }
@@ -109,6 +111,7 @@ public class OrganizationalUnitInputType implements Serializable {
     return mandant;
   }
 
+  @JsonProperty("mandant")
   public void setMandant(Boolean mandant) {
     this.mandant = mandant;
   }
@@ -129,6 +132,7 @@ public class OrganizationalUnitInputType implements Serializable {
     return keycloakId;
   }
 
+  @JsonProperty("keycloakId")
   public void setKeycloakId(@Nullable String keycloakId) {
     this.keycloakId = keycloakId;
   }
@@ -149,6 +153,7 @@ public class OrganizationalUnitInputType implements Serializable {
     return contact;
   }
 
+  @JsonProperty("contact")
   public void setContact(String contact) {
     this.contact = contact;
   }
@@ -169,6 +174,7 @@ public class OrganizationalUnitInputType implements Serializable {
     return description;
   }
 
+  @JsonProperty("description")
   public void setDescription(@Nullable String description) {
     this.description = description;
   }
@@ -189,6 +195,7 @@ public class OrganizationalUnitInputType implements Serializable {
     return parentId;
   }
 
+  @JsonProperty("parentId")
   public void setParentId(@Nullable String parentId) {
     this.parentId = parentId;
   }
@@ -235,11 +242,8 @@ public class OrganizationalUnitInputType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

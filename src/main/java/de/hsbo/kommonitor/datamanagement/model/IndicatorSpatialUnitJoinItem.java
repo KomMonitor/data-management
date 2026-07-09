@@ -24,12 +24,11 @@ import jakarta.annotation.Generated;
  * IndicatorSpatialUnitJoinItem
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class IndicatorSpatialUnitJoinItem implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @Valid
   private List<String> permissions = new ArrayList<>();
 
   private @Nullable String ownerId;
@@ -38,7 +37,6 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
 
   private String spatialUnitName;
 
-  @Valid
   private List<PermissionLevelType> userPermissions = new ArrayList<>();
 
   private @Nullable Boolean isPublic;
@@ -79,6 +77,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     return permissions;
   }
 
+  @JsonProperty("permissions")
   public void setPermissions(List<String> permissions) {
     this.permissions = permissions;
   }
@@ -99,6 +98,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     return ownerId;
   }
 
+  @JsonProperty("ownerId")
   public void setOwnerId(@Nullable String ownerId) {
     this.ownerId = ownerId;
   }
@@ -119,6 +119,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     return spatialUnitId;
   }
 
+  @JsonProperty("spatialUnitId")
   public void setSpatialUnitId(String spatialUnitId) {
     this.spatialUnitId = spatialUnitId;
   }
@@ -139,6 +140,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     return spatialUnitName;
   }
 
+  @JsonProperty("spatialUnitName")
   public void setSpatialUnitName(String spatialUnitName) {
     this.spatialUnitName = spatialUnitName;
   }
@@ -167,6 +169,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     return userPermissions;
   }
 
+  @JsonProperty("userPermissions")
   public void setUserPermissions(List<PermissionLevelType> userPermissions) {
     this.userPermissions = userPermissions;
   }
@@ -187,6 +190,7 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
     return isPublic;
   }
 
+  @JsonProperty("isPublic")
   public void setIsPublic(@Nullable Boolean isPublic) {
     this.isPublic = isPublic;
   }
@@ -231,11 +235,8 @@ public class IndicatorSpatialUnitJoinItem implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

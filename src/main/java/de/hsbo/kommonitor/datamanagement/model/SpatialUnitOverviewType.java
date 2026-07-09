@@ -27,15 +27,13 @@ import jakarta.annotation.Generated;
  * SpatialUnitOverviewType
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class SpatialUnitOverviewType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @Valid
   private List<String> permissions = new ArrayList<>();
 
-  @Valid
   private List<@Valid PeriodOfValidityType> availablePeriodsOfValidity = new ArrayList<>();
 
   private Boolean isPublic;
@@ -50,7 +48,6 @@ public class SpatialUnitOverviewType implements Serializable {
 
   private String spatialUnitLevel;
 
-  @Valid
   private List<PermissionLevelType> userPermissions = new ArrayList<>();
 
   private @Nullable String wfsUrl;
@@ -107,6 +104,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return permissions;
   }
 
+  @JsonProperty("permissions")
   public void setPermissions(List<String> permissions) {
     this.permissions = permissions;
   }
@@ -135,6 +133,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return availablePeriodsOfValidity;
   }
 
+  @JsonProperty("availablePeriodsOfValidity")
   public void setAvailablePeriodsOfValidity(List<@Valid PeriodOfValidityType> availablePeriodsOfValidity) {
     this.availablePeriodsOfValidity = availablePeriodsOfValidity;
   }
@@ -155,6 +154,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return isPublic;
   }
 
+  @JsonProperty("isPublic")
   public void setIsPublic(Boolean isPublic) {
     this.isPublic = isPublic;
   }
@@ -175,6 +175,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return metadata;
   }
 
+  @JsonProperty("metadata")
   public void setMetadata(CommonMetadataType metadata) {
     this.metadata = metadata;
   }
@@ -195,6 +196,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return nextLowerHierarchyLevel;
   }
 
+  @JsonProperty("nextLowerHierarchyLevel")
   public void setNextLowerHierarchyLevel(@Nullable String nextLowerHierarchyLevel) {
     this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
   }
@@ -215,6 +217,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return nextUpperHierarchyLevel;
   }
 
+  @JsonProperty("nextUpperHierarchyLevel")
   public void setNextUpperHierarchyLevel(@Nullable String nextUpperHierarchyLevel) {
     this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
   }
@@ -235,6 +238,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return spatialUnitId;
   }
 
+  @JsonProperty("spatialUnitId")
   public void setSpatialUnitId(String spatialUnitId) {
     this.spatialUnitId = spatialUnitId;
   }
@@ -255,6 +259,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return spatialUnitLevel;
   }
 
+  @JsonProperty("spatialUnitLevel")
   public void setSpatialUnitLevel(String spatialUnitLevel) {
     this.spatialUnitLevel = spatialUnitLevel;
   }
@@ -283,6 +288,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return userPermissions;
   }
 
+  @JsonProperty("userPermissions")
   public void setUserPermissions(List<PermissionLevelType> userPermissions) {
     this.userPermissions = userPermissions;
   }
@@ -303,6 +309,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return wfsUrl;
   }
 
+  @JsonProperty("wfsUrl")
   public void setWfsUrl(@Nullable String wfsUrl) {
     this.wfsUrl = wfsUrl;
   }
@@ -323,6 +330,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return wmsUrl;
   }
 
+  @JsonProperty("wmsUrl")
   public void setWmsUrl(@Nullable String wmsUrl) {
     this.wmsUrl = wmsUrl;
   }
@@ -343,6 +351,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return isOutlineLayer;
   }
 
+  @JsonProperty("isOutlineLayer")
   public void setIsOutlineLayer(@Nullable Boolean isOutlineLayer) {
     this.isOutlineLayer = isOutlineLayer;
   }
@@ -363,6 +372,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return outlineColor;
   }
 
+  @JsonProperty("outlineColor")
   public void setOutlineColor(@Nullable String outlineColor) {
     this.outlineColor = outlineColor;
   }
@@ -383,6 +393,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return outlineWidth;
   }
 
+  @JsonProperty("outlineWidth")
   public void setOutlineWidth(@Nullable BigDecimal outlineWidth) {
     this.outlineWidth = outlineWidth;
   }
@@ -403,6 +414,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return outlineDashArrayString;
   }
 
+  @JsonProperty("outlineDashArrayString")
   public void setOutlineDashArrayString(@Nullable String outlineDashArrayString) {
     this.outlineDashArrayString = outlineDashArrayString;
   }
@@ -423,6 +435,7 @@ public class SpatialUnitOverviewType implements Serializable {
     return ownerId;
   }
 
+  @JsonProperty("ownerId")
   public void setOwnerId(@Nullable String ownerId) {
     this.ownerId = ownerId;
   }
@@ -487,11 +500,8 @@ public class SpatialUnitOverviewType implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

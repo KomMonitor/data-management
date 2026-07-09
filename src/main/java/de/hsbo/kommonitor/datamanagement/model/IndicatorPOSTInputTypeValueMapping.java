@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * IndicatorPOSTInputTypeValueMapping
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.18.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public class IndicatorPOSTInputTypeValueMapping implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -57,6 +57,7 @@ public class IndicatorPOSTInputTypeValueMapping implements Serializable {
     return timestamp;
   }
 
+  @JsonProperty("timestamp")
   public void setTimestamp(LocalDate timestamp) {
     this.timestamp = timestamp;
   }
@@ -91,11 +92,8 @@ public class IndicatorPOSTInputTypeValueMapping implements Serializable {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 
