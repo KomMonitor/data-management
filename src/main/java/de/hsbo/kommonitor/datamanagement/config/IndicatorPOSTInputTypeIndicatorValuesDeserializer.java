@@ -11,6 +11,7 @@ import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ValueDeserializer;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,10 +41,24 @@ public class IndicatorPOSTInputTypeIndicatorValuesDeserializer extends ValueDese
         if (node.has("valueMapping") && node.get("valueMapping").isArray()) {
             List<IndicatorPOSTInputTypeValueMapping> list = new ArrayList<>();
             for (JsonNode element : node.get("valueMapping")) {
+                LocalDate timestamp = null;
+                if (element.has("timestamp") && !element.get("timestamp").isNull()) {
+                    timestamp = LocalDate.parse(element.get("timestamp").asText());
+                }
                 if (valueType == IndicatorValueTypeEnum.CATEGORICAL) {
-                    list.add(ctxt.readTreeAsValue(element, IndicatorPOSTInputTypeCategoricalValueMapping.class));
+                    IndicatorPOSTInputTypeCategoricalValueMapping mapping = new IndicatorPOSTInputTypeCategoricalValueMapping();
+                    mapping.setTimestamp(timestamp);
+                    if (element.has("indicatorValue") && !element.get("indicatorValue").isNull()) {
+                        mapping.setIndicatorValue(element.get("indicatorValue").asText());
+                    }
+                    list.add(mapping);
                 } else {
-                    list.add(ctxt.readTreeAsValue(element, IndicatorPOSTInputTypeNumericalValueMapping.class));
+                    IndicatorPOSTInputTypeNumericalValueMapping mapping = new IndicatorPOSTInputTypeNumericalValueMapping();
+                    mapping.setTimestamp(timestamp);
+                    if (element.has("indicatorValue") && !element.get("indicatorValue").isNull()) {
+                        mapping.setIndicatorValue(element.get("indicatorValue").floatValue());
+                    }
+                    list.add(mapping);
                 }
             }
             result.setValueMapping(list);

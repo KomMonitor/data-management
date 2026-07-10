@@ -67,6 +67,7 @@ public class IndicatorsManager {
     private static final String MSG_CLASSIFICATION_MAPPING_ERROR = "invalid-classification-mapping-error";
     private static final String MSG_INVALID_INDICATOR_TYPE = "conflicting-indicator-value-type-error";
     private static final String MSG_CONFLICTING_CLASSIFICATION = "conflicting-classification-value-type-error";
+    private static final String MSG_INVALID_TIMESTAMP_ERROR = "invalid_timestamp_error";
 
     @Autowired
     private IndicatorsMetadataRepository indicatorsMetadataRepo;
@@ -1224,6 +1225,10 @@ public class IndicatorsManager {
 
             for (IndicatorPOSTInputTypeValueMapping indicatorPOSTInputTypeValueMapping : exampleValueMapping) {
                 LocalDate timestamp_localDate = indicatorPOSTInputTypeValueMapping.getTimestamp();
+                if (timestamp_localDate == null) {
+                    String errMsg = messageResolver.getMessage(MSG_INVALID_TIMESTAMP_ERROR);
+                    throw new ApiException(400, errMsg);
+                }
                 Date timestamp_date = DateTimeUtil.fromLocalDate(timestamp_localDate);
 
                 String timestamp_propertyName = IndicatorDatabaseHandler.createDateStringForDbProperty(timestamp_date);

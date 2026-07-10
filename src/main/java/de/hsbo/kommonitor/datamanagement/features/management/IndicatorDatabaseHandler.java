@@ -159,7 +159,7 @@ public class IndicatorDatabaseHandler {
 
 				if (indicatorPOSTInputTypeIndicatorValueEntry.getValueType().equals(IndicatorValueTypeEnum.NUMERIC)) {
 					IndicatorPOSTInputTypeNumericalValueMapping numericalEntry = new IndicatorPOSTInputTypeNumericalValueMapping();
-					numericalEntry.setIndicatorValue(((Number) mapValue).floatValue());
+					numericalEntry.setIndicatorValue(mapValue != null ? ((Number) mapValue).floatValue() : null);
 					entry = numericalEntry;
 				} else {
 					IndicatorPOSTInputTypeCategoricalValueMapping categoricalEntry = new IndicatorPOSTInputTypeCategoricalValueMapping();
