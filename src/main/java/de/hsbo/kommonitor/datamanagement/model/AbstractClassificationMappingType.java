@@ -33,7 +33,7 @@ import jakarta.annotation.Generated;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "classificationType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = QualitativeClassificationMappingType.class, name = "QUALITATIVE"),
-  @JsonSubTypes.Type(value = DefaultClassificationMappingType.class, name = "SEQUENTIAL")
+  @JsonSubTypes.Type(value = DefaultClassificationMappingType.class, name = "QUANTITATIVE")
 })
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")

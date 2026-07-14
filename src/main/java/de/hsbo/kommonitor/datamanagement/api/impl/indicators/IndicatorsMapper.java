@@ -262,7 +262,7 @@ public class IndicatorsMapper {
 		defaultClassification.setColorBrewerSchemeName(indicatorsMetadataEntity.getColorBrewerSchemeName());
 		defaultClassification.setNumClasses(new BigDecimal(indicatorsMetadataEntity.getNumClasses()));
 		defaultClassification.setClassificationMethod(indicatorsMetadataEntity.getClassificationMethod());
-		defaultClassification.setClassificationType(ClassificationTypeEnum.SEQUENTIAL);
+		defaultClassification.setClassificationType(ClassificationTypeEnum.QUANTITATIVE);
 		defaultClassification.setIndividualColors(indicatorsMetadataEntity.getIndividualColors());
 		defaultClassification.setLabels(indicatorsMetadataEntity.getLabels());
 
@@ -309,7 +309,7 @@ public class IndicatorsMapper {
 	public static AbstractClassificationMappingType extractClassificationMappingFromMetadata(MetadataIndicatorsEntity indicatorsMetadataEntity) {
 		ClassificationTypeEnum classificationType = indicatorsMetadataEntity.getClassificationType();
 
-		if (classificationType.equals(ClassificationTypeEnum.SEQUENTIAL)) {
+		if (classificationType.equals(ClassificationTypeEnum.QUANTITATIVE)) {
 			return extractDefaultClassificationMappingFromMetadata(indicatorsMetadataEntity);
 		} else if (classificationType.equals(ClassificationTypeEnum.QUALITATIVE)) {
 			return extractQualitativeClassificationMappingFromMetadata(indicatorsMetadataEntity);

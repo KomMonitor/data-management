@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
 public enum ClassificationTypeEnum implements Serializable {
   
-  SEQUENTIAL("SEQUENTIAL"),
+  QUANTITATIVE("QUANTITATIVE"),
   
   QUALITATIVE("QUALITATIVE");
 

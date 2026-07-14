@@ -412,9 +412,9 @@ public class IndicatorsManager {
                     throw new ApiException(400, String.format(errMsg, ClassificationTypeEnum.QUALITATIVE.getValue(), IndicatorValueTypeEnum.CATEGORICAL.getValue()));
                 }
 
-                if (ClassificationTypeEnum.SEQUENTIAL.equals(classification) && !IndicatorValueTypeEnum.NUMERIC.equals(valueType)) {
+                if (ClassificationTypeEnum.QUANTITATIVE.equals(classification) && !IndicatorValueTypeEnum.NUMERIC.equals(valueType)) {
                     String errMsg = messageResolver.getMessage(MSG_CONFLICTING_CLASSIFICATION);
-                    throw new ApiException(400, String.format(errMsg, ClassificationTypeEnum.SEQUENTIAL.getValue(), IndicatorValueTypeEnum.NUMERIC.getValue()));
+                    throw new ApiException(400, String.format(errMsg, ClassificationTypeEnum.QUANTITATIVE.getValue(), IndicatorValueTypeEnum.NUMERIC.getValue()));
                 }
 
                 String indicatorViewTableName = indicatorSpatialsUnitsEntity.getIndicatorViewTableName();
@@ -1450,7 +1450,7 @@ public class IndicatorsManager {
         if (entity.getQualitativeClassificationMappingItems() != null) {
             entity.getQualitativeClassificationMappingItems().clear();
         }
-        entity.setClassificationType(ClassificationTypeEnum.SEQUENTIAL);
+        entity.setClassificationType(ClassificationTypeEnum.QUANTITATIVE);
 
         BigDecimal numClasses = classificationMapping.getNumClasses();
         if (numClasses == null) {

@@ -6785,7 +6785,7 @@ components:
       discriminator:
         propertyName: classificationType
         mapping:
-          SEQUENTIAL: '#/components/schemas/DefaultClassificationMappingType'
+          QUANTITATIVE: '#/components/schemas/DefaultClassificationMappingType'
           QUALITATIVE: '#/components/schemas/QualitativeClassificationMappingType'
       required:
         - colorBrewerSchemeName
@@ -6793,7 +6793,7 @@ components:
       properties:
         classificationType:
           $ref: '#/components/schemas/ClassificationTypeEnum'
-          default: SEQUENTIAL
+          default: QUANTITATIVE
         colorBrewerSchemeName:
           type: string
           description: the name of the colorBrewer color scheme used to define the
@@ -8817,7 +8817,7 @@ components:
     ClassificationTypeEnum:
       type: string
       enum:
-        - SEQUENTIAL
+        - QUANTITATIVE
         - QUALITATIVE
     IndicatorValueTypeEnum:
       type: string
