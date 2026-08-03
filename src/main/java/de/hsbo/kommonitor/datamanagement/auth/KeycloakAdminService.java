@@ -362,7 +362,9 @@ public class KeycloakAdminService {
         Set<String> policySet = new HashSet<>();
         while (parent != null) {
             String policyName = "member-of-" + parent.getKeycloakId() + "." + CLIENT_USERS_ADMIN_ROLE_NAME;
+            LOG.debug("trying to fetch policy for parent using policyName %s".formatted(policyName));
             PolicyRepresentation policyRepresentation = getPolicyByName(clientRepresentation.getId(), policyName);
+            LOG.debug("retrieved policy representation:  {}", policyRepresentation.getName());
             policySet.add(policyRepresentation.getId());
             parent = parent.getParent();
         }
