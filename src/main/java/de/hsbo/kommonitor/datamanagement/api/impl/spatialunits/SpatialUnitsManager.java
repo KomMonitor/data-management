@@ -70,6 +70,9 @@ public class SpatialUnitsManager {
     OGCWebServiceManager ogcServiceManager;
 
     @Autowired
+    private SpatialUnitHierarchyManager spatialUnitHierarchyManager;
+
+    @Autowired
     MessageResolver messageResolver;
 
     public SpatialUnitOverviewType addSpatialUnit(SpatialUnitPOSTInputType featureData) throws Exception {
@@ -82,20 +85,18 @@ public class SpatialUnitsManager {
             logger.info("Trying to persist spatialUnit with name '{}'", datasetName);
 
             /*
-             * analyse input type
-             *
-             * store metadata entry for spatial unit
-             *
-             * create db table for actual features
-             *
-             * return metadata id
+             * spatial unit names must be unique only within a mandant. Resolve the
+             * mandant from the requested owner and scope the uniqueness check to it.
              */
+            OrganizationalUnitEntity owner = orgaManager.getOrganizationalUnitEntity(featureData.getOwnerId());
+            OrganizationalUnitEntity mandant = resolveMandant(owner);
+            String mandantId = mandant != null ? mandant.getOrganizationalUnitId() : null;
 
-            if (spatialUnitsMetadataRepo.existsByDatasetName(datasetName)) {
-                MetadataSpatialUnitsEntity existingSpatialUnit = spatialUnitsMetadataRepo.findByDatasetName(datasetName);
-                logger.error("The spatialUnit metadataset with datasetName '{}' already exists. Thus aborting add spatial unit request.", datasetName);
+            if (mandantId != null
+                    && spatialUnitsMetadataRepo.existsByDatasetNameAndMandant_OrganizationalUnitId(datasetName, mandantId)) {
+                logger.error("The spatialUnit metadataset with datasetName '{}' already exists for mandant '{}'. Thus aborting add spatial unit request.", datasetName, mandant.getName());
                 String errMsg = messageResolver.getMessage(MSG_SPATIAL_UNIT_EXISTS_ERROR);
-                throw new Exception(String.format(errMsg, datasetName, existingSpatialUnit.getOwner().getMandant().getName()));
+                throw new Exception(String.format(errMsg, datasetName, mandant.getName()));
             }
 
             metadataEntity = createMetadata(featureData);
@@ -111,24 +112,27 @@ public class SpatialUnitsManager {
              */
             updateMetadataWithOgcServiceUrls(metadataId, dbTableName);
 
-            updateSpatialUnitHierarchy_onAdd(metadataId, featureData);
+            /*
+             * optionally place the new spatial unit into the requested hierarchies by
+             * defining its neighbouring spatial units (next upper / next lower) in each
+             */
+            spatialUnitHierarchyManager.createMembershipsFromRegistration(metadataId, featureData.getHierarchies());
         } catch (Exception e) {
             /*
              * remove partially created resources and thrwo error
              */
-            logger.error("Error while creating spatialUnit. Error message: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error while creating spatialUnit. Error message: {}", e.getMessage());
 
             logger.info("Deleting partially created resources");
 
             try {
-                logger.info("Delete metadata entry if exists for id '{}'" + metadataId);
+                logger.info("Delete metadata entry if exists for id '{}'", metadataId);
                 if (metadataId != null) {
                     if (spatialUnitsMetadataRepo.existsByDatasetId(metadataId))
                         spatialUnitsMetadataRepo.deleteByDatasetId(metadataId);
                 }
 
-                logger.info("Delete feature table if exists for tableName '{}'" + dbTableName);
+                logger.info("Delete feature table if exists for tableName '{}'", dbTableName);
                 if (dbTableName != null) {
                     SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);
                     ;
@@ -139,8 +143,7 @@ public class SpatialUnitsManager {
                     ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
                 }
             } catch (Exception e2) {
-                logger.error("Error while deleting partially created georesource. Error message: " + e.getMessage());
-                e.printStackTrace();
+                logger.error("Error while deleting partially created georesource. Error message: {}", e.getMessage());
                 throw e;
             }
             throw e;
@@ -150,81 +153,21 @@ public class SpatialUnitsManager {
         return SpatialUnitsMapper.mapToSwaggerSpatialUnit(spatialUnitsMetadataRepo.findByDatasetId(metadataId));
     }
 
-    private void updateSpatialUnitHierarchy_onAdd(String metadataId, SpatialUnitPOSTInputType featureData) {
-        /*
-         * automatically update metadata entries with respect to hierarchy
-         *
-         *
-         */
-
-        List<MetadataSpatialUnitsEntity> matchingEntriesForNextLowerHierarchy = spatialUnitsMetadataRepo.findByNextLowerHierarchyLevel(featureData.getNextLowerHierarchyLevel());
-
-        for (MetadataSpatialUnitsEntity metadataSpatialUnitsEntity : matchingEntriesForNextLowerHierarchy) {
-            if (!metadataSpatialUnitsEntity.getDatasetId().equalsIgnoreCase(metadataId)) {
-                metadataSpatialUnitsEntity.setNextLowerHierarchyLevel(featureData.getSpatialUnitLevel());
-            }
+    /**
+     * Resolves the mandant an owning organizational unit belongs to: the owner's
+     * mandant if set, otherwise the owner itself when it is a mandant, otherwise null.
+     */
+    private OrganizationalUnitEntity resolveMandant(OrganizationalUnitEntity owner) {
+        if (owner == null) {
+            return null;
         }
-
-        List<MetadataSpatialUnitsEntity> matchingEntriesForNextUpperHierarchy = spatialUnitsMetadataRepo.findByNextUpperHierarchyLevel(featureData.getNextUpperHierarchyLevel());
-
-        for (MetadataSpatialUnitsEntity metadataSpatialUnitsEntity : matchingEntriesForNextUpperHierarchy) {
-            if (!metadataSpatialUnitsEntity.getDatasetId().equalsIgnoreCase(metadataId)) {
-                metadataSpatialUnitsEntity.setNextUpperHierarchyLevel(featureData.getSpatialUnitLevel());
-            }
+        if (owner.getMandant() != null) {
+            return owner.getMandant();
         }
-
-    }
-
-    private void updateSpatialUnitHierarchy_onUpdate(String metadataId, String oldName, String newName) {
-
-        /*
-         * automatically update metadata entries with respect to hierarchy
-         *
-         *
-         */
-
-        List<MetadataSpatialUnitsEntity> matchingEntriesForNextLowerHierarchy = spatialUnitsMetadataRepo.findByNextLowerHierarchyLevel(oldName);
-
-        for (MetadataSpatialUnitsEntity metadataSpatialUnitsEntity : matchingEntriesForNextLowerHierarchy) {
-            if (!metadataSpatialUnitsEntity.getDatasetId().equalsIgnoreCase(metadataId)) {
-                metadataSpatialUnitsEntity.setNextLowerHierarchyLevel(newName);
-            }
+        if (owner.isMandant()) {
+            return owner;
         }
-
-        List<MetadataSpatialUnitsEntity> matchingEntriesForNextUpperHierarchy = spatialUnitsMetadataRepo.findByNextUpperHierarchyLevel(oldName);
-
-        for (MetadataSpatialUnitsEntity metadataSpatialUnitsEntity : matchingEntriesForNextUpperHierarchy) {
-            if (!metadataSpatialUnitsEntity.getDatasetId().equalsIgnoreCase(metadataId)) {
-                metadataSpatialUnitsEntity.setNextUpperHierarchyLevel(newName);
-            }
-        }
-
-    }
-
-    private void updateSpatialUnitHierarchy_onDelete(String metadataId) {
-        /*
-         * automatically update metadata entries with respect to hierarchy
-         *
-         *
-         */
-
-        MetadataSpatialUnitsEntity deleteEntry = spatialUnitsMetadataRepo.findByDatasetId(metadataId);
-
-        List<MetadataSpatialUnitsEntity> matchingEntriesForNextLowerHierarchy = spatialUnitsMetadataRepo.findByNextLowerHierarchyLevel(deleteEntry.getDatasetName());
-
-        for (MetadataSpatialUnitsEntity metadataSpatialUnitsEntity : matchingEntriesForNextLowerHierarchy) {
-            if (!metadataSpatialUnitsEntity.getDatasetId().equalsIgnoreCase(metadataId)) {
-                metadataSpatialUnitsEntity.setNextLowerHierarchyLevel(deleteEntry.getNextLowerHierarchyLevel());
-            }
-        }
-
-        List<MetadataSpatialUnitsEntity> matchingEntriesForNextUpperHierarchy = spatialUnitsMetadataRepo.findByNextUpperHierarchyLevel(deleteEntry.getDatasetName());
-
-        for (MetadataSpatialUnitsEntity metadataSpatialUnitsEntity : matchingEntriesForNextUpperHierarchy) {
-            if (!metadataSpatialUnitsEntity.getDatasetId().equalsIgnoreCase(metadataId)) {
-                metadataSpatialUnitsEntity.setNextUpperHierarchyLevel(deleteEntry.getNextUpperHierarchyLevel());
-            }
-        }
+        return null;
     }
 
     private void updateMetadataWithOgcServiceUrls(String metadataId, String dbTableName) {
@@ -296,8 +239,6 @@ public class SpatialUnitsManager {
         if (lastUpdate == null)
             lastUpdate = java.util.Calendar.getInstance().getTime();
         entity.setLastUpdate(lastUpdate);
-        entity.setNextLowerHierarchyLevel(featureData.getNextLowerHierarchyLevel());
-        entity.setNextUpperHierarchyLevel(featureData.getNextUpperHierarchyLevel());
         entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
         entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 
@@ -320,7 +261,9 @@ public class SpatialUnitsManager {
 
         //
         entity.setPermissions(permissionManager.retrievePermissions(featureData.getPermissions()));
-        entity.setOwner(orgaManager.getOrganizationalUnitEntity(featureData.getOwnerId()));
+        OrganizationalUnitEntity owner = orgaManager.getOrganizationalUnitEntity(featureData.getOwnerId());
+        entity.setOwner(owner);
+        entity.setMandant(resolveMandant(owner));
         entity.setPublic(featureData.getIsPublic());
 
         // persist in db
@@ -407,18 +350,9 @@ public class SpatialUnitsManager {
             }
 
             try {
-
-                // update spatial unit hierarchy and make it consistent again
-                updateSpatialUnitHierarchy_onDelete(spatialUnitId);
-            } catch (Exception e) {
-                logger.error("Error while updating spatial unit hierarchy due to deletion of spatial unit with id {}", spatialUnitId);
-                logger.error("Error was: {}", e.getMessage());
-                e.printStackTrace();
-            }
-
-            try {
                 /*
-                 * delete metadata entry
+                 * delete metadata entry. Associated hierarchy memberships are removed
+                 * automatically via the ON DELETE CASCADE foreign key.
                  */
                 spatialUnitsMetadataRepo.deleteByDatasetId(spatialUnitId);
             } catch (Exception e) {
@@ -571,8 +505,6 @@ public class SpatialUnitsManager {
         if (lastUpdate == null)
             lastUpdate = java.util.Calendar.getInstance().getTime();
         entity.setLastUpdate(lastUpdate);
-        entity.setNextLowerHierarchyLevel(metadata.getNextLowerHierarchyLevel());
-        entity.setNextUpperHierarchyLevel(metadata.getNextUpperHierarchyLevel());
         entity.setSridEpsg(genericMetadata.getSridEPSG().intValue());
         entity.setUpdateIntervall(genericMetadata.getUpdateInterval());
 
@@ -587,7 +519,7 @@ public class SpatialUnitsManager {
         entity.setOutlineDashArrayString(metadata.getOutlineDashArrayString());
 
         /*
-         * UPDATE DATASETNAME and adjust hierarchy order if needed
+         * UPDATE DATASETNAME
          * also adjust spatialUnitName in all affected indicatorSpatialUnitJoinEntities
          */
         String oldName = entity.getDatasetName();
@@ -595,7 +527,6 @@ public class SpatialUnitsManager {
         if (!newName.equals(oldName) && newName != null && newName != "") {
             // update datasetName
             entity.setDatasetName(newName);
-            updateSpatialUnitHierarchy_onUpdate(entity.getDatasetId(), oldName, newName);
             indicatorsManager.updateJoinedSpatialUnitName(entity.getDatasetId(), newName);
         }
 
@@ -643,65 +574,7 @@ public class SpatialUnitsManager {
         logger.info("Retrieved a total number of {} entries for spatialUnits metadata from db. Convert them to JSON Output structure and return.", spatialUnitMeatadataEntities.size());
         List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata = SpatialUnitsMapper.mapToSwaggerSpatialUnits(spatialUnitMeatadataEntities);
 
-        swaggerSpatialUnitsMetadata = sortSpatialUnitsHierarchically(swaggerSpatialUnitsMetadata);
-
         return swaggerSpatialUnitsMetadata;
-    }
-
-    public static List<SpatialUnitOverviewType> sortSpatialUnitsHierarchically(
-            List<SpatialUnitOverviewType> swaggerSpatialUnitsMetadata) {
-
-        List<SpatialUnitOverviewType> backupCopy = new ArrayList<SpatialUnitOverviewType>(swaggerSpatialUnitsMetadata.size());
-        backupCopy.addAll(swaggerSpatialUnitsMetadata);
-
-
-        try {
-            List<SpatialUnitOverviewType> newOrder = new ArrayList<SpatialUnitOverviewType>();
-            for (SpatialUnitOverviewType spatialUnitOverviewType : swaggerSpatialUnitsMetadata) {
-                if (spatialUnitOverviewType.getNextUpperHierarchyLevel() == null) {
-                    newOrder.add(spatialUnitOverviewType);
-                    swaggerSpatialUnitsMetadata.remove(spatialUnitOverviewType);
-                    break;
-                }
-            }
-
-            int loopFinisher = 100;
-            int counter = 0;
-
-            while (swaggerSpatialUnitsMetadata.size() > 0) {
-                /*
-                 * find next lower hierarchyElement
-                 */
-                SpatialUnitOverviewType lastIndexElement = newOrder.get(newOrder.size() - 1);
-                for (SpatialUnitOverviewType spatialUnitOverviewType : swaggerSpatialUnitsMetadata) {
-                    if (lastIndexElement.getNextLowerHierarchyLevel() == null) {
-                        newOrder.add(spatialUnitOverviewType);
-                        swaggerSpatialUnitsMetadata.remove(spatialUnitOverviewType);
-                        break;
-                    }
-                    // compare nextLowerHierarchyLevel of lastIndexElement to spatialUnitName of current element
-                    else if (lastIndexElement.getNextLowerHierarchyLevel().equalsIgnoreCase(spatialUnitOverviewType.getSpatialUnitLevel())) {
-                        newOrder.add(spatialUnitOverviewType);
-                        swaggerSpatialUnitsMetadata.remove(spatialUnitOverviewType);
-                        break;
-                    } else if (counter >= loopFinisher) {
-                        newOrder.addAll(swaggerSpatialUnitsMetadata);
-                        swaggerSpatialUnitsMetadata.removeAll(swaggerSpatialUnitsMetadata);
-                        break;
-                    }
-                }
-
-                counter++;
-            }
-
-            return newOrder;
-        } catch (Exception e) {
-            // log error and return unsorted list
-            logger.error(e.getMessage());
-            e.printStackTrace();
-            return backupCopy;
-        }
-
     }
 
     public SpatialUnitOverviewType getSpatialUnitByDatasetId(String spatialUnitId) throws Exception {

@@ -7,6 +7,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.util.DateTimeUtil;
 import de.hsbo.kommonitor.datamanagement.model.AvailablePeriodsOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyMembershipType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
 
 import java.math.BigDecimal;
@@ -103,9 +104,12 @@ public class SpatialUnitsMapper {
 		commonMetadata.setLiterature(spatialUnitEntity.getLiterature());
 		dataset.setMetadata(commonMetadata);
 		
-		dataset.setNextLowerHierarchyLevel(spatialUnitEntity.getNextLowerHierarchyLevel());
-		dataset.setNextUpperHierarchyLevel(spatialUnitEntity.getNextUpperHierarchyLevel());
 		dataset.setSpatialUnitLevel(spatialUnitEntity.getDatasetName());
+
+		if (spatialUnitEntity.getMandant() != null) {
+			dataset.setMandantId(spatialUnitEntity.getMandant().getOrganizationalUnitId());
+		}
+		dataset.setHierarchies(mapToHierarchyMemberships(spatialUnitEntity.getHierarchyMemberships()));
 		
 		dataset.setWmsUrl(spatialUnitEntity.getWmsUrl());
 		dataset.setWfsUrl(spatialUnitEntity.getWfsUrl());
@@ -144,6 +148,28 @@ public class SpatialUnitsMapper {
 	private static List<String> getRoleIds(HashSet<PermissionEntity> roles) {
 		return roles.stream()
 				.map(r -> r.getPermissionId())
+				.collect(Collectors.toList());
+	}
+
+	private static List<SpatialUnitHierarchyMembershipType> mapToHierarchyMemberships(
+			List<SpatialUnitHierarchyMembershipEntity> memberships) {
+		if (memberships == null) {
+			return new ArrayList<>();
+		}
+		return memberships.stream()
+				.map(m -> {
+					SpatialUnitHierarchyMembershipType membershipType = new SpatialUnitHierarchyMembershipType();
+					membershipType.setHierarchyId(m.getHierarchy().getId());
+					membershipType.setHierarchyName(m.getHierarchy().getName());
+					membershipType.setHierarchyLevel(m.getHierarchyLevel());
+					if (m.getNextUpperSpatialUnit() != null) {
+						membershipType.setNextUpperSpatialUnitId(m.getNextUpperSpatialUnit().getDatasetId());
+					}
+					if (m.getNextLowerSpatialUnit() != null) {
+						membershipType.setNextLowerSpatialUnitId(m.getNextLowerSpatialUnit().getDatasetId());
+					}
+					return membershipType;
+				})
 				.collect(Collectors.toList());
 	}
 }

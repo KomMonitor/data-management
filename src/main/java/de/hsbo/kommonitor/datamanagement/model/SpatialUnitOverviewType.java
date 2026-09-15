@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyMembershipType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,9 +41,9 @@ public class SpatialUnitOverviewType implements Serializable {
 
   private CommonMetadataType metadata;
 
-  private @Nullable String nextLowerHierarchyLevel;
+  private @Nullable String mandantId;
 
-  private @Nullable String nextUpperHierarchyLevel;
+  private List<@Valid SpatialUnitHierarchyMembershipType> hierarchies = new ArrayList<>();
 
   private String spatialUnitId;
 
@@ -180,46 +181,54 @@ public class SpatialUnitOverviewType implements Serializable {
     this.metadata = metadata;
   }
 
-  public SpatialUnitOverviewType nextLowerHierarchyLevel(@Nullable String nextLowerHierarchyLevel) {
-    this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
+  public SpatialUnitOverviewType mandantId(@Nullable String mandantId) {
+    this.mandantId = mandantId;
     return this;
   }
 
   /**
-   * the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level
-   * @return nextLowerHierarchyLevel
+   * identifier of the mandant (organizational unit) this spatial unit belongs to. Its name is unique within this mandant.
+   * @return mandantId
    */
   
-  @Schema(name = "nextLowerHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("nextLowerHierarchyLevel")
-  public @Nullable String getNextLowerHierarchyLevel() {
-    return nextLowerHierarchyLevel;
+  @Schema(name = "mandantId", description = "identifier of the mandant (organizational unit) this spatial unit belongs to. Its name is unique within this mandant.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("mandantId")
+  public @Nullable String getMandantId() {
+    return mandantId;
   }
 
-  @JsonProperty("nextLowerHierarchyLevel")
-  public void setNextLowerHierarchyLevel(@Nullable String nextLowerHierarchyLevel) {
-    this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
+  @JsonProperty("mandantId")
+  public void setMandantId(@Nullable String mandantId) {
+    this.mandantId = mandantId;
   }
 
-  public SpatialUnitOverviewType nextUpperHierarchyLevel(@Nullable String nextUpperHierarchyLevel) {
-    this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
+  public SpatialUnitOverviewType hierarchies(List<@Valid SpatialUnitHierarchyMembershipType> hierarchies) {
+    this.hierarchies = hierarchies;
+    return this;
+  }
+
+  public SpatialUnitOverviewType addHierarchiesItem(SpatialUnitHierarchyMembershipType hierarchiesItem) {
+    if (this.hierarchies == null) {
+      this.hierarchies = new ArrayList<>();
+    }
+    this.hierarchies.add(hierarchiesItem);
     return this;
   }
 
   /**
-   * the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level
-   * @return nextUpperHierarchyLevel
+   * the hierarchies this spatial unit is a member of, together with its ordered position (level) in each. May be empty if the spatial unit is not part of any hierarchy.
+   * @return hierarchies
    */
-  
-  @Schema(name = "nextUpperHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("nextUpperHierarchyLevel")
-  public @Nullable String getNextUpperHierarchyLevel() {
-    return nextUpperHierarchyLevel;
+  @Valid 
+  @Schema(name = "hierarchies", description = "the hierarchies this spatial unit is a member of, together with its ordered position (level) in each. May be empty if the spatial unit is not part of any hierarchy.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("hierarchies")
+  public List<@Valid SpatialUnitHierarchyMembershipType> getHierarchies() {
+    return hierarchies;
   }
 
-  @JsonProperty("nextUpperHierarchyLevel")
-  public void setNextUpperHierarchyLevel(@Nullable String nextUpperHierarchyLevel) {
-    this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
+  @JsonProperty("hierarchies")
+  public void setHierarchies(List<@Valid SpatialUnitHierarchyMembershipType> hierarchies) {
+    this.hierarchies = hierarchies;
   }
 
   public SpatialUnitOverviewType spatialUnitId(String spatialUnitId) {
@@ -249,11 +258,11 @@ public class SpatialUnitOverviewType implements Serializable {
   }
 
   /**
-   * the name of the spatial unit level the features apply to
+   * the name of the spatial unit level the features apply to. The name is unique only within a mandant.
    * @return spatialUnitLevel
    */
   @NotNull 
-  @Schema(name = "spatialUnitLevel", description = "the name of the spatial unit level the features apply to", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "spatialUnitLevel", description = "the name of the spatial unit level the features apply to. The name is unique only within a mandant.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("spatialUnitLevel")
   public String getSpatialUnitLevel() {
     return spatialUnitLevel;
@@ -453,8 +462,8 @@ public class SpatialUnitOverviewType implements Serializable {
         Objects.equals(this.availablePeriodsOfValidity, spatialUnitOverviewType.availablePeriodsOfValidity) &&
         Objects.equals(this.isPublic, spatialUnitOverviewType.isPublic) &&
         Objects.equals(this.metadata, spatialUnitOverviewType.metadata) &&
-        Objects.equals(this.nextLowerHierarchyLevel, spatialUnitOverviewType.nextLowerHierarchyLevel) &&
-        Objects.equals(this.nextUpperHierarchyLevel, spatialUnitOverviewType.nextUpperHierarchyLevel) &&
+        Objects.equals(this.mandantId, spatialUnitOverviewType.mandantId) &&
+        Objects.equals(this.hierarchies, spatialUnitOverviewType.hierarchies) &&
         Objects.equals(this.spatialUnitId, spatialUnitOverviewType.spatialUnitId) &&
         Objects.equals(this.spatialUnitLevel, spatialUnitOverviewType.spatialUnitLevel) &&
         Objects.equals(this.userPermissions, spatialUnitOverviewType.userPermissions) &&
@@ -469,7 +478,7 @@ public class SpatialUnitOverviewType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, availablePeriodsOfValidity, isPublic, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, spatialUnitId, spatialUnitLevel, userPermissions, wfsUrl, wmsUrl, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString, ownerId);
+    return Objects.hash(permissions, availablePeriodsOfValidity, isPublic, metadata, mandantId, hierarchies, spatialUnitId, spatialUnitLevel, userPermissions, wfsUrl, wmsUrl, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString, ownerId);
   }
 
   @Override
@@ -480,8 +489,8 @@ public class SpatialUnitOverviewType implements Serializable {
     sb.append("    availablePeriodsOfValidity: ").append(toIndentedString(availablePeriodsOfValidity)).append("\n");
     sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
-    sb.append("    nextLowerHierarchyLevel: ").append(toIndentedString(nextLowerHierarchyLevel)).append("\n");
-    sb.append("    nextUpperHierarchyLevel: ").append(toIndentedString(nextUpperHierarchyLevel)).append("\n");
+    sb.append("    mandantId: ").append(toIndentedString(mandantId)).append("\n");
+    sb.append("    hierarchies: ").append(toIndentedString(hierarchies)).append("\n");
     sb.append("    spatialUnitId: ").append(toIndentedString(spatialUnitId)).append("\n");
     sb.append("    spatialUnitLevel: ").append(toIndentedString(spatialUnitLevel)).append("\n");
     sb.append("    userPermissions: ").append(toIndentedString(userPermissions)).append("\n");

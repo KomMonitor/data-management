@@ -5344,6 +5344,229 @@ paths:
                 $ref: '#/components/schemas/WebServiceOverviewType'
       security:
         - kommonitor-data-access_oauth: [ ]
+  /spatial-unit-hierarchies:
+    get:
+      tags:
+        - spatial-units
+      summary: retrieve the available spatial unit hierarchies
+      description: retrieve the available spatial unit hierarchies for the mandants the
+        current user is allowed to access
+      operationId: getSpatialUnitHierarchies
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+    post:
+      tags:
+        - spatial-units
+      summary: Add a new spatial unit hierarchy
+      description: Create a new hierarchy owned by a mandant. A mandant may own one or
+        more hierarchies.
+      operationId: addSpatialUnitHierarchy
+      requestBody:
+        description: hierarchy definition
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpatialUnitHierarchyInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "405":
+          description: Invalid input
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+      x-codegen-request-body-name: hierarchyData
+  /spatial-unit-hierarchies/{hierarchyId}:
+    get:
+      tags:
+        - spatial-units
+      summary: retrieve a single spatial unit hierarchy
+      description: retrieve a single spatial unit hierarchy including its ordered members
+      operationId: getSpatialUnitHierarchyById
+      parameters:
+        - name: hierarchyId
+          in: path
+          description: the unique identifier of the hierarchy
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+    put:
+      tags:
+        - spatial-units
+      summary: Modify/Update a spatial unit hierarchy
+      description: Modify/Update the metadata (e.g. name) of the selected spatial unit
+        hierarchy
+      operationId: updateSpatialUnitHierarchy
+      parameters:
+        - name: hierarchyId
+          in: path
+          description: the unique identifier of the hierarchy
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: hierarchy definition
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpatialUnitHierarchyInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "405":
+          description: Invalid input
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+      x-codegen-request-body-name: hierarchyData
+    delete:
+      tags:
+        - spatial-units
+      summary: Delete a spatial unit hierarchy
+      description: Delete the selected spatial unit hierarchy. The spatial units that
+        were members of the hierarchy are not deleted.
+      operationId: deleteSpatialUnitHierarchyById
+      parameters:
+        - name: hierarchyId
+          in: path
+          description: the unique identifier of the hierarchy
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "204":
+          description: No Content
+          content: {}
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+  /spatial-unit-hierarchies/{hierarchyId}/members:
+    put:
+      tags:
+        - spatial-units
+      summary: Set the ordered members of a spatial unit hierarchy
+      description: Replace the full ordered list of spatial unit members of the selected
+        hierarchy. This single operation covers reordering, removing and adding members
+        within the hierarchy.
+      operationId: updateSpatialUnitHierarchyMembers
+      parameters:
+        - name: hierarchyId
+          in: path
+          description: the unique identifier of the hierarchy
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: the ordered list of spatial unit members
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/SpatialUnitHierarchyMemberInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: {}
+        "403":
+          description: Forbidden
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "405":
+          description: Invalid input
+          content: {}
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: []
+      x-codegen-request-body-name: members
   /spatial-units:
     get:
       tags:
@@ -5785,6 +6008,55 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: [ ]
+  /spatial-units/{spatialUnitId}/hierarchies:
+    put:
+      tags:
+        - spatial-units
+      summary: Set the hierarchies a spatial unit belongs to
+      description: Replace the full set of hierarchy memberships for the selected spatial
+        unit. This single operation covers placing the spatial unit into further
+        hierarchies, changing its level within a hierarchy, and removing it from a
+        hierarchy. All referenced hierarchies must belong to the spatial unit's mandant.
+      operationId: updateSpatialUnitHierarchyMemberships
+      parameters:
+        - name: spatialUnitId
+          in: path
+          description: the unique identifier of the spatial unit
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: the full list of hierarchy memberships for the spatial unit
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/SpatialUnitHierarchyMembershipInputType'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpatialUnitOverviewType'
+        "401":
+          description: API key is missing or invalid
+          content: { }
+        "403":
+          description: Forbidden
+          content: { }
+        "404":
+          description: Not Found
+          content: { }
+        "405":
+          description: Invalid input
+          content: { }
+      deprecated: false
+      security:
+        - kommonitor-data-access_oauth: [ ]
+      x-codegen-request-body-name: hierarchies
   /spatial-units/{spatialUnitId}/schema:
     get:
       tags:
@@ -6858,7 +7130,6 @@ components:
         - $ref: '#/components/schemas/AbstractClassificationMappingType'
         - title: QualitativeClassificationMappingType
           required:
-#            - items
             - categoricalData
           type: object
           properties:
@@ -6867,27 +7138,6 @@ components:
               description: mapping of categorical values, colors and labels
               items:
                 $ref: '#/components/schemas/CategoricalMappingType'
-#            items:
-#              type: array
-#              description: Array of classification mapping items. Each item holds categorical data as well as its color
-#                and label mappings for a certain spatial unit.
-#              items:
-#                $ref: '#/components/schemas/QualitativeClassificationMappingItemType'
-#    QualitativeClassificationMappingItemType:
-#      title: DefaultClassificationMappingItemType
-#      required:
-#        - spatialUnitId
-#        - categorialData
-#      type: object
-#      properties:
-#        spatialUnitId:
-#          type: string
-#          description: spatial unit id
-#        categoricalData:
-#          type: array
-#          description: mapping of categorical values, colors and labels
-#          items:
-#            $ref: '#/components/schemas/CategoricalMappingType'
     CategoricalMappingType:
       title: DefaultClassificationMappingItemType
       required:
@@ -7205,7 +7455,6 @@ components:
     IndicatorMetadataPATCHInputType:
       title: IndicatorMetadataPATCHInputType
       required:
-        - abbreviation
         - interpretation
         - isHeadlineIndicator
         - metadata
@@ -7497,7 +7746,6 @@ components:
       title: IndicatorPOSTInputType
       required:
         - permissions
-        - characteristicValue
         - creationType
         - datasetName
         - defaultClassificationMapping
@@ -7615,26 +7863,9 @@ components:
           type: array
           description: an array of entries mapping an indicator value to a timestamp
             as mapping key
-#          items:
-#            $ref: '#/components/schemas/IndicatorPOSTInputTypeValueMapping'
           items:
             allOf:
               - $ref: '#/components/schemas/IndicatorPOSTInputTypeValueMapping'
-
-#    IndicatorPOSTInputTypeValueMapping:
-#      title: IndicatorPOSTInputTypeValueMapping
-#      type: object
-#      required:
-#        - indicatorValue
-#        - timestamp
-#      properties:
-#        indicatorValue:
-#          description: The value of the indicator for the timestamp. Can be a floating-point number or a categorical string depending on the parent container's valueType.
-#        timestamp:
-#          type: string
-#          description: timestamp consisting of year, month and day according to ISO 8601 (e.g. 2018-01-30)
-#          format: date
-    # --- Abstract Base Class for Items ---
     IndicatorPOSTInputTypeValueMapping:
       title: IndicatorPOSTInputTypeValueMapping
       type: object
@@ -7643,18 +7874,11 @@ components:
         @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
       required:
         - timestamp
-#        - valueType  # <-- Required for Jackson polymorphism inside the array
       properties:
         timestamp:
           type: string
           description: timestamp consisting of year, month and day according to ISO 8601 (e.g. 2018-01-30)
           format: date
-#        valueType:
-#          description: Discriminator field to determine concrete mapping class type.
-#          $ref: '#/components/schemas/IndicatorValueTypeEnum'
-#          default: NUMERIC
-#
-#    # --- Concrete Subclass 1 (Numerical) ---
     IndicatorPOSTInputTypeNumericalValueMapping:
       title: IndicatorPOSTInputTypeNumericalValueMapping
       allOf:
@@ -7668,8 +7892,6 @@ components:
               description: the numeric extent of the indicator for the timestamp
               format: float
               example: 0.0
-#
-#    # --- Concrete Subclass 2 (Categorical) ---
     IndicatorPOSTInputTypeCategoricalValueMapping:
       title: IndicatorPOSTInputTypeCategoricalValueMapping
       allOf:
@@ -7682,7 +7904,6 @@ components:
               type: string
               description: the text-based categorical value of the indicator for the timestamp
               example: "high"
-
     IndicatorPOSTInputTypeRefrencesToGeoresources:
       title: IndicatorPOSTInputTypeRefrencesToGeoresources
       type: object
@@ -8237,21 +8458,25 @@ components:
           description: flag whether the resource is publicly accessible
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
-        nextLowerHierarchyLevel:
+        mandantId:
           type: string
-          description: the identifier/name of the spatial unit level that contains
-            the features of the nearest lower hierarchy level
-        nextUpperHierarchyLevel:
-          type: string
-          description: the identifier/name of the spatial unit level that contains
-            the features of the nearest upper hierarchy level
+          description: identifier of the mandant (organizational unit) this spatial
+            unit belongs to. Its name is unique within this mandant.
+        hierarchies:
+          type: array
+          description: the hierarchies this spatial unit is a member of, together with
+            its ordered position (level) in each. May be empty if the spatial unit is
+            not part of any hierarchy.
+          items:
+            $ref: '#/components/schemas/SpatialUnitHierarchyMembershipType'
         spatialUnitId:
           type: string
           description: the unique identifier of the spatial unit level the features
             apply to
         spatialUnitLevel:
           type: string
-          description: the name of the spatial unit level the features apply to
+          description: the name of the spatial unit level the features apply to. The
+            name is unique only within a mandant.
         userPermissions:
           type: array
           description: list of permissions that are effective on this dataset for
@@ -8287,23 +8512,14 @@ components:
       required:
         - metadata
         - datasetName
-        - nextLowerHierarchyLevel
-        - nextUpperHierarchyLevel
       type: object
       properties:
-        datasetName: 
+        datasetName:
           type: string
-          description: the name of the spatial unit - its "spatialUnitLevel"
+          description: the name of the spatial unit - its "spatialUnitLevel". The name
+            is unique only within a mandant.
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
-        nextLowerHierarchyLevel:
-          type: string
-          description: the identifier/name of the spatial unit level that contains
-            the features of the nearest lower hierarchy level
-        nextUpperHierarchyLevel:
-          type: string
-          description: the identifier/name of the spatial unit level that contains
-            the features of the nearest upper hierarchy level
         isOutlineLayer:
           type: boolean
           description: if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control
@@ -8344,20 +8560,20 @@ components:
             dataset. It can be used to validate the geoJsonString property.
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
-        nextLowerHierarchyLevel:
-          type: string
-          description: the identifier/name of the spatial unit level that contains
-            the features of the nearest lower hierarchy level
-        nextUpperHierarchyLevel:
-          type: string
-          description: the identifier/name of the spatial unit level that contains
-            the features of the nearest upper hierarchy level
+        hierarchies:
+          type: array
+          description: optional list of hierarchies the new spatial unit shall be placed
+            into. For each hierarchy the next upper and next lower spatial units within
+            that hierarchy are defined. All referenced hierarchies must belong to the
+            same mandant as the spatial unit.
+          items:
+            $ref: '#/components/schemas/SpatialUnitHierarchyMembershipPOSTInputType'
         periodOfValidity:
           $ref: '#/components/schemas/PeriodOfValidityType'
         spatialUnitLevel:
           type: string
           description: the name and identifier of the spatial unit level the features
-            apply to
+            apply to. The name is unique only within a mandant.
         isOutlineLayer:
           type: boolean
           description: if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control
@@ -8395,6 +8611,160 @@ components:
             Missing features that are already in the database will then not be deleted
         periodOfValidity:
           $ref: '#/components/schemas/PeriodOfValidityType'
+    SpatialUnitHierarchyMembershipPOSTInputType:
+      title: SpatialUnitHierarchyMembershipPOSTInputType
+      required:
+        - hierarchyId
+      type: object
+      description: places a newly registered spatial unit into a hierarchy by defining
+        its neighbouring spatial units within that hierarchy
+      properties:
+        hierarchyId:
+          type: string
+          description: the unique identifier of the hierarchy the spatial unit shall
+            be a member of
+        nextUpperSpatialUnitId:
+          type: string
+          description: the identifier of the next upper spatial unit within this
+            hierarchy. Leave empty if the spatial unit is the top level.
+        nextLowerSpatialUnitId:
+          type: string
+          description: the identifier of the next lower spatial unit within this
+            hierarchy. Leave empty if the spatial unit is the bottom level.
+    SpatialUnitHierarchyMembershipInputType:
+      title: SpatialUnitHierarchyMembershipInputType
+      required:
+        - hierarchyId
+        - hierarchyLevel
+      type: object
+      description: places an existing spatial unit into a hierarchy at a given ordered
+        position (level)
+      properties:
+        hierarchyId:
+          type: string
+          description: the unique identifier of the hierarchy the spatial unit shall
+            be a member of
+        hierarchyLevel:
+          type: integer
+          format: int32
+          description: the ordered position of the spatial unit within the hierarchy.
+            Lower values denote upper levels.
+    SpatialUnitHierarchyMembershipType:
+      title: SpatialUnitHierarchyMembershipType
+      required:
+        - hierarchyId
+        - hierarchyLevel
+      type: object
+      description: membership of a spatial unit within a hierarchy. The ordering is kept
+        coherent in both representations - hierarchyLevel is always set and the
+        neighbouring spatial units are derived from it.
+      properties:
+        hierarchyId:
+          type: string
+          description: the unique identifier of the hierarchy
+        hierarchyName:
+          type: string
+          description: the name of the hierarchy
+        hierarchyLevel:
+          type: integer
+          format: int32
+          description: the ordered position of the spatial unit within the hierarchy.
+            Lower values denote upper levels. Set when the membership was created by
+            adding an existing spatial unit or reordering.
+        nextUpperSpatialUnitId:
+          type: string
+          description: the identifier of the next upper spatial unit within this
+            hierarchy. Null denotes the top level.
+        nextLowerSpatialUnitId:
+          type: string
+          description: the identifier of the next lower spatial unit within this
+            hierarchy. Null denotes the bottom level.
+    SpatialUnitHierarchyMemberInputType:
+      title: SpatialUnitHierarchyMemberInputType
+      required:
+        - spatialUnitId
+        - hierarchyLevel
+      type: object
+      description: a spatial unit and its ordered position within a hierarchy
+      properties:
+        spatialUnitId:
+          type: string
+          description: the unique identifier of the spatial unit
+        hierarchyLevel:
+          type: integer
+          format: int32
+          description: the ordered position of the spatial unit within the hierarchy.
+            Lower values denote upper levels.
+    SpatialUnitHierarchyMemberType:
+      title: SpatialUnitHierarchyMemberType
+      required:
+        - spatialUnitId
+        - hierarchyLevel
+      type: object
+      description: a spatial unit member of a hierarchy. The ordering is kept coherent in
+        both representations - hierarchyLevel is always set and the neighbouring spatial
+        units are derived from it.
+      properties:
+        spatialUnitId:
+          type: string
+          description: the unique identifier of the spatial unit
+        spatialUnitLevel:
+          type: string
+          description: the name of the spatial unit level
+        hierarchyLevel:
+          type: integer
+          format: int32
+          description: the ordered position of the spatial unit within the hierarchy.
+            Lower values denote upper levels. Set when the membership was created by
+            adding an existing spatial unit or reordering.
+        nextUpperSpatialUnitId:
+          type: string
+          description: the identifier of the next upper spatial unit within this
+            hierarchy. Null denotes the top level.
+        nextLowerSpatialUnitId:
+          type: string
+          description: the identifier of the next lower spatial unit within this
+            hierarchy. Null denotes the bottom level.
+    SpatialUnitHierarchyInputType:
+      title: SpatialUnitHierarchyInputType
+      required:
+        - name
+        - mandantId
+      type: object
+      description: input for creating or updating a mandant-owned spatial unit hierarchy
+      properties:
+        name:
+          type: string
+          description: the name of the hierarchy. Unique within the owning mandant.
+        mandantId:
+          type: string
+          description: identifier of the mandant (organizational unit) that owns the
+            hierarchy
+    SpatialUnitHierarchyOverviewType:
+      title: SpatialUnitHierarchyOverviewType
+      required:
+        - hierarchyId
+        - name
+        - mandantId
+      type: object
+      description: metadata of a mandant-owned spatial unit hierarchy and its ordered
+        members
+      properties:
+        hierarchyId:
+          type: string
+          description: the unique identifier of the hierarchy
+        name:
+          type: string
+          description: the name of the hierarchy. Unique within the owning mandant.
+        mandantId:
+          type: string
+          description: identifier of the mandant (organizational unit) that owns the
+            hierarchy
+        members:
+          type: array
+          description: the ordered spatial units that are members of this hierarchy
+          items:
+            $ref: '#/components/schemas/SpatialUnitHierarchyMemberType'
     TopicInputType:
       title: TopicInputType
       required:

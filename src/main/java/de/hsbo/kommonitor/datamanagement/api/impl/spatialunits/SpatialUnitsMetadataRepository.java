@@ -8,21 +8,25 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsE
 
 public interface SpatialUnitsMetadataRepository extends JpaRepository<MetadataSpatialUnitsEntity, Long> {
 	MetadataSpatialUnitsEntity findByDatasetId(String datasetId);
-	
+
 	MetadataSpatialUnitsEntity findByDatasetName(String datasetName);
-	
-	List<MetadataSpatialUnitsEntity> findByNextLowerHierarchyLevel(String hierarchyLevel);
-	
-	List<MetadataSpatialUnitsEntity> findByNextUpperHierarchyLevel(String hierarchyLevel);
+
+	/**
+	 * Spatial unit names are unique only within a mandant, so name-based lookups
+	 * must be scoped to a mandant to be unambiguous.
+	 */
+	MetadataSpatialUnitsEntity findByDatasetNameAndMandant_OrganizationalUnitId(String datasetName, String mandantId);
+
+	List<MetadataSpatialUnitsEntity> findByMandant_OrganizationalUnitId(String mandantId);
 
 	boolean existsByDatasetId(String datasetId);
 
 	boolean existsByDatasetName(String datasetName);
 
+	boolean existsByDatasetNameAndMandant_OrganizationalUnitId(String datasetName, String mandantId);
+
 	void deleteByDatasetName(String datasetName);
 
 	void deleteByDatasetId(String datasetId);
-
-	
 
 }

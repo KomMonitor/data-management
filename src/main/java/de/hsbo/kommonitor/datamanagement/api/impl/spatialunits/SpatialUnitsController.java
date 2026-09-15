@@ -40,6 +40,9 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	SpatialUnitsManager spatialUnitsManager;
 
 	@Autowired
+	SpatialUnitHierarchyManager spatialUnitHierarchyManager;
+
+	@Autowired
 	AuthInfoProviderFactory authInfoProviderFactory;
 	
 	@Autowired
@@ -624,6 +627,110 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
+	public ResponseEntity<List<SpatialUnitHierarchyOverviewType>> getSpatialUnitHierarchies() {
+		logger.info("Received request to get all spatial unit hierarchies");
+		try {
+			List<SpatialUnitHierarchyOverviewType> hierarchies = spatialUnitHierarchyManager.getAllHierarchies();
+			return new ResponseEntity<>(hierarchies, HttpStatus.OK);
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
+	public ResponseEntity<SpatialUnitHierarchyOverviewType> getSpatialUnitHierarchyById(String hierarchyId) {
+		logger.info("Received request to get spatial unit hierarchy with id '{}'", hierarchyId);
+		try {
+			SpatialUnitHierarchyOverviewType hierarchy = spatialUnitHierarchyManager.getHierarchy(hierarchyId);
+			return new ResponseEntity<>(hierarchy, HttpStatus.OK);
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
+	public ResponseEntity<SpatialUnitHierarchyOverviewType> addSpatialUnitHierarchy(SpatialUnitHierarchyInputType hierarchyData) {
+		logger.info("Received request to create a new spatial unit hierarchy");
+		SpatialUnitHierarchyOverviewType hierarchy;
+		try {
+			hierarchy = spatialUnitHierarchyManager.addHierarchy(hierarchyData);
+			lastModManager.updateLastDatabaseModificationSpatialUnits();
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+
+		if (hierarchy != null) {
+			HttpHeaders responseHeaders = new HttpHeaders();
+			try {
+				responseHeaders.setLocation(new URI(hierarchy.getHierarchyId()));
+			} catch (URISyntaxException e) {
+				// ignore invalid location URI
+			}
+			return new ResponseEntity<>(hierarchy, responseHeaders, HttpStatus.CREATED);
+		} else {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
+	public ResponseEntity<SpatialUnitHierarchyOverviewType> updateSpatialUnitHierarchy(String hierarchyId, SpatialUnitHierarchyInputType hierarchyData) {
+		logger.info("Received request to update spatial unit hierarchy with id '{}'", hierarchyId);
+		try {
+			SpatialUnitHierarchyOverviewType hierarchy = spatialUnitHierarchyManager.updateHierarchy(hierarchyId, hierarchyData);
+			lastModManager.updateLastDatabaseModificationSpatialUnits();
+			return new ResponseEntity<>(hierarchy, HttpStatus.OK);
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
+	public ResponseEntity<Void> deleteSpatialUnitHierarchyById(String hierarchyId) {
+		logger.info("Received request to delete spatial unit hierarchy with id '{}'", hierarchyId);
+		try {
+			spatialUnitHierarchyManager.deleteHierarchy(hierarchyId);
+			lastModManager.updateLastDatabaseModificationSpatialUnits();
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
+	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
+	public ResponseEntity<SpatialUnitHierarchyOverviewType> updateSpatialUnitHierarchyMembers(String hierarchyId, List<SpatialUnitHierarchyMemberInputType> members) {
+		logger.info("Received request to update members of spatial unit hierarchy with id '{}'", hierarchyId);
+		try {
+			SpatialUnitHierarchyOverviewType hierarchy = spatialUnitHierarchyManager.updateHierarchyMembers(hierarchyId, members);
+			lastModManager.updateLastDatabaseModificationSpatialUnits();
+			return new ResponseEntity<>(hierarchy, HttpStatus.OK);
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
+		}
+	}
+
+	@Override
+	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
+	public ResponseEntity<SpatialUnitOverviewType> updateSpatialUnitHierarchyMemberships(
+			@P("spatialUnitId") String spatialUnitId,
+			List<SpatialUnitHierarchyMembershipInputType> hierarchies) {
+		logger.info("Received request to update hierarchy memberships of spatial unit with id '{}'", spatialUnitId);
+		try {
+			spatialUnitHierarchyManager.updateSpatialUnitMemberships(spatialUnitId, hierarchies);
+			lastModManager.updateLastDatabaseModificationSpatialUnits();
+			SpatialUnitOverviewType spatialUnit = spatialUnitsManager.getSpatialUnitByDatasetId(spatialUnitId);
+			return new ResponseEntity<>(spatialUnit, HttpStatus.OK);
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
 		}
 	}
 

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.hsbo.kommonitor.datamanagement.model.CommonMetadataType;
 import de.hsbo.kommonitor.datamanagement.model.PeriodOfValidityType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyMembershipPOSTInputType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,9 +40,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
 
   private CommonMetadataType metadata;
 
-  private @Nullable String nextLowerHierarchyLevel;
-
-  private @Nullable String nextUpperHierarchyLevel;
+  private List<@Valid SpatialUnitHierarchyMembershipPOSTInputType> hierarchies = new ArrayList<>();
 
   private PeriodOfValidityType periodOfValidity;
 
@@ -167,46 +166,33 @@ public class SpatialUnitPOSTInputType implements Serializable {
     this.metadata = metadata;
   }
 
-  public SpatialUnitPOSTInputType nextLowerHierarchyLevel(@Nullable String nextLowerHierarchyLevel) {
-    this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
+  public SpatialUnitPOSTInputType hierarchies(List<@Valid SpatialUnitHierarchyMembershipPOSTInputType> hierarchies) {
+    this.hierarchies = hierarchies;
+    return this;
+  }
+
+  public SpatialUnitPOSTInputType addHierarchiesItem(SpatialUnitHierarchyMembershipPOSTInputType hierarchiesItem) {
+    if (this.hierarchies == null) {
+      this.hierarchies = new ArrayList<>();
+    }
+    this.hierarchies.add(hierarchiesItem);
     return this;
   }
 
   /**
-   * the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level
-   * @return nextLowerHierarchyLevel
+   * optional list of hierarchies the new spatial unit shall be placed into. For each hierarchy the next upper and next lower spatial units within that hierarchy are defined. All referenced hierarchies must belong to the same mandant as the spatial unit.
+   * @return hierarchies
    */
-  
-  @Schema(name = "nextLowerHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest lower hierarchy level", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("nextLowerHierarchyLevel")
-  public @Nullable String getNextLowerHierarchyLevel() {
-    return nextLowerHierarchyLevel;
+  @Valid 
+  @Schema(name = "hierarchies", description = "optional list of hierarchies the new spatial unit shall be placed into. For each hierarchy the next upper and next lower spatial units within that hierarchy are defined. All referenced hierarchies must belong to the same mandant as the spatial unit.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("hierarchies")
+  public List<@Valid SpatialUnitHierarchyMembershipPOSTInputType> getHierarchies() {
+    return hierarchies;
   }
 
-  @JsonProperty("nextLowerHierarchyLevel")
-  public void setNextLowerHierarchyLevel(@Nullable String nextLowerHierarchyLevel) {
-    this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
-  }
-
-  public SpatialUnitPOSTInputType nextUpperHierarchyLevel(@Nullable String nextUpperHierarchyLevel) {
-    this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
-    return this;
-  }
-
-  /**
-   * the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level
-   * @return nextUpperHierarchyLevel
-   */
-  
-  @Schema(name = "nextUpperHierarchyLevel", description = "the identifier/name of the spatial unit level that contains the features of the nearest upper hierarchy level", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("nextUpperHierarchyLevel")
-  public @Nullable String getNextUpperHierarchyLevel() {
-    return nextUpperHierarchyLevel;
-  }
-
-  @JsonProperty("nextUpperHierarchyLevel")
-  public void setNextUpperHierarchyLevel(@Nullable String nextUpperHierarchyLevel) {
-    this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
+  @JsonProperty("hierarchies")
+  public void setHierarchies(List<@Valid SpatialUnitHierarchyMembershipPOSTInputType> hierarchies) {
+    this.hierarchies = hierarchies;
   }
 
   public SpatialUnitPOSTInputType periodOfValidity(PeriodOfValidityType periodOfValidity) {
@@ -236,11 +222,11 @@ public class SpatialUnitPOSTInputType implements Serializable {
   }
 
   /**
-   * the name and identifier of the spatial unit level the features apply to
+   * the name and identifier of the spatial unit level the features apply to. The name is unique only within a mandant.
    * @return spatialUnitLevel
    */
   @NotNull 
-  @Schema(name = "spatialUnitLevel", description = "the name and identifier of the spatial unit level the features apply to", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "spatialUnitLevel", description = "the name and identifier of the spatial unit level the features apply to. The name is unique only within a mandant.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("spatialUnitLevel")
   public String getSpatialUnitLevel() {
     return spatialUnitLevel;
@@ -390,8 +376,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
         Objects.equals(this.geoJsonString, spatialUnitPOSTInputType.geoJsonString) &&
         Objects.equals(this.jsonSchema, spatialUnitPOSTInputType.jsonSchema) &&
         Objects.equals(this.metadata, spatialUnitPOSTInputType.metadata) &&
-        Objects.equals(this.nextLowerHierarchyLevel, spatialUnitPOSTInputType.nextLowerHierarchyLevel) &&
-        Objects.equals(this.nextUpperHierarchyLevel, spatialUnitPOSTInputType.nextUpperHierarchyLevel) &&
+        Objects.equals(this.hierarchies, spatialUnitPOSTInputType.hierarchies) &&
         Objects.equals(this.periodOfValidity, spatialUnitPOSTInputType.periodOfValidity) &&
         Objects.equals(this.spatialUnitLevel, spatialUnitPOSTInputType.spatialUnitLevel) &&
         Objects.equals(this.isOutlineLayer, spatialUnitPOSTInputType.isOutlineLayer) &&
@@ -404,7 +389,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(permissions, geoJsonString, jsonSchema, metadata, nextLowerHierarchyLevel, nextUpperHierarchyLevel, periodOfValidity, spatialUnitLevel, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString, ownerId, isPublic);
+    return Objects.hash(permissions, geoJsonString, jsonSchema, metadata, hierarchies, periodOfValidity, spatialUnitLevel, isOutlineLayer, outlineColor, outlineWidth, outlineDashArrayString, ownerId, isPublic);
   }
 
   @Override
@@ -415,8 +400,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
     sb.append("    geoJsonString: ").append(toIndentedString(geoJsonString)).append("\n");
     sb.append("    jsonSchema: ").append(toIndentedString(jsonSchema)).append("\n");
     sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
-    sb.append("    nextLowerHierarchyLevel: ").append(toIndentedString(nextLowerHierarchyLevel)).append("\n");
-    sb.append("    nextUpperHierarchyLevel: ").append(toIndentedString(nextUpperHierarchyLevel)).append("\n");
+    sb.append("    hierarchies: ").append(toIndentedString(hierarchies)).append("\n");
     sb.append("    periodOfValidity: ").append(toIndentedString(periodOfValidity)).append("\n");
     sb.append("    spatialUnitLevel: ").append(toIndentedString(spatialUnitLevel)).append("\n");
     sb.append("    isOutlineLayer: ").append(toIndentedString(isOutlineLayer)).append("\n");

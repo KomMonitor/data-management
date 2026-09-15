@@ -2,10 +2,13 @@ package de.hsbo.kommonitor.datamanagement.api.impl.metadata;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitHierarchyMembershipEntity;
 import jakarta.persistence.*;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.RestrictedEntity;
@@ -18,8 +21,6 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.PermissionEntity
 public class MetadataSpatialUnitsEntity extends AbstractMetadata implements RestrictedEntity {
 
     private int sridEpsg;
-    private String nextLowerHierarchyLevel = null;
-    private String nextUpperHierarchyLevel = null;
     private boolean isOutlineLayer = false;
     private String outlineColor = null;
     private Integer outlineWidth = null;
@@ -33,6 +34,18 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata implements Rest
 
     @ManyToOne
     private OrganizationalUnitEntity owner;
+
+    /**
+     * The mandant this spatial unit belongs to. Spatial unit names are unique only
+     * within a mandant, and a spatial unit may only be placed into hierarchies owned
+     * by this mandant.
+     */
+    @ManyToOne
+    @JoinColumn(name = "mandant_organizationalunitid")
+    private OrganizationalUnitEntity mandant;
+
+    @OneToMany(mappedBy = "spatialUnit", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<SpatialUnitHierarchyMembershipEntity> hierarchyMemberships = new ArrayList<>();
 
     @Column
     private Boolean isPublic;
@@ -70,20 +83,20 @@ public class MetadataSpatialUnitsEntity extends AbstractMetadata implements Rest
         this.sridEpsg = sridEpsg;
     }
 
-    public String getNextLowerHierarchyLevel() {
-        return nextLowerHierarchyLevel;
+    public OrganizationalUnitEntity getMandant() {
+        return mandant;
     }
 
-    public void setNextLowerHierarchyLevel(String nextLowerHierarchyLevel) {
-        this.nextLowerHierarchyLevel = nextLowerHierarchyLevel;
+    public void setMandant(OrganizationalUnitEntity mandant) {
+        this.mandant = mandant;
     }
 
-    public String getNextUpperHierarchyLevel() {
-        return nextUpperHierarchyLevel;
+    public List<SpatialUnitHierarchyMembershipEntity> getHierarchyMemberships() {
+        return hierarchyMemberships;
     }
 
-    public void setNextUpperHierarchyLevel(String nextUpperHierarchyLevel) {
-        this.nextUpperHierarchyLevel = nextUpperHierarchyLevel;
+    public void setHierarchyMemberships(List<SpatialUnitHierarchyMembershipEntity> hierarchyMemberships) {
+        this.hierarchyMemberships = hierarchyMemberships;
     }
 
     public boolean isOutlineLayer() {

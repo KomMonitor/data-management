@@ -1,0 +1,131 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Named hierarchy owned by a mandant (organizational unit) -->
+    <changeSet author="kommonitor" id="kommonitor-6.0.0-1">
+        <createTable tableName="spatialunithierarchies">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="spatialunithierarchies_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mandant_organizationalunitid" type="VARCHAR(255)">
+                <constraints nullable="false"
+                             foreignKeyName="fk_spatialunithierarchy_mandant"
+                             referencedTableName="organizationalunits"
+                             referencedColumnNames="organizationalunitid"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Constraint: A mandant may not have two hierarchies with the same name -->
+    <changeSet author="kommonitor" id="kommonitor-6.0.0-2">
+        <addUniqueConstraint columnNames="name, mandant_organizationalunitid"
+                             constraintName="spatialunithierarchies_name_mandant_key"
+                             tableName="spatialunithierarchies"/>
+    </changeSet>
+
+    <!-- Ordered membership of a spatial unit within a hierarchy -->
+    <changeSet author="kommonitor" id="kommonitor-6.0.0-3">
+        <createTable tableName="spatialunithierarchy_memberships">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="spatialunithierarchy_memberships_pkey"/>
+            </column>
+            <column name="hierarchy_id" type="VARCHAR(255)">
+                <constraints nullable="false"
+                             foreignKeyName="fk_membership_hierarchy"
+                             referencedTableName="spatialunithierarchies"
+                             referencedColumnNames="id"
+                             deleteCascade="true"/>
+            </column>
+            <column name="spatialunit_datasetid" type="VARCHAR(255)">
+                <constraints nullable="false"
+                             foreignKeyName="fk_membership_spatialunit"
+                             referencedTableName="metadataspatialunits"
+                             referencedColumnNames="datasetid"
+                             deleteCascade="true"/>
+            </column>
+            <column name="hierarchylevel" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nextlower_spatialunit_datasetid" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="nextupper_spatialunit_datasetid" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- A spatial unit may appear at most once per hierarchy -->
+    <changeSet author="kommonitor" id="kommonitor-6.0.0-4">
+        <addUniqueConstraint columnNames="hierarchy_id, spatialunit_datasetid"
+                             constraintName="spatialunithierarchy_memberships_hierarchy_spatialunit_key"
+                             tableName="spatialunithierarchy_memberships"/>
+    </changeSet>
+
+    <!-- Neighbour foreign keys. ON DELETE SET NULL so removing a spatial unit only
+         breaks the links pointing at it, without deleting other memberships. -->
+    <changeSet author="kommonitor" id="kommonitor-6.0.0-10">
+        <addForeignKeyConstraint constraintName="fk_membership_nextlower_spatialunit"
+                                 baseTableName="spatialunithierarchy_memberships"
+                                 baseColumnNames="nextlower_spatialunit_datasetid"
+                                 referencedTableName="metadataspatialunits"
+                                 referencedColumnNames="datasetid"
+                                 onDelete="SET NULL"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-6.0.0-11">
+        <addForeignKeyConstraint constraintName="fk_membership_nextupper_spatialunit"
+                                 baseTableName="spatialunithierarchy_memberships"
+                                 baseColumnNames="nextupper_spatialunit_datasetid"
+                                 referencedTableName="metadataspatialunits"
+                                 referencedColumnNames="datasetid"
+                                 onDelete="SET NULL"/>
+    </changeSet>
+
+    <!-- Explicit mandant reference on the spatial unit metadata -->
+    <changeSet author="kommonitor" id="kommonitor-6.0.0-5">
+        <addColumn schemaName="public" tableName="metadataspatialunits">
+            <column name="mandant_organizationalunitid" type="VARCHAR(255)">
+                <constraints nullable="true"
+                             foreignKeyName="fk_metadataspatialunits_mandant"
+                             referencedTableName="organizationalunits"
+                             referencedColumnNames="organizationalunitid"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!-- Backfill the mandant column from each spatial unit's owner -->
+    <changeSet author="kommonitor" id="kommonitor-6.0.0-6">
+        <sql dbms="postgresql">
+            UPDATE metadataspatialunits msu
+            SET mandant_organizationalunitid = (
+                SELECT COALESCE(ou.mandant,
+                                CASE WHEN ou.ismandant THEN ou.organizationalunitid ELSE NULL END)
+                FROM organizationalunits ou
+                WHERE ou.organizationalunitid = msu.owner_organizationalunitid
+            )
+            WHERE msu.owner_organizationalunitid IS NOT NULL;
+        </sql>
+    </changeSet>
+
+    <!-- Spatial unit names must be unique within a mandant -->
+    <changeSet author="kommonitor" id="kommonitor-6.0.0-7">
+        <addUniqueConstraint columnNames="datasetname, mandant_organizationalunitid"
+                             constraintName="metadataspatialunits_datasetname_mandant_key"
+                             tableName="metadataspatialunits"/>
+    </changeSet>
+
+    <!-- Drop the obsolete single-hierarchy link columns -->
+    <changeSet author="kommonitor" id="kommonitor-6.0.0-8">
+        <dropColumn columnName="nextlowerhierarchylevel"
+                    schemaName="public"
+                    tableName="metadataspatialunits"/>
+    </changeSet>
+    <changeSet author="kommonitor" id="kommonitor-6.0.0-9">
+        <dropColumn columnName="nextupperhierarchylevel"
+                    schemaName="public"
+                    tableName="metadataspatialunits"/>
+    </changeSet>
+</databaseChangeLog>
