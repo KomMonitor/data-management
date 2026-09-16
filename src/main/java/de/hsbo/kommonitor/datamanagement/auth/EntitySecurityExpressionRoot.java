@@ -12,6 +12,8 @@ import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundExce
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitHierarchyEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitHierarchyRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.WebServicesRepository;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
@@ -24,6 +26,7 @@ import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHDisplayOrderInputTy
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 
 import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
@@ -53,6 +56,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
     private final GeoresourcesMetadataRepository georesourceRepository;
     private final IndicatorsMetadataRepository indicatorRepository;
     private final SpatialUnitsMetadataRepository spatialunitsRepository;
+    private final SpatialUnitHierarchyRepository spatialUnitHierarchyRepository;
     private final IndicatorSpatialUnitsRepository indicatorspatialunitsRepository;
     private final WebServicesRepository webServicesRepository;
     private final UserInfoRepository userInfoRepository;
@@ -69,6 +73,7 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
         this.georesourceRepository = this.authHelperService.getGeoresourceRepository();
         this.indicatorRepository = this.authHelperService.getIndicatorRepository();
         this.spatialunitsRepository = this.authHelperService.getSpatialunitsRepository();
+        this.spatialUnitHierarchyRepository = this.authHelperService.getSpatialUnitHierarchyRepository();
         this.indicatorspatialunitsRepository = this.authHelperService.getIndicatorSpatialunitsRepository();
         this.webServicesRepository = this.authHelperService.getWebServicesRepository();
         this.userInfoRepository = this.authHelperService.getUserInfoRepository();
@@ -151,6 +156,69 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
             return isAuthorized;
         } catch (Exception ex) {
             logger.error("unable to evaluate permissions for OrganizationalUnit with id " + organizationalUnitId, ex);
+            return false;
+        }
+    }
+
+    /**
+     * custom security method to check if a user is allowed to manage the given spatial unit
+     * hierarchy, i.e. has the required resource permission level and belongs to the mandant
+     * that owns the hierarchy. To be used with @PreAuthorize / @PostAuthorize annotations.
+     * to be used with @PreAuthorize and @PostAuthorize annotations
+     *
+     * @param hierarchyId the id of the spatial unit hierarchy
+     * @param permissionLevel the required resource permission level (e.g. 'editor', 'creator')
+     * @return true if the user is authorized to manage the hierarchy
+     */
+    public boolean isAuthorizedForSpatialUnitHierarchy(String hierarchyId, String permissionLevel) {
+        logger.debug("called isAuthorizedForSpatialUnitHierarchy with hierarchy id " + hierarchyId);
+        if (!hasRequiredPermissionLevel(permissionLevel, PermissionResourceType.RESOURCES.getValue())) {
+            return false;
+        }
+        if (isAuthorizedForAdminOperations()) {
+            return true;
+        }
+        try {
+            SpatialUnitHierarchyEntity hierarchy = this.spatialUnitHierarchyRepository.findById(hierarchyId).orElse(null);
+            if (hierarchy == null) {
+                throw new ResourceNotFoundException(NOTFOUNDCODE, "could not find spatial unit hierarchy " + hierarchyId);
+            }
+            boolean isAuthorized = this.authInfoProvider.checkMandantOperationPermissions(hierarchy.getMandant());
+            logger.info("access for " + this.getAuthentication().getName() + " to spatial unit hierarchy " + hierarchyId + " authorized? " + isAuthorized);
+            return isAuthorized;
+        } catch (Exception ex) {
+            logger.error("unable to evaluate permissions for spatial unit hierarchy with id " + hierarchyId + "; return not authorized", ex);
+            return false;
+        }
+    }
+
+    /**
+     * Check if a user is allowed to create resources for the given mandant, i.e. has the required resource permission
+     * level for that mandant.
+     * to be used with @PreAuthorize and @PostAuthorize annotations
+     *
+     * @param mandantId the id of the mandant (organizational unit)
+     * @param permissionLevel the required resource permission level (e.g. 'creator')
+     * @return true if the user is authorized for the mandant
+     */
+    public boolean isAuthorizedForMandant(String mandantId, String permissionLevel) {
+        logger.debug("called isAuthorizedForMandant with mandant id " + mandantId);
+        if (!hasRequiredPermissionLevel(permissionLevel, PermissionResourceType.RESOURCES.getValue())) {
+            return false;
+        }
+        if (isAuthorizedForAdminOperations()) {
+            return true;
+        }
+        try {
+            OrganizationalUnitEntity mandant = this.organizationalUnitRepository.findByOrganizationalUnitId(mandantId);
+            if (mandant == null) {
+                throw new ResourceNotFoundException(NOTFOUNDCODE, "could not find mandant " + mandantId);
+            }
+            boolean isAuthorized = this.authInfoProvider.checkMandantOperationPermissions(mandant);
+            logger.info("access for " + this.getAuthentication().getName() + " to mandant " + mandantId + " authorized? " + isAuthorized);
+            return isAuthorized;
+        } catch (Exception ex) {
+            logger.error("unable to evaluate mandant membership for mandant with id " + mandantId + "; return not authorized", ex);
             return false;
         }
     }

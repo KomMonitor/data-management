@@ -634,8 +634,9 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
 	public ResponseEntity<List<SpatialUnitHierarchyOverviewType>> getSpatialUnitHierarchies() {
 		logger.info("Received request to get all spatial unit hierarchies");
+		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
 		try {
-			List<SpatialUnitHierarchyOverviewType> hierarchies = spatialUnitHierarchyManager.getAllHierarchies();
+			List<SpatialUnitHierarchyOverviewType> hierarchies = spatialUnitHierarchyManager.getAllHierarchies(authInfoProvider);
 			return new ResponseEntity<>(hierarchies, HttpStatus.OK);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
@@ -655,8 +656,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
-	public ResponseEntity<SpatialUnitHierarchyOverviewType> addSpatialUnitHierarchy(SpatialUnitHierarchyInputType hierarchyData) {
+	@PreAuthorize("isAuthorizedForMandant(#hierarchyData.mandantId, 'creator')")
+	public ResponseEntity<SpatialUnitHierarchyOverviewType> addSpatialUnitHierarchy(@P("hierarchyData") SpatialUnitHierarchyInputType hierarchyData) {
 		logger.info("Received request to create a new spatial unit hierarchy");
 		SpatialUnitHierarchyOverviewType hierarchy;
 		try {
@@ -680,8 +681,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
-	public ResponseEntity<SpatialUnitHierarchyOverviewType> updateSpatialUnitHierarchy(String hierarchyId, SpatialUnitHierarchyInputType hierarchyData) {
+	@PreAuthorize("isAuthorizedForSpatialUnitHierarchy(#hierarchyId, 'creator')")
+	public ResponseEntity<SpatialUnitHierarchyOverviewType> updateSpatialUnitHierarchy(@P("hierarchyId") String hierarchyId, SpatialUnitHierarchyInputType hierarchyData) {
 		logger.info("Received request to update spatial unit hierarchy with id '{}'", hierarchyId);
 		try {
 			SpatialUnitHierarchyOverviewType hierarchy = spatialUnitHierarchyManager.updateHierarchy(hierarchyId, hierarchyData);
@@ -693,8 +694,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
-	public ResponseEntity<Void> deleteSpatialUnitHierarchyById(String hierarchyId) {
+	@PreAuthorize("isAuthorizedForSpatialUnitHierarchy(#hierarchyId, 'creator')")
+	public ResponseEntity<Void> deleteSpatialUnitHierarchyById(@P("hierarchyId") String hierarchyId) {
 		logger.info("Received request to delete spatial unit hierarchy with id '{}'", hierarchyId);
 		try {
 			spatialUnitHierarchyManager.deleteHierarchy(hierarchyId);
@@ -706,8 +707,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	@PreAuthorize("hasRequiredPermissionLevel('creator', 'resources')")
-	public ResponseEntity<SpatialUnitHierarchyOverviewType> updateSpatialUnitHierarchyMembers(String hierarchyId, List<SpatialUnitHierarchyMemberInputType> members) {
+	@PreAuthorize("isAuthorizedForSpatialUnitHierarchy(#hierarchyId, 'creator')")
+	public ResponseEntity<SpatialUnitHierarchyOverviewType> updateSpatialUnitHierarchyMembers(@P("hierarchyId") String hierarchyId, List<SpatialUnitHierarchyMemberInputType> members) {
 		logger.info("Received request to update members of spatial unit hierarchy with id '{}'", hierarchyId);
 		try {
 			SpatialUnitHierarchyOverviewType hierarchy = spatialUnitHierarchyManager.updateHierarchyMembers(hierarchyId, members);

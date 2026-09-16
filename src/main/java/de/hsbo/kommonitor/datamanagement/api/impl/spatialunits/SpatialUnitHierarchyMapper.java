@@ -20,6 +20,7 @@ public class SpatialUnitHierarchyMapper {
         if (entity.getMandant() != null) {
             overview.setMandantId(entity.getMandant().getOrganizationalUnitId());
         }
+        overview.setIsPublic(entity.isPublic());
         overview.setMembers(mapToMembers(entity.getMemberships()));
         return overview;
     }

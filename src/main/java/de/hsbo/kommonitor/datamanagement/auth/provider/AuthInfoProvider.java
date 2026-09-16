@@ -30,9 +30,18 @@ public interface AuthInfoProvider {
 
     /**
      * Checks if the current user has the permission to manage an Organization
-     * @param entity Organization that should be managed i.e., perform operations to chang the hierarchy or metadata
+     *
+     * @param entity Organization that should be managed i.e., perform operations to change the hierarchy or metadata
      */
     boolean checkOrganizationalUnitPermissions(OrganizationalUnitEntity entity);
+
+    /**
+     * Checks if the current user has the permission to perform mandant operations, i.e. managing spatial unit hierarchies.
+     *
+     * @param entity Organization to check mandant operation permission for
+     * @return True if the user has the required permissions
+     */
+    public boolean checkMandantOperationPermissions(OrganizationalUnitEntity entity);
 
     /**
      * Lists all permissions the current user has on given entity

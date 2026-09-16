@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -36,6 +37,9 @@ public class SpatialUnitHierarchyEntity {
     @JoinColumn(name = "mandant_organizationalunitid")
     private OrganizationalUnitEntity mandant;
 
+    @Column(name = "ispublic", nullable = false)
+    private boolean isPublic = false;
+
     @OneToMany(mappedBy = "hierarchy", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<SpatialUnitHierarchyMembershipEntity> memberships = new ArrayList<>();
 
@@ -61,6 +65,14 @@ public class SpatialUnitHierarchyEntity {
 
     public void setMandant(OrganizationalUnitEntity mandant) {
         this.mandant = mandant;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     public List<SpatialUnitHierarchyMembershipEntity> getMemberships() {

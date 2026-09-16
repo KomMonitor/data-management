@@ -521,6 +521,38 @@ public class OrganizationalUnitManager {
         }
         return entity;
     }
+
+    /**
+     * Checks whether the current user belongs to the given mandant, either directly (a group whose organizational unit
+     * is the mandant) or via a group whose organizational unit is assigned to that mandant.
+     *
+     * @param mandant Mandant to check membership of the current user for
+     * @param authInfoProvider Provider for authentication information
+     * @return true if the is member of a group that belongs to the mandant
+     */
+    public boolean belongsToMandant(OrganizationalUnitEntity mandant, AuthInfoProvider authInfoProvider) {
+        if (mandant == null) {
+            return false;
+        }
+        Set<String> groupNames = authInfoProvider.getGroupNames();
+        if (groupNames == null || groupNames.isEmpty()) {
+            return false;
+        }
+        String mandantId = mandant.getOrganizationalUnitId();
+        for (String groupName : groupNames) {
+            OrganizationalUnitEntity ou = this.organizationalUnitRepository.findByName(groupName);
+            if (ou == null) {
+                continue;
+            }
+            if (mandantId.equals(ou.getOrganizationalUnitId())) {
+                return true;
+            }
+            if (ou.getMandant() != null && mandantId.equals(ou.getMandant().getOrganizationalUnitId())) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     protected void syncAllOrganizationalUnits() {
         organizationalUnitRepository.findAll().forEach(this::syncOrganizationalUnit);

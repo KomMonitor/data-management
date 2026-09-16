@@ -9,6 +9,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUn
 import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitHierarchyRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.api.impl.webservice.WebServicesRepository;
 import jakarta.annotation.PostConstruct;
@@ -37,7 +38,10 @@ public final class AuthHelperService {
     
     @Autowired
     private SpatialUnitsMetadataRepository spatialunitRepository;
-    
+
+    @Autowired
+    private SpatialUnitHierarchyRepository spatialUnitHierarchyRepository;
+
     @Autowired
     private IndicatorSpatialUnitsRepository indicatorspatialUnitsRepository;
 
@@ -82,7 +86,11 @@ public final class AuthHelperService {
     public SpatialUnitsMetadataRepository getSpatialunitsRepository(){
         return this.spatialunitRepository;
     }
-    
+
+    public SpatialUnitHierarchyRepository getSpatialUnitHierarchyRepository(){
+        return this.spatialUnitHierarchyRepository;
+    }
+
     public IndicatorSpatialUnitsRepository getIndicatorSpatialunitsRepository(){
         return this.indicatorspatialUnitsRepository;
     }

@@ -4817,6 +4817,52 @@ paths:
       deprecated: false
       security:
         - kommonitor-data-access_oauth: []
+  /public/spatial-unit-hierarchies:
+    get:
+      tags:
+        - spatial-units-public
+      summary: retrieve the available public spatial unit hierarchies
+      description: retrieve the publicly accessible spatial unit hierarchies
+      operationId: getPublicSpatialUnitHierarchies
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+        "404":
+          description: Not Found
+          content: {}
+      deprecated: false
+  /public/spatial-unit-hierarchies/{hierarchyId}:
+    get:
+      tags:
+        - spatial-units-public
+      summary: retrieve a single public spatial unit hierarchy
+      description: retrieve a single publicly accessible spatial unit hierarchy including
+        its ordered members
+      operationId: getPublicSpatialUnitHierarchyById
+      parameters:
+        - name: hierarchyId
+          in: path
+          description: the unique identifier of the hierarchy
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+        "404":
+          description: Not Found
+          content: {}
+      deprecated: false
   /public/spatial-units:
     get:
       tags:
@@ -8740,12 +8786,17 @@ components:
           type: string
           description: identifier of the mandant (organizational unit) that owns the
             hierarchy
+        isPublic:
+          type: boolean
+          description: flag whether the hierarchy is publicly accessible
+          default: false
     SpatialUnitHierarchyOverviewType:
       title: SpatialUnitHierarchyOverviewType
       required:
         - hierarchyId
         - name
         - mandantId
+        - isPublic
       type: object
       description: metadata of a mandant-owned spatial unit hierarchy and its ordered
         members
@@ -8760,6 +8811,9 @@ components:
           type: string
           description: identifier of the mandant (organizational unit) that owns the
             hierarchy
+        isPublic:
+          type: boolean
+          description: flag whether the hierarchy is publicly accessible
         members:
           type: array
           description: the ordered spatial units that are members of this hierarchy

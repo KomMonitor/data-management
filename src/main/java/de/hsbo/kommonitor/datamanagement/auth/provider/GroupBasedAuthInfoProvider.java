@@ -272,6 +272,19 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         return hasUsersAdministrationPermission(entity);
     }
 
+    public boolean checkMandantOperationPermissions(OrganizationalUnitEntity entity) {
+        if (!entity.isMandant) {
+            return false;
+        }
+
+        // User is global administrator
+        if (tokenParser.hasRealmAdminRole(getPrincipal(), ADMIN_ROLE_NAME)) {
+            return true;
+        }
+
+        return hasMandantAdministrationPermission(entity);
+    }
+
     public List<Group> getResourceAdminGroups() {
         //TODO check for group hierarchies
         Set<String> ownedRoles = tokenParser.getOwnedRoles(getPrincipal());
@@ -352,6 +365,17 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
                         hasClientUsersAdminPermissionForOwningGroup(r.getFirst(), r.getSecond(), entity));
     }
 
+    private boolean hasMandantAdministrationPermission(OrganizationalUnitEntity entity) {
+        Set<String> ownedRoles = tokenParser.getOwnedRoles(getPrincipal());
+        return ownedRoles.stream()
+                .filter(r -> roleExtractorRegex.split(r, 2).length == 2)
+                .map(r -> {
+                    String[] split = roleExtractorRegex.split(r, 2);
+                    return Pair.of(split[0], split[1]);
+                })
+                .anyMatch(r -> hasClientResourcesAdminPermissionForOwningGroup(r.getFirst(), r.getSecond(), entity));
+    }
+
     private boolean hasUnitUsersAdminPermissionForOwningGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
         return kcGroup.equals(entity.getName())
                 && hasAdminPermissionForResourceType(kcRole, PermissionResourceType.USERS);
@@ -359,6 +383,10 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
 
     private boolean hasClientUsersAdminPermissionForOwningGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
         return kcRole.equals(CLIENT_USERS_CREATOR.getValue()) && roleGroupIsParent(kcGroup, entity);
+    }
+
+    private boolean hasClientResourcesAdminPermissionForOwningGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
+        return kcRole.equals(CLIENT_RESOURCES_CREATOR.getValue()) && roleGroupIsParent(kcGroup, entity);
     }
 
     /**

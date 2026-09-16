@@ -30,6 +30,8 @@ public class SpatialUnitHierarchyInputType implements Serializable {
 
   private String mandantId;
 
+  private Boolean isPublic = false;
+
   public SpatialUnitHierarchyInputType() {
     super();
   }
@@ -84,6 +86,27 @@ public class SpatialUnitHierarchyInputType implements Serializable {
     this.mandantId = mandantId;
   }
 
+  public SpatialUnitHierarchyInputType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the hierarchy is publicly accessible
+   * @return isPublic
+   */
+  
+  @Schema(name = "isPublic", description = "flag whether the hierarchy is publicly accessible", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  @JsonProperty("isPublic")
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -94,12 +117,13 @@ public class SpatialUnitHierarchyInputType implements Serializable {
     }
     SpatialUnitHierarchyInputType spatialUnitHierarchyInputType = (SpatialUnitHierarchyInputType) o;
     return Objects.equals(this.name, spatialUnitHierarchyInputType.name) &&
-        Objects.equals(this.mandantId, spatialUnitHierarchyInputType.mandantId);
+        Objects.equals(this.mandantId, spatialUnitHierarchyInputType.mandantId) &&
+        Objects.equals(this.isPublic, spatialUnitHierarchyInputType.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, mandantId);
+    return Objects.hash(name, mandantId, isPublic);
   }
 
   @Override
@@ -108,6 +132,7 @@ public class SpatialUnitHierarchyInputType implements Serializable {
     sb.append("class SpatialUnitHierarchyInputType {\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    mandantId: ").append(toIndentedString(mandantId)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");
     return sb.toString();
   }

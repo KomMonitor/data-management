@@ -1,20 +1,14 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
-import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyInputType;
-import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyMemberInputType;
-import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyMembershipInputType;
-import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyMembershipPOSTInputType;
-import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyOverviewType;
+import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
+import de.hsbo.kommonitor.datamanagement.model.*;
 
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -54,14 +48,31 @@ public class SpatialUnitHierarchyManager {
         SpatialUnitHierarchyEntity entity = new SpatialUnitHierarchyEntity();
         entity.setName(input.getName());
         entity.setMandant(mandant);
+        entity.setPublic(Boolean.TRUE.equals(input.getIsPublic()));
 
         entity = hierarchyRepository.save(entity);
         logger.info("Created spatial unit hierarchy '{}' for mandant '{}'.", entity.getId(), mandant.getOrganizationalUnitId());
         return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(entity);
     }
 
-    public List<SpatialUnitHierarchyOverviewType> getAllHierarchies() {
-        return SpatialUnitHierarchyMapper.mapToSwaggerHierarchies(hierarchyRepository.findAll());
+    public List<SpatialUnitHierarchyOverviewType> getAllHierarchies(AuthInfoProvider provider) {
+        logger.info("Retrieving all hierarchies from db");
+
+        List<SpatialUnitHierarchyEntity> hierarchyEntities;
+
+        if (provider == null) {
+            hierarchyEntities = hierarchyRepository.findByIsPublicTrue();
+        } else if (provider.hasGlobalAdminPermissions()) {
+            logger.debug("User is global admin - retrieving all hierarchies from DB");
+            hierarchyEntities = hierarchyRepository.findAll();
+        }
+        else {
+            hierarchyEntities = hierarchyRepository.findAll().stream()
+                    .filter(s -> orgaManager.belongsToMandant(s.getMandant(), provider))
+                    .collect(Collectors.toList());
+        }
+
+        return SpatialUnitHierarchyMapper.mapToSwaggerHierarchies(hierarchyEntities);
     }
 
     public List<SpatialUnitHierarchyOverviewType> getHierarchiesForMandant(String mandantId) {
@@ -84,7 +95,23 @@ public class SpatialUnitHierarchyManager {
             }
             entity.setMandant(mandant);
         }
+        if (input.getIsPublic() != null) {
+            entity.setPublic(input.getIsPublic());
+        }
         entity = hierarchyRepository.save(entity);
+        return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(entity);
+    }
+
+    public List<SpatialUnitHierarchyOverviewType> getPublicHierarchies() {
+        return SpatialUnitHierarchyMapper.mapToSwaggerHierarchies(hierarchyRepository.findByIsPublicTrue());
+    }
+
+    public SpatialUnitHierarchyOverviewType getPublicHierarchy(String hierarchyId) throws ResourceNotFoundException {
+        SpatialUnitHierarchyEntity entity = getHierarchyEntity(hierarchyId);
+        if (!entity.isPublic()) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "No public spatial unit hierarchy exists with id " + hierarchyId);
+        }
         return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(entity);
     }
 

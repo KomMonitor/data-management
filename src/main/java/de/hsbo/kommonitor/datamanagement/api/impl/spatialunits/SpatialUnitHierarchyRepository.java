@@ -8,5 +8,7 @@ public interface SpatialUnitHierarchyRepository extends JpaRepository<SpatialUni
 
     List<SpatialUnitHierarchyEntity> findByMandant_OrganizationalUnitId(String mandantId);
 
+    List<SpatialUnitHierarchyEntity> findByIsPublicTrue();
+
     boolean existsByNameAndMandant_OrganizationalUnitId(String name, String mandantId);
 }

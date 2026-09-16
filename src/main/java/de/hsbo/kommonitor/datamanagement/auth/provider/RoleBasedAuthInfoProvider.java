@@ -119,6 +119,11 @@ public class RoleBasedAuthInfoProvider implements AuthInfoProvider {
         return hasRealmAdminRole(getPrincipal());
     }
 
+    @Override
+    public boolean checkMandantOperationPermissions(OrganizationalUnitEntity entity) {
+        return hasRealmAdminRole(getPrincipal());
+    }
+
     public List<PermissionLevelType> getPermissions(RestrictedEntity entity) {
         // User is global administrator
         if (hasRealmAdminRole(getPrincipal())) {

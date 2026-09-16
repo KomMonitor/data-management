@@ -5,6 +5,7 @@ import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -33,12 +34,37 @@ public class SpatialUnitsPublicController extends BasePathController implements 
     SpatialUnitsManager spatialUnitsManager;
 
     @Autowired
+    SpatialUnitHierarchyManager spatialUnitHierarchyManager;
+
+    @Autowired
     AuthInfoProviderFactory authInfoProviderFactory;
 
     @Autowired
     public SpatialUnitsPublicController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
+    }
+
+    @Override
+    public ResponseEntity<List<SpatialUnitHierarchyOverviewType>> getPublicSpatialUnitHierarchies() {
+        logger.info("Received request to get all public spatial unit hierarchies");
+        try {
+            List<SpatialUnitHierarchyOverviewType> hierarchies = spatialUnitHierarchyManager.getPublicHierarchies();
+            return new ResponseEntity<>(hierarchies, HttpStatus.OK);
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<SpatialUnitHierarchyOverviewType> getPublicSpatialUnitHierarchyById(String hierarchyId) {
+        logger.info("Received request to get public spatial unit hierarchy with id '{}'", hierarchyId);
+        try {
+            SpatialUnitHierarchyOverviewType hierarchy = spatialUnitHierarchyManager.getPublicHierarchy(hierarchyId);
+            return new ResponseEntity<>(hierarchy, HttpStatus.OK);
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
     }
 
     @Override

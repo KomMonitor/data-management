@@ -16,6 +16,9 @@
                              referencedTableName="organizationalunits"
                              referencedColumnNames="organizationalunitid"/>
             </column>
+            <column name="ispublic" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 

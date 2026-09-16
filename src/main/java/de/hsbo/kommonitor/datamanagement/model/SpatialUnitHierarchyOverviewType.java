@@ -36,6 +36,8 @@ public class SpatialUnitHierarchyOverviewType implements Serializable {
 
   private String mandantId;
 
+  private Boolean isPublic;
+
   private List<@Valid SpatialUnitHierarchyMemberType> members = new ArrayList<>();
 
   public SpatialUnitHierarchyOverviewType() {
@@ -45,10 +47,11 @@ public class SpatialUnitHierarchyOverviewType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public SpatialUnitHierarchyOverviewType(String hierarchyId, String name, String mandantId) {
+  public SpatialUnitHierarchyOverviewType(String hierarchyId, String name, String mandantId, Boolean isPublic) {
     this.hierarchyId = hierarchyId;
     this.name = name;
     this.mandantId = mandantId;
+    this.isPublic = isPublic;
   }
 
   public SpatialUnitHierarchyOverviewType hierarchyId(String hierarchyId) {
@@ -114,6 +117,27 @@ public class SpatialUnitHierarchyOverviewType implements Serializable {
     this.mandantId = mandantId;
   }
 
+  public SpatialUnitHierarchyOverviewType isPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+    return this;
+  }
+
+  /**
+   * flag whether the hierarchy is publicly accessible
+   * @return isPublic
+   */
+  @NotNull 
+  @Schema(name = "isPublic", description = "flag whether the hierarchy is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("isPublic")
+  public Boolean getIsPublic() {
+    return isPublic;
+  }
+
+  @JsonProperty("isPublic")
+  public void setIsPublic(Boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   public SpatialUnitHierarchyOverviewType members(List<@Valid SpatialUnitHierarchyMemberType> members) {
     this.members = members;
     return this;
@@ -155,12 +179,13 @@ public class SpatialUnitHierarchyOverviewType implements Serializable {
     return Objects.equals(this.hierarchyId, spatialUnitHierarchyOverviewType.hierarchyId) &&
         Objects.equals(this.name, spatialUnitHierarchyOverviewType.name) &&
         Objects.equals(this.mandantId, spatialUnitHierarchyOverviewType.mandantId) &&
+        Objects.equals(this.isPublic, spatialUnitHierarchyOverviewType.isPublic) &&
         Objects.equals(this.members, spatialUnitHierarchyOverviewType.members);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(hierarchyId, name, mandantId, members);
+    return Objects.hash(hierarchyId, name, mandantId, isPublic, members);
   }
 
   @Override
@@ -170,6 +195,7 @@ public class SpatialUnitHierarchyOverviewType implements Serializable {
     sb.append("    hierarchyId: ").append(toIndentedString(hierarchyId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    mandantId: ").append(toIndentedString(mandantId)).append("\n");
+    sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("    members: ").append(toIndentedString(members)).append("\n");
     sb.append("}");
     return sb.toString();
