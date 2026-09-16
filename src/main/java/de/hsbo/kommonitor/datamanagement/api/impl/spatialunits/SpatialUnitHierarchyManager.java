@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol.OrganizationalUnitManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ValidationException;
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.msg.MessageResolver;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.*;
 
@@ -26,6 +28,8 @@ public class SpatialUnitHierarchyManager {
 
     private static final Logger logger = LoggerFactory.getLogger(SpatialUnitHierarchyManager.class);
 
+    private static final String MSG_INVALID_HIERARCHY_NEIGHBOURS_ERROR = "invalid-hierarchy-neighbours-error";
+
     @Autowired
     private SpatialUnitHierarchyRepository hierarchyRepository;
 
@@ -38,6 +42,16 @@ public class SpatialUnitHierarchyManager {
     @Autowired
     private OrganizationalUnitManager orgaManager;
 
+    @Autowired
+    private MessageResolver messageResolver;
+
+    /**
+     * Creates a new spatial unit hierarchy owned by a mandant.
+     *
+     * @param input definition of the hierarchy to create
+     * @return representation of the created spatial unit hierarchy
+     * @throws ResourceNotFoundException if the referenced organizational unit does not exist or is not a mandant
+     */
     public SpatialUnitHierarchyOverviewType addHierarchy(SpatialUnitHierarchyInputType input) throws ResourceNotFoundException {
         OrganizationalUnitEntity mandant = orgaManager.getOrganizationalUnitEntity(input.getMandantId());
         if (!mandant.isMandant()) {
@@ -55,6 +69,14 @@ public class SpatialUnitHierarchyManager {
         return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(entity);
     }
 
+    /**
+     * Retrieves the spatial unit hierarchies the current user is allowed to access. Without an authentication provider
+     * only public hierarchies are returned, global admins receive all hierarchies and any other user receives the
+     * hierarchies of the mandants they belong to.
+     *
+     * @param provider authentication information of the current user, or {@code null} to retrieve only public hierarchies
+     * @return list of accessible spatial unit hierarchies
+     */
     public List<SpatialUnitHierarchyOverviewType> getAllHierarchies(AuthInfoProvider provider) {
         logger.info("Retrieving all hierarchies from db");
 
@@ -75,15 +97,36 @@ public class SpatialUnitHierarchyManager {
         return SpatialUnitHierarchyMapper.mapToSwaggerHierarchies(hierarchyEntities);
     }
 
+    /**
+     * Retrieves all spatial unit hierarchies owned by the given mandant.
+     *
+     * @param mandantId ID of the mandant (organizational unit) that owns the hierarchies
+     * @return list of the mandant's spatial unit hierarchies
+     */
     public List<SpatialUnitHierarchyOverviewType> getHierarchiesForMandant(String mandantId) {
         return SpatialUnitHierarchyMapper.mapToSwaggerHierarchies(
                 hierarchyRepository.findByMandant_OrganizationalUnitId(mandantId));
     }
 
+    /**
+     * Retrieves a single spatial unit hierarchy including its ordered members.
+     *
+     * @param hierarchyId ID of the spatial unit hierarchy
+     * @return representation of the spatial unit hierarchy
+     * @throws ResourceNotFoundException if no hierarchy exists with the given id
+     */
     public SpatialUnitHierarchyOverviewType getHierarchy(String hierarchyId) throws ResourceNotFoundException {
         return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(getHierarchyEntity(hierarchyId));
     }
 
+    /**
+     * Updates the metadata (name, owning mandant and public flag) of an existing spatial unit hierarchy.
+     *
+     * @param hierarchyId ID of the spatial unit hierarchy to update
+     * @param input the new hierarchy metadata
+     * @return representation of the updated spatial unit hierarchy
+     * @throws ResourceNotFoundException if the hierarchy does not exist or the referenced organizational unit is not a mandant
+     */
     public SpatialUnitHierarchyOverviewType updateHierarchy(String hierarchyId, SpatialUnitHierarchyInputType input) throws ResourceNotFoundException {
         SpatialUnitHierarchyEntity entity = getHierarchyEntity(hierarchyId);
         entity.setName(input.getName());
@@ -102,10 +145,22 @@ public class SpatialUnitHierarchyManager {
         return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(entity);
     }
 
+    /**
+     * Retrieves all publicly accessible spatial unit hierarchies.
+     *
+     * @return list of public spatial unit hierarchies
+     */
     public List<SpatialUnitHierarchyOverviewType> getPublicHierarchies() {
         return SpatialUnitHierarchyMapper.mapToSwaggerHierarchies(hierarchyRepository.findByIsPublicTrue());
     }
 
+    /**
+     * Retrieves a single publicly accessible spatial unit hierarchy including its ordered members.
+     *
+     * @param hierarchyId ID of the spatial unit hierarchy
+     * @return representation of the public spatial unit hierarchy
+     * @throws ResourceNotFoundException if no hierarchy exists with the given id or the hierarchy is not public
+     */
     public SpatialUnitHierarchyOverviewType getPublicHierarchy(String hierarchyId) throws ResourceNotFoundException {
         SpatialUnitHierarchyEntity entity = getHierarchyEntity(hierarchyId);
         if (!entity.isPublic()) {
@@ -115,6 +170,12 @@ public class SpatialUnitHierarchyManager {
         return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(entity);
     }
 
+    /**
+     * Deletes a spatial unit hierarchy. The spatial units that were members of the hierarchy are not deleted.
+     *
+     * @param hierarchyId ID of the spatial unit hierarchy to delete
+     * @throws ResourceNotFoundException if no hierarchy exists with the given id
+     */
     public void deleteHierarchy(String hierarchyId) throws ResourceNotFoundException {
         SpatialUnitHierarchyEntity entity = getHierarchyEntity(hierarchyId);
         hierarchyRepository.delete(entity);
@@ -122,10 +183,15 @@ public class SpatialUnitHierarchyManager {
     }
 
     /**
-     * Replaces the full ordered list of members of a hierarchy. Covers reordering,
-     * removing and adding members within the hierarchy in a single operation. The members
-     * are ordered by the requested hierarchyLevel and then normalized so that level and
-     * neighbouring spatial units are coherent.
+     * Replaces the full ordered list of members of a hierarchy. Covers reordering, removing and adding members within
+     * the hierarchy in a single operation. The members are ordered by the requested hierarchyLevel and then normalized
+     * so that level and neighbouring spatial units are coherent.
+     *
+     * @param hierarchyId ID of a spatial unit hierarchy
+     * @param members list of members of a hierarchy
+     * @return representation of the ordered spatial unit hierarchy
+     * @throws ResourceNotFoundException if the requested spatial unit or one of the hierarchies does not exist or
+     * if the spatial unit and a hierarchy do not belong to the same mandant.
      */
     public SpatialUnitHierarchyOverviewType updateHierarchyMembers(String hierarchyId, List<SpatialUnitHierarchyMemberInputType> members)
             throws ResourceNotFoundException {
@@ -151,11 +217,15 @@ public class SpatialUnitHierarchyManager {
     }
 
     /**
-     * Replaces the full set of hierarchy memberships of an existing spatial unit using
-     * integer levels. Covers placing the spatial unit into further hierarchies, changing
-     * its level within a hierarchy and removing it from a hierarchy in a single operation.
-     * A {@code null} list clears all memberships. Affected hierarchies are renormalized so
+     * Replaces the full set of hierarchy memberships of an existing spatial unit using integer levels. Covers placing
+     * the spatial unit into further hierarchies, changing its level within a hierarchy and removing it from a hierarchy
+     * in a single operation. A {@code null} list clears all memberships. Affected hierarchies are renormalized so
      * that level and neighbouring spatial units stay coherent.
+     *
+     * @param spatialUnitId ID of the spatial unit for which the hierarchy memberships should be updated
+     * @param memberships List of hierarchy membership definitions
+     * @throws ResourceNotFoundException if the requested spatial unit or one of the hierarchies does not exist or
+     * if the spatial unit and a hierarchy do not belong to the same mandant.
      */
     public void updateSpatialUnitMemberships(String spatialUnitId, List<SpatialUnitHierarchyMembershipInputType> memberships)
             throws ResourceNotFoundException {
@@ -184,10 +254,13 @@ public class SpatialUnitHierarchyManager {
     }
 
     /**
-     * Places a newly registered spatial unit into hierarchies by defining, for each
-     * hierarchy, its neighbouring spatial units (next upper / next lower). The integer
-     * level is derived from that placement so both representations stay coherent. Replaces
-     * any existing memberships of the spatial unit. A {@code null} list clears all memberships.
+     * Places a newly registered spatial unit into hierarchies by defining, for each hierarchy, its neighboring
+     * spatial units (next upper / next lower). The integer level is derived from that placement so both representations
+     * stay coherent. Replaces any existing memberships of the spatial unit. A {@code null} list clears all memberships.
+     *
+     * @param spatialUnitId ID of the spatial unit that is registered
+     * @param memberships definition of hierarchy memberships
+     * @throws ResourceNotFoundException if spatial unit and hierarchy do not belong to the same mandant
      */
     public void createMembershipsFromRegistration(String spatialUnitId, List<SpatialUnitHierarchyMembershipPOSTInputType> memberships)
             throws ResourceNotFoundException {
@@ -202,11 +275,11 @@ public class SpatialUnitHierarchyManager {
             for (SpatialUnitHierarchyMembershipPOSTInputType membership : memberships) {
                 SpatialUnitHierarchyEntity hierarchy = getHierarchyEntity(membership.getHierarchyId());
                 validateSameMandant(spatialUnit, hierarchy);
-                validateNeighbourMembership(hierarchy, membership.getNextUpperSpatialUnitId(), spatialUnitId, "next upper");
-                validateNeighbourMembership(hierarchy, membership.getNextLowerSpatialUnitId(), spatialUnitId, "next lower");
+                validateNeighbourMembership(hierarchy, membership.getNextUpperSpatialUnitId(), spatialUnitId);
+                validateNeighbourMembership(hierarchy, membership.getNextLowerSpatialUnitId(), spatialUnitId);
 
                 List<SpatialUnitHierarchyMembershipEntity> ordered = loadOrderedMembers(hierarchy.getId());
-                int index = insertIndexByNeighbours(ordered, membership.getNextUpperSpatialUnitId(),
+                int index = insertIndexByNeighbours(ordered, hierarchy, membership.getNextUpperSpatialUnitId(),
                         membership.getNextLowerSpatialUnitId());
                 ordered.add(index, newMembership(hierarchy, spatialUnit));
                 recomputeOrdering(ordered);
@@ -261,22 +334,53 @@ public class SpatialUnitHierarchyManager {
         return Math.max(targetLevel, 0);
     }
 
-    private int insertIndexByNeighbours(List<SpatialUnitHierarchyMembershipEntity> ordered, String nextUpperId, String nextLowerId) {
-        if (nextUpperId != null && !nextUpperId.isBlank()) {
-            for (int i = 0; i < ordered.size(); i++) {
-                if (ordered.get(i).getSpatialUnit().getDatasetId().equals(nextUpperId)) {
-                    return i + 1;
-                }
+    /**
+     * Determines the insertion index for a newly registered spatial unit within an ordered
+     * hierarchy from its requested neighbours:
+     * <ul>
+     *   <li>if neither neighbour is given, the unit is appended at the last (bottom) position;</li>
+     *   <li>if only one neighbour is given, the unit is placed directly adjacent to it;</li>
+     *   <li>if both are given, they must currently be direct neighbours (next lower directly
+     *       below next upper) and the unit is placed between them - otherwise a
+     *       {@link ValidationException} is thrown.</li>
+     * </ul>
+     */
+    private int insertIndexByNeighbours(List<SpatialUnitHierarchyMembershipEntity> ordered,
+                                        SpatialUnitHierarchyEntity hierarchy, String nextUpperId, String nextLowerId) {
+        boolean hasUpper = nextUpperId != null && !nextUpperId.isBlank();
+        boolean hasLower = nextLowerId != null && !nextLowerId.isBlank();
+
+        if (!hasUpper && !hasLower) {
+            return ordered.size();
+        }
+
+        Integer upperIndex = hasUpper ? indexOfMember(ordered, nextUpperId) : null;
+        Integer lowerIndex = hasLower ? indexOfMember(ordered, nextLowerId) : null;
+
+        if (hasUpper && hasLower) {
+            // both neighbours must currently be adjacent (next lower directly below next upper)
+            if (upperIndex == null || lowerIndex == null || lowerIndex != upperIndex + 1) {
+                String message = String.format(
+                        messageResolver.getMessage(MSG_INVALID_HIERARCHY_NEIGHBOURS_ERROR),
+                        nextUpperId, nextLowerId, hierarchy.getId());
+                throw new ValidationException("hierarchies", message);
+            }
+            return upperIndex + 1;
+        }
+
+        if (hasUpper) {
+            return upperIndex + 1;
+        }
+        return lowerIndex;
+    }
+
+    private Integer indexOfMember(List<SpatialUnitHierarchyMembershipEntity> ordered, String spatialUnitId) {
+        for (int i = 0; i < ordered.size(); i++) {
+            if (ordered.get(i).getSpatialUnit().getDatasetId().equals(spatialUnitId)) {
+                return i;
             }
         }
-        if (nextLowerId != null && !nextLowerId.isBlank()) {
-            for (int i = 0; i < ordered.size(); i++) {
-                if (ordered.get(i).getSpatialUnit().getDatasetId().equals(nextLowerId)) {
-                    return i;
-                }
-            }
-        }
-        return ordered.size();
+        return null;
     }
 
     private Set<String> collectHierarchyIds(String spatialUnitId) {
@@ -301,17 +405,17 @@ public class SpatialUnitHierarchyManager {
      * or blank neighbour is allowed and denotes the top/bottom of the hierarchy.
      */
     private void validateNeighbourMembership(SpatialUnitHierarchyEntity hierarchy, String neighbourId,
-                                             String spatialUnitId, String position) throws ResourceNotFoundException {
+                                             String spatialUnitId) throws ResourceNotFoundException {
         if (neighbourId == null || neighbourId.isBlank()) {
             return;
         }
         if (neighbourId.equals(spatialUnitId)) {
             throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
-                    "The " + position + " spatial unit of a hierarchy membership must not be the spatial unit itself.");
+                    "The neighbouring spatial unit of a hierarchy membership must not be the spatial unit itself.");
         }
         if (!membershipRepository.existsByHierarchy_IdAndSpatialUnit_DatasetId(hierarchy.getId(), neighbourId)) {
             throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
-                    "The " + position + " spatial unit '" + neighbourId + "' is not a member of hierarchy '"
+                    "The neighbouring spatial unit '" + neighbourId + "' is not a member of hierarchy '"
                             + hierarchy.getId() + "'. Neighbouring spatial units must already be members of the same hierarchy.");
         }
     }

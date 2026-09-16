@@ -325,8 +325,7 @@ public class SpatialUnitsManager {
             } catch (Exception e) {
                 logger.error("Error while deleting associated indicator layer entries for spatial unit with id {}",
                         spatialUnitId);
-                logger.error("Error was: {}", e.getMessage());
-                e.printStackTrace();
+                logger.debug("Error was: {}", e.getMessage());
             }
 
             // delete any linked roles first
@@ -334,8 +333,7 @@ public class SpatialUnitsManager {
                 spatialUnitEntity = removeAnyLinkedRoles(spatialUnitEntity);
             } catch (Exception e) {
                 logger.error("Error while deleting roles for spatial unit with id {}", spatialUnitEntity);
-                logger.error("Error was: {}", e.getMessage());
-                e.printStackTrace();
+                logger.debug("Error was: {}", e.getMessage());
             }
 
             try {
@@ -345,8 +343,7 @@ public class SpatialUnitsManager {
                 SpatialFeatureDatabaseHandler.deleteFeatureTable(ResourceTypeEnum.SPATIAL_UNIT, dbTableName);
             } catch (Exception e) {
                 logger.error("Error while deleting feature table for spatial unit with id {}", spatialUnitId);
-                logger.error("Error was: {}", e.getMessage());
-                e.printStackTrace();
+                logger.debug("Error was: {}", e.getMessage());
             }
 
             try {
@@ -357,8 +354,7 @@ public class SpatialUnitsManager {
                 spatialUnitsMetadataRepo.deleteByDatasetId(spatialUnitId);
             } catch (Exception e) {
                 logger.error("Error while deleting metadata entry for spatial unit with id {}", spatialUnitId);
-                logger.error("Error was: {}", e.getMessage());
-                e.printStackTrace();
+                logger.debug("Error was: {}", e.getMessage());
                 success = false;
             }
 
@@ -367,8 +363,7 @@ public class SpatialUnitsManager {
                 ogcServiceManager.unpublishDbLayer(dbTableName, ResourceTypeEnum.SPATIAL_UNIT);
             } catch (Exception e) {
                 logger.error("Error while unpublishing OGC service layer for spatial unit with id {}", spatialUnitId);
-                logger.error("Error was: {}", e.getMessage());
-                e.printStackTrace();
+                logger.debug("Error was: {}", e.getMessage());
             }
 
             return success;

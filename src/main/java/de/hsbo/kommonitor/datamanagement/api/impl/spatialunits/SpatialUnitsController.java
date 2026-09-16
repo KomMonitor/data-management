@@ -4,6 +4,7 @@ import de.hsbo.kommonitor.datamanagement.api.SpatialUnitsApi;
 import de.hsbo.kommonitor.datamanagement.api.impl.BasePathController;
 import de.hsbo.kommonitor.datamanagement.api.impl.database.LastModificationManager;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.exception.ValidationException;
 import de.hsbo.kommonitor.datamanagement.api.impl.util.ApiUtils;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProviderFactory;
@@ -68,8 +69,10 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		try {
 			spatialUnitMetadata = spatialUnitsManager.addSpatialUnit(featureData);
 			lastModManager.updateLastDatabaseModificationSpatialUnits();
-		} catch (Exception e1) {
-			return ApiUtils.createResponseEntityFromException(e1);
+		} catch (ValidationException e) {
+			throw e;
+		} catch (Exception e) {
+			return ApiUtils.createResponseEntityFromException(e);
 
 		}
 

@@ -27,6 +27,22 @@ public class GlobalExceptionHandler {
     @Autowired
     private MessageResolver messageResolver;
 
+    // Handles semantic validation errors raised by the service layer
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ValidationErrorResponse> handleValidationException(
+            ValidationException ex, HttpServletRequest request) {
+
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                messageResolver.getMessage(MSG_SCHEMA_VALIDATION_ERROR),
+                request.getRequestURI(),
+                ex.getViolations()
+        );
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex, HttpServletRequest request) {
