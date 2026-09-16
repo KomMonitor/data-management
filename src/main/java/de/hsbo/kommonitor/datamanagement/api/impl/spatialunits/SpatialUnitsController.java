@@ -667,6 +667,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 		try {
 			hierarchy = spatialUnitHierarchyManager.addHierarchy(hierarchyData);
 			lastModManager.updateLastDatabaseModificationSpatialUnits();
+		} catch (ValidationException ve) {
+			throw ve;
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
@@ -692,6 +694,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			SpatialUnitHierarchyOverviewType hierarchy = spatialUnitHierarchyManager.updateHierarchy(hierarchyId, hierarchyData);
 			lastModManager.updateLastDatabaseModificationSpatialUnits();
 			return new ResponseEntity<>(hierarchy, HttpStatus.OK);
+		} catch (ValidationException ve) {
+			throw ve;
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
@@ -718,6 +722,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			SpatialUnitHierarchyOverviewType hierarchy = spatialUnitHierarchyManager.updateHierarchyMembers(hierarchyId, members);
 			lastModManager.updateLastDatabaseModificationSpatialUnits();
 			return new ResponseEntity<>(hierarchy, HttpStatus.OK);
+		} catch (ValidationException ve) {
+			throw ve;
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
@@ -734,6 +740,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			lastModManager.updateLastDatabaseModificationSpatialUnits();
 			SpatialUnitOverviewType spatialUnit = spatialUnitsManager.getSpatialUnitByDatasetId(spatialUnitId);
 			return new ResponseEntity<>(spatialUnit, HttpStatus.OK);
+		} catch (ValidationException ve) {
+			throw ve;
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}

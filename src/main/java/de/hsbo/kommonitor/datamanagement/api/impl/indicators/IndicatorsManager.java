@@ -1062,7 +1062,7 @@ public class IndicatorsManager {
 				success = false;
 			}
 
-            indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName());
+            indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName(), resolveMandantIdForIndicator(indicatorForSpatialUnit.getIndicatorMetadataId()));
 
             /*
              * republish indicator layer as OGC service
@@ -1271,7 +1271,8 @@ public class IndicatorsManager {
          */
         LOG.info("Trying to create unique table joining indicator values and spatial unit features from table name.");
 
-        String dbViewName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromValueTableName(indicatorValueableName, spatialUnitName);
+        String dbViewName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromValueTableName(indicatorValueableName,
+                spatialUnitName, resolveMandantIdForIndicator(metadataId));
 
         LOG.info("Completed creation of indicator feature table corresponding to datasetId {} from table name. Table name is {}.",
                 metadataId, dbViewName);
@@ -1286,7 +1287,8 @@ public class IndicatorsManager {
          */
         LOG.info("Trying to create unique table joining indicator values and spatial unit features from view name.");
 
-        String dbViewName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, spatialUnitName);
+        String dbViewName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName,
+                spatialUnitName, resolveMandantIdForIndicator(metadataId));
 
         LOG.info("Completed creation of indicator feature table corresponding to datasetId {} from view name. Table name is {}.",
                 metadataId, dbViewName);
@@ -1319,7 +1321,9 @@ public class IndicatorsManager {
                 "Create or modify entry in indicator spatial units join table for indicatorId '{}', and spatialUnitName '{}'. Set indicatorValueTable with name '{}'.",
                 indicatorMetadataId, spatialUnitName, indicatorViewTableName);
 
-        MetadataSpatialUnitsEntity spatialUnitMetadataEntity = DatabaseHelperUtil.getSpatialUnitMetadataEntityByName(spatialUnitName);
+        OrganizationalUnitEntity owner = orgaManager.getOrganizationalUnitEntity(ownerId);
+        MetadataSpatialUnitsEntity spatialUnitMetadataEntity = DatabaseHelperUtil
+                .getSpatialUnitMetadataEntityByName(spatialUnitName, resolveMandantId(owner));
         String spatialUnitId = spatialUnitMetadataEntity.getDatasetId();
 
         IndicatorSpatialUnitJoinEntity entity = new IndicatorSpatialUnitJoinEntity();
@@ -1340,13 +1344,36 @@ public class IndicatorsManager {
         entity.setDefaultStyleName(styleName);
 
         entity.setPermissions(permissionManager.retrievePermissions(permissions));
-        entity.setOwner(orgaManager.getOrganizationalUnitEntity(ownerId));
+        entity.setOwner(owner);
         entity.setPublic(istPublic);
 
         indicatorsSpatialUnitsRepo.saveAndFlush(entity);
 
         LOG.info("Creation or modification of join entry successful.");
 
+    }
+
+    /**
+     * Resolves the id of the mandant an owning organizational unit belongs to: the owner's mandant if set, otherwise
+     * the owner itself when it is a mandant, otherwise {@code null}.
+     */
+    private String resolveMandantId(OrganizationalUnitEntity owner) {
+        if (owner == null) {
+            return null;
+        }
+        OrganizationalUnitEntity mandant = owner.getMandant() != null
+                ? owner.getMandant()
+                : (owner.isMandant() ? owner : null);
+        return mandant != null ? mandant.getOrganizationalUnitId() : null;
+    }
+
+    /**
+     * Resolves the mandant id of an indicator from its owner. Used to scope name-based spatial unit lookups, since
+     * spatial unit names are unique only within a mandant.
+     */
+    private String resolveMandantIdForIndicator(String indicatorMetadataId) {
+        MetadataIndicatorsEntity indicator = indicatorsMetadataRepo.findByDatasetId(indicatorMetadataId);
+        return indicator != null ? resolveMandantId(indicator.getOwner()) : null;
     }
 
     private MetadataIndicatorsEntity createMetadata(IndicatorPOSTInputType indicatorData) throws Exception {
@@ -1775,7 +1802,7 @@ public class IndicatorsManager {
 				LOG.error("Error while deleting features in value table for indicator with id {}", indicatorId, e);
 			}
 
-			indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName());
+			indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName(), resolveMandantIdForIndicator(indicatorForSpatialUnit.getIndicatorMetadataId()));
 
 			/*
 			 * republish indicator layer as OGC service
@@ -1832,7 +1859,7 @@ public class IndicatorsManager {
 				LOG.error("Error while deleting features in value table for indicator with id {}", indicatorId, e);
 			}
 
-			indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName());
+			indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorForSpatialUnit.getSpatialUnitName(), resolveMandantIdForIndicator(indicatorForSpatialUnit.getIndicatorMetadataId()));
 
 			/*
 			 * republish indicator layer as OGC service
@@ -1878,7 +1905,7 @@ public class IndicatorsManager {
             indicatorMetadataEntry.setLastUpdate(java.util.Calendar.getInstance().getTime());
             indicatorsMetadataRepo.saveAndFlush(indicatorMetadataEntry);
 
-            indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorSpatialsUnitsEntity.getSpatialUnitName());
+            indicatorViewTableName = IndicatorDatabaseHandler.createOrReplaceIndicatorView_fromViewTableName(indicatorViewTableName, indicatorSpatialsUnitsEntity.getSpatialUnitName(), resolveMandantIdForIndicator(indicatorSpatialsUnitsEntity.getIndicatorMetadataId()));
 			
 			/*
 			 * republish indicator layer as OGC service

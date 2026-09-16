@@ -174,6 +174,18 @@ public class DatabaseHelperUtil {
 	public static MetadataSpatialUnitsEntity getSpatialUnitMetadataEntityByName(String spatialUnitName) {
 		return spatialUnitsRepo.findByDatasetName(spatialUnitName);
 	}
+
+	/**
+	 * Resolves a spatial unit by its name scoped to a mandant. Spatial unit names are unique only within a mandant,
+	 * so a name-only lookup is ambiguous once two mandants share a name. When {@code mandantId} is {@code null} this
+	 * falls back to the (potentially ambiguous) name-only lookup.
+	 */
+	public static MetadataSpatialUnitsEntity getSpatialUnitMetadataEntityByName(String spatialUnitName, String mandantId) {
+		if (mandantId != null) {
+			return spatialUnitsRepo.findByDatasetNameAndMandant_OrganizationalUnitId(spatialUnitName, mandantId);
+		}
+		return spatialUnitsRepo.findByDatasetName(spatialUnitName);
+	}
 	
 	public static MetadataSpatialUnitsEntity getSpatialUnitMetadataEntityById(String spatialUnitId) {
 		return spatialUnitsRepo.findByDatasetId(spatialUnitId);

@@ -179,12 +179,12 @@ public class IndicatorDatabaseHandler {
 	}
 
 	private static String createOrOverwriteIndicatorView(String indicatorValueTableName,
-			String spatialUnitName) throws IOException, SQLException {
-		
+			String spatialUnitName, String mandantId) throws IOException, SQLException {
+
 		Connection jdbcConnection = null;
 		Statement statement = null;
 		String viewTableName = getViewTableNameFromValueTableName(indicatorValueTableName);
-		
+
 		try {
 			jdbcConnection = DatabaseHelperUtil.getJdbcConnection();
 
@@ -195,7 +195,7 @@ public class IndicatorDatabaseHandler {
 			 * t2.col = t1.col
 			 */
 			MetadataSpatialUnitsEntity spatialUnitEntity = DatabaseHelperUtil
-					.getSpatialUnitMetadataEntityByName(spatialUnitName);
+					.getSpatialUnitMetadataEntityByName(spatialUnitName, mandantId);
 			String spatialUnitsTable = spatialUnitEntity.getDbTableName();
 
 			// the correct naming of the properies/columns has to be ensured within input dataset!
@@ -999,18 +999,18 @@ public class IndicatorDatabaseHandler {
 //		
 //	}
 
-	public static String createOrReplaceIndicatorView_fromValueTableName(String indicatorValueTableName, String spatialUnitName) throws IOException, SQLException {
+	public static String createOrReplaceIndicatorView_fromValueTableName(String indicatorValueTableName, String spatialUnitName, String mandantId) throws IOException, SQLException {
 		/*
 		 * create view containing the geometry and indicatorValues
 		 * for each indicator feature also set ViewName in Metadata
 		 */
-		return createOrOverwriteIndicatorView(indicatorValueTableName, spatialUnitName);
+		return createOrOverwriteIndicatorView(indicatorValueTableName, spatialUnitName, mandantId);
 	}
-	
+
 	public static String createOrReplaceIndicatorView_fromViewTableName(String indicatorViewTableName,
-			String spatialUnitName) throws IOException, SQLException {
+			String spatialUnitName, String mandantId) throws IOException, SQLException {
 		String valueTableName = getValueTableNameFromViewTableName(indicatorViewTableName);
-		return createOrOverwriteIndicatorView(valueTableName, spatialUnitName);
+		return createOrOverwriteIndicatorView(valueTableName, spatialUnitName, mandantId);
 	}
 
 	public static List<Float> getAllIndicatorValues(String indicatorValueTableName, String datePropertyName) throws SQLException, IOException {

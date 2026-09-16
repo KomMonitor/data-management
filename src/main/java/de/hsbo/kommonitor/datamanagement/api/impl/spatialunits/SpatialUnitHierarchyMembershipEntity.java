@@ -1,6 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.spatialunits;
 
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -31,6 +32,7 @@ public class SpatialUnitHierarchyMembershipEntity {
     @JoinColumn(name = "spatialunit_datasetid", referencedColumnName = "datasetid")
     private MetadataSpatialUnitsEntity spatialUnit;
 
+    @Column(nullable = false)
     private Integer hierarchyLevel;
 
     @ManyToOne
