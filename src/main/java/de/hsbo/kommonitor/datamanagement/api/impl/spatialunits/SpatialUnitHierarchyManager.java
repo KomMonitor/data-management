@@ -30,6 +30,10 @@ public class SpatialUnitHierarchyManager {
 
     private static final String MSG_INVALID_HIERARCHY_NEIGHBOURS_ERROR = "invalid-hierarchy-neighbours-error";
 
+    private static final String MSG_HIERARCHY_EXISTS_ERROR = "hierarchy-exists-error";
+
+    private static final String MSG_DUPLICATE_HIERARCHY_ENTRY_ERROR = "duplicate-hierarchy-entry-error";
+
     @Autowired
     private SpatialUnitHierarchyRepository hierarchyRepository;
 
@@ -57,6 +61,11 @@ public class SpatialUnitHierarchyManager {
         if (!mandant.isMandant()) {
             throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
                     "Organizational unit '" + mandant.getOrganizationalUnitId() + "' is not a mandant and cannot own a spatial unit hierarchy.");
+        }
+
+        if (hierarchyRepository.existsByNameAndMandant_OrganizationalUnitId(input.getName(), mandant.getOrganizationalUnitId())) {
+            throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                    String.format(messageResolver.getMessage(MSG_HIERARCHY_EXISTS_ERROR), input.getName(), mandant.getName()));
         }
 
         SpatialUnitHierarchyEntity entity = new SpatialUnitHierarchyEntity();
@@ -89,8 +98,10 @@ public class SpatialUnitHierarchyManager {
             hierarchyEntities = hierarchyRepository.findAll();
         }
         else {
+            // a logged-in non-admin user sees the hierarchies of the mandants they belong to
+            // plus any publicly accessible hierarchy owned by another mandant
             hierarchyEntities = hierarchyRepository.findAll().stream()
-                    .filter(s -> orgaManager.belongsToMandant(s.getMandant(), provider))
+                    .filter(s -> s.isPublic() || orgaManager.belongsToMandant(s.getMandant(), provider))
                     .collect(Collectors.toList());
         }
 
@@ -142,35 +153,38 @@ public class SpatialUnitHierarchyManager {
     }
 
     /**
-     * Updates the metadata (name, owning mandant and public flag) of an existing spatial unit hierarchy.
+     * Updates the name and public flag of an existing spatial unit hierarchy. The owning mandant is immutable and
+     * cannot be changed through this operation.
      *
      * @param hierarchyId ID of the spatial unit hierarchy to update
      * @param input the new hierarchy metadata
      * @return representation of the updated spatial unit hierarchy
-     * @throws ResourceNotFoundException if the hierarchy does not exist or the referenced organizational unit is not a mandant
+     * @throws ResourceNotFoundException if the hierarchy does not exist, the request tries to change the mandant, or
+     * another hierarchy of the same mandant already uses the requested name
      */
     public SpatialUnitHierarchyOverviewType updateHierarchy(String hierarchyId, SpatialUnitHierarchyInputType input) throws ResourceNotFoundException {
         SpatialUnitHierarchyEntity entity = getHierarchyEntity(hierarchyId);
-        entity.setName(input.getName());
-        if (input.getMandantId() != null) {
-            OrganizationalUnitEntity mandant = orgaManager.getOrganizationalUnitEntity(input.getMandantId());
-            if (!mandant.isMandant()) {
-                throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
-                        "Organizational unit '" + mandant.getOrganizationalUnitId() + "' is not a mandant and cannot own a spatial unit hierarchy.");
-            }
-            /*
-             * A mandant change would leave the hierarchy's existing members belonging to a different mandant,
-             * violating the same-mandant invariant. Reject it while the hierarchy still has members.
-             */
-            boolean mandantChanged = entity.getMandant() == null
-                    || !mandant.getOrganizationalUnitId().equals(entity.getMandant().getOrganizationalUnitId());
-            if (mandantChanged && !membershipRepository.findByHierarchy_Id(hierarchyId).isEmpty()) {
-                throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
-                        "Cannot change the mandant of spatial unit hierarchy '" + hierarchyId
-                                + "' while it still has members. Remove its members first.");
-            }
-            entity.setMandant(mandant);
+        String currentMandantId = entity.getMandant() != null ? entity.getMandant().getOrganizationalUnitId() : null;
+
+        /*
+         * The owning mandant of a hierarchy is immutable. Reject any request that would change it.
+         */
+        if (input.getMandantId() != null && !input.getMandantId().equals(currentMandantId)) {
+            throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                    "The mandant of a spatial unit hierarchy cannot be changed.");
         }
+
+        /*
+         * Guard against a name collision with a different hierarchy of the same mandant. If the name is unchanged
+         * the only match is this hierarchy itself and the update is allowed.
+         */
+        if (!input.getName().equals(entity.getName()) && currentMandantId != null
+                && hierarchyRepository.existsByNameAndMandant_OrganizationalUnitId(input.getName(), currentMandantId)) {
+            throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                    String.format(messageResolver.getMessage(MSG_HIERARCHY_EXISTS_ERROR), input.getName(), entity.getMandant().getName()));
+        }
+
+        entity.setName(input.getName());
         if (input.getIsPublic() != null) {
             entity.setPublic(input.getIsPublic());
         }
@@ -235,6 +249,8 @@ public class SpatialUnitHierarchyManager {
 
         List<SpatialUnitHierarchyMembershipEntity> ordered = new ArrayList<>();
         if (members != null) {
+            validateNoDuplicateIds(members.stream().map(SpatialUnitHierarchyMemberInputType::getSpatialUnitId)
+                    .collect(Collectors.toList()), "spatialUnitId");
             List<SpatialUnitHierarchyMemberInputType> sortedMembers = new ArrayList<>(members);
             sortedMembers.sort(Comparator.comparing(SpatialUnitHierarchyMemberInputType::getHierarchyLevel,
                     Comparator.nullsLast(Comparator.naturalOrder())));
@@ -270,6 +286,8 @@ public class SpatialUnitHierarchyManager {
 
         Set<String> targetHierarchyIds = new HashSet<>();
         if (memberships != null) {
+            validateNoDuplicateIds(memberships.stream().map(SpatialUnitHierarchyMembershipInputType::getHierarchyId)
+                    .collect(Collectors.toList()), "hierarchies");
             for (SpatialUnitHierarchyMembershipInputType membership : memberships) {
                 SpatialUnitHierarchyEntity hierarchy = getHierarchyEntity(membership.getHierarchyId());
                 validateSameMandant(spatialUnit, hierarchy);
@@ -305,6 +323,8 @@ public class SpatialUnitHierarchyManager {
 
         Set<String> targetHierarchyIds = new HashSet<>();
         if (memberships != null) {
+            validateNoDuplicateIds(memberships.stream().map(SpatialUnitHierarchyMembershipPOSTInputType::getHierarchyId)
+                    .collect(Collectors.toList()), "hierarchies");
             for (SpatialUnitHierarchyMembershipPOSTInputType membership : memberships) {
                 SpatialUnitHierarchyEntity hierarchy = getHierarchyEntity(membership.getHierarchyId());
                 validateSameMandant(spatialUnit, hierarchy);
@@ -472,6 +492,20 @@ public class SpatialUnitHierarchyManager {
             throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
                     "The neighbouring spatial unit '" + neighbourId + "' is not a member of hierarchy '"
                             + hierarchy.getId() + "'. Neighbouring spatial units must already be members of the same hierarchy.");
+        }
+    }
+
+    /**
+     * Rejects a request whose input list references the same id more than once, which would otherwise violate the
+     * unique membership constraint at flush time and surface as an opaque server error.
+     */
+    private void validateNoDuplicateIds(List<String> ids, String field) {
+        Set<String> seen = new HashSet<>();
+        for (String id : ids) {
+            if (id != null && !seen.add(id)) {
+                throw new ValidationException(field,
+                        String.format(messageResolver.getMessage(MSG_DUPLICATE_HIERARCHY_ENTRY_ERROR), id));
+            }
         }
     }
 

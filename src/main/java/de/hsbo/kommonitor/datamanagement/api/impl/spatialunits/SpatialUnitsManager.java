@@ -90,10 +90,18 @@ public class SpatialUnitsManager {
              */
             OrganizationalUnitEntity owner = orgaManager.getOrganizationalUnitEntity(featureData.getOwnerId());
             OrganizationalUnitEntity mandant = resolveMandant(owner);
-            String mandantId = mandant != null ? mandant.getOrganizationalUnitId() : null;
 
-            if (mandantId != null
-                    && spatialUnitsMetadataRepo.existsByDatasetNameAndMandant_OrganizationalUnitId(datasetName, mandantId)) {
+            /*
+             * a spatial unit must resolve to a mandant so that its name uniqueness can be enforced; without a
+             * mandant the (datasetname, mandant) unique constraint cannot protect against name collisions.
+             */
+            if (mandant == null) {
+                throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                        "The owner '" + featureData.getOwnerId() + "' does not resolve to a mandant. A spatial unit must belong to a mandant.");
+            }
+            String mandantId = mandant.getOrganizationalUnitId();
+
+            if (spatialUnitsMetadataRepo.existsByDatasetNameAndMandant_OrganizationalUnitId(datasetName, mandantId)) {
                 logger.error("The spatialUnit metadataset with datasetName '{}' already exists for mandant '{}'. Thus aborting add spatial unit request.", datasetName, mandant.getName());
                 String errMsg = messageResolver.getMessage(MSG_SPATIAL_UNIT_EXISTS_ERROR);
                 throw new Exception(String.format(errMsg, datasetName, mandant.getName()));
@@ -346,16 +354,13 @@ public class SpatialUnitsManager {
                 logger.debug("Error was: {}", e.getMessage());
             }
 
-            try {
-                /*
-                 * remove the spatial unit from all hierarchies it belongs to and renormalize
-                 * those hierarchies so the remaining members' levels and neighbours stay coherent
-                 */
-                spatialUnitHierarchyManager.removeSpatialUnitFromAllHierarchies(spatialUnitId);
-            } catch (Exception e) {
-                logger.error("Error while updating hierarchy memberships due to deletion of spatial unit with id {}", spatialUnitId);
-                logger.debug("Error was: {}", e.getMessage());
-            }
+            /*
+             * remove the spatial unit from all hierarchies it belongs to and renormalize those hierarchies so the
+             * remaining members' levels and neighbours stay coherent. This is NOT swallowed: if it fails the whole
+             * delete must abort and roll back, otherwise the metadata delete would fire ON DELETE SET NULL on the
+             * neighbour columns and leave surviving members with un-renormalized ordering.
+             */
+            spatialUnitHierarchyManager.removeSpatialUnitFromAllHierarchies(spatialUnitId);
 
             try {
                 /*

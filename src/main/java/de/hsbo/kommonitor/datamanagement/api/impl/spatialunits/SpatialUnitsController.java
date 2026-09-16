@@ -685,8 +685,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	@PreAuthorize("isAuthorizedForSpatialUnitHierarchy(#hierarchyId, 'creator') and (#hierarchyData.mandantId == null or isAuthorizedForMandant(#hierarchyData.mandantId, 'creator'))")
-	public ResponseEntity<SpatialUnitHierarchyOverviewType> updateSpatialUnitHierarchy(@P("hierarchyId") String hierarchyId, @P("hierarchyData") SpatialUnitHierarchyInputType hierarchyData) {
+	@PreAuthorize("isAuthorizedForSpatialUnitHierarchy(#hierarchyId, 'creator')")
+	public ResponseEntity<SpatialUnitHierarchyOverviewType> updateSpatialUnitHierarchy(@P("hierarchyId") String hierarchyId, SpatialUnitHierarchyInputType hierarchyData) {
 		logger.info("Received request to update spatial unit hierarchy with id '{}'", hierarchyId);
 		try {
 			SpatialUnitHierarchyOverviewType hierarchy = spatialUnitHierarchyManager.updateHierarchy(hierarchyId, hierarchyData);
