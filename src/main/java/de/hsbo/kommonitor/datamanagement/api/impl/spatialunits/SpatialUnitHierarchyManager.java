@@ -279,7 +279,7 @@ public class SpatialUnitHierarchyManager {
                 validateNeighbourMembership(hierarchy, membership.getNextLowerSpatialUnitId(), spatialUnitId);
 
                 List<SpatialUnitHierarchyMembershipEntity> ordered = loadOrderedMembers(hierarchy.getId());
-                int index = insertIndexByNeighbours(ordered, hierarchy, membership.getNextUpperSpatialUnitId(),
+                int index = getInsertIndexByNeighbours(ordered, hierarchy, membership.getNextUpperSpatialUnitId(),
                         membership.getNextLowerSpatialUnitId());
                 ordered.add(index, newMembership(hierarchy, spatialUnit));
                 recomputeOrdering(ordered);
@@ -289,6 +289,29 @@ public class SpatialUnitHierarchyManager {
             }
         }
         renormalizeRemovedFrom(affectedHierarchyIds, targetHierarchyIds);
+    }
+
+    /**
+     * Removes a spatial unit from all hierarchies it belongs to and renormalizes those hierarchies afterwards, so that
+     * the membership levels and neighbouring spatial units of the remaining members stay coherent. Intended to be
+     * called when a spatial unit is deleted.
+     *
+     * @param spatialUnitId ID of the spatial unit that is being deleted
+     */
+    public void removeSpatialUnitFromAllHierarchies(String spatialUnitId) {
+        Set<String> affectedHierarchyIds = collectHierarchyIds(spatialUnitId);
+        if (affectedHierarchyIds.isEmpty()) {
+            return;
+        }
+
+        membershipRepository.deleteBySpatialUnit_DatasetId(spatialUnitId);
+        membershipRepository.flush();
+
+        for (String hierarchyId : affectedHierarchyIds) {
+            recomputeOrdering(loadOrderedMembers(hierarchyId));
+        }
+        logger.info("Removed spatial unit '{}' from {} hierarchies and renormalized their membership ordering.",
+                spatialUnitId, affectedHierarchyIds.size());
     }
 
     /**
@@ -304,10 +327,9 @@ public class SpatialUnitHierarchyManager {
     }
 
     /**
-     * Normalizes an ordered list of memberships (index 0 = top level) so that both
-     * representations of the ordering are coherent: hierarchyLevel is set to the position
-     * and the nextUpper/nextLower spatial units are set to the adjacent members (null at
-     * the top/bottom ends). Persists all memberships.
+     * Normalizes an ordered list of memberships (index 0 = top level) so that both representations of the ordering are
+     * coherent: hierarchyLevel is set to the position and the nextUpper/nextLower spatial units are set to the adjacent
+     * members (null at the top/bottom ends). Persists all memberships.
      */
     private void recomputeOrdering(List<SpatialUnitHierarchyMembershipEntity> ordered) {
         for (int i = 0; i < ordered.size(); i++) {
@@ -345,8 +367,8 @@ public class SpatialUnitHierarchyManager {
      *       {@link ValidationException} is thrown.</li>
      * </ul>
      */
-    private int insertIndexByNeighbours(List<SpatialUnitHierarchyMembershipEntity> ordered,
-                                        SpatialUnitHierarchyEntity hierarchy, String nextUpperId, String nextLowerId) {
+    private int getInsertIndexByNeighbours(List<SpatialUnitHierarchyMembershipEntity> ordered,
+                                           SpatialUnitHierarchyEntity hierarchy, String nextUpperId, String nextLowerId) {
         boolean hasUpper = nextUpperId != null && !nextUpperId.isBlank();
         boolean hasLower = nextLowerId != null && !nextLowerId.isBlank();
 

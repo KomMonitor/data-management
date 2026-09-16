@@ -348,7 +348,18 @@ public class SpatialUnitsManager {
 
             try {
                 /*
-                 * delete metadata entry. Associated hierarchy memberships are removed
+                 * remove the spatial unit from all hierarchies it belongs to and renormalize
+                 * those hierarchies so the remaining members' levels and neighbours stay coherent
+                 */
+                spatialUnitHierarchyManager.removeSpatialUnitFromAllHierarchies(spatialUnitId);
+            } catch (Exception e) {
+                logger.error("Error while updating hierarchy memberships due to deletion of spatial unit with id {}", spatialUnitId);
+                logger.debug("Error was: {}", e.getMessage());
+            }
+
+            try {
+                /*
+                 * delete metadata entry. Any remaining hierarchy memberships are removed
                  * automatically via the ON DELETE CASCADE foreign key.
                  */
                 spatialUnitsMetadataRepo.deleteByDatasetId(spatialUnitId);
