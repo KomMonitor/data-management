@@ -23,6 +23,7 @@ import de.hsbo.kommonitor.datamanagement.auth.token.TokenParserFactory;
 import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.users.UserInfoRepository;
 import de.hsbo.kommonitor.datamanagement.model.IndicatorPATCHDisplayOrderInputType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyMembershipInputType;
 
 import java.security.Principal;
 import java.util.List;
@@ -221,6 +222,33 @@ public class EntitySecurityExpressionRoot extends SecurityExpressionRoot impleme
             logger.error("unable to evaluate mandant membership for mandant with id " + mandantId + "; return not authorized", ex);
             return false;
         }
+    }
+
+    /**
+     * Check if a user is allowed to change the hierarchy memberships of a spatial unit: the user must have the
+     * required permission level on the spatial unit itself AND be authorized (via the owning mandant) for each
+     * referenced hierarchy.
+     * to be used with @PreAuthorize and @PostAuthorize annotations
+     *
+     * @param spatialUnitId the id of the spatial unit whose memberships are changed
+     * @param memberships the requested hierarchy memberships
+     * @param permissionLevel the required resource permission level (e.g. 'editor')
+     * @return true if the user is authorized for the spatial unit and every referenced hierarchy
+     */
+    public boolean isAuthorizedForSpatialUnitHierarchyMemberships(String spatialUnitId,
+            List<SpatialUnitHierarchyMembershipInputType> memberships, String permissionLevel) {
+        logger.debug("called isAuthorizedForSpatialUnitHierarchyMemberships for spatial unit id " + spatialUnitId);
+        if (!isAuthorizedForEntity(spatialUnitId, EntityType.SPATIALUNIT.toString(), permissionLevel)) {
+            return false;
+        }
+        if (memberships != null) {
+            for (SpatialUnitHierarchyMembershipInputType membership : memberships) {
+                if (!isAuthorizedForSpatialUnitHierarchy(membership.getHierarchyId(), permissionLevel)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

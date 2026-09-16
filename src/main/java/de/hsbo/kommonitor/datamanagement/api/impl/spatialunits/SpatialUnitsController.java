@@ -650,8 +650,9 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
 	public ResponseEntity<SpatialUnitHierarchyOverviewType> getSpatialUnitHierarchyById(String hierarchyId) {
 		logger.info("Received request to get spatial unit hierarchy with id '{}'", hierarchyId);
+		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
 		try {
-			SpatialUnitHierarchyOverviewType hierarchy = spatialUnitHierarchyManager.getHierarchy(hierarchyId);
+			SpatialUnitHierarchyOverviewType hierarchy = spatialUnitHierarchyManager.getHierarchy(hierarchyId, authInfoProvider);
 			return new ResponseEntity<>(hierarchy, HttpStatus.OK);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
@@ -684,8 +685,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	@PreAuthorize("isAuthorizedForSpatialUnitHierarchy(#hierarchyId, 'creator')")
-	public ResponseEntity<SpatialUnitHierarchyOverviewType> updateSpatialUnitHierarchy(@P("hierarchyId") String hierarchyId, SpatialUnitHierarchyInputType hierarchyData) {
+	@PreAuthorize("isAuthorizedForSpatialUnitHierarchy(#hierarchyId, 'creator') and (#hierarchyData.mandantId == null or isAuthorizedForMandant(#hierarchyData.mandantId, 'creator'))")
+	public ResponseEntity<SpatialUnitHierarchyOverviewType> updateSpatialUnitHierarchy(@P("hierarchyId") String hierarchyId, @P("hierarchyData") SpatialUnitHierarchyInputType hierarchyData) {
 		logger.info("Received request to update spatial unit hierarchy with id '{}'", hierarchyId);
 		try {
 			SpatialUnitHierarchyOverviewType hierarchy = spatialUnitHierarchyManager.updateHierarchy(hierarchyId, hierarchyData);
@@ -723,10 +724,10 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	}
 
 	@Override
-	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
+	@PreAuthorize("isAuthorizedForSpatialUnitHierarchyMemberships(#spatialUnitId, #hierarchies, 'editor')")
 	public ResponseEntity<SpatialUnitOverviewType> updateSpatialUnitHierarchyMemberships(
 			@P("spatialUnitId") String spatialUnitId,
-			List<SpatialUnitHierarchyMembershipInputType> hierarchies) {
+			@P("hierarchies") List<SpatialUnitHierarchyMembershipInputType> hierarchies) {
 		logger.info("Received request to update hierarchy memberships of spatial unit with id '{}'", spatialUnitId);
 		try {
 			spatialUnitHierarchyManager.updateSpatialUnitMemberships(spatialUnitId, hierarchies);

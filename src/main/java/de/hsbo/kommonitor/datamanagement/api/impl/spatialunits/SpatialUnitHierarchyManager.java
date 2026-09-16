@@ -120,6 +120,28 @@ public class SpatialUnitHierarchyManager {
     }
 
     /**
+     * Retrieves a single spatial unit hierarchy including its ordered members, scoped to the requesting user. The
+     * hierarchy is returned only if it is public, the user belongs to its mandant, or the user is a global administrator;
+     * otherwise it is treated as not found so that its existence is not leaked across mandants.
+     *
+     * @param hierarchyId ID of the spatial unit hierarchy
+     * @param provider authentication information of the current user, or {@code null} for anonymous access
+     * @return representation of the spatial unit hierarchy
+     * @throws ResourceNotFoundException if no hierarchy exists with the given id or the user is not allowed to access it
+     */
+    public SpatialUnitHierarchyOverviewType getHierarchy(String hierarchyId, AuthInfoProvider provider) throws ResourceNotFoundException {
+        SpatialUnitHierarchyEntity entity = getHierarchyEntity(hierarchyId);
+        boolean authorized = entity.isPublic()
+                || (provider != null
+                    && (provider.hasGlobalAdminPermissions() || orgaManager.belongsToMandant(entity.getMandant(), provider)));
+        if (!authorized) {
+            throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                    "No spatial unit hierarchy exists with id " + hierarchyId);
+        }
+        return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(entity);
+    }
+
+    /**
      * Updates the metadata (name, owning mandant and public flag) of an existing spatial unit hierarchy.
      *
      * @param hierarchyId ID of the spatial unit hierarchy to update
@@ -135,6 +157,17 @@ public class SpatialUnitHierarchyManager {
             if (!mandant.isMandant()) {
                 throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
                         "Organizational unit '" + mandant.getOrganizationalUnitId() + "' is not a mandant and cannot own a spatial unit hierarchy.");
+            }
+            /*
+             * A mandant change would leave the hierarchy's existing members belonging to a different mandant,
+             * violating the same-mandant invariant. Reject it while the hierarchy still has members.
+             */
+            boolean mandantChanged = entity.getMandant() == null
+                    || !mandant.getOrganizationalUnitId().equals(entity.getMandant().getOrganizationalUnitId());
+            if (mandantChanged && !membershipRepository.findByHierarchy_Id(hierarchyId).isEmpty()) {
+                throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                        "Cannot change the mandant of spatial unit hierarchy '" + hierarchyId
+                                + "' while it still has members. Remove its members first.");
             }
             entity.setMandant(mandant);
         }
