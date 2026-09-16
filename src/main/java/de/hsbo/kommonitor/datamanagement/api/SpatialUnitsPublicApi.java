@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-09-15T09:32:24.972110100+02:00[Europe/Berlin]", comments = "Generator version: 7.23.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-09-16T13:46:24.618402300+02:00[Europe/Berlin]", comments = "Generator version: 7.23.0")
 @Validated
 @Tag(name = "spatial-units-public", description = "the public SpatialUnits API")
 public interface SpatialUnitsPublicApi {

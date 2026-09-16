@@ -5431,7 +5431,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SpatialUnitHierarchyInputType'
+              $ref: '#/components/schemas/SpatialUnitHierarchyPOSTInputType'
         required: true
       responses:
         "200":
@@ -8777,7 +8777,8 @@ components:
         - name
         - mandantId
       type: object
-      description: input for creating or updating a mandant-owned spatial unit hierarchy
+      description: input for updating a mandant-owned spatial unit hierarchy. The owning
+        mandant is immutable and must match the hierarchy's current mandant.
       properties:
         name:
           type: string
@@ -8790,6 +8791,32 @@ components:
           type: boolean
           description: flag whether the hierarchy is publicly accessible
           default: false
+    SpatialUnitHierarchyPOSTInputType:
+      title: SpatialUnitHierarchyPOSTInputType
+      required:
+        - name
+        - mandantId
+      type: object
+      description: input for creating a mandant-owned spatial unit hierarchy, optionally
+        with its ordered spatial unit members
+      properties:
+        name:
+          type: string
+          description: the name of the hierarchy. Unique within the owning mandant.
+        mandantId:
+          type: string
+          description: identifier of the mandant (organizational unit) that owns the
+            hierarchy
+        isPublic:
+          type: boolean
+          description: flag whether the hierarchy is publicly accessible
+          default: false
+        members:
+          type: array
+          description: optional ordered list of existing spatial units to place into the
+            new hierarchy. All members must belong to the same mandant as the hierarchy.
+          items:
+            $ref: '#/components/schemas/SpatialUnitHierarchyMemberInputType'
     SpatialUnitHierarchyOverviewType:
       title: SpatialUnitHierarchyOverviewType
       required:

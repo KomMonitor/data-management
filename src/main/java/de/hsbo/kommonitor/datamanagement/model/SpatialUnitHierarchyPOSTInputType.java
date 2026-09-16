@@ -4,6 +4,10 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyMemberInputType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.io.Serializable;
@@ -17,12 +21,12 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * input for updating a mandant-owned spatial unit hierarchy. The owning mandant is immutable and must match the hierarchy&#39;s current mandant.
+ * input for creating a mandant-owned spatial unit hierarchy, optionally with its ordered spatial unit members
  */
 
-@Schema(name = "SpatialUnitHierarchyInputType", description = "input for updating a mandant-owned spatial unit hierarchy. The owning mandant is immutable and must match the hierarchy's current mandant.")
+@Schema(name = "SpatialUnitHierarchyPOSTInputType", description = "input for creating a mandant-owned spatial unit hierarchy, optionally with its ordered spatial unit members")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.23.0")
-public class SpatialUnitHierarchyInputType implements Serializable {
+public class SpatialUnitHierarchyPOSTInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -32,19 +36,21 @@ public class SpatialUnitHierarchyInputType implements Serializable {
 
   private Boolean isPublic = false;
 
-  public SpatialUnitHierarchyInputType() {
+  private List<@Valid SpatialUnitHierarchyMemberInputType> members = new ArrayList<>();
+
+  public SpatialUnitHierarchyPOSTInputType() {
     super();
   }
 
   /**
    * Constructor with only required parameters
    */
-  public SpatialUnitHierarchyInputType(String name, String mandantId) {
+  public SpatialUnitHierarchyPOSTInputType(String name, String mandantId) {
     this.name = name;
     this.mandantId = mandantId;
   }
 
-  public SpatialUnitHierarchyInputType name(String name) {
+  public SpatialUnitHierarchyPOSTInputType name(String name) {
     this.name = name;
     return this;
   }
@@ -65,7 +71,7 @@ public class SpatialUnitHierarchyInputType implements Serializable {
     this.name = name;
   }
 
-  public SpatialUnitHierarchyInputType mandantId(String mandantId) {
+  public SpatialUnitHierarchyPOSTInputType mandantId(String mandantId) {
     this.mandantId = mandantId;
     return this;
   }
@@ -86,7 +92,7 @@ public class SpatialUnitHierarchyInputType implements Serializable {
     this.mandantId = mandantId;
   }
 
-  public SpatialUnitHierarchyInputType isPublic(Boolean isPublic) {
+  public SpatialUnitHierarchyPOSTInputType isPublic(Boolean isPublic) {
     this.isPublic = isPublic;
     return this;
   }
@@ -107,6 +113,35 @@ public class SpatialUnitHierarchyInputType implements Serializable {
     this.isPublic = isPublic;
   }
 
+  public SpatialUnitHierarchyPOSTInputType members(List<@Valid SpatialUnitHierarchyMemberInputType> members) {
+    this.members = members;
+    return this;
+  }
+
+  public SpatialUnitHierarchyPOSTInputType addMembersItem(SpatialUnitHierarchyMemberInputType membersItem) {
+    if (this.members == null) {
+      this.members = new ArrayList<>();
+    }
+    this.members.add(membersItem);
+    return this;
+  }
+
+  /**
+   * optional ordered list of existing spatial units to place into the new hierarchy. All members must belong to the same mandant as the hierarchy.
+   * @return members
+   */
+  @Valid 
+  @Schema(name = "members", description = "optional ordered list of existing spatial units to place into the new hierarchy. All members must belong to the same mandant as the hierarchy.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("members")
+  public List<@Valid SpatialUnitHierarchyMemberInputType> getMembers() {
+    return members;
+  }
+
+  @JsonProperty("members")
+  public void setMembers(List<@Valid SpatialUnitHierarchyMemberInputType> members) {
+    this.members = members;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -115,24 +150,26 @@ public class SpatialUnitHierarchyInputType implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SpatialUnitHierarchyInputType spatialUnitHierarchyInputType = (SpatialUnitHierarchyInputType) o;
-    return Objects.equals(this.name, spatialUnitHierarchyInputType.name) &&
-        Objects.equals(this.mandantId, spatialUnitHierarchyInputType.mandantId) &&
-        Objects.equals(this.isPublic, spatialUnitHierarchyInputType.isPublic);
+    SpatialUnitHierarchyPOSTInputType spatialUnitHierarchyPOSTInputType = (SpatialUnitHierarchyPOSTInputType) o;
+    return Objects.equals(this.name, spatialUnitHierarchyPOSTInputType.name) &&
+        Objects.equals(this.mandantId, spatialUnitHierarchyPOSTInputType.mandantId) &&
+        Objects.equals(this.isPublic, spatialUnitHierarchyPOSTInputType.isPublic) &&
+        Objects.equals(this.members, spatialUnitHierarchyPOSTInputType.members);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, mandantId, isPublic);
+    return Objects.hash(name, mandantId, isPublic, members);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SpatialUnitHierarchyInputType {\n");
+    sb.append("class SpatialUnitHierarchyPOSTInputType {\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    mandantId: ").append(toIndentedString(mandantId)).append("\n");
     sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
+    sb.append("    members: ").append(toIndentedString(members)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -50,13 +50,15 @@ public class SpatialUnitHierarchyManager {
     private MessageResolver messageResolver;
 
     /**
-     * Creates a new spatial unit hierarchy owned by a mandant.
+     * Creates a new spatial unit hierarchy owned by a mandant, optionally with its ordered spatial unit members.
      *
-     * @param input definition of the hierarchy to create
+     * @param input definition of the hierarchy to create, optionally including members
      * @return representation of the created spatial unit hierarchy
-     * @throws ResourceNotFoundException if the referenced organizational unit does not exist or is not a mandant
+     * @throws ResourceNotFoundException if the referenced organizational unit does not exist or is not a mandant, a
+     * member spatial unit does not exist or does not belong to the mandant, or another hierarchy of the same mandant
+     * already uses the requested name
      */
-    public SpatialUnitHierarchyOverviewType addHierarchy(SpatialUnitHierarchyInputType input) throws ResourceNotFoundException {
+    public SpatialUnitHierarchyOverviewType addHierarchy(SpatialUnitHierarchyPOSTInputType input) throws ResourceNotFoundException {
         OrganizationalUnitEntity mandant = orgaManager.getOrganizationalUnitEntity(input.getMandantId());
         if (!mandant.isMandant()) {
             throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
@@ -75,7 +77,13 @@ public class SpatialUnitHierarchyManager {
 
         entity = hierarchyRepository.save(entity);
         logger.info("Created spatial unit hierarchy '{}' for mandant '{}'.", entity.getId(), mandant.getOrganizationalUnitId());
-        return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(entity);
+
+        List<SpatialUnitHierarchyMembershipEntity> memberships = new ArrayList<>();
+        if (input.getMembers() != null && !input.getMembers().isEmpty()) {
+            applyHierarchyMembers(entity, input.getMembers());
+            memberships = membershipRepository.findByHierarchy_Id(entity.getId());
+        }
+        return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(entity, memberships);
     }
 
     /**
@@ -243,8 +251,21 @@ public class SpatialUnitHierarchyManager {
     public SpatialUnitHierarchyOverviewType updateHierarchyMembers(String hierarchyId, List<SpatialUnitHierarchyMemberInputType> members)
             throws ResourceNotFoundException {
         SpatialUnitHierarchyEntity hierarchy = getHierarchyEntity(hierarchyId);
+        applyHierarchyMembers(hierarchy, members);
+        return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(getHierarchyEntity(hierarchyId));
+    }
 
-        membershipRepository.deleteByHierarchy_Id(hierarchyId);
+    /**
+     * Replaces the full ordered member list of a hierarchy: removes any existing memberships, then (re)creates them
+     * from the requested members ordered by hierarchyLevel and normalized so that level and neighbouring spatial units
+     * are coherent. A {@code null} member list leaves the hierarchy without members.
+     *
+     * @throws ResourceNotFoundException if a member spatial unit does not exist or does not belong to the hierarchy's
+     * mandant
+     */
+    private void applyHierarchyMembers(SpatialUnitHierarchyEntity hierarchy, List<SpatialUnitHierarchyMemberInputType> members)
+            throws ResourceNotFoundException {
+        membershipRepository.deleteByHierarchy_Id(hierarchy.getId());
         membershipRepository.flush();
 
         List<SpatialUnitHierarchyMembershipEntity> ordered = new ArrayList<>();
@@ -261,8 +282,6 @@ public class SpatialUnitHierarchyManager {
             }
         }
         recomputeOrdering(ordered);
-
-        return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(getHierarchyEntity(hierarchyId));
     }
 
     /**

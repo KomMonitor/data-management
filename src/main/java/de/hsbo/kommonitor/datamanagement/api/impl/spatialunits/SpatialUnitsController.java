@@ -555,7 +555,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 
 	@Override
 	@PreAuthorize("isAuthorizedForMandant(#hierarchyData.mandantId, 'creator')")
-	public ResponseEntity<SpatialUnitHierarchyOverviewType> addSpatialUnitHierarchy(@P("hierarchyData") SpatialUnitHierarchyInputType hierarchyData) {
+	public ResponseEntity<SpatialUnitHierarchyOverviewType> addSpatialUnitHierarchy(@P("hierarchyData") SpatialUnitHierarchyPOSTInputType hierarchyData) {
 		logger.info("Received request to create a new spatial unit hierarchy");
 		SpatialUnitHierarchyOverviewType hierarchy;
 		try {

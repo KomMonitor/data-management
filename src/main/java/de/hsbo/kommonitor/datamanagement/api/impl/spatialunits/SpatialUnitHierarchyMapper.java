@@ -14,6 +14,16 @@ import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyOverviewType;
 public class SpatialUnitHierarchyMapper {
 
     public static SpatialUnitHierarchyOverviewType mapToSwaggerHierarchy(SpatialUnitHierarchyEntity entity) {
+        return mapToSwaggerHierarchy(entity, entity.getMemberships());
+    }
+
+    /**
+     * Maps a hierarchy using an explicitly provided membership list rather than the entity's lazy collection. Used
+     * right after a hierarchy's memberships were changed within the same transaction, where the entity's in-memory
+     * collection may not yet reflect the persisted rows.
+     */
+    public static SpatialUnitHierarchyOverviewType mapToSwaggerHierarchy(SpatialUnitHierarchyEntity entity,
+            List<SpatialUnitHierarchyMembershipEntity> memberships) {
         SpatialUnitHierarchyOverviewType overview = new SpatialUnitHierarchyOverviewType();
         overview.setHierarchyId(entity.getId());
         overview.setName(entity.getName());
@@ -21,7 +31,7 @@ public class SpatialUnitHierarchyMapper {
             overview.setMandantId(entity.getMandant().getOrganizationalUnitId());
         }
         overview.setIsPublic(entity.isPublic());
-        overview.setMembers(mapToMembers(entity.getMemberships()));
+        overview.setMembers(mapToMembers(memberships));
         return overview;
     }
 

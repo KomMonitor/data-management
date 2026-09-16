@@ -14,6 +14,7 @@ import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyInputType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyMemberInputType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyMembershipInputType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.SpatialUnitHierarchyPOSTInputType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPATCHInputType;
 import de.hsbo.kommonitor.datamanagement.model.SpatialUnitPOSTInputType;
@@ -42,7 +43,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-09-15T09:32:24.972110100+02:00[Europe/Berlin]", comments = "Generator version: 7.23.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-09-16T13:46:24.618402300+02:00[Europe/Berlin]", comments = "Generator version: 7.23.0")
 @Validated
 @Tag(name = "spatial-units", description = "the SpatialUnits API")
 public interface SpatialUnitsApi {
@@ -131,7 +132,7 @@ public interface SpatialUnitsApi {
         consumes = { "application/json" }
     )
     ResponseEntity<SpatialUnitHierarchyOverviewType> addSpatialUnitHierarchy(
-        @Parameter(name = "hierarchyData", description = "hierarchy definition", required = true) @Valid @RequestBody SpatialUnitHierarchyInputType hierarchyData
+        @Parameter(name = "hierarchyData", description = "hierarchy definition", required = true) @Valid @RequestBody SpatialUnitHierarchyPOSTInputType hierarchyData
     );
 
 
