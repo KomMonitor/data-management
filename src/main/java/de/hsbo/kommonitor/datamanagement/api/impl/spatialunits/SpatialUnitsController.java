@@ -60,11 +60,6 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	public ResponseEntity<SpatialUnitOverviewType> addSpatialUnitAsBody(SpatialUnitPOSTInputType featureData) {
 		logger.info("Received request to insert new spatial unit");
 
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * analyse input data and save it within database
-		 */
 		SpatialUnitOverviewType spatialUnitMetadata;
 		try {
 			spatialUnitMetadata = spatialUnitsManager.addSpatialUnit(featureData);
@@ -83,7 +78,7 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			try {
 				responseHeaders.setLocation(new URI(location));
 			} catch (URISyntaxException e) {
-				// return ApiResponseUtil.createResponseEntityFromException(e);
+				return ApiUtils.createResponseEntityFromException(e);
 			}
 
 			return new ResponseEntity<SpatialUnitOverviewType>(spatialUnitMetadata, responseHeaders, HttpStatus.CREATED);
@@ -96,12 +91,6 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'editor')")
 	public ResponseEntity deleteAllSpatialUnitFeaturesById(@P("spatialUnitId") String spatialUnitId) {
 		logger.info("Received request to delete all spatialUnit features for datasetName '{}'", spatialUnitId);
-
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * delete topic with the specified id
-		 */
 
 		boolean isDeleted;
 		try {
@@ -122,12 +111,6 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'creator')")
 	public ResponseEntity deleteSpatialUnitById(@P("spatialUnitId") String spatialUnitId) {
 		logger.info("Received request to delete spatialUnit for datasetName '{}'", spatialUnitId);
-
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * delete topic with the specified id
-		 */
 
 		boolean isDeleted;
 		try {
@@ -153,12 +136,6 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			BigDecimal day) {
 		logger.info("Received request to delete spatialUnit for datasetId '{}' and Date '{}-{}-{}'", spatialUnitId, year, month, day);
 
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * delete topic with the specified id
-		 */
-
 		boolean isDeleted;
 		try {
 			isDeleted = spatialUnitsManager.deleteSpatialUnitDatasetByIdAndDate(spatialUnitId, year, month, day);
@@ -180,12 +157,6 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			@P("spatialUnitId") String spatialUnitId,
 			String featureId) {
 		logger.info("Received request to delete single spatial unit feature databse records for datasetId '{}' and featureId '{}'", spatialUnitId, featureId);
-
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * delete topic with the specified id
-		 */
 
 		boolean isDeleted;
 		try {
@@ -210,12 +181,6 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			String featureRecordId) {
 		logger.info("Received request to delete single spatial unit feature databse record for datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
 
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * delete topic with the specified id
-		 */
-
 		boolean isDeleted;
 		try {
 			isDeleted = spatialUnitsManager.deleteSingleSpatialUnitFeatureRecordByRecordId(spatialUnitId, featureId, featureRecordId);
@@ -235,26 +200,12 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	@PreAuthorize("hasRequiredPermissionLevel('viewer')")
 	public ResponseEntity<List<SpatialUnitOverviewType>> getSpatialUnits() {
 		logger.info("Received request to get all spatialUnits metadata");
-		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
-		/*
-		 * retrieve all available users
-		 * 
-		 * return them to client
-		 */
+
 		try {
-			
-//			if (accept != null && accept.contains("application/json")) {
-
-				List<SpatialUnitOverviewType> spatialunitsMetadata = spatialUnitsManager.getAllSpatialUnitsMetadata(authInfoProvider);
-
-				return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
-//
-//			} else {
-//				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//			}
-			
+			List<SpatialUnitOverviewType> spatialunitsMetadata = spatialUnitsManager.getAllSpatialUnitsMetadata(authInfoProvider);
+			return new ResponseEntity<>(spatialunitsMetadata, HttpStatus.OK);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
@@ -264,46 +215,28 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'viewer')")
 	public ResponseEntity<SpatialUnitOverviewType> getSpatialUnitsById(@P("spatialUnitId") String spatialUnitId) {
 		logger.info("Received request to get spatialUnit metadata for datasetId '{}'", spatialUnitId);
-		String accept = request.getHeader("Accept");
+
 		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
 
-		/*
-		 * retrieve the user for the specified id
-		 */
 		try {
-			if (accept != null && accept.contains("application/json")) {
-
-				
-				SpatialUnitOverviewType spatialUnitMetadata = spatialUnitsManager.getSpatialUnitByDatasetId(spatialUnitId, authInfoProvider);
-
-				return new ResponseEntity<>(spatialUnitMetadata, HttpStatus.OK);
-
-			} else {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+			SpatialUnitOverviewType spatialUnitMetadata = spatialUnitsManager.getSpatialUnitByDatasetId(spatialUnitId, authInfoProvider);
+			return new ResponseEntity<>(spatialUnitMetadata, HttpStatus.OK);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
-
-		
 	}
 
 	@Override
 	public ResponseEntity<List<PermissionLevelType>> getSpatialUnitsPermissionsById(String spatialUnitId) {
 		logger.info("Received request to list access rights for spatial unit with datasetId '{}'", spatialUnitId);
-		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider provider = authInfoProviderFactory.createAuthInfoProvider();
 
 		try {
-			if (accept != null && accept.contains("application/json")) {
-				List<PermissionLevelType> permissions =
-						spatialUnitsManager.getSpatialUnitsPermissionsByDatasetId(spatialUnitId, provider);
+			List<PermissionLevelType> permissions =
+					spatialUnitsManager.getSpatialUnitsPermissionsByDatasetId(spatialUnitId, provider);
 
-				return new ResponseEntity<>(permissions, HttpStatus.OK);
-			} else {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+			return new ResponseEntity<>(permissions, HttpStatus.OK);
 		} catch (Exception e) {
 			return ApiUtils.createResponseEntityFromException(e);
 		}
@@ -315,13 +248,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			@P("spatialUnitId") String spatialUnitId,
 			String simplifyGeometries) {
 		logger.info("Received request to get spatialUnit features for datasetId '{}' and simplifyGeometries parameter '{}'", spatialUnitId, simplifyGeometries);
-		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
-
-		/*
-		 * retrieve the user for the specified id
-		 */
 
 		try {
 			String geoJsonFeatures = spatialUnitsManager.getAllSpatialUnitFeatures(spatialUnitId, simplifyGeometries, authInfoProvider);
@@ -348,7 +276,6 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			String simplifyGeometries) {
 		logger.info("Received request to get single spatial unit feature records for datasetId '{}' and featureId '{}'",
 				spatialUnitId, featureId);
-		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
 
@@ -409,13 +336,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			BigDecimal day,
 			String simplifyGeometries) {
 		logger.info("Received request to get spatialUnit features for datasetId '{}' and simplifyGeometries parameter '{}'", spatialUnitId, simplifyGeometries);
-		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
-
-		/*
-		 * retrieve the user for the specified id
-		 */
 
 		try {
 			String geoJsonFeatures = spatialUnitsManager.getValidSpatialUnitFeatures(spatialUnitId, year, month,
@@ -440,28 +362,18 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 	@PreAuthorize("isAuthorizedForEntity(#spatialUnitId, 'spatialunit', 'viewer')")
 	public ResponseEntity<String> getSpatialUnitsSchemaById(@P("spatialUnitId") String spatialUnitId) {
 		logger.info("Received request to get spatialUnit metadata for datasetName '{}'", spatialUnitId);
-		String accept = request.getHeader("Accept");
 
 		AuthInfoProvider authInfoProvider = authInfoProviderFactory.createAuthInfoProvider();
 
-		/*
-		 * retrieve the user for the specified id
-		 */
-
-		if (accept != null && accept.contains("application/json")) {
-
-			String jsonSchema = null;
-			try {
-				jsonSchema = spatialUnitsManager.getJsonSchemaForDatasetId(spatialUnitId, authInfoProvider);
-			} catch (ResourceNotFoundException e) {
-				return ApiUtils.createResponseEntityFromException(e);
-			}
-
-			return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
-
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		String jsonSchema;
+		try {
+			jsonSchema = spatialUnitsManager.getJsonSchemaForDatasetId(spatialUnitId, authInfoProvider);
+		} catch (ResourceNotFoundException e) {
+			return ApiUtils.createResponseEntityFromException(e);
 		}
+
+		return new ResponseEntity<>(jsonSchema, HttpStatus.OK);
+
 	}
 
 	@Override
@@ -470,12 +382,6 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			@P("spatialUnitId") String spatialUnitId,
 			SpatialUnitPUTInputType featureData) {
 		logger.info("Received request to update spatial unit features for datasetName '{}'", spatialUnitId);
-
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * analyse input data and save it within database
-		 */
 
 		try {
 			spatialUnitId = spatialUnitsManager.updateFeatures(featureData, spatialUnitId);
@@ -507,12 +413,6 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			@P("spatialUnitId") String spatialUnitId,
 			SpatialUnitPATCHInputType metadata) {
 		logger.info("Received request to update spatial unit metadata for datasetName '{}'", spatialUnitId);
-
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * analyse input data and save it within database
-		 */
 
 		try {
 			spatialUnitId = spatialUnitsManager.updateMetadata(metadata, spatialUnitId);
@@ -546,12 +446,6 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			String featureRecordId,
 			String spatialUnitFeatureRecordData) {
 		logger.info("Received request to update single spatial unit feature database record for datasetId '{}' and featureId '{}' and recordId '{}'", spatialUnitId, featureId, featureRecordId);
-
-		String accept = request.getHeader("Accept");
-
-		/*
-		 * analyse input data and save it within database
-		 */
 
 		try {
 			spatialUnitId = spatialUnitsManager.updateFeatureRecordByRecordId(spatialUnitFeatureRecordData, spatialUnitId, featureId, featureRecordId);
