@@ -102,7 +102,7 @@ public class GeoresourcePATCHInputType implements Serializable {
    * @return datasetName
    */
   
-  @Schema(name = "datasetName", description = "the meaningful name of the dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "datasetName", example = "Public Schools", description = "the meaningful name of the dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("datasetName")
   public @Nullable String getDatasetName() {
     return datasetName;
@@ -333,7 +333,7 @@ public class GeoresourcePATCHInputType implements Serializable {
    * @return poiSymbolBootstrap3Name
    */
   
-  @Schema(name = "poiSymbolBootstrap3Name", description = "If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "poiSymbolBootstrap3Name", example = "education", description = "If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiSymbolBootstrap3Name")
   public @Nullable String getPoiSymbolBootstrap3Name() {
     return poiSymbolBootstrap3Name;
@@ -375,7 +375,7 @@ public class GeoresourcePATCHInputType implements Serializable {
    * @return topicReference
    */
   
-  @Schema(name = "topicReference", description = "id of the last topic hierarchy entity ", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "topicReference", example = "education", description = "id of the last topic hierarchy entity ", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("topicReference")
   public @Nullable String getTopicReference() {
     return topicReference;

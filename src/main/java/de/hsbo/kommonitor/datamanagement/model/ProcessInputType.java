@@ -123,7 +123,7 @@ public class ProcessInputType implements Serializable {
    * @return defaultValue
    */
   @NotNull 
-  @Schema(name = "defaultValue", description = "the default value of the process parameter", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "defaultValue", example = "5.0", description = "the default value of the process parameter", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("defaultValue")
   public String getDefaultValue() {
     return defaultValue;
@@ -144,7 +144,7 @@ public class ProcessInputType implements Serializable {
    * @return description
    */
   @NotNull 
-  @Schema(name = "description", description = "a short description of the process input", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "description", example = "Threshold used during computation.", description = "a short description of the process input", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("description")
   public String getDescription() {
     return description;
@@ -165,7 +165,7 @@ public class ProcessInputType implements Serializable {
    * @return maxParameterValueForNumericInputs
    */
   @Valid 
-  @Schema(name = "maxParameterValueForNumericInputs", example = "0.0", description = "the maximum value that is allowed for the process parameter", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "maxParameterValueForNumericInputs", example = "100.0", description = "the maximum value that is allowed for the process parameter", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("maxParameterValueForNumericInputs")
   public @Nullable BigDecimal getMaxParameterValueForNumericInputs() {
     return maxParameterValueForNumericInputs;
@@ -207,7 +207,7 @@ public class ProcessInputType implements Serializable {
    * @return name
    */
   @NotNull 
-  @Schema(name = "name", description = "the name of the process input parameter", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "name", example = "threshold", description = "the name of the process input parameter", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("name")
   public String getName() {
     return name;

@@ -62,7 +62,7 @@ public class ResourceFilterType implements Serializable {
    * @return topicIds
    */
   @NotNull 
-  @Schema(name = "topicIds", description = "list of topics for which all resources should be filtered", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "topicIds", example = "[\"t-demography\",\"t-mobility\"]", description = "list of topics for which all resources should be filtered", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("topicIds")
   public List<String> getTopicIds() {
     return topicIds;
@@ -91,7 +91,7 @@ public class ResourceFilterType implements Serializable {
    * @return ids
    */
   @NotNull 
-  @Schema(name = "ids", description = "list of resources that should be filtered", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "ids", example = "[\"1d2e3f40-0001-4a5b-8c9d-000000000001\",\"1d2e3f40-0002-4a5b-8c9d-000000000002\"]", description = "list of resources that should be filtered", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("ids")
   public List<String> getIds() {
     return ids;

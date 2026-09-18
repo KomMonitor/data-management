@@ -51,7 +51,7 @@ public class IndicatorPOSTInputTypeValueMapping implements Serializable {
    * @return timestamp
    */
   @NotNull @Valid 
-  @Schema(name = "timestamp", description = "timestamp consisting of year, month and day according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "timestamp", example = "2020-01-01", description = "timestamp consisting of year, month and day according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("timestamp")
   public LocalDate getTimestamp() {
     return timestamp;

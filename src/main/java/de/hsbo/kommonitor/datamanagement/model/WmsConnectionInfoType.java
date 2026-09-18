@@ -55,7 +55,7 @@ public class WmsConnectionInfoType extends ConnectionInfoType implements Seriali
    * @return baseUrl
    */
   @NotNull 
-  @Schema(name = "baseUrl", description = "the base URL of the WMS web service", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "baseUrl", example = "https://geoserver.example.org/kommonitor/wms", description = "the base URL of the WMS web service", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("baseUrl")
   public String getBaseUrl() {
     return baseUrl;
@@ -76,7 +76,7 @@ public class WmsConnectionInfoType extends ConnectionInfoType implements Seriali
    * @return layerName
    */
   @NotNull 
-  @Schema(name = "layerName", description = "the layer Name of the WMS web service", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "layerName", example = "kommonitor:schools", description = "the layer Name of the WMS web service", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("layerName")
   public String getLayerName() {
     return layerName;

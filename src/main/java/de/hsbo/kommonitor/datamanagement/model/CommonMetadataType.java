@@ -117,7 +117,7 @@ public class CommonMetadataType implements Serializable {
    * @return contact
    */
   @NotNull 
-  @Schema(name = "contact", description = "contact details where additional information can be achieved", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "contact", example = "KomMonitor Team, info@kommonitor.de", description = "contact details where additional information can be achieved", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("contact")
   public String getContact() {
     return contact;
@@ -138,7 +138,7 @@ public class CommonMetadataType implements Serializable {
    * @return databasis
    */
   
-  @Schema(name = "databasis", description = "information about data used as a basis to generate the dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "databasis", example = "Open data portal of the municipality", description = "information about data used as a basis to generate the dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("databasis")
   public @Nullable String getDatabasis() {
     return databasis;
@@ -159,7 +159,7 @@ public class CommonMetadataType implements Serializable {
    * @return datasource
    */
   @NotNull 
-  @Schema(name = "datasource", description = "information about the origin/source of the dataset", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "datasource", example = "Municipal education department", description = "information about the origin/source of the dataset", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("datasource")
   public String getDatasource() {
     return datasource;
@@ -180,7 +180,7 @@ public class CommonMetadataType implements Serializable {
    * @return description
    */
   @NotNull 
-  @Schema(name = "description", description = "description of the dataset", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "description", example = "Locations of all public schools within the city.", description = "description of the dataset", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("description")
   public String getDescription() {
     return description;
@@ -201,7 +201,7 @@ public class CommonMetadataType implements Serializable {
    * @return lastUpdate
    */
   @Valid 
-  @Schema(name = "lastUpdate", description = "a timestamp representing the lastUpdate according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "lastUpdate", example = "2018-01-30", description = "a timestamp representing the lastUpdate according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("lastUpdate")
   public @Nullable LocalDate getLastUpdate() {
     return lastUpdate;
@@ -264,7 +264,7 @@ public class CommonMetadataType implements Serializable {
    * @return sridEPSG
    */
   @Valid 
-  @Schema(name = "sridEPSG", example = "0.0", description = "the coordinate reference system of the dataset as EPSG code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "sridEPSG", example = "4326", description = "the coordinate reference system of the dataset as EPSG code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("sridEPSG")
   public @Nullable BigDecimal getSridEPSG() {
     return sridEPSG;
@@ -285,7 +285,7 @@ public class CommonMetadataType implements Serializable {
    * @return updateInterval
    */
   @NotNull 
-  @Schema(name = "updateInterval", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "updateInterval", example = "YEARLY", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("updateInterval")
   public UpdateIntervalEnum getUpdateInterval() {
     return updateInterval;

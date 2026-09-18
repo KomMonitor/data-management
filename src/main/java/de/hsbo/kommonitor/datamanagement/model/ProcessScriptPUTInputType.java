@@ -69,7 +69,7 @@ public class ProcessScriptPUTInputType implements Serializable {
    * @return description
    */
   @NotNull 
-  @Schema(name = "description", description = "short description of the scripts content (what does it do)", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "description", example = "Computes the U6 indicator from population counts.", description = "short description of the scripts content (what does it do)", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("description")
   public String getDescription() {
     return description;
@@ -90,7 +90,7 @@ public class ProcessScriptPUTInputType implements Serializable {
    * @return name
    */
   @NotNull 
-  @Schema(name = "name", description = "name of the process script", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "name", example = "Compute share of children under 6", description = "name of the process script", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("name")
   public String getName() {
     return name;
@@ -119,7 +119,7 @@ public class ProcessScriptPUTInputType implements Serializable {
    * @return requiredGeoresourceIds
    */
   @NotNull 
-  @Schema(name = "requiredGeoresourceIds", description = "identifiers of georesources that are used within the script.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "requiredGeoresourceIds", example = "[]", description = "identifiers of georesources that are used within the script.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("requiredGeoresourceIds")
   public List<String> getRequiredGeoresourceIds() {
     return requiredGeoresourceIds;
@@ -148,7 +148,7 @@ public class ProcessScriptPUTInputType implements Serializable {
    * @return requiredIndicatorIds
    */
   @NotNull 
-  @Schema(name = "requiredIndicatorIds", description = "identifiers of indicators that are used within the script.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "requiredIndicatorIds", example = "[\"1d2e3f40-0002-4a5b-8c9d-000000000002\"]", description = "identifiers of indicators that are used within the script.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("requiredIndicatorIds")
   public List<String> getRequiredIndicatorIds() {
     return requiredIndicatorIds;
@@ -169,7 +169,7 @@ public class ProcessScriptPUTInputType implements Serializable {
    * @return scriptCodeBase64
    */
   @NotNull 
-  @Schema(name = "scriptCodeBase64", description = "the actual script code (JavaScript) as BASE64 encoded string", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "scriptCodeBase64", example = "LyoganMgc2NyaXB0IGNvZGUgdjIgKi8=", description = "the actual script code (JavaScript) as BASE64 encoded string", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("scriptCodeBase64")
   public String getScriptCodeBase64() {
     return scriptCodeBase64;
@@ -190,7 +190,7 @@ public class ProcessScriptPUTInputType implements Serializable {
    * @return scriptType
    */
   
-  @Schema(name = "scriptType", description = "a script type reference name used to distuingish process scripts from a client perspective, i.e. setup admin pages due to knowledge about type-specific script parameters and required indicators/georesources", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "scriptType", example = "kommonitor-standard", description = "a script type reference name used to distuingish process scripts from a client perspective, i.e. setup admin pages due to knowledge about type-specific script parameters and required indicators/georesources", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("scriptType")
   public @Nullable String getScriptType() {
     return scriptType;

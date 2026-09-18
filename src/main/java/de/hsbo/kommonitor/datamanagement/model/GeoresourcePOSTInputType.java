@@ -109,7 +109,7 @@ public class GeoresourcePOSTInputType implements Serializable {
    * @return permissions
    */
   
-  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "permissions", example = "[\"creator\",\"editor\"]", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("permissions")
   public List<String> getPermissions() {
     return permissions;
@@ -151,7 +151,7 @@ public class GeoresourcePOSTInputType implements Serializable {
    * @return datasetName
    */
   @NotNull 
-  @Schema(name = "datasetName", description = "the meaningful name of the dataset", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "datasetName", example = "Schools", description = "the meaningful name of the dataset", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("datasetName")
   public String getDatasetName() {
     return datasetName;
@@ -172,7 +172,7 @@ public class GeoresourcePOSTInputType implements Serializable {
    * @return geoJsonString
    */
   
-  @Schema(name = "geoJsonString", description = "a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "geoJsonString", example = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[7.011,51.455]},\"properties\":{\"name\":\"Primary School Centre\"}}]}", description = "a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("geoJsonString")
   public @Nullable String getGeoJsonString() {
     return geoJsonString;
@@ -193,7 +193,7 @@ public class GeoresourcePOSTInputType implements Serializable {
    * @return isAOI
    */
   
-  @Schema(name = "isAOI", description = "boolean value indicating if the dataset contains areas of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "isAOI", example = "false", description = "boolean value indicating if the dataset contains areas of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("isAOI")
   public @Nullable Boolean getIsAOI() {
     return isAOI;
@@ -214,7 +214,7 @@ public class GeoresourcePOSTInputType implements Serializable {
    * @return isLOI
    */
   
-  @Schema(name = "isLOI", description = "boolean value indicating if the dataset contains lines of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "isLOI", example = "false", description = "boolean value indicating if the dataset contains lines of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("isLOI")
   public @Nullable Boolean getIsLOI() {
     return isLOI;
@@ -235,7 +235,7 @@ public class GeoresourcePOSTInputType implements Serializable {
    * @return isPOI
    */
   
-  @Schema(name = "isPOI", description = "boolean value indicating if the dataset contains points of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "isPOI", example = "true", description = "boolean value indicating if the dataset contains points of interest", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("isPOI")
   public @Nullable Boolean getIsPOI() {
     return isPOI;
@@ -361,7 +361,7 @@ public class GeoresourcePOSTInputType implements Serializable {
    * @return ownerId
    */
   @NotNull 
-  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "ownerId", example = "3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("ownerId")
   public String getOwnerId() {
     return ownerId;
@@ -466,7 +466,7 @@ public class GeoresourcePOSTInputType implements Serializable {
    * @return poiSymbolBootstrap3Name
    */
   
-  @Schema(name = "poiSymbolBootstrap3Name", description = "If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "poiSymbolBootstrap3Name", example = "education", description = "If georesource is a POI then custom POI marker symbol can be set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. \"home\" for a home symbol or \"education\" for a students hat symbol)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("poiSymbolBootstrap3Name")
   public @Nullable String getPoiSymbolBootstrap3Name() {
     return poiSymbolBootstrap3Name;
@@ -508,7 +508,7 @@ public class GeoresourcePOSTInputType implements Serializable {
    * @return topicReference
    */
   
-  @Schema(name = "topicReference", description = "id of the last topic hierarchy entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "topicReference", example = "education", description = "id of the last topic hierarchy entity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("topicReference")
   public @Nullable String getTopicReference() {
     return topicReference;
@@ -529,7 +529,7 @@ public class GeoresourcePOSTInputType implements Serializable {
    * @return isPublic
    */
   @NotNull 
-  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "isPublic", example = "false", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isPublic")
   public Boolean getIsPublic() {
     return isPublic;

@@ -55,7 +55,7 @@ public class PeriodOfValidityType implements Serializable {
    * @return endDate
    */
   @Valid 
-  @Schema(name = "endDate", description = "an optional timestamp representing the ending date according to ISO 8601 (e.g. 2018-01-30). The parameter can be omitted, if the end date is unknown.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "endDate", example = "2018-12-31", description = "an optional timestamp representing the ending date according to ISO 8601 (e.g. 2018-01-30). The parameter can be omitted, if the end date is unknown.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("endDate")
   public @Nullable LocalDate getEndDate() {
     return endDate;
@@ -76,7 +76,7 @@ public class PeriodOfValidityType implements Serializable {
    * @return startDate
    */
   @NotNull @Valid 
-  @Schema(name = "startDate", description = "a timestamp representing the starting date according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "startDate", example = "2018-01-01", description = "a timestamp representing the starting date according to ISO 8601 (e.g. 2018-01-30)", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("startDate")
   public LocalDate getStartDate() {
     return startDate;

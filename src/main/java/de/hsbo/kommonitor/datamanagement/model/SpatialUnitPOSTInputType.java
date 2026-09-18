@@ -92,7 +92,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
    * @return permissions
    */
   @NotNull 
-  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "permissions", example = "[\"creator\"]", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissions")
   public List<String> getPermissions() {
     return permissions;
@@ -113,7 +113,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
    * @return geoJsonString
    */
   @NotNull 
-  @Schema(name = "geoJsonString", description = "a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "geoJsonString", example = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[7.0,51.4],[7.1,51.4],[7.1,51.5],[7.0,51.5],[7.0,51.4]]]},\"properties\":{\"uuid\":\"8f14e45f-ceea-467d-9a1b-000000000101\",\"name\":\"District Centre\"}}]}", description = "a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("geoJsonString")
   public String getGeoJsonString() {
     return geoJsonString;
@@ -226,7 +226,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
    * @return spatialUnitLevel
    */
   @NotNull 
-  @Schema(name = "spatialUnitLevel", description = "the name and identifier of the spatial unit level the features apply to. The name is unique only within a mandant.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "spatialUnitLevel", example = "districts", description = "the name and identifier of the spatial unit level the features apply to. The name is unique only within a mandant.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("spatialUnitLevel")
   public String getSpatialUnitLevel() {
     return spatialUnitLevel;
@@ -268,7 +268,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
    * @return outlineColor
    */
   
-  @Schema(name = "outlineColor", description = "outline color for this layer as hex code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "outlineColor", example = "#333333", description = "outline color for this layer as hex code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineColor")
   public @Nullable String getOutlineColor() {
     return outlineColor;
@@ -289,7 +289,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
    * @return outlineWidth
    */
   @Valid 
-  @Schema(name = "outlineWidth", description = "outline width as stroke width for outline geometry", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "outlineWidth", example = "2", description = "outline width as stroke width for outline geometry", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineWidth")
   public @Nullable BigDecimal getOutlineWidth() {
     return outlineWidth;
@@ -331,7 +331,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
    * @return ownerId
    */
   
-  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "ownerId", example = "3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("ownerId")
   public @Nullable String getOwnerId() {
     return ownerId;
@@ -352,7 +352,7 @@ public class SpatialUnitPOSTInputType implements Serializable {
    * @return isPublic
    */
   @NotNull 
-  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "isPublic", example = "true", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isPublic")
   public Boolean getIsPublic() {
     return isPublic;

@@ -58,7 +58,7 @@ public class IndicatorPOSTInputTypeIndicatorValues implements Serializable {
    * @return spatialReferenceKey
    */
   
-  @Schema(name = "spatialReferenceKey", description = "identifier (uuid) of the spatial feature to which the values shall be applied", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "spatialReferenceKey", example = "8f14e45f-ceea-467d-9a1b-000000000101", description = "identifier (uuid) of the spatial feature to which the values shall be applied", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("spatialReferenceKey")
   public @Nullable String getSpatialReferenceKey() {
     return spatialReferenceKey;

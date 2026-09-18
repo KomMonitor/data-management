@@ -52,7 +52,7 @@ public class IndicatorPOSTInputTypeNumericalValueMapping extends IndicatorPOSTIn
    * @return indicatorValue
    */
   @NotNull 
-  @Schema(name = "indicatorValue", example = "0.0", description = "the numeric extent of the indicator for the timestamp", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "indicatorValue", example = "12.4", description = "the numeric extent of the indicator for the timestamp", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("indicatorValue")
   public Float getIndicatorValue() {
     return indicatorValue;

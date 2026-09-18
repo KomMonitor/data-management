@@ -54,7 +54,7 @@ public class SpatialUnitPUTInputType implements Serializable {
    * @return geoJsonString
    */
   @NotNull 
-  @Schema(name = "geoJsonString", description = "a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "geoJsonString", example = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[7.0,51.4],[7.1,51.4],[7.1,51.5],[7.0,51.5],[7.0,51.4]]]},\"properties\":{\"uuid\":\"8f14e45f-ceea-467d-9a1b-000000000101\",\"name\":\"District Centre\"}}]}", description = "a valid GeoJSON string containing the features consisting of a geometry and a unique identifier as property 'uuid'", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("geoJsonString")
   public String getGeoJsonString() {
     return geoJsonString;
@@ -75,7 +75,7 @@ public class SpatialUnitPUTInputType implements Serializable {
    * @return isPartialUpdate
    */
   
-  @Schema(name = "isPartialUpdate", description = "if set to TRUE, then a partial upload of geometries is possible. Missing features that are already in the database will then not be deleted", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "isPartialUpdate", example = "false", description = "if set to TRUE, then a partial upload of geometries is possible. Missing features that are already in the database will then not be deleted", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("isPartialUpdate")
   public @Nullable Boolean getIsPartialUpdate() {
     return isPartialUpdate;

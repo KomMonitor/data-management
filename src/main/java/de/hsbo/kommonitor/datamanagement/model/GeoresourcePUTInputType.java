@@ -54,7 +54,7 @@ public class GeoresourcePUTInputType implements Serializable {
    * @return geoJsonString
    */
   @NotNull 
-  @Schema(name = "geoJsonString", description = "a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "geoJsonString", example = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[7.013,51.457]},\"properties\":{\"name\":\"Primary School Centre\"}}]}", description = "a valid GeoJSON string containing the features consisting of a geometry and properties specific to the dataset", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("geoJsonString")
   public String getGeoJsonString() {
     return geoJsonString;
@@ -75,7 +75,7 @@ public class GeoresourcePUTInputType implements Serializable {
    * @return isPartialUpdate
    */
   
-  @Schema(name = "isPartialUpdate", description = "if set to TRUE, then a partial upload of geometries is possible. Missing features that are already in the database will then not be deleted", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "isPartialUpdate", example = "false", description = "if set to TRUE, then a partial upload of geometries is possible. Missing features that are already in the database will then not be deleted", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("isPartialUpdate")
   public @Nullable Boolean getIsPartialUpdate() {
     return isPartialUpdate;

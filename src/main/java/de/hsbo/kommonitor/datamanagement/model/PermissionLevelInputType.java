@@ -62,7 +62,7 @@ public class PermissionLevelInputType implements Serializable {
    * @return permissions
    */
   @NotNull 
-  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "permissions", example = "[\"9a8b7c6d-1001-4e2f-8a3b-000000000001\",\"9a8b7c6d-1002-4e2f-8a3b-000000000002\"]", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissions")
   public List<String> getPermissions() {
     return permissions;
@@ -83,7 +83,7 @@ public class PermissionLevelInputType implements Serializable {
    * @return isPublic
    */
   @NotNull 
-  @Schema(name = "isPublic", description = "flag whether this resource is publicly viewable", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "isPublic", example = "false", description = "flag whether this resource is publicly viewable", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isPublic")
   public Boolean getIsPublic() {
     return isPublic;

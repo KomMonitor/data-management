@@ -72,7 +72,7 @@ public class IndicatorPUTInputType implements Serializable {
    * @return permissions
    */
   @NotNull 
-  @Schema(name = "permissions", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "permissions", example = "[\"creator\"]", description = "list of permissions on this entity", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("permissions")
   public List<String> getPermissions() {
     return permissions;
@@ -93,7 +93,7 @@ public class IndicatorPUTInputType implements Serializable {
    * @return applicableSpatialUnit
    */
   @NotNull 
-  @Schema(name = "applicableSpatialUnit", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "applicableSpatialUnit", example = "5a1b2c3d-0001-4e5f-8a9b-000000000001", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("applicableSpatialUnit")
   public String getApplicableSpatialUnit() {
     return applicableSpatialUnit;
@@ -143,7 +143,7 @@ public class IndicatorPUTInputType implements Serializable {
    * @return isPublic
    */
   @NotNull 
-  @Schema(name = "isPublic", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "isPublic", example = "false", description = "flag whether the resource is publicly accessible", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("isPublic")
   public Boolean getIsPublic() {
     return isPublic;
@@ -164,7 +164,7 @@ public class IndicatorPUTInputType implements Serializable {
    * @return ownerId
    */
   @NotNull 
-  @Schema(name = "ownerId", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "ownerId", example = "3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01", description = "identifier of the owning group", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("ownerId")
   public String getOwnerId() {
     return ownerId;

@@ -90,7 +90,7 @@ public class AbstractClassificationMappingType implements Serializable {
    * @return colorBrewerSchemeName
    */
   @NotNull 
-  @Schema(name = "colorBrewerSchemeName", description = "the name of the colorBrewer color scheme used to define the colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "colorBrewerSchemeName", example = "BuGn", description = "the name of the colorBrewer color scheme used to define the colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3 for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("colorBrewerSchemeName")
   public String getColorBrewerSchemeName() {
     return colorBrewerSchemeName;
@@ -113,7 +113,7 @@ public class AbstractClassificationMappingType implements Serializable {
    * @return numClasses
    */
   @NotNull @Valid @DecimalMin(value = "1") @DecimalMax(value = "9") 
-  @Schema(name = "numClasses", description = "the number of classes", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "numClasses", example = "5", description = "the number of classes", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("numClasses")
   public BigDecimal getNumClasses() {
     return numClasses;

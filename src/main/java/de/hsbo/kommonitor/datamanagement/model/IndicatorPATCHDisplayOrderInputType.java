@@ -52,7 +52,7 @@ public class IndicatorPATCHDisplayOrderInputType implements Serializable {
    * @return displayOrder
    */
   @NotNull @Valid 
-  @Schema(name = "displayOrder", example = "0.0", description = "the new display order value", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "displayOrder", example = "1", description = "the new display order value", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("displayOrder")
   public BigDecimal getDisplayOrder() {
     return displayOrder;
@@ -73,7 +73,7 @@ public class IndicatorPATCHDisplayOrderInputType implements Serializable {
    * @return indicatorId
    */
   @NotNull 
-  @Schema(name = "indicatorId", description = "unique ID of the associated indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "indicatorId", example = "1d2e3f40-0001-4a5b-8c9d-000000000001", description = "unique ID of the associated indicator", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("indicatorId")
   public String getIndicatorId() {
     return indicatorId;

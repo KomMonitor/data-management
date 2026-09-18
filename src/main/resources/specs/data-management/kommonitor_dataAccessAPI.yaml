@@ -7441,20 +7441,25 @@ components:
         contact:
           type: string
           description: contact details where additional information can be achieved
+          example: KomMonitor Team, info@kommonitor.de
         databasis:
           type: string
           description: information about data used as a basis to generate the dataset
+          example: Open data portal of the municipality
         datasource:
           type: string
           description: information about the origin/source of the dataset
+          example: Municipal education department
         description:
           type: string
           description: description of the dataset
+          example: Locations of all public schools within the city.
         lastUpdate:
           type: string
           description: a timestamp representing the lastUpdate according to ISO 8601
             (e.g. 2018-01-30)
           format: date
+          example: "2018-01-30"
         literature:
           type: string
           description: an optional hint to literature about the dataset (e.g. URL
@@ -7465,7 +7470,7 @@ components:
         sridEPSG:
           type: number
           description: the coordinate reference system of the dataset as EPSG code
-          example: 0.0
+          example: 4326
         updateInterval:
           type: string
           enum:
@@ -7476,6 +7481,7 @@ components:
             - YEARLY
             - DAILY
             - WEEKLY
+          example: YEARLY
     AbstractClassificationMappingType:
       type: object
       discriminator:
@@ -7495,12 +7501,14 @@ components:
           description: the name of the colorBrewer color scheme used to define the
             colors for classification (see project http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
             for colorSchemes). Set to 'INDIVIDUAL' if colors are set arbitrarily.
+          example: BuGn
         numClasses:
           type: number
           format: int16
           description: the number of classes
           minimum: 1
           maximum: 9
+          example: 5
     DefaultClassificationMappingType:
       allOf:
         - $ref: '#/components/schemas/AbstractClassificationMappingType'
@@ -7543,12 +7551,17 @@ components:
         spatialUnitId:
           type: string
           description: spatial unit id for manual classification
+          example: 5a1b2c3d-0001-4e5f-8a9b-000000000001
         breaks:
           type: array
           description: array of numeric break values
           items:
             type: number
             format: float
+          example:
+            - 0.0
+            - 10.0
+            - 20.0
     QualitativeClassificationMappingType:
       allOf:
         - $ref: '#/components/schemas/AbstractClassificationMappingType'
@@ -7713,6 +7726,7 @@ components:
         datasetName:
           type: string
           description: the meaningful name of the dataset
+          example: Public Schools
         isAOI:
           type: boolean
           description: boolean value indicating if the dataset contains areas of interest
@@ -7751,6 +7765,7 @@ components:
           description: If georesource is a POI then custom POI marker symbol can be
             set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. "home"
             for a home symbol or "education" for a students hat symbol)
+          example: education
         poiSymbolColor:
           description: If georesource is a POI then custom POI symbol color can be
             set by specifying one of the following color names
@@ -7758,6 +7773,7 @@ components:
         topicReference:
           type: string
           description: 'id of the last topic hierarchy entity '
+          example: education
     GeoresourcePOSTInputType:
       title: GeoresourcePOSTInputType
       required:
@@ -7773,26 +7789,35 @@ components:
           description: list of permissions on this entity
           items:
             type: string
+          example:
+            - creator
+            - editor
         aoiColor:
           type: string
           description: color name or color code (i.e. hex number) for areas of interest
         datasetName:
           type: string
           description: the meaningful name of the dataset
+          example: Schools
         geoJsonString:
           type: string
           description: a valid GeoJSON string containing the features consisting of
             a geometry and properties specific to the dataset
+          example: >-
+            {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[7.011,51.455]},"properties":{"name":"Primary School Centre"}}]}
         isAOI:
           type: boolean
           description: boolean value indicating if the dataset contains areas of interest
+          example: false
         isLOI:
           type: boolean
           description: boolean value indicating if the dataset contains lines of interest
+          example: false
         isPOI:
           type: boolean
           description: boolean value indicating if the dataset contains points of
             interest
+          example: true
         jsonSchema:
           type: string
           description: a JSON schema as string that defines the data model for this
@@ -7813,6 +7838,7 @@ components:
         ownerId:
           type: string
           description: identifier of the owning group
+          example: 3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01
         periodOfValidity:
           $ref: '#/components/schemas/PeriodOfValidityType'
         poiMarkerStyle:
@@ -7830,6 +7856,7 @@ components:
           description: If georesource is a POI then custom POI marker symbol can be
             set by specifying the name of a Bootstrap 3 glyphicon symbol (i.e. "home"
             for a home symbol or "education" for a students hat symbol)
+          example: education
         poiSymbolColor:
           description: If georesource is a POI then custom POI symbol color can be
             set by specifying one of the following color names
@@ -7837,9 +7864,11 @@ components:
         topicReference:
           type: string
           description: id of the last topic hierarchy entity
+          example: education
         isPublic:
           type: boolean
           description: flag whether the resource is publicly accessible
+          example: false
     GeoresourcePUTInputType:
       title: GeoresourcePUTInputType
       required:
@@ -7851,10 +7880,13 @@ components:
           type: string
           description: a valid GeoJSON string containing the features consisting of
             a geometry and properties specific to the dataset
+          example: >-
+            {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[7.013,51.457]},"properties":{"name":"Primary School Centre"}}]}
         isPartialUpdate:
           type: boolean
           description: if set to TRUE, then a partial upload of geometries is possible.
             Missing features that are already in the database will then not be deleted
+          example: false
         periodOfValidity:
           $ref: '#/components/schemas/PeriodOfValidityType'
     GeoresourceReferenceType:
@@ -7891,6 +7923,7 @@ components:
         abbreviation:
           type: string
           description: abbreviated mark of the indicator
+          example: U6
         characteristicValue:
           type: string
           description: the distuingishing characteristic value of the indicator
@@ -7902,6 +7935,7 @@ components:
         datasetName:
           type: string
           description: the meaningful name of the indicator
+          example: Share of children under 6 years
         defaultClassificationMapping:
           $ref: '#/components/schemas/AbstractClassificationMappingType'
         regionalReferenceValues:
@@ -7912,7 +7946,7 @@ components:
         displayOrder:
           type: number
           description: an order number to control display order in clients
-          example: 0
+          example: 1
         indicatorType:
           description: indicates whether the indicator is a status indicator (values
             represent the extent of the watched phenomenon for a certain point in
@@ -7922,9 +7956,11 @@ components:
         interpretation:
           type: string
           description: interpretation of the indicator values
+          example: Higher values indicate a younger population structure.
         isHeadlineIndicator:
           type: boolean
           description: boolean value indicating if the indicator is a headline indicator
+          example: true
         lowestSpatialUnitForComputation:
           type: string
           description: identifier/name of the lowest spatial unit for which the indicator
@@ -7935,9 +7971,11 @@ components:
           type: integer
           description: Defines the number of decimal places for indicator values. If null, there is no predefined
             precision for this indicator.
+          example: 2
         processDescription:
           type: string
           description: description about how the indicator was computed
+          example: Number of children under 6 divided by total population.
         referenceDateNote:
           type: string
           description: an optional note on the reference date of the indicator
@@ -7961,12 +7999,17 @@ components:
           description: list of tag labels for the indicator
           items:
             type: string
+          example:
+            - demography
+            - children
         topicReference:
           type: string
           description: 'id of the last topic hierarchy entity '
+          example: demography
         unit:
           type: string
           description: unit of the indicator values
+          example: percent
     IndicatorOverviewType:
       title: IndicatorOverviewType
       required:
@@ -8039,9 +8082,11 @@ components:
         interpretation:
           type: string
           description: interpretation of the indicator values
+          example: Higher values indicate a younger population structure.
         isHeadlineIndicator:
           type: boolean
           description: boolean value indicating if the indicator is a headline indicator
+          example: true
         lowestSpatialUnitForComputation:
           type: string
           description: identifier/name of the lowest spatial unit for which the indicator
@@ -8060,10 +8105,12 @@ components:
         processDescription:
           type: string
           description: description about how the indicator was computed
+          example: Number of children under 6 divided by total population.
         precision:
           type: integer
           description: Defines the number of decimal places for indicator values. If null, there is no predefined
             precision for this indicator.
+          example: 2
         referenceDateNote:
           type: string
           description: an optional note on the reference date of the indicator
@@ -8082,6 +8129,9 @@ components:
           description: list of tag labels for the indicator
           items:
             type: string
+          example:
+            - demography
+            - children
         topicReference:
           type: string
           description: 'id of the last topic hierarchy entity '
@@ -8107,10 +8157,11 @@ components:
         displayOrder:
           type: number
           description: the new display order value
-          example: 0.0
+          example: 1
         indicatorId:
           type: string
           description: unique ID of the associated indicator
+          example: 1d2e3f40-0001-4a5b-8c9d-000000000001
     TopicDisplayOrderInputType:
       title: TopicDisplayOrderInputType
       required:
@@ -8163,9 +8214,13 @@ components:
           description: list of permissions on this entity
           items:
             type: string
+          example:
+            - 9a8b7c6d-1001-4e2f-8a3b-000000000001
+            - 9a8b7c6d-1002-4e2f-8a3b-000000000002
         isPublic:
           type: boolean
           description: flag whether this resource is publicly viewable
+          example: false
     IndicatorPOSTInputType:
       title: IndicatorPOSTInputType
       required:
@@ -8187,11 +8242,14 @@ components:
         abbreviation:
           type: string
           description: abbreviated mark of the indicator
+          example: U6
         permissions:
           type: array
           description: list of permissions on this entity
           items:
             type: string
+          example:
+            - creator
         characteristicValue:
           type: string
           description: the distuingishing characteristic value of the indicator
@@ -8203,12 +8261,13 @@ components:
         datasetName:
           type: string
           description: the meaningful name of the indicator
+          example: Share of children under 6 years
         defaultClassificationMapping:
           $ref: '#/components/schemas/AbstractClassificationMappingType'
         displayOrder:
           type: number
           description: an order number to control display order in clients
-          example: 0
+          example: 1
         indicatorType:
           description: indicates whether the indicator is a status indicator (values
             represent the extent of the watched phenomenon for a certain point in
@@ -8218,9 +8277,11 @@ components:
         interpretation:
           type: string
           description: interpretation of the indicator values
+          example: Higher values indicate a younger population structure.
         isHeadlineIndicator:
           type: boolean
           description: boolean value indicating if the indicator is a headline indicator
+          example: true
         lowestSpatialUnitForComputation:
           type: string
           description: identifier/name of the lowest spatial unit for which the indicator
@@ -8231,12 +8292,14 @@ components:
           type: integer
           description: Defines the number of decimal places for indicator values. If null, there is no predefined
             precision for this indicator.
+          example: 2
         ownerId:
           type: string
           description: identifier of the owning group
         processDescription:
           type: string
           description: description about how the indicator was computed
+          example: Number of children under 6 divided by total population.
         referenceDateNote:
           type: string
           description: an optional note on the reference date of the indicator
@@ -8260,15 +8323,21 @@ components:
           description: list of tag labels for the indicator
           items:
             type: string
+          example:
+            - demography
+            - children
         topicReference:
           type: string
           description: 'id of the last topic hierarchy entity '
+          example: demography
         unit:
           type: string
           description: unit of the indicator values
+          example: percent
         isPublic:
           type: boolean
           description: flag whether the resource is publicly accessible
+          example: false
     IndicatorPOSTInputTypeIndicatorValues:
       title: IndicatorPOSTInputTypeIndicatorValues
       type: object
@@ -8278,6 +8347,7 @@ components:
         spatialReferenceKey:
           type: string
           description: identifier (uuid) of the spatial feature to which the values shall be applied
+          example: 8f14e45f-ceea-467d-9a1b-000000000101
         valueType:
           description: Informational field indicating the type of mapping values inside this container.
           allOf:
@@ -8303,6 +8373,7 @@ components:
           type: string
           description: timestamp consisting of year, month and day according to ISO 8601 (e.g. 2018-01-30)
           format: date
+          example: "2020-01-01"
     IndicatorPOSTInputTypeNumericalValueMapping:
       title: IndicatorPOSTInputTypeNumericalValueMapping
       allOf:
@@ -8315,7 +8386,7 @@ components:
               type: number
               description: the numeric extent of the indicator for the timestamp
               format: float
-              example: 0.0
+              example: 12.4
     IndicatorPOSTInputTypeCategoricalValueMapping:
       title: IndicatorPOSTInputTypeCategoricalValueMapping
       allOf:
@@ -8365,8 +8436,11 @@ components:
           description: list of permissions on this entity
           items:
             type: string
+          example:
+            - creator
         applicableSpatialUnit:
           type: string
+          example: 5a1b2c3d-0001-4e5f-8a9b-000000000001
         indicatorValues:
           type: array
           description: an array of entries containing indicator values and mapping
@@ -8376,9 +8450,11 @@ components:
         isPublic:
           type: boolean
           description: flag whether the resource is publicly accessible
+          example: false
         ownerId:
           type: string
           description: identifier of the owning group
+          example: 3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01
     IndicatorPropertiesWithoutGeomType:
       title: IndicatorPropertiesWithoutGeomType
       type: object
@@ -8391,15 +8467,19 @@ components:
         id:
           type: string
           description: the id of the spatial feature
+          example: 8f14e45f-ceea-467d-9a1b-000000000101
         name:
           type: string
           description: the name of the spatial feature
+          example: District Centre
         validStartDate:
           type: string
           description: the start date from which on the spatial feature is valid
+          example: "2020-01-01"
         validEndDate:
           type: string
           description: the end date until the spatial feature is valid - or null if not set
+          example: "2020-12-31"
     IndicatorReferenceType:
       title: IndicatorReferenceType
       required:
@@ -8507,18 +8587,22 @@ components:
         name:
           type: string
           description: name of this organizational Unit
+          example: District administration
         mandant:
           type: boolean
           description: flag whether this unit is an autonomous mandant
+          example: true
         keycloakId:
           type: string
           description: uuid of the corresponding Keycloak group
         contact:
           type: string
           description: contact information of the person responsible for this group
+          example: admin@example.org
         description:
           type: string
           description: additional information
+          example: Administration of the example municipality.
         parentId:
           type: string
           description: uuid of the parent group
@@ -8655,6 +8739,7 @@ components:
         ownerId:
           type: string
           description: ID of the owning group
+          example: 3c9f8b12-0002-4a1b-9c33-1a2b3c4d5e02
     PeriodOfValidityType:
       title: PeriodOfValidityType
       required:
@@ -8667,11 +8752,13 @@ components:
             to ISO 8601 (e.g. 2018-01-30). The parameter can be omitted, if the
             end date is unknown.
           format: date
+          example: "2018-12-31"
         startDate:
           type: string
           description: a timestamp representing the starting date according to ISO
             8601 (e.g. 2018-01-30)
           format: date
+          example: "2018-01-01"
       description: definition of the period of validity of a certain dataset
     ProcessInputType:
       title: ProcessInputType
@@ -8693,13 +8780,15 @@ components:
         defaultValue:
           type: string
           description: the default value of the process parameter
+          example: "5.0"
         description:
           type: string
           description: a short description of the process input
+          example: Threshold used during computation.
         maxParameterValueForNumericInputs:
           type: number
           description: the maximum value that is allowed for the process parameter
-          example: 0.0
+          example: 100.0
         minParameterValueForNumericInputs:
           type: number
           description: the minimum value that is allowed for the process parameter
@@ -8707,6 +8796,7 @@ components:
         name:
           type: string
           description: the name of the process input parameter
+          example: threshold
     ProcessScriptOverviewType:
       title: ProcessScriptOverviewType
       required:
@@ -8771,30 +8861,38 @@ components:
           description: unique identifier of the associated indicator (e.g. the indicator
             that is computed by a script or for which the values shall be aggregated
             to another spatial unit)
+          example: 1d2e3f40-0001-4a5b-8c9d-000000000001
         description:
           type: string
           description: short description of the scripts content (what does it do)
+          example: Computes the U6 indicator from population counts.
         name:
           type: string
           description: name of the process script
+          example: Compute share of children under 6
         requiredGeoresourceIds:
           type: array
           description: identifiers of georesources that are used within the script.
           items:
             type: string
+          example: []
         requiredIndicatorIds:
           type: array
           description: identifiers of indicators that are used within the script.
           items:
             type: string
+          example:
+            - 1d2e3f40-0002-4a5b-8c9d-000000000002
         scriptCodeBase64:
           type: string
           description: the actual script code (JavaScript) as BASE64 encoded string
+          example: LyoganMgc2NyaXB0IGNvZGUgaGVyZSAqLw==
         scriptType:
           type: string
           description: a script type reference name used to distuingish process scripts
             from a client perspective, i.e. setup admin pages due to knowledge about
             type-specific script parameters and required indicators/georesources
+          example: kommonitor-standard
         variableProcessParameters:
           type: array
           description: list of process parameters that can be set by an expert user.
@@ -8815,27 +8913,34 @@ components:
         description:
           type: string
           description: short description of the scripts content (what does it do)
+          example: Computes the U6 indicator from population counts.
         name:
           type: string
           description: name of the process script
+          example: Compute share of children under 6
         requiredGeoresourceIds:
           type: array
           description: identifiers of georesources that are used within the script.
           items:
             type: string
+          example: []
         requiredIndicatorIds:
           type: array
           description: identifiers of indicators that are used within the script.
           items:
             type: string
+          example:
+            - 1d2e3f40-0002-4a5b-8c9d-000000000002
         scriptCodeBase64:
           type: string
           description: the actual script code (JavaScript) as BASE64 encoded string
+          example: LyoganMgc2NyaXB0IGNvZGUgdjIgKi8=
         scriptType:
           type: string
           description: a script type reference name used to distuingish process scripts
             from a client perspective, i.e. setup admin pages due to knowledge about
             type-specific script parameters and required indicators/georesources
+          example: kommonitor-standard
         variableProcessParameters:
           type: array
           description: list of process parameters that can be set by an expert user.
@@ -8942,6 +9047,7 @@ components:
           type: string
           description: the name of the spatial unit - its "spatialUnitLevel". The name
             is unique only within a mandant.
+          example: districts
         metadata:
           $ref: '#/components/schemas/CommonMetadataType'
         isOutlineLayer:
@@ -8951,10 +9057,12 @@ components:
         outlineColor:
           type: string
           description: outline color for this layer as hex code
+          example: "#333333"
         outlineWidth:
           type: number
           format: int32
           description: outline width as stroke width for outline geometry
+          example: 2
         outlineDashArrayString:
           type: string
           description: 'string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)'
@@ -8974,10 +9082,14 @@ components:
           description: list of permissions on this entity
           items:
             type: string
+          example:
+            - creator
         geoJsonString:
           type: string
           description: a valid GeoJSON string containing the features consisting of
             a geometry and a unique identifier as property 'uuid'
+          example: >-
+            {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[7.0,51.4],[7.1,51.4],[7.1,51.5],[7.0,51.5],[7.0,51.4]]]},"properties":{"uuid":"8f14e45f-ceea-467d-9a1b-000000000101","name":"District Centre"}}]}
         jsonSchema:
           type: string
           description: a JSON schema as string that defines the data model for this
@@ -8998,6 +9110,7 @@ components:
           type: string
           description: the name and identifier of the spatial unit level the features
             apply to. The name is unique only within a mandant.
+          example: districts
         isOutlineLayer:
           type: boolean
           description: if true, then KomMonitor web client map application will offer this spatial unit as outline layer in legend control
@@ -9005,19 +9118,23 @@ components:
         outlineColor:
           type: string
           description: outline color for this layer as hex code
+          example: "#333333"
         outlineWidth:
           type: number
           format: int32
           description: outline width as stroke width for outline geometry
+          example: 2
         outlineDashArrayString:
           type: string
           description: 'string of line stroke dash array for lines of interest (e.g. 20,20; see https://developer.mozilla.org/de/docs/Web/SVG/Attribute/stroke-dasharray)'
         ownerId:
           type: string
           description: identifier of the owning group
+          example: 3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01
         isPublic:
           type: boolean
           description: flag whether the resource is publicly accessible
+          example: true
     SpatialUnitPUTInputType:
       title: SpatialUnitPUTInputType
       required:
@@ -9029,10 +9146,13 @@ components:
           type: string
           description: a valid GeoJSON string containing the features consisting of
             a geometry and a unique identifier as property 'uuid'
+          example: >-
+            {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[7.0,51.4],[7.1,51.4],[7.1,51.5],[7.0,51.5],[7.0,51.4]]]},"properties":{"uuid":"8f14e45f-ceea-467d-9a1b-000000000101","name":"District Centre"}}]}
         isPartialUpdate:
           type: boolean
           description: if set to TRUE, then a partial upload of geometries is possible.
             Missing features that are already in the database will then not be deleted
+          example: false
         periodOfValidity:
           $ref: '#/components/schemas/PeriodOfValidityType'
     SpatialUnitHierarchyMembershipPOSTInputType:
@@ -9253,12 +9373,14 @@ components:
         topicDescription:
           type: string
           description: short description of the topic
+          example: Indicators describing the population structure.
         topicId:
           type: string
           description: the topic identifier
         topicName:
           type: string
           description: the topic name
+          example: Demography
         topicResource:
           description: topic resource indicating if the topic object corresponds to
             an indicator or to a georesource
@@ -9317,11 +9439,17 @@ components:
           description: list of topics for which all resources should be filtered
           items:
             type: string
+          example:
+            - t-demography
+            - t-mobility
         ids:
           type: array
           description: list of resources that should be filtered
           items:
             type: string
+          example:
+            - 1d2e3f40-0001-4a5b-8c9d-000000000001
+            - 1d2e3f40-0002-4a5b-8c9d-000000000002
     WebServiceType:
       title: WebServiceType
       required:
@@ -9337,6 +9465,7 @@ components:
         contact:
           type: string
           description: contact details where additional information can be achieved
+          example: KomMonitor Team, info@kommonitor.de
         connectionDetails:
           oneOf:
             - $ref: '#/components/schemas/WmsConnectionInfoType'
@@ -9348,9 +9477,11 @@ components:
         datasource:
           type: string
           description: information about the origin/source of the web service
+          example: Municipal education department
         description:
           type: string
           description: description of the web service
+          example: WMS serving the school locations.
         note:
           type: string
           description: an optional note with background information about the web service
@@ -9360,9 +9491,11 @@ components:
         title:
           type: string
           description: title of the web service
+          example: Schools WMS
         topicReference:
           type: string
           description: 'id of the last topic hierarchy entity '
+          example: education
     WebServiceCreationType:
       title: WebServiceOverviewType
       allOf:
@@ -9376,14 +9509,18 @@ components:
             isPublic:
               type: boolean
               description: flag whether the resource is publicly accessible
+              example: true
             ownerId:
               type: string
               description: identifier of the owning group
+              example: 3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01
             permissions:
               type: array
               description: list of permissions on this entity
               items:
                 type: string
+              example:
+                - creator
     WebServiceOverviewType:
       title: WebServiceOverviewType
       allOf:
@@ -9436,9 +9573,11 @@ components:
             baseUrl:
               type: string
               description: the base URL of the WMS web service
+              example: https://geoserver.example.org/kommonitor/wms
             layerName:
               type: string
               description: the layer Name of the WMS web service
+              example: kommonitor:schools
     UserInfoOverviewType:
       title: UserInfoOverviewType
       required:
@@ -9491,26 +9630,36 @@ components:
           description: list of georesource user favourites
           items:
             type: string
+          example:
+            - 0c0d17bb-0001-4a56-9abc-000000000001
         indicatorFavourites:
           type: array
           description: list of indicator user favourites
           items:
             type: string
+          example:
+            - 1d2e3f40-0001-4a5b-8c9d-000000000001
         georesourceTopicFavourites:
           type: array
           description: list of georesource topic user favourites
           items:
             type: string
+          example:
+            - t-administrative-boundaries
         indicatorTopicFavourites:
           type: array
           description: list of indicator topic user favourites
           items:
             type: string
+          example:
+            - t-demography
         webServiceFavourites:
           type: array
           description: list of web service user favourites
           items:
             type: string
+          example:
+            - ws-0001-0001-0001
     OrganizationalUnitRoleAuthorityType:
       title: OrganizationalUnitRoleAuthorityType
       required:

@@ -54,7 +54,7 @@ public class DefaultClassificationMappingItemType implements Serializable {
    * @return spatialUnitId
    */
   @NotNull 
-  @Schema(name = "spatialUnitId", description = "spatial unit id for manual classification", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "spatialUnitId", example = "5a1b2c3d-0001-4e5f-8a9b-000000000001", description = "spatial unit id for manual classification", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("spatialUnitId")
   public String getSpatialUnitId() {
     return spatialUnitId;
@@ -83,7 +83,7 @@ public class DefaultClassificationMappingItemType implements Serializable {
    * @return breaks
    */
   @NotNull 
-  @Schema(name = "breaks", description = "array of numeric break values", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "breaks", example = "[0.0,10.0,20.0]", description = "array of numeric break values", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("breaks")
   public List<Float> getBreaks() {
     return breaks;

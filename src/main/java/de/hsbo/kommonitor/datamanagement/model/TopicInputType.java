@@ -95,7 +95,7 @@ public class TopicInputType implements Serializable {
    * @return topicDescription
    */
   @NotNull 
-  @Schema(name = "topicDescription", description = "short description of the topic", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "topicDescription", example = "Indicators describing the population structure.", description = "short description of the topic", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("topicDescription")
   public String getTopicDescription() {
     return topicDescription;
@@ -137,7 +137,7 @@ public class TopicInputType implements Serializable {
    * @return topicName
    */
   @NotNull 
-  @Schema(name = "topicName", description = "the topic name", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "topicName", example = "Demography", description = "the topic name", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("topicName")
   public String getTopicName() {
     return topicName;

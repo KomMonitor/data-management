@@ -61,7 +61,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
    * @return datasetName
    */
   @NotNull 
-  @Schema(name = "datasetName", description = "the name of the spatial unit - its \"spatialUnitLevel\". The name is unique only within a mandant.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "datasetName", example = "districts", description = "the name of the spatial unit - its \"spatialUnitLevel\". The name is unique only within a mandant.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("datasetName")
   public String getDatasetName() {
     return datasetName;
@@ -124,7 +124,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
    * @return outlineColor
    */
   
-  @Schema(name = "outlineColor", description = "outline color for this layer as hex code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "outlineColor", example = "#333333", description = "outline color for this layer as hex code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineColor")
   public @Nullable String getOutlineColor() {
     return outlineColor;
@@ -145,7 +145,7 @@ public class SpatialUnitPATCHInputType implements Serializable {
    * @return outlineWidth
    */
   @Valid 
-  @Schema(name = "outlineWidth", description = "outline width as stroke width for outline geometry", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "outlineWidth", example = "2", description = "outline width as stroke width for outline geometry", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("outlineWidth")
   public @Nullable BigDecimal getOutlineWidth() {
     return outlineWidth;

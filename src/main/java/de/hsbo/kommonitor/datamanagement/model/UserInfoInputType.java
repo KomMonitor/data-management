@@ -56,7 +56,7 @@ public class UserInfoInputType implements Serializable {
    * @return georesourceFavourites
    */
   
-  @Schema(name = "georesourceFavourites", description = "list of georesource user favourites", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "georesourceFavourites", example = "[\"0c0d17bb-0001-4a56-9abc-000000000001\"]", description = "list of georesource user favourites", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("georesourceFavourites")
   public List<String> getGeoresourceFavourites() {
     return georesourceFavourites;
@@ -85,7 +85,7 @@ public class UserInfoInputType implements Serializable {
    * @return indicatorFavourites
    */
   
-  @Schema(name = "indicatorFavourites", description = "list of indicator user favourites", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "indicatorFavourites", example = "[\"1d2e3f40-0001-4a5b-8c9d-000000000001\"]", description = "list of indicator user favourites", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicatorFavourites")
   public List<String> getIndicatorFavourites() {
     return indicatorFavourites;
@@ -114,7 +114,7 @@ public class UserInfoInputType implements Serializable {
    * @return georesourceTopicFavourites
    */
   
-  @Schema(name = "georesourceTopicFavourites", description = "list of georesource topic user favourites", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "georesourceTopicFavourites", example = "[\"t-administrative-boundaries\"]", description = "list of georesource topic user favourites", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("georesourceTopicFavourites")
   public List<String> getGeoresourceTopicFavourites() {
     return georesourceTopicFavourites;
@@ -143,7 +143,7 @@ public class UserInfoInputType implements Serializable {
    * @return indicatorTopicFavourites
    */
   
-  @Schema(name = "indicatorTopicFavourites", description = "list of indicator topic user favourites", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "indicatorTopicFavourites", example = "[\"t-demography\"]", description = "list of indicator topic user favourites", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("indicatorTopicFavourites")
   public List<String> getIndicatorTopicFavourites() {
     return indicatorTopicFavourites;
@@ -172,7 +172,7 @@ public class UserInfoInputType implements Serializable {
    * @return webServiceFavourites
    */
   
-  @Schema(name = "webServiceFavourites", description = "list of web service user favourites", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "webServiceFavourites", example = "[\"ws-0001-0001-0001\"]", description = "list of web service user favourites", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("webServiceFavourites")
   public List<String> getWebServiceFavourites() {
     return webServiceFavourites;
