@@ -37,7 +37,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String abbreviation;
+  private @Nullable String abbreviation;
 
   private @Nullable String characteristicValue;
 
@@ -84,8 +84,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorMetadataPATCHInputType(String abbreviation, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String processDescription, List<String> tags, String topicReference, String unit) {
-    this.abbreviation = abbreviation;
+  public IndicatorMetadataPATCHInputType(String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String processDescription, List<String> tags, String topicReference, String unit) {
     this.interpretation = interpretation;
     this.isHeadlineIndicator = isHeadlineIndicator;
     this.metadata = metadata;
@@ -95,7 +94,7 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
     this.unit = unit;
   }
 
-  public IndicatorMetadataPATCHInputType abbreviation(String abbreviation) {
+  public IndicatorMetadataPATCHInputType abbreviation(@Nullable String abbreviation) {
     this.abbreviation = abbreviation;
     return this;
   }
@@ -104,15 +103,15 @@ public class IndicatorMetadataPATCHInputType implements Serializable {
    * abbreviated mark of the indicator
    * @return abbreviation
    */
-  @NotNull 
-  @Schema(name = "abbreviation", description = "abbreviated mark of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "abbreviation", description = "abbreviated mark of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("abbreviation")
-  public String getAbbreviation() {
+  public @Nullable String getAbbreviation() {
     return abbreviation;
   }
 
   @JsonProperty("abbreviation")
-  public void setAbbreviation(String abbreviation) {
+  public void setAbbreviation(@Nullable String abbreviation) {
     this.abbreviation = abbreviation;
   }
 

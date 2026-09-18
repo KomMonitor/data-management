@@ -7215,12 +7215,12 @@ components:
           type: number
           format: float
           description: regional sum value
-          
+
         regionalAverage:
           type: number
           format: float
           description: regional average value
-          
+
         spatiallyUnassignable:
           type: number
           format: float
@@ -7763,13 +7763,13 @@ components:
     TopicDisplayOrderModeInputType:
       title: TopicDisplayOrderModeInputType
       required:
-#        - topicResource
+        #        - topicResource
         - orderMode
       type: object
       properties:
-#        topicResource:
-#          description: topic resource indicating if the topic object corresponds to an indicator or to a georesource
-#          $ref: '#/components/schemas/TopicResourceEnum'
+        #        topicResource:
+        #          description: topic resource indicating if the topic object corresponds to an indicator or to a georesource
+        #          $ref: '#/components/schemas/TopicResourceEnum'
         orderMode:
           description: the mode which should be used for ordering topics
           $ref: '#/components/schemas/TopicOrderModeEnum'
@@ -8201,10 +8201,10 @@ components:
     ResourceType:
       type: string
       enum:
-      - georesources
-      - spatialunits,
-      - indicators
-      - indicatorspatialunits
+        - georesources
+        - spatialunits,
+        - indicators
+        - indicatorspatialunits
     OrganizationalUnitPermissionOverviewElementType:
       type: object
       required:

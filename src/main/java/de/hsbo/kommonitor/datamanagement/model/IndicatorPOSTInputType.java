@@ -40,7 +40,7 @@ public class IndicatorPOSTInputType implements Serializable {
 
   private List<String> permissions = new ArrayList<>();
 
-  private String characteristicValue;
+  private @Nullable String characteristicValue;
 
   private CreationTypeEnum creationType;
 
@@ -87,9 +87,8 @@ public class IndicatorPOSTInputType implements Serializable {
   /**
    * Constructor with only required parameters
    */
-  public IndicatorPOSTInputType(List<String> permissions, String characteristicValue, CreationTypeEnum creationType, String datasetName, AbstractClassificationMappingType defaultClassificationMapping, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String ownerId, String processDescription, List<String> tags, String topicReference, String unit, Boolean isPublic) {
+  public IndicatorPOSTInputType(List<String> permissions, CreationTypeEnum creationType, String datasetName, AbstractClassificationMappingType defaultClassificationMapping, String interpretation, Boolean isHeadlineIndicator, CommonMetadataType metadata, String ownerId, String processDescription, List<String> tags, String topicReference, String unit, Boolean isPublic) {
     this.permissions = permissions;
-    this.characteristicValue = characteristicValue;
     this.creationType = creationType;
     this.datasetName = datasetName;
     this.defaultClassificationMapping = defaultClassificationMapping;
@@ -154,7 +153,7 @@ public class IndicatorPOSTInputType implements Serializable {
     this.permissions = permissions;
   }
 
-  public IndicatorPOSTInputType characteristicValue(String characteristicValue) {
+  public IndicatorPOSTInputType characteristicValue(@Nullable String characteristicValue) {
     this.characteristicValue = characteristicValue;
     return this;
   }
@@ -163,15 +162,15 @@ public class IndicatorPOSTInputType implements Serializable {
    * the distuingishing characteristic value of the indicator
    * @return characteristicValue
    */
-  @NotNull 
-  @Schema(name = "characteristicValue", description = "the distuingishing characteristic value of the indicator", requiredMode = Schema.RequiredMode.REQUIRED)
+  
+  @Schema(name = "characteristicValue", description = "the distuingishing characteristic value of the indicator", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("characteristicValue")
-  public String getCharacteristicValue() {
+  public @Nullable String getCharacteristicValue() {
     return characteristicValue;
   }
 
   @JsonProperty("characteristicValue")
-  public void setCharacteristicValue(String characteristicValue) {
+  public void setCharacteristicValue(@Nullable String characteristicValue) {
     this.characteristicValue = characteristicValue;
   }
 
