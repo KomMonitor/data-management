@@ -60,7 +60,7 @@ public class SpatialUnitHierarchyPOSTInputType implements Serializable {
    * @return name
    */
   @NotNull 
-  @Schema(name = "name", description = "the name of the hierarchy. Unique within the owning mandant.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "name", example = "Administrative hierarchy", description = "the name of the hierarchy. Unique within the owning mandant.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("name")
   public String getName() {
     return name;
@@ -81,7 +81,7 @@ public class SpatialUnitHierarchyPOSTInputType implements Serializable {
    * @return mandantId
    */
   @NotNull 
-  @Schema(name = "mandantId", description = "identifier of the mandant (organizational unit) that owns the hierarchy", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "mandantId", example = "3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01", description = "identifier of the mandant (organizational unit) that owns the hierarchy", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("mandantId")
   public String getMandantId() {
     return mandantId;
@@ -102,7 +102,7 @@ public class SpatialUnitHierarchyPOSTInputType implements Serializable {
    * @return isPublic
    */
   
-  @Schema(name = "isPublic", description = "flag whether the hierarchy is publicly accessible", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "isPublic", example = "false", description = "flag whether the hierarchy is publicly accessible", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("isPublic")
   public Boolean getIsPublic() {
     return isPublic;

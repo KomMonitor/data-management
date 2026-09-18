@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-09-16T13:46:24.618402300+02:00[Europe/Berlin]", comments = "Generator version: 7.23.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-09-18T10:59:56.525846100+02:00[Europe/Berlin]", comments = "Generator version: 7.23.0")
 @Validated
 @Tag(name = "spatial-units", description = "the SpatialUnits API")
 public interface SpatialUnitsApi {
@@ -68,10 +68,22 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitOverviewType.class), examples = {
+                    @ExampleObject(
+                        name = "SpatialUnitOverview",
+                        value = "{\"spatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\",\"spatialUnitLevel\":\"districts\",\"isPublic\":true,\"ownerId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"mandantId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"permissions\":[\"creator\"],\"userPermissions\":[\"creator\"],\"availablePeriodsOfValidity\":[{\"startDate\":\"2018-01-01\"}],\"hierarchies\":[{\"hierarchyId\":\"7b3f9a10-0001-4c2d-8e3f-000000000001\",\"hierarchyName\":\"Administrative hierarchy\",\"hierarchyLevel\":1,\"nextUpperSpatialUnitId\":\"5a1b2c3d-0000-4e5f-8a9b-000000000000\",\"nextLowerSpatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\"}],\"isOutlineLayer\":true,\"outlineColor\":\"#333333\",\"outlineWidth\":2,\"metadata\":{\"contact\":\"KomMonitor Team, info@kommonitor.de\",\"datasource\":\"Surveying office\",\"description\":\"Administrative districts of the city.\",\"updateInterval\":\"ARBITRARY\",\"lastUpdate\":\"2019-01-30\",\"sridEPSG\":4326}}"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "201", description = "Created", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitOverviewType.class), examples = {
+                    @ExampleObject(
+                        name = "SpatialUnitOverview",
+                        value = "{\"spatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\",\"spatialUnitLevel\":\"districts\",\"isPublic\":true,\"ownerId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"mandantId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"permissions\":[\"creator\"],\"userPermissions\":[\"creator\"],\"availablePeriodsOfValidity\":[{\"startDate\":\"2018-01-01\"}],\"hierarchies\":[{\"hierarchyId\":\"7b3f9a10-0001-4c2d-8e3f-000000000001\",\"hierarchyName\":\"Administrative hierarchy\",\"hierarchyLevel\":1,\"nextUpperSpatialUnitId\":\"5a1b2c3d-0000-4e5f-8a9b-000000000000\",\"nextLowerSpatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\"}],\"isOutlineLayer\":true,\"outlineColor\":\"#333333\",\"outlineWidth\":2,\"metadata\":{\"contact\":\"KomMonitor Team, info@kommonitor.de\",\"datasource\":\"Surveying office\",\"description\":\"Administrative districts of the city.\",\"updateInterval\":\"ARBITRARY\",\"lastUpdate\":\"2019-01-30\",\"sridEPSG\":4326}}"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -112,10 +124,22 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitHierarchyOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitHierarchyOverviewType.class), examples = {
+                    @ExampleObject(
+                        name = "SpatialUnitHierarchyOverview",
+                        value = "{\"hierarchyId\":\"7b3f9a10-0001-4c2d-8e3f-000000000001\",\"name\":\"Administrative hierarchy\",\"mandantId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"isPublic\":false,\"members\":[{\"spatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\",\"spatialUnitLevel\":\"districts\",\"hierarchyLevel\":1,\"nextLowerSpatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\"},{\"spatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\",\"spatialUnitLevel\":\"blocks\",\"hierarchyLevel\":2,\"nextUpperSpatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\"}]}"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "201", description = "Created", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitHierarchyOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitHierarchyOverviewType.class), examples = {
+                    @ExampleObject(
+                        name = "SpatialUnitHierarchyOverview",
+                        value = "{\"hierarchyId\":\"7b3f9a10-0001-4c2d-8e3f-000000000001\",\"name\":\"Administrative hierarchy\",\"mandantId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"isPublic\":false,\"members\":[{\"spatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\",\"spatialUnitLevel\":\"districts\",\"hierarchyLevel\":1,\"nextLowerSpatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\"},{\"spatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\",\"spatialUnitLevel\":\"blocks\",\"hierarchyLevel\":2,\"nextUpperSpatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\"}]}"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -507,7 +531,13 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SpatialUnitHierarchyOverviewType.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SpatialUnitHierarchyOverviewType.class)), examples = {
+                    @ExampleObject(
+                        name = "SpatialUnitHierarchyOverviewCollection",
+                        value = "[{\"hierarchyId\":\"7b3f9a10-0001-4c2d-8e3f-000000000001\",\"name\":\"Administrative hierarchy\",\"mandantId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"isPublic\":false,\"members\":[{\"spatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\",\"spatialUnitLevel\":\"districts\",\"hierarchyLevel\":1}]},{\"hierarchyId\":\"7b3f9a10-0002-4c2d-8e3f-000000000002\",\"name\":\"Statistical hierarchy\",\"mandantId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"isPublic\":true,\"members\":[]}]"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -545,7 +575,13 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitHierarchyOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitHierarchyOverviewType.class), examples = {
+                    @ExampleObject(
+                        name = "SpatialUnitHierarchyOverview",
+                        value = "{\"hierarchyId\":\"7b3f9a10-0001-4c2d-8e3f-000000000001\",\"name\":\"Administrative hierarchy\",\"mandantId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"isPublic\":false,\"members\":[{\"spatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\",\"spatialUnitLevel\":\"districts\",\"hierarchyLevel\":1,\"nextLowerSpatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\"},{\"spatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\",\"spatialUnitLevel\":\"blocks\",\"hierarchyLevel\":2,\"nextUpperSpatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\"}]}"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -583,7 +619,13 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SpatialUnitOverviewType.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SpatialUnitOverviewType.class)), examples = {
+                    @ExampleObject(
+                        name = "SpatialUnitOverviewCollection",
+                        value = "[{\"spatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\",\"spatialUnitLevel\":\"districts\",\"isPublic\":true,\"permissions\":[\"creator\"],\"userPermissions\":[\"creator\"],\"metadata\":{\"contact\":\"KomMonitor Team, info@kommonitor.de\",\"datasource\":\"Surveying office\",\"description\":\"Administrative districts of the city.\",\"updateInterval\":\"ARBITRARY\",\"sridEPSG\":4326}},{\"spatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\",\"spatialUnitLevel\":\"blocks\",\"isPublic\":true,\"permissions\":[\"viewer\"],\"userPermissions\":[\"viewer\"],\"metadata\":{\"contact\":\"KomMonitor Team, info@kommonitor.de\",\"datasource\":\"Surveying office\",\"description\":\"Statistical blocks of the city.\",\"updateInterval\":\"ARBITRARY\",\"sridEPSG\":4326}}]"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -623,7 +665,13 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitOverviewType.class), examples = {
+                    @ExampleObject(
+                        name = "SpatialUnitOverview",
+                        value = "{\"spatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\",\"spatialUnitLevel\":\"districts\",\"isPublic\":true,\"ownerId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"mandantId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"permissions\":[\"creator\"],\"userPermissions\":[\"creator\"],\"availablePeriodsOfValidity\":[{\"startDate\":\"2018-01-01\"}],\"hierarchies\":[{\"hierarchyId\":\"7b3f9a10-0001-4c2d-8e3f-000000000001\",\"hierarchyName\":\"Administrative hierarchy\",\"hierarchyLevel\":1,\"nextUpperSpatialUnitId\":\"5a1b2c3d-0000-4e5f-8a9b-000000000000\",\"nextLowerSpatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\"}],\"isOutlineLayer\":true,\"outlineColor\":\"#333333\",\"outlineWidth\":2,\"metadata\":{\"contact\":\"KomMonitor Team, info@kommonitor.de\",\"datasource\":\"Surveying office\",\"description\":\"Administrative districts of the city.\",\"updateInterval\":\"ARBITRARY\",\"lastUpdate\":\"2019-01-30\",\"sridEPSG\":4326}}"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -711,7 +759,13 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PermissionLevelType.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PermissionLevelType.class)), examples = {
+                    @ExampleObject(
+                        name = "PermissionLevelCollection",
+                        value = "[\"creator\",\"editor\"]"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
@@ -880,7 +934,13 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitHierarchyOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitHierarchyOverviewType.class), examples = {
+                    @ExampleObject(
+                        name = "SpatialUnitHierarchyOverview",
+                        value = "{\"hierarchyId\":\"7b3f9a10-0001-4c2d-8e3f-000000000001\",\"name\":\"Administrative hierarchy\",\"mandantId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"isPublic\":false,\"members\":[{\"spatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\",\"spatialUnitLevel\":\"districts\",\"hierarchyLevel\":1,\"nextLowerSpatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\"},{\"spatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\",\"spatialUnitLevel\":\"blocks\",\"hierarchyLevel\":2,\"nextUpperSpatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\"}]}"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -923,7 +983,13 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitHierarchyOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitHierarchyOverviewType.class), examples = {
+                    @ExampleObject(
+                        name = "SpatialUnitHierarchyOverview",
+                        value = "{\"hierarchyId\":\"7b3f9a10-0001-4c2d-8e3f-000000000001\",\"name\":\"Administrative hierarchy\",\"mandantId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"isPublic\":false,\"members\":[{\"spatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\",\"spatialUnitLevel\":\"districts\",\"hierarchyLevel\":1,\"nextLowerSpatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\"},{\"spatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\",\"spatialUnitLevel\":\"blocks\",\"hierarchyLevel\":2,\"nextUpperSpatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\"}]}"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -966,7 +1032,13 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitOverviewType.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = SpatialUnitOverviewType.class), examples = {
+                    @ExampleObject(
+                        name = "SpatialUnitOverview",
+                        value = "{\"spatialUnitId\":\"5a1b2c3d-0001-4e5f-8a9b-000000000001\",\"spatialUnitLevel\":\"districts\",\"isPublic\":true,\"ownerId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"mandantId\":\"3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01\",\"permissions\":[\"creator\"],\"userPermissions\":[\"creator\"],\"availablePeriodsOfValidity\":[{\"startDate\":\"2018-01-01\"}],\"hierarchies\":[{\"hierarchyId\":\"7b3f9a10-0001-4c2d-8e3f-000000000001\",\"hierarchyName\":\"Administrative hierarchy\",\"hierarchyLevel\":1,\"nextUpperSpatialUnitId\":\"5a1b2c3d-0000-4e5f-8a9b-000000000000\",\"nextLowerSpatialUnitId\":\"5a1b2c3d-0002-4e5f-8a9b-000000000002\"}],\"isOutlineLayer\":true,\"outlineColor\":\"#333333\",\"outlineWidth\":2,\"metadata\":{\"contact\":\"KomMonitor Team, info@kommonitor.de\",\"datasource\":\"Surveying office\",\"description\":\"Administrative districts of the city.\",\"updateInterval\":\"ARBITRARY\",\"lastUpdate\":\"2019-01-30\",\"sridEPSG\":4326}}"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -1091,7 +1163,13 @@ public interface SpatialUnitsApi {
         tags = { "spatial-units" },
         responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PermissionLevelType.class)))
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PermissionLevelType.class)), examples = {
+                    @ExampleObject(
+                        name = "PermissionLevelCollection",
+                        value = "[\"creator\",\"editor\"]"
+                    )
+                })
+
             }),
             @ApiResponse(responseCode = "400", description = "Invalid status value"),
             @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),

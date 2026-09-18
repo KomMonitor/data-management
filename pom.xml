@@ -585,7 +585,7 @@
                                             <version>${kommonitor-oas.version}</version>
                                             <type>jar</type>
                                             <includes>
-                                                specs/data-management/kommonitor_dataAccessAPI.yaml
+                                                specs/data-management/kommonitor_dataAccessAPI.yaml,specs/data-management/examples.yaml
                                             </includes>
                                             <outputDirectory>${project.basedir}/src/main/resources</outputDirectory>
                                         </artifactItem>
@@ -671,7 +671,7 @@
                                             <artifactId>kommonitor-api-specs</artifactId>
                                             <version>${kommonitor-oas.version}</version>
                                             <type>jar</type>
-                                            <includes>specs/data-management/kommonitor_dataAccessAPI.yaml</includes>
+                                            <includes>specs/data-management/kommonitor_dataAccessAPI.yaml,specs/data-management/examples.yaml</includes>
                                             <outputDirectory>${project.basedir}/src/main/resources</outputDirectory>
                                         </artifactItem>
                                     </artifactItems>

@@ -52,7 +52,7 @@ public class SpatialUnitHierarchyMembershipInputType implements Serializable {
    * @return hierarchyId
    */
   @NotNull 
-  @Schema(name = "hierarchyId", description = "the unique identifier of the hierarchy the spatial unit shall be a member of", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "hierarchyId", example = "7b3f9a10-0001-4c2d-8e3f-000000000001", description = "the unique identifier of the hierarchy the spatial unit shall be a member of", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("hierarchyId")
   public String getHierarchyId() {
     return hierarchyId;
@@ -73,7 +73,7 @@ public class SpatialUnitHierarchyMembershipInputType implements Serializable {
    * @return hierarchyLevel
    */
   @NotNull 
-  @Schema(name = "hierarchyLevel", description = "the ordered position of the spatial unit within the hierarchy. Lower values denote upper levels.", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "hierarchyLevel", example = "1", description = "the ordered position of the spatial unit within the hierarchy. Lower values denote upper levels.", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("hierarchyLevel")
   public Integer getHierarchyLevel() {
     return hierarchyLevel;

@@ -53,7 +53,7 @@ public class SpatialUnitHierarchyMembershipPOSTInputType implements Serializable
    * @return hierarchyId
    */
   @NotNull 
-  @Schema(name = "hierarchyId", description = "the unique identifier of the hierarchy the spatial unit shall be a member of", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(name = "hierarchyId", example = "7b3f9a10-0001-4c2d-8e3f-000000000001", description = "the unique identifier of the hierarchy the spatial unit shall be a member of", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("hierarchyId")
   public String getHierarchyId() {
     return hierarchyId;
@@ -74,7 +74,7 @@ public class SpatialUnitHierarchyMembershipPOSTInputType implements Serializable
    * @return nextUpperSpatialUnitId
    */
   
-  @Schema(name = "nextUpperSpatialUnitId", description = "the identifier of the next upper spatial unit within this hierarchy. Leave empty if the spatial unit is the top level.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "nextUpperSpatialUnitId", example = "5a1b2c3d-0001-4e5f-8a9b-000000000001", description = "the identifier of the next upper spatial unit within this hierarchy. Leave empty if the spatial unit is the top level.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("nextUpperSpatialUnitId")
   public @Nullable String getNextUpperSpatialUnitId() {
     return nextUpperSpatialUnitId;
@@ -95,7 +95,7 @@ public class SpatialUnitHierarchyMembershipPOSTInputType implements Serializable
    * @return nextLowerSpatialUnitId
    */
   
-  @Schema(name = "nextLowerSpatialUnitId", description = "the identifier of the next lower spatial unit within this hierarchy. Leave empty if the spatial unit is the bottom level.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "nextLowerSpatialUnitId", example = "5a1b2c3d-0002-4e5f-8a9b-000000000002", description = "the identifier of the next lower spatial unit within this hierarchy. Leave empty if the spatial unit is the bottom level.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("nextLowerSpatialUnitId")
   public @Nullable String getNextLowerSpatialUnitId() {
     return nextLowerSpatialUnitId;

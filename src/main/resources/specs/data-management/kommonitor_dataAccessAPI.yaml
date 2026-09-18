@@ -56,6 +56,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/GeoresourceOverviewType'
+              examples:
+                georesourceOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/GeoresourceOverviewCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -83,6 +86,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/GeoresourcePOSTInputType'
+            examples:
+              georesourcePOSTInput:
+                $ref: './examples.yaml#/components/examples/GeoresourcePOSTInput'
         required: true
       responses:
         "200":
@@ -91,12 +97,18 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/GeoresourceOverviewType'
+              examples:
+                georesourceOverview:
+                  $ref: './examples.yaml#/components/examples/GeoresourceOverview'
         "201":
           description: Created
           content:
             'application/json':
               schema:
                 $ref: '#/components/schemas/GeoresourceOverviewType'
+              examples:
+                georesourceOverview:
+                  $ref: './examples.yaml#/components/examples/GeoresourceOverview'
         "401":
           description: API key is missing or invalid
           content: {}
@@ -123,6 +135,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ResourceFilterType'
+            examples:
+              resourceFilter:
+                $ref: './examples.yaml#/components/examples/ResourceFilter'
         required: true
       responses:
         "200":
@@ -133,6 +148,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/GeoresourceOverviewType'
+              examples:
+                georesourceOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/GeoresourceOverviewCollection'
         "401":
           description: API key is missing or invalid
           content: { }
@@ -169,6 +187,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GeoresourceOverviewType'
+              examples:
+                georesourceOverview:
+                  $ref: './examples.yaml#/components/examples/GeoresourceOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -208,6 +229,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/GeoresourcePUTInputType'
+            examples:
+              georesourcePUTInput:
+                $ref: './examples.yaml#/components/examples/GeoresourcePUTInput'
         required: true
       responses:
         "200":
@@ -279,6 +303,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/GeoresourcePATCHInputType'
+            examples:
+              georesourcePATCHInput:
+                $ref: './examples.yaml#/components/examples/GeoresourcePATCHInput'
         required: true
       responses:
         "200":
@@ -483,6 +510,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PermissionLevelType'
+              examples:
+                permissionLevelCollection:
+                  $ref: './examples.yaml#/components/examples/PermissionLevelCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -517,6 +547,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PermissionLevelInputType'
+            examples:
+              permissionLevelInput:
+                $ref: './examples.yaml#/components/examples/PermissionLevelInput'
       responses:
         "204":
           description: No Content
@@ -555,6 +588,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OwnerInputType'
+            examples:
+              ownerInput:
+                $ref: './examples.yaml#/components/examples/OwnerInput'
       responses:
         "204":
           description: No Content
@@ -1126,6 +1162,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IndicatorOverviewType'
+              examples:
+                indicatorOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/IndicatorOverviewCollection'
 
         "400":
           description: Invalid status value
@@ -1155,6 +1194,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/IndicatorPOSTInputType'
+            examples:
+              indicatorPOSTInput:
+                $ref: './examples.yaml#/components/examples/IndicatorPOSTInput'
         required: true
       responses:
         "200":
@@ -1163,12 +1205,18 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/IndicatorOverviewType'
+              examples:
+                indicatorOverview:
+                  $ref: './examples.yaml#/components/examples/IndicatorOverview'
         "201":
           description: Created
           content:
             'application/json':
               schema:
                 $ref: '#/components/schemas/IndicatorOverviewType'
+              examples:
+                indicatorOverview:
+                  $ref: './examples.yaml#/components/examples/IndicatorOverview'
         "401":
           description: Unauthorized
           content: {}
@@ -1198,6 +1246,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ResourceFilterType'
+            examples:
+              resourceFilter:
+                $ref: './examples.yaml#/components/examples/ResourceFilter'
         required: true
       responses:
         "200":
@@ -1208,6 +1259,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IndicatorOverviewType'
+              examples:
+                indicatorOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/IndicatorOverviewCollection'
         "401":
           description: API key is missing or invalid
           content: { }
@@ -1236,6 +1290,9 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/IndicatorPATCHDisplayOrderInputType'
+            examples:
+              indicatorPATCHDisplayOrderInputCollection:
+                $ref: './examples.yaml#/components/examples/IndicatorPATCHDisplayOrderInputCollection'
         required: true
       responses:
         "200":
@@ -1282,6 +1339,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/IndicatorOverviewType'
+              examples:
+                indicatorOverview:
+                  $ref: './examples.yaml#/components/examples/IndicatorOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -1316,6 +1376,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/IndicatorPUTInputType'
+            examples:
+              indicatorPUTInput:
+                $ref: './examples.yaml#/components/examples/IndicatorPUTInput'
         required: true
       responses:
         "200":
@@ -1387,6 +1450,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/IndicatorMetadataPATCHInputType'
+            examples:
+              indicatorMetadataPATCHInput:
+                $ref: './examples.yaml#/components/examples/IndicatorMetadataPATCHInput'
         required: true
       responses:
         "200":
@@ -1432,6 +1498,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PermissionLevelType'
+              examples:
+                permissionLevelCollection:
+                  $ref: './examples.yaml#/components/examples/PermissionLevelCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -1465,6 +1534,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PermissionLevelInputType'
+            examples:
+              permissionLevelInput:
+                $ref: './examples.yaml#/components/examples/PermissionLevelInput'
         required: true
       responses:
         "204":
@@ -1502,6 +1574,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OwnerInputType'
+            examples:
+              ownerInput:
+                $ref: './examples.yaml#/components/examples/OwnerInput'
         required: true
       responses:
         "204":
@@ -1685,6 +1760,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PermissionLevelType'
+              examples:
+                permissionLevelCollection:
+                  $ref: './examples.yaml#/components/examples/PermissionLevelCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -1724,6 +1802,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PermissionLevelInputType'
+            examples:
+              permissionLevelInput:
+                $ref: './examples.yaml#/components/examples/PermissionLevelInput'
         required: true
       responses:
         "200":
@@ -1769,6 +1850,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OwnerInputType'
+            examples:
+              ownerInput:
+                $ref: './examples.yaml#/components/examples/OwnerInput'
         required: true
       responses:
         "200":
@@ -1843,6 +1927,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
+              examples:
+                indicatorPropertiesWithoutGeomCollection:
+                  $ref: './examples.yaml#/components/examples/IndicatorPropertiesWithoutGeomCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -1959,6 +2046,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
+              examples:
+                indicatorPropertiesWithoutGeomCollection:
+                  $ref: './examples.yaml#/components/examples/IndicatorPropertiesWithoutGeomCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -2015,6 +2105,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
+            examples:
+              indicatorPropertiesWithoutGeom:
+                $ref: './examples.yaml#/components/examples/IndicatorPropertiesWithoutGeom'
         required: true
       responses:
         "200":
@@ -2118,6 +2211,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
+              examples:
+                indicatorPropertiesWithoutGeomCollection:
+                  $ref: './examples.yaml#/components/examples/IndicatorPropertiesWithoutGeomCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -2372,6 +2468,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
+              examples:
+                indicatorPropertiesWithoutGeomCollection:
+                  $ref: './examples.yaml#/components/examples/IndicatorPropertiesWithoutGeomCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -2403,6 +2502,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/OrganizationalUnitOverviewType'
+              examples:
+                organizationalUnitOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/OrganizationalUnitOverviewCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -2430,6 +2532,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OrganizationalUnitInputType'
+            examples:
+              organizationalUnitInput:
+                $ref: './examples.yaml#/components/examples/OrganizationalUnitInput'
         required: true
       responses:
         "200":
@@ -2473,6 +2578,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrganizationalUnitOverviewType'
+              examples:
+                organizationalUnitOverview:
+                  $ref: './examples.yaml#/components/examples/OrganizationalUnitOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -2507,6 +2615,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OrganizationalUnitInputType'
+            examples:
+              organizationalUnitInput:
+                $ref: './examples.yaml#/components/examples/OrganizationalUnitInput'
         required: true
       responses:
         "200":
@@ -2583,6 +2694,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrganizationalUnitPermissionOverviewType'
+              examples:
+                organizationalUnitPermissionOverview:
+                  $ref: './examples.yaml#/components/examples/OrganizationalUnitPermissionOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -2621,6 +2735,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrganizationalUnitRoleAuthorityType'
+              examples:
+                organizationalUnitRoleAuthority:
+                  $ref: './examples.yaml#/components/examples/OrganizationalUnitRoleAuthority'
         "400":
           description: Invalid status value
           content: { }
@@ -2658,6 +2775,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrganizationalUnitRoleDelegateType'
+              examples:
+                organizationalUnitRoleDelegate:
+                  $ref: './examples.yaml#/components/examples/OrganizationalUnitRoleDelegate'
         "400":
           description: Invalid status value
           content: { }
@@ -2694,6 +2814,9 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/GroupAdminRolesPUTInputType'
+            examples:
+              groupAdminRolesPUTInputCollection:
+                $ref: './examples.yaml#/components/examples/GroupAdminRolesPUTInputCollection'
         required: true
       responses:
         "200":
@@ -2794,6 +2917,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ProcessScriptOverviewType'
+              examples:
+                processScriptOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/ProcessScriptOverviewCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -2821,6 +2947,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProcessScriptPOSTInputType'
+            examples:
+              processScriptPOSTInput:
+                $ref: './examples.yaml#/components/examples/ProcessScriptPOSTInput'
         required: true
       responses:
         "200":
@@ -2829,12 +2958,18 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/ProcessScriptOverviewType'
+              examples:
+                processScriptOverview:
+                  $ref: './examples.yaml#/components/examples/ProcessScriptOverview'
         "201":
           description: Created
           content:
             'application/json':
               schema:
                 $ref: '#/components/schemas/ProcessScriptOverviewType'
+              examples:
+                processScriptOverview:
+                  $ref: './examples.yaml#/components/examples/ProcessScriptOverview'
         "401":
           description: API key is missing or invalid
           content: {}
@@ -2910,6 +3045,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProcessScriptOverviewType'
+              examples:
+                processScriptOverview:
+                  $ref: './examples.yaml#/components/examples/ProcessScriptOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -2945,6 +3083,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProcessScriptPUTInputType'
+            examples:
+              processScriptPUTInput:
+                $ref: './examples.yaml#/components/examples/ProcessScriptPUTInput'
         required: true
       responses:
         "200":
@@ -3058,6 +3199,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProcessScriptOverviewType'
+              examples:
+                processScriptOverview:
+                  $ref: './examples.yaml#/components/examples/ProcessScriptOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -3093,6 +3237,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProcessScriptPUTInputType'
+            examples:
+              processScriptPUTInput:
+                $ref: './examples.yaml#/components/examples/ProcessScriptPUTInput'
         required: true
       responses:
         "200":
@@ -3199,6 +3346,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UserInfoOverviewType'
+              examples:
+                userInfoOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/UserInfoOverviewCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -3226,6 +3376,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserInfoInputType'
+            examples:
+              userInfoInput:
+                $ref: './examples.yaml#/components/examples/UserInfoInput'
         required: true
       responses:
         "200":
@@ -3234,12 +3387,18 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/UserInfoOverviewType'
+              examples:
+                userInfoOverview:
+                  $ref: './examples.yaml#/components/examples/UserInfoOverview'
         "201":
           description: Created
           content:
             'application/json':
               schema:
                 $ref: '#/components/schemas/UserInfoOverviewType'
+              examples:
+                userInfoOverview:
+                  $ref: './examples.yaml#/components/examples/UserInfoOverview'
         "401":
           description: API key is missing or invalid
           content: {}
@@ -3277,6 +3436,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserInfoOverviewType'
+              examples:
+                userInfoOverview:
+                  $ref: './examples.yaml#/components/examples/UserInfoOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -3311,6 +3473,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserInfoInputType'
+            examples:
+              userInfoInput:
+                $ref: './examples.yaml#/components/examples/UserInfoInput'
         required: true
       responses:
         "200":
@@ -3319,12 +3484,18 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/UserInfoOverviewType'
+              examples:
+                userInfoOverview:
+                  $ref: './examples.yaml#/components/examples/UserInfoOverview'
         "201":
           description: Created
           content:
             'application/json':
               schema:
                 $ref: '#/components/schemas/UserInfoOverviewType'
+              examples:
+                userInfoOverview:
+                  $ref: './examples.yaml#/components/examples/UserInfoOverview'
         "204":
           description: No Content
           content: {}
@@ -3360,6 +3531,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserInfoInputType'
+            examples:
+              userInfoInput:
+                $ref: './examples.yaml#/components/examples/UserInfoInput'
         required: true
       responses:
         "200":
@@ -3368,12 +3542,18 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/UserInfoOverviewType'
+              examples:
+                userInfoOverview:
+                  $ref: './examples.yaml#/components/examples/UserInfoOverview'
         "201":
           description: Created
           content:
             'application/json':
               schema:
                 $ref: '#/components/schemas/UserInfoOverviewType'
+              examples:
+                userInfoOverview:
+                  $ref: './examples.yaml#/components/examples/UserInfoOverview'
         "204":
           description: No Content
           content: { }
@@ -3432,6 +3612,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserInfoOverviewType'
+              examples:
+                userInfoOverview:
+                  $ref: './examples.yaml#/components/examples/UserInfoOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -3461,6 +3644,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LastModificationOverviewType'
+              examples:
+                lastModificationOverview:
+                  $ref: './examples.yaml#/components/examples/LastModificationOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -3494,6 +3680,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/GeoresourceOverviewType'
+              examples:
+                georesourceOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/GeoresourceOverviewCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -3522,6 +3711,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ResourceFilterType'
+            examples:
+              resourceFilter:
+                $ref: './examples.yaml#/components/examples/ResourceFilter'
         required: true
       responses:
         "200":
@@ -3532,6 +3724,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/GeoresourceOverviewType'
+              examples:
+                georesourceOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/GeoresourceOverviewCollection'
         "401":
           description: API key is missing or invalid
           content: { }
@@ -3568,6 +3763,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GeoresourceOverviewType'
+              examples:
+                georesourceOverview:
+                  $ref: './examples.yaml#/components/examples/GeoresourceOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -4082,6 +4280,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IndicatorOverviewType'
+              examples:
+                indicatorOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/IndicatorOverviewCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -4110,6 +4311,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ResourceFilterType'
+            examples:
+              resourceFilter:
+                $ref: './examples.yaml#/components/examples/ResourceFilter'
         required: true
       responses:
         "200":
@@ -4120,6 +4324,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IndicatorOverviewType'
+              examples:
+                indicatorOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/IndicatorOverviewCollection'
         "401":
           description: API key is missing or invalid
           content: { }
@@ -4154,6 +4361,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/IndicatorOverviewType'
+              examples:
+                indicatorOverview:
+                  $ref: './examples.yaml#/components/examples/IndicatorOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -4307,6 +4517,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
+              examples:
+                indicatorPropertiesWithoutGeomCollection:
+                  $ref: './examples.yaml#/components/examples/IndicatorPropertiesWithoutGeomCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -4367,6 +4580,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
+              examples:
+                indicatorPropertiesWithoutGeomCollection:
+                  $ref: './examples.yaml#/components/examples/IndicatorPropertiesWithoutGeomCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -4413,6 +4629,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
+              examples:
+                indicatorPropertiesWithoutGeomCollection:
+                  $ref: './examples.yaml#/components/examples/IndicatorPropertiesWithoutGeomCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -4615,6 +4834,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/IndicatorPropertiesWithoutGeomType'
+              examples:
+                indicatorPropertiesWithoutGeomCollection:
+                  $ref: './examples.yaml#/components/examples/IndicatorPropertiesWithoutGeomCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -4648,6 +4870,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ProcessScriptOverviewType'
+              examples:
+                processScriptOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/ProcessScriptOverviewCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -4686,6 +4911,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProcessScriptOverviewType'
+              examples:
+                processScriptOverview:
+                  $ref: './examples.yaml#/components/examples/ProcessScriptOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -4763,6 +4991,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProcessScriptOverviewType'
+              examples:
+                processScriptOverview:
+                  $ref: './examples.yaml#/components/examples/ProcessScriptOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -4833,6 +5064,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+              examples:
+                spatialUnitHierarchyOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitHierarchyOverviewCollection'
         "404":
           description: Not Found
           content: {}
@@ -4859,6 +5093,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+              examples:
+                spatialUnitHierarchyOverview:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitHierarchyOverview'
         "404":
           description: Not Found
           content: {}
@@ -4881,6 +5118,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SpatialUnitOverviewType'
+              examples:
+                spatialUnitOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitOverviewCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -4919,6 +5159,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpatialUnitOverviewType'
+              examples:
+                spatialUnitOverview:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -5256,6 +5499,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TopicOverviewType'
+              examples:
+                topicOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/TopicOverviewCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -5287,6 +5533,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TopicDisplayOrderModeOverviewType'
+              examples:
+                topicDisplayOrderModeOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/TopicDisplayOrderModeOverviewCollection'
         "400":
           description: Invalid status value
           content: { }
@@ -5323,6 +5572,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TopicOverviewType'
+              examples:
+                topicOverview:
+                  $ref: './examples.yaml#/components/examples/TopicOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -5365,6 +5617,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/WebServiceOverviewType'
+              examples:
+                webServiceOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/WebServiceOverviewCollection'
       security:
         - kommonitor-data-access_oauth: [ ]
   /public/web-services/{webServiceId}:
@@ -5388,6 +5643,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebServiceOverviewType'
+              examples:
+                webServiceOverview:
+                  $ref: './examples.yaml#/components/examples/WebServiceOverview'
       security:
         - kommonitor-data-access_oauth: [ ]
   /spatial-unit-hierarchies:
@@ -5407,6 +5665,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+              examples:
+                spatialUnitHierarchyOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitHierarchyOverviewCollection'
         "401":
           description: API key is missing or invalid
           content: {}
@@ -5432,6 +5693,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SpatialUnitHierarchyPOSTInputType'
+            examples:
+              spatialUnitHierarchyPOSTInput:
+                $ref: './examples.yaml#/components/examples/SpatialUnitHierarchyPOSTInput'
         required: true
       responses:
         "200":
@@ -5440,12 +5704,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+              examples:
+                spatialUnitHierarchyOverview:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitHierarchyOverview'
         "201":
           description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+              examples:
+                spatialUnitHierarchyOverview:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitHierarchyOverview'
         "401":
           description: API key is missing or invalid
           content: {}
@@ -5480,6 +5750,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+              examples:
+                spatialUnitHierarchyOverview:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitHierarchyOverview'
         "401":
           description: API key is missing or invalid
           content: {}
@@ -5512,6 +5785,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SpatialUnitHierarchyInputType'
+            examples:
+              spatialUnitHierarchyInput:
+                $ref: './examples.yaml#/components/examples/SpatialUnitHierarchyInput'
         required: true
       responses:
         "200":
@@ -5520,6 +5796,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+              examples:
+                spatialUnitHierarchyOverview:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitHierarchyOverview'
         "401":
           description: API key is missing or invalid
           content: {}
@@ -5589,6 +5868,9 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/SpatialUnitHierarchyMemberInputType'
+            examples:
+              spatialUnitHierarchyMemberInputCollection:
+                $ref: './examples.yaml#/components/examples/SpatialUnitHierarchyMemberInputCollection'
         required: true
       responses:
         "200":
@@ -5597,6 +5879,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpatialUnitHierarchyOverviewType'
+              examples:
+                spatialUnitHierarchyOverview:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitHierarchyOverview'
         "401":
           description: API key is missing or invalid
           content: {}
@@ -5631,6 +5916,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SpatialUnitOverviewType'
+              examples:
+                spatialUnitOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitOverviewCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -5658,6 +5946,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SpatialUnitPOSTInputType'
+            examples:
+              spatialUnitPOSTInput:
+                $ref: './examples.yaml#/components/examples/SpatialUnitPOSTInput'
         required: true
       responses:
         "200":
@@ -5666,12 +5957,18 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/SpatialUnitOverviewType'
+              examples:
+                spatialUnitOverview:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitOverview'
         "201":
           description: Created
           content:
             'application/json':
               schema:
                 $ref: '#/components/schemas/SpatialUnitOverviewType'
+              examples:
+                spatialUnitOverview:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitOverview'
         "401":
           description: API key is missing or invalid
           content: {}
@@ -5711,6 +6008,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpatialUnitOverviewType'
+              examples:
+                spatialUnitOverview:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitOverview'
         "400":
           description: Invalid status value
           content: {}
@@ -5749,6 +6049,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SpatialUnitPUTInputType'
+            examples:
+              spatialUnitPUTInput:
+                $ref: './examples.yaml#/components/examples/SpatialUnitPUTInput'
         required: true
       responses:
         "200":
@@ -5820,6 +6123,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SpatialUnitPATCHInputType'
+            examples:
+              spatialUnitPATCHInput:
+                $ref: './examples.yaml#/components/examples/SpatialUnitPATCHInput'
         required: true
       responses:
         "200":
@@ -5949,6 +6255,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PermissionLevelType'
+              examples:
+                permissionLevelCollection:
+                  $ref: './examples.yaml#/components/examples/PermissionLevelCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -5985,6 +6294,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PermissionLevelInputType'
+            examples:
+              permissionLevelInput:
+                $ref: './examples.yaml#/components/examples/PermissionLevelInput'
         required: true
       responses:
         "200":
@@ -5995,6 +6307,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PermissionLevelType'
+              examples:
+                permissionLevelCollection:
+                  $ref: './examples.yaml#/components/examples/PermissionLevelCollection'
         "400":
           description: Invalid status value
           content: {}
@@ -6032,6 +6347,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OwnerInputType'
+            examples:
+              ownerInput:
+                $ref: './examples.yaml#/components/examples/OwnerInput'
         required: true
       responses:
         "200":
@@ -6079,6 +6397,9 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/SpatialUnitHierarchyMembershipInputType'
+            examples:
+              spatialUnitHierarchyMembershipInputCollection:
+                $ref: './examples.yaml#/components/examples/SpatialUnitHierarchyMembershipInputCollection'
         required: true
       responses:
         "200":
@@ -6087,6 +6408,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SpatialUnitOverviewType'
+              examples:
+                spatialUnitOverview:
+                  $ref: './examples.yaml#/components/examples/SpatialUnitOverview'
         "401":
           description: API key is missing or invalid
           content: { }
@@ -6539,6 +6863,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TopicInputType'
+            examples:
+              topicInput:
+                $ref: './examples.yaml#/components/examples/TopicInput'
         required: true
       responses:
         "200":
@@ -6547,12 +6874,18 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/TopicOverviewType'
+              examples:
+                topicOverview:
+                  $ref: './examples.yaml#/components/examples/TopicOverview'
         "201":
           description: Created
           content:
             'application/json':
               schema:
                 $ref: '#/components/schemas/TopicOverviewType'
+              examples:
+                topicOverview:
+                  $ref: './examples.yaml#/components/examples/TopicOverview'
         "401":
           description: API key is missing or invalid
           content: {}
@@ -6584,6 +6917,9 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/TopicDisplayOrderInputType'
+            examples:
+              topicDisplayOrderInputCollection:
+                $ref: './examples.yaml#/components/examples/TopicDisplayOrderInputCollection'
         required: true
       responses:
         "200":
@@ -6622,6 +6958,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TopicDisplayOrderModeInputType'
+            examples:
+              topicDisplayOrderModeInput:
+                $ref: './examples.yaml#/components/examples/TopicDisplayOrderModeInput'
         required: true
       responses:
         "200":
@@ -6662,6 +7001,9 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/TopicDisplayOrderInputType'
+            examples:
+              topicDisplayOrderInputCollection:
+                $ref: './examples.yaml#/components/examples/TopicDisplayOrderInputCollection'
         required: true
       responses:
         "200":
@@ -6700,6 +7042,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TopicDisplayOrderModeInputType'
+            examples:
+              topicDisplayOrderModeInput:
+                $ref: './examples.yaml#/components/examples/TopicDisplayOrderModeInput'
         required: true
       responses:
         "200":
@@ -6745,6 +7090,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TopicInputType'
+            examples:
+              topicInput:
+                $ref: './examples.yaml#/components/examples/TopicInput'
         required: true
       responses:
         "200":
@@ -6818,6 +7166,9 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/TopicDisplayOrderInputType'
+            examples:
+              topicDisplayOrderInputCollection:
+                $ref: './examples.yaml#/components/examples/TopicDisplayOrderInputCollection'
         required: true
       responses:
         "200":
@@ -6870,6 +7221,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/WebServiceOverviewType'
+              examples:
+                webServiceOverviewCollection:
+                  $ref: './examples.yaml#/components/examples/WebServiceOverviewCollection'
       security:
         - kommonitor-data-access_oauth: [ ]
     post:
@@ -6884,6 +7238,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/WebServiceCreationType'
+            examples:
+              webServiceCreation:
+                $ref: './examples.yaml#/components/examples/WebServiceCreation'
         required: true
       responses:
         "200":
@@ -6892,12 +7249,18 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/WebServiceOverviewType'
+              examples:
+                webServiceOverview:
+                  $ref: './examples.yaml#/components/examples/WebServiceOverview'
         "201":
           description: Created
           content:
             'application/json':
               schema:
                 $ref: '#/components/schemas/WebServiceOverviewType'
+              examples:
+                webServiceOverview:
+                  $ref: './examples.yaml#/components/examples/WebServiceOverview'
   /web-services/{webServiceId}:
     get:
       tags:
@@ -6919,6 +7282,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WebServiceOverviewType'
+              examples:
+                webServiceOverview:
+                  $ref: './examples.yaml#/components/examples/WebServiceOverview'
       security:
         - kommonitor-data-access_oauth: [ ]
     put:
@@ -6940,6 +7306,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/WebServiceType'
+            examples:
+              webServiceInput:
+                $ref: './examples.yaml#/components/examples/WebServiceInput'
         required: true
       responses:
         "200":
@@ -6996,6 +7365,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PermissionLevelType'
+              examples:
+                permissionLevelCollection:
+                  $ref: './examples.yaml#/components/examples/PermissionLevelCollection'
       deprecated: false
       security:
         - kommonitor-data-access_oauth: [ ]
@@ -7018,6 +7390,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PermissionLevelInputType'
+            examples:
+              permissionLevelInput:
+                $ref: './examples.yaml#/components/examples/PermissionLevelInput'
       responses:
         "204":
           description: No Content
@@ -7044,6 +7419,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OwnerInputType'
+            examples:
+              ownerInput:
+                $ref: './examples.yaml#/components/examples/OwnerInput'
       responses:
         "204":
           description: No Content
@@ -8669,14 +9047,17 @@ components:
           type: string
           description: the unique identifier of the hierarchy the spatial unit shall
             be a member of
+          example: 7b3f9a10-0001-4c2d-8e3f-000000000001
         nextUpperSpatialUnitId:
           type: string
           description: the identifier of the next upper spatial unit within this
             hierarchy. Leave empty if the spatial unit is the top level.
+          example: 5a1b2c3d-0001-4e5f-8a9b-000000000001
         nextLowerSpatialUnitId:
           type: string
           description: the identifier of the next lower spatial unit within this
             hierarchy. Leave empty if the spatial unit is the bottom level.
+          example: 5a1b2c3d-0002-4e5f-8a9b-000000000002
     SpatialUnitHierarchyMembershipInputType:
       title: SpatialUnitHierarchyMembershipInputType
       required:
@@ -8690,11 +9071,13 @@ components:
           type: string
           description: the unique identifier of the hierarchy the spatial unit shall
             be a member of
+          example: 7b3f9a10-0001-4c2d-8e3f-000000000001
         hierarchyLevel:
           type: integer
           format: int32
           description: the ordered position of the spatial unit within the hierarchy.
             Lower values denote upper levels.
+          example: 1
     SpatialUnitHierarchyMembershipType:
       title: SpatialUnitHierarchyMembershipType
       required:
@@ -8736,11 +9119,13 @@ components:
         spatialUnitId:
           type: string
           description: the unique identifier of the spatial unit
+          example: 5a1b2c3d-0001-4e5f-8a9b-000000000001
         hierarchyLevel:
           type: integer
           format: int32
           description: the ordered position of the spatial unit within the hierarchy.
             Lower values denote upper levels.
+          example: 1
     SpatialUnitHierarchyMemberType:
       title: SpatialUnitHierarchyMemberType
       required:
@@ -8783,14 +9168,17 @@ components:
         name:
           type: string
           description: the name of the hierarchy. Unique within the owning mandant.
+          example: Administrative hierarchy
         mandantId:
           type: string
           description: identifier of the mandant (organizational unit) that owns the
             hierarchy
+          example: 3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01
         isPublic:
           type: boolean
           description: flag whether the hierarchy is publicly accessible
           default: false
+          example: true
     SpatialUnitHierarchyPOSTInputType:
       title: SpatialUnitHierarchyPOSTInputType
       required:
@@ -8803,14 +9191,17 @@ components:
         name:
           type: string
           description: the name of the hierarchy. Unique within the owning mandant.
+          example: Administrative hierarchy
         mandantId:
           type: string
           description: identifier of the mandant (organizational unit) that owns the
             hierarchy
+          example: 3c9f8b12-0001-4a1b-9c33-1a2b3c4d5e01
         isPublic:
           type: boolean
           description: flag whether the hierarchy is publicly accessible
           default: false
+          example: false
         members:
           type: array
           description: optional ordered list of existing spatial units to place into the
