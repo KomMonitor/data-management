@@ -292,11 +292,13 @@ public class SpatialUnitHierarchyManager {
      *
      * @param spatialUnitId ID of the spatial unit for which the hierarchy memberships should be updated
      * @param memberships List of hierarchy membership definitions
+     * @return representation of the updated spatial unit including its recomputed hierarchy memberships
      * @throws ResourceNotFoundException if the requested spatial unit or one of the hierarchies does not exist or
      * if the spatial unit and a hierarchy do not belong to the same mandant.
+     * @throws Exception if the updated spatial unit cannot be mapped to its Swagger representation
      */
-    public void updateSpatialUnitMemberships(String spatialUnitId, List<SpatialUnitHierarchyMembershipInputType> memberships)
-            throws ResourceNotFoundException {
+    public SpatialUnitOverviewType updateSpatialUnitMemberships(String spatialUnitId, List<SpatialUnitHierarchyMembershipInputType> memberships)
+            throws Exception {
         MetadataSpatialUnitsEntity spatialUnit = getSpatialUnitEntity(spatialUnitId);
 
         Set<String> affectedHierarchyIds = collectHierarchyIds(spatialUnitId);
@@ -321,6 +323,8 @@ public class SpatialUnitHierarchyManager {
             }
         }
         renormalizeRemovedFrom(affectedHierarchyIds, targetHierarchyIds);
+
+        return SpatialUnitsMapper.mapToSwaggerSpatialUnit(spatialUnit);
     }
 
     /**

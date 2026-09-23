@@ -630,9 +630,8 @@ public class SpatialUnitsController extends BasePathController implements Spatia
 			@P("hierarchies") List<SpatialUnitHierarchyMembershipInputType> hierarchies) {
 		logger.info("Received request to update hierarchy memberships of spatial unit with id '{}'", spatialUnitId);
 		try {
-			spatialUnitHierarchyManager.updateSpatialUnitMemberships(spatialUnitId, hierarchies);
+			SpatialUnitOverviewType spatialUnit = spatialUnitHierarchyManager.updateSpatialUnitMemberships(spatialUnitId, hierarchies);
 			lastModManager.updateLastDatabaseModificationSpatialUnits();
-			SpatialUnitOverviewType spatialUnit = spatialUnitsManager.getSpatialUnitByDatasetId(spatialUnitId);
 			return new ResponseEntity<>(spatialUnit, HttpStatus.OK);
 		} catch (ValidationException ve) {
 			throw ve;
