@@ -277,11 +277,6 @@
             <artifactId>gt-brewer</artifactId>
             <version>${geotools.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-geopkg</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
 
         <!-- PostgeSQL support -->
         <dependency>
