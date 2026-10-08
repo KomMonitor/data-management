@@ -31,7 +31,7 @@ public class ApiUtils {
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
         }
-    	
+
     	ErrorType er = new ErrorType();
         er.setLabel(exception.getClass().getName());
         er.setMessage(exception.getMessage());

@@ -5,6 +5,60 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Add git cliff changelog generation to release process ([94af9e7](https://github.com/KomMonitor/data-management/commit/94af9e7503dd49992629c612317461ad149d1048))
+
+## [5.2.6]
+> 17 Jun 2026
+
+### Added
+
+- Add an additional global proxy selector enforcing proxy routing deep in Javas networking tier if necessary - with debug logs ([2c352f4](https://github.com/KomMonitor/data-management/commit/2c352f4739918700298d9acb2b00096906e14e05))
+
+### Changed
+
+- [maven-release-plugin] prepare for next development iteration ([6c4657f](https://github.com/KomMonitor/data-management/commit/6c4657f420d80755182b919832ce152b85dbf7b4))
+- [maven-release-plugin] Update CHANGELOG.md ([c8d917f](https://github.com/KomMonitor/data-management/commit/c8d917ffdaf16afb909cfddf7bf83eebcb9c6b0b))
+- [maven-release-plugin] prepare release v5.2.6-beta.1 ([a89d1e0](https://github.com/KomMonitor/data-management/commit/a89d1e0659ad72b0593daef9d3a5c5fdb7df9a59))
+- [maven-release-plugin] prepare for next development iteration ([8843988](https://github.com/KomMonitor/data-management/commit/88439884afc02c6154dc498c6f0600ff91e1bc96))
+- [maven-release-plugin] Update CHANGELOG.md ([ee153b1](https://github.com/KomMonitor/data-management/commit/ee153b1dff6c28c03da454925bfe1f346958ea5c))
+- [maven-release-plugin] prepare release v5.2.6-beta.2 ([904ce19](https://github.com/KomMonitor/data-management/commit/904ce1928c3a7d0fb10ceba04393ae5ab73257f3))
+- [maven-release-plugin] prepare for next development iteration ([2735d88](https://github.com/KomMonitor/data-management/commit/2735d88d8f1d57055e50232457c7764638c448f0))
+- [maven-release-plugin] Update CHANGELOG.md ([aa7c6e8](https://github.com/KomMonitor/data-management/commit/aa7c6e802538f9b2b8498b442afd3e0d94cd60af))
+- [maven-release-plugin] prepare release v5.2.6 ([6340a6f](https://github.com/KomMonitor/data-management/commit/6340a6f4e179eb0843dbf0ed5dd082adbd96961e))
+- [maven-release-plugin] prepare for next development iteration ([539cce8](https://github.com/KomMonitor/data-management/commit/539cce872bc14eff50fd814f2ed8f63f68417997))
+- [maven-release-plugin] prepare release v5.2.6 ([0daf6a1](https://github.com/KomMonitor/data-management/commit/0daf6a15975620d81da96a2d42ecad00cba8345b))
+
+### Fixed
+
+- Fix proxied restEasy client setup for keycloak admin communication ([2b89cda](https://github.com/KomMonitor/data-management/commit/2b89cdae599c70f10124cfa56705ac527dd7cd00))
+
+## [5.2.5]
+> 15 Jun 2026
+
+### Changed
+
+- [maven-release-plugin] prepare for next development iteration ([a706c39](https://github.com/KomMonitor/data-management/commit/a706c3971169f81735fab822c478bd1eb51dddfd))
+- [maven-release-plugin] Update CHANGELOG.md ([ae59755](https://github.com/KomMonitor/data-management/commit/ae59755db50e78a64653bd33e50d378c3a16dd1e))
+- [maven-release-plugin] prepare release v5.2.5 ([8decce5](https://github.com/KomMonitor/data-management/commit/8decce5cbef51dbe31c72b9fdeb166d9d72ebccf))
+
+### Fixed
+
+- Fix proxy inclusion in resteasy client based Keycloak communication for user group management ([e6e4699](https://github.com/KomMonitor/data-management/commit/e6e4699e32370af004ff285bf44192a818b82bfd))
+
+## [5.2.4]
+>  8 Jun 2026
+
+### Changed
+
+- [maven-release-plugin] prepare for next development iteration ([aa8699d](https://github.com/KomMonitor/data-management/commit/aa8699d0f2d09a154db2416e2efcd3130bba9213))
+- Refine implementation for proxy setup - add proxy config bean for RestEasy client necessary for keycloak admin cli requests ([64d0eff](https://github.com/KomMonitor/data-management/commit/64d0eff592113fe395424527ac634279cbaf5c6d))
+- [maven-release-plugin] Update CHANGELOG.md ([3615dc6](https://github.com/KomMonitor/data-management/commit/3615dc6e25fb41d9df7d66f60611a7049d0d3b67))
+- [maven-release-plugin] prepare release v5.2.4 ([7800517](https://github.com/KomMonitor/data-management/commit/78005170a107b1372b0ce38f778cac47f872899a))
+
 ## [5.2.3]
 >  1 Jun 2026
 
@@ -21,15 +75,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [5.2.2]
 > 21 May 2026
 
-### Added
-
-- Add managing qualitative classification mapping ([f93deae](https://github.com/KomMonitor/data-management/commit/f93deae6ee46822da785fc7e585ebf9f9e1c1a94))
-
 ### Changed
 
-- Merge branch 'master' into develop ([77aea7a](https://github.com/KomMonitor/data-management/commit/77aea7a80218edc60b79b561738a026d01d6c80e))
-- Refactor JPA entity for default classification items ([f62f01c](https://github.com/KomMonitor/data-management/commit/f62f01cb50dfc0b32f23ce5e3bc0bef716860778))
-- Enhance classification by qualitative classification types ([e92c349](https://github.com/KomMonitor/data-management/commit/e92c349a97415f16d241df80ac4699d8e7bf323c))
 - [maven-release-plugin] Update CHANGELOG.md ([9c6f7f0](https://github.com/KomMonitor/data-management/commit/9c6f7f015c4ac77092f90ba38cdb53ea6bd9f21d))
 - [maven-release-plugin] prepare release v5.2.2 ([55a7b98](https://github.com/KomMonitor/data-management/commit/55a7b988a7a81754459afa50a31cf29f9cd064d3))
 
@@ -50,7 +97,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adjust docker-compose setup ([d99a8ad](https://github.com/KomMonitor/data-management/commit/d99a8adf0093cca170198ecd4b6f34e578c0f9ef))
 - [maven-release-plugin] Update CHANGELOG.md ([b9f9ed0](https://github.com/KomMonitor/data-management/commit/b9f9ed09e1a7f26c5c2b7e7b8d85f038408618ff))
 - [maven-release-plugin] prepare release v5.2.0 ([31e3145](https://github.com/KomMonitor/data-management/commit/31e31453f12b5c4916fe792b938d0330e6cc4f5e))
-- [maven-release-plugin] prepare for next development iteration ([85a68c0](https://github.com/KomMonitor/data-management/commit/85a68c0bc66bcd3fb14450d3764f7d1c7e6880b0))
 - Revert springdoc-openapi-starter-webmvc-ui version update ([0ce727e](https://github.com/KomMonitor/data-management/commit/0ce727eabfc09a8c5ef2e652a0923462d44847ae))
 
 ## [5.1.6]
@@ -128,7 +174,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implement controller for public web services ([4680a03](https://github.com/KomMonitor/data-management/commit/4680a0300e86efef420d1e4d0a08f7e8008c77ee))
 - Refine models and apply fixes ([d2e0adf](https://github.com/KomMonitor/data-management/commit/d2e0adf19b29f4dcc29d37b9868f12d1091de15f))
 - Merge branch 'master' into develop ([9a164f0](https://github.com/KomMonitor/data-management/commit/9a164f08048ad06a27a11687ad4da21dd9223379))
-- Pin Trivy action to save version ([41ca6d5](https://github.com/KomMonitor/data-management/commit/41ca6d57032f17215829e32e868ac5bde646c315))
 - Prepare hotfix release ([40a2c64](https://github.com/KomMonitor/data-management/commit/40a2c6432ec1b4fb34ddfe7d94f94075d507a316))
 - [maven-release-plugin] Update CHANGELOG.md ([2218600](https://github.com/KomMonitor/data-management/commit/2218600c5dc9a706dab392268be68d0e083752cc))
 - [maven-release-plugin] prepare release v5.1.5 ([66036dd](https://github.com/KomMonitor/data-management/commit/66036ddfe6cffcf648dab3870c652300aba973cf))
@@ -1540,6 +1585,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove old files ([820d309](https://github.com/KomMonitor/data-management/commit/820d309a1c58c275179f7c23504e6ec725530b35))
 - Remove TOC as on dockerhub links in TOC do not work properly ([b02c3f5](https://github.com/KomMonitor/data-management/commit/b02c3f5ee590d374ea18866186dca798846f41d3))
 
+[unreleased]: https://github.com/KomMonitor/data-management/compare/v5.2.6..HEAD
+[5.2.6]: https://github.com/KomMonitor/data-management/compare/v5.2.5..v5.2.6
+[5.2.5]: https://github.com/KomMonitor/data-management/compare/v5.2.4..v5.2.5
+[5.2.4]: https://github.com/KomMonitor/data-management/compare/v5.2.3..v5.2.4
 [5.2.3]: https://github.com/KomMonitor/data-management/compare/v5.2.2..v5.2.3
 [5.2.2]: https://github.com/KomMonitor/data-management/compare/v5.2.1..v5.2.2
 [5.2.1]: https://github.com/KomMonitor/data-management/tree/v5.2.1
@@ -1582,6 +1631,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.2.1]: https://github.com/KomMonitor/data-management/compare/1.2.0..v1.2.1
 [1.2.0]: https://github.com/KomMonitor/data-management/compare/1.1.0..1.2.0
 [1.1.0]: https://github.com/KomMonitor/data-management/compare/1.0.0..1.1.0
-[1.0.0]: https://github.com/KomMonitor/data-management/tree/1.0.0
+[1.0.0]: https://github.com/KomMonitor/data-management/compare/v6.0.0-SNAPSHOT..1.0.0
 
 <!-- generated by git-cliff -->
