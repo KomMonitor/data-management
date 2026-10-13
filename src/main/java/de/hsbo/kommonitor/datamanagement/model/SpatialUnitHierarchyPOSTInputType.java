@@ -32,6 +32,8 @@ public class SpatialUnitHierarchyPOSTInputType implements Serializable {
 
   private String name;
 
+  private @Nullable String description;
+
   private String mandantId;
 
   private Boolean isPublic = false;
@@ -69,6 +71,27 @@ public class SpatialUnitHierarchyPOSTInputType implements Serializable {
   @JsonProperty("name")
   public void setName(String name) {
     this.name = name;
+  }
+
+  public SpatialUnitHierarchyPOSTInputType description(@Nullable String description) {
+    this.description = description;
+    return this;
+  }
+
+  /**
+   * free text info to provide a comprehensive description for the hierarchy
+   * @return description
+   */
+  
+  @Schema(name = "description", example = "This hierarchy contains spatial units that represent administrative boundaries", description = "free text info to provide a comprehensive description for the hierarchy", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("description")
+  public @Nullable String getDescription() {
+    return description;
+  }
+
+  @JsonProperty("description")
+  public void setDescription(@Nullable String description) {
+    this.description = description;
   }
 
   public SpatialUnitHierarchyPOSTInputType mandantId(String mandantId) {
@@ -152,6 +175,7 @@ public class SpatialUnitHierarchyPOSTInputType implements Serializable {
     }
     SpatialUnitHierarchyPOSTInputType spatialUnitHierarchyPOSTInputType = (SpatialUnitHierarchyPOSTInputType) o;
     return Objects.equals(this.name, spatialUnitHierarchyPOSTInputType.name) &&
+        Objects.equals(this.description, spatialUnitHierarchyPOSTInputType.description) &&
         Objects.equals(this.mandantId, spatialUnitHierarchyPOSTInputType.mandantId) &&
         Objects.equals(this.isPublic, spatialUnitHierarchyPOSTInputType.isPublic) &&
         Objects.equals(this.members, spatialUnitHierarchyPOSTInputType.members);
@@ -159,7 +183,7 @@ public class SpatialUnitHierarchyPOSTInputType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, mandantId, isPublic, members);
+    return Objects.hash(name, description, mandantId, isPublic, members);
   }
 
   @Override
@@ -167,6 +191,7 @@ public class SpatialUnitHierarchyPOSTInputType implements Serializable {
     StringBuilder sb = new StringBuilder();
     sb.append("class SpatialUnitHierarchyPOSTInputType {\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    mandantId: ").append(toIndentedString(mandantId)).append("\n");
     sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("    members: ").append(toIndentedString(members)).append("\n");

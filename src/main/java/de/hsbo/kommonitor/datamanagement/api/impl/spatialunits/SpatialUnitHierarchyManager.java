@@ -72,6 +72,7 @@ public class SpatialUnitHierarchyManager {
 
         SpatialUnitHierarchyEntity entity = new SpatialUnitHierarchyEntity();
         entity.setName(input.getName());
+        entity.setDescription(input.getDescription());
         entity.setMandant(mandant);
         entity.setPublic(Boolean.TRUE.equals(input.getIsPublic()));
 
@@ -196,6 +197,7 @@ public class SpatialUnitHierarchyManager {
         if (input.getIsPublic() != null) {
             entity.setPublic(input.getIsPublic());
         }
+        entity.setDescription(input.getDescription());
         entity = hierarchyRepository.save(entity);
         return SpatialUnitHierarchyMapper.mapToSwaggerHierarchy(entity);
     }

@@ -34,6 +34,8 @@ public class SpatialUnitHierarchyOverviewType implements Serializable {
 
   private String name;
 
+  private @Nullable String description;
+
   private String mandantId;
 
   private Boolean isPublic;
@@ -94,6 +96,27 @@ public class SpatialUnitHierarchyOverviewType implements Serializable {
   @JsonProperty("name")
   public void setName(String name) {
     this.name = name;
+  }
+
+  public SpatialUnitHierarchyOverviewType description(@Nullable String description) {
+    this.description = description;
+    return this;
+  }
+
+  /**
+   * free text info to provide a comprehensive description for the hierarchy
+   * @return description
+   */
+  
+  @Schema(name = "description", description = "free text info to provide a comprehensive description for the hierarchy", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("description")
+  public @Nullable String getDescription() {
+    return description;
+  }
+
+  @JsonProperty("description")
+  public void setDescription(@Nullable String description) {
+    this.description = description;
   }
 
   public SpatialUnitHierarchyOverviewType mandantId(String mandantId) {
@@ -178,6 +201,7 @@ public class SpatialUnitHierarchyOverviewType implements Serializable {
     SpatialUnitHierarchyOverviewType spatialUnitHierarchyOverviewType = (SpatialUnitHierarchyOverviewType) o;
     return Objects.equals(this.hierarchyId, spatialUnitHierarchyOverviewType.hierarchyId) &&
         Objects.equals(this.name, spatialUnitHierarchyOverviewType.name) &&
+        Objects.equals(this.description, spatialUnitHierarchyOverviewType.description) &&
         Objects.equals(this.mandantId, spatialUnitHierarchyOverviewType.mandantId) &&
         Objects.equals(this.isPublic, spatialUnitHierarchyOverviewType.isPublic) &&
         Objects.equals(this.members, spatialUnitHierarchyOverviewType.members);
@@ -185,7 +209,7 @@ public class SpatialUnitHierarchyOverviewType implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(hierarchyId, name, mandantId, isPublic, members);
+    return Objects.hash(hierarchyId, name, description, mandantId, isPublic, members);
   }
 
   @Override
@@ -194,6 +218,7 @@ public class SpatialUnitHierarchyOverviewType implements Serializable {
     sb.append("class SpatialUnitHierarchyOverviewType {\n");
     sb.append("    hierarchyId: ").append(toIndentedString(hierarchyId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    mandantId: ").append(toIndentedString(mandantId)).append("\n");
     sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("    members: ").append(toIndentedString(members)).append("\n");

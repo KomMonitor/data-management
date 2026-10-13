@@ -28,6 +28,8 @@ public class SpatialUnitHierarchyInputType implements Serializable {
 
   private String name;
 
+  private @Nullable String description;
+
   private String mandantId;
 
   private Boolean isPublic = false;
@@ -63,6 +65,27 @@ public class SpatialUnitHierarchyInputType implements Serializable {
   @JsonProperty("name")
   public void setName(String name) {
     this.name = name;
+  }
+
+  public SpatialUnitHierarchyInputType description(@Nullable String description) {
+    this.description = description;
+    return this;
+  }
+
+  /**
+   * free text info to provide a comprehensive description for the hierarchy
+   * @return description
+   */
+  
+  @Schema(name = "description", example = "This hierarchy contains spatial units that represent administrative boundaries", description = "free text info to provide a comprehensive description for the hierarchy", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("description")
+  public @Nullable String getDescription() {
+    return description;
+  }
+
+  @JsonProperty("description")
+  public void setDescription(@Nullable String description) {
+    this.description = description;
   }
 
   public SpatialUnitHierarchyInputType mandantId(String mandantId) {
@@ -117,13 +140,14 @@ public class SpatialUnitHierarchyInputType implements Serializable {
     }
     SpatialUnitHierarchyInputType spatialUnitHierarchyInputType = (SpatialUnitHierarchyInputType) o;
     return Objects.equals(this.name, spatialUnitHierarchyInputType.name) &&
+        Objects.equals(this.description, spatialUnitHierarchyInputType.description) &&
         Objects.equals(this.mandantId, spatialUnitHierarchyInputType.mandantId) &&
         Objects.equals(this.isPublic, spatialUnitHierarchyInputType.isPublic);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, mandantId, isPublic);
+    return Objects.hash(name, description, mandantId, isPublic);
   }
 
   @Override
@@ -131,6 +155,7 @@ public class SpatialUnitHierarchyInputType implements Serializable {
     StringBuilder sb = new StringBuilder();
     sb.append("class SpatialUnitHierarchyInputType {\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    description: ").append(toIndentedString(description)).append("\n");
     sb.append("    mandantId: ").append(toIndentedString(mandantId)).append("\n");
     sb.append("    isPublic: ").append(toIndentedString(isPublic)).append("\n");
     sb.append("}");

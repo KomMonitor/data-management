@@ -33,6 +33,8 @@ public class SpatialUnitHierarchyEntity {
 
     private String name;
 
+    private String description;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "mandant_organizationalunitid")
     private OrganizationalUnitEntity mandant;
@@ -57,6 +59,14 @@ public class SpatialUnitHierarchyEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public OrganizationalUnitEntity getMandant() {

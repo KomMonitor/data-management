@@ -27,6 +27,7 @@ public class SpatialUnitHierarchyMapper {
         SpatialUnitHierarchyOverviewType overview = new SpatialUnitHierarchyOverviewType();
         overview.setHierarchyId(entity.getId());
         overview.setName(entity.getName());
+        overview.setDescription(entity.getDescription());
         if (entity.getMandant() != null) {
             overview.setMandantId(entity.getMandant().getOrganizationalUnitId());
         }

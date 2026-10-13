@@ -9289,6 +9289,10 @@ components:
           type: string
           description: the name of the hierarchy. Unique within the owning mandant.
           example: Administrative hierarchy
+        description:
+          type: string
+          description: free text info to provide a comprehensive description for the hierarchy
+          example: This hierarchy contains spatial units that represent administrative boundaries
         mandantId:
           type: string
           description: identifier of the mandant (organizational unit) that owns the
@@ -9312,6 +9316,10 @@ components:
           type: string
           description: the name of the hierarchy. Unique within the owning mandant.
           example: Administrative hierarchy
+        description:
+          type: string
+          description: free text info to provide a comprehensive description for the hierarchy
+          example: This hierarchy contains spatial units that represent administrative boundaries
         mandantId:
           type: string
           description: identifier of the mandant (organizational unit) that owns the
@@ -9345,6 +9353,9 @@ components:
         name:
           type: string
           description: the name of the hierarchy. Unique within the owning mandant.
+        description:
+          type: string
+          description: free text info to provide a comprehensive description for the hierarchy
         mandantId:
           type: string
           description: identifier of the mandant (organizational unit) that owns the
