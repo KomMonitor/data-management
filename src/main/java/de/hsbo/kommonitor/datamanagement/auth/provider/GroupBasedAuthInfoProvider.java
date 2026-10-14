@@ -47,7 +47,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
         this.tokenParser = tokenParser;
 
         groups = tokenParser.getGroupMemberships(principal);
-        permissionSet = new TreeSet();
+        permissionSet = new TreeSet<>();
         permissionSet.add(PermissionLevelType.CREATOR);
         permissionSet.add(PermissionLevelType.EDITOR);
         permissionSet.add(PermissionLevelType.VIEWER);
@@ -346,7 +346,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
      * @return true if the Keycloak group has admin permission for resources of the owning group
      */
     private boolean hasClientResourceAdminPermissionForOwningGroup(String kcGroup, String kcRole, RestrictedEntity entity) {
-        return kcRole.equals(CLIENT_RESOURCES_CREATOR.getValue()) && roleGroupIsParent(kcGroup, entity.getOwner());
+        return kcRole.equals(CLIENT_RESOURCES_CREATOR.getValue()) && roleGroupIsSameOrParent(kcGroup, entity.getOwner());
     }
 
     private boolean hasClientUsersAdminPermissionForParentGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
@@ -373,7 +373,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
                     String[] split = roleExtractorRegex.split(r, 2);
                     return Pair.of(split[0], split[1]);
                 })
-                .anyMatch(r -> hasClientResourcesAdminPermissionForOwningGroup(r.getFirst(), r.getSecond(), entity));
+                .anyMatch(r -> hasExclusiveClientResourcesAdminPermissionForOwningGroup(r.getFirst(), r.getSecond(), entity));
     }
 
     private boolean hasUnitUsersAdminPermissionForOwningGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
@@ -382,11 +382,15 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
     }
 
     private boolean hasClientUsersAdminPermissionForOwningGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
-        return kcRole.equals(CLIENT_USERS_CREATOR.getValue()) && roleGroupIsParent(kcGroup, entity);
+        return kcRole.equals(CLIENT_USERS_CREATOR.getValue()) && roleGroupIsSameOrParent(kcGroup, entity);
     }
 
     private boolean hasClientResourcesAdminPermissionForOwningGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
-        return kcRole.equals(CLIENT_RESOURCES_CREATOR.getValue()) && roleGroupIsParent(kcGroup, entity);
+        return kcRole.equals(CLIENT_RESOURCES_CREATOR.getValue()) && roleGroupIsSameOrParent(kcGroup, entity);
+    }
+
+    private boolean hasExclusiveClientResourcesAdminPermissionForOwningGroup(String kcGroup, String kcRole, OrganizationalUnitEntity entity) {
+        return kcRole.equals(CLIENT_RESOURCES_CREATOR.getValue()) && entity.getName().equals(kcGroup);
     }
 
     /**
@@ -396,7 +400,7 @@ public class GroupBasedAuthInfoProvider implements AuthInfoProvider {
      * @param entity  OrganizationalUnit
      * @return true if the OrganizationalUnit has a parent, which has the same name as the Keycloak group
      */
-    private boolean roleGroupIsParent(String kcGroup, OrganizationalUnitEntity entity) {
+    private boolean roleGroupIsSameOrParent(String kcGroup, OrganizationalUnitEntity entity) {
         OrganizationalUnitEntity currentOrga = entity;
         while (currentOrga != null) {
             if (currentOrga.getName().equals(kcGroup)) {
