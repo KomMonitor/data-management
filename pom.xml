@@ -4,7 +4,7 @@
 
     <groupId>de.hsbo.kommonitor</groupId>
     <artifactId>kommonitor-data-management-app</artifactId>
-    <version>5.2.6</version>
+    <version>5.2.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>KomMonitor Data Management</name>
@@ -374,7 +374,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>${release-plugin.version}</version>
                 <configuration>
-                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
                     <pushChanges>false</pushChanges>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <preparationGoals>clean verify exec:exec@generate-changelog scm:checkin -DpushChanges=false -Dincludes=CHANGELOG.md -Dmessage="[maven-release-plugin] Update CHANGELOG.md" verify</preparationGoals>
