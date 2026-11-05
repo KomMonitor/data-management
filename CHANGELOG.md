@@ -5,11 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [5.2.7]
+>  5 Nov 2026
 
 ### Added
 
 - Add git cliff changelog generation to release process ([94af9e7](https://github.com/KomMonitor/data-management/commit/94af9e7503dd49992629c612317461ad149d1048))
+
+### Changed
+
+- Update changelog ([2c1526f](https://github.com/KomMonitor/data-management/commit/2c1526f3624b6482eca134af3c282a03b6f81d4a))
+- Update base image ([e0b46e8](https://github.com/KomMonitor/data-management/commit/e0b46e8e37e1af559b88512e5ef1f5ef81104185))
+
+### Removed
+
+- Remove duplicat dep ([9e31ff2](https://github.com/KomMonitor/data-management/commit/9e31ff2f35da9ae63939ae1c6863ea8b18e5f133))
 
 ## [5.2.6]
 > 17 Jun 2026
@@ -1585,7 +1595,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove old files ([820d309](https://github.com/KomMonitor/data-management/commit/820d309a1c58c275179f7c23504e6ec725530b35))
 - Remove TOC as on dockerhub links in TOC do not work properly ([b02c3f5](https://github.com/KomMonitor/data-management/commit/b02c3f5ee590d374ea18866186dca798846f41d3))
 
-[unreleased]: https://github.com/KomMonitor/data-management/compare/v5.2.6..HEAD
+[5.2.7]: https://github.com/KomMonitor/data-management/compare/v5.2.6..5.2.7
 [5.2.6]: https://github.com/KomMonitor/data-management/compare/v5.2.5..v5.2.6
 [5.2.5]: https://github.com/KomMonitor/data-management/compare/v5.2.4..v5.2.5
 [5.2.4]: https://github.com/KomMonitor/data-management/compare/v5.2.3..v5.2.4
