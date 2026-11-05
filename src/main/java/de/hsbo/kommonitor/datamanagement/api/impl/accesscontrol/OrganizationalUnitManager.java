@@ -3,6 +3,14 @@ package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ApiException;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.KeycloakException;
 import de.hsbo.kommonitor.datamanagement.api.impl.exception.ResourceNotFoundException;
+import de.hsbo.kommonitor.datamanagement.api.impl.georesources.GeoresourcesMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.IndicatorsMetadataRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitJoinEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.indicators.joinspatialunits.IndicatorSpatialUnitsRepository;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataGeoresourcesEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
+import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.auth.KeycloakAdminService;
 import de.hsbo.kommonitor.datamanagement.auth.provider.AuthInfoProvider;
 import de.hsbo.kommonitor.datamanagement.model.*;
@@ -37,6 +45,18 @@ public class OrganizationalUnitManager {
 
     @Autowired
     KeycloakAdminService keycloakAdminService;
+
+    @Autowired
+    GeoresourcesMetadataRepository georesourcesMetadataRepository;
+
+    @Autowired
+    SpatialUnitsMetadataRepository spatialUnitsMetadataRepository;
+
+    @Autowired
+    IndicatorsMetadataRepository indicatorsMetadataRepository;
+
+    @Autowired
+    IndicatorSpatialUnitsRepository indicatorSpatialUnitsRepository;
 
     @Value("${kommonitor.access-control.anonymous-users.organizationalUnit:public}")
     private String defaultAnonymousOUname;
@@ -364,22 +384,103 @@ public class OrganizationalUnitManager {
         }
     }
 
-    public OrganizationalUnitPermissionOverviewType getOrganizationalUnitPermissionsById(String organizationalUnitId) throws ResourceNotFoundException {
-        LOG.info("Retrieving OrganizationalUnit->permissions for organizationalUnitId '{}'", organizationalUnitId);
+    public OrganizationalUnitPermissionOverviewType getOrganizationalUnitPermissionsById(
+            String organizationalUnitId, ResourceType resourceType) throws ResourceNotFoundException {
+        LOG.info("Retrieving OrganizationalUnit->permissions for organizationalUnitId '{}' and resourceType '{}'",
+                organizationalUnitId, resourceType);
 
         OrganizationalUnitEntity organizationalUnitEntity =
                 organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
 
-        if (organizationalUnitEntity != null) {
-            return OrganizationalUnitMapper.mapToSwapperOUPermissionOverviewType(organizationalUnitEntity);
-        } else {
-            LOG.error("No OrganizationalUnit with id '{}' was found in database. Delete request has no effect.",
-                    organizationalUnitId);
+        if (organizationalUnitEntity == null) {
+            LOG.error("No OrganizationalUnit with id '{}' was found in database.", organizationalUnitId);
             throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
-                    "Tried to delete OrganizationalUnit, but no OrganizationalUnit " +
-                            "existes with id " +
-                            organizationalUnitId);
+                    "Tried to fetch OrganizationalUnit permissions, but no OrganizationalUnit " +
+                            "exists with id " + organizationalUnitId);
         }
+
+        OrganizationalUnitPermissionOverviewType overview =
+                OrganizationalUnitMapper.mapToSwapperOUPermissionOverviewType(organizationalUnitEntity);
+
+        OrganizationalUnitPermissionOverviewTypePermissions permissions =
+                new OrganizationalUnitPermissionOverviewTypePermissions();
+
+        if (resourceType == null || resourceType == ResourceType.GEORESOURCES) {
+            permissions.setGeoresources(collectGeoresourcePermissions(organizationalUnitId));
+        }
+        if (resourceType == null || resourceType == ResourceType.SPATIALUNITS) {
+            permissions.setSpatialunits(collectSpatialUnitPermissions(organizationalUnitId));
+        }
+        if (resourceType == null || resourceType == ResourceType.INDICATORS) {
+            permissions.setIndicators(collectIndicatorPermissions(organizationalUnitId));
+        }
+        if (resourceType == null || resourceType == ResourceType.INDICATORSPATIALUNITS) {
+            permissions.setIndicatorspatialunits(collectIndicatorSpatialUnitPermissions(organizationalUnitId));
+        }
+
+        overview.setPermissions(permissions);
+        return overview;
+    }
+
+    private List<OrganizationalUnitPermissionOverviewElementType> collectGeoresourcePermissions(
+            String organizationalUnitId) {
+        List<OrganizationalUnitPermissionOverviewElementType> elements = new ArrayList<>();
+        for (MetadataGeoresourcesEntity dataset : georesourcesMetadataRepository.findAll()) {
+            addMatchingElements(elements, dataset.getDatasetId(), dataset.getPermissions(), organizationalUnitId);
+        }
+        return elements;
+    }
+
+    private List<OrganizationalUnitPermissionOverviewElementType> collectSpatialUnitPermissions(
+            String organizationalUnitId) {
+        List<OrganizationalUnitPermissionOverviewElementType> elements = new ArrayList<>();
+        for (MetadataSpatialUnitsEntity dataset : spatialUnitsMetadataRepository.findAll()) {
+            addMatchingElements(elements, dataset.getDatasetId(), dataset.getPermissions(), organizationalUnitId);
+        }
+        return elements;
+    }
+
+    private List<OrganizationalUnitPermissionOverviewElementType> collectIndicatorPermissions(
+            String organizationalUnitId) {
+        List<OrganizationalUnitPermissionOverviewElementType> elements = new ArrayList<>();
+        for (MetadataIndicatorsEntity dataset : indicatorsMetadataRepository.findAll()) {
+            addMatchingElements(elements, dataset.getDatasetId(), dataset.getPermissions(), organizationalUnitId);
+        }
+        return elements;
+    }
+
+    private List<OrganizationalUnitPermissionOverviewSpatialUnitElementType> collectIndicatorSpatialUnitPermissions(
+            String organizationalUnitId) {
+        List<OrganizationalUnitPermissionOverviewSpatialUnitElementType> elements = new ArrayList<>();
+        for (IndicatorSpatialUnitJoinEntity join : indicatorSpatialUnitsRepository.findAll()) {
+            for (PermissionEntity permission : join.getPermissions()) {
+                if (belongsToOrganizationalUnit(permission, organizationalUnitId)) {
+                    elements.add(OrganizationalUnitMapper.mapToSpatialUnitPermissionElement(
+                            permission, join.getIndicatorMetadataId(), join.getSpatialUnitId()));
+                }
+            }
+        }
+        return elements;
+    }
+
+    private void addMatchingElements(List<OrganizationalUnitPermissionOverviewElementType> target,
+                                     String datasetId,
+                                     Set<PermissionEntity> permissions,
+                                     String organizationalUnitId) {
+        if (permissions == null) {
+            return;
+        }
+        for (PermissionEntity permission : permissions) {
+            if (belongsToOrganizationalUnit(permission, organizationalUnitId)) {
+                target.add(OrganizationalUnitMapper.mapToPermissionElement(permission, datasetId));
+            }
+        }
+    }
+
+    private boolean belongsToOrganizationalUnit(PermissionEntity permission, String organizationalUnitId) {
+        return permission != null
+                && permission.getOrganizationalUnit() != null
+                && organizationalUnitId.equals(permission.getOrganizationalUnit().getOrganizationalUnitId());
     }
 
     public String updateOrganizationalUnit(OrganizationalUnitInputType newData,

@@ -1,13 +1,16 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewElementType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewSpatialUnitElementType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
-import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewTypePermissions;
+import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.PermissionResourceType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class OrganizationalUnitMapper {
@@ -63,6 +66,11 @@ public class OrganizationalUnitMapper {
         return roles;
     }
 
+    /**
+     * Maps the header information (id, name, contact, description) of an organizational unit onto a
+     * permission overview. The grouped per-dataset permissions themselves are assembled in
+     * {@link OrganizationalUnitManager}, because that requires access to the dataset repositories.
+     */
     public static OrganizationalUnitPermissionOverviewType mapToSwapperOUPermissionOverviewType(
             OrganizationalUnitEntity ouEntity) {
         OrganizationalUnitPermissionOverviewType ou = new OrganizationalUnitPermissionOverviewType();
@@ -70,15 +78,32 @@ public class OrganizationalUnitMapper {
         ou.setName(ouEntity.getName());
         ou.setContact(ouEntity.getContact());
         ou.setDescription(ouEntity.getDescription());
-
-        OrganizationalUnitPermissionOverviewTypePermissions permissions =
-                new OrganizationalUnitPermissionOverviewTypePermissions();
-
-        //TODO(auti); create mapping
-
-        ou.setPermissions(permissions);
-
         return ou;
+    }
+
+    public static OrganizationalUnitPermissionOverviewElementType mapToPermissionElement(
+            PermissionEntity permission, String datasetId) {
+        OrganizationalUnitPermissionOverviewElementType element =
+                new OrganizationalUnitPermissionOverviewElementType();
+        element.setId(UUID.fromString(datasetId));
+        element.setPermissionLevel(mapPermissionLevel(permission.getPermissionLevel()));
+        element.setRoleId(UUID.fromString(permission.getPermissionId()));
+        return element;
+    }
+
+    public static OrganizationalUnitPermissionOverviewSpatialUnitElementType mapToSpatialUnitPermissionElement(
+            PermissionEntity permission, String indicatorId, String spatialUnitId) {
+        OrganizationalUnitPermissionOverviewSpatialUnitElementType element =
+                new OrganizationalUnitPermissionOverviewSpatialUnitElementType();
+        element.setId(UUID.fromString(indicatorId));
+        element.setPermissionLevel(mapPermissionLevel(permission.getPermissionLevel()));
+        element.setRoleId(UUID.fromString(permission.getPermissionId()));
+        element.setSpatialUnitId(UUID.fromString(spatialUnitId));
+        return element;
+    }
+
+    private static String mapPermissionLevel(PermissionLevelType permissionLevel) {
+        return permissionLevel != null ? permissionLevel.getValue() : null;
     }
 
 }

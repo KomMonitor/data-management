@@ -12,7 +12,6 @@ import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitRoleAuthorityType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitRoleDelegateType;
-import de.hsbo.kommonitor.datamanagement.model.ResourceType;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -207,7 +206,7 @@ public interface AccessControlApi {
     )
     ResponseEntity<OrganizationalUnitPermissionOverviewType> getOrganizationalUnitPermissions(
         @Parameter(name = "organizationalUnitId", description = "organizationalUnitId", required = true, in = ParameterIn.PATH) @PathVariable("organizationalUnitId") String organizationalUnitId,
-        @Parameter(name = "resourceType", description = "resourceType", in = ParameterIn.QUERY) @Valid @RequestParam(value = "resourceType", required = false) @Nullable ResourceType resourceType
+        @Parameter(name = "resourceType", description = "resourceType", in = ParameterIn.QUERY) @Valid @RequestParam(value = "resourceType", required = false) @Nullable String resourceType
     );
 
 

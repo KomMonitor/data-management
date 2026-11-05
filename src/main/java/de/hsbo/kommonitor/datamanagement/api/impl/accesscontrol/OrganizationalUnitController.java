@@ -166,14 +166,26 @@ public class OrganizationalUnitController extends BasePathController implements 
     @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
     @Override public ResponseEntity<OrganizationalUnitPermissionOverviewType> getOrganizationalUnitPermissions(
             String organizationalUnitId,
-            ResourceType resourceType) {
-        LOG.info("Received request to get organizationalUnit permissions for id '{}'", organizationalUnitId);
+            String resourceType) {
+        LOG.info("Received request to get organizationalUnit permissions for id '{}' and resourceType '{}'",
+                organizationalUnitId, resourceType);
         String accept = request.getHeader("Accept");
+
+        ResourceType parsedResourceType = null;
+        if (resourceType != null) {
+            try {
+                parsedResourceType = ResourceType.fromValue(resourceType);
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Invalid resourceType '{}' requested for organizationalUnit permissions", resourceType);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
 
         try {
             if (accept != null && accept.contains("application/json")) {
                 OrganizationalUnitPermissionOverviewType permissions =
-                        organizationalUnitManager.getOrganizationalUnitPermissionsById(organizationalUnitId);
+                        organizationalUnitManager.getOrganizationalUnitPermissionsById(
+                                organizationalUnitId, parsedResourceType);
                 return new ResponseEntity<>(permissions, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

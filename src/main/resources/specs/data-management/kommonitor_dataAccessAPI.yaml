@@ -2686,7 +2686,12 @@ paths:
           description: resourceType
           required: false
           schema:
-            $ref: "#/components/schemas/ResourceType"
+            type: string
+            enum:
+              - georesources
+              - spatialunits
+              - indicators
+              - indicatorspatialunits
       responses:
         "200":
           description: OK
@@ -8664,7 +8669,7 @@ components:
       type: string
       enum:
         - georesources
-        - spatialunits,
+        - spatialunits
         - indicators
         - indicatorspatialunits
     OrganizationalUnitPermissionOverviewElementType:
