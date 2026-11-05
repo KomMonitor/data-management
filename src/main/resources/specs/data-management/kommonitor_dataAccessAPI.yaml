@@ -8676,17 +8676,29 @@ components:
       type: object
       required:
         - id
-        - permissionLevel
-        - roleId
+        - name
+        - permissions
       properties:
         id:
           type: string
           format: uuid
-        permissionLevel:
+        name:
           type: string
-        roleId:
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrganizationalUnitPermissionDetailType"
+    OrganizationalUnitPermissionDetailType:
+      type: object
+      required:
+        - permissionId
+        - permissionLevel
+      properties:
+        permissionId:
           type: string
           format: uuid
+        permissionLevel:
+          type: string
     OrganizationalUnitPermissionOverviewSpatialUnitElementType:
       allOf:
         - $ref: '#/components/schemas/OrganizationalUnitPermissionOverviewElementType'

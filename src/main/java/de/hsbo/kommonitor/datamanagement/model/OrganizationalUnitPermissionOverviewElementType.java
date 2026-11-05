@@ -4,6 +4,9 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionDetailType;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
@@ -28,9 +31,10 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
 
   private UUID id;
 
-  private String permissionLevel;
+  private String name;
 
-  private UUID roleId;
+  @Valid
+  private List<@Valid OrganizationalUnitPermissionDetailType> permissions = new ArrayList<>();
 
   public OrganizationalUnitPermissionOverviewElementType() {
     super();
@@ -39,10 +43,10 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
   /**
    * Constructor with only required parameters
    */
-  public OrganizationalUnitPermissionOverviewElementType(UUID id, String permissionLevel, UUID roleId) {
+  public OrganizationalUnitPermissionOverviewElementType(UUID id, String name, List<@Valid OrganizationalUnitPermissionDetailType> permissions) {
     this.id = id;
-    this.permissionLevel = permissionLevel;
-    this.roleId = roleId;
+    this.name = name;
+    this.permissions = permissions;
   }
 
   public OrganizationalUnitPermissionOverviewElementType id(UUID id) {
@@ -54,7 +58,7 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
    * Get id
    * @return id
    */
-  @NotNull @Valid 
+  @NotNull @Valid
   @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("id")
   public UUID getId() {
@@ -66,46 +70,54 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
     this.id = id;
   }
 
-  public OrganizationalUnitPermissionOverviewElementType permissionLevel(String permissionLevel) {
-    this.permissionLevel = permissionLevel;
+  public OrganizationalUnitPermissionOverviewElementType name(String name) {
+    this.name = name;
     return this;
   }
 
   /**
-   * Get permissionLevel
-   * @return permissionLevel
+   * Get name
+   * @return name
    */
-  @NotNull 
-  @Schema(name = "permissionLevel", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("permissionLevel")
-  public String getPermissionLevel() {
-    return permissionLevel;
+  @NotNull
+  @Schema(name = "name", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("name")
+  public String getName() {
+    return name;
   }
 
-  @JsonProperty("permissionLevel")
-  public void setPermissionLevel(String permissionLevel) {
-    this.permissionLevel = permissionLevel;
+  @JsonProperty("name")
+  public void setName(String name) {
+    this.name = name;
   }
 
-  public OrganizationalUnitPermissionOverviewElementType roleId(UUID roleId) {
-    this.roleId = roleId;
+  public OrganizationalUnitPermissionOverviewElementType permissions(List<@Valid OrganizationalUnitPermissionDetailType> permissions) {
+    this.permissions = permissions;
+    return this;
+  }
+
+  public OrganizationalUnitPermissionOverviewElementType addPermissionsItem(OrganizationalUnitPermissionDetailType permissionsItem) {
+    if (this.permissions == null) {
+      this.permissions = new ArrayList<>();
+    }
+    this.permissions.add(permissionsItem);
     return this;
   }
 
   /**
-   * Get roleId
-   * @return roleId
+   * Get permissions
+   * @return permissions
    */
-  @NotNull @Valid 
-  @Schema(name = "roleId", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("roleId")
-  public UUID getRoleId() {
-    return roleId;
+  @NotNull @Valid
+  @Schema(name = "permissions", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("permissions")
+  public List<@Valid OrganizationalUnitPermissionDetailType> getPermissions() {
+    return permissions;
   }
 
-  @JsonProperty("roleId")
-  public void setRoleId(UUID roleId) {
-    this.roleId = roleId;
+  @JsonProperty("permissions")
+  public void setPermissions(List<@Valid OrganizationalUnitPermissionDetailType> permissions) {
+    this.permissions = permissions;
   }
 
   @Override
@@ -118,13 +130,13 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
     }
     OrganizationalUnitPermissionOverviewElementType organizationalUnitPermissionOverviewElementType = (OrganizationalUnitPermissionOverviewElementType) o;
     return Objects.equals(this.id, organizationalUnitPermissionOverviewElementType.id) &&
-        Objects.equals(this.permissionLevel, organizationalUnitPermissionOverviewElementType.permissionLevel) &&
-        Objects.equals(this.roleId, organizationalUnitPermissionOverviewElementType.roleId);
+        Objects.equals(this.name, organizationalUnitPermissionOverviewElementType.name) &&
+        Objects.equals(this.permissions, organizationalUnitPermissionOverviewElementType.permissions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, permissionLevel, roleId);
+    return Objects.hash(id, name, permissions);
   }
 
   @Override
@@ -132,8 +144,8 @@ public class OrganizationalUnitPermissionOverviewElementType implements Serializ
     StringBuilder sb = new StringBuilder();
     sb.append("class OrganizationalUnitPermissionOverviewElementType {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    permissionLevel: ").append(toIndentedString(permissionLevel)).append("\n");
-    sb.append("    roleId: ").append(toIndentedString(roleId)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    permissions: ").append(toIndentedString(permissions)).append("\n");
     sb.append("}");
     return sb.toString();
   }

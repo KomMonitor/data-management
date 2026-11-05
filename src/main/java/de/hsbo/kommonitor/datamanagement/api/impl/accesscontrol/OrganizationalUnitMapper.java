@@ -1,6 +1,7 @@
 package de.hsbo.kommonitor.datamanagement.api.impl.accesscontrol;
 
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionDetailType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewElementType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewSpatialUnitElementType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
@@ -82,28 +83,37 @@ public class OrganizationalUnitMapper {
     }
 
     public static OrganizationalUnitPermissionOverviewElementType mapToPermissionElement(
-            PermissionEntity permission, String datasetId) {
+            String datasetId, String datasetName, List<PermissionEntity> permissions) {
         OrganizationalUnitPermissionOverviewElementType element =
                 new OrganizationalUnitPermissionOverviewElementType();
         element.setId(UUID.fromString(datasetId));
-        element.setPermissionLevel(mapPermissionLevel(permission.getPermissionLevel()));
-        element.setRoleId(UUID.fromString(permission.getPermissionId()));
+        element.setName(datasetName);
+        element.setPermissions(mapPermissionDetails(permissions));
         return element;
     }
 
     public static OrganizationalUnitPermissionOverviewSpatialUnitElementType mapToSpatialUnitPermissionElement(
-            PermissionEntity permission, String indicatorId, String spatialUnitId) {
+            String indicatorId, String indicatorName, String spatialUnitId, List<PermissionEntity> permissions) {
         OrganizationalUnitPermissionOverviewSpatialUnitElementType element =
                 new OrganizationalUnitPermissionOverviewSpatialUnitElementType();
         element.setId(UUID.fromString(indicatorId));
-        element.setPermissionLevel(mapPermissionLevel(permission.getPermissionLevel()));
-        element.setRoleId(UUID.fromString(permission.getPermissionId()));
+        element.setName(indicatorName);
         element.setSpatialUnitId(UUID.fromString(spatialUnitId));
+        element.setPermissions(mapPermissionDetails(permissions));
         return element;
     }
 
-    private static String mapPermissionLevel(PermissionLevelType permissionLevel) {
-        return permissionLevel != null ? permissionLevel.getValue() : null;
+    private static List<OrganizationalUnitPermissionDetailType> mapPermissionDetails(
+            List<PermissionEntity> permissions) {
+        List<OrganizationalUnitPermissionDetailType> details = new ArrayList<>();
+        for (PermissionEntity permission : permissions) {
+            OrganizationalUnitPermissionDetailType detail = new OrganizationalUnitPermissionDetailType();
+            detail.setPermissionId(UUID.fromString(permission.getPermissionId()));
+            detail.setPermissionLevel(
+                    permission.getPermissionLevel() != null ? permission.getPermissionLevel().getValue() : null);
+            details.add(detail);
+        }
+        return details;
     }
 
 }

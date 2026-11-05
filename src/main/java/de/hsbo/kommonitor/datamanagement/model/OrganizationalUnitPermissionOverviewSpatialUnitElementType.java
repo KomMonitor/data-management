@@ -4,7 +4,10 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionDetailType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewElementType;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.lang.Nullable;
 import org.openapitools.jackson.nullable.JsonNullable;
@@ -36,8 +39,8 @@ public class OrganizationalUnitPermissionOverviewSpatialUnitElementType extends 
   /**
    * Constructor with only required parameters
    */
-  public OrganizationalUnitPermissionOverviewSpatialUnitElementType(UUID spatialUnitId, UUID id, String permissionLevel, UUID roleId) {
-    super(id, permissionLevel, roleId);
+  public OrganizationalUnitPermissionOverviewSpatialUnitElementType(UUID spatialUnitId, UUID id, String name, List<@Valid OrganizationalUnitPermissionDetailType> permissions) {
+    super(id, name, permissions);
     this.spatialUnitId = spatialUnitId;
   }
 
@@ -50,7 +53,7 @@ public class OrganizationalUnitPermissionOverviewSpatialUnitElementType extends 
    * Get spatialUnitId
    * @return spatialUnitId
    */
-  @NotNull @Valid 
+  @NotNull @Valid
   @Schema(name = "spatialUnitId", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("spatialUnitId")
   public UUID getSpatialUnitId() {
@@ -68,13 +71,13 @@ public class OrganizationalUnitPermissionOverviewSpatialUnitElementType extends 
     return this;
   }
 
-  public OrganizationalUnitPermissionOverviewSpatialUnitElementType permissionLevel(String permissionLevel) {
-    super.permissionLevel(permissionLevel);
+  public OrganizationalUnitPermissionOverviewSpatialUnitElementType name(String name) {
+    super.name(name);
     return this;
   }
 
-  public OrganizationalUnitPermissionOverviewSpatialUnitElementType roleId(UUID roleId) {
-    super.roleId(roleId);
+  public OrganizationalUnitPermissionOverviewSpatialUnitElementType permissions(List<@Valid OrganizationalUnitPermissionDetailType> permissions) {
+    super.permissions(permissions);
     return this;
   }
   @Override

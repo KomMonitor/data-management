@@ -426,7 +426,12 @@ public class OrganizationalUnitManager {
             String organizationalUnitId) {
         List<OrganizationalUnitPermissionOverviewElementType> elements = new ArrayList<>();
         for (MetadataGeoresourcesEntity dataset : georesourcesMetadataRepository.findAll()) {
-            addMatchingElements(elements, dataset.getDatasetId(), dataset.getPermissions(), organizationalUnitId);
+            List<PermissionEntity> matching =
+                    filterByOrganizationalUnit(dataset.getPermissions(), organizationalUnitId);
+            if (!matching.isEmpty()) {
+                elements.add(OrganizationalUnitMapper.mapToPermissionElement(
+                        dataset.getDatasetId(), dataset.getDatasetName(), matching));
+            }
         }
         return elements;
     }
@@ -435,7 +440,12 @@ public class OrganizationalUnitManager {
             String organizationalUnitId) {
         List<OrganizationalUnitPermissionOverviewElementType> elements = new ArrayList<>();
         for (MetadataSpatialUnitsEntity dataset : spatialUnitsMetadataRepository.findAll()) {
-            addMatchingElements(elements, dataset.getDatasetId(), dataset.getPermissions(), organizationalUnitId);
+            List<PermissionEntity> matching =
+                    filterByOrganizationalUnit(dataset.getPermissions(), organizationalUnitId);
+            if (!matching.isEmpty()) {
+                elements.add(OrganizationalUnitMapper.mapToPermissionElement(
+                        dataset.getDatasetId(), dataset.getDatasetName(), matching));
+            }
         }
         return elements;
     }
@@ -444,7 +454,12 @@ public class OrganizationalUnitManager {
             String organizationalUnitId) {
         List<OrganizationalUnitPermissionOverviewElementType> elements = new ArrayList<>();
         for (MetadataIndicatorsEntity dataset : indicatorsMetadataRepository.findAll()) {
-            addMatchingElements(elements, dataset.getDatasetId(), dataset.getPermissions(), organizationalUnitId);
+            List<PermissionEntity> matching =
+                    filterByOrganizationalUnit(dataset.getPermissions(), organizationalUnitId);
+            if (!matching.isEmpty()) {
+                elements.add(OrganizationalUnitMapper.mapToPermissionElement(
+                        dataset.getDatasetId(), dataset.getDatasetName(), matching));
+            }
         }
         return elements;
     }
@@ -453,28 +468,28 @@ public class OrganizationalUnitManager {
             String organizationalUnitId) {
         List<OrganizationalUnitPermissionOverviewSpatialUnitElementType> elements = new ArrayList<>();
         for (IndicatorSpatialUnitJoinEntity join : indicatorSpatialUnitsRepository.findAll()) {
-            for (PermissionEntity permission : join.getPermissions()) {
-                if (belongsToOrganizationalUnit(permission, organizationalUnitId)) {
-                    elements.add(OrganizationalUnitMapper.mapToSpatialUnitPermissionElement(
-                            permission, join.getIndicatorMetadataId(), join.getSpatialUnitId()));
-                }
+            List<PermissionEntity> matching =
+                    filterByOrganizationalUnit(join.getPermissions(), organizationalUnitId);
+            if (!matching.isEmpty()) {
+                elements.add(OrganizationalUnitMapper.mapToSpatialUnitPermissionElement(
+                        join.getIndicatorMetadataId(), join.getIndicatorName(), join.getSpatialUnitId(), matching));
             }
         }
         return elements;
     }
 
-    private void addMatchingElements(List<OrganizationalUnitPermissionOverviewElementType> target,
-                                     String datasetId,
-                                     Set<PermissionEntity> permissions,
-                                     String organizationalUnitId) {
+    private List<PermissionEntity> filterByOrganizationalUnit(Set<PermissionEntity> permissions,
+                                                              String organizationalUnitId) {
+        List<PermissionEntity> matching = new ArrayList<>();
         if (permissions == null) {
-            return;
+            return matching;
         }
         for (PermissionEntity permission : permissions) {
             if (belongsToOrganizationalUnit(permission, organizationalUnitId)) {
-                target.add(OrganizationalUnitMapper.mapToPermissionElement(permission, datasetId));
+                matching.add(permission);
             }
         }
+        return matching;
     }
 
     private boolean belongsToOrganizationalUnit(PermissionEntity permission, String organizationalUnitId) {
