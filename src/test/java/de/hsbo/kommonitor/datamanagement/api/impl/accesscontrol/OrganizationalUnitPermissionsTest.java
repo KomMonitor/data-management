@@ -10,6 +10,10 @@ import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataIndicatorsEnt
 import de.hsbo.kommonitor.datamanagement.api.impl.metadata.MetadataSpatialUnitsEntity;
 import de.hsbo.kommonitor.datamanagement.api.impl.spatialunits.SpatialUnitsMetadataRepository;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionDetailType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionInputElementType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionInputSpatialUnitElementType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionInputType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionInputTypePermissions;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewElementType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewSpatialUnitElementType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
@@ -17,12 +21,14 @@ import de.hsbo.kommonitor.datamanagement.model.PermissionLevelType;
 import de.hsbo.kommonitor.datamanagement.model.ResourceType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,12 +40,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Unit tests for {@link OrganizationalUnitManager#getOrganizationalUnitPermissionsById} covering the
- * per-dataset grouping and the organizational-unit filtering that back the
- * {@code GET /organizationalUnits/{id}/permissions} endpoint.
+ * Unit tests for the organizational-unit permission endpoints on {@link OrganizationalUnitManager}:
+ * <ul>
+ *   <li>{@code getOrganizationalUnitPermissionsById} &mdash; the per-dataset grouping and
+ *       organizational-unit filtering behind {@code GET /organizationalUnits/{id}/permissions};</li>
+ *   <li>{@code updateOrganizationalUnitPermissions} &mdash; the batch PATCH behind
+ *       {@code PATCH /organizationalUnits/permissions}, which replaces only the addressed
+ *       organizational unit's grants on each listed dataset and leaves everything else untouched.</li>
+ * </ul>
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -62,6 +74,9 @@ public class OrganizationalUnitPermissionsTest {
 
     @Mock
     private IndicatorSpatialUnitsRepository indicatorSpatialUnitsRepository;
+
+    @Mock
+    private PermissionManager permissionManager;
 
     @InjectMocks
     private OrganizationalUnitManager manager;
@@ -201,6 +216,168 @@ public class OrganizationalUnitPermissionsTest {
 
         assertEquals(OU_ID, overview.getOrganizationalUnitId());
         assertEquals("OU " + OU_ID, overview.getName());
+    }
+
+    // ##### updateOrganizationalUnitPermissions (PATCH) #####
+
+    @Test
+    public void patchReplacesOnlyThisOrganizationalUnitsGrantsOnGeoresource() throws Exception {
+        stubOuFound();
+
+        String datasetId = UUID.randomUUID().toString();
+        String oldPermId = UUID.randomUUID().toString();
+        String newPermId = UUID.randomUUID().toString();
+        String foreignPermId = UUID.randomUUID().toString();
+
+        PermissionEntity oldPerm = permission(oldPermId, PermissionLevelType.VIEWER, OU_ID);
+        PermissionEntity newPerm = permission(newPermId, PermissionLevelType.EDITOR, OU_ID);
+        PermissionEntity foreignPerm = permission(foreignPermId, PermissionLevelType.EDITOR, OTHER_OU_ID);
+
+        // Dataset currently holds this OU's old grant plus another OU's grant.
+        MetadataGeoresourcesEntity dataset = georesource(datasetId, "Schulen", oldPerm, foreignPerm);
+        when(georesourcesMetadataRepository.findByDatasetId(datasetId)).thenReturn(dataset);
+        when(permissionManager.retrievePermissions(List.of(newPermId))).thenReturn(List.of(newPerm));
+
+        manager.updateOrganizationalUnitPermissions(List.of(
+                patch(OU_ID, permissions().georesources(List.of(element(datasetId, newPermId))))));
+
+        Collection<PermissionEntity> saved = capturedGeoresourcePermissions(dataset);
+        assertEquals(Set.of(foreignPerm, newPerm), new HashSet<>(saved),
+                "the other OU's grant is kept, this OU's old grant is replaced by the requested one");
+    }
+
+    @Test
+    public void patchWithEmptyPermissionListClearsThisOrganizationalUnitsGrants() throws Exception {
+        stubOuFound();
+
+        String datasetId = UUID.randomUUID().toString();
+        PermissionEntity ownGrant = permission(UUID.randomUUID().toString(), PermissionLevelType.EDITOR, OU_ID);
+        PermissionEntity foreignGrant = permission(UUID.randomUUID().toString(), PermissionLevelType.EDITOR, OTHER_OU_ID);
+
+        MetadataGeoresourcesEntity dataset = georesource(datasetId, "Schulen", ownGrant, foreignGrant);
+        when(georesourcesMetadataRepository.findByDatasetId(datasetId)).thenReturn(dataset);
+
+        manager.updateOrganizationalUnitPermissions(List.of(
+                patch(OU_ID, permissions().georesources(List.of(element(datasetId))))));
+
+        Collection<PermissionEntity> saved = capturedGeoresourcePermissions(dataset);
+        assertEquals(Set.of(foreignGrant), new HashSet<>(saved),
+                "an empty permission list removes this OU's grants but keeps other OUs' grants");
+    }
+
+    @Test
+    public void patchUsesIndicatorIdAndSpatialUnitIdForIndicatorSpatialUnits() throws Exception {
+        stubOuFound();
+
+        String indicatorId = UUID.randomUUID().toString();
+        String spatialUnitId = UUID.randomUUID().toString();
+        String newPermId = UUID.randomUUID().toString();
+
+        PermissionEntity existing = permission(UUID.randomUUID().toString(), PermissionLevelType.VIEWER, OU_ID);
+        PermissionEntity newPerm = permission(newPermId, PermissionLevelType.EDITOR, OU_ID);
+
+        IndicatorSpatialUnitJoinEntity joinEntity =
+                join(indicatorId, "Population density", spatialUnitId, existing);
+        when(indicatorSpatialUnitsRepository.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId))
+                .thenReturn(joinEntity);
+        when(permissionManager.retrievePermissions(List.of(newPermId))).thenReturn(List.of(newPerm));
+
+        OrganizationalUnitPermissionInputSpatialUnitElementType element =
+                new OrganizationalUnitPermissionInputSpatialUnitElementType(
+                        UUID.fromString(spatialUnitId), UUID.fromString(indicatorId),
+                        List.of(UUID.fromString(newPermId)));
+
+        manager.updateOrganizationalUnitPermissions(List.of(
+                patch(OU_ID, permissions().indicatorspatialunits(List.of(element)))));
+
+        ArgumentCaptor<Collection<PermissionEntity>> captor = permissionCaptor();
+        verify(joinEntity).setPermissions(captor.capture());
+        assertEquals(Set.of(newPerm), new HashSet<>(captor.getValue()));
+    }
+
+    @Test
+    public void patchRejectsPermissionBelongingToAnotherOrganizationalUnit() throws Exception {
+        stubOuFound();
+
+        String datasetId = UUID.randomUUID().toString();
+        String foreignPermId = UUID.randomUUID().toString();
+        PermissionEntity foreignPerm = permission(foreignPermId, PermissionLevelType.EDITOR, OTHER_OU_ID);
+
+        MetadataGeoresourcesEntity dataset = georesource(datasetId, "Schulen");
+        when(georesourcesMetadataRepository.findByDatasetId(datasetId)).thenReturn(dataset);
+        when(permissionManager.retrievePermissions(List.of(foreignPermId))).thenReturn(List.of(foreignPerm));
+
+        assertThrows(ResourceNotFoundException.class, () ->
+                manager.updateOrganizationalUnitPermissions(List.of(
+                        patch(OU_ID, permissions().georesources(List.of(element(datasetId, foreignPermId)))))));
+    }
+
+    @Test
+    public void patchThrowsWhenOrganizationalUnitMissing() {
+        when(organizationalUnitRepository.findByOrganizationalUnitId(OU_ID)).thenReturn(null);
+
+        assertThrows(ResourceNotFoundException.class, () ->
+                manager.updateOrganizationalUnitPermissions(List.of(
+                        patch(OU_ID, permissions().georesources(List.of())))));
+    }
+
+    @Test
+    public void patchThrowsWhenDatasetMissing() {
+        stubOuFound();
+
+        String datasetId = UUID.randomUUID().toString();
+        when(georesourcesMetadataRepository.findByDatasetId(datasetId)).thenReturn(null);
+
+        assertThrows(ResourceNotFoundException.class, () ->
+                manager.updateOrganizationalUnitPermissions(List.of(
+                        patch(OU_ID, permissions().georesources(List.of(element(datasetId)))))));
+    }
+
+    @Test
+    public void patchReturnsUpdatedOverviewPerOrganizationalUnit() throws Exception {
+        stubOuFound();
+
+        String datasetId = UUID.randomUUID().toString();
+        MetadataGeoresourcesEntity dataset = georesource(datasetId, "Schulen");
+        when(georesourcesMetadataRepository.findByDatasetId(datasetId)).thenReturn(dataset);
+
+        List<OrganizationalUnitPermissionOverviewType> result = manager.updateOrganizationalUnitPermissions(List.of(
+                patch(OU_ID, permissions().georesources(List.of(element(datasetId))))));
+
+        assertEquals(1, result.size(), "one overview per patched organizational unit");
+        assertEquals(OU_ID, result.get(0).getOrganizationalUnitId());
+    }
+
+    private OrganizationalUnitPermissionInputType patch(String ouId,
+            OrganizationalUnitPermissionInputTypePermissions perms) {
+        return new OrganizationalUnitPermissionInputType(UUID.fromString(ouId), perms);
+    }
+
+    private OrganizationalUnitPermissionInputTypePermissions permissions() {
+        OrganizationalUnitPermissionInputTypePermissions perms =
+                new OrganizationalUnitPermissionInputTypePermissions();
+        // start from null lists so only the explicitly set resource types are touched
+        perms.setGeoresources(null);
+        perms.setSpatialunits(null);
+        perms.setIndicators(null);
+        perms.setIndicatorspatialunits(null);
+        return perms;
+    }
+
+    private OrganizationalUnitPermissionInputElementType element(String datasetId, String... permissionIds) {
+        List<UUID> perms = java.util.Arrays.stream(permissionIds).map(UUID::fromString).collect(Collectors.toList());
+        return new OrganizationalUnitPermissionInputElementType(UUID.fromString(datasetId), perms);
+    }
+
+    @SuppressWarnings("unchecked")
+    private ArgumentCaptor<Collection<PermissionEntity>> permissionCaptor() {
+        return ArgumentCaptor.forClass(Collection.class);
+    }
+
+    private Collection<PermissionEntity> capturedGeoresourcePermissions(MetadataGeoresourcesEntity dataset) {
+        ArgumentCaptor<Collection<PermissionEntity>> captor = permissionCaptor();
+        verify(dataset).setPermissions(captor.capture());
+        return captor.getValue();
     }
 
     private OrganizationalUnitEntity ou(String id) {

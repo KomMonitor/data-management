@@ -9,6 +9,7 @@ import de.hsbo.kommonitor.datamanagement.model.GroupAdminRolesPUTInputType;
 import org.springframework.lang.Nullable;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitInputType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitOverviewType;
+import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionInputType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitPermissionOverviewType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitRoleAuthorityType;
 import de.hsbo.kommonitor.datamanagement.model.OrganizationalUnitRoleDelegateType;
@@ -503,6 +504,48 @@ public interface AccessControlApi {
     ResponseEntity<Void> updateRoleDelegates(
         @Parameter(name = "organizationalUnitId", description = "organizationalUnitId", required = true, in = ParameterIn.PATH) @PathVariable("organizationalUnitId") String organizationalUnitId,
         @Parameter(name = "organizationalUnitData", description = "data", required = true) @Valid @RequestBody List<@Valid GroupAdminRolesPUTInputType> organizationalUnitData
+    );
+
+
+    String PATH_UPDATE_ORGANIZATIONAL_UNIT_PERMISSIONS = "/organizationalUnits/permissions";
+    /**
+     * PATCH /organizationalUnits/permissions : Set dataset permissions for a batch of organizationalUnits
+     * Partially updates the dataset permissions of the submitted organizationalUnits. Only the listed datasets of the
+     * listed resource types are updated for each organizationalUnit; all other permissions stay untouched.
+     *
+     * @param organizationalUnitPermissionData data (required)
+     * @return OK (status code 200)
+     *         or API key is missing or invalid (status code 401)
+     *         or Forbidden (status code 403)
+     *         or Not Found (status code 404)
+     *         or Invalid input (status code 405)
+     */
+    @Operation(
+        operationId = "updateOrganizationalUnitPermissions",
+        summary = "Set dataset permissions for a batch of organizationalUnits",
+        description = "Partially updates the dataset permissions of the submitted organizationalUnits. Only the listed datasets of the listed resource types are updated for each organizationalUnit; all other permissions stay untouched.",
+        tags = { "access-control" },
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = {
+                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = OrganizationalUnitPermissionOverviewType.class)))
+            }),
+            @ApiResponse(responseCode = "401", description = "API key is missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not Found"),
+            @ApiResponse(responseCode = "405", description = "Invalid input")
+        },
+        security = {
+            @SecurityRequirement(name = "kommonitor-data-access_oauth")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.PATCH,
+        value = AccessControlApi.PATH_UPDATE_ORGANIZATIONAL_UNIT_PERMISSIONS,
+        produces = { "application/json" },
+        consumes = { "application/json" }
+    )
+    ResponseEntity<List<OrganizationalUnitPermissionOverviewType>> updateOrganizationalUnitPermissions(
+        @Parameter(name = "organizationalUnitPermissionData", description = "data", required = true) @Valid @RequestBody List<@Valid OrganizationalUnitPermissionInputType> organizationalUnitPermissionData
     );
 
 }

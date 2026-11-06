@@ -498,6 +498,167 @@ public class OrganizationalUnitManager {
                 && organizationalUnitId.equals(permission.getOrganizationalUnit().getOrganizationalUnitId());
     }
 
+    /**
+     * Partially updates (PATCH) the dataset permissions of a batch of organizational units. For every
+     * (organizational unit, dataset) pair listed in the payload, the dataset's grants that belong to
+     * that organizational unit are replaced by the requested ones; grants of other organizational units
+     * and datasets not listed stay untouched. The whole batch runs in the surrounding transaction, so a
+     * failure on any entry rolls back the entire request.
+     *
+     * @return the resulting permission overview of every updated organizational unit
+     */
+    public List<OrganizationalUnitPermissionOverviewType> updateOrganizationalUnitPermissions(
+            List<OrganizationalUnitPermissionInputType> orgaPermissions) throws ResourceNotFoundException {
+        List<OrganizationalUnitPermissionOverviewType> result = new ArrayList<>();
+        if (orgaPermissions == null) {
+            return result;
+        }
+
+        for (OrganizationalUnitPermissionInputType entry : orgaPermissions) {
+            if (entry == null || entry.getOrganizationalUnitId() == null) {
+                throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                        "Each permission patch entry must specify an organizationalUnitId.");
+            }
+            String organizationalUnitId = entry.getOrganizationalUnitId().toString();
+            LOG.info("Updating dataset permissions for organizationalUnit '{}'", organizationalUnitId);
+
+            OrganizationalUnitEntity organizationalUnitEntity =
+                    organizationalUnitRepository.findByOrganizationalUnitId(organizationalUnitId);
+            if (organizationalUnitEntity == null) {
+                LOG.error("No OrganizationalUnit with id '{}' was found in database.", organizationalUnitId);
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                        "Tried to update OrganizationalUnit permissions, but no OrganizationalUnit " +
+                                "exists with id " + organizationalUnitId);
+            }
+
+            OrganizationalUnitPermissionInputTypePermissions permissions = entry.getPermissions();
+            if (permissions != null) {
+                applyDatasetPermissions(organizationalUnitId, permissions.getGeoresources(),
+                        ResourceType.GEORESOURCES);
+                applyDatasetPermissions(organizationalUnitId, permissions.getSpatialunits(),
+                        ResourceType.SPATIALUNITS);
+                applyDatasetPermissions(organizationalUnitId, permissions.getIndicators(),
+                        ResourceType.INDICATORS);
+                applyIndicatorSpatialUnitPermissions(organizationalUnitId,
+                        permissions.getIndicatorspatialunits());
+            }
+
+            result.add(getOrganizationalUnitPermissionsById(organizationalUnitId, null));
+        }
+        return result;
+    }
+
+    private void applyDatasetPermissions(String organizationalUnitId,
+            List<OrganizationalUnitPermissionInputElementType> elements,
+            ResourceType resourceType) throws ResourceNotFoundException {
+        if (elements == null) {
+            return;
+        }
+        for (OrganizationalUnitPermissionInputElementType element : elements) {
+            if (element == null || element.getId() == null) {
+                throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                        "Each permission element must specify a dataset id.");
+            }
+            String datasetId = element.getId().toString();
+            switch (resourceType) {
+                case GEORESOURCES -> {
+                    MetadataGeoresourcesEntity dataset = georesourcesMetadataRepository.findByDatasetId(datasetId);
+                    if (dataset == null) {
+                        throw datasetNotFound("georesource", datasetId);
+                    }
+                    dataset.setPermissions(mergePermissions(
+                            dataset.getPermissions(), organizationalUnitId, element.getPermissions()));
+                    georesourcesMetadataRepository.saveAndFlush(dataset);
+                }
+                case SPATIALUNITS -> {
+                    MetadataSpatialUnitsEntity dataset = spatialUnitsMetadataRepository.findByDatasetId(datasetId);
+                    if (dataset == null) {
+                        throw datasetNotFound("spatial unit", datasetId);
+                    }
+                    dataset.setPermissions(mergePermissions(
+                            dataset.getPermissions(), organizationalUnitId, element.getPermissions()));
+                    spatialUnitsMetadataRepository.saveAndFlush(dataset);
+                }
+                case INDICATORS -> {
+                    MetadataIndicatorsEntity dataset = indicatorsMetadataRepository.findByDatasetId(datasetId);
+                    if (dataset == null) {
+                        throw datasetNotFound("indicator", datasetId);
+                    }
+                    dataset.setPermissions(mergePermissions(
+                            dataset.getPermissions(), organizationalUnitId, element.getPermissions()));
+                    indicatorsMetadataRepository.saveAndFlush(dataset);
+                }
+                default -> throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                        "Unsupported resource type for dataset permissions: " + resourceType);
+            }
+        }
+    }
+
+    private void applyIndicatorSpatialUnitPermissions(String organizationalUnitId,
+            List<OrganizationalUnitPermissionInputSpatialUnitElementType> elements) throws ResourceNotFoundException {
+        if (elements == null) {
+            return;
+        }
+        for (OrganizationalUnitPermissionInputSpatialUnitElementType element : elements) {
+            if (element == null || element.getId() == null || element.getSpatialUnitId() == null) {
+                throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                        "Each indicatorspatialunits permission element must specify an indicator id and a spatialUnitId.");
+            }
+            String indicatorId = element.getId().toString();
+            String spatialUnitId = element.getSpatialUnitId().toString();
+            IndicatorSpatialUnitJoinEntity join =
+                    indicatorSpatialUnitsRepository.findByIndicatorMetadataIdAndSpatialUnitId(indicatorId, spatialUnitId);
+            if (join == null) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                        "Tried to update permissions, but no indicator/spatial-unit combination exists for indicator "
+                                + indicatorId + " and spatialUnit " + spatialUnitId);
+            }
+            join.setPermissions(mergePermissions(
+                    join.getPermissions(), organizationalUnitId, element.getPermissions()));
+            indicatorSpatialUnitsRepository.saveAndFlush(join);
+        }
+    }
+
+    /**
+     * Builds the new permission collection for a dataset under PATCH semantics: keeps every grant that
+     * does not belong to the given organizational unit, then adds the requested grants. Every
+     * requested permission must exist and belong to that organizational unit, otherwise the request is
+     * rejected.
+     */
+    private Collection<PermissionEntity> mergePermissions(Set<PermissionEntity> current,
+            String organizationalUnitId, List<UUID> requestedPermissionIds) throws ResourceNotFoundException {
+        List<PermissionEntity> merged = new ArrayList<>();
+        if (current != null) {
+            for (PermissionEntity permission : current) {
+                if (!belongsToOrganizationalUnit(permission, organizationalUnitId)) {
+                    merged.add(permission);
+                }
+            }
+        }
+        if (requestedPermissionIds != null && !requestedPermissionIds.isEmpty()) {
+            List<String> ids = new ArrayList<>();
+            for (UUID id : requestedPermissionIds) {
+                ids.add(id.toString());
+            }
+            for (PermissionEntity permission : permissionManager.retrievePermissions(ids)) {
+                if (!belongsToOrganizationalUnit(permission, organizationalUnitId)) {
+                    throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                            "Permission " + permission.getPermissionId() + " does not belong to organizationalUnit "
+                                    + organizationalUnitId);
+                }
+                if (!merged.contains(permission)) {
+                    merged.add(permission);
+                }
+            }
+        }
+        return merged;
+    }
+
+    private ResourceNotFoundException datasetNotFound(String datasetType, String datasetId) {
+        return new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(),
+                "Tried to update permissions, but no " + datasetType + " dataset exists with id " + datasetId);
+    }
+
     public String updateOrganizationalUnit(OrganizationalUnitInputType newData,
                                            String organizationalUnitId) throws Exception {
         LOG.info("Trying to update OrganizationalUnit with organizationalUnitId '{}'", organizationalUnitId);

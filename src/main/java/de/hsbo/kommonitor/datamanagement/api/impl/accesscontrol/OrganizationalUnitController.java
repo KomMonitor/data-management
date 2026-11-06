@@ -52,7 +52,6 @@ public class OrganizationalUnitController extends BasePathController implements 
     }
 
     @Override
-    // @PreAuthorize("hasRequiredPermissionLevel('viewer')")
     public ResponseEntity<List<OrganizationalUnitOverviewType>> getOrganizationalUnits() {
         LOG.debug("Received request to get all organizationalUnits");
 
@@ -68,7 +67,7 @@ public class OrganizationalUnitController extends BasePathController implements 
     }
 
     @Override
-    @PreAuthorize("hasRequiredPermissionLevel('editor')")
+    @PreAuthorize("isAuthorizedForOrganization(#organizationalUnitId)")
     public ResponseEntity<OrganizationalUnitOverviewType> getOrganizationalUnitById(String organizationalUnitId) {
         LOG.debug("Received request to get organizationalUnit with id '{}'", organizationalUnitId);
 
@@ -163,9 +162,9 @@ public class OrganizationalUnitController extends BasePathController implements 
         }
     }
 
-    @PreAuthorize("hasRequiredPermissionLevel('creator', 'users')")
+    @PreAuthorize("isAuthorizedForOrganization(#organizationalUnitId)")
     @Override public ResponseEntity<OrganizationalUnitPermissionOverviewType> getOrganizationalUnitPermissions(
-            String organizationalUnitId,
+            @P("organizationalUnitId") String organizationalUnitId,
             String resourceType) {
         LOG.info("Received request to get organizationalUnit permissions for id '{}' and resourceType '{}'",
                 organizationalUnitId, resourceType);
@@ -244,6 +243,22 @@ public class OrganizationalUnitController extends BasePathController implements 
         try {
             organizationalUnitManager.updateDelegatedGroupAdminRoles(organizationalUnitId, organizationalUnitData);
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return ApiUtils.createResponseEntityFromException(e);
+        }
+    }
+
+    @PreAuthorize("isAuthorizedForAdminOperations()")
+    @Override
+    public ResponseEntity<List<OrganizationalUnitPermissionOverviewType>> updateOrganizationalUnitPermissions(
+            List<OrganizationalUnitPermissionInputType> organizationalUnitPermissionData) {
+        LOG.info("Received request to update dataset permissions for {} organizationalUnit(s)",
+                organizationalUnitPermissionData != null ? organizationalUnitPermissionData.size() : 0);
+        try {
+            List<OrganizationalUnitPermissionOverviewType> updated =
+                    organizationalUnitManager.updateOrganizationalUnitPermissions(organizationalUnitPermissionData);
+            lastModManager.updateLastDatabaseModificationAccessControl();
+            return new ResponseEntity<>(updated, HttpStatus.OK);
         } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);
         }
