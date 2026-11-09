@@ -258,6 +258,7 @@ public class OrganizationalUnitController extends BasePathController implements 
             List<OrganizationalUnitPermissionOverviewType> updated =
                     organizationalUnitManager.updateOrganizationalUnitPermissions(organizationalUnitPermissionData);
             lastModManager.updateLastDatabaseModificationAccessControl();
+            lastModManager.updateLastDatabaseModificationResources();
             return new ResponseEntity<>(updated, HttpStatus.OK);
         } catch (Exception e) {
             return ApiUtils.createResponseEntityFromException(e);

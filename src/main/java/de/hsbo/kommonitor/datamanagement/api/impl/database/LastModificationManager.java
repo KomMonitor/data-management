@@ -17,6 +17,12 @@ public class LastModificationManager {
 	@Autowired
 	LastModificationRepository lastModificationRepo;
 
+    public void  updateLastDatabaseModificationResources() {
+        updateLastDatabaseModificationIndicators();
+        updateLastDatabaseModificationGeoresources();
+        updateLastDatabaseModificationSpatialUnits();
+    }
+
 	public void updateLastDatabaseModificationIndicators() {
 		List<LastModificationEntity> all = lastModificationRepo.findAll();
 
